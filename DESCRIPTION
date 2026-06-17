@@ -1,9 +1,10 @@
 Package: kelpbio
 Title: Bayesian Kelp Biomass Estimation
 Version: 0.0.0.9000
-Authors@R: 
+Authors@R: c(
     person("Seb", "Dalgarno", , "seb@poissonconsulting.ca", role = c("aut", "cre"),
-           comment = c(ORCID = "0000-0002-3658-4517"))
+           comment = c(ORCID = "0000-0002-3658-4517")),
+    person("Tula Foundation", role = c("fnd", "cph")))
 Description: Fits Bayesian hierarchical models via 'rstan' to estimate kelp
     biomass and carbon from field measurements, including allometric weight,
     plant size distribution, transect density, and wet-to-dry and carbon

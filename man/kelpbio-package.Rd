@@ -11,5 +11,10 @@ Fits Bayesian hierarchical models via 'rstan' to estimate kelp biomass and carbo
 \author{
 \strong{Maintainer}: Seb Dalgarno \email{seb@poissonconsulting.ca} (\href{https://orcid.org/0000-0002-3658-4517}{ORCID})
 
+Other contributors:
+\itemize{
+  \item Tula Foundation [funder, copyright holder]
+}
+
 }
 \keyword{internal}
