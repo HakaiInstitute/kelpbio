@@ -10,11 +10,17 @@ Description: Fits Bayesian hierarchical Stan models via 'rstan' to estimate kelp
     plant size distribution, density, and wet-to-dry and carbon
     tissue conversions.
 License: MIT + file LICENSE
+URL: https://github.com/HakaiInstitute/kelpbio,
+    https://hakaiinstitute.github.io/kelpbio/
+BugReports: https://github.com/HakaiInstitute/kelpbio/issues
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.3.9000
-Suggests: 
+Suggests:
+    knitr,
+    rmarkdown,
     testthat (>= 3.0.0)
+VignetteBuilder: knitr
 Config/testthat/edition: 3
 Biarch: true
 Depends: 

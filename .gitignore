@@ -11,6 +11,8 @@
 .claude/
 
 *.html
+# but keep the pkgdown navbar template (a tracked source file, not rendered output)
+!pkgdown/templates/navbar.html
 
 # compiled Stan / C++ artifacts (regenerated at install)
 *.o
