@@ -16,3 +16,4 @@
 ^openspec$
 ^\.claude$
 ^CLAUDE\.md$
+^jarl\.toml$

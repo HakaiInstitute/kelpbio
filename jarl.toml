@@ -1,0 +1,4 @@
+[lint]
+# Skip rstantools-generated files (regenerated at build; not hand-edited).
+default-exclude = true
+exclude = ["R/stanmodels.R"]

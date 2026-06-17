@@ -13,5 +13,6 @@
 #' @aliases parameters arguments args
 #' @usage NULL
 # nocov start
+# jarl-ignore unused_function: @inheritParams donor, intentionally never called
 params <- function(...) NULL
 # nocov end
