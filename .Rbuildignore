@@ -13,3 +13,6 @@
 ^LICENSE\.md$
 ^_pkgdown\.yml$
 ^README\.Rmd$
+^openspec$
+^\.claude$
+^CLAUDE\.md$
