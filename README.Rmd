@@ -53,12 +53,7 @@ If a source build can't find a compiler, see the
 
 ## Example
 
-This is a basic example which shows you how to solve a common problem:
-
-``` r
-library(kelpbio)
-## basic example code
-```
+<!-- Worked example to follow once the `kb_` API is available. -->
 
 ```{r, results = "asis", echo = FALSE}
 cat(licensing_md())

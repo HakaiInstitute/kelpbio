@@ -60,9 +60,10 @@ guide](https://github.com/stan-dev/rstan/wiki/RStan-Getting-Started).
 
 ## Example
 
-This is a basic example which shows you how to solve a common problem:
+<!-- Worked example to follow once the `kb_` API is available. -->
 
-``` r
-library(kelpbio)
-## basic example code
-```
+## Licensing
+
+Copyright 2026 Tula Foundation.
+
+The code is released under the [MIT License](LICENSE.md).
