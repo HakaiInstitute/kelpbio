@@ -12,6 +12,11 @@
 
 *.html
 
+# compiled Stan / C++ artifacts (regenerated at install)
+*.o
+*.so
+*.dll
+
 /docs/
 /inst/docs/
 /paper/paper.pdf

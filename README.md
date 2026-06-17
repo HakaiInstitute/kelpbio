@@ -1,13 +1,37 @@
+<!-- README.md is generated from README.Rmd. Please edit that file -->
 
 # kelpbio
 
 <!-- badges: start -->
+
+[![R-CMD-check](https://github.com/HakaiInstitute/kelpbio/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/HakaiInstitute/kelpbio/actions/workflows/R-CMD-check.yaml)
+[![Lifecycle:
+experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
 <!-- badges: end -->
 
-The goal of kelpbio is to ...
+kelpbio fits Bayesian hierarchical models to estimate kelp biomass and
+carbon from field measurements.
 
 ## Installation
 
+kelpbio compiles its Stan models from source at install time, so a
+working **C++17 toolchain** is required (see the [RStan getting-started
+guide](https://github.com/stan-dev/rstan/wiki/RStan-Getting-Started)).
+The first install takes several minutes; later installs of the same
+version are near-instant.
+
+``` r
+# from the Hakai R-universe
+install.packages("kelpbio", repos = c("https://hakaiinstitute.r-universe.dev", getOption("repos")))
+
+# or from GitHub
+# install.packages("pak")
+# pak::pak("HakaiInstitute/kelpbio")
+```
+
+When developing kelpbio, edits to `inst/stan/*.stan` are **not** picked
+up by `devtools::load_all()` — reinstall with `devtools::install()` to
+recompile the Stan models.
 
 ## Example
 
@@ -16,8 +40,4 @@ This is a basic example which shows you how to solve a common problem:
 ``` r
 library(kelpbio)
 ## basic example code
-```
-
-```{r, results = "asis", echo = FALSE}
-cat(licensing_md())
 ```

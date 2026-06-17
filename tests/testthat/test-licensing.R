@@ -1,3 +1,3 @@
 test_that("licensing_md works", {
-  expect_type(licensing_md(), "character")
+  expect_type(kelpbio:::licensing_md(), "character")
 })
