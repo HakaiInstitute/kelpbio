@@ -1,8 +1,23 @@
+---
+output: github_document
+---
 
-# kelpbio
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "man/figures/README-"
+)
+```
+
+# kelpbio <img src="man/figures/logo.png" align="right" height="139" />
 
 <!-- badges: start -->
 [![R-CMD-check](https://github.com/HakaiInstitute/kelpbio/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/HakaiInstitute/kelpbio/actions/workflows/R-CMD-check.yaml)
+[![R-universe version](https://hakaiinstitute.r-universe.dev/kelpbio/badges/version)](https://hakaiinstitute.r-universe.dev/kelpbio)
+[![R-universe status](https://hakaiinstitute.r-universe.dev/kelpbio/badges/checks)](https://hakaiinstitute.r-universe.dev/kelpbio)
 [![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
 <!-- badges: end -->
 
@@ -51,10 +66,14 @@ If a source build can't find a compiler, see the
 > `devtools::load_all()` — reinstall with `devtools::install()` to recompile the
 > Stan models.
 
-## Example
+## Usage
 
 <!-- Worked example to follow once the `kb_` API is available. -->
 
+## Citation
+
+<!-- Citation guidance to follow once the `kb_` API is available. -->
+
 ```{r, results = "asis", echo = FALSE}
-cat(licensing_md())
+cat(kelpbio:::licensing_md())
 ```

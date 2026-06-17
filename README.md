@@ -1,10 +1,15 @@
+
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# kelpbio
+# kelpbio <img src="man/figures/logo.png" align="right" height="139" />
 
 <!-- badges: start -->
 
 [![R-CMD-check](https://github.com/HakaiInstitute/kelpbio/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/HakaiInstitute/kelpbio/actions/workflows/R-CMD-check.yaml)
+[![R-universe
+version](https://hakaiinstitute.r-universe.dev/kelpbio/badges/version)](https://hakaiinstitute.r-universe.dev/kelpbio)
+[![R-universe
+status](https://hakaiinstitute.r-universe.dev/kelpbio/badges/checks)](https://hakaiinstitute.r-universe.dev/kelpbio)
 [![Lifecycle:
 experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
 <!-- badges: end -->
@@ -15,8 +20,8 @@ carbon from field measurements.
 ## Installation
 
 kelpbio bundles its Stan models, so you do **not** need to install Stan,
-CmdStan, or any separate Bayesian toolchain — and on macOS/Windows you do
-not need a compiler either. What you need depends on how you install.
+CmdStan, or any separate Bayesian toolchain — and on macOS/Windows you
+do not need a compiler either. What you need depends on how you install.
 
 ### macOS and Windows (recommended)
 
@@ -38,8 +43,8 @@ version) compile the Stan models on your machine. This needs a **C++
 toolchain** and a few minutes (~4 GB RAM, ~10–20 min the first time;
 later installs are fast):
 
-- **Linux** — a C++ compiler and make, e.g.
-  `sudo apt install build-essential`.
+- **Linux** — a C++ compiler and make,
+  e.g. `sudo apt install build-essential`.
 - **Windows** (only when compiling from source) —
   [Rtools](https://cran.r-project.org/bin/windows/Rtools/) matching your
   R version.
@@ -58,9 +63,13 @@ guide](https://github.com/stan-dev/rstan/wiki/RStan-Getting-Started).
 > by `devtools::load_all()` — reinstall with `devtools::install()` to
 > recompile the Stan models.
 
-## Example
+## Usage
 
 <!-- Worked example to follow once the `kb_` API is available. -->
+
+## Citation
+
+<!-- Citation guidance to follow once the `kb_` API is available. -->
 
 ## Licensing
 
