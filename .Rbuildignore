@@ -2,3 +2,5 @@
 ^CLAUDE\.md$
 ^\.gitignore$
 ^docs$
+^\.github$
+^scripts$
