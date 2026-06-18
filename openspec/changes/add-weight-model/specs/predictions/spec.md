@@ -14,19 +14,27 @@
 
 ### Requirement: Grouping and uncertainty axes
 
-Predictions SHALL support a `by` grouping axis and an `uncertainty = c("marginal", "typical")` axis (marginal default), validated with `rlang::arg_match()`.
+Predictions SHALL support a `by` grouping axis and an `uncertainty = c("marginal", "typical")` axis (marginal default), validated with `rlang::arg_match()`. The weight model carries three random effects across two grouping factors: a site intercept and a site slope (both keyed on `site`) and a site:year effect (keyed on `site` and `year`). Its available `by` values are therefore `NULL`, `"site"`, and `c("site", "year")`.
 
-#### Scenario: Population-average vs new-site
+#### Scenario: Population-average vs new site-year
 - **WHEN** `uncertainty = "typical"` vs `uncertainty = "marginal"` with `by = NULL`
-- **THEN** `typical` zeroes the site effect (population-average curve) and `marginal` draws a new site effect from `Normal(0, sSite)`, giving an interval at least as wide as typical
+- **THEN** `typical` zeroes all random effects (the population-average curve) and `marginal` draws a new site intercept from `Normal(0, sSite)`, a new site slope from `Normal(0, sSiteDiameter)`, and a new site:year effect from `Normal(0, sSiteYear)`, giving an interval at least as wide as typical
 
 #### Scenario: Per-site curves
 - **WHEN** `by = "site"` is supplied
-- **THEN** one curve per observed site is returned, using each site's estimated effect
+- **THEN** one curve per observed site is returned, holding that site's estimated intercept and slope at their posterior values; under `uncertainty = "marginal"` the omitted site:year effect is drawn from `Normal(0, sSiteYear)`, and under `"typical"` it is zeroed
+
+#### Scenario: Per-site-year curves
+- **WHEN** `by = c("site", "year")` is supplied
+- **THEN** one curve per observed site-by-year combination is returned, holding the site intercept, site slope, and that site:year effect at their estimated posterior values
 
 #### Scenario: Marginal requires an omitted RE factor
-- **WHEN** `uncertainty = "marginal"` is requested but `by` already conditions on every available random-effect factor
+- **WHEN** `uncertainty = "marginal"` is requested with `by = c("site", "year")`, which conditions on every random-effect factor and leaves nothing to draw
 - **THEN** it errors with an informative `cli` message
+
+#### Scenario: year alone is not a valid grouping for the weight model
+- **WHEN** `by = "year"` is supplied
+- **THEN** it errors with a `cli` message explaining that year enters the weight model only through the `site:year` interaction (there is no year main effect), so the available groupings are `NULL`, `"site"`, and `c("site", "year")`
 
 ### Requirement: Raw prediction draws
 

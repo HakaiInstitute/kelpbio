@@ -1,14 +1,15 @@
 ## Why
 
-With the rstan/rstantools engine and the compiled `stanmodels$weight` in place (Change A `scaffold-rstan-package`), kelpbio needs its first end-to-end user-facing pipeline. This change delivers the full weight-model vertical slice — data validation, structured priors, fitting, model summaries/diagnostics, predictions, and plotting — establishing the package's S3 architecture and conventions that every later model will reuse. See `docs/package-design.md`, `docs/vertical-slice.md`, and `docs/testing-strategy.md`.
+With the rstan/rstantools engine and the compiled `stanmodels$weight` in place (Change A `scaffold-rstan-package`), kelpbio needs its first end-to-end user-facing pipeline. This change delivers the full weight model end to end -- data validation, structured priors, fitting, model summaries/diagnostics, predictions, and plotting -- establishing the package's S3 architecture and conventions that every later model will reuse. The model is the validated analysis-project allometry: a quadratic log-diameter mean with site intercept, site slope, and site:year random effects under a Student-t(4) likelihood (it supersedes the site-intercept-only smoke-test that Change A shipped to prove the engine). See `docs/package-design.md` (model catalogue), `docs/vertical-slice.md`, and `docs/testing-strategy.md`.
 
 ## What Changes
 
+- Expand `inst/stan/weight.stan` from the site-intercept-only smoke-test to the full allometric model: add `bDiameter2` (quadratic log-diameter term), the site slope random effect (`bSiteDiameter`/`sSiteDiameter`), and the site:year random effect (`bSiteYear`/`sSiteYear`, which reintroduces the `year` dimension), keeping priors-as-data, the `prior_only`/zero-obs guards, and the `typical`/`marginal` generated quantities (now drawing all three random effects).
 - Add `kb_check_data_weight()` (chk validation of `diameter`, `weight`, `site`, `year`) and bundle a small `kb_data_weight` dataset (simulated/anonymized until data permission is confirmed).
-- Add the structured prior surface: `kb_prior_normal()` / `kb_prior_exponential()` constructors (self-validating, self-printing) and `kb_priors_weight()` returning the named default prior list.
+- Add the structured prior surface: `kb_prior_normal()` / `kb_prior_exponential()` constructors (self-validating, self-printing) and `kb_priors_weight()` returning the named default prior list -- now seven entries: `intercept`, `diameter`, `diameter2`, `sd_site`, `sd_site_diameter`, `sd_site_year`, `sd_residual`.
 - Add `kb_fit_weight()`: fits `stanmodels$weight`, supports `prior_only` and zero-observation fits, and returns a `c("kb_fit_weight", "kb_fit")` object that stores **extracted posterior draws (not the stanfit)** + diagnostics + data + meta.
 - Add the model-summary surface as S3 methods on `kb_fit`: `print`, `tidy`, `glance`, `augment`, `converged`, `samples`, `coef`; the `universals` accessors (`rhat`, `ess`, `nobs`, `nchains`, `niters`, `npars`, `nterms`, `pars`); and `kb_stancode()`.
-- Add `kb_predict_weight()` and `kb_predict_weight_samples()` — allometric curves over `new_data` (auto-sequence when NULL) with the `by` and `uncertainty = c("marginal","typical")` axes, computed R-side from the stored draws; the summary returns a `kb_predictions` tibble subclass carrying column-role metadata.
+- Add `kb_predict_weight()` and `kb_predict_weight_samples()` — allometric curves over `new_data` (auto-sequence when NULL) with the `by` and `uncertainty = c("marginal","typical")` axes, computed R-side from the stored draws; the summary returns a `kb_predictions` tibble subclass carrying column-role metadata. With three random effects across two grouping factors, the available `by` values are `NULL`, `"site"`, and `c("site","year")`, and `marginal` draws whichever of site intercept, site slope, and site:year `by` does not condition on.
 - Add `kb_plot_predictions()` — a composable ggplot built from a `kb_predictions` object (ribbon for the continuous predictor), inferring x/style/facet from metadata, with an optional `observed` overlay.
 - Establish the testthat fixture workflow (`tests/testthat/fixtures/make-fixtures.R` + `helper-fixtures.R`) so downstream methods are tested without re-sampling.
 
@@ -23,9 +24,7 @@ With the rstan/rstantools engine and the compiled `stanmodels$weight` in place (
 - `plotting`: `kb_plot_predictions()` — metadata-driven ggplot from a `kb_predictions` object.
 
 ### Modified Capabilities
-<!-- none — stan-engine (Change A) ships the complete weight.stan, including the
-     typical/marginal generated quantities; this change adds R code only and does
-     not modify the Stan source. -->
+- `stan-engine`: `inst/stan/weight.stan` is expanded from the site-intercept-only smoke-test (shipped by Change A to prove the engine) to the full allometric model -- new parameters (`bDiameter2`, `sSiteDiameter`, `sSiteYear`, and the `bSiteDiameter`/`bSiteYear` random effects), the `year` index in the data block, the additional prior hyperparameters, and the expanded `typical`/`marginal` generated quantities.
 
 ## Impact
 
@@ -34,4 +33,5 @@ With the rstan/rstantools engine and the compiled `stanmodels$weight` in place (
 - **Data**: new `data/kb_data_weight.rda` + `data-raw/kb_data_weight.R`.
 - **Tests**: 1:1 mirrored test files; `tests/testthat/fixtures/` with `make-fixtures.R` + a committed slim `weight_fit.rds`; `helper-fixtures.R`.
 - **Docs**: roxygen for all exports (plain-language `marginal`/`typical`); a prior-predictive example.
-- **Out of scope**: all other models (size, density, blade, wetdry, carbon), the biomass pipeline, pre-fit `kb_default_*` models, and any Stan source changes.
+- **Stan source**: `inst/stan/weight.stan` rewritten to the full model (requires `devtools::install()` to recompile; `load_all()` does not pick up Stan changes).
+- **Out of scope**: all other models (size, density, blade, wetdry, carbon), the biomass pipeline, and the pre-fit `kb_default_*` models.

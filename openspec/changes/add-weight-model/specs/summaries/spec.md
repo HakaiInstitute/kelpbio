@@ -4,13 +4,13 @@
 
 `tidy()` and `coef()` SHALL summarise a `kb_fit` from its stored draws, carrying `conf_level`, `estimate`, and `sig_fig`.
 
-#### Scenario: tidy returns fixed-effect summaries
+#### Scenario: tidy returns fixed-effect and SD summaries
 - **WHEN** `tidy(fit)` is called
-- **THEN** it returns a tibble with one row per fixed-effect term and columns `term`, `estimate`, `std.error`, `conf.low`, `conf.high`
+- **THEN** it returns a tibble with one row per population-level term (`bWeight30`, `bDiameter`, `bDiameter2`) and per random-effect SD (`sSite`, `sSiteDiameter`, `sSiteYear`, `sWeight`), with columns `term`, `estimate`, `std.error`, `conf.low`, `conf.high`
 
 #### Scenario: coef returns group-level estimates
 - **WHEN** `coef(fit)` is called
-- **THEN** it returns the site-level coefficient estimates (wrapping `tidy`)
+- **THEN** it returns the group-level coefficient estimates (the per-site intercepts and slopes, and the site:year effects; wrapping `tidy`)
 
 ### Requirement: Glance and convergence
 
@@ -26,7 +26,7 @@
 
 ### Requirement: Augmented fitted values
 
-`augment(x)` SHALL return the input data augmented with `.fitted`, `.resid`, `.lower`, `.upper`, fitted at each observed row using that row's estimated site random effect, at full precision.
+`augment(x)` SHALL return the input data augmented with `.fitted`, `.resid`, `.lower`, `.upper`, fitted at each observed row using that row's estimated random effects (site intercept, site slope, and site:year), at full precision.
 
 #### Scenario: augment adds fitted/resid columns
 - **WHEN** `augment(fit)` is called

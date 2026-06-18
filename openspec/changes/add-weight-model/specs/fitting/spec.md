@@ -2,7 +2,7 @@
 
 ### Requirement: Fit the weight model
 
-`kb_fit_weight(data, species, priors, prior_only, chains, iter, nthin, cores, quiet, ...)` SHALL fit the site-intercept-only weight model via `stanmodels$weight` and return an object of class `c("kb_fit_weight", "kb_fit")`.
+`kb_fit_weight(data, species, priors, prior_only, chains, iter, nthin, cores, quiet, ...)` SHALL fit the full allometric weight model (quadratic log-diameter mean with site intercept, site slope, and site:year random effects) via `stanmodels$weight` and return an object of class `c("kb_fit_weight", "kb_fit")`.
 
 #### Scenario: Returns a kb_fit_weight object
 - **WHEN** `kb_fit_weight()` is called on valid weight data
@@ -18,7 +18,7 @@ The returned `kb_fit` SHALL store extracted posterior draws (a `posterior` draws
 
 #### Scenario: Draws and diagnostics are retained, stanfit discarded
 - **WHEN** the fit object is inspected
-- **THEN** it exposes posterior draws (including `bWeight30`, `bDiameter`, `sSite`, `sWeight`, and per-site `bSite`) and diagnostics, and contains no live `stanfit`
+- **THEN** it exposes posterior draws (the fixed effects `bWeight30`, `bDiameter`, `bDiameter2`; the SDs `sSite`, `sSiteDiameter`, `sSiteYear`, `sWeight`; the per-site `bSite` and `bSiteDiameter`; and the site-by-year `bSiteYear`) and diagnostics, and contains no live `stanfit`
 
 ### Requirement: Prior-only and zero-observation fits
 
