@@ -45,7 +45,6 @@ The analysis project Stan models require these adaptations for kelpbio:
 
 1. **Priors as data** — analysis models hard-code priors; kelpbio passes all prior hyperparameters through the `data` block so users can adjust them via `kb_priors_*()`.
 2. **Column naming** — analysis uses CamelCase (`SbulbMax`, `PlantW`, `Site`, `Year`); kelpbio uses snake_case (`diameter`, `weight`, `site`, `year`).
-3. **Marginal generated quantities** — add a `generated quantities` block that draws new random effects from hyperprior distributions for `uncertainty = "marginal"` predictions (see §Predictions below).
 
 ## OOP Pattern (S3, following bboutools)
 
@@ -62,24 +61,6 @@ tidy.kb_fit_weight  # subclass-specific
 ```
 
 Access via `$`: `x$draws`, `x$data`, `x$meta`. `samples(x)` returns the draws container. The live `stanfit` is discarded after fitting — see `docs/package-design.md` §Data & model storage. Single package (R-universe, not CRAN): demo + coastwide data + slim pre-fit models in `data/`; no companion data package.
-
-## Predictions
-
-`augment()` returns fitted values at observed data points (`.fitted`, `.resid`, `.lower`, `.upper`), using each observation's estimated random effects — for diagnostics and PPC. `kb_predict_*()` generates predictions over a predictor sequence (e.g. allometric weight-vs-diameter curves). These are different jobs; keep them separate.
-
-`kb_predict_*()` has two orthogonal axes:
-
-**`by`** — grouping factors that get their own curve, held at observed estimated random-effect levels. Character vector following the `emmeans`/`marginaleffects` idiom (NOT bboutools boolean flags), so one signature is uniform across the whole `kb_predict_*` family: `by = NULL` (population), `"site"`, `"year"`, `c("site", "year")`.
-
-**`uncertainty = c("marginal", "typical")`** — how random-effect factors *not* in `by` are treated. Defaults to `"marginal"`.
-- **`"marginal"`** (default) — random effects drawn from their estimated hyperprior distributions (e.g. `normal_rng(0, sSite)`); an unobserved level (new site/year). Uses the `marginal` term from the analysis project. Default because the core job is applying the model to new surveyed sites, and it avoids understating uncertainty / downward bias in population totals.
-- **`"typical"`** — random effects zeroed; describes the population-average relationship (a statement about the mean). Uses the `prediction` term from the analysis project.
-
-The axes compose. `"marginal"` requires `by` to omit at least one random-effect factor (else nothing is left to draw — validate and error). Both terms are computed in the Stan `generated quantities` block and extracted by the R wrapper.
-
-The terms `marginal`/`typical` are kept but are jargon for the audience (biologists, not statisticians). Help pages AND the predictions vignette/article must explain them in plain language: `marginal` = "a new site you have not sampled", `typical` = "the average site", with guidance on when to use each.
-
-`new_data = NULL` auto-generates a predictor sequence over the observed range; supplying `new_data` predicts at those rows.
 
 ## Package Conventions
 
