@@ -8,10 +8,16 @@
 #     test() compile from those generated files but do NOT re-transpile the
 #     Stan source themselves, so .stan edits are otherwise missed.
 #   * The generated files (R/stanmodels.R, src/stanExports_*, src/RcppExports.cpp)
-#     are not hand-edited and are excluded from styling and linting.
-#   * devtools::check() runs a full R CMD build + INSTALL, which re-runs
-#     configure -> rstan_config() and recompiles the models; it is the
-#     authoritative Stan-aware build.
+#     are not hand-edited and are excluded from styling.
+#   * Linting is handled by jarl in CI (.github/workflows/lint-with-jarl.yaml,
+#     configured by jarl.toml); this script no longer lints, so local and CI
+#     checks stay in sync.
+#   * The slow, authoritative steps (R CMD check, which re-runs configure ->
+#     rstan_config() and recompiles the models, plus the pkgdown site) run only
+#     when KELPBIO_FULL_CHECK=true, so routine runs stay fast:
+#       KELPBIO_FULL_CHECK=true Rscript scripts/build.R
+
+full_check <- isTRUE(as.logical(Sys.getenv("KELPBIO_FULL_CHECK", "false")))
 
 # Regenerate C++ from the current Stan source (picks up inst/stan/*.stan edits).
 rstantools::rstan_config()
@@ -24,21 +30,10 @@ styler::style_pkg(
   exclude_files = "R/stanmodels.R"
 )
 
-lintr::lint_package(
-  linters = lintr::linters_with_defaults(
-    line_length_linter = lintr::line_length_linter(1000),
-    object_name_linter = lintr::object_name_linter(regexes = ".*")
-  ),
-  exclusions = list("R/stanmodels.R")
-)
-
-lintr::lint_package(exclusions = list("R/stanmodels.R"))
-
-devtools::test()
 devtools::document()
+devtools::test()
 
-# Note: Only use pkgdown to build a documentation website for public facing packages
-pkgdown::build_reference()
-pkgdown::build_site()
-
-devtools::check()
+if (full_check) {
+  pkgdown::build_site()
+  devtools::check()
+}
