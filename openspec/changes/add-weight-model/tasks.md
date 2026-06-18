@@ -49,8 +49,8 @@
 
 ## 9. Plotting (on fixture)
 
-- [ ] 9.1 `R/kb_plot_predictions.R` — ggplot from `kb_predictions`; ribbon for continuous predictor; metadata-driven `x`/`style`/`facet` with overrides + graceful fallback; optional `observed` overlay
-- [ ] 9.2 Tests: structure assertions (ggplot class, layers, mappings) + a sparse `vdiffr` doppelganger
+- [x] 9.1 `R/kb_plot_predictions.R` — ggplot from `kb_predictions`; ribbon for continuous predictor; metadata-driven `x`/`style`/`facet` with overrides + graceful fallback; optional `observed` overlay
+- [x] 9.2 Tests: structure assertions (ggplot class, layers, mappings) + a sparse `vdiffr` doppelganger
 
 ## 10. Documentation and check
 
