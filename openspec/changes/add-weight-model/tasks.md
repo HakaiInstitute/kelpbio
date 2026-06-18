@@ -1,7 +1,7 @@
 ## 0. Stan source — full weight model (install-gated)
 
 - [x] 0.1 Rewrite `inst/stan/weight.stan` to the full model: add `bDiameter2`; the site slope RE (`sSiteDiameter`, `z_bSiteDiameter`, `bSiteDiameter`); the site:year RE (`sSiteYear`, `z_bSiteYear` as `matrix[nSite, nYear]`, `bSiteYear`); add `nYear` and `year` to the data block; add the prior hyperparameters `prior_diameter2_mu/sd`, `prior_sd_site_diameter_rate`, `prior_sd_site_year_rate` and rename `prior_slope_*` → `prior_diameter_*`; expand the `typical`/`marginal` generated quantities to draw all three random effects. Keep the `prior_only` guard and `nObs == 0` support.
-- [ ] 0.2 **Checkpoint:** `devtools::install()` to recompile (`load_all()` does not pick up Stan changes; first compile is slow). Confirm `rstan::sampling(stanmodels$weight, ...)` returns a stanfit exposing the new parameters.
+- [x] 0.2 **Checkpoint:** `devtools::install()` to recompile (`load_all()` does not pick up Stan changes; first compile is slow). Confirm `rstan::sampling(stanmodels$weight, ...)` returns a stanfit exposing the new parameters.
 
 ## 1. Dependencies and shared scaffolding
 
@@ -54,5 +54,5 @@
 
 ## 10. Documentation and check
 
-- [ ] 10.1 roxygen for all exports (plain-language `marginal`/`typical`); a prior-predictive example (`prior_only = TRUE` → predict → plot)
-- [ ] 10.2 `devtools::document()`; `R CMD check` clean; confirm 1:1 test mirroring
+- [x] 10.1 roxygen for all exports (plain-language `marginal`/`typical`); a prior-predictive example (`prior_only = TRUE` → predict → plot)
+- [x] 10.2 `devtools::document()`; `R CMD check` clean; confirm 1:1 test mirroring

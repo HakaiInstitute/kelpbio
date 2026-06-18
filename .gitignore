@@ -22,3 +22,7 @@
 /docs/
 /inst/docs/
 /paper/paper.pdf
+
+# testthat failure artifacts
+tests/testthat/_problems/
+tests/testthat/testthat-problems.rds

@@ -8,7 +8,7 @@
 #' `nYear` fall back to `1`.
 #'
 #' @inheritParams params
-#' @param priors A resolved named prior list (see [resolve_priors()]).
+#' @param priors A resolved named prior list (see `resolve_priors()`).
 #'
 #' @return A named list suitable for `rstan::sampling(stanmodels$weight, data = .)`.
 #' @noRd

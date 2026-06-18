@@ -1,6 +1,5 @@
 #' Convergence of a Model Fit
 #'
-#' @inheritParams params
 #' @param x A `kb_fit` object.
 #' @param rhat A number: the maximum acceptable Rhat.
 #' @param ess A number: the minimum acceptable bulk effective sample size.

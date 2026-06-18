@@ -3,6 +3,7 @@
 ^\.github$
 ^data-raw$
 ^docs$
+^README\.html$
 ^pkgdown$
 ^revdep$
 ^scripts$
