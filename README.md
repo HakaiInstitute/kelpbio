@@ -19,15 +19,8 @@ carbon from field measurements.
 
 ## Installation
 
-kelpbio bundles its Stan models, so you do **not** need to install Stan,
-CmdStan, or any separate Bayesian toolchain — and on macOS/Windows you
-do not need a compiler either. What you need depends on how you install.
-
-### macOS and Windows (recommended)
-
-Install the pre-built binary from the Hakai R-universe. This needs
-**nothing but a current version of R** — no compiler, no Rtools, no
-Xcode, no wait:
+Install the pre-built binary from the Hakai R-universe (macOS and
+Windows):
 
 ``` r
 install.packages(
@@ -36,32 +29,18 @@ install.packages(
 )
 ```
 
-### Linux, or installing from source
-
-Source installs (Linux, GitHub, or when no binary matches your R
-version) compile the Stan models on your machine. This needs a **C++
-toolchain** and a few minutes (~4 GB RAM, ~10–20 min the first time;
-later installs are fast):
-
-- **Linux** — a C++ compiler and make,
-  e.g. `sudo apt install build-essential`.
-- **Windows** (only when compiling from source) —
-  [Rtools](https://cran.r-project.org/bin/windows/Rtools/) matching your
-  R version.
-- **macOS** (only when compiling from source) — Xcode command-line
-  tools: `xcode-select --install`.
+Install from source (Linux, or to build from GitHub):
 
 ``` r
 # install.packages("pak")
 pak::pak("HakaiInstitute/kelpbio")
 ```
 
-If a source build can’t find a compiler, see the [RStan getting-started
-guide](https://github.com/stan-dev/rstan/wiki/RStan-Getting-Started).
+Source builds require a C++ toolchain:
 
-> Developing kelpbio? Edits to `inst/stan/*.stan` are **not** picked up
-> by `devtools::load_all()` — reinstall with `devtools::install()` to
-> recompile the Stan models.
+- Linux: `sudo apt install build-essential`
+- Windows: [Rtools](https://cran.r-project.org/bin/windows/Rtools/)
+- macOS: `xcode-select --install`
 
 ## Usage
 
