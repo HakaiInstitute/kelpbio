@@ -36,10 +36,10 @@
 
 ## 7. Summaries and diagnostics (on fixture)
 
-- [ ] 7.1 `R/samples.R` (returns a `posterior` `draws_rvars`) + `R/accessors.R` (`rhat`/`ess`/`nobs`/`nchains`/`niters`/`npars`/`nterms`/`pars`, computed from the stored draws via `posterior`) + `R/kb_stancode.R`
-- [ ] 7.2 `R/tidy.R`, `R/coef.R`, `R/glance.R` (thresholds `rhat`/`ess`), `R/converged.R`
-- [ ] 7.3 `R/augment.R` (`.fitted`/`.resid`/`.lower`/`.upper`, full precision) and `R/print.R` (stable metadata, snapshot)
-- [ ] 7.4 Tests: structure + invariants for numeric output; snapshot prints/messages only
+- [x] 7.1 `R/samples.R` (returns a `posterior` `draws_rvars`) + `R/accessors.R` (`rhat`/`ess`/`nobs`/`nchains`/`niters`/`npars`/`nterms`/`pars`, computed from the stored draws via `posterior`) + `R/kb_stancode.R`
+- [x] 7.2 `R/tidy.R`, `R/coef.R`, `R/glance.R` (thresholds `rhat`/`ess`), `R/converged.R`
+- [x] 7.3 `R/augment.R` (`.fitted`/`.resid`/`.lower`/`.upper`, full precision) and `R/print.R` (stable metadata, snapshot)
+- [x] 7.4 Tests: structure + invariants for numeric output; snapshot prints/messages only
 
 ## 8. Predictions (on fixture)
 
