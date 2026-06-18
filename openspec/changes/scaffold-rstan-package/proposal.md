@@ -25,5 +25,5 @@ This is Change A of the weight-model vertical slice; it delivers the build infra
 - **Build system**: new `src/`, `configure`(+`.win`), `R/stanmodels.R`; `DESCRIPTION` gains Imports (Rcpp, RcppParallel, rstan, rstantools) and LinkingTo (BH, Rcpp, RcppEigen, RcppParallel, StanHeaders, rstan); `NAMESPACE` gains `useDynLib` + rstan imports.
 - **Stan source**: new `inst/stan/weight.stan` (+ any `inst/stan/include/`).
 - **Install**: first `R CMD INSTALL` becomes slow (10-20 min); `devtools::load_all()` will not pick up Stan changes (use `devtools::install()`).
-- **CI**: new `.github/workflows` R-CMD-check across platforms.
+- **CI**: new `.github/workflows` R-CMD-check across platforms, plus a `lint-with-jarl.yaml` jarl-check (with `jarl.toml`); the jarl lint is dev tooling, so it adds no spec capability.
 - **Out of scope (Change B)**: all `kb_` user-facing functions (`kb_fit_weight`, `kb_check_data_weight`, priors API, predictions, plotting) and any bundled `data/` datasets.
