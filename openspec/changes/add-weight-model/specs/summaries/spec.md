@@ -34,11 +34,11 @@
 
 ### Requirement: Draws accessor and diagnostics surface
 
-`samples(x)` SHALL return the raw parameter draws in a standard draws container, and the accessors `rhat`, `ess`, `nobs`, `nchains`, `niters`, `npars`, `nterms`, `pars` and `kb_stancode(x)` SHALL operate on the fit object.
+`samples(x)` SHALL return the raw parameter draws as a `posterior` draws object, and the accessors `rhat`, `ess`, `nobs`, `nchains`, `niters`, `npars`, `nterms`, `pars` and `kb_stancode(x)` SHALL operate on the fit object. All summaries and diagnostics are computed from the stored draws via `posterior` (see `docs/predictions.md`).
 
 #### Scenario: samples returns a draws container
 - **WHEN** `samples(fit)` is called
-- **THEN** it returns a `posterior`/mcmcr draws container (not a melted one-row-per-draw tibble) that interoperates with bayesplot/coda/posterior
+- **THEN** it returns a `posterior` draws object (`draws_rvars`), not a melted one-row-per-draw tibble, that interoperates with bayesplot/coda/posterior
 
 #### Scenario: accessors return scalar/structural values
 - **WHEN** `rhat(fit)`, `ess(fit)`, `nobs(fit)`, `nchains(fit)`, `niters(fit)`, `npars(fit)`, `pars(fit)` are called

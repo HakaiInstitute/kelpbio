@@ -2,15 +2,19 @@
 
 ### Requirement: Predict allometric curves
 
-`kb_predict_weight(new_data, fit, by, uncertainty, conf_level, estimate, sig_fig)` SHALL return a summary of predicted weight over a diameter sequence, computed R-side from the fit's stored draws, as a `kb_predictions` object.
+`kb_predict_weight(new_data, fit, by, uncertainty, conf_level, estimate, sig_fig)` SHALL return a summary of predicted weight over a diameter sequence, computed from the fit's stored posterior draws, as a `kb_predictions` object. The computation uses the `posterior` `rvar` engine specified in `docs/predictions.md`.
 
 #### Scenario: Auto-generated diameter sequence
 - **WHEN** `kb_predict_weight(fit)` is called with `new_data = NULL`
-- **THEN** it predicts over a diameter sequence spanning the fit's observed range and returns a `kb_predictions` tibble with `estimate`, `lower`, `upper`
+- **THEN** it generates the diameter sequence with `newdata::xnew_data()` spanning the fit's observed range and returns a `kb_predictions` tibble with `estimate`, `lower`, `upper`
 
 #### Scenario: Prediction at supplied new_data
 - **WHEN** `new_data` is supplied with a `diameter` column
 - **THEN** predictions are returned at exactly those diameters
+
+#### Scenario: Predictor enters on a fixed-reference scale
+- **WHEN** predictions are formed at any diameter
+- **THEN** the diameter enters through the fixed transform `log(diameter) - log(30)` with no training-data-dependent rescaling step
 
 ### Requirement: Grouping and uncertainty axes
 
@@ -38,11 +42,15 @@ Predictions SHALL support a `by` grouping axis and an `uncertainty = c("marginal
 
 ### Requirement: Raw prediction draws
 
-`kb_predict_weight_samples()` SHALL return the raw posterior prediction draws (no `conf_level`/`sig_fig`) in a standard draws container with the prediction grid associated.
+`kb_predict_weight_samples()` SHALL return the raw posterior prediction draws (no `conf_level`/`sig_fig`) as the prediction-grid tibble with the draws attached as an `rvar` column.
 
 #### Scenario: Samples variant returns draws
 - **WHEN** `kb_predict_weight_samples(fit)` is called
-- **THEN** it returns the full prediction draws (not a summary), suitable for composition
+- **THEN** it returns the grid tibble carrying a `.prediction` `rvar` column (the full posterior draws, grid-aligned), suitable for composition into derived quantities and not a melted one-row-per-draw tibble
+
+#### Scenario: Summary is the summariser over the samples
+- **WHEN** `kb_predict_weight()` is compared to `kb_predict_weight_samples()`
+- **THEN** the summary's `estimate`/`lower`/`upper` are the median and `conf_level` interval of the `rvar` column, rounded to `sig_fig`
 
 ### Requirement: kb_predictions carries plotting metadata
 

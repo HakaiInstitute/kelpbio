@@ -9,6 +9,7 @@ R package for Bayesian kelp biomass estimation. All exported functions use the `
 | Analysis project (final models + Stan code) | `~/Analyses/poissonconsulting/hakai-kelp-biomass-25/` |
 | Reference package architecture | `~/Code/poissonconsulting/bboutools/` |
 | Package API design | `docs/package-design.md` |
+| Prediction / derived-quantity engine (posterior `rvar`) | `docs/predictions.md` |
 | Bayesian engine (rstan/rstantools) | `docs/bayesian-engine.md` |
 | API design rationale + bboutools divergences | `docs/bboutools-api-review.md` |
 | Testing strategy | `docs/testing-strategy.md` |
@@ -60,7 +61,9 @@ augment.kb_fit    # all subclasses
 tidy.kb_fit_weight  # subclass-specific
 ```
 
-Access via `$`: `x$draws`, `x$data`, `x$meta`. `samples(x)` returns the draws container. The live `stanfit` is discarded after fitting — see `docs/package-design.md` §Data & model storage. Single package (R-universe, not CRAN): demo + coastwide data + slim pre-fit models in `data/`; no companion data package.
+Access via `$`: `x$draws`, `x$data`, `x$meta`. `samples(x)` returns a `posterior` `draws_rvars` object. The live `stanfit` is discarded after fitting — see `docs/package-design.md` §Data & model storage. Single package (R-universe, not CRAN): demo + coastwide data + slim pre-fit models in `data/`; no companion data package.
+
+**Prediction / derived-quantity engine.** Predictions, summaries, and the biomass composition are computed from the stored draws with the `posterior` `rvar` datatype (per-model prediction is plain `rvar` arithmetic); grids built with `newdata::xnew_data` (no `rescale`); `coef`/`tidy`/`glance`/`augment`/`samples`/diagnostics reconstructed from the draws via `posterior`. `docs/predictions.md` is the authoritative spec — read it before touching any `kb_predict_*`, summary, or biomass code.
 
 ## Package Conventions
 
