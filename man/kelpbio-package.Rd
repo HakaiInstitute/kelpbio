@@ -6,7 +6,18 @@
 \alias{kelpbio-package}
 \title{kelpbio: Bayesian Kelp Biomass Estimation}
 \description{
-Fits Bayesian hierarchical models via 'rstan' to estimate kelp biomass and carbon from field measurements, including allometric weight, plant size distribution, transect density, and wet-to-dry and carbon tissue conversions.
+\if{html}{\figure{logo.png}{options: style='float: right' alt='logo' width='120'}}
+
+Fit Bayesian hierarchical Stan models via 'rstan' to estimate kelp biomass and carbon from in-situ observations, including allometric weight, plant size distribution, density, and wet-to-dry and carbon tissue conversions.
+}
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://github.com/HakaiInstitute/kelpbio}
+  \item \url{https://hakaiinstitute.github.io/kelpbio/}
+  \item Report bugs at \url{https://github.com/HakaiInstitute/kelpbio/issues}
+}
+
 }
 \author{
 \strong{Maintainer}: Seb Dalgarno \email{seb@poissonconsulting.ca} (\href{https://orcid.org/0000-0002-3658-4517}{ORCID})

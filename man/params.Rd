@@ -8,6 +8,40 @@
 \title{Parameter Descriptions for Package}
 \arguments{
 \item{...}{These dots are for future extensions and must be empty.}
+
+\item{data}{A data frame of observations.}
+
+\item{species}{A string naming the species. One of \code{"nereocystis"}.}
+
+\item{priors}{A named list of prior objects (see \code{\link[=kb_priors_weight]{kb_priors_weight()}}), or
+\code{NULL} to use the defaults. Supplied entries override the corresponding
+defaults; unspecified entries keep their defaults.}
+
+\item{prior_only}{A flag specifying whether to sample from the priors only
+(the likelihood is switched off), for prior predictive checks.}
+
+\item{chains}{A whole number of MCMC chains.}
+
+\item{iter}{A whole number of saved post-warmup iterations per chain.}
+
+\item{nthin}{A whole number giving the thinning interval.}
+
+\item{cores}{A whole number of cores, or \code{NULL} to fit chains in parallel.}
+
+\item{quiet}{A flag specifying whether to suppress sampler output.}
+
+\item{conf_level}{A number between 0 and 1 giving the compatibility-interval
+level.}
+
+\item{estimate}{A function giving the point estimate (e.g. \code{median}).}
+
+\item{sig_fig}{A whole number of significant figures for summary output.}
+
+\item{by}{A character vector of grouping factors to predict by, or \code{NULL}
+for the population-level prediction.}
+
+\item{uncertainty}{A string, one of \code{"marginal"} or \code{"typical"}, controlling
+how random-effect factors not named in \code{by} are treated.}
 }
 \description{
 Default parameter descriptions which may be overridden in individual
