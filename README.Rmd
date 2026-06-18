@@ -57,5 +57,6 @@ Source builds require a C++ toolchain:
 <!-- Citation guidance to follow once the `kb_` API is available. -->
 
 ```{r, results = "asis", echo = FALSE}
+# jarl-ignore internal_function: rendering own README; licensing_md() is internal
 cat(kelpbio:::licensing_md())
 ```
