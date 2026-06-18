@@ -7,7 +7,7 @@
 
 - [x] 1.1 Add Imports to `DESCRIPTION`: chk, cli, rlang, posterior, newdata, generics, universals, ggplot2, tibble, dplyr
 - [x] 1.2 Set up `R/params.R` as the `@inheritParams` donor for shared args (`data`, `species`, `priors`, `prior_only`, `chains`, `iter`, `nthin`, `cores`, `quiet`, `conf_level`, `estimate`, `sig_fig`, `by`, `uncertainty`)
-- [ ] 1.3 Re-export the broom/universals generics (`tidy`, `glance`, `augment`, `converged`, `samples`, `rhat`, `ess`, `nobs`, `nchains`, `niters`, `npars`, `nterms`, `pars`)
+- [x] 1.3 Re-export the broom/universals generics (`tidy`, `glance`, `augment`, `converged`, `samples`, `rhat`, `ess`, `nobs`, `nchains`, `niters`, `npars`, `nterms`, `pars`)
 
 ## 2. Data (pure)
 
@@ -26,13 +26,13 @@
 
 ## 5. Fitting (install-gated)
 
-- [ ] 5.1 `R/kb_fit_weight.R` — wire pure helpers + single `rstan::sampling()` (translate `iter`/warmup/`nthin`, `cores` parallel, `quiet`); `new_kb_fit_weight()` constructor that extracts draws via `posterior` (keep `bWeight30`, `bDiameter`, `bDiameter2`, `sSite`, `sSiteDiameter`, `sSiteYear`, `sWeight`, `bSite`, `bSiteDiameter`, `bSiteYear`), captures diagnostics + stancode, discards the stanfit; returns `c("kb_fit_weight","kb_fit")`
-- [ ] 5.2 Layer-3 test (`skip_on_cran`): a real fit on tiny data returns a correctly-structured object (classes, draws present, stanfit absent); a `prior_only = TRUE` fit ignores the data
+- [x] 5.1 `R/kb_fit_weight.R` — wire pure helpers + single `rstan::sampling()` (translate `iter`/warmup/`nthin`, `cores` parallel, `quiet`); `new_kb_fit_weight()` constructor that extracts draws via `posterior` (keep `bWeight30`, `bDiameter`, `bDiameter2`, `sSite`, `sSiteDiameter`, `sSiteYear`, `sWeight`, `bSite`, `bSiteDiameter`, `bSiteYear`), captures diagnostics + stancode, discards the stanfit; returns `c("kb_fit_weight","kb_fit")`
+- [x] 5.2 Layer-3 test (`skip_on_cran`): a real fit on tiny data returns a correctly-structured object (classes, draws present, stanfit absent); a `prior_only = TRUE` fit ignores the data
 
 ## 6. Test fixtures
 
-- [ ] 6.1 `tests/testthat/fixtures/make-fixtures.R` — build a tiny seeded `weight_fit.rds` via `rstan::sampling(seed = ...)` against the full model (multiple sites and years so `by = "site"`/`c("site","year")` are exercised); header documents: requires `devtools::install()`, re-run on Stan change
-- [ ] 6.2 `tests/testthat/helper-fixtures.R` — load the fixture(s) and any custom expectations
+- [x] 6.1 `tests/testthat/fixtures/make-fixtures.R` — build a tiny seeded `weight_fit.rds` via `rstan::sampling(seed = ...)` against the full model (multiple sites and years so `by = "site"`/`c("site","year")` are exercised); header documents: requires `devtools::install()`, re-run on Stan change
+- [x] 6.2 `tests/testthat/helper-fixtures.R` — load the fixture(s) and any custom expectations
 
 ## 7. Summaries and diagnostics (on fixture)
 
