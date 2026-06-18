@@ -86,8 +86,9 @@ The terms `marginal`/`typical` are kept but are jargon for the audience (biologi
 - **Prefix**: all exported functions use `kb_`
 - **Validation**: all exported function arguments validated with `chk`; user-facing messages via `cli`
 - **Documentation**: roxygen2 with markdown; `@inheritParams` for shared parameters
+- **Writing** (docs, README, vignettes, roxygen, PR/commit text): follow the writing style in `~/.claude/CLAUDE.md`; in particular no em-dashes or en-dashes (use hyphens, commas, or colons) and no mid-sentence bold for emphasis; concise technical register
 - **File layout**: one function per file, file named after the function (`kb_fit_weight()` → `R/kb_fit_weight.R`). S3 methods grouped one file per generic, named after the generic (`R/print.R` holds all `print.*` methods, `R/tidy.R` all `tidy.*`, etc.). Internal helpers in clearly-named files, never a catch-all `utils.R`.
 - **Testing**: testthat 3e; strict 1:1 test mirroring (`R/<name>.R` ↔ `tests/testthat/test-<name>.R`). Test the wrapper, not the model's numbers. Snapshot print methods + messages; NEVER snapshot MCMC numerics (test structure + invariants instead). Small pre-built fits in `tests/testthat/fixtures/` (built with `rstan::sampling(seed=)`, not `set.seed`); slow end-to-end fits `skip_on_cran()`. Factor pure logic (data/prior assembly) out of fit functions for MCMC-free testing. See `docs/testing-strategy.md`.
 - **Code style**: tidyverse; no lubridate, reshape2, plyr, or data.table
 - **No `library()` calls** in package code; use `@importFrom` or `pkg::fun()`
-- **Do not run Stan MCMC** during a session without confirming first — fitting is slow
+- **Do not run Stan MCMC** during a session without confirming first; fitting is slow
