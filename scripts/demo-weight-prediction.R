@@ -54,8 +54,9 @@ priors$sd_site <- kb_prior_exponential(rate = 3) # tighter between-site spread
 priors$diameter <- kb_prior_normal(mean = 2.6, sd = 0.3) # informed allometric slope
 priors
 
-# Prior predictive check: fit from the priors only (likelihood off) and view the
-# implied weight-at-diameter relationship before the data speaks.
+# Prior predictive check: fit from the priors only (likelihood off), then judge
+# whether the priors imply a plausible weight-at-diameter relationship by
+# overlaying the observed data on the prior-implied curve.
 prior_fit <- kb_fit_weight(
   kb_data_weight,
   priors = priors, prior_only = TRUE,
@@ -63,8 +64,19 @@ prior_fit <- kb_fit_weight(
 )
 prior_summary(prior_fit) # confirms the priors actually used
 kb_predict_weight_by(prior_fit, new_levels = "sample") |>
-  kb_plot_predictions() +
-  ggtitle("A2b. Prior predictive weight-at-diameter")
+  kb_plot_predictions(observed = kb_data_weight) +
+  ggtitle("A2b. Prior predictive curve vs observed data")
+
+# Prior predictive distribution of weight (from the prior-only yrep) against the
+# observed weights: do the priors generate data in a sensible range before
+# fitting? (Prior predictive draws can be widely dispersed; log the x axis.)
+prior_yrep <- posterior_predict(prior_fit)
+ppc_dens_overlay(
+  y = prior_fit$data$weight,
+  yrep = prior_yrep[1:50, , drop = FALSE]
+) +
+  scale_x_log10() +
+  ggtitle("A2b. Prior predictive check (prior yrep vs observed weight)")
 
 # Refit with the custom priors (likelihood on) and compare coefficients:
 fit_custom <- kb_fit_weight(
