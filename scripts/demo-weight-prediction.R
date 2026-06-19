@@ -28,7 +28,23 @@ library(bayesplot)
 # A0. The data ---------------------------------------------------------------
 # Real Hakai Nereocystis sub-bulb diameter (mm) and wet weight (kg).
 str(kb_data_weight)
-kb_check_data_weight(kb_data_weight) # validate before fitting
+kb_check_data_weight(kb_data_weight) # passes: validate before fitting
+
+# kb_check_data_weight() errors clearly on bad input (try() so the script can
+# be sourced straight through):
+#  - wrong column name
+bad_name <- kb_data_weight
+names(bad_name)[names(bad_name) == "diameter"] <- "diam"
+try(kb_check_data_weight(bad_name))
+#  - missing value in diameter
+bad_na <- kb_data_weight
+bad_na$diameter[1] <- NA_real_
+try(kb_check_data_weight(bad_na))
+#  - non-numeric (character) value in diameter
+bad_chr <- kb_data_weight
+bad_chr$diameter <- as.character(bad_chr$diameter)
+bad_chr$diameter[1] <- "1.1o"
+try(kb_check_data_weight(bad_chr))
 
 # A1. Fit ---------------------------------------------------------------------
 fit <- kb_fit_weight(kb_data_weight, chains = 4, niters = 500, quiet = FALSE)
