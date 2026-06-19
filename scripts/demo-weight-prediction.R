@@ -43,6 +43,36 @@ prior_summary(fit)
 draws <- samples(fit) # posterior::draws_rvars for bespoke work
 posterior::summarise_draws(draws) |> head()
 
+# A2b. Custom priors and prior predictive check ------------------------------
+# Defaults: a named list of structured prior objects. The prior FAMILY is fixed
+# (population terms Normal, SDs Exponential); only the hyperparameters change.
+kb_priors_weight()
+
+# Override a couple of entries; unmodified entries keep their defaults.
+priors <- kb_priors_weight()
+priors$sd_site <- kb_prior_exponential(rate = 3) # tighter between-site spread
+priors$diameter <- kb_prior_normal(mean = 2.6, sd = 0.3) # informed allometric slope
+priors
+
+# Prior predictive check: fit from the priors only (likelihood off) and view the
+# implied weight-at-diameter relationship before the data speaks.
+prior_fit <- kb_fit_weight(
+  kb_data_weight,
+  priors = priors, prior_only = TRUE,
+  chains = 2, niters = 500, quiet = TRUE
+)
+prior_summary(prior_fit) # confirms the priors actually used
+kb_predict_weight_by(prior_fit, new_levels = "sample") |>
+  kb_plot_predictions() +
+  ggtitle("A2b. Prior predictive weight-at-diameter")
+
+# Refit with the custom priors (likelihood on) and compare coefficients:
+fit_custom <- kb_fit_weight(
+  kb_data_weight,
+  priors = priors, chains = 4, niters = 500, quiet = TRUE
+)
+coef(fit_custom)
+
 # A3. Residual diagnostics (augment = diagnostics verb) -----------------------
 aug <- augment(fit) # fitted/residual at observed rows, conditioned on their REs
 ggplot(aug, aes(fitted, residual)) +
