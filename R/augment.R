@@ -20,9 +20,9 @@ augment.kb_fit_weight <- function(x, conf_level = 0.95, ...) {
   chk::chk_range(conf_level)
 
   data <- tibble::as_tibble(x$data)
-  # Condition on each row's observed site and year (all factors in `by`), so the
-  # row's estimated random effects are used; uncertainty is then immaterial.
-  epred <- exp(.weight_linpred(x, data, by = c("site", "year"), uncertainty = "typical"))
+  # The observed data carries site and year columns, so .weight_linpred()
+  # conditions on each row's estimated random effects; new_levels is immaterial.
+  epred <- exp(.weight_linpred(x, data, new_levels = "average"))
   a <- (1 - conf_level) / 2
   fitted <- as.numeric(stats::median(epred))
 

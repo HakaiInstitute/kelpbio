@@ -33,10 +33,17 @@
 #' @param rhat A number giving the maximum acceptable Rhat.
 #' @param esr A number giving the minimum acceptable effective sample rate
 #'   (effective sample size divided by the number of draws).
-#' @param by A character vector of grouping factors to predict by, or `NULL`
-#'   for the population-level prediction.
-#' @param uncertainty A string, one of `"marginal"` or `"typical"`, controlling
-#'   how random-effect factors not named in `by` are treated.
+#' @param by A character vector of grouping factors to build prediction curves
+#'   over, or `NULL` for a single population-level curve. Each named factor is
+#'   expanded over its observed levels and conditioned on at its estimated
+#'   random effects.
+#' @param new_levels A string, one of `"sample"` or `"average"`, controlling how
+#'   random-effect factors that are not conditioned on are treated. `"sample"`
+#'   draws a new random effect from `Normal(0, sd)` (a new, unsampled group),
+#'   widening the interval to include between-group variation. `"average"` holds
+#'   the random effects at their central (zero) value, giving the typical
+#'   (central) group on the linear-predictor scale (not the response-scale
+#'   arithmetic mean across the group population).
 #' @keywords internal
 #' @aliases parameters arguments args
 #' @usage NULL

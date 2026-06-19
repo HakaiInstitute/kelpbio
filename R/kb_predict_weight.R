@@ -5,12 +5,12 @@
 #' For the raw posterior prediction draws use `posterior_epred()` /
 #' `posterior_predict()` directly.
 #'
-#' `by` selects grouping factors that each get their own curve, held at their
-#' observed estimated random effects. `uncertainty` controls factors not named
-#' in `by`: `"marginal"` (a new, unobserved level: drawn from the estimated
-#' hyperprior) or `"typical"` (the population-average: random effects zeroed).
-#' For the weight model the available `by` values are `NULL`, `"site"`, and
-#' `c("site", "year")`.
+#' `by` builds a separate curve per observed level of each named grouping
+#' factor, conditioned on that level's estimated random effects. `new_levels`
+#' controls factors not named in `by`: `"sample"` (a new, unsampled group: a
+#' random effect drawn from `Normal(0, sd)`) or `"average"` (the random effects
+#' held at their central, zero, value). For the weight model the available `by`
+#' values are `NULL`, `"site"`, and `c("site", "year")`.
 #'
 #' @inheritParams params
 #' @param fit A `kb_fit_weight` object.
@@ -24,7 +24,7 @@
 kb_predict_weight <- function(fit,
                               new_data = NULL,
                               by = NULL,
-                              uncertainty = c("marginal", "typical"),
+                              new_levels = c("sample", "average"),
                               conf_level = 0.95,
                               estimate = stats::median,
                               sig_fig = 3) {
@@ -35,7 +35,7 @@ kb_predict_weight <- function(fit,
   chk::chk_whole_number(sig_fig)
   chk::chk_gt(sig_fig, value = 0)
 
-  res <- weight_grid_linpred(fit, new_data, by, uncertainty)
+  res <- weight_grid_linpred(fit, new_data, by, new_levels)
   epred <- exp(res$linpred)
   a <- (1 - conf_level) / 2
 

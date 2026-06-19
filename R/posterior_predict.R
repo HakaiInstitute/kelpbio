@@ -6,10 +6,14 @@
 #' posterior-predictive replicate at the observed data) is returned, for use
 #' with `bayesplot::pp_check()`.
 #'
+#' For supplied `newdata`, conditioning is inferred from the grouping columns
+#' present (see [posterior_epred()]). With `newdata = NULL` the stored `yrep`
+#' (generated conditioned on the observed groups) is returned.
+#'
 #' @inheritParams params
 #' @param object A `kb_fit_weight` object.
-#' @param newdata A data frame with a `diameter` column (and the `by` columns),
-#'   or `NULL` for the stored `yrep` at the observed data.
+#' @param newdata A data frame with a `diameter` column (and optional `site` /
+#'   `year` columns), or `NULL` for the stored `yrep` at the observed data.
 #' @param ... Unused.
 #'
 #' @return A draws-by-observations (`D x N`) matrix.
@@ -17,8 +21,7 @@
 #' @exportS3Method rstantools::posterior_predict
 posterior_predict.kb_fit_weight <- function(object,
                                             newdata = NULL,
-                                            by = NULL,
-                                            uncertainty = "marginal",
+                                            new_levels = "sample",
                                             ...) {
   rlang::check_dots_empty()
   .chk_kb_fit_weight(object)
@@ -28,7 +31,7 @@ posterior_predict.kb_fit_weight <- function(object,
     }
     return(posterior::draws_of(object$gq$yrep))
   }
-  res <- weight_grid_linpred(object, newdata, by, uncertainty)
+  res <- weight_grid_linpred(object, newdata, new_levels = new_levels)
   lp <- posterior::draws_of(res$linpred) # D x N
   sweight <- as.vector(posterior::draws_of(object$draws$sWeight)) # length D
   # student_t(nu, mu, sigma) = mu + sigma * t_nu; nu = 4 (fixed in weight.stan).

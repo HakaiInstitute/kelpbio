@@ -4,25 +4,21 @@
 \alias{posterior_predict.kb_fit_weight}
 \title{Posterior-Predictive Weight Draws}
 \usage{
-\method{posterior_predict}{kb_fit_weight}(
-  object,
-  newdata = NULL,
-  by = NULL,
-  uncertainty = "marginal",
-  ...
-)
+\method{posterior_predict}{kb_fit_weight}(object, newdata = NULL, new_levels = "sample", ...)
 }
 \arguments{
 \item{object}{A \code{kb_fit_weight} object.}
 
-\item{newdata}{A data frame with a \code{diameter} column (and the \code{by} columns),
-or \code{NULL} for the stored \code{yrep} at the observed data.}
+\item{newdata}{A data frame with a \code{diameter} column (and optional \code{site} /
+\code{year} columns), or \code{NULL} for the stored \code{yrep} at the observed data.}
 
-\item{by}{A character vector of grouping factors to predict by, or \code{NULL}
-for the population-level prediction.}
-
-\item{uncertainty}{A string, one of \code{"marginal"} or \code{"typical"}, controlling
-how random-effect factors not named in \code{by} are treated.}
+\item{new_levels}{A string, one of \code{"sample"} or \code{"average"}, controlling how
+random-effect factors that are not conditioned on are treated. \code{"sample"}
+draws a new random effect from \code{Normal(0, sd)} (a new, unsampled group),
+widening the interval to include between-group variation. \code{"average"} holds
+the random effects at their central (zero) value, giving the typical
+(central) group on the linear-predictor scale (not the response-scale
+arithmetic mean across the group population).}
 
 \item{...}{Unused.}
 }
@@ -35,6 +31,11 @@ Student-t observation noise (scale \code{sWeight}, 4 degrees of freedom, matchin
 the Stan likelihood). With \code{newdata = NULL} the stored \code{yrep} (the
 posterior-predictive replicate at the observed data) is returned, for use
 with \code{bayesplot::pp_check()}.
+}
+\details{
+For supplied \code{newdata}, conditioning is inferred from the grouping columns
+present (see \code{\link[=posterior_epred]{posterior_epred()}}). With \code{newdata = NULL} the stored \code{yrep}
+(generated conditioned on the observed groups) is returned.
 }
 \seealso{
 Other generics: 

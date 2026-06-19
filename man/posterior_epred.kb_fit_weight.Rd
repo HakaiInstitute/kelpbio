@@ -4,25 +4,21 @@
 \alias{posterior_epred.kb_fit_weight}
 \title{Expected Weight Posterior Draws}
 \usage{
-\method{posterior_epred}{kb_fit_weight}(
-  object,
-  newdata = NULL,
-  by = NULL,
-  uncertainty = "marginal",
-  ...
-)
+\method{posterior_epred}{kb_fit_weight}(object, newdata = NULL, new_levels = "sample", ...)
 }
 \arguments{
 \item{object}{A \code{kb_fit_weight} object.}
 
-\item{newdata}{A data frame with a \code{diameter} column (and the \code{by} columns),
-or \code{NULL} for the observed data.}
+\item{newdata}{A data frame with a \code{diameter} column (and optional \code{site} /
+\code{year} columns), or \code{NULL} for the observed data.}
 
-\item{by}{A character vector of grouping factors to predict by, or \code{NULL}
-for the population-level prediction.}
-
-\item{uncertainty}{A string, one of \code{"marginal"} or \code{"typical"}, controlling
-how random-effect factors not named in \code{by} are treated.}
+\item{new_levels}{A string, one of \code{"sample"} or \code{"average"}, controlling how
+random-effect factors that are not conditioned on are treated. \code{"sample"}
+draws a new random effect from \code{Normal(0, sd)} (a new, unsampled group),
+widening the interval to include between-group variation. \code{"average"} holds
+the random effects at their central (zero) value, giving the typical
+(central) group on the linear-predictor scale (not the response-scale
+arithmetic mean across the group population).}
 
 \item{...}{Unused.}
 }
@@ -33,6 +29,13 @@ A draws-by-observations (\verb{D x N}) matrix.
 Draws from the expectation of the posterior predictive distribution
 (response-scale expected weight, \code{exp} of the linear predictor) for the
 weight model. The prediction engine; \code{\link[=kb_predict_weight]{kb_predict_weight()}} summarises it.
+}
+\details{
+Conditioning is inferred from the grouping columns present in \code{newdata}: a
+\code{site} (and optionally \code{year}) column with known levels is conditioned on;
+factors with no column are handled by \code{new_levels}. With \code{newdata = NULL} the
+observed data is used and conditioned on its site and year, so the central
+estimate agrees with \code{\link[=augment]{augment()}}.
 }
 \seealso{
 Other generics: 

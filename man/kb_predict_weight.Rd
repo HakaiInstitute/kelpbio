@@ -8,7 +8,7 @@ kb_predict_weight(
   fit,
   new_data = NULL,
   by = NULL,
-  uncertainty = c("marginal", "typical"),
+  new_levels = c("sample", "average"),
   conf_level = 0.95,
   estimate = stats::median,
   sig_fig = 3
@@ -20,11 +20,18 @@ kb_predict_weight(
 \item{new_data}{A data frame with a \code{diameter} column (and the \code{by} columns),
 or \code{NULL} to auto-generate a diameter sequence over the observed range.}
 
-\item{by}{A character vector of grouping factors to predict by, or \code{NULL}
-for the population-level prediction.}
+\item{by}{A character vector of grouping factors to build prediction curves
+over, or \code{NULL} for a single population-level curve. Each named factor is
+expanded over its observed levels and conditioned on at its estimated
+random effects.}
 
-\item{uncertainty}{A string, one of \code{"marginal"} or \code{"typical"}, controlling
-how random-effect factors not named in \code{by} are treated.}
+\item{new_levels}{A string, one of \code{"sample"} or \code{"average"}, controlling how
+random-effect factors that are not conditioned on are treated. \code{"sample"}
+draws a new random effect from \code{Normal(0, sd)} (a new, unsampled group),
+widening the interval to include between-group variation. \code{"average"} holds
+the random effects at their central (zero) value, giving the typical
+(central) group on the linear-predictor scale (not the response-scale
+arithmetic mean across the group population).}
 
 \item{conf_level}{A number between 0 and 1 giving the compatibility-interval
 level.}
@@ -44,12 +51,12 @@ For the raw posterior prediction draws use \code{posterior_epred()} /
 \code{posterior_predict()} directly.
 }
 \details{
-\code{by} selects grouping factors that each get their own curve, held at their
-observed estimated random effects. \code{uncertainty} controls factors not named
-in \code{by}: \code{"marginal"} (a new, unobserved level: drawn from the estimated
-hyperprior) or \code{"typical"} (the population-average: random effects zeroed).
-For the weight model the available \code{by} values are \code{NULL}, \code{"site"}, and
-\code{c("site", "year")}.
+\code{by} builds a separate curve per observed level of each named grouping
+factor, conditioned on that level's estimated random effects. \code{new_levels}
+controls factors not named in \code{by}: \code{"sample"} (a new, unsampled group: a
+random effect drawn from \code{Normal(0, sd)}) or \code{"average"} (the random effects
+held at their central, zero, value). For the weight model the available \code{by}
+values are \code{NULL}, \code{"site"}, and \code{c("site", "year")}.
 }
 \seealso{
 Other prediction: 

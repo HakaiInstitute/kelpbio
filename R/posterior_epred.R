@@ -4,10 +4,16 @@
 #' (response-scale expected weight, `exp` of the linear predictor) for the
 #' weight model. The prediction engine; [kb_predict_weight()] summarises it.
 #'
+#' Conditioning is inferred from the grouping columns present in `newdata`: a
+#' `site` (and optionally `year`) column with known levels is conditioned on;
+#' factors with no column are handled by `new_levels`. With `newdata = NULL` the
+#' observed data is used and conditioned on its site and year, so the central
+#' estimate agrees with [augment()].
+#'
 #' @inheritParams params
 #' @param object A `kb_fit_weight` object.
-#' @param newdata A data frame with a `diameter` column (and the `by` columns),
-#'   or `NULL` for the observed data.
+#' @param newdata A data frame with a `diameter` column (and optional `site` /
+#'   `year` columns), or `NULL` for the observed data.
 #' @param ... Unused.
 #'
 #' @return A draws-by-observations (`D x N`) matrix.
@@ -15,10 +21,9 @@
 #' @exportS3Method rstantools::posterior_epred
 posterior_epred.kb_fit_weight <- function(object,
                                           newdata = NULL,
-                                          by = NULL,
-                                          uncertainty = "marginal",
+                                          new_levels = "sample",
                                           ...) {
   rlang::check_dots_empty()
-  res <- weight_grid_linpred(object, predict_newdata(object, newdata), by, uncertainty)
+  res <- weight_grid_linpred(object, predict_newdata(object, newdata), new_levels = new_levels)
   exp(posterior::draws_of(res$linpred))
 }

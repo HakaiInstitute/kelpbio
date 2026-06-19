@@ -73,3 +73,11 @@ Only the production `rvar` paths are used (native operators, `rvar_rng`, the
   re-implemented.
 - The biomass kernel may drop to `posterior::draws_of()` matrices for speed where
   needed; the result is identical and re-wrapped as an `rvar`.
+- Conditioning is a property of the prediction grid's columns, not a separate
+  argument: `.weight_linpred()` conditions on a random-effect factor when its
+  grouping column is present in the grid and applies `new_levels`
+  (`"sample"`/`"average"`) to factors with no column. The `rstantools` generics
+  therefore take no `by` argument (conditioning is inferred from `newdata`,
+  matching the ecosystem; `newdata = NULL` conditions on the observed groups);
+  `by` survives only on `kb_predict_weight()` as the grid-construction control.
+  Later sub-models follow the same "condition on the columns present" rule.

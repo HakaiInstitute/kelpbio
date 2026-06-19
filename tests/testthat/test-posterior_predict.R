@@ -8,8 +8,8 @@ test_that("posterior_predict returns stored yrep at observed data", {
 
 test_that("posterior_predict at new data is wider than posterior_epred", {
   nd <- data.frame(diameter = c(20, 40, 60))
-  pp <- posterior_predict(weight_fit, newdata = nd, uncertainty = "typical")
-  ep <- posterior_epred(weight_fit, newdata = nd, uncertainty = "typical")
+  pp <- posterior_predict(weight_fit, newdata = nd, new_levels = "average")
+  ep <- posterior_epred(weight_fit, newdata = nd, new_levels = "average")
   expect_equal(dim(pp), dim(ep))
   # observation noise widens the predictive spread relative to the mean structure
   expect_gt(mean(apply(pp, 2, stats::sd)), mean(apply(ep, 2, stats::sd)))

@@ -1,5 +1,5 @@
 test_that("autoplot.kb_predictions returns a ggplot", {
-  p <- kb_predict_weight(weight_fit, uncertainty = "typical")
+  p <- kb_predict_weight(weight_fit, new_levels = "sample")
   expect_s3_class(ggplot2::autoplot(p), "ggplot")
 })
 

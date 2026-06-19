@@ -3,45 +3,51 @@
 # downstream consumer (posterior_linpred/epred/predict, augment, kb_predict_weight,
 # biomass) calls this, so the mean is never re-implemented. The Stan
 # transformed-parameters block is the only other place the mean is defined.
-.weight_linpred <- function(fit, grid, by, uncertainty) {
+#
+# Conditioning is a property of the grid columns: a factor with a column present
+# is conditioned on at its estimated random effects; a factor with no column is
+# handled by `new_levels` ("sample" draws a new effect, "average" zeroes it).
+.weight_linpred <- function(fit, grid, new_levels) {
   d <- fit$draws
   n <- nrow(grid)
   log_dc <- log(grid$diameter) - log(fit$meta$diameter_ref)
-  site_obs <- "site" %in% by
-  sy_obs <- ("site" %in% by) && ("year" %in% by)
+  site_obs <- "site" %in% names(grid)
+  sy_obs <- all(c("site", "year") %in% names(grid))
 
   if (site_obs) {
     si <- match_levels(grid$site, fit$meta$site_levels, "site")
     re_site <- rvar_index1(d$bSite, si)
     re_slope <- rvar_index1(d$bSiteDiameter, si)
   } else {
-    re_site <- re_draw(uncertainty, n, d$sSite)
-    re_slope <- re_draw(uncertainty, n, d$sSiteDiameter)
+    re_site <- re_draw(new_levels, n, d$sSite)
+    re_slope <- re_draw(new_levels, n, d$sSiteDiameter)
   }
   if (sy_obs) {
     si <- match_levels(grid$site, fit$meta$site_levels, "site")
     yi <- match_levels(grid$year, fit$meta$year_levels, "year")
     re_sy <- rvar_index2(d$bSiteYear, si, yi)
   } else {
-    re_sy <- re_draw(uncertainty, n, d$sSiteYear)
+    re_sy <- re_draw(new_levels, n, d$sSiteYear)
   }
 
   d$bWeight30 + d$bDiameter * log_dc + d$bDiameter2 * log_dc^2 +
     re_site + re_slope * log_dc + re_sy
 }
 
-# Orchestrator shared by kb_predict_weight() and the posterior_* generics:
-# validate `by`, build the grid, and compute the log-scale linear-predictor
-# rvar. Returns the grid, the resolved `by`, and the linpred rvar.
-weight_grid_linpred <- function(fit, new_data, by, uncertainty) {
+# Orchestrator for kb_predict_weight(): validate `by`, build the grid (expanding
+# the named grouping factors over their observed levels), and compute the
+# log-scale linear-predictor rvar. Returns the grid, the resolved `by`, and the
+# linpred rvar. Conditioning then follows the grid columns inside
+# .weight_linpred(), so `by` is purely the grid-construction control here.
+weight_grid_linpred <- function(fit, new_data, by = NULL, new_levels) {
   .chk_kb_fit_weight(fit)
-  uncertainty <- rlang::arg_match(uncertainty, c("marginal", "typical"))
-  by <- validate_by_weight(by, uncertainty)
+  new_levels <- rlang::arg_match(new_levels, c("sample", "average"))
+  by <- validate_by_weight(by, new_levels)
   grid <- build_weight_grid(fit, new_data, by)
   list(
     grid = grid,
     by = by,
-    linpred = .weight_linpred(fit, grid, by, uncertainty)
+    linpred = .weight_linpred(fit, grid, new_levels)
   )
 }
 
@@ -53,7 +59,7 @@ predict_newdata <- function(object, newdata) {
 }
 
 # Validate the `by` axis for the weight model. Returns a character vector.
-validate_by_weight <- function(by, uncertainty) {
+validate_by_weight <- function(by, new_levels) {
   if (is.null(by)) by <- character(0)
   chk::chk_character(by)
   valid <- c("site", "year")
@@ -71,11 +77,11 @@ validate_by_weight <- function(by, uncertainty) {
       i = "Use {.code by = NULL}, {.val site}, or {.code c(\"site\", \"year\")}."
     ))
   }
-  if (uncertainty == "marginal" && all(valid %in% by)) {
+  if (new_levels == "sample" && all(valid %in% by)) {
     cli::cli_abort(c(
-      "{.code uncertainty = \"marginal\"} needs an omitted random-effect factor.",
+      "{.code new_levels = \"sample\"} needs an omitted random-effect factor.",
       i = "{.code by = c(\"site\", \"year\")} conditions on every factor.",
-      i = "Use {.code uncertainty = \"typical\"} instead."
+      i = "Use {.code new_levels = \"average\"} instead."
     ))
   }
   by
@@ -113,8 +119,8 @@ build_weight_grid <- function(fit, new_data, by) {
   tibble::as_tibble(g)
 }
 
-re_draw <- function(uncertainty, n, sd_rvar) {
-  if (uncertainty == "typical") {
+re_draw <- function(new_levels, n, sd_rvar) {
+  if (new_levels == "average") {
     return(0)
   }
   posterior::rvar_rng(stats::rnorm, n, mean = 0, sd = sd_rvar)

@@ -8,8 +8,7 @@
   object,
   transform = FALSE,
   newdata = NULL,
-  by = NULL,
-  uncertainty = "marginal",
+  new_levels = "sample",
   ...
 )
 }
@@ -18,14 +17,16 @@
 
 \item{transform}{A flag: if \code{TRUE}, return the response-scale value (\code{exp}).}
 
-\item{newdata}{A data frame with a \code{diameter} column (and the \code{by} columns),
-or \code{NULL} for the observed data.}
+\item{newdata}{A data frame with a \code{diameter} column (and optional \code{site} /
+\code{year} columns), or \code{NULL} for the observed data.}
 
-\item{by}{A character vector of grouping factors to predict by, or \code{NULL}
-for the population-level prediction.}
-
-\item{uncertainty}{A string, one of \code{"marginal"} or \code{"typical"}, controlling
-how random-effect factors not named in \code{by} are treated.}
+\item{new_levels}{A string, one of \code{"sample"} or \code{"average"}, controlling how
+random-effect factors that are not conditioned on are treated. \code{"sample"}
+draws a new random effect from \code{Normal(0, sd)} (a new, unsampled group),
+widening the interval to include between-group variation. \code{"average"} holds
+the random effects at their central (zero) value, giving the typical
+(central) group on the linear-predictor scale (not the response-scale
+arithmetic mean across the group population).}
 
 \item{...}{Unused.}
 }
@@ -35,6 +36,11 @@ A draws-by-observations (\verb{D x N}) matrix.
 \description{
 Draws of the weight-model linear predictor on the log scale (or, with
 \code{transform = TRUE}, on the response scale).
+}
+\details{
+Conditioning is inferred from the grouping columns present in \code{newdata} (see
+\code{\link[=posterior_epred]{posterior_epred()}}); with \code{newdata = NULL} the observed data is used and
+conditioned on its site and year.
 }
 \seealso{
 Other generics: 

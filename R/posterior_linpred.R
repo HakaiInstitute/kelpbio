@@ -3,11 +3,15 @@
 #' Draws of the weight-model linear predictor on the log scale (or, with
 #' `transform = TRUE`, on the response scale).
 #'
+#' Conditioning is inferred from the grouping columns present in `newdata` (see
+#' [posterior_epred()]); with `newdata = NULL` the observed data is used and
+#' conditioned on its site and year.
+#'
 #' @inheritParams params
 #' @param object A `kb_fit_weight` object.
 #' @param transform A flag: if `TRUE`, return the response-scale value (`exp`).
-#' @param newdata A data frame with a `diameter` column (and the `by` columns),
-#'   or `NULL` for the observed data.
+#' @param newdata A data frame with a `diameter` column (and optional `site` /
+#'   `year` columns), or `NULL` for the observed data.
 #' @param ... Unused.
 #'
 #' @return A draws-by-observations (`D x N`) matrix.
@@ -16,12 +20,11 @@
 posterior_linpred.kb_fit_weight <- function(object,
                                             transform = FALSE,
                                             newdata = NULL,
-                                            by = NULL,
-                                            uncertainty = "marginal",
+                                            new_levels = "sample",
                                             ...) {
   rlang::check_dots_empty()
   chk::chk_flag(transform)
-  res <- weight_grid_linpred(object, predict_newdata(object, newdata), by, uncertainty)
+  res <- weight_grid_linpred(object, predict_newdata(object, newdata), new_levels = new_levels)
   m <- posterior::draws_of(res$linpred)
   if (transform) exp(m) else m
 }

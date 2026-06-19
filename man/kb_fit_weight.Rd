@@ -70,7 +70,7 @@ if (interactive()) {
   # Prior predictive check: fit from the priors only, then predict and plot
   # the implied weight-vs-diameter relationship over the data.
   fit <- kb_fit_weight(kb_data_weight, prior_only = TRUE)
-  kb_predict_weight(fit, uncertainty = "typical") |>
+  kb_predict_weight(fit, new_levels = "average") |>
     kb_plot_predictions(observed = kb_data_weight)
 }
 }
