@@ -1,7 +1,7 @@
 test_that("kb_fit_weight returns a correctly-structured object", {
   skip_on_cran()
   d <- droplevels(subset(
-    kb_data_weight,
+    sim_weight,
     site %in% c("site1", "site2") & year %in% c("2019", "2020")
   ))
   fit <- kb_fit_weight(d, chains = 2, niters = 100, nthin = 1, cores = 2, quiet = TRUE, seed = 1)
@@ -29,7 +29,7 @@ test_that("kb_fit_weight returns a correctly-structured object", {
 test_that("prior_only fit ignores the data", {
   skip_on_cran()
   d <- droplevels(subset(
-    kb_data_weight,
+    sim_weight,
     site %in% c("site1", "site2") & year %in% c("2019", "2020")
   ))
   f1 <- kb_fit_weight(d, prior_only = TRUE, chains = 1, niters = 300, nthin = 1, cores = 1, quiet = TRUE, seed = 7)
@@ -42,7 +42,7 @@ test_that("prior_only fit ignores the data", {
 
 test_that("zero-row data is accepted under prior_only", {
   skip_on_cran()
-  fit <- kb_fit_weight(kb_data_weight[0, ], prior_only = TRUE, chains = 1, niters = 100, nthin = 1, cores = 1, quiet = TRUE, seed = 1)
+  fit <- kb_fit_weight(sim_weight[0, ], prior_only = TRUE, chains = 1, niters = 100, nthin = 1, cores = 1, quiet = TRUE, seed = 1)
   expect_s3_class(fit, "kb_fit_weight")
   # no observations -> no generated quantities stored
   expect_null(fit$gq)

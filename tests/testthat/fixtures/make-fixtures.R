@@ -10,10 +10,12 @@
 
 devtools::load_all(quiet = TRUE)
 
-# A small slice of the bundled data spanning several sites and years so that
-# by = "site" and by = c("site", "year") predictions are exercised downstream.
+# A small slice of the simulated data (see make-sim-data.R) spanning several
+# sites and years so that by = "site" and by = c("site", "year") predictions are
+# exercised downstream. Independent of the real bundled kb_data_weight.
+sim_weight <- readRDS("tests/testthat/fixtures/sim_weight.rds")
 d <- subset(
-  kb_data_weight,
+  sim_weight,
   site %in% c("site1", "site2", "site3", "site4") &
     year %in% c("2019", "2020", "2021")
 )

@@ -1,9 +1,10 @@
-#' Simulated Weight Dataset
+#' Nereocystis Weight Dataset
 #'
-#' A small simulated dataset of *Nereocystis luetkeana* sub-bulb diameter and
-#' wet weight across several sites and years, for use in examples and tests. One
-#' site-year cell is intentionally absent. This is simulated data, not real
-#' survey data. Built by `data-raw/kb_data_weight.R`.
+#' *Nereocystis luetkeana* sub-bulb diameter and wet weight from the Hakai
+#' Institute allometry surveys, the data the coastwide weight model is fit to.
+#' One row per harvested individual, across multiple sites and years. Prepared
+#' from the analysis project (Hakai-only records, maximum sub-bulb measurements,
+#' completeness and outlier screening); built by `data-raw/kb_data_weight.R`.
 #'
 #' @format A data frame with columns:
 #' \describe{

@@ -3,7 +3,7 @@
 \docType{data}
 \name{kb_data_weight}
 \alias{kb_data_weight}
-\title{Simulated Weight Dataset}
+\title{Nereocystis Weight Dataset}
 \format{
 A data frame with columns:
 \describe{
@@ -17,10 +17,11 @@ A data frame with columns:
 kb_data_weight
 }
 \description{
-A small simulated dataset of \emph{Nereocystis luetkeana} sub-bulb diameter and
-wet weight across several sites and years, for use in examples and tests. One
-site-year cell is intentionally absent. This is simulated data, not real
-survey data. Built by \code{data-raw/kb_data_weight.R}.
+\emph{Nereocystis luetkeana} sub-bulb diameter and wet weight from the Hakai
+Institute allometry surveys, the data the coastwide weight model is fit to.
+One row per harvested individual, across multiple sites and years. Prepared
+from the analysis project (Hakai-only records, maximum sub-bulb measurements,
+completeness and outlier screening); built by \code{data-raw/kb_data_weight.R}.
 }
 \seealso{
 Other data: 
