@@ -22,13 +22,17 @@ defaults; unspecified entries keep their defaults.}
 
 \item{chains}{A whole number of MCMC chains.}
 
-\item{iter}{A whole number of saved post-warmup iterations per chain.}
+\item{niters}{A whole number of saved post-warmup draws per chain (warmup
+defaults to match). Named \code{niters} (not \code{iter}) to avoid clashing with
+rstan's own \code{iter}, which counts warmup too.}
 
 \item{nthin}{A whole number giving the thinning interval.}
 
 \item{cores}{A whole number of cores, or \code{NULL} to fit chains in parallel.}
 
-\item{quiet}{A flag specifying whether to suppress sampler output.}
+\item{quiet}{A flag specifying whether to suppress the sampler progress
+output. Diagnostic warnings (divergences, etc.) are suppressed regardless
+and surfaced through \code{\link[=converged]{converged()}}/\code{\link[=glance]{glance()}}.}
 
 \item{conf_level}{A number between 0 and 1 giving the compatibility-interval
 level.}
@@ -36,6 +40,14 @@ level.}
 \item{estimate}{A function giving the point estimate (e.g. \code{median}).}
 
 \item{sig_fig}{A whole number of significant figures for summary output.}
+
+\item{include_random_effects}{A flag specifying whether to include the
+group-level random-effect terms in the output.}
+
+\item{rhat}{A number giving the maximum acceptable Rhat.}
+
+\item{esr}{A number giving the minimum acceptable effective sample rate
+(effective sample size divided by the number of draws).}
 
 \item{by}{A character vector of grouping factors to predict by, or \code{NULL}
 for the population-level prediction.}

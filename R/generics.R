@@ -14,9 +14,17 @@ generics::augment
 #' @export
 universals::rhat
 
+#' @importFrom universals esr
+#' @export
+universals::esr
+
 #' @importFrom universals converged
 #' @export
 universals::converged
+
+#' @importFrom universals estimates
+#' @export
+universals::estimates
 
 #' @importFrom universals npars
 #' @export
@@ -38,6 +46,30 @@ universals::niters
 #' @export
 universals::pars
 
+#' @importFrom rstantools posterior_epred
+#' @export
+rstantools::posterior_epred
+
+#' @importFrom rstantools posterior_linpred
+#' @export
+rstantools::posterior_linpred
+
+#' @importFrom rstantools posterior_predict
+#' @export
+rstantools::posterior_predict
+
+#' @importFrom rstantools log_lik
+#' @export
+rstantools::log_lik
+
+#' @importFrom rstantools prior_summary
+#' @export
+rstantools::prior_summary
+
+#' @importFrom ggplot2 autoplot
+#' @export
+ggplot2::autoplot
+
 #' Posterior Draws
 #'
 #' Extract the raw posterior draws from a fitted model object.
@@ -48,16 +80,4 @@ universals::pars
 #' @export
 samples <- function(x, ...) {
   UseMethod("samples")
-}
-
-#' Effective Sample Size
-#'
-#' Bulk effective sample size of a fitted model object's parameters.
-#'
-#' @param x A fitted model object.
-#' @param ... Unused.
-#' @return A named numeric vector or scalar.
-#' @export
-ess <- function(x, ...) {
-  UseMethod("ess")
 }

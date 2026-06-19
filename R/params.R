@@ -16,14 +16,23 @@
 #' @param prior_only A flag specifying whether to sample from the priors only
 #'   (the likelihood is switched off), for prior predictive checks.
 #' @param chains A whole number of MCMC chains.
-#' @param iter A whole number of saved post-warmup iterations per chain.
+#' @param niters A whole number of saved post-warmup draws per chain (warmup
+#'   defaults to match). Named `niters` (not `iter`) to avoid clashing with
+#'   rstan's own `iter`, which counts warmup too.
 #' @param nthin A whole number giving the thinning interval.
 #' @param cores A whole number of cores, or `NULL` to fit chains in parallel.
-#' @param quiet A flag specifying whether to suppress sampler output.
+#' @param quiet A flag specifying whether to suppress the sampler progress
+#'   output. Diagnostic warnings (divergences, etc.) are suppressed regardless
+#'   and surfaced through [converged()]/[glance()].
 #' @param conf_level A number between 0 and 1 giving the compatibility-interval
 #'   level.
 #' @param estimate A function giving the point estimate (e.g. `median`).
 #' @param sig_fig A whole number of significant figures for summary output.
+#' @param include_random_effects A flag specifying whether to include the
+#'   group-level random-effect terms in the output.
+#' @param rhat A number giving the maximum acceptable Rhat.
+#' @param esr A number giving the minimum acceptable effective sample rate
+#'   (effective sample size divided by the number of draws).
 #' @param by A character vector of grouping factors to predict by, or `NULL`
 #'   for the population-level prediction.
 #' @param uncertainty A string, one of `"marginal"` or `"typical"`, controlling

@@ -7,12 +7,20 @@
 \alias{glance}
 \alias{augment}
 \alias{rhat}
+\alias{esr}
 \alias{converged}
+\alias{estimates}
 \alias{npars}
 \alias{nterms}
 \alias{nchains}
 \alias{niters}
 \alias{pars}
+\alias{posterior_epred}
+\alias{posterior_linpred}
+\alias{posterior_predict}
+\alias{log_lik}
+\alias{prior_summary}
+\alias{autoplot}
 \title{Objects exported from other packages}
 \keyword{internal}
 \description{
@@ -22,6 +30,10 @@ below to see their documentation.
 \describe{
   \item{generics}{\code{\link[generics]{augment}}, \code{\link[generics]{glance}}, \code{\link[generics]{tidy}}}
 
-  \item{universals}{\code{\link[universals]{converged}}, \code{\link[universals]{nchains}}, \code{\link[universals]{niters}}, \code{\link[universals]{npars}}, \code{\link[universals]{nterms}}, \code{\link[universals]{pars}}, \code{\link[universals]{rhat}}}
+  \item{ggplot2}{\code{\link[ggplot2]{autoplot}}}
+
+  \item{rstantools}{\code{\link[rstantools]{log_lik}}, \code{\link[rstantools]{posterior_epred}}, \code{\link[rstantools]{posterior_linpred}}, \code{\link[rstantools]{posterior_predict}}, \code{\link[rstantools]{prior_summary}}}
+
+  \item{universals}{\code{\link[universals]{converged}}, \code{\link[universals]{esr}}, \code{\link[universals]{estimates}}, \code{\link[universals]{nchains}}, \code{\link[universals]{niters}}, \code{\link[universals]{npars}}, \code{\link[universals]{nterms}}, \code{\link[universals]{pars}}, \code{\link[universals]{rhat}}}
 }}
 
