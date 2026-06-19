@@ -63,10 +63,13 @@ posterior::summarise_draws(draws) |> head()
 # (population terms Normal, SDs Exponential); only the hyperparameters change.
 kb_priors_weight()
 
-# Override a couple of entries; unmodified entries keep their defaults.
+# Override a couple of entries; unmodified entries keep their defaults. Here we
+# deliberately impose a tight, biased prior on the allometric slope (bDiameter)
+# so its posterior is pulled well away from the data estimate (~2.6) - enough to
+# show the prior visibly moving the result.
 priors <- kb_priors_weight()
 priors$sd_site <- kb_prior_exponential(rate = 3) # tighter between-site spread
-priors$diameter <- kb_prior_normal(mean = 2.6, sd = 0.3) # informed allometric slope
+priors$diameter <- kb_prior_normal(mean = 1.5, sd = 0.05) # strong, off-target slope
 priors
 
 # Prior predictive check: fit from the priors only (likelihood off), then judge
@@ -93,12 +96,27 @@ ppc_dens_overlay(
   scale_x_log10() +
   ggtitle("A2b. Prior predictive check (prior yrep vs observed weight)")
 
-# Refit with the custom priors (likelihood on) and compare coefficients:
+# Refit with the custom priors (likelihood on) and compare coefficients to the
+# default-prior fit. The tight, off-target prior pulls bDiameter away from its
+# default-prior posterior; the other terms barely move.
 fit_custom <- kb_fit_weight(
   kb_data_weight,
   priors = priors, chains = 4, niters = 500, quiet = TRUE
 )
-coef(fit_custom)
+
+coef_compare <- bind_rows(
+  mutate(coef(fit, include_random_effects = FALSE), priors = "default"),
+  mutate(coef(fit_custom, include_random_effects = FALSE), priors = "custom")
+)
+# the slope is the term expected to move:
+filter(coef_compare, term == "bDiameter")
+
+ggplot(coef_compare, aes(estimate, term, colour = priors)) +
+  geom_pointrange(
+    aes(xmin = lower, xmax = upper),
+    position = position_dodge(width = 0.5)
+  ) +
+  ggtitle("A2b. Coefficients: default vs custom (tight, off-target) priors")
 
 # A3. Residual diagnostics (augment = diagnostics verb) -----------------------
 aug <- augment(fit) # fitted/residual at observed rows, conditioned on their REs
