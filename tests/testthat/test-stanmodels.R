@@ -46,7 +46,8 @@ test_that("the weight model samples and returns the declared parameters", {
     c(
       "bWeight30", "bDiameter", "bDiameter2",
       "sSite", "sSiteDiameter", "sSiteYear", "sWeight",
-      "bSite", "bSiteDiameter", "bSiteYear"
+      "bSite", "bSiteDiameter", "bSiteYear",
+      "log_lik", "yrep"
     ) %in% fit@model_pars
   ))
 })

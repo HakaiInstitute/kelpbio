@@ -75,19 +75,15 @@ model {
   }
 }
 generated quantities {
-  // Predicted weight at the observed grid on the response scale.
-  // typical:  all random effects zeroed (population-average relationship).
-  // marginal: a new, unobserved site-year, with the site intercept, site slope,
-  //           and site:year effects drawn from their estimated hyperpriors.
-  vector[nObs] typical;
-  vector[nObs] marginal;
+  // Reuse the single mean definition (log_eWeight, transformed parameters).
+  // log_lik: pointwise log-likelihood, for loo.
+  // yrep:    response-scale posterior-predictive replicate, for pp_check.
+  // Both loops are no-ops when nObs == 0. Predictions at new data are computed
+  // in R from the stored draws (see docs/predictions.md), not here.
+  vector[nObs] log_lik;
+  vector[nObs] yrep;
   for (i in 1:nObs) {
-    real lp_typical = bWeight30 + bDiameter * log_diameter[i]
-      + bDiameter2 * log_diameter[i]^2;
-    typical[i] = exp(lp_typical);
-    marginal[i] = exp(bWeight30 + normal_rng(0, sSite)
-      + (bDiameter + normal_rng(0, sSiteDiameter)) * log_diameter[i]
-      + bDiameter2 * log_diameter[i]^2
-      + normal_rng(0, sSiteYear));
+    log_lik[i] = student_t_lpdf(log_weight[i] | nu, log_eWeight[i], sWeight);
+    yrep[i] = exp(student_t_rng(nu, log_eWeight[i], sWeight));
   }
 }
