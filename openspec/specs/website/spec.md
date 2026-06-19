@@ -34,6 +34,20 @@ Running pkgdown over the installed package SHALL produce a complete static site,
 - **WHEN** `vignettes/kelpbio.Rmd` is inspected
 - **THEN** it is a valid `rmarkdown::html_vignette` with a `\VignetteIndexEntry` and contains only placeholder overview prose (no evaluated `kb_*()` code), so it renders cleanly while the API is unbuilt
 
+### Requirement: The reference index is organized into thematic sections
+
+`_pkgdown.yml` SHALL organize the function reference into titled thematic sections so every exported function appears under a section rather than in a single flat list, and exported functions SHALL carry `@family` tags so related functions cross-reference each other in their See Also. Any new exported function must be added to a section (or matched by an existing pattern) so the reference index stays complete.
+
+#### Scenario: The reference config declares thematic sections
+
+- **WHEN** `_pkgdown.yml` is inspected
+- **THEN** it declares a `reference:` block with titled sections (fitting, priors, data, predictions and plotting, and model summaries and diagnostics) and a `matches("\\.")` entry that captures the S3 method topics
+
+#### Scenario: Every export maps to a section
+
+- **WHEN** the pkgdown reference index is built
+- **THEN** every exported function maps to exactly one section and pkgdown reports no topics missing from the index
+
 ### Requirement: CI builds and deploys the site
 
 The package SHALL include a GitHub Actions workflow that builds the pkgdown site on push and pull request and deploys it to the `gh-pages` branch on push to the default branch.
