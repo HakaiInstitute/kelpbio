@@ -19,6 +19,7 @@
 #'
 #' @return A `kb_predictions` object: a summary tibble with `estimate`, `lower`,
 #'   `upper` plus the grouping columns.
+#' @family prediction
 #' @export
 kb_predict_weight <- function(fit,
                               new_data = NULL,
@@ -27,10 +28,12 @@ kb_predict_weight <- function(fit,
                               conf_level = 0.95,
                               estimate = stats::median,
                               sig_fig = 3) {
+  .chk_kb_fit_weight(fit)
   chk::chk_number(conf_level)
   chk::chk_range(conf_level)
   chk::chk_function(estimate)
   chk::chk_whole_number(sig_fig)
+  chk::chk_gt(sig_fig, value = 0)
 
   res <- weight_grid_linpred(fit, new_data, by, uncertainty)
   epred <- exp(res$linpred)

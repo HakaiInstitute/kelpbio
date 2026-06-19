@@ -51,3 +51,9 @@ hyperprior) or \code{"typical"} (the population-average: random effects zeroed).
 For the weight model the available \code{by} values are \code{NULL}, \code{"site"}, and
 \code{c("site", "year")}.
 }
+\seealso{
+Other prediction: 
+\code{\link{autoplot.kb_predictions}()},
+\code{\link{kb_plot_predictions}()}
+}
+\concept{prediction}

@@ -13,6 +13,7 @@
 #' @param ... Unused.
 #'
 #' @return A draws-by-observations (`D x N`) matrix.
+#' @family generics
 #' @exportS3Method rstantools::posterior_predict
 posterior_predict.kb_fit_weight <- function(object,
                                             newdata = NULL,
@@ -20,6 +21,7 @@ posterior_predict.kb_fit_weight <- function(object,
                                             uncertainty = "marginal",
                                             ...) {
   rlang::check_dots_empty()
+  .chk_kb_fit_weight(object)
   if (is.null(newdata)) {
     if (is.null(object$gq)) {
       cli::cli_abort("No posterior-predictive draws are stored (zero-observation fit).")

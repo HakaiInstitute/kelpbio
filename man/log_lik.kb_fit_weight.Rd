@@ -18,3 +18,20 @@ A draws-by-observations (\verb{D x N}) matrix.
 The pointwise log-likelihood of the observed data (from the Stan generated
 quantities), suitable for \code{loo::loo()}.
 }
+\seealso{
+Other generics: 
+\code{\link{augment.kb_fit_weight}()},
+\code{\link{coef.kb_fit_weight}()},
+\code{\link{converged.kb_fit}()},
+\code{\link{glance.kb_fit}()},
+\code{\link{kb_stancode}()},
+\code{\link{posterior_epred.kb_fit_weight}()},
+\code{\link{posterior_linpred.kb_fit_weight}()},
+\code{\link{posterior_predict.kb_fit_weight}()},
+\code{\link{predict.kb_fit_weight}()},
+\code{\link{prior_summary.kb_fit}()},
+\code{\link{samples}()},
+\code{\link{summary.kb_fit}()},
+\code{\link{tidy.kb_fit_weight}()}
+}
+\concept{generics}

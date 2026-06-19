@@ -34,9 +34,7 @@
 # validate `by`, build the grid, and compute the log-scale linear-predictor
 # rvar. Returns the grid, the resolved `by`, and the linpred rvar.
 weight_grid_linpred <- function(fit, new_data, by, uncertainty) {
-  if (!inherits(fit, "kb_fit_weight")) {
-    cli::cli_abort("{.arg fit} must be a {.cls kb_fit_weight} object.")
-  }
+  .chk_kb_fit_weight(fit)
   uncertainty <- rlang::arg_match(uncertainty, c("marginal", "typical"))
   by <- validate_by_weight(by, uncertainty)
   grid <- build_weight_grid(fit, new_data, by)

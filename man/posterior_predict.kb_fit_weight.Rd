@@ -36,3 +36,20 @@ the Stan likelihood). With \code{newdata = NULL} the stored \code{yrep} (the
 posterior-predictive replicate at the observed data) is returned, for use
 with \code{bayesplot::pp_check()}.
 }
+\seealso{
+Other generics: 
+\code{\link{augment.kb_fit_weight}()},
+\code{\link{coef.kb_fit_weight}()},
+\code{\link{converged.kb_fit}()},
+\code{\link{glance.kb_fit}()},
+\code{\link{kb_stancode}()},
+\code{\link{log_lik.kb_fit_weight}()},
+\code{\link{posterior_epred.kb_fit_weight}()},
+\code{\link{posterior_linpred.kb_fit_weight}()},
+\code{\link{predict.kb_fit_weight}()},
+\code{\link{prior_summary.kb_fit}()},
+\code{\link{samples}()},
+\code{\link{summary.kb_fit}()},
+\code{\link{tidy.kb_fit_weight}()}
+}
+\concept{generics}

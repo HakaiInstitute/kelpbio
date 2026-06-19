@@ -11,9 +11,11 @@
 #'
 #' @return The input data with added columns `fitted`, `residual`, `lower`,
 #'   `upper`.
+#' @family generics
 #' @exportS3Method generics::augment
 augment.kb_fit_weight <- function(x, conf_level = 0.95, ...) {
   rlang::check_dots_empty()
+  .chk_kb_fit_weight(x)
   chk::chk_number(conf_level)
   chk::chk_range(conf_level)
 
