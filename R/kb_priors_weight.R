@@ -14,6 +14,7 @@
 #' @return A named list of prior objects with entries `intercept`, `diameter`,
 #'   `diameter2`, `sd_site`, `sd_site_diameter`, `sd_site_year`, and
 #'   `sd_residual`.
+#' @family priors
 #' @export
 #'
 #' @examples

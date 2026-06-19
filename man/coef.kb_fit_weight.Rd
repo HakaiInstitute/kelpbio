@@ -19,3 +19,20 @@ A tibble with one row per term and columns \code{term}, \code{estimate},
 A pure wrapper on \link[=tidy.kb_fit_weight]{tidy()}, matching the \code{bboutools} /
 \code{ssdtools} convention. Returns the model-term posterior summaries.
 }
+\seealso{
+Other generics: 
+\code{\link{augment.kb_fit_weight}()},
+\code{\link{converged.kb_fit}()},
+\code{\link{glance.kb_fit}()},
+\code{\link{kb_stancode}()},
+\code{\link{log_lik.kb_fit_weight}()},
+\code{\link{posterior_epred.kb_fit_weight}()},
+\code{\link{posterior_linpred.kb_fit_weight}()},
+\code{\link{posterior_predict.kb_fit_weight}()},
+\code{\link{predict.kb_fit_weight}()},
+\code{\link{prior_summary.kb_fit}()},
+\code{\link{samples}()},
+\code{\link{summary.kb_fit}()},
+\code{\link{tidy.kb_fit_weight}()}
+}
+\concept{generics}

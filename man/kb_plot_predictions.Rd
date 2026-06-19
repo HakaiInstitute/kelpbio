@@ -44,3 +44,9 @@ variables); each remains an overridable argument. If the metadata has been
 stripped (e.g. by dplyr post-processing) and \code{x} cannot be inferred, the
 function errors and asks for \code{x}.
 }
+\seealso{
+Other prediction: 
+\code{\link{autoplot.kb_predictions}()},
+\code{\link{kb_predict_weight}()}
+}
+\concept{prediction}

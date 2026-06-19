@@ -11,6 +11,7 @@
 #' @param ... Unused.
 #'
 #' @return A draws-by-observations (`D x N`) matrix.
+#' @family generics
 #' @exportS3Method rstantools::posterior_epred
 posterior_epred.kb_fit_weight <- function(object,
                                           newdata = NULL,

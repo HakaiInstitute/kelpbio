@@ -17,3 +17,20 @@ The named list of prior objects (see \code{\link[=kb_priors_weight]{kb_priors_we
 \description{
 The resolved prior objects used to fit the model.
 }
+\seealso{
+Other generics: 
+\code{\link{augment.kb_fit_weight}()},
+\code{\link{coef.kb_fit_weight}()},
+\code{\link{converged.kb_fit}()},
+\code{\link{glance.kb_fit}()},
+\code{\link{kb_stancode}()},
+\code{\link{log_lik.kb_fit_weight}()},
+\code{\link{posterior_epred.kb_fit_weight}()},
+\code{\link{posterior_linpred.kb_fit_weight}()},
+\code{\link{posterior_predict.kb_fit_weight}()},
+\code{\link{predict.kb_fit_weight}()},
+\code{\link{samples}()},
+\code{\link{summary.kb_fit}()},
+\code{\link{tidy.kb_fit_weight}()}
+}
+\concept{generics}

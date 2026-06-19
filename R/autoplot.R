@@ -9,6 +9,7 @@
 #'   `observed`).
 #'
 #' @return A `ggplot` object.
+#' @family prediction
 #' @exportS3Method ggplot2::autoplot
 autoplot.kb_predictions <- function(object, ...) {
   kb_plot_predictions(object, ...)

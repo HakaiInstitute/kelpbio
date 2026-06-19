@@ -22,4 +22,9 @@ wet weight across several sites and years, for use in examples and tests. One
 site-year cell is intentionally absent. This is simulated data, not real
 survey data. Built by \code{data-raw/kb_data_weight.R}.
 }
+\seealso{
+Other data: 
+\code{\link{kb_check_data_weight}()}
+}
+\concept{data}
 \keyword{datasets}

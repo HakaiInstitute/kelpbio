@@ -9,6 +9,7 @@
 #' @param ... Passed to [tidy()][tidy.kb_fit_weight].
 #'
 #' @return A `summary_kb_fit` object.
+#' @family generics
 #' @exportS3Method base::summary
 summary.kb_fit <- function(object, ...) {
   structure(

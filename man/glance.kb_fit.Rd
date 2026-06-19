@@ -24,3 +24,20 @@ A one-row tibble with \code{n}, \code{K}, \code{nchains}, \code{niters}, \code{n
 One-row summary of a model fit with convergence verdict, using the
 \code{bboutools} column set.
 }
+\seealso{
+Other generics: 
+\code{\link{augment.kb_fit_weight}()},
+\code{\link{coef.kb_fit_weight}()},
+\code{\link{converged.kb_fit}()},
+\code{\link{kb_stancode}()},
+\code{\link{log_lik.kb_fit_weight}()},
+\code{\link{posterior_epred.kb_fit_weight}()},
+\code{\link{posterior_linpred.kb_fit_weight}()},
+\code{\link{posterior_predict.kb_fit_weight}()},
+\code{\link{predict.kb_fit_weight}()},
+\code{\link{prior_summary.kb_fit}()},
+\code{\link{samples}()},
+\code{\link{summary.kb_fit}()},
+\code{\link{tidy.kb_fit_weight}()}
+}
+\concept{generics}

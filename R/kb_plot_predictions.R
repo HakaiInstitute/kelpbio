@@ -21,6 +21,7 @@
 #' @param ... Unused.
 #'
 #' @return A `ggplot` object.
+#' @family prediction
 #' @export
 kb_plot_predictions <- function(predictions,
                                 x = NULL,
@@ -29,6 +30,9 @@ kb_plot_predictions <- function(predictions,
                                 observed = NULL,
                                 ...) {
   rlang::check_dots_empty()
+  if (!is.null(observed)) {
+    chk::chk_data(observed)
+  }
   if (!is.data.frame(predictions)) {
     cli::cli_abort("{.arg predictions} must be a {.cls kb_predictions} data frame.")
   }

@@ -9,6 +9,7 @@
 #' @param ... Unused.
 #'
 #' @return A `kb_predictions` object.
+#' @family generics
 #' @exportS3Method stats::predict
 predict.kb_fit_weight <- function(object,
                                   new_data = NULL,

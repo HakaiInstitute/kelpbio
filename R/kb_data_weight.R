@@ -12,4 +12,5 @@
 #'   \item{site}{Survey site, a factor.}
 #'   \item{year}{Survey year, a factor.}
 #' }
+#' @family data
 "kb_data_weight"

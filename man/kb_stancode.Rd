@@ -20,3 +20,20 @@ The Stan source as a string.
 \description{
 Return the Stan source code of the fitted model.
 }
+\seealso{
+Other generics: 
+\code{\link{augment.kb_fit_weight}()},
+\code{\link{coef.kb_fit_weight}()},
+\code{\link{converged.kb_fit}()},
+\code{\link{glance.kb_fit}()},
+\code{\link{log_lik.kb_fit_weight}()},
+\code{\link{posterior_epred.kb_fit_weight}()},
+\code{\link{posterior_linpred.kb_fit_weight}()},
+\code{\link{posterior_predict.kb_fit_weight}()},
+\code{\link{predict.kb_fit_weight}()},
+\code{\link{prior_summary.kb_fit}()},
+\code{\link{samples}()},
+\code{\link{summary.kb_fit}()},
+\code{\link{tidy.kb_fit_weight}()}
+}
+\concept{generics}

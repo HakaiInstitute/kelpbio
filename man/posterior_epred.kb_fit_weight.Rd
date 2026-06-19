@@ -34,3 +34,20 @@ Draws from the expectation of the posterior predictive distribution
 (response-scale expected weight, \code{exp} of the linear predictor) for the
 weight model. The prediction engine; \code{\link[=kb_predict_weight]{kb_predict_weight()}} summarises it.
 }
+\seealso{
+Other generics: 
+\code{\link{augment.kb_fit_weight}()},
+\code{\link{coef.kb_fit_weight}()},
+\code{\link{converged.kb_fit}()},
+\code{\link{glance.kb_fit}()},
+\code{\link{kb_stancode}()},
+\code{\link{log_lik.kb_fit_weight}()},
+\code{\link{posterior_linpred.kb_fit_weight}()},
+\code{\link{posterior_predict.kb_fit_weight}()},
+\code{\link{predict.kb_fit_weight}()},
+\code{\link{prior_summary.kb_fit}()},
+\code{\link{samples}()},
+\code{\link{summary.kb_fit}()},
+\code{\link{tidy.kb_fit_weight}()}
+}
+\concept{generics}

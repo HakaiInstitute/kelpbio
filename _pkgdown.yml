@@ -7,3 +7,31 @@ template:
     link-color: "#aa2025"
     navbar-bg: "#2c3e50"
     navbar-dark: true
+
+reference:
+- title: "Fitting Models"
+  desc: "Fit Bayesian Stan models."
+  contents:
+    - kb_fit_weight
+- title: "Priors"
+  desc: "Specify priors for model parameters."
+  contents:
+    - kb_priors_weight
+    - kb_prior_normal
+    - kb_prior_exponential
+- title: "Data"
+  desc: "Validate and explore input data."
+  contents:
+    - kb_check_data_weight
+    - kb_data_weight
+- title: "Predictions and Plotting"
+  desc: "Predict and visualise model output."
+  contents:
+    - kb_predict_weight
+    - kb_plot_predictions
+- title: "Model Summaries and Diagnostics"
+  desc: "Summarise fits, extract coefficients and draws, and assess convergence."
+  contents:
+    - samples
+    - kb_stancode
+    - matches("\\.")

@@ -21,3 +21,9 @@ Construct a Normal prior object for use in \code{\link[=kb_priors_weight]{kb_pri
 \examples{
 kb_prior_normal(mean = 0, sd = 2)
 }
+\seealso{
+Other priors: 
+\code{\link{kb_prior_exponential}()},
+\code{\link{kb_priors_weight}()}
+}
+\concept{priors}

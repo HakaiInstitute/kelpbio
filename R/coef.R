@@ -8,6 +8,7 @@
 #'
 #' @return A tibble with one row per term and columns `term`, `estimate`,
 #'   `lower`, `upper`.
+#' @family generics
 #' @exportS3Method stats::coef
 coef.kb_fit_weight <- function(object, ...) {
   tidy(object, ...)

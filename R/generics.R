@@ -77,6 +77,7 @@ ggplot2::autoplot
 #' @param x A fitted model object.
 #' @param ... Unused.
 #' @return A `posterior` draws object.
+#' @family generics
 #' @export
 samples <- function(x, ...) {
   UseMethod("samples")

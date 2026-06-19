@@ -20,3 +20,9 @@ deviation (scale) hyperparameters.
 \examples{
 kb_prior_exponential(rate = 1)
 }
+\seealso{
+Other priors: 
+\code{\link{kb_prior_normal}()},
+\code{\link{kb_priors_weight}()}
+}
+\concept{priors}

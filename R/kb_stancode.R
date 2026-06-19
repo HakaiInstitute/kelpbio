@@ -6,6 +6,7 @@
 #' @param ... Unused.
 #'
 #' @return The Stan source as a string.
+#' @family generics
 #' @export
 kb_stancode <- function(x, ...) {
   UseMethod("kb_stancode")

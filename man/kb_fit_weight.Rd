@@ -66,11 +66,12 @@ low ESS/Rhat) are suppressed; inspect convergence with \code{\link[=converged]{c
 \code{\link[=glance]{glance()}}.
 }
 \examples{
-\dontrun{
-# Prior predictive check: fit from the priors only, then predict and plot
-# the implied weight-vs-diameter relationship over the data.
-fit <- kb_fit_weight(kb_data_weight, prior_only = TRUE)
-kb_predict_weight(fit, uncertainty = "typical") |>
-  kb_plot_predictions(observed = kb_data_weight)
+if (interactive()) {
+  # Prior predictive check: fit from the priors only, then predict and plot
+  # the implied weight-vs-diameter relationship over the data.
+  fit <- kb_fit_weight(kb_data_weight, prior_only = TRUE)
+  kb_predict_weight(fit, uncertainty = "typical") |>
+    kb_plot_predictions(observed = kb_data_weight)
 }
 }
+\concept{model}

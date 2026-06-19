@@ -7,6 +7,7 @@
 #' @param rate A positive number giving the rate.
 #'
 #' @return A `kb_prior_exponential` object.
+#' @family priors
 #' @export
 #'
 #' @examples

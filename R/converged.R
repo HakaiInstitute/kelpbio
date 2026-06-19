@@ -12,6 +12,7 @@
 #'
 #' @return A flag: `TRUE` if all Rhat are below `rhat` and all effective sample
 #'   rates above `esr`.
+#' @family generics
 #' @exportS3Method universals::converged
 converged.kb_fit <- function(x, rhat = 1.05, esr = 0.1, ...) {
   rlang::check_dots_empty()

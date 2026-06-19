@@ -7,6 +7,7 @@
 #' @param sd A positive number giving the standard deviation.
 #'
 #' @return A `kb_prior_normal` object.
+#' @family priors
 #' @export
 #'
 #' @examples

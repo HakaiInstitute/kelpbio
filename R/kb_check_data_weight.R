@@ -11,6 +11,7 @@
 #' @param x_name A string naming `data` in error messages.
 #'
 #' @return `data`, invisibly.
+#' @family data
 #' @export
 #'
 #' @examples

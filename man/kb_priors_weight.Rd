@@ -29,3 +29,9 @@ can be changed.
 priors <- kb_priors_weight()
 priors$sd_site <- kb_prior_exponential(2)
 }
+\seealso{
+Other priors: 
+\code{\link{kb_prior_exponential}()},
+\code{\link{kb_prior_normal}()}
+}
+\concept{priors}

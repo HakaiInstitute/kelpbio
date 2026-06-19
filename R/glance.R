@@ -7,6 +7,7 @@
 #'
 #' @return A one-row tibble with `n`, `K`, `nchains`, `niters`, `nthin`, `ess`,
 #'   `rhat`, and `converged`.
+#' @family generics
 #' @exportS3Method generics::glance
 glance.kb_fit <- function(x, rhat = 1.05, esr = 0.1, ...) {
   rlang::check_dots_empty()

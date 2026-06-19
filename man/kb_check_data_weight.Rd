@@ -30,3 +30,8 @@ data <- data.frame(
 )
 kb_check_data_weight(data)
 }
+\seealso{
+Other data: 
+\code{\link{kb_data_weight}}
+}
+\concept{data}
