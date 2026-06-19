@@ -7,6 +7,12 @@ test_that("kb_plot_predictions returns a ribbon ggplot for a continuous predicto
   expect_true(any(grepl("GeomLine", geoms)))
 })
 
+test_that("the weight-vs-diameter ribbon plot is visually stable", {
+  skip_if_not_installed("vdiffr")
+  p <- kb_predict_weight(weight_fit, uncertainty = "typical")
+  vdiffr::expect_doppelganger("weight ribbon", kb_plot_predictions(p))
+})
+
 test_that("facet is inferred from grouping variables", {
   p <- kb_predict_weight(weight_fit, by = "site")
   gg <- kb_plot_predictions(p)
