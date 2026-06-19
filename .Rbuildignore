@@ -18,3 +18,4 @@
 ^\.claude$
 ^CLAUDE\.md$
 ^jarl\.toml$
+^decisions$

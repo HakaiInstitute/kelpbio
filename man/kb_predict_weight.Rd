@@ -39,9 +39,9 @@ A \code{kb_predictions} object: a summary tibble with \code{estimate}, \code{low
 }
 \description{
 Predict weight over a diameter sequence from a fitted weight model. The
-summary is the summariser over \code{posterior_epred()} (the prediction engine;
-see \code{docs/predictions.md}). For the raw posterior prediction draws use
-\code{posterior_epred()} / \code{posterior_predict()} directly.
+summary is the summariser over \code{posterior_epred()} (the prediction engine).
+For the raw posterior prediction draws use \code{posterior_epred()} /
+\code{posterior_predict()} directly.
 }
 \details{
 \code{by} selects grouping factors that each get their own curve, held at their

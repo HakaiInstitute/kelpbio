@@ -8,7 +8,7 @@
 #' to match `niters` and the post-warmup phase is thinned by `nthin`. The live
 #' `stanfit` is discarded after fitting: the returned object stores the extracted
 #' posterior draws (including the `log_lik` and `yrep` generated quantities),
-#' diagnostics, data, and metadata (see `docs/predictions.md`).
+#' diagnostics, data, and metadata.
 #'
 #' With the default `quiet = FALSE` the sampler shows its progress but other Stan
 #' output and the post-sampling HMC diagnostic warnings (divergences, treedepth,

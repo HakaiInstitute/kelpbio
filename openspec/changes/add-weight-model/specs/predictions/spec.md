@@ -2,7 +2,7 @@
 
 ### Requirement: Predict allometric curves
 
-`kb_predict_weight(new_data, fit, by, uncertainty, conf_level, estimate, sig_fig)` SHALL return a summary of predicted weight over a diameter sequence, computed from the fit's stored posterior draws, as a `kb_predictions` object. It is the summariser over `posterior_epred()` (the prediction engine), which is built on the single internal linear-predictor helper `.weight_linpred()` specified in `docs/predictions.md`.
+`kb_predict_weight(new_data, fit, by, uncertainty, conf_level, estimate, sig_fig)` SHALL return a summary of predicted weight over a diameter sequence, computed from the fit's stored posterior draws, as a `kb_predictions` object. It is the summariser over `posterior_epred()` (the prediction engine), which is built on the single internal linear-predictor helper `.weight_linpred()` specified in `decisions/prediction-engine.md`.
 
 #### Scenario: Auto-generated diameter sequence
 - **WHEN** `kb_predict_weight(fit)` is called with `new_data = NULL`

@@ -16,7 +16,7 @@ A compiled model SHALL be samplable through `rstan::sampling(stanmodels$<name>, 
 
 ### Requirement: The weight model follows the engine conventions
 
-The bundled `inst/stan/weight.stan` SHALL implement the full allometric weight structure -- a quadratic log-diameter mean with site intercept, site slope (on log diameter), and site:year random effects, and a Student-t(4) likelihood -- with priors passed as data, a likelihood guard, and `log_lik`/`yrep` generated quantities, per `docs/bayesian-engine.md` and the model catalogue in `docs/package-design.md`. The mean (`log_eWeight`) SHALL be defined once, in `transformed parameters`, and reused by both the likelihood and the generated quantities.
+The bundled `inst/stan/weight.stan` SHALL implement the full allometric weight structure -- a quadratic log-diameter mean with site intercept, site slope (on log diameter), and site:year random effects, and a Student-t(4) likelihood -- with priors passed as data, a likelihood guard, and `log_lik`/`yrep` generated quantities, per `decisions/engine-choice.md` and the model catalogue in `decisions/bboutools-api-review.md`. The mean (`log_eWeight`) SHALL be defined once, in `transformed parameters`, and reused by both the likelihood and the generated quantities.
 
 #### Scenario: The mean follows the full allometric structure
 

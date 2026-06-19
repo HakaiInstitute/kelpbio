@@ -1,6 +1,6 @@
 > Note: tasks 0-10 were implemented against the original (broom-flavoured, rvar-`_samples`) design.
 > This change realigns the surface to the `generics`/`stats`/`base`/`universals`/`rstantools` generics
-> and the house vocabulary (see `docs/generics.md`). Items reopened below (`[ ]`) need rework; pure
+> and the house vocabulary (see `decisions/prediction-engine.md`). Items reopened below (`[ ]`) need rework; pure
 > helpers unaffected by the realignment stay `[x]`.
 
 ## 0. Stan source — full weight model (install-gated)
@@ -60,5 +60,5 @@
 
 ## 10. Documentation and check
 
-- [x] 10.1 roxygen for all exports (plain-language `marginal`/`typical`); a prior-predictive example; a `pp_check`/`loo` demonstration in a vignette; ensure `docs/generics.md` matches the implemented surface.
+- [x] 10.1 roxygen for all exports (plain-language `marginal`/`typical`); a prior-predictive example; a `pp_check`/`loo` demonstration in a vignette; ensure `decisions/prediction-engine.md` matches the implemented surface.
 - [x] 10.2 `devtools::document()`; `R CMD check` clean; confirm 1:1 test mirroring.

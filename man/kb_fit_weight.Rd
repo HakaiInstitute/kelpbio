@@ -58,7 +58,7 @@ weight data via Stan.
 to match \code{niters} and the post-warmup phase is thinned by \code{nthin}. The live
 \code{stanfit} is discarded after fitting: the returned object stores the extracted
 posterior draws (including the \code{log_lik} and \code{yrep} generated quantities),
-diagnostics, data, and metadata (see \code{docs/predictions.md}).
+diagnostics, data, and metadata.
 
 With the default \code{quiet = FALSE} the sampler shows its progress but other Stan
 output and the post-sampling HMC diagnostic warnings (divergences, treedepth,

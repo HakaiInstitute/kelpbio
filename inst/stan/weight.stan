@@ -79,7 +79,7 @@ generated quantities {
   // log_lik: pointwise log-likelihood, for loo.
   // yrep:    response-scale posterior-predictive replicate, for pp_check.
   // Both loops are no-ops when nObs == 0. Predictions at new data are computed
-  // in R from the stored draws (see docs/predictions.md), not here.
+  // in R from the stored draws, not here.
   vector[nObs] log_lik;
   vector[nObs] yrep;
   for (i in 1:nObs) {

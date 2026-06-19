@@ -42,7 +42,7 @@
 
 ### Requirement: Draws accessor and diagnostics surface
 
-`samples(x)` SHALL return the raw parameter draws as a `posterior` draws object, and the accessors `rhat`, `esr`, `nobs`, `nchains`, `niters`, `npars`, `nterms`, `pars`, `estimates` and `kb_stancode(x)` SHALL operate on the fit object. All summaries and diagnostics are computed from the stored draws via `posterior` (see `docs/predictions.md` and `docs/generics.md`).
+`samples(x)` SHALL return the raw parameter draws as a `posterior` draws object, and the accessors `rhat`, `esr`, `nobs`, `nchains`, `niters`, `npars`, `nterms`, `pars`, `estimates` and `kb_stancode(x)` SHALL operate on the fit object. All summaries and diagnostics are computed from the stored draws via `posterior` (see `decisions/prediction-engine.md` and `decisions/prediction-engine.md`).
 
 #### Scenario: samples returns a draws container
 - **WHEN** `samples(fit)` is called

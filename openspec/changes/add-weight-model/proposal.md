@@ -1,6 +1,6 @@
 ## Why
 
-With the rstan/rstantools engine and the compiled `stanmodels$weight` in place (Change A `scaffold-rstan-package`), kelpbio needs its first end-to-end user-facing pipeline. This change delivers the full weight model end to end -- data validation, structured priors, fitting, model summaries/diagnostics, predictions, and plotting -- establishing the package's S3 architecture and conventions that every later model will reuse. The model is the validated analysis-project allometry: a quadratic log-diameter mean with site intercept, site slope, and site:year random effects under a Student-t(4) likelihood (it supersedes the site-intercept-only smoke-test that Change A shipped to prove the engine). See `docs/package-design.md` (model catalogue), `docs/vertical-slice.md`, and `docs/testing-strategy.md`.
+With the rstan/rstantools engine and the compiled `stanmodels$weight` in place (Change A `scaffold-rstan-package`), kelpbio needs its first end-to-end user-facing pipeline. This change delivers the full weight model end to end -- data validation, structured priors, fitting, model summaries/diagnostics, predictions, and plotting -- establishing the package's S3 architecture and conventions that every later model will reuse. The model is the validated analysis-project allometry: a quadratic log-diameter mean with site intercept, site slope, and site:year random effects under a Student-t(4) likelihood (it supersedes the site-intercept-only smoke-test that Change A shipped to prove the engine). See `decisions/bboutools-api-review.md` (model catalogue), `openspec/specs/stan-engine/spec.md`, and `decisions/bboutools-api-review.md`.
 
 ## What Changes
 
@@ -19,8 +19,8 @@ With the rstan/rstantools engine and the compiled `stanmodels$weight` in place (
 - `data`: weight-data validation (`kb_check_data_weight`) and the bundled `kb_data_weight` dataset contract.
 - `priors`: structured prior objects (`kb_prior_normal`, `kb_prior_exponential`) and the weight default priors (`kb_priors_weight`).
 - `fitting`: `kb_fit_weight()` — the fit contract, the draws-not-stanfit `kb_fit` object (with `log_lik`/`yrep`), `prior_only`/zero-obs support, `niters`/`quiet` sampler arguments.
-- `summaries`: S3 model-summary and diagnostic surface over `kb_fit` (`generics`/`stats`/`base`/`universals` generics with house columns, `converged` via `esr`, `samples`, accessors, `kb_stancode`); see `docs/generics.md`.
-- `predictions`: the `rstantools` generics (`posterior_epred`/`posterior_linpred`/`posterior_predict`/`log_lik`, `prior_summary`), `kb_predict_weight()`, and the `kb_predictions` object (the `by`/`uncertainty`/`new_data` behavior, built on `.weight_linpred()`; see `docs/predictions.md`).
+- `summaries`: S3 model-summary and diagnostic surface over `kb_fit` (`generics`/`stats`/`base`/`universals` generics with house columns, `converged` via `esr`, `samples`, accessors, `kb_stancode`); see `decisions/prediction-engine.md`.
+- `predictions`: the `rstantools` generics (`posterior_epred`/`posterior_linpred`/`posterior_predict`/`log_lik`, `prior_summary`), `kb_predict_weight()`, and the `kb_predictions` object (the `by`/`uncertainty`/`new_data` behavior, built on `.weight_linpred()`; see `decisions/prediction-engine.md`).
 - `plotting`: `kb_plot_predictions()` and `autoplot.kb_predictions()` — metadata-driven ggplot from a `kb_predictions` object.
 
 ### Modified Capabilities
@@ -32,6 +32,6 @@ With the rstan/rstantools engine and the compiled `stanmodels$weight` in place (
 - **DESCRIPTION** gains Imports: chk, cli, rlang, posterior, newdata, generics, universals, rstantools, ggplot2, tibble, dplyr (and the existing rstan stack); `loo` and `bayesplot` may be Suggests for the `loo`/`pp_check` examples.
 - **Data**: new `data/kb_data_weight.rda` + `data-raw/kb_data_weight.R`.
 - **Tests**: 1:1 mirrored test files; `tests/testthat/fixtures/` with `make-fixtures.R` + a committed slim `weight_fit.rds`; `helper-fixtures.R`.
-- **Docs**: roxygen for all exports (plain-language `marginal`/`typical`); a prior-predictive example; `docs/generics.md` (the generic inventory); a `pp_check`/`loo` demonstration in a vignette.
+- **Docs**: roxygen for all exports (plain-language `marginal`/`typical`); a prior-predictive example; `decisions/prediction-engine.md` (the generic inventory); a `pp_check`/`loo` demonstration in a vignette.
 - **Stan source**: `inst/stan/weight.stan` rewritten to the full model with `log_lik`/`yrep` generated quantities (requires `devtools::install()` to recompile; `load_all()` does not pick up Stan changes).
 - **Out of scope**: all other models (size, density, blade, wetdry, carbon), the biomass pipeline, and the pre-fit `kb_default_*` models.

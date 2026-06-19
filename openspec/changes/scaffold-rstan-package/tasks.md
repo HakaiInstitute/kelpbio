@@ -28,6 +28,6 @@
 
 - [x] 4.1 Add `.github/workflows/R-CMD-check.yaml` (macOS/Linux/Windows) using `r-lib/actions/setup-r-dependencies@v2` + `check-r-package@v2` (the action caches the package library)
 - [x] 4.2 Confirm CI is green on all platforms (PR #1, run 27713902602: all 5 R-CMD-check jobs pass)
-- [x] 4.3 Record the actual first-install timing in `docs/bayesian-engine.md` (§11)
+- [x] 4.3 Record the actual first-install timing in `decisions/engine-choice.md` (§11)
 - [x] 4.4 Add platform/install notes to README (C++17 toolchain, rstan getting-started link, `devtools::install()` not `load_all()` for Stan changes)
 - [x] 4.5 Add `.github/workflows/lint-with-jarl.yaml` (jarl-check on push/PR, mirrors hydrocan) with `jarl.toml` excluding the generated `R/stanmodels.R` and `jarl-ignore` suppressions for the `@inheritParams` donor and the two internal-helper tests; tooling only, no spec capability

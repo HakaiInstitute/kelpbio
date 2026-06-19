@@ -1,9 +1,9 @@
 #' Predict Allometric Weight
 #'
 #' Predict weight over a diameter sequence from a fitted weight model. The
-#' summary is the summariser over `posterior_epred()` (the prediction engine;
-#' see `docs/predictions.md`). For the raw posterior prediction draws use
-#' `posterior_epred()` / `posterior_predict()` directly.
+#' summary is the summariser over `posterior_epred()` (the prediction engine).
+#' For the raw posterior prediction draws use `posterior_epred()` /
+#' `posterior_predict()` directly.
 #'
 #' `by` selects grouping factors that each get their own curve, held at their
 #' observed estimated random effects. `uncertainty` controls factors not named
