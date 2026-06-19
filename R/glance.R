@@ -12,6 +12,9 @@
 glance.kb_fit <- function(x, rhat = 1.05, esr = 0.1, ...) {
   rlang::check_dots_empty()
   s <- x$diagnostics$summary
+  # Evaluate the verdict before the tibble(): inside tibble() the bare `rhat`
+  # would mask to the `rhat = max(...)` column rather than the threshold arg.
+  is_converged <- converged(x, rhat = rhat, esr = esr)
   tibble::tibble(
     n = nobs(x),
     K = npars(x),
@@ -20,6 +23,6 @@ glance.kb_fit <- function(x, rhat = 1.05, esr = 0.1, ...) {
     nthin = x$meta$nthin,
     ess = min(s$ess_bulk, na.rm = TRUE),
     rhat = max(s$rhat, na.rm = TRUE),
-    converged = converged(x, rhat = rhat, esr = esr)
+    converged = is_converged
   )
 }
