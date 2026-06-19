@@ -2,23 +2,20 @@
 % Please edit documentation in R/coef.R
 \name{coef.kb_fit_weight}
 \alias{coef.kb_fit_weight}
-\title{Group-Level Coefficients of a Weight Model Fit}
+\title{Coefficients of a Weight Model Fit}
 \usage{
-\method{coef}{kb_fit_weight}(object, conf_level = 0.95, ...)
+\method{coef}{kb_fit_weight}(object, ...)
 }
 \arguments{
 \item{object}{A \code{kb_fit_weight} object.}
 
-\item{conf_level}{A number between 0 and 1 giving the compatibility-interval
-level.}
-
-\item{...}{Unused.}
+\item{...}{Passed to \link[=tidy.kb_fit_weight]{tidy()}.}
 }
 \value{
-A tibble with one row per group-level term and columns \code{term},
-\code{estimate}, \code{std.error}, \code{conf.low}, \code{conf.high}.
+A tibble with one row per term and columns \code{term}, \code{estimate},
+\code{lower}, \code{upper}.
 }
 \description{
-Posterior summaries of the group-level random effects: the per-site intercept
-and slope, and the site-year effects.
+A pure wrapper on \link[=tidy.kb_fit_weight]{tidy()}, matching the \code{bboutools} /
+\code{ssdtools} convention. Returns the model-term posterior summaries.
 }

@@ -1,7 +1,23 @@
-test_that("tidy returns population terms and SDs", {
+test_that("tidy returns house columns and all terms by default", {
   t <- tidy(weight_fit)
   expect_s3_class(t, "tbl_df")
-  expect_setequal(t$term, c("bWeight30", "bDiameter", "bDiameter2", "sSite", "sSiteDiameter", "sSiteYear", "sWeight"))
-  expect_named(t, c("term", "estimate", "std.error", "conf.low", "conf.high"))
-  expect_true(all(t$conf.low <= t$estimate & t$estimate <= t$conf.high))
+  expect_named(t, c("term", "estimate", "lower", "upper"))
+  expect_true(all(t$lower <= t$estimate & t$estimate <= t$upper))
+  # default include_random_effects = TRUE -> per-level random effects present
+  expect_true(any(grepl("^bSite\\[", t$term)))
+})
+
+test_that("include_random_effects = FALSE drops group-level terms", {
+  t <- tidy(weight_fit, include_random_effects = FALSE)
+  expect_setequal(
+    t$term,
+    c("bWeight30", "bDiameter", "bDiameter2", "sSite", "sSiteDiameter", "sSiteYear", "sWeight")
+  )
+})
+
+test_that("estimate and sig_fig are honoured", {
+  t <- tidy(weight_fit, estimate = mean, sig_fig = 2, include_random_effects = FALSE)
+  expect_named(t, c("term", "estimate", "lower", "upper"))
+  # rounded to 2 significant figures
+  expect_equal(t$estimate, signif(t$estimate, 2))
 })

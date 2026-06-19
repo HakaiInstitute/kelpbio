@@ -4,7 +4,14 @@
 \alias{tidy.kb_fit_weight}
 \title{Tidy a Weight Model Fit}
 \usage{
-\method{tidy}{kb_fit_weight}(x, conf_level = 0.95, ...)
+\method{tidy}{kb_fit_weight}(
+  x,
+  conf_level = 0.95,
+  estimate = stats::median,
+  sig_fig = 3,
+  include_random_effects = TRUE,
+  ...
+)
 }
 \arguments{
 \item{x}{A \code{kb_fit_weight} object.}
@@ -12,13 +19,21 @@
 \item{conf_level}{A number between 0 and 1 giving the compatibility-interval
 level.}
 
+\item{estimate}{A function giving the point estimate (e.g. \code{median}).}
+
+\item{sig_fig}{A whole number of significant figures for summary output.}
+
+\item{include_random_effects}{A flag specifying whether to include the
+group-level random-effect terms in the output.}
+
 \item{...}{Unused.}
 }
 \value{
 A tibble with one row per term and columns \code{term}, \code{estimate},
-\code{std.error}, \code{conf.low}, \code{conf.high}.
+\code{lower}, \code{upper}.
 }
 \description{
-Posterior summaries of the population-level terms and random-effect standard
-deviations.
+Posterior summaries of the model terms: the population-level effects, the
+random-effect standard deviations, and (when \code{include_random_effects = TRUE})
+the group-level random effects.
 }

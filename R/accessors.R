@@ -1,12 +1,11 @@
 # Diagnostic and structural accessors for kb_fit, computed from the stored
 # draws and diagnostics via posterior.
 
-#' @rdname ess
-#' @export
-ess.kb_fit <- function(x, ...) {
+#' @exportS3Method universals::esr
+esr.kb_fit <- function(x, ...) {
   rlang::check_dots_empty()
   s <- x$diagnostics$summary
-  stats::setNames(s$ess_bulk, s$variable)
+  stats::setNames(s$ess_bulk / posterior::ndraws(x$draws), s$variable)
 }
 
 #' @exportS3Method universals::rhat
@@ -14,6 +13,13 @@ rhat.kb_fit <- function(x, ...) {
   rlang::check_dots_empty()
   s <- x$diagnostics$summary
   stats::setNames(s$rhat, s$variable)
+}
+
+#' @exportS3Method universals::estimates
+estimates.kb_fit <- function(x, ...) {
+  rlang::check_dots_empty()
+  m <- posterior::summarise_draws(x$draws, estimate = stats::median)
+  stats::setNames(m$estimate, m$variable)
 }
 
 #' @exportS3Method stats::nobs

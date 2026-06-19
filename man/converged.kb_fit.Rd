@@ -4,21 +4,28 @@
 \alias{converged.kb_fit}
 \title{Convergence of a Model Fit}
 \usage{
-\method{converged}{kb_fit}(x, rhat = 1.05, ess = 400, ...)
+\method{converged}{kb_fit}(x, rhat = 1.05, esr = 0.1, ...)
 }
 \arguments{
 \item{x}{A \code{kb_fit} object.}
 
-\item{rhat}{A number: the maximum acceptable Rhat.}
+\item{rhat}{A number giving the maximum acceptable Rhat.}
 
-\item{ess}{A number: the minimum acceptable bulk effective sample size.}
+\item{esr}{A number giving the minimum acceptable effective sample rate
+(effective sample size divided by the number of draws).}
 
 \item{...}{Unused.}
 }
 \value{
-A flag: \code{TRUE} if all Rhat are below \code{rhat} and all bulk ESS above
-\code{ess}.
+A flag: \code{TRUE} if all Rhat are below \code{rhat} and all effective sample
+rates above \code{esr}.
 }
 \description{
 Convergence of a Model Fit
+}
+\details{
+The thresholds default to the \code{report} analysis-mode values (\code{rhat = 1.05},
+\code{esr = 0.1}). \code{esr} is the effective sample rate (effective sample size
+divided by the number of draws); a rate is used rather than an absolute ESS
+because it is stable under changes to the number of saved iterations.
 }

@@ -24,3 +24,14 @@ print.kb_fit <- function(x, ...) {
   cat("converged:    ", converged(x), "\n", sep = "")
   invisible(x)
 }
+
+#' @export
+print.summary_kb_fit <- function(x, ...) {
+  cat("<summary_kb_fit>\n", sep = "")
+  cat("model:        ", x$model, "\n", sep = "")
+  cat("species:      ", x$species, "\n", sep = "")
+  cat("observations: ", x$nobs, "\n", sep = "")
+  cat("converged:    ", x$converged, "\n\n", sep = "")
+  print(x$coefficients, ...)
+  invisible(x)
+}

@@ -1,17 +1,24 @@
 #' Convergence of a Model Fit
 #'
+#' @inheritParams params
 #' @param x A `kb_fit` object.
-#' @param rhat A number: the maximum acceptable Rhat.
-#' @param ess A number: the minimum acceptable bulk effective sample size.
 #' @param ... Unused.
 #'
-#' @return A flag: `TRUE` if all Rhat are below `rhat` and all bulk ESS above
-#'   `ess`.
+#' @details
+#' The thresholds default to the `report` analysis-mode values (`rhat = 1.05`,
+#' `esr = 0.1`). `esr` is the effective sample rate (effective sample size
+#' divided by the number of draws); a rate is used rather than an absolute ESS
+#' because it is stable under changes to the number of saved iterations.
+#'
+#' @return A flag: `TRUE` if all Rhat are below `rhat` and all effective sample
+#'   rates above `esr`.
 #' @exportS3Method universals::converged
-converged.kb_fit <- function(x, rhat = 1.05, ess = 400, ...) {
+converged.kb_fit <- function(x, rhat = 1.05, esr = 0.1, ...) {
   rlang::check_dots_empty()
   chk::chk_number(rhat)
-  chk::chk_number(ess)
+  chk::chk_number(esr)
   s <- x$diagnostics$summary
-  all(s$rhat < rhat, na.rm = TRUE) && all(s$ess_bulk > ess, na.rm = TRUE)
+  ndraws <- posterior::ndraws(x$draws)
+  all(s$rhat < rhat, na.rm = TRUE) &&
+    all((s$ess_bulk / ndraws) > esr, na.rm = TRUE)
 }

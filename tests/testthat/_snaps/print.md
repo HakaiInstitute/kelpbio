@@ -22,5 +22,5 @@
       species:      nereocystis
       observations: 300
       draws:        600 (2 chains)
-      converged:    FALSE
+      converged:    TRUE
 

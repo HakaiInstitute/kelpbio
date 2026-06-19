@@ -4,21 +4,23 @@
 \alias{glance.kb_fit}
 \title{Glance at a Model Fit}
 \usage{
-\method{glance}{kb_fit}(x, rhat = 1.05, ess = 400, ...)
+\method{glance}{kb_fit}(x, rhat = 1.05, esr = 0.1, ...)
 }
 \arguments{
 \item{x}{A \code{kb_fit} object.}
 
-\item{rhat}{A number: the maximum acceptable Rhat.}
+\item{rhat}{A number giving the maximum acceptable Rhat.}
 
-\item{ess}{A number: the minimum acceptable bulk effective sample size.}
+\item{esr}{A number giving the minimum acceptable effective sample rate
+(effective sample size divided by the number of draws).}
 
 \item{...}{Unused.}
 }
 \value{
-A one-row tibble with \code{nobs}, \code{nchains}, \code{niters}, \code{npars}, and
-\code{converged}.
+A one-row tibble with \code{n}, \code{K}, \code{nchains}, \code{niters}, \code{nthin}, \code{ess},
+\code{rhat}, and \code{converged}.
 }
 \description{
-One-row summary of a model fit with convergence verdict.
+One-row summary of a model fit with convergence verdict, using the
+\code{bboutools} column set.
 }
