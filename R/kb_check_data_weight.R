@@ -2,12 +2,13 @@
 #'
 #' Check that `data` contains the columns required to fit the weight model, with
 #' appropriate types and values. Returns the data invisibly on success and
-#' errors otherwise.
+#' errors via `chk` otherwise.
 #'
 #' Required columns: numeric `diameter` (> 0), numeric `weight` (> 0), and
-#' factor or character `site` and `year`.
+#' factor or character `site` and `year`, with no missing values.
 #'
 #' @inheritParams params
+#' @param x_name A string naming `data` in error messages.
 #'
 #' @return `data`, invisibly.
 #' @export
@@ -18,37 +19,31 @@
 #'   site = factor(c("a", "b")), year = factor(c("2020", "2021"))
 #' )
 #' kb_check_data_weight(data)
-kb_check_data_weight <- function(data) {
-  if (!is.data.frame(data)) {
-    cli::cli_abort("{.arg data} must be a data frame, not {.obj_type_friendly {data}}.")
-  }
-
-  required <- c("diameter", "weight", "site", "year")
-  missing <- setdiff(required, names(data))
-  if (length(missing)) {
-    cli::cli_abort("{.arg data} is missing required column{?s}: {.field {missing}}.")
-  }
+kb_check_data_weight <- function(data, x_name = deparse(substitute(data))) {
+  chk::chk_data(data, x_name = x_name)
+  chk::chk_superset(
+    names(data),
+    c("diameter", "weight", "site", "year"),
+    x_name = x_name
+  )
 
   for (col in c("diameter", "weight")) {
-    x <- data[[col]]
-    if (!is.numeric(x)) {
-      cli::cli_abort(
-        "Column {.field {col}} must be numeric, not {.obj_type_friendly {x}}."
-      )
-    }
-    if (any(x <= 0, na.rm = TRUE)) {
-      cli::cli_abort("Column {.field {col}} must be positive (> 0).")
-    }
+    nm <- kb_xname(x_name, col)
+    chk::chk_numeric(data[[col]], x_name = nm)
+    chk::chk_not_any_na(data[[col]], x_name = nm)
+    chk::chk_gt(data[[col]], value = 0, x_name = nm)
   }
 
   for (col in c("site", "year")) {
-    x <- data[[col]]
-    if (!is.factor(x) && !is.character(x)) {
-      cli::cli_abort(
-        "Column {.field {col}} must be a factor or character, not {.obj_type_friendly {x}}."
-      )
-    }
+    nm <- kb_xname(x_name, col)
+    chk::chk_character_or_factor(data[[col]], x_name = nm)
+    chk::chk_not_any_na(data[[col]], x_name = nm)
   }
 
   invisible(data)
+}
+
+# Column-qualified name for chk error messages (bboudata convention).
+kb_xname <- function(x_name, col) {
+  paste0("Column `", col, "` of ", x_name)
 }

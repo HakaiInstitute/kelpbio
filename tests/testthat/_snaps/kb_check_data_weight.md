@@ -4,7 +4,7 @@
       kb_check_data_weight(good[c("weight", "site", "year")])
     Condition
       Error in `kb_check_data_weight()`:
-      ! `data` is missing required column: diameter.
+      ! Good[c("weight", "site", "year")] must include 'diameter'.
 
 ---
 
@@ -12,7 +12,7 @@
       kb_check_data_weight(bad_type)
     Condition
       Error in `kb_check_data_weight()`:
-      ! Column diameter must be numeric, not a string.
+      ! Column `diameter` of bad_type must be numeric.
 
 ---
 
@@ -20,5 +20,5 @@
       kb_check_data_weight(bad_value)
     Condition
       Error in `kb_check_data_weight()`:
-      ! Column weight must be positive (> 0).
+      ! Column `weight` of bad_value must be greater than 0, not -1.
 

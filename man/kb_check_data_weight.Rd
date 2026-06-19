@@ -4,10 +4,12 @@
 \alias{kb_check_data_weight}
 \title{Validate Weight Model Input Data}
 \usage{
-kb_check_data_weight(data)
+kb_check_data_weight(data, x_name = deparse(substitute(data)))
 }
 \arguments{
 \item{data}{A data frame of observations.}
+
+\item{x_name}{A string naming \code{data} in error messages.}
 }
 \value{
 \code{data}, invisibly.
@@ -15,11 +17,11 @@ kb_check_data_weight(data)
 \description{
 Check that \code{data} contains the columns required to fit the weight model, with
 appropriate types and values. Returns the data invisibly on success and
-errors otherwise.
+errors via \code{chk} otherwise.
 }
 \details{
 Required columns: numeric \code{diameter} (> 0), numeric \code{weight} (> 0), and
-factor or character \code{site} and \code{year}.
+factor or character \code{site} and \code{year}, with no missing values.
 }
 \examples{
 data <- data.frame(
