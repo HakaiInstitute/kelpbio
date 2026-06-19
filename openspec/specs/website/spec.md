@@ -18,7 +18,7 @@ The package SHALL include a `_pkgdown.yml` that builds a Bootstrap 5 site using 
 #### Scenario: The navbar carries the shared Hakai branding
 
 - **WHEN** the `pkgdown/` directory is inspected
-- **THEN** it contains `templates/navbar.html` and `assets/hakai.png`, and the navbar template renders the Hakai logo as a link to `https://www.hakai.org`
+- **THEN** it contains `templates/navbar.html`, `assets/hakai.png`, and a placeholder `favicon/` set, and the navbar template renders the Hakai logo as a link to `https://www.hakai.org`
 
 ### Requirement: The site builds without error
 

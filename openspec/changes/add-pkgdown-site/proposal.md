@@ -29,7 +29,7 @@ This change delivers the website framework only: the pkgdown config + Hakai them
 
 ## Non-goals
 
-- **Favicons / package logo/hex.** Deferred until kelpbio has its own logo; hydrocan's favicons are package-specific and would mis-brand. The navbar still carries the shared Hakai logo.
+- **Final package logo / hex sticker.** kelpbio ships a placeholder `pkgdown/favicon/` set; the bespoke logo and hex are deferred until kelpbio has its own branding. The navbar carries the shared Hakai logo.
 - **Reference-index organisation** (`reference:` groupings in `_pkgdown.yml`). pkgdown auto-generates the index; explicit grouping waits until there are exported `kb_*()` functions.
 - **Real getting-started content / how-to articles.** The vignette is a placeholder; it is fleshed out as `kb_*()` functions land (Change B onward). No predictions/plotting articles here.
 - **Any package source, model, or `kb_` API changes.** This change is documentation infrastructure only.

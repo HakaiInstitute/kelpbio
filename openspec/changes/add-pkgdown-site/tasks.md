@@ -3,7 +3,7 @@
 - [x] 1.1 Add `_pkgdown.yml`: copy hydrocan's, retarget `url:` to `https://hakaiinstitute.github.io/kelpbio/`; keep `template` (bootstrap 5, `flatly`, primary/link `#aa2025`, navbar-bg `#2c3e50`, navbar-dark)
 - [x] 1.2 Copy `pkgdown/templates/navbar.html` verbatim from hydrocan (Hakai logo link to hakai.org)
 - [x] 1.3 Copy `pkgdown/assets/hakai.png` from hydrocan (shared Hakai branding)
-- [x] 1.4 Do NOT add `pkgdown/favicon/` — deferred until kelpbio has its own logo (see proposal Non-goals)
+- [x] 1.4 Add a placeholder `pkgdown/favicon/` (generated favicon set); refreshed when kelpbio gets its own logo
 - [x] 1.5 Confirm `.Rbuildignore` already excludes `_pkgdown.yml`, `pkgdown`, `docs` (it does) and `.gitignore` ignores `/docs/` (it does)
 - [x] 1.6 Add a `reference:` block to `_pkgdown.yml` organizing exports into thematic sections (fitting, priors, data, predictions and plotting, model summaries and diagnostics) with a `matches("\\.")` catch-all for S3 method topics, and add `@family` tags to the exported functions
 
