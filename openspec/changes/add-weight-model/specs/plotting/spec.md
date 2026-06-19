@@ -31,3 +31,11 @@
 #### Scenario: Observed points overlaid
 - **WHEN** `observed = kb_data_weight` is supplied
 - **THEN** the plot adds a points layer of the raw observations aligned to the prediction's axes
+
+### Requirement: autoplot method on predictions
+
+`autoplot.kb_predictions()` SHALL provide the conventional `ggplot2::autoplot` entry point, dispatching on the `kb_predictions` data frame (via its stored column-role attributes) and wrapping `kb_plot_predictions()`. It SHALL NOT dispatch on a fit object, preserving the rule that plotting functions take data frames, not fits.
+
+#### Scenario: autoplot on a kb_predictions object
+- **WHEN** `autoplot(predictions)` is called on a `kb_predictions` object
+- **THEN** it returns the same `ggplot` as `kb_plot_predictions(predictions)`, inferring `x`/`style`/`facet` from the stored metadata

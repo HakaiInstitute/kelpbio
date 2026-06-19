@@ -17,3 +17,28 @@ distribution, density, and wet-to-dry and carbon tissue conversions. This
 article will walk through a complete worked example once the modelling
 functions are available; for now it serves as a placeholder while the package
 API is under development.
+
+## Model checking with the standard Bayesian tooling
+
+A fitted model exposes the `rstantools` generics, so it composes directly with
+`bayesplot` and `loo`. The chunks below are illustrative (not run here, as
+fitting requires the compiled package).
+
+```{r fit, eval = FALSE}
+fit <- kb_fit_weight(kb_data_weight)
+```
+
+A posterior-predictive check uses the stored `yrep` via `posterior_predict()`:
+
+```{r ppc, eval = FALSE}
+bayesplot::ppc_dens_overlay(
+  y = fit$data$weight,
+  yrep = posterior_predict(fit)
+)
+```
+
+Leave-one-out model comparison uses the pointwise `log_lik()`:
+
+```{r loo, eval = FALSE}
+loo::loo(log_lik(fit))
+```

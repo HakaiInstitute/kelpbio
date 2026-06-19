@@ -12,15 +12,15 @@ A compiled model SHALL be samplable through `rstan::sampling(stanmodels$<name>, 
 #### Scenario: Sampling the weight model returns a stanfit
 
 - **WHEN** `rstan::sampling()` is called on `stanmodels$weight` with a valid data list (observation vectors, `site`/`year` factor indices, and prior hyperparameters)
-- **THEN** it returns a `stanfit` object containing the fixed effects `bWeight30`, `bDiameter`, `bDiameter2`, the random-effect SDs `sSite`, `sSiteDiameter`, `sSiteYear`, the residual scale `sWeight`, the per-site vectors `bSite` and `bSiteDiameter`, and the site-by-year matrix `bSiteYear`
+- **THEN** it returns a `stanfit` object containing the fixed effects `bWeight30`, `bDiameter`, `bDiameter2`, the random-effect SDs `sSite`, `sSiteDiameter`, `sSiteYear`, the residual scale `sWeight`, the per-site vectors `bSite` and `bSiteDiameter`, the site-by-year matrix `bSiteYear`, and the generated quantities `log_lik` and `yrep`
 
 ### Requirement: The weight model follows the engine conventions
 
-The bundled `inst/stan/weight.stan` SHALL implement the full allometric weight structure -- a quadratic log-diameter mean with site intercept, site slope (on log diameter), and site:year random effects, and a Student-t(4) likelihood -- with priors passed as data, a likelihood guard, and both prediction terms, per `docs/bayesian-engine.md` and the model catalogue in `docs/package-design.md`.
+The bundled `inst/stan/weight.stan` SHALL implement the full allometric weight structure -- a quadratic log-diameter mean with site intercept, site slope (on log diameter), and site:year random effects, and a Student-t(4) likelihood -- with priors passed as data, a likelihood guard, and `log_lik`/`yrep` generated quantities, per `docs/bayesian-engine.md` and the model catalogue in `docs/package-design.md`. The mean (`log_eWeight`) SHALL be defined once, in `transformed parameters`, and reused by both the likelihood and the generated quantities.
 
 #### Scenario: The mean follows the full allometric structure
 
-- **WHEN** the linear predictor for an observation is formed
+- **WHEN** the linear predictor for an observation is formed in `transformed parameters`
 - **THEN** it is `bWeight30 + bSite[site] + (bDiameter + bSiteDiameter[site]) * log(diameter / 30) + bDiameter2 * log(diameter / 30)^2 + bSiteYear[site, year]`, with `bSite`, `bSiteDiameter`, and `bSiteYear` non-centered (`z_* * s_*`)
 
 #### Scenario: Prior hyperparameters are read from the data block
@@ -38,7 +38,7 @@ The bundled `inst/stan/weight.stan` SHALL implement the full allometric weight s
 - **WHEN** the data list sets `nObs = 0` (no observed rows, `nSite`/`nYear >= 1`)
 - **THEN** the model samples without error (the likelihood loop is a no-op)
 
-#### Scenario: Generated quantities expose typical and marginal terms
+#### Scenario: Generated quantities expose log_lik and yrep
 
-- **WHEN** the model is sampled over an observed grid
-- **THEN** the `generated quantities` block produces a `typical` term (all random effects zeroed) and a `marginal` term (a new, unobserved site-year with the site intercept, site slope, and site:year effects each drawn from their estimated hyperpriors via `normal_rng`)
+- **WHEN** the model is sampled
+- **THEN** the `generated quantities` block, reusing `log_eWeight`, produces a pointwise `log_lik` (`student_t_lpdf` of `log_weight` given the mean and `sWeight`, for `loo`) and a `yrep` (response-scale posterior-predictive replicate via `student_t_rng`, for `bayesplot::pp_check`); predictions at new data are computed in R from the stored draws, not via standalone generated quantities

@@ -9,6 +9,7 @@ R package for Bayesian kelp biomass estimation. All exported functions use the `
 | Analysis project (final models + Stan code) | `~/Analyses/poissonconsulting/hakai-kelp-biomass-25/` |
 | Reference package architecture | `~/Code/poissonconsulting/bboutools/` |
 | Package API design | `docs/package-design.md` |
+| S3 generic inventory (which generic, from which package) | `docs/generics.md` |
 | Prediction / derived-quantity engine (posterior `rvar`) | `docs/predictions.md` |
 | Bayesian engine (rstan/rstantools) | `docs/bayesian-engine.md` |
 | API design rationale + bboutools divergences | `docs/bboutools-api-review.md` |
