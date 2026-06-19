@@ -39,13 +39,6 @@ test_that("invalid by / uncertainty combinations error", {
   expect_error(kb_predict_weight(weight_fit, by = "bogus"))
 })
 
-test_that("samples variant returns draws attached to the grid", {
-  s <- kb_predict_weight_samples(weight_fit)
-  expect_s3_class(s, "kb_predictions")
-  expect_true(inherits(s$.prediction, "rvar"))
-  expect_equal(posterior::ndraws(s$.prediction), posterior::ndraws(weight_fit$draws))
-})
-
 test_that("new_data predicts at the supplied rows", {
   p <- kb_predict_weight(weight_fit, new_data = data.frame(diameter = c(20, 40, 60)))
   expect_equal(nrow(p), 3L)

@@ -15,12 +15,12 @@ level.}
 \item{...}{Unused.}
 }
 \value{
-The input data with added columns \code{.fitted}, \code{.resid}, \code{.lower},
-\code{.upper}.
+The input data with added columns \code{fitted}, \code{residual}, \code{lower},
+\code{upper}.
 }
 \description{
 Return the input data augmented with fitted values and residuals, evaluated
 at each observed row using that row's estimated random effects (site
-intercept, site slope, and site:year). Full precision; for residual
-diagnostics and posterior predictive checks.
+intercept, site slope, and site:year) via the shared \code{.weight_linpred()}
+engine. Full precision; for residual diagnostics.
 }

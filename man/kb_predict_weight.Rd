@@ -2,7 +2,6 @@
 % Please edit documentation in R/kb_predict_weight.R
 \name{kb_predict_weight}
 \alias{kb_predict_weight}
-\alias{kb_predict_weight_samples}
 \title{Predict Allometric Weight}
 \usage{
 kb_predict_weight(
@@ -13,14 +12,6 @@ kb_predict_weight(
   conf_level = 0.95,
   estimate = stats::median,
   sig_fig = 3
-)
-
-kb_predict_weight_samples(
-  fit,
-  new_data = NULL,
-  by = NULL,
-  uncertainty = c("marginal", "typical"),
-  ...
 )
 }
 \arguments{
@@ -41,20 +32,16 @@ level.}
 \item{estimate}{A function giving the point estimate (e.g. \code{median}).}
 
 \item{sig_fig}{A whole number of significant figures for summary output.}
-
-\item{...}{These dots are for future extensions and must be empty.}
 }
 \value{
-A \code{kb_predictions} object: a summary tibble (\code{estimate}, \code{lower},
-\code{upper} plus grouping columns) from \code{kb_predict_weight()}, or the grid with
-a \code{.prediction} \code{rvar} column from \code{kb_predict_weight_samples()}.
+A \code{kb_predictions} object: a summary tibble with \code{estimate}, \code{lower},
+\code{upper} plus the grouping columns.
 }
 \description{
-Predict weight over a diameter sequence from a fitted weight model, computed
-from the stored posterior draws with the \code{posterior} \code{rvar} engine (see
-\code{docs/predictions.md}). \code{kb_predict_weight()} returns a summary; the
-\verb{_samples()} variant returns the full posterior draws attached to the grid as
-an \code{.prediction} \code{rvar} column.
+Predict weight over a diameter sequence from a fitted weight model. The
+summary is the summariser over \code{posterior_epred()} (the prediction engine;
+see \code{docs/predictions.md}). For the raw posterior prediction draws use
+\code{posterior_epred()} / \code{posterior_predict()} directly.
 }
 \details{
 \code{by} selects grouping factors that each get their own curve, held at their
