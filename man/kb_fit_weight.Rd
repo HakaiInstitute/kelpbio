@@ -11,7 +11,7 @@ kb_fit_weight(
   prior_only = FALSE,
   chains = 4L,
   niters = 1000L,
-  nthin = 10L,
+  nthin = 1L,
   cores = NULL,
   quiet = FALSE,
   ...

@@ -10,6 +10,7 @@ kb_plot_predictions(
   style = NULL,
   facet = NULL,
   observed = NULL,
+  max_facets = 12L,
   ...
 )
 }
@@ -25,6 +26,10 @@ kb_plot_predictions(
 metadata.}
 
 \item{observed}{Optional raw data to overlay as points; \code{NULL} for none.}
+
+\item{max_facets}{A whole number capping the facet panels drawn; if the
+grouping has more groups, the first \code{max_facets} are shown with a warning.
+Use \code{Inf} to disable.}
 
 \item{...}{Unused.}
 }
@@ -47,6 +52,7 @@ function errors and asks for \code{x}.
 \seealso{
 Other prediction: 
 \code{\link{autoplot.kb_predictions}()},
-\code{\link{kb_predict_weight}()}
+\code{\link{kb_predict_weight}()},
+\code{\link{kb_predict_weight_by}()}
 }
 \concept{prediction}

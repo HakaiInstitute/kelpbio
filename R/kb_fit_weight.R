@@ -36,7 +36,7 @@ kb_fit_weight <- function(data,
                           prior_only = FALSE,
                           chains = 4L,
                           niters = 1000L,
-                          nthin = 10L,
+                          nthin = 1L,
                           cores = NULL,
                           quiet = FALSE,
                           ...) {
@@ -75,6 +75,9 @@ kb_fit_weight <- function(data,
       cores = cores %||% as.integer(chains),
       refresh = if (quiet) 0L else max(1L, total_iter %/% 10L),
       show_messages = FALSE,
+      # Stream textual progress to the console; never open the HTML progress
+      # viewer (which triggers a "URL cannot be accessed" pop-up in some GUIs).
+      open_progress = FALSE,
       ...
     )
   )

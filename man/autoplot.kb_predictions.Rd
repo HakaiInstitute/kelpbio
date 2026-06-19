@@ -23,6 +23,7 @@ prediction data frame (via its stored attributes), never on a fit.
 \seealso{
 Other prediction: 
 \code{\link{kb_plot_predictions}()},
-\code{\link{kb_predict_weight}()}
+\code{\link{kb_predict_weight}()},
+\code{\link{kb_predict_weight_by}()}
 }
 \concept{prediction}

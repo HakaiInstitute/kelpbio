@@ -18,6 +18,9 @@
 #' @param facet Grouping variables to facet by; `NULL` infers them from the
 #'   metadata.
 #' @param observed Optional raw data to overlay as points; `NULL` for none.
+#' @param max_facets A whole number capping the facet panels drawn; if the
+#'   grouping has more groups, the first `max_facets` are shown with a warning.
+#'   Use `Inf` to disable.
 #' @param ... Unused.
 #'
 #' @return A `ggplot` object.
@@ -28,11 +31,14 @@ kb_plot_predictions <- function(predictions,
                                 style = NULL,
                                 facet = NULL,
                                 observed = NULL,
+                                max_facets = 12L,
                                 ...) {
   rlang::check_dots_empty()
   if (!is.null(observed)) {
     chk::chk_data(observed)
   }
+  chk::chk_number(max_facets)
+  chk::chk_gt(max_facets, value = 0)
   if (!is.data.frame(predictions)) {
     cli::cli_abort("{.arg predictions} must be a {.cls kb_predictions} data frame.")
   }
@@ -44,6 +50,24 @@ kb_plot_predictions <- function(predictions,
   response <- attr(predictions, "kb_response")
   x <- x %||% predictor
   facet <- facet %||% attr(predictions, "kb_group_vars")
+
+  # Cap the number of facet panels so a many-group prediction (e.g. site x year
+  # over many sites) stays readable; keep the first `max_facets` groups.
+  if (length(facet) && is.finite(max_facets)) {
+    keys <- do.call(paste, c(predictions[facet], sep = "\r"))
+    groups <- unique(keys)
+    if (length(groups) > max_facets) {
+      keep <- groups[seq_len(max_facets)]
+      cli::cli_warn(c(
+        "Showing the first {max_facets} of {length(groups)} {.field {facet}} group{?s}.",
+        i = "Pre-filter {.arg predictions} or raise {.arg max_facets} to show more."
+      ))
+      predictions <- predictions[keys %in% keep, , drop = FALSE]
+      if (!is.null(observed) && all(facet %in% names(observed))) {
+        observed <- observed[do.call(paste, c(observed[facet], sep = "\r")) %in% keep, , drop = FALSE]
+      }
+    }
+  }
 
   if (is.null(x) || !x %in% names(predictions)) {
     cli::cli_abort(c(
