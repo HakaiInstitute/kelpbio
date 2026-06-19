@@ -22,7 +22,7 @@ d$year <- factor(d$year)
 
 weight_fit <- kb_fit_weight(
   d,
-  chains = 2L, iter = 300L, nthin = 1L, cores = 2L,
+  chains = 2L, niters = 300L, nthin = 1L, cores = 2L,
   quiet = TRUE, seed = 42L
 )
 

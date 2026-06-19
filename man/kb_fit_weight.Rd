@@ -10,10 +10,10 @@ kb_fit_weight(
   priors = NULL,
   prior_only = FALSE,
   chains = 4L,
-  iter = 1000L,
+  niters = 1000L,
   nthin = 10L,
   cores = NULL,
-  quiet = TRUE,
+  quiet = FALSE,
   ...
 )
 }
@@ -31,13 +31,17 @@ defaults; unspecified entries keep their defaults.}
 
 \item{chains}{A whole number of MCMC chains.}
 
-\item{iter}{A whole number of saved post-warmup iterations per chain.}
+\item{niters}{A whole number of saved post-warmup draws per chain (warmup
+defaults to match). Named \code{niters} (not \code{iter}) to avoid clashing with
+rstan's own \code{iter}, which counts warmup too.}
 
 \item{nthin}{A whole number giving the thinning interval.}
 
 \item{cores}{A whole number of cores, or \code{NULL} to fit chains in parallel.}
 
-\item{quiet}{A flag specifying whether to suppress sampler output.}
+\item{quiet}{A flag specifying whether to suppress the sampler progress
+output. Diagnostic warnings (divergences, etc.) are suppressed regardless
+and surfaced through \code{\link[=converged]{converged()}}/\code{\link[=glance]{glance()}}.}
 
 \item{...}{Additional arguments passed to \code{\link[rstan:stanmodel-method-sampling]{rstan::sampling()}}.}
 }
@@ -50,10 +54,16 @@ intercept, site slope, and site:year random effects, Student-t likelihood) to
 weight data via Stan.
 }
 \details{
-\code{iter} is the number of saved post-warmup draws per chain; warmup defaults to
-match \code{iter} and the post-warmup phase is thinned by \code{nthin}. The live
+\code{niters} is the number of saved post-warmup draws per chain; warmup defaults
+to match \code{niters} and the post-warmup phase is thinned by \code{nthin}. The live
 \code{stanfit} is discarded after fitting: the returned object stores the extracted
-posterior draws, diagnostics, data, and metadata (see \code{docs/predictions.md}).
+posterior draws (including the \code{log_lik} and \code{yrep} generated quantities),
+diagnostics, data, and metadata (see \code{docs/predictions.md}).
+
+With the default \code{quiet = FALSE} the sampler shows its progress but other Stan
+output and the post-sampling HMC diagnostic warnings (divergences, treedepth,
+low ESS/Rhat) are suppressed; inspect convergence with \code{\link[=converged]{converged()}} /
+\code{\link[=glance]{glance()}}.
 }
 \examples{
 \dontrun{
