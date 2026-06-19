@@ -2,12 +2,11 @@
 % Please edit documentation in R/kb_predict_weight.R
 \name{kb_predict_weight}
 \alias{kb_predict_weight}
-\title{Predict Allometric Weight}
+\title{Predict Weight for New Data}
 \usage{
 kb_predict_weight(
   fit,
   new_data = NULL,
-  by = NULL,
   new_levels = c("sample", "average"),
   conf_level = 0.95,
   estimate = stats::median,
@@ -17,21 +16,19 @@ kb_predict_weight(
 \arguments{
 \item{fit}{A \code{kb_fit_weight} object.}
 
-\item{new_data}{A data frame with a \code{diameter} column (and the \code{by} columns),
-or \code{NULL} to auto-generate a diameter sequence over the observed range.}
-
-\item{by}{A character vector of grouping factors to build prediction curves
-over, or \code{NULL} for a single population-level curve. Each named factor is
-expanded over its observed levels and conditioned on at its estimated
-random effects.}
+\item{new_data}{A data frame with a \code{diameter} column (and optional \code{site} /
+\code{year} columns), or \code{NULL} to predict at the observed data.}
 
 \item{new_levels}{A string, one of \code{"sample"} or \code{"average"}, controlling how
-random-effect factors that are not conditioned on are treated. \code{"sample"}
-draws a new random effect from \code{Normal(0, sd)} (a new, unsampled group),
-widening the interval to include between-group variation. \code{"average"} holds
-the random effects at their central (zero) value, giving the typical
-(central) group on the linear-predictor scale (not the response-scale
-arithmetic mean across the group population).}
+random effects that are not conditioned on are treated: factors absent from
+the prediction, and (in \code{\link[=kb_predict_weight]{kb_predict_weight()}}) any new level not seen in the
+fit. \code{"sample"} draws a new random effect from \code{Normal(0, sd)} (a new,
+unsampled group), widening the interval to include between-group variation.
+\code{"average"} holds the random effects at their central (zero) value, giving
+the typical group on the linear-predictor scale. Known levels are always
+conditioned on, regardless of \code{new_levels}. Note that \code{"average"} on a new
+group reports the typical-group prediction, not a calibrated interval for
+that specific new group.}
 
 \item{conf_level}{A number between 0 and 1 giving the compatibility-interval
 level.}
@@ -41,26 +38,29 @@ level.}
 \item{sig_fig}{A whole number of significant figures for summary output.}
 }
 \value{
-A \code{kb_predictions} object: a summary tibble with \code{estimate}, \code{lower},
-\code{upper} plus the grouping columns.
+A \code{kb_predictions} object: the input rows with added \code{estimate},
+\code{lower}, \code{upper} columns.
 }
 \description{
-Predict weight over a diameter sequence from a fitted weight model. The
-summary is the summariser over \code{posterior_epred()} (the prediction engine).
-For the raw posterior prediction draws use \code{posterior_epred()} /
-\code{posterior_predict()} directly.
+Predict weight at the rows you supply: a data frame of measured diameters
+(and, optionally, the site and year they were collected at). This is the
+entry point for turning cheaply-collected diameters into predicted weight
+without harvesting. With \code{new_data = NULL} it predicts at the observed data
+(matching \code{\link[=augment]{augment()}}'s fitted values, the base R \code{predict()} convention).
 }
 \details{
-\code{by} builds a separate curve per observed level of each named grouping
-factor, conditioned on that level's estimated random effects. \code{new_levels}
-controls factors not named in \code{by}: \code{"sample"} (a new, unsampled group: a
-random effect drawn from \code{Normal(0, sd)}) or \code{"average"} (the random effects
-held at their central, zero, value). For the weight model the available \code{by}
-values are \code{NULL}, \code{"site"}, and \code{c("site", "year")}.
+Conditioning is resolved per row: a \code{site}/\code{year} value the model has seen is
+conditioned on its estimated random effects; a new site or year (or an absent
+grouping column) is handled by \code{new_levels}. A mix of observed and new sites
+in one \code{new_data} is resolved row by row, in a single call.
+
+For allometric curves to visualise (one line per group over a diameter
+sequence) use \code{\link[=kb_predict_weight_by]{kb_predict_weight_by()}}.
 }
 \seealso{
 Other prediction: 
 \code{\link{autoplot.kb_predictions}()},
-\code{\link{kb_plot_predictions}()}
+\code{\link{kb_plot_predictions}()},
+\code{\link{kb_predict_weight_by}()}
 }
 \concept{prediction}

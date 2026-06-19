@@ -1,7 +1,9 @@
 #' Predict Method for a Weight Model Fit
 #'
 #' A thin wrapper on [kb_predict_weight()] providing the conventional
-#' `stats::predict` entry point. Returns a `kb_predictions` summary tibble.
+#' `stats::predict` entry point: predict weight at the supplied `new_data`
+#' rows (or the observed data when `new_data = NULL`). For allometric curves to
+#' visualise, use [kb_predict_weight_by()].
 #'
 #' @inheritParams params
 #' @inheritParams kb_predict_weight
@@ -13,7 +15,6 @@
 #' @exportS3Method stats::predict
 predict.kb_fit_weight <- function(object,
                                   new_data = NULL,
-                                  by = NULL,
                                   new_levels = c("sample", "average"),
                                   conf_level = 0.95,
                                   estimate = stats::median,
@@ -23,7 +24,6 @@ predict.kb_fit_weight <- function(object,
   kb_predict_weight(
     object,
     new_data = new_data,
-    by = by,
     new_levels = new_levels,
     conf_level = conf_level,
     estimate = estimate,

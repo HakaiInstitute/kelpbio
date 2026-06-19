@@ -24,6 +24,6 @@ posterior_epred.kb_fit_weight <- function(object,
                                           new_levels = "sample",
                                           ...) {
   rlang::check_dots_empty()
-  res <- weight_grid_linpred(object, predict_newdata(object, newdata), new_levels = new_levels)
+  res <- weight_data_linpred(object, newdata, new_levels)
   exp(posterior::draws_of(res$linpred))
 }

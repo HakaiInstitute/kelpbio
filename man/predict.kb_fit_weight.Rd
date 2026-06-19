@@ -7,7 +7,6 @@
 \method{predict}{kb_fit_weight}(
   object,
   new_data = NULL,
-  by = NULL,
   new_levels = c("sample", "average"),
   conf_level = 0.95,
   estimate = stats::median,
@@ -18,21 +17,19 @@
 \arguments{
 \item{object}{A \code{kb_fit_weight} object.}
 
-\item{new_data}{A data frame with a \code{diameter} column (and the \code{by} columns),
-or \code{NULL} to auto-generate a diameter sequence over the observed range.}
-
-\item{by}{A character vector of grouping factors to build prediction curves
-over, or \code{NULL} for a single population-level curve. Each named factor is
-expanded over its observed levels and conditioned on at its estimated
-random effects.}
+\item{new_data}{A data frame with a \code{diameter} column (and optional \code{site} /
+\code{year} columns), or \code{NULL} to predict at the observed data.}
 
 \item{new_levels}{A string, one of \code{"sample"} or \code{"average"}, controlling how
-random-effect factors that are not conditioned on are treated. \code{"sample"}
-draws a new random effect from \code{Normal(0, sd)} (a new, unsampled group),
-widening the interval to include between-group variation. \code{"average"} holds
-the random effects at their central (zero) value, giving the typical
-(central) group on the linear-predictor scale (not the response-scale
-arithmetic mean across the group population).}
+random effects that are not conditioned on are treated: factors absent from
+the prediction, and (in \code{\link[=kb_predict_weight]{kb_predict_weight()}}) any new level not seen in the
+fit. \code{"sample"} draws a new random effect from \code{Normal(0, sd)} (a new,
+unsampled group), widening the interval to include between-group variation.
+\code{"average"} holds the random effects at their central (zero) value, giving
+the typical group on the linear-predictor scale. Known levels are always
+conditioned on, regardless of \code{new_levels}. Note that \code{"average"} on a new
+group reports the typical-group prediction, not a calibrated interval for
+that specific new group.}
 
 \item{conf_level}{A number between 0 and 1 giving the compatibility-interval
 level.}
@@ -48,7 +45,9 @@ A \code{kb_predictions} object.
 }
 \description{
 A thin wrapper on \code{\link[=kb_predict_weight]{kb_predict_weight()}} providing the conventional
-\code{stats::predict} entry point. Returns a \code{kb_predictions} summary tibble.
+\code{stats::predict} entry point: predict weight at the supplied \code{new_data}
+rows (or the observed data when \code{new_data = NULL}). For allometric curves to
+visualise, use \code{\link[=kb_predict_weight_by]{kb_predict_weight_by()}}.
 }
 \seealso{
 Other generics: 

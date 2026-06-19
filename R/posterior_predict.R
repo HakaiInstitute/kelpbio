@@ -31,7 +31,7 @@ posterior_predict.kb_fit_weight <- function(object,
     }
     return(posterior::draws_of(object$gq$yrep))
   }
-  res <- weight_grid_linpred(object, newdata, new_levels = new_levels)
+  res <- weight_data_linpred(object, newdata, new_levels)
   lp <- posterior::draws_of(res$linpred) # D x N
   sweight <- as.vector(posterior::draws_of(object$draws$sWeight)) # length D
   # student_t(nu, mu, sigma) = mu + sigma * t_nu; nu = 4 (fixed in weight.stan).

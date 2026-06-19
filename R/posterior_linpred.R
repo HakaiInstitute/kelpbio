@@ -24,7 +24,7 @@ posterior_linpred.kb_fit_weight <- function(object,
                                             ...) {
   rlang::check_dots_empty()
   chk::chk_flag(transform)
-  res <- weight_grid_linpred(object, predict_newdata(object, newdata), new_levels = new_levels)
+  res <- weight_data_linpred(object, newdata, new_levels)
   m <- posterior::draws_of(res$linpred)
   if (transform) exp(m) else m
 }

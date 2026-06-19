@@ -1,212 +1,141 @@
-# Demo / test-drive: kelpbio weight model prediction + uncertainty API
+# Demo / test-drive: kelpbio weight model prediction API
 # -----------------------------------------------------------------------------
 # Purpose: exercise the full prediction surface end to end so we can judge
 #   (1) coverage  - is all the functionality we need present?
 #   (2) ergonomics - are the argument choices intuitive?
 #   (3) output     - do the results look sensible?
 #
-# Run interactively, block by block (the fits are fast; no cmdstan needed).
-# A Stan-free package load is enough since no .stan changed:
-#   devtools::load_all()   # or library(kelpbio) after devtools::install()
+# Run interactively, block by block. A Stan-free package load is enough since no
+# .stan changed:  devtools::load_all()   (or library(kelpbio) after install).
 #
-# Two real-world use cases:
-#   A. Hakai fits a weight model to their own harvest data, inspects it, and
-#      predicts / visualises at the population and group level and at the
-#      observation level, under different forms of uncertainty.
-#   B. Hakai reuses an existing (coastwide) weight model fit and predicts weight
-#      for newly collected diameters - at existing sites, brand-new sites, a new
-#      year at existing sites, and a mix - without harvesting (no new weights).
-# -----------------------------------------------------------------------------
+# Two prediction verbs, independent arguments:
+#   kb_predict_weight(fit, new_data)     -> predict weight for rows you supply
+#                                           (per-row: known levels conditioned,
+#                                            new levels sampled). predict() wraps it.
+#   kb_predict_weight_by(fit, by)        -> allometric curve(s) over a diameter
+#                                           sequence, for visualisation.
+# augment(fit) is the diagnostics verb (fitted/residuals on the training data).
 
 library(kelpbio)
 library(ggplot2)
 library(dplyr)
+library(bayesplot)
 
 # =============================================================================
-# USE CASE A - Fit to your own data, inspect, predict, visualise
+# USE CASE A - Fit to data, inspect, visualise the allometric curves
 # =============================================================================
 
 # A0. The data ---------------------------------------------------------------
-# Simulated Nereocystis sub-bulb diameter (mm) and wet weight (kg) across 6
-# sites and 4 years (one site-year cell is intentionally absent).
+# Real Hakai Nereocystis sub-bulb diameter (mm) and wet weight (kg).
 str(kb_data_weight)
-kb_check_data_weight(kb_data_weight)   # validate before fitting
+kb_check_data_weight(kb_data_weight) # validate before fitting
 
 # A1. Fit ---------------------------------------------------------------------
-# Small/fast settings for a test-drive; bump for real use.
-fit <- kb_fit_weight(
-  kb_data_weight,
-  chains = 2, niters = 500, quiet = TRUE
-)
-fit                       # print method: model, data, sampler summary
+fit <- kb_fit_weight(kb_data_weight, chains = 4, niters = 500, quiet = FALSE)
+fit # print: model, data, sampler summary (no URL popup; progress streams)
 
 # A2. Inspect the fit via the generics ---------------------------------------
-converged(fit)            # did it converge? (report-mode rhat/esr thresholds)
-glance(fit)               # one-row model-level summary + diagnostics
-tidy(fit)                 # tidy parameter estimates (term/estimate/lower/upper)
-coef(fit)                 # fixed-effect coefficients
-prior_summary(fit)        # the resolved priors actually used
-pars(fit); nterms(fit); npars(fit); nobs(fit)   # universals accessors
-
-# Raw posterior access for bespoke work / the broader ecosystem:
-draws <- samples(fit)     # posterior::draws_rvars
+converged(fit)
+glance(fit)
+tidy(fit, include_random_effects = FALSE)
+coef(fit)
+prior_summary(fit)
+draws <- samples(fit) # posterior::draws_rvars for bespoke work
 posterior::summarise_draws(draws) |> head()
 
-# A3. Residual diagnostics at the observed points -----------------------------
-# augment() conditions on each row's own site & year (its estimated REs).
-aug <- augment(fit)
-head(aug)
+# A3. Residual diagnostics (augment = diagnostics verb) -----------------------
+aug <- augment(fit) # fitted/residual at observed rows, conditioned on their REs
 ggplot(aug, aes(fitted, residual)) +
   geom_hline(yintercept = 0, linetype = 2) +
-  geom_point(alpha = 0.4) +
-  labs(title = "A3. Residuals vs fitted (conditioned on observed site-year)")
+  geom_point(alpha = 0.3) +
+  labs(title = "A3. Residuals vs fitted")
 
-# Posterior-predictive check using the stored yrep (bayesplot-ready):
-if (requireNamespace("bayesplot", quietly = TRUE)) {
-  yrep <- posterior_predict(fit)           # D x N, conditioned on observed groups
-  bayesplot::ppc_dens_overlay(
-    y = fit$data$weight,
-    yrep = yrep[1:50, , drop = FALSE]
-  ) + ggplot2::ggtitle("A3. Posterior predictive check (yrep)")
-}
+# Posterior-predictive check from stored yrep (bayesplot-ready):
+yrep <- posterior_predict(fit) # D x N, conditioned on observed groups
+ppc_dens_overlay(y = fit$data$weight, yrep = yrep[1:50, , drop = FALSE]) +
+  ggtitle("A3. Posterior predictive check (yrep)")
 
-# A4. The three uncertainty axes, made explicit -------------------------------
-# Axis 1 - the QUANTITY (which generic):
-#   posterior_linpred : log-scale mean (no link, no obs noise)
-#   posterior_epred   : expected weight = exp(linpred) (link, no obs noise)
-#   posterior_predict : expected weight + Student-t observation noise
-# Axis 2 - the GROUP REGIME (by + new_levels):
-#   by         -> which grouping factors get their own curve (conditioned on)
-#   new_levels -> what to do with factors NOT named in `by`:
-#                   "sample"  = a new, unsampled group (Normal(0, sd) draw)
-#                   "average" = the typical group (random effects held at 0)
-# Axis 3 - PARAMETER uncertainty is always on (it is the posterior).
-grid <- data.frame(diameter = seq(20, 80, by = 20))
-
-dim(posterior_linpred(fit, newdata = grid))             # D x N, log scale
-dim(posterior_epred(fit, newdata = grid))               # D x N, response scale
-dim(posterior_predict(fit, newdata = grid))             # D x N, + obs noise
-
-# new_levels widens epred at the population level (between-site variation in):
+# A4. new_levels controls the population band (the fix for the old SD bug) ----
+# A diameter-only grid (no site/year columns) -> new_levels is in force:
+grid <- data.frame(diameter = seq(20, 60, by = 10))
 ep_avg <- posterior_epred(fit, newdata = grid, new_levels = "average")
 ep_smp <- posterior_epred(fit, newdata = grid, new_levels = "sample")
 rbind(
-  average = apply(ep_avg, 2, sd),
-  sample  = apply(ep_smp, 2, sd)
-)   # sample SDs should be >= average SDs
+  average = apply(ep_avg, 2, sd), # narrow: parameter uncertainty only
+  sample = apply(ep_smp, 2, sd) # wider: + between-site variation
+)
 
-# A5. Population-level prediction curve ---------------------------------------
-# Typical (average) site - narrow: only parameter uncertainty.
-pop_avg <- kb_predict_weight(fit, new_levels = "average")
-# A new, unsampled site-year - wide: adds between-group variation.
-pop_smp <- kb_predict_weight(fit, new_levels = "sample")
-print(pop_avg)
+# A5. Population curve --------------------------------------------------------
+pop_avg <- kb_predict_weight_by(fit, new_levels = "average") # typical site
+pop_smp <- kb_predict_weight_by(fit, new_levels = "sample") # a new, unsampled site
+print(pop_smp)
 kb_plot_predictions(pop_avg, observed = kb_data_weight) +
-  ggtitle("A5. Population-average weight-at-diameter")
+  ggtitle("A5. Typical-site weight-at-diameter")
 kb_plot_predictions(pop_smp, observed = kb_data_weight) +
-  ggtitle("A5. New-site-year weight-at-diameter (wider)")
+  ggtitle("A5. New-site weight-at-diameter (wider band)")
 
-# A6. Group-level prediction curves -------------------------------------------
-# One curve per site (conditioned on each site's estimated REs); the omitted
-# site:year effect is averaged out.
-by_site <- kb_predict_weight(fit, by = "site", new_levels = "average")
-autoplot(by_site, observed = kb_data_weight) +
+# A6. Group-level curves ------------------------------------------------------
+# One curve per site (site conditioned; omitted site:year averaged out):
+kb_predict_weight_by(fit, by = "site", new_levels = "average") |>
+  kb_plot_predictions() +
   ggtitle("A6. Per-site weight-at-diameter")
 
-# One curve per observed site-by-year cell (every factor conditioned on):
-by_site_year <- kb_predict_weight(fit, by = c("site", "year"))
-autoplot(by_site_year) +
-  ggtitle("A6. Per-site-year weight-at-diameter")
+# Per site-year: many panels with real data -> facet cap kicks in (warns,
+# shows the first max_facets). Raise max_facets or pre-filter to see more.
+kb_predict_weight_by(fit, by = c("site", "year")) |>
+  kb_plot_predictions() +
+  ggtitle("A6. Per-site-year (facet-capped)")
 
-# A7. Guard rails - do the errors read well? ----------------------------------
-# year has no main effect (enters only via site:year):
-try(kb_predict_weight(fit, by = "year"))
-# nothing left to sample when every factor is conditioned on:
-try(kb_predict_weight(fit, by = c("site", "year"), new_levels = "sample"))
+# A7. Guard rail - year has no main effect (enters only via site:year):
+try(kb_predict_weight_by(fit, by = "year"))
 
 
 # =============================================================================
-# USE CASE B - Reuse an existing model, predict weight for NEW diameter data
+# USE CASE B - Predict weight for newly measured diameters (no harvest)
 # =============================================================================
-# Hakai returns next year, measures sub-bulb diameters, but does NOT harvest
-# (no new weights). They reuse the existing weight model to turn diameters into
-# predicted weights. In production this would be a shipped pre-fit object
-# (e.g. kb_default_weight); here we reuse `fit` from Use Case A as that model.
-coastwide <- fit
-existing_sites <- coastwide$meta$site_levels   # site1..site6
-existing_years <- coastwide$meta$year_levels   # 2019..2022
+# Hakai returns, measures sub-bulb diameters, does NOT harvest. Reuse the fit to
+# turn diameters into predicted weights. (In production this is a shipped pre-fit
+# object; here we reuse `fit`.)
+sites <- levels(fit$data$site)
 
-# B1. New diameters at EXISTING sites -----------------------------------------
-# Conditioning is inferred from the columns present in newdata (brms-style):
-# a known `site` column conditions on that site's estimated random effects.
-# NOTE: with supplied new_data, `by` is not needed - the columns drive
-# conditioning. `by` only matters for the auto-generated grid (use case A).
-newdata_existing <- data.frame(
-  diameter = c(25, 40, 55),
-  site = "site2"
+# B0. Bare call = observed data, conditioned (base R predict() convention):
+predict(fit) # one row per observed individual + estimate/lower/upper
+
+# B1. New diameters at an EXISTING site (conditioned on that site) ------------
+newdata_existing <- tibble(diameter = c(25, 40, 55), site = sites[1])
+predict(fit, new_data = newdata_existing, new_levels = "average")
+# raw draws for downstream propagation (e.g. biomass):
+str(posterior_epred(fit, newdata = newdata_existing))
+
+# B2. New diameters at a BRAND-NEW site - works, no error (sampled, wider) ----
+newdata_new_site <- tibble(diameter = c(25, 40, 55), site = "new_reef")
+predict(fit, new_data = newdata_new_site, new_levels = "sample")
+
+# B3. A NEW YEAR at existing sites (site conditioned, new site:year sampled) --
+newdata_new_year <- tidyr::expand_grid(
+  diameter = c(25, 40, 55), site = sites[1:2], year = "2099"
 )
-# Point + interval per row, conditioned on site2 (site:year averaged out):
-predict(coastwide, new_data = newdata_existing, new_levels = "average")
-# Raw draws for downstream propagation (e.g. into a biomass calc):
-pe <- posterior_epred(coastwide, newdata = newdata_existing, new_levels = "average")
-str(pe)   # D x 3
+predict(fit, new_data = newdata_new_year, new_levels = "sample")
 
-# B2. New diameters at a BRAND-NEW site ---------------------------------------
-# No matching level -> the prediction must integrate over the population of
-# sites. Either omit the site column, or use new_levels = "sample".
-newdata_new_site <- data.frame(diameter = c(25, 40, 55))
-# A new, unsampled site -> wider interval (between-site variation included):
-predict(coastwide, new_data = newdata_new_site, new_levels = "sample")
-
-# B3. A NEW YEAR at EXISTING sites --------------------------------------------
-# Hakai measures diameters in a year the model never saw (e.g. 2023), at sites
-# it knows. The site intercept/slope are conditioned on; the site:year effect is
-# new, so it is sampled. Supply `site` (known) but leave `year` to new_levels.
-newdata_new_year <- expand.grid(
-  diameter = c(25, 40, 55),
-  site = c("site1", "site3"),
-  stringsAsFactors = FALSE
+# B4. A MIX of existing and new sites - resolved per row, ONE call, no bind ---
+newdata_mix <- tibble(
+  diameter = 30,
+  site = c(sites[1], sites[2], "new_reef_A", "new_reef_B")
 )
-# site (known) is conditioned on; year is absent so the new site:year is sampled:
-predict(coastwide, new_data = newdata_new_year, new_levels = "sample")
+predict(fit, new_data = newdata_mix, new_levels = "sample")
+# ^ known sites conditioned (narrower), new reefs sampled (wider) - all at once.
 
-# B4. A MIX - some existing sites, some new -----------------------------------
-# Rows with a known site condition on it; the genuinely new site is handled by
-# new_levels. Mark new sites by leaving them out of the model's known levels.
-newdata_mix <- data.frame(
-  diameter = c(30, 30, 30, 30),
-  site     = c("site1", "site4", "new_reef_A", "new_reef_B")
-)
-# A present-but-unknown level should error clearly (it is not silently "new"):
-try(posterior_epred(coastwide, newdata = newdata_mix, new_levels = "sample"))
-# Intended pattern for a mix: predict known sites conditioned, unknown sites
-# from the population, then bind. Known:
-known <- dplyr::filter(newdata_mix, site %in% existing_sites)
-new   <- dplyr::filter(newdata_mix, !site %in% existing_sites)
-pred_known <- predict(coastwide, new_data = known, new_levels = "average")
-pred_new   <- predict(coastwide, new_data = dplyr::select(new, diameter),
-                      new_levels = "sample")
-dplyr::bind_rows(
-  dplyr::mutate(as_tibble(pred_known), site = known$site),
-  dplyr::mutate(as_tibble(pred_new),   site = new$site)
-)
-# ^ NOTE FOR REVIEW: this hand-binding is the friction point in use case B.
-#   Question for the API: should a single call accept a mix of known and new
-#   levels and resolve each row (condition where known, sample where new)?
-
-# B5. Visualise predicted weights over a diameter sequence for new data -------
-# A smooth predicted curve a field team could read off:
-curve_new_site <- kb_predict_weight(coastwide, new_levels = "sample")   # new site
-kb_plot_predictions(curve_new_site) +
-  ggtitle("B5. Predicted weight-at-diameter for a new site (95% CI)")
+# B5. A predicted curve for a new site a field team could read off ------------
+kb_predict_weight_by(fit, new_levels = "sample") |>
+  kb_plot_predictions() +
+  ggtitle("B5. Predicted weight-at-diameter, new site (95% CI)")
 
 # -----------------------------------------------------------------------------
-# REVIEW CHECKLIST while running the above
-#  [ ] Coverage: any prediction you wanted that no function above produces?
-#  [ ] Ergonomics: did `by` vs `new_levels` read naturally? Was "sample" vs
-#      "average" obvious without reading the help? Did newdata-column-driven
-#      conditioning (B1-B4) match your mental model?
-#  [ ] Output: are estimate/lower/upper sensible, ordered, positive? Do the
-#      intervals widen in the expected order (average < per-site < new site)?
-#  [ ] The mix case (B4): is hand-binding acceptable, or do we want one call?
+# REVIEW CHECKLIST
+#  [ ] Coverage: any prediction you wanted that no verb above produces?
+#  [ ] Ergonomics: kb_predict_weight (your data) vs kb_predict_weight_by (curves)
+#      - clear which to reach for? new_levels sample-vs-average obvious?
+#  [ ] Output: estimate/lower/upper ordered, positive? Do bands widen as
+#      expected (typical site < new site; known row < new-site row)?
+#  [ ] The mix (B4): one call, no bind - does it read right?
 # -----------------------------------------------------------------------------

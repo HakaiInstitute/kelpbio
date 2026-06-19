@@ -73,11 +73,38 @@ Only the production `rvar` paths are used (native operators, `rvar_rng`, the
   re-implemented.
 - The biomass kernel may drop to `posterior::draws_of()` matrices for speed where
   needed; the result is identical and re-wrapped as an `rvar`.
-- Conditioning is a property of the prediction grid's columns, not a separate
-  argument: `.weight_linpred()` conditions on a random-effect factor when its
-  grouping column is present in the grid and applies `new_levels`
-  (`"sample"`/`"average"`) to factors with no column. The `rstantools` generics
-  therefore take no `by` argument (conditioning is inferred from `newdata`,
-  matching the ecosystem; `newdata = NULL` conditions on the observed groups);
-  `by` survives only on `kb_predict_weight()` as the grid-construction control.
-  Later sub-models follow the same "condition on the columns present" rule.
+## Cross-model prediction contract
+
+Prediction is split into two verbs per model, with independent arguments so no
+`by` + `new_data` combination is representable (tidyverse argument independence;
+the `fct_lump_n`/`fct_lump_prop` precedent):
+
+- **`kb_predict_<model>(fit, new_data, new_levels)` + `predict()`** - predict at
+  the rows you supply (or the observed data when `new_data = NULL`, matching base
+  R `predict()`). The genuinely-new capability: turn cheaply-measured predictors
+  into the expensive response without re-fitting. Most useful for the
+  continuous-predictor models (weight, blade fraction), where the predictor
+  (diameter) is the cheap field measurement; the bare verb is valid but rarely
+  needed where the response is measured directly (density, size).
+- **`kb_predict_<model>_by(fit, by, new_levels)`** - the grid-free, `by`-driven
+  summary; the function builds the design grid (no user grid construction). It
+  renders as a curve over the continuous predictor (weight, blade) or grouped
+  points (density, size). Exists wherever the model has grouping factors.
+- Scalar, intercept-only models (wet/dry, carbon) have only the bare verb (the
+  population estimate); no `_by`. The size model returns a distribution and needs
+  its own pass.
+
+`augment()` stays a diagnostics verb (fitted/residuals on the training data), not
+a prediction entry point.
+
+Conditioning is resolved **per row, per factor** by level membership, in the
+shared `.weight_linpred()` engine: a row whose grouping level is known is
+conditioned on its estimated random effect; a new level, or an absent grouping
+column, is handled by `new_levels` (`"sample"` draws `Normal(0, sd)`, `"average"`
+zeroes it). Known levels condition regardless of `new_levels`. This makes a mix
+of observed and new groups resolve in a single call (no bind), and lets the
+`rstantools` generics infer conditioning from `newdata` columns with no `by`
+argument. `new_levels` defaults to `"sample"` so an unseen group carries honest
+between-group uncertainty; `"average"` is opt-in and reports the typical group,
+not a calibrated interval for the specific new group. Later sub-models follow
+this same contract.

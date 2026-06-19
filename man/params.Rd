@@ -49,18 +49,21 @@ group-level random-effect terms in the output.}
 \item{esr}{A number giving the minimum acceptable effective sample rate
 (effective sample size divided by the number of draws).}
 
-\item{by}{A character vector of grouping factors to build prediction curves
-over, or \code{NULL} for a single population-level curve. Each named factor is
+\item{by}{A character vector of grouping factors to draw a separate curve
+for, or \code{NULL} for a single population-level curve. Each named factor is
 expanded over its observed levels and conditioned on at its estimated
 random effects.}
 
 \item{new_levels}{A string, one of \code{"sample"} or \code{"average"}, controlling how
-random-effect factors that are not conditioned on are treated. \code{"sample"}
-draws a new random effect from \code{Normal(0, sd)} (a new, unsampled group),
-widening the interval to include between-group variation. \code{"average"} holds
-the random effects at their central (zero) value, giving the typical
-(central) group on the linear-predictor scale (not the response-scale
-arithmetic mean across the group population).}
+random effects that are not conditioned on are treated: factors absent from
+the prediction, and (in \code{\link[=kb_predict_weight]{kb_predict_weight()}}) any new level not seen in the
+fit. \code{"sample"} draws a new random effect from \code{Normal(0, sd)} (a new,
+unsampled group), widening the interval to include between-group variation.
+\code{"average"} holds the random effects at their central (zero) value, giving
+the typical group on the linear-predictor scale. Known levels are always
+conditioned on, regardless of \code{new_levels}. Note that \code{"average"} on a new
+group reports the typical-group prediction, not a calibrated interval for
+that specific new group.}
 }
 \description{
 Default parameter descriptions which may be overridden in individual
