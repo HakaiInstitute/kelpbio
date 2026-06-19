@@ -1,27 +1,32 @@
 ## Why
 
-The prediction surface currently exposes two controls, `by` and `uncertainty`, that overlap. The `by` argument decides which random-effect factors are conditioned on, but for the `posterior_*` generics that information is already carried by the grouping columns present in `newdata`, so `by` is redundant there and has no analogue in the rstantools/brms ecosystem. The redundancy produces a concrete defect: with the default `by = NULL`, `posterior_epred(fit, newdata = NULL)` ignores each observed row's site and simulates new random sites, so it disagrees with `augment()` and `posterior_predict()` (which condition on the observed groups) at the observed data. The `uncertainty = c("marginal", "typical")` value names also describe the statistical concept rather than the action the user is requesting.
+A demo test-drive of the weight model showed the prior column-inference design was confusing (a grid-builder like `xnew_data` silently switched on conditioning, so `new_levels` was ignored) and that erroring on unknown levels forced a clumsy bind pattern for the common "new site" case. It also surfaced concrete bugs (an HTML progress popup, `nthin` default 10, no facet cap) and the need for real data. The fix is a two-verb prediction API with independent arguments, per-row level resolution, and the review bug fixes.
 
 ## What Changes
 
-- **BREAKING**: Remove `by` and `uncertainty` from the `posterior_epred`, `posterior_linpred`, and `posterior_predict` generics. Conditioning is inferred from the grouping columns present in `newdata` (brms semantics): a grouping column present and matching a known level conditions on it; a factor with no column is handled by `new_levels`.
-- **BREAKING**: Rename `uncertainty = c("marginal", "typical")` to `new_levels = c("sample", "average")` on `kb_predict_weight()` and the generics' remaining surface. `"sample"` draws a new random effect from `Normal(0, s)` for factors not represented in the data (was `"marginal"`); `"average"` holds them at their central (zero) value (was `"typical"`). `"sample"` remains the default.
-- The notion of `allow_new_levels` (the brms gate permitting unseen group labels) is not introduced: new levels are always available through the `"sample"` path, and conditioned levels are validated by `match_levels()`, so there is no silent-typo exposure to gate.
-- `by` survives only on `kb_predict_weight()`, where it is the grid-builder control: it decides which grouping columns the auto-generated grid is expanded over. Once a grid exists, the columns present in it are the conditioning set.
-- `newdata = NULL` on the generics now conditions on the observed site and year, so `posterior_epred()`, `posterior_predict()`, and `augment()` agree at the observed data (and `posterior_epred(newdata = NULL)` becomes a valid `bayesplot` input alongside the stored `yrep`).
-- `.weight_linpred()` keys conditioning off `names(grid)` rather than a `by` argument, becoming the single place that maps "column present" to "condition on this factor".
+- **BREAKING**: Split prediction into two verbs with independent arguments (tidyverse argument independence; the `fct_lump_n`/`fct_lump_prop` precedent), so `by` and `new_data` can never collide:
+  - `kb_predict_weight(fit, new_data, new_levels, ...)` + `predict()` - predict at supplied rows (or observed data when `new_data = NULL`, matching base R). No `by`.
+  - `kb_predict_weight_by(fit, by, new_levels, diameter, ...)` - the curve summary over a diameter sequence. No `new_data`.
+- **Per-row level resolution** in `.weight_linpred()`: known level → condition; new level → drawn per `new_levels`; absent column → `new_levels`. A new level no longer errors, so a mix of known and new sites resolves in one call (no bind pattern). The `rstantools` generics inherit this.
+- `new_levels = c("sample", "average")`, default `"sample"`, governs every random effect that can't be conditioned (uniform across both verbs and the generics).
+- `augment()` stays a diagnostics verb (unchanged).
+- **Fix**: `nthin` default 1 (was 10); `open_progress = FALSE` (kills the URL popup and restores console progress with `quiet = FALSE`); `max_facets` cap on `kb_plot_predictions()`.
+- **Data**: `kb_data_weight` becomes the real Hakai allometry data; a small simulated set is retained in test fixtures.
+- This is the **cross-model contract** (recorded in `decisions/prediction-engine.md`): bare verb + `_by` where there are grouping factors; scalar models get only the bare verb; size deferred.
 
 ## Capabilities
 
 ### New Capabilities
-<!-- None: no new capability is introduced. -->
+<!-- None. -->
 
 ### Modified Capabilities
-- `predictions`: the "Grouping and uncertainty axes" and "Raw prediction draws via rstantools generics" requirements change. The generics drop `by`/`uncertainty` and infer conditioning from `newdata` columns; the `uncertainty` axis is renamed to `new_levels` with values `c("sample", "average")`; `kb_predict_weight()` retains `by` as its grid control; `newdata = NULL` conditions on observed groups.
+- `predictions`: the two-verb split, per-row resolution, no-error-on-new-levels, `new_levels` semantics.
+- `fitting`: `nthin` default 1; `open_progress = FALSE` / console progress.
+- `plotting`: `max_facets` panel cap.
+- `data`: `kb_data_weight` is real Hakai data; simulated set kept for fixtures.
 
 ## Impact
 
-- API (breaking, pre-1.0, R-universe distribution): `kb_predict_weight()` argument rename `uncertainty` -> `new_levels`; `posterior_epred()` / `posterior_linpred()` / `posterior_predict()` lose `by` and `uncertainty`, gain `new_levels` where they previously took `uncertainty`.
-- Code: `R/weight_linpred.R` (`.weight_linpred()`, `weight_grid_linpred()`, `validate_by_weight()`, `re_draw()`), `R/kb_predict_weight.R`, `R/posterior_epred.R`, `R/posterior_linpred.R`, `R/posterior_predict.R`, `R/augment.R`, and the shared `@inheritParams` donor in `R/params.R` (or equivalent). Mirrored tests under `tests/testthat/`.
-- Docs: roxygen for the affected functions (the `new_levels` value definitions, in particular the precise meaning of `"average"`), plus `decisions/prediction-engine.md` rationale note. No change to `inst/stan/` (no recompile).
-- Consistent with `decisions/prediction-engine.md` (single `.weight_linpred()` source of truth) and the API-simplicity philosophy; no new dependencies.
+- API (breaking, pre-1.0, R-universe): new export `kb_predict_weight_by()`; `by` removed from `kb_predict_weight()` / `predict()` / the generics; `kb_predict_weight(NULL)` now returns observed-data predictions.
+- Code: `R/weight_linpred.R`, `R/kb_predict_weight.R`, `R/kb_predict_weight_by.R` (new), `R/predict.R`, `R/posterior_*.R`, `R/kb_plot_predictions.R`, `R/kb_fit_weight.R`, `R/params.R`, `data-raw/kb_data_weight.R`, `data/kb_data_weight.rda`, fixtures, mirrored tests, `decisions/prediction-engine.md`, `scripts/demo-weight-prediction.R`.
+- No `inst/stan/` change (no recompile).
