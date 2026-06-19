@@ -97,15 +97,12 @@ yrep <- posterior_predict(fit) # D x N, conditioned on observed groups
 ppc_dens_overlay(y = fit$data$weight, yrep = yrep[1:50, , drop = FALSE]) +
   ggtitle("A3. Posterior predictive check (yrep)")
 
-# A4. new_levels controls the population band (the fix for the old SD bug) ----
-# A diameter-only grid (no site/year columns) -> new_levels is in force:
-grid <- data.frame(diameter = seq(20, 60, by = 10))
-ep_avg <- posterior_epred(fit, newdata = grid, new_levels = "average")
-ep_smp <- posterior_epred(fit, newdata = grid, new_levels = "sample")
-rbind(
-  average = apply(ep_avg, 2, sd), # narrow: parameter uncertainty only
-  sample = apply(ep_smp, 2, sd) # wider: + between-site variation
-)
+# A4. Raw posterior draws, if you need them (bayesplot / loo / bespoke work) ---
+# The rstantools generics return the SAME predictions as kb_predict_weight(),
+# just as a raw draws-by-rows matrix instead of a summary data frame.
+nd <- data.frame(diameter = c(20, 40, 60))
+dim(posterior_epred(fit, newdata = nd)) # draws x rows matrix
+kb_predict_weight(fit, new_data = nd) # the same draws, summarised
 
 # A5. Population curve --------------------------------------------------------
 pop_avg <- kb_predict_weight_by(fit, new_levels = "average") # typical site
@@ -146,8 +143,6 @@ predict(fit) # one row per observed individual + estimate/lower/upper
 # B1. New diameters at an EXISTING site (conditioned on that site) ------------
 newdata_existing <- tibble(diameter = c(25, 40, 55), site = sites[1])
 predict(fit, new_data = newdata_existing, new_levels = "average")
-# raw draws for downstream propagation (e.g. biomass):
-str(posterior_epred(fit, newdata = newdata_existing))
 
 # B2. New diameters at a BRAND-NEW site - works, no error (sampled, wider) ----
 newdata_new_site <- tibble(diameter = c(25, 40, 55), site = "new_reef")
