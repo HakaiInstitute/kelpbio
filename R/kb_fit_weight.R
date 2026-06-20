@@ -15,6 +15,13 @@
 #' low ESS/Rhat) are suppressed; inspect convergence with [converged()] /
 #' [glance()].
 #'
+#' Chains run in parallel by default (`cores = NULL` uses `getOption("mc.cores")`,
+#' falling back to `chains`, capped at the available cores). Set
+#' `options(mc.cores = 1)` (or pass `cores = 1`) on shared servers, in
+#' containers, or inside another parallel context. On Windows, parallel chains
+#' run in separate processes that load the installed package, so use
+#' `cores = 1` when running from `devtools::load_all()`.
+#'
 #' @inheritParams params
 #' @param ... Additional arguments passed to [rstan::sampling()].
 #'
@@ -72,7 +79,7 @@ kb_fit_weight <- function(data,
       iter = total_iter,
       warmup = warmup,
       thin = as.integer(nthin),
-      cores = cores %||% as.integer(chains),
+      cores = resolve_cores(cores, chains),
       refresh = if (quiet) 0L else max(1L, total_iter %/% 10L),
       show_messages = FALSE,
       # Stream textual progress to the console; never open the HTML progress
@@ -109,6 +116,22 @@ with_quiet_sampler <- function(expr) {
       }
     }
   )
+}
+
+# Resolve the number of cores for parallel chains. NULL respects
+# getOption("mc.cores") (the rstan/brms/rstanarm convention) and falls back to
+# `chains`. The result is capped at the available cores so the default never
+# oversubscribes the machine, and floored at 1.
+resolve_cores <- function(cores, chains) {
+  if (is.null(cores)) {
+    cores <- getOption("mc.cores", chains)
+  }
+  cores <- as.integer(cores)
+  avail <- parallel::detectCores()
+  if (!is.na(avail)) {
+    cores <- min(cores, avail)
+  }
+  max(1L, cores)
 }
 
 # Construct a kb_fit_weight from a stanfit: keep the extracted draws (as rvars),

@@ -28,7 +28,10 @@ rstan's own \code{iter}, which counts warmup too.}
 
 \item{nthin}{A whole number giving the thinning interval.}
 
-\item{cores}{A whole number of cores, or \code{NULL} to fit chains in parallel.}
+\item{cores}{A whole number of cores for parallel chains, or \code{NULL} to use
+\code{getOption("mc.cores")} (falling back to \code{chains}), capped at the available
+cores. Use \code{cores = 1} (or \code{options(mc.cores = 1)}) on shared servers, in
+containers, or when running from \code{devtools::load_all()} on Windows.}
 
 \item{quiet}{A flag specifying whether to suppress the sampler progress
 output. Diagnostic warnings (divergences, etc.) are suppressed regardless

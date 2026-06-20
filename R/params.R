@@ -20,7 +20,10 @@
 #'   defaults to match). Named `niters` (not `iter`) to avoid clashing with
 #'   rstan's own `iter`, which counts warmup too.
 #' @param nthin A whole number giving the thinning interval.
-#' @param cores A whole number of cores, or `NULL` to fit chains in parallel.
+#' @param cores A whole number of cores for parallel chains, or `NULL` to use
+#'   `getOption("mc.cores")` (falling back to `chains`), capped at the available
+#'   cores. Use `cores = 1` (or `options(mc.cores = 1)`) on shared servers, in
+#'   containers, or when running from `devtools::load_all()` on Windows.
 #' @param quiet A flag specifying whether to suppress the sampler progress
 #'   output. Diagnostic warnings (divergences, etc.) are suppressed regardless
 #'   and surfaced through [converged()]/[glance()].

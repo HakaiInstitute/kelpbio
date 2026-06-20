@@ -37,7 +37,10 @@ rstan's own \code{iter}, which counts warmup too.}
 
 \item{nthin}{A whole number giving the thinning interval.}
 
-\item{cores}{A whole number of cores, or \code{NULL} to fit chains in parallel.}
+\item{cores}{A whole number of cores for parallel chains, or \code{NULL} to use
+\code{getOption("mc.cores")} (falling back to \code{chains}), capped at the available
+cores. Use \code{cores = 1} (or \code{options(mc.cores = 1)}) on shared servers, in
+containers, or when running from \code{devtools::load_all()} on Windows.}
 
 \item{quiet}{A flag specifying whether to suppress the sampler progress
 output. Diagnostic warnings (divergences, etc.) are suppressed regardless
@@ -64,6 +67,13 @@ With the default \code{quiet = FALSE} the sampler shows its progress but other S
 output and the post-sampling HMC diagnostic warnings (divergences, treedepth,
 low ESS/Rhat) are suppressed; inspect convergence with \code{\link[=converged]{converged()}} /
 \code{\link[=glance]{glance()}}.
+
+Chains run in parallel by default (\code{cores = NULL} uses \code{getOption("mc.cores")},
+falling back to \code{chains}, capped at the available cores). Set
+\code{options(mc.cores = 1)} (or pass \code{cores = 1}) on shared servers, in
+containers, or inside another parallel context. On Windows, parallel chains
+run in separate processes that load the installed package, so use
+\code{cores = 1} when running from \code{devtools::load_all()}.
 }
 \examples{
 if (interactive()) {

@@ -1,3 +1,15 @@
+test_that("resolve_cores respects mc.cores, caps at available, floors at 1", {
+  avail <- parallel::detectCores()
+  old <- options(mc.cores = 1)
+  on.exit(options(old), add = TRUE)
+  expect_identical(kelpbio:::resolve_cores(NULL, 4L), 1L) # NULL -> mc.cores
+  expect_identical(kelpbio:::resolve_cores(1L, 4L), 1L) # explicit honoured
+  expect_gte(kelpbio:::resolve_cores(NULL, 4L), 1L) # floored at 1
+  if (!is.na(avail)) {
+    expect_lte(kelpbio:::resolve_cores(1000L, 4L), avail) # never oversubscribe
+  }
+})
+
 test_that("kb_fit_weight returns a correctly-structured object", {
   skip_on_cran()
   d <- droplevels(subset(
