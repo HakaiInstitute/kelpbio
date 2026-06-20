@@ -70,26 +70,37 @@ summary.kb_fit <- function(object,
   coefficients$ess_bulk <- round(diag$ess_bulk[idx])
   coefficients$ess_tail <- round(diag$ess_tail[idx])
 
-  descr <- fit_descriptor(object)
   structure(
-    list(
-      model = sub("^kb_fit_", "", class(object)[1]),
-      species = object$meta$species,
-      family = descr$family,
-      formula = descr$formula,
-      groups = descr$groups,
-      nobs = nobs(object),
-      nchains = nchains(object),
-      niters = niters(object),
-      nthin = object$meta$nthin,
-      ndraws = posterior::ndraws(object$draws),
-      prior_only = isTRUE(object$meta$prior_only),
-      ndivergent = object$diagnostics$ndivergent,
-      converged = converged(object),
-      conf_level = conf_level,
-      coefficients = coefficients
+    c(
+      .kb_fit_header(object),
+      list(
+        ndivergent = object$diagnostics$ndivergent,
+        conf_level = conf_level,
+        coefficients = coefficients
+      )
     ),
     class = "summary_kb_fit"
+  )
+}
+
+# Fit-level metadata header, shared by the summary_kb_fit object and
+# print.kb_fit() so both render the same block (a single source for the fields;
+# .print_kb_fit_header() in print.R is the single source for the rendering).
+.kb_fit_header <- function(fit) {
+  descr <- fit_descriptor(fit)
+  list(
+    model = sub("^kb_fit_", "", class(fit)[1]),
+    species = fit$meta$species,
+    family = descr$family,
+    formula = descr$formula,
+    groups = descr$groups,
+    nobs = nobs(fit),
+    nchains = nchains(fit),
+    niters = niters(fit),
+    nthin = fit$meta$nthin,
+    ndraws = posterior::ndraws(fit$draws),
+    prior_only = isTRUE(fit$meta$prior_only),
+    converged = converged(fit)
   )
 }
 
@@ -101,11 +112,11 @@ fit_descriptor <- function(x) {
   switch(model,
     weight = {
       ref <- x$meta$diameter_ref
-      dc <- paste0("log(diameter/", ref, ")")
+      dc <- paste0("log(diameter_mm/", ref, ")")
       list(
-        family = "Student-t (df = 4); response modelled as log(weight)",
+        family = "Student-t (df = 4); response modelled as log(weight_kg)",
         formula = paste0(
-          "log(weight) ~ 1 + ", dc, " + ", dc, "^2 + ",
+          "log(weight_kg) ~ 1 + ", dc, " + ", dc, "^2 + ",
           "(1 + ", dc, " | site) + (1 | site:year)"
         ),
         groups = weight_groups(x)

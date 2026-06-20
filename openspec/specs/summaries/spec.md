@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Model summaries and diagnostics over a kb_fit: tidy / coef / glance / converged / augment / summary / print, the universals accessors, and samples().
+Model summaries and diagnostics over a kb_fit: tidy / coef / glance / converged / fitted / residuals / augment / summary / print, the universals accessors, and samples().
 
 ## Requirements
 
@@ -40,11 +40,23 @@ Model summaries and diagnostics over a kb_fit: tidy / coef / glance / converged 
 
 ### Requirement: Augmented fitted values
 
-`augment(x)` SHALL return the input data augmented with `fitted`, `residual`, `lower`, and `upper` (no dot prefix), fitted at each observed row using that row's estimated random effects (site intercept, site slope, and site:year), at full precision.
+`augment(x)` SHALL return the input data with two columns appended: `fitted` (response-scale fitted weight, from `fitted(x)`) and `residual` (deviance residual, from `residuals(x)`), evaluated at the observed rows. The columns SHALL be taken directly from the `fitted()` and `residuals()` methods so they cannot diverge from them. `augment()` SHALL NOT add interval (`lower`/`upper`) columns; prediction intervals are obtained from `kb_predict_weight()`.
 
 #### Scenario: augment adds fitted/residual columns
 - **WHEN** `augment(fit)` is called
-- **THEN** it returns the original data columns plus `fitted`, `residual`, `lower`, `upper`
+- **THEN** it returns the original data columns plus `fitted` and `residual` (and no `lower`/`upper`), with `fitted` matching `fitted(fit)` and `residual` matching `residuals(fit)`
+
+### Requirement: Fitted values and deviance residuals
+
+`fitted(object)` SHALL return a numeric vector of posterior point estimates of the expected weight at each observed row, on the response scale (the posterior median of `posterior_epred()` at the observed data). `residuals(object)` SHALL return a numeric vector of deviance residuals at each observed row, from the Student-t log-weight likelihood, computed via `extras::res_student(log(weight), fit, sd = sWeight, theta = 1 / nu)` per draw and summarised to a point estimate. Both return a vector of length `nobs(object)`, suitable for appending to the data. `residuals()` SHALL NOT take a residual-type argument.
+
+#### Scenario: fitted returns response-scale point estimates
+- **WHEN** `fitted(fit)` is called
+- **THEN** it returns a numeric vector of length `nobs(fit)` of positive expected weights whose values equal `augment(fit)$fitted`
+
+#### Scenario: residuals returns deviance residuals
+- **WHEN** `residuals(fit)` is called
+- **THEN** it returns a numeric vector of length `nobs(fit)` of deviance residuals whose values equal `augment(fit)$residual`
 
 ### Requirement: Draws accessor and diagnostics surface
 
@@ -64,13 +76,13 @@ Model summaries and diagnostics over a kb_fit: tidy / coef / glance / converged 
 
 ### Requirement: Summary and print methods
 
-`summary(x)` SHALL return a classed `summary_kb_fit` object collecting fit-level metadata and a per-term posterior summary table (with its own `print` method), in the style of `brms`/`rstanarm`. `print(x)` SHALL display a stable, human-readable overview of a `kb_fit` (model, species, n obs, draws, convergence) without embedding raw MCMC numbers, so it is snapshot-testable.
+`summary(x)` SHALL return a classed `summary_kb_fit` object collecting fit-level metadata and a per-term posterior summary table (with its own `print` method), in the style of `brms`/`rstanarm`. `print(x)` and the summary object SHALL render the same fit-metadata header (model and species, likelihood family, model formula, observation and group counts, sampler configuration, convergence verdict) from a single shared renderer, so the two cannot diverge. `print(x)` SHALL display only that header, without embedding raw MCMC numbers, so it is snapshot-testable.
 
-The `summary_kb_fit` coefficient table SHALL carry columns `term`, `estimate`, `lower`, `upper`, `rhat`, `ess_bulk`, `ess_tail`, with the diagnostic columns taken from the stored fit diagnostics (the same source as `converged()`/`glance()`). It SHALL show population-level terms and random-effect SDs, including the per-level group deviations only when `include_random_effects = TRUE` (default `FALSE`, matching `tidy()`). Its `print` method SHALL render a header (likelihood family, model formula, observation and group counts, sampler configuration, convergence verdict), the coefficient table, and a diagnostics footer defining the columns and reporting the divergent-transition count.
+The `summary_kb_fit` coefficient table SHALL carry columns `term`, `estimate`, `lower`, `upper`, `rhat`, `ess_bulk`, `ess_tail`, with the diagnostic columns taken from the stored fit diagnostics (the same source as `converged()`/`glance()`). It SHALL show population-level terms and random-effect SDs, including the per-level group deviations only when `include_random_effects = TRUE` (default `FALSE`, matching `tidy()`). Its `print` method SHALL render the shared header, the coefficient table, and a diagnostics footer defining the columns and reporting the divergent-transition count.
 
 #### Scenario: print shows stable metadata
 - **WHEN** `print(fit)` is called
-- **THEN** it shows the model type, species, number of observations, and convergence status, and contains no raw MCMC numerics
+- **THEN** it shows the shared fit-metadata header (model, species, family, formula, observation and group counts, sampler configuration, convergence) with no coefficient table, footer, or raw MCMC numerics, identical to the header shown by `print(summary(fit))`
 
 #### Scenario: summary returns metadata and a diagnostic table
 - **WHEN** `summary(fit)` is called

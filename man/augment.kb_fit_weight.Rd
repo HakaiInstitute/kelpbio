@@ -4,34 +4,34 @@
 \alias{augment.kb_fit_weight}
 \title{Augment Weight Data with Fitted Values}
 \usage{
-\method{augment}{kb_fit_weight}(x, conf_level = 0.95, ...)
+\method{augment}{kb_fit_weight}(x, ...)
 }
 \arguments{
 \item{x}{A \code{kb_fit_weight} object.}
 
-\item{conf_level}{A number between 0 and 1 giving the compatibility-interval
-level.}
-
 \item{...}{Unused.}
 }
 \value{
-The input data with added columns \code{fitted}, \code{residual}, \code{lower}, and
-\code{upper}.
+The input data with added columns \code{fitted} (response-scale fitted
+weight) and \code{residual} (deviance residual).
 }
 \description{
-Return the input data augmented with fitted values and residuals, evaluated at
-each observed row using that row's estimated random effects (site intercept,
-site slope, and site:year).
+Return the input data with the \code{\link[=fitted]{fitted()}} values and deviance \code{\link[=residuals]{residuals()}}
+appended, for residual diagnostics. The columns come straight from the
+\code{fitted()} and \code{residuals()} methods, so they cannot diverge from them. For
+prediction intervals use \code{\link[=kb_predict_weight]{kb_predict_weight()}}.
 }
 \examples{
 augment(fit_weight)
 }
 \seealso{
-\code{\link[=kb_predict_weight]{kb_predict_weight()}} for predictions at supplied rows.
+\code{\link[=fitted]{fitted()}}, \code{\link[=residuals]{residuals()}}, and \code{\link[=kb_predict_weight]{kb_predict_weight()}} for predictions
+at supplied rows.
 
 Other generics: 
 \code{\link{coef.kb_fit_weight}()},
 \code{\link{converged.kb_fit}()},
+\code{\link{fitted.kb_fit_weight}()},
 \code{\link{glance.kb_fit}()},
 \code{\link{kb_stancode}()},
 \code{\link{log_lik.kb_fit_weight}()},
@@ -40,6 +40,7 @@ Other generics:
 \code{\link{posterior_predict.kb_fit_weight}()},
 \code{\link{predict.kb_fit_weight}()},
 \code{\link{prior_summary.kb_fit}()},
+\code{\link{residuals.kb_fit_weight}()},
 \code{\link{samples}()},
 \code{\link{summary.kb_fit}()},
 \code{\link{tidy.kb_fit_weight}()}

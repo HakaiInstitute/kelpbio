@@ -18,9 +18,10 @@
       print(weight_fit)
     Output
       <kb_fit_weight>
-      model:        weight
-      species:      nereocystis
-      observations: 300
-      draws:        600 (2 chains)
-      converged:    TRUE
+      Model:     weight (nereocystis)
+      Family:    Student-t (df = 4); response modelled as log(weight_kg)
+      Formula:   log(weight_kg) ~ 1 + log(diameter_mm/30) + log(diameter_mm/30)^2 + (1 + log(diameter_mm/30) | site) + (1 | site:year)
+      Data:      300 observations; groups: site (4), site:year (12)
+      Draws:     2 chains, 300 post-warmup draws each (thin = 1), 600 total
+      Converged: TRUE
 

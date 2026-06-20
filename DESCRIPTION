@@ -32,6 +32,7 @@ Imports:
     chk,
     cli,
     dplyr,
+    extras,
     generics,
     ggplot2,
     methods,

@@ -31,6 +31,7 @@ Other generics:
 \code{\link{augment.kb_fit_weight}()},
 \code{\link{coef.kb_fit_weight}()},
 \code{\link{converged.kb_fit}()},
+\code{\link{fitted.kb_fit_weight}()},
 \code{\link{kb_stancode}()},
 \code{\link{log_lik.kb_fit_weight}()},
 \code{\link{posterior_epred.kb_fit_weight}()},
@@ -38,6 +39,7 @@ Other generics:
 \code{\link{posterior_predict.kb_fit_weight}()},
 \code{\link{predict.kb_fit_weight}()},
 \code{\link{prior_summary.kb_fit}()},
+\code{\link{residuals.kb_fit_weight}()},
 \code{\link{samples}()},
 \code{\link{summary.kb_fit}()},
 \code{\link{tidy.kb_fit_weight}()}

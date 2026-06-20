@@ -16,39 +16,41 @@ print.kb_prior_exponential <- function(x, ...) {
   invisible(x)
 }
 
+# Render the shared fit metadata header (used by print.kb_fit and
+# print.summary_kb_fit). `h` is the field list from .kb_fit_header(); the
+# summary_kb_fit object carries the same fields. No raw MCMC numerics, so both
+# callers stay snapshot-safe.
+.print_kb_fit_header <- function(h) {
+  cli::cat_line("Model:     ", h$model, " (", h$species, ")")
+  if (!is.na(h$family)) cli::cat_line("Family:    ", h$family)
+  if (!is.na(h$formula)) cli::cat_line("Formula:   ", h$formula)
+  groups <- if (length(h$groups)) {
+    paste0("; groups: ", paste0(names(h$groups), " (", h$groups, ")", collapse = ", "))
+  } else {
+    ""
+  }
+  cli::cat_line("Data:      ", h$nobs, " observations", groups)
+  cli::cat_line(
+    "Draws:     ", h$nchains, " chains, ", h$niters,
+    " post-warmup draws each (thin = ", h$nthin, "), ", h$ndraws, " total"
+  )
+  if (isTRUE(h$prior_only)) {
+    cli::cat_line("Note:      prior-only fit (likelihood off)")
+  }
+  cli::cat_line("Converged: ", h$converged)
+}
+
 #' @export
 print.kb_fit <- function(x, ...) {
   cli::cat_line(cli::format_inline("{.cls {class(x)[1]}}"))
-  cli::cat_line("model:        ", sub("^kb_fit_", "", class(x)[1]))
-  cli::cat_line("species:      ", x$meta$species)
-  cli::cat_line("observations: ", nobs(x))
-  cli::cat_line(
-    "draws:        ", posterior::ndraws(x$draws), " (", nchains(x), " chains)"
-  )
-  cli::cat_line("converged:    ", converged(x))
+  .print_kb_fit_header(.kb_fit_header(x))
   invisible(x)
 }
 
 #' @export
 print.summary_kb_fit <- function(x, ...) {
   cli::cat_line(cli::format_inline("{.cls summary_kb_fit}"))
-  cli::cat_line("Model:     ", x$model, " (", x$species, ")")
-  if (!is.na(x$family)) cli::cat_line("Family:    ", x$family)
-  if (!is.na(x$formula)) cli::cat_line("Formula:   ", x$formula)
-  groups <- if (length(x$groups)) {
-    paste0("; groups: ", paste0(names(x$groups), " (", x$groups, ")", collapse = ", "))
-  } else {
-    ""
-  }
-  cli::cat_line("Data:      ", x$nobs, " observations", groups)
-  cli::cat_line(
-    "Draws:     ", x$nchains, " chains, ", x$niters,
-    " post-warmup draws each (thin = ", x$nthin, "), ", x$ndraws, " total"
-  )
-  if (isTRUE(x$prior_only)) {
-    cli::cat_line("Note:      prior-only fit (likelihood off)")
-  }
-  cli::cat_line("Converged: ", x$converged)
+  .print_kb_fit_header(x)
   cli::cat_line("")
   print(x$coefficients, ...)
   cli::cat_line("")
