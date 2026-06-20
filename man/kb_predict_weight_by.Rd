@@ -8,7 +8,7 @@ kb_predict_weight_by(
   fit,
   by = NULL,
   new_levels = c("sample", "average"),
-  diameter = NULL,
+  diameter_mm = NULL,
   conf_level = 0.95,
   estimate = stats::median,
   sig_fig = 3
@@ -29,8 +29,8 @@ new random effect from \code{Normal(0, sd)}, widening the interval to include
 between-group variation; \code{"average"} holds the random effects at zero, giving
 the typical group. Known levels are always conditioned on.}
 
-\item{diameter}{A numeric vector of diameters to predict over, or \code{NULL} for
-an automatic sequence spanning the observed range.}
+\item{diameter_mm}{A numeric vector of sub-bulb diameters (mm) to predict
+over, or \code{NULL} for an automatic sequence spanning the observed range.}
 
 \item{conf_level}{A number between 0 and 1 giving the compatibility-interval
 level.}
@@ -41,7 +41,7 @@ level.}
 }
 \value{
 A \code{kb_predictions} object: a summary tibble with \code{estimate}, \code{lower},
-\code{upper}, the \code{diameter} predictor, and the \code{by} grouping columns.
+\code{upper}, the \code{diameter_mm} predictor, and the \code{by} grouping columns.
 }
 \description{
 Summarise the fitted weight-at-diameter relationship over a diameter sequence,

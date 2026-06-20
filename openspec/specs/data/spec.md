@@ -8,18 +8,18 @@ Validating weight-model input data and the bundled example data and fit objects.
 
 ### Requirement: Validate weight model input data
 
-`kb_check_data_weight(data)` SHALL validate that `data` contains the columns required to fit the weight model, with appropriate types and values, returning the data invisibly on success and erroring on failure. It SHALL use `chk` validators following the `bboudata` conventions (e.g. `chk::chk_superset` for required columns, `chk::chk_character_or_factor` for `site`/`year`, `chk::chk_numeric` plus a positivity check for `diameter`/`weight`, and `chk::chk_not_any_na`), with column-qualified messages.
+`kb_check_data_weight(data)` SHALL validate that `data` contains the columns required to fit the weight model, with appropriate types and values, returning the data invisibly on success and erroring on failure. The diameter and weight columns carry their units in their names (`diameter_mm` in millimetres, `weight_kg` in kilograms), since the model centres diameter at 30 mm and so the units are part of the data contract. It SHALL use `chk` validators following the `bboudata` conventions (e.g. `chk::chk_superset` for required columns, `chk::chk_character_or_factor` for `site`/`year`, `chk::chk_numeric` plus a positivity check for `diameter_mm`/`weight_kg`, and `chk::chk_not_any_na`), with column-qualified messages.
 
 #### Scenario: Valid data passes
-- **WHEN** `kb_check_data_weight()` is called with a data frame containing numeric `diameter` (> 0), numeric `weight` (> 0), and factor/character `site` and `year`, with no missing values
+- **WHEN** `kb_check_data_weight()` is called with a data frame containing numeric `diameter_mm` (> 0), numeric `weight_kg` (> 0), and factor/character `site` and `year`, with no missing values
 - **THEN** it returns the data invisibly and emits no error
 
 #### Scenario: Missing required column errors
-- **WHEN** the data frame is missing one of `diameter`, `weight`, `site`, `year`
+- **WHEN** the data frame is missing one of `diameter_mm`, `weight_kg`, `site`, `year`
 - **THEN** it errors via `chk` with a message naming the missing column(s)
 
 #### Scenario: Wrong type or impossible value errors
-- **WHEN** `diameter` or `weight` is non-numeric or contains values `<= 0`
+- **WHEN** `diameter_mm` or `weight_kg` is non-numeric or contains values `<= 0`
 - **THEN** it errors via `chk` with a column-qualified message identifying the offending column
 
 #### Scenario: Missing values error
@@ -28,19 +28,19 @@ Validating weight-model input data and the bundled example data and fit objects.
 
 ### Requirement: Bundled weight dataset
 
-The package SHALL ship `data_weight_hakai`, the real Hakai Institute *Nereocystis luetkeana* allometry survey data (the data the coastwide weight model is fit to), with columns `diameter`, `weight`, `site`, `year`. It is prepared from the analysis project (Hakai-only records, maximum sub-bulb measurements, completeness and outlier screening; no day-of-year filter).
+The package SHALL ship `data_weight_hakai`, the real Hakai Institute *Nereocystis luetkeana* allometry survey data (the data the coastwide weight model is fit to), with columns `diameter_mm`, `weight_kg`, `site`, `year`. It is prepared from the analysis project (Hakai-only records, maximum sub-bulb measurements, completeness and outlier screening; no day-of-year filter).
 
-The package SHALL also ship `data_weight_sim`, a small simulated dataset with the same columns (`diameter`, `weight`, `site`, `year`), generated reproducibly from a fixed seed. It is intended for fast tests and runnable examples, not for inference.
+The package SHALL also ship `data_weight_sim`, a small simulated dataset with the same columns (`diameter_mm`, `weight_kg`, `site`, `year`), generated reproducibly from a fixed seed. It is intended for fast tests and runnable examples, not for inference.
 
 The package SHALL also ship `fit_weight`, a slim pre-fit `kb_fit_weight` object fitted to `data_weight_sim` with a reduced number of chains and draws. It is intended for runnable examples and tests, not for inference.
 
 #### Scenario: Hakai dataset is available and valid
 - **WHEN** `data_weight_hakai` is loaded
-- **THEN** it is a data frame with columns `diameter`, `weight`, `site`, `year` that passes `kb_check_data_weight()`
+- **THEN** it is a data frame with columns `diameter_mm`, `weight_kg`, `site`, `year` that passes `kb_check_data_weight()`
 
 #### Scenario: Simulated dataset is available and valid
 - **WHEN** `data_weight_sim` is loaded
-- **THEN** it is a data frame with columns `diameter`, `weight`, `site`, `year` that passes `kb_check_data_weight()`
+- **THEN** it is a data frame with columns `diameter_mm`, `weight_kg`, `site`, `year` that passes `kb_check_data_weight()`
 
 #### Scenario: Example fit is available
 - **WHEN** `fit_weight` is loaded

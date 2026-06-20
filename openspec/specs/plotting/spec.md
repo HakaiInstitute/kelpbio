@@ -18,6 +18,10 @@ Plotting predictions from a kb_predictions data frame: kb_plot_predictions() and
 - **WHEN** the prediction's predictor is continuous (an allometric weight-vs-diameter curve) and `style = NULL`
 - **THEN** it draws a line with a credible-interval ribbon
 
+#### Scenario: Publication-ready axis titles
+- **WHEN** `kb_plot_predictions()` labels the axes
+- **THEN** it uses descriptive titles for the known model variables, appending units where available (e.g. `Sub-bulb diameter (mm)`, `Wet weight (kg)`, `Site`), rather than the raw column names
+
 ### Requirement: Metadata-driven, overridable defaults
 
 `x`, `style`, and `facet` SHALL default to `NULL` and be inferred from the prediction's metadata, while remaining overridable arguments. A `max_facets` argument SHALL cap the number of facet panels drawn (default a small finite number); when the grouping has more groups than `max_facets`, the first `max_facets` are shown and a `cli` warning names how many were dropped and how to override. `Inf` disables the cap.

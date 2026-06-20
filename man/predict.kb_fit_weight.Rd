@@ -17,8 +17,8 @@
 \arguments{
 \item{object}{A \code{kb_fit_weight} object.}
 
-\item{new_data}{A data frame with a \code{diameter} column (and optional \code{site} /
-\code{year} columns), or \code{NULL} to predict at the observed data.}
+\item{new_data}{A data frame with a \code{diameter_mm} column (and optional \code{site}
+/ \code{year} columns), or \code{NULL} to predict at the observed data.}
 
 \item{new_levels}{A string, one of \code{"sample"} or \code{"average"}, controlling how
 random effects that are not conditioned on are treated (factors absent from
@@ -46,13 +46,14 @@ rows (or the observed data when \code{new_data = NULL}). For allometric curves t
 visualise, use \code{\link[=kb_predict_weight_by]{kb_predict_weight_by()}}.
 }
 \examples{
-predict(fit_weight, data.frame(diameter = c(20, 40)))
+predict(fit_weight, data.frame(diameter_mm = c(20, 40)))
 }
 \seealso{
 Other generics: 
 \code{\link{augment.kb_fit_weight}()},
 \code{\link{coef.kb_fit_weight}()},
 \code{\link{converged.kb_fit}()},
+\code{\link{fitted.kb_fit_weight}()},
 \code{\link{glance.kb_fit}()},
 \code{\link{kb_stancode}()},
 \code{\link{log_lik.kb_fit_weight}()},
@@ -60,6 +61,7 @@ Other generics:
 \code{\link{posterior_linpred.kb_fit_weight}()},
 \code{\link{posterior_predict.kb_fit_weight}()},
 \code{\link{prior_summary.kb_fit}()},
+\code{\link{residuals.kb_fit_weight}()},
 \code{\link{samples}()},
 \code{\link{summary.kb_fit}()},
 \code{\link{tidy.kb_fit_weight}()}

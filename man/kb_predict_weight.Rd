@@ -16,8 +16,8 @@ kb_predict_weight(
 \arguments{
 \item{fit}{A \code{kb_fit_weight} object.}
 
-\item{new_data}{A data frame with a \code{diameter} column (and optional \code{site} /
-\code{year} columns), or \code{NULL} to predict at the observed data.}
+\item{new_data}{A data frame with a \code{diameter_mm} column (and optional \code{site}
+/ \code{year} columns), or \code{NULL} to predict at the observed data.}
 
 \item{new_levels}{A string, one of \code{"sample"} or \code{"average"}, controlling how
 random effects that are not conditioned on are treated (factors absent from
@@ -50,7 +50,7 @@ grouping column, is handled by \code{new_levels}. A mix of observed and new site
 one \code{new_data} is resolved row by row, in a single call.
 }
 \examples{
-new_data <- data.frame(diameter = c(20, 40, 60))
+new_data <- data.frame(diameter_mm = c(20, 40, 60))
 kb_predict_weight(fit_weight, new_data, new_levels = "average")
 }
 \seealso{

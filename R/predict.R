@@ -14,7 +14,7 @@
 #' @family generics
 #' @exportS3Method stats::predict
 #' @examples
-#' predict(fit_weight, data.frame(diameter = c(20, 40)))
+#' predict(fit_weight, data.frame(diameter_mm = c(20, 40)))
 predict.kb_fit_weight <- function(object,
                                   new_data = NULL,
                                   new_levels = c("sample", "average"),

@@ -9,7 +9,7 @@
 - **THEN** it generates the diameter sequence with `newdata::xnew_data()` spanning the fit's observed range and returns a `kb_predictions` tibble with `estimate`, `lower`, `upper`
 
 #### Scenario: Prediction at supplied new_data
-- **WHEN** `new_data` is supplied with a `diameter` column
+- **WHEN** `new_data` is supplied with a `diameter_mm` column
 - **THEN** predictions are returned at exactly those diameters
 
 #### Scenario: Predictor enters on a fixed-reference scale

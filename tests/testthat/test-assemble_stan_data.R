@@ -1,7 +1,7 @@
 test_that("assemble_stan_data maps data and priors to the Stan data block", {
   data <- data.frame(
-    diameter = c(20, 35, 50),
-    weight = c(0.5, 2, 4),
+    diameter_mm = c(20, 35, 50),
+    weight_kg = c(0.5, 2, 4),
     site = factor(c("a", "b", "a")),
     year = factor(c("2020", "2020", "2021"))
   )
@@ -25,7 +25,7 @@ test_that("assemble_stan_data maps data and priors to the Stan data block", {
 
 test_that("assemble_stan_data accepts zero-row data", {
   data <- data.frame(
-    diameter = numeric(0), weight = numeric(0),
+    diameter_mm = numeric(0), weight_kg = numeric(0),
     site = factor(character(0)), year = factor(character(0))
   )
   sd <- assemble_stan_data(data, kb_priors_weight(), prior_only = TRUE)

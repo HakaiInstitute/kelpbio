@@ -20,12 +20,14 @@ appropriate types and values. Returns the data invisibly on success and
 errors via \code{chk} otherwise.
 }
 \details{
-Required columns: numeric \code{diameter} (> 0), numeric \code{weight} (> 0), and
-factor or character \code{site} and \code{year}, with no missing values.
+Required columns: numeric \code{diameter_mm} (> 0), numeric \code{weight_kg} (> 0), and
+factor or character \code{site} and \code{year}, with no missing values. Diameter is
+the sub-bulb diameter in millimetres and weight the wet weight in kilograms;
+the model centres diameter at 30 mm, so the units are part of the contract.
 }
 \examples{
 data <- data.frame(
-  diameter = c(20, 35), weight = c(0.5, 2.1),
+  diameter_mm = c(20, 35), weight_kg = c(0.5, 2.1),
   site = factor(c("a", "b")), year = factor(c("2020", "2021"))
 )
 kb_check_data_weight(data)

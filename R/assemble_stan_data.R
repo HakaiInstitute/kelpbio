@@ -2,8 +2,9 @@
 #'
 #' Map validated weight data and a resolved prior list to the `data` block of
 #' `inst/stan/weight.stan`. `site` and `year` are encoded as integer factor
-#' codes; the raw `diameter` and `weight` vectors are passed through (the Stan
-#' model applies the `log(diameter) - log(30)` and `log(weight)` transforms).
+#' codes; the raw `diameter_mm` and `weight_kg` vectors are passed through (the
+#' Stan model applies the `log(diameter) - log(30)` and `log(weight)`
+#' transforms; the Stan data block keeps the unitless names `diameter`/`weight`).
 #' Zero-row data is supported (for prior-only fits): `nObs` is `0` and `nSite` /
 #' `nYear` fall back to `1`.
 #'
@@ -23,8 +24,8 @@ assemble_stan_data <- function(data, priors, prior_only = FALSE) {
     nYear = max(1L, nlevels(year)),
     site = as.integer(site),
     year = as.integer(year),
-    diameter = as.numeric(data$diameter),
-    weight = as.numeric(data$weight),
+    diameter = as.numeric(data$diameter_mm),
+    weight = as.numeric(data$weight_kg),
     prior_intercept_mu = priors$intercept$mean,
     prior_intercept_sd = priors$intercept$sd,
     prior_diameter_mu = priors$diameter$mean,

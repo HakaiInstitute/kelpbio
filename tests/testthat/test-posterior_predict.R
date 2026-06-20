@@ -7,7 +7,7 @@ test_that("posterior_predict returns stored yrep at observed data", {
 })
 
 test_that("posterior_predict at new data is wider than posterior_epred", {
-  nd <- data.frame(diameter = c(20, 40, 60))
+  nd <- data.frame(diameter_mm = c(20, 40, 60))
   pp <- posterior_predict(weight_fit, newdata = nd, new_levels = "average")
   ep <- posterior_epred(weight_fit, newdata = nd, new_levels = "average")
   expect_equal(dim(pp), dim(ep))

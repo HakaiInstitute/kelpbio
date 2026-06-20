@@ -114,5 +114,24 @@ kb_plot_predictions <- function(predictions,
       inherit.aes = FALSE, alpha = 0.3
     )
   }
-  gg + ggplot2::labs(x = x, y = response %||% "estimate")
+  x_units <- if (identical(x, predictor)) attr(predictions, "kb_predictor_units") else NA_character_
+  gg + ggplot2::labs(
+    x = kb_axis_label(x, x_units),
+    y = kb_axis_label(response %||% "estimate", attr(predictions, "kb_response_units"))
+  )
+}
+
+# Publication-ready axis title for a prediction column: a descriptive label for
+# the known model variables, with units appended in parentheses when available.
+# Unrecognised columns fall back to their name (sentence-cased).
+kb_axis_label <- function(name, units = NA_character_) {
+  base <- switch(name,
+    diameter_mm = "Sub-bulb diameter",
+    weight_kg = "Wet weight",
+    site = "Site",
+    year = "Year",
+    estimate = "Estimate",
+    paste0(toupper(substring(name, 1, 1)), substring(name, 2))
+  )
+  if (!is.na(units) && nzchar(units)) paste0(base, " (", units, ")") else base
 }

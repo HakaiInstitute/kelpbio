@@ -46,7 +46,7 @@ test_that("prior_only fit ignores the data", {
   ))
   f1 <- kb_fit_weight(d, prior_only = TRUE, chains = 1, niters = 300, nthin = 1, cores = 1, quiet = TRUE, seed = 7)
   d2 <- d
-  d2$weight <- rev(d2$weight)
+  d2$weight_kg <- rev(d2$weight_kg)
   f2 <- kb_fit_weight(d2, prior_only = TRUE, chains = 1, niters = 300, nthin = 1, cores = 1, quiet = TRUE, seed = 7)
   # likelihood off => permuting the response leaves the prior-only fit unchanged
   expect_equal(median(f1$draws$bWeight30), median(f2$draws$bWeight30), tolerance = 0.05)

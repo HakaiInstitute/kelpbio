@@ -1,5 +1,5 @@
 test_that("posterior_epred returns a D x N matrix of positive expected weights", {
-  m <- posterior_epred(weight_fit, newdata = data.frame(diameter = c(20, 40, 60)))
+  m <- posterior_epred(weight_fit, newdata = data.frame(diameter_mm = c(20, 40, 60)))
   expect_true(is.matrix(m))
   expect_equal(ncol(m), 3L)
   expect_equal(nrow(m), posterior::ndraws(weight_fit$draws))
@@ -22,14 +22,14 @@ test_that("newdata = NULL conditions on observed groups, agreeing with augment",
 
 test_that("a site column conditions on that site", {
   site1 <- weight_fit$meta$site_levels[1]
-  nd <- data.frame(diameter = c(30, 30), site = site1)
+  nd <- data.frame(diameter_mm = c(30, 30), site = site1)
   m_site <- posterior_epred(weight_fit, newdata = nd, new_levels = "average")
-  m_bare <- posterior_epred(weight_fit, newdata = data.frame(diameter = c(30, 30)), new_levels = "average")
+  m_bare <- posterior_epred(weight_fit, newdata = data.frame(diameter_mm = c(30, 30)), new_levels = "average")
   expect_false(isTRUE(all.equal(m_site, m_bare)))
 })
 
 test_that("an unknown site level is sampled, not errored", {
-  nd <- data.frame(diameter = c(30, 30), site = "brand_new_site")
+  nd <- data.frame(diameter_mm = c(30, 30), site = "brand_new_site")
   expect_no_error(m <- posterior_epred(weight_fit, newdata = nd, new_levels = "sample"))
   expect_equal(dim(m), c(posterior::ndraws(weight_fit$draws), 2L))
   expect_true(all(m > 0))

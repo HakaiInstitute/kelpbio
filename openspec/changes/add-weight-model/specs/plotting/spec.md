@@ -12,6 +12,10 @@
 - **WHEN** the prediction's predictor is continuous (an allometric weight-vs-diameter curve) and `style = NULL`
 - **THEN** it draws a line with a credible-interval ribbon
 
+#### Scenario: Publication-ready axis titles
+- **WHEN** `kb_plot_predictions()` labels the axes
+- **THEN** it uses descriptive titles for the known model variables, appending units where available (e.g. `Sub-bulb diameter (mm)`, `Wet weight (kg)`, `Site`), rather than the raw column names
+
 ### Requirement: Metadata-driven, overridable defaults
 
 `x`, `style`, and `facet` SHALL default to `NULL` and be inferred from the prediction's metadata, while remaining overridable arguments.

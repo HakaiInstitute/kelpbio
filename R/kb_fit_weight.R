@@ -164,6 +164,7 @@ new_kb_fit_weight <- function(stanfit, data, priors, species, prior_only, nthin)
     site_levels = levels(factor(data$site)),
     year_levels = levels(factor(data$year)),
     diameter_ref = 30,
+    nu = 4, # Student-t degrees of freedom (fixed in inst/stan/weight.stan)
     nthin = nthin
   )
 

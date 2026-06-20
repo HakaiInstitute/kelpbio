@@ -2,12 +2,14 @@
 # metadata (predictor, grouping variables, response + units) as attributes, used
 # by kb_plot_predictions() for its defaults.
 new_kb_predictions <- function(x, predictor, group_vars, response,
-                               response_units = NA_character_) {
+                               response_units = NA_character_,
+                               predictor_units = NA_character_) {
   x <- tibble::as_tibble(x)
   structure(
     x,
     class = c("kb_predictions", class(x)),
     kb_predictor = predictor,
+    kb_predictor_units = predictor_units,
     kb_group_vars = group_vars,
     kb_response = response,
     kb_response_units = response_units

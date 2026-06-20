@@ -34,8 +34,8 @@ rows <- lapply(seq_len(nrow(grid)), function(i) {
     a_site[[s]] + a_sy +
     stats::rnorm(n_per, 0, sd_resid)
   data.frame(
-    diameter = round(diameter, 1),
-    weight = round(exp(log_w), 3),
+    diameter_mm = round(diameter, 1),
+    weight_kg = round(exp(log_w), 3),
     site = s,
     year = y
   )

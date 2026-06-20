@@ -32,7 +32,7 @@ A posterior-predictive check uses the stored `yrep` via `posterior_predict()`:
 
 ```{r ppc, eval = FALSE}
 bayesplot::ppc_dens_overlay(
-  y = fit$data$weight,
+  y = fit$data$weight_kg,
   yrep = posterior_predict(fit)
 )
 ```
