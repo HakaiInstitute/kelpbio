@@ -4,21 +4,67 @@
 \alias{summary.kb_fit}
 \title{Summarise a Model Fit}
 \usage{
-\method{summary}{kb_fit}(object, ...)
+\method{summary}{kb_fit}(
+  object,
+  conf_level = 0.95,
+  estimate = stats::median,
+  sig_fig = 3,
+  include_random_effects = FALSE,
+  ...
+)
 }
 \arguments{
 \item{object}{A \code{kb_fit} object.}
 
-\item{...}{Passed to \link[=tidy.kb_fit_weight]{tidy()}.}
+\item{conf_level}{A number between 0 and 1 giving the compatibility-interval
+level.}
+
+\item{estimate}{A function giving the point estimate (e.g. \code{median}).}
+
+\item{sig_fig}{A whole number of significant figures for summary output.}
+
+\item{include_random_effects}{A flag specifying whether to include the
+group-level random-effect terms in the output.}
+
+\item{...}{Unused.}
 }
 \value{
-A \code{summary_kb_fit} object.
+A \code{summary_kb_fit} object: a list of fit metadata and a
+\code{coefficients} tibble with columns \code{term}, \code{estimate}, \code{lower}, \code{upper},
+\code{rhat}, \code{ess_bulk}, and \code{ess_tail}.
 }
 \description{
-Return a classed \code{summary_kb_fit} object: the stable fit metadata plus the
-per-term posterior summary table (from \link[=tidy.kb_fit_weight]{tidy()}). Its
-\code{print} method shows the numeric table; for the snapshot-safe overview call
-\code{print()} on the fit itself.
+Return a classed \code{summary_kb_fit} object collecting fit-level metadata and a
+per-term posterior summary table, in the style of \code{brms} and \code{rstanarm}.
+}
+\details{
+The \code{print} method renders a header (likelihood family, model formula,
+observation and group counts, sampler configuration, and the convergence
+verdict), the coefficient table, and a diagnostics footer. For the
+snapshot-safe overview without the numeric table, call \code{print()} on the fit
+itself.
+
+The coefficient table reports, per term:
+\describe{
+\item{\code{estimate}}{the posterior point estimate (the \code{estimate} function;
+the median by default).}
+\item{\code{lower}, \code{upper}}{the \code{conf_level} equal-tailed compatibility limits.}
+\item{\code{rhat}}{the potential scale reduction factor, comparing between- and
+within-chain variance; values near 1 indicate convergence.}
+\item{\code{ess_bulk}}{the bulk effective sample size, governing the reliability
+of central posterior summaries.}
+\item{\code{ess_tail}}{the tail effective sample size, governing the reliability
+of the interval limits.}
+}
+
+Population-level coefficients and random-effect standard deviations are always
+shown. The group-level deviations are included only when
+\code{include_random_effects = TRUE}, following the convention that \code{summary}
+reports the variance hyperparameters rather than the per-level effects (the
+latter are the \code{tidy()} default).
+}
+\examples{
+summary(fit_weight)
 }
 \seealso{
 Other generics: 

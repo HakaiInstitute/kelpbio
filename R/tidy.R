@@ -1,8 +1,9 @@
 #' Tidy a Weight Model Fit
 #'
-#' Posterior summaries of the model terms: the population-level effects, the
-#' random-effect standard deviations, and (when `include_random_effects = TRUE`)
-#' the group-level random effects.
+#' Posterior summaries of the model terms: the population-level effects and the
+#' random-effect standard deviations, plus (when `include_random_effects = TRUE`)
+#' the group-level deviations. By default the per-level deviations are omitted,
+#' following the `broom.mixed` convention.
 #'
 #' @inheritParams params
 #' @param x A `kb_fit_weight` object.
@@ -12,11 +13,13 @@
 #'   `lower`, `upper`.
 #' @family generics
 #' @exportS3Method generics::tidy
+#' @examples
+#' tidy(fit_weight)
 tidy.kb_fit_weight <- function(x,
                                conf_level = 0.95,
                                estimate = stats::median,
                                sig_fig = 3,
-                               include_random_effects = TRUE,
+                               include_random_effects = FALSE,
                                ...) {
   rlang::check_dots_empty()
   .chk_kb_fit_weight(x)

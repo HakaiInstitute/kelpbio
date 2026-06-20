@@ -45,6 +45,7 @@
 - [x] 7.2 `R/tidy.R` (`term`/`estimate`/`lower`/`upper`; args `conf_level`/`estimate`/`sig_fig`/`include_random_effects`), `R/coef.R` (pure wrapper on `tidy`), `R/glance.R` (columns `n,K,nchains,niters,nthin,ess,rhat,converged`), `R/converged.R` (`rhat`/`esr` thresholds, defaults `1.05`/`0.1`).
 - [x] 7.3 `R/augment.R` (`fitted`/`residual`/`lower`/`upper`, no dot prefix, full precision, via `.weight_linpred`), `R/print.R` (stable metadata, snapshot), `R/summary.R` (classed `summary_kb_fit` + print).
 - [x] 7.4 Tests: structure + invariants; snapshot prints/messages only; assert house column names.
+- [x] 7.5 Align `summary.kb_fit` with the `brms`/`rstanarm` idiom: a metadata header (likelihood family, model formula, observation/group counts, sampler draws, convergence verdict), the coefficient table gaining `rhat`/`ess_bulk`/`ess_tail` from the stored diagnostics, an `include_random_effects` arg (default `FALSE`) toggling the per-level deviations, and a diagnostics footer. Flip the `tidy()`/`coef()` `include_random_effects` default to `FALSE` to match (`broom.mixed` convention). Update `openspec/specs/summaries` + this change's delta and the summary/tidy tests.
 
 ## 8. Prediction engine + generics (on fixture)
 

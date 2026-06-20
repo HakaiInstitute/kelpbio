@@ -9,7 +9,7 @@
   conf_level = 0.95,
   estimate = stats::median,
   sig_fig = 3,
-  include_random_effects = TRUE,
+  include_random_effects = FALSE,
   ...
 )
 }
@@ -33,9 +33,13 @@ A tibble with one row per term and columns \code{term}, \code{estimate},
 \code{lower}, \code{upper}.
 }
 \description{
-Posterior summaries of the model terms: the population-level effects, the
-random-effect standard deviations, and (when \code{include_random_effects = TRUE})
-the group-level random effects.
+Posterior summaries of the model terms: the population-level effects and the
+random-effect standard deviations, plus (when \code{include_random_effects = TRUE})
+the group-level deviations. By default the per-level deviations are omitted,
+following the \code{broom.mixed} convention.
+}
+\examples{
+tidy(fit_weight)
 }
 \seealso{
 Other generics: 
