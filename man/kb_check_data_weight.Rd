@@ -32,6 +32,8 @@ kb_check_data_weight(data)
 }
 \seealso{
 Other data: 
-\code{\link{kb_data_weight}}
+\code{\link{data_weight_hakai}},
+\code{\link{data_weight_sim}},
+\code{\link{fit_weight}}
 }
 \concept{data}

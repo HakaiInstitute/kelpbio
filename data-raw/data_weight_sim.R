@@ -1,9 +1,10 @@
-# Build the small SIMULATED weight dataset used to build the test fixture and to
-# drive the fit/check tests. Kept small and controlled (6 sites x 4 years, one
-# missing cell) and independent of the real bundled data_weight_hakai, so tests
-# stay fast and stable. NOT run during testing.
-#
-# Run from the package root:  Rscript tests/testthat/fixtures/make-sim-data.R
+# Build data_weight_sim, a small simulated weight dataset for fast tests and
+# runnable examples. Simulated from the weight-model structure (quadratic
+# log-diameter mean with site and site:year random effects, log-normal noise) so
+# it passes kb_check_data_weight() and kb_fit_weight() converges on it. Kept
+# small (6 sites x 4 years, one missing cell) and seeded for reproducibility.
+# Not for inference. Run from the package root:
+#   Rscript data-raw/data_weight_sim.R
 
 set.seed(101)
 
@@ -40,10 +41,10 @@ rows <- lapply(seq_len(nrow(grid)), function(i) {
   )
 })
 
-sim_weight <- do.call(rbind, rows)
-sim_weight$site <- factor(sim_weight$site)
-sim_weight$year <- factor(sim_weight$year)
-rownames(sim_weight) <- NULL
+data_weight_sim <- do.call(rbind, rows)
+data_weight_sim$site <- factor(data_weight_sim$site)
+data_weight_sim$year <- factor(data_weight_sim$year)
+rownames(data_weight_sim) <- NULL
+data_weight_sim <- tibble::as_tibble(data_weight_sim)
 
-saveRDS(sim_weight, "tests/testthat/fixtures/sim_weight.rds")
-message("Wrote tests/testthat/fixtures/sim_weight.rds")
+usethis::use_data(data_weight_sim, overwrite = TRUE)

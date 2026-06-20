@@ -1,4 +1,4 @@
-# Build kb_data_weight from the Hakai Nereocystis allometry survey data.
+# Build data_weight_hakai from the Hakai Nereocystis allometry survey data.
 #
 # Source: the prepared weight dataset from the analysis project
 # (hakai-kelp-biomass-25), `data_submax`, which already carries the analysis
@@ -12,9 +12,9 @@
 src <- "~/Analyses/poissonconsulting/hakai-kelp-biomass-25/output/data/nereo/weight/data_submax.rds"
 data_submax <- readRDS(path.expand(src))
 
-kb_data_weight <- data_submax[c("diameter", "weight", "site", "year")]
-kb_data_weight$site <- droplevels(factor(kb_data_weight$site))
-kb_data_weight$year <- droplevels(factor(kb_data_weight$year))
-kb_data_weight <- tibble::as_tibble(kb_data_weight)
+data_weight_hakai <- data_submax[c("diameter", "weight", "site", "year")]
+data_weight_hakai$site <- droplevels(factor(data_weight_hakai$site))
+data_weight_hakai$year <- droplevels(factor(data_weight_hakai$year))
+data_weight_hakai <- tibble::as_tibble(data_weight_hakai)
 
-usethis::use_data(kb_data_weight, overwrite = TRUE)
+usethis::use_data(data_weight_hakai, overwrite = TRUE)
