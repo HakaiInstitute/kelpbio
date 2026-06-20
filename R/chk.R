@@ -1,8 +1,7 @@
-# Validators for kb_fit objects, following the bboutools .vld_/.chk_ pattern.
-# Public entry points that take a fit call .chk_kb_fit_weight() at their head so
-# a wrong object errors with a clear message rather than failing deep in the
-# prediction engine (S3 dispatch alone does not catch a non-fit passed to a
-# function called directly, e.g. kb_predict_weight()).
+# Validators for kb_fit objects (.vld_/.chk_ pattern). Public functions that take
+# a fit call .chk_kb_fit_weight() at their head so a wrong object errors clearly
+# rather than failing deep in the prediction engine; S3 dispatch alone does not
+# catch a non-fit passed to a function called directly.
 
 .vld_kb_fit <- function(x) {
   inherits(x, "kb_fit")

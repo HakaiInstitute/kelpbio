@@ -1,15 +1,15 @@
 #' Plot Model Predictions
 #'
 #' Render a `ggplot` from a `kb_predictions` object (the output of a
-#' `kb_predict_*()` function). Operates on prediction data frames in a pipe-based
-#' workflow; it never takes a fit object. The result is a `ggplot` the user can
-#' extend with `+`.
+#' `kb_predict_*()` function). It operates on prediction data frames, never on a
+#' fit object, and returns a `ggplot` the user can extend with `+`.
 #'
+#' @details
 #' `x`, `style`, and `facet` default to `NULL` and are inferred from the
 #' prediction's metadata (the predictor column, predictor type, and grouping
-#' variables); each remains an overridable argument. If the metadata has been
-#' stripped (e.g. by dplyr post-processing) and `x` cannot be inferred, the
-#' function errors and asks for `x`.
+#' variables); each remains overridable. If the metadata has been stripped (e.g.
+#' by dplyr post-processing) and `x` cannot be inferred, the function errors and
+#' asks for `x`.
 #'
 #' @param predictions A `kb_predictions` object.
 #' @param x The predictor column name; `NULL` infers it from the metadata.
@@ -26,6 +26,10 @@
 #' @return A `ggplot` object.
 #' @family prediction
 #' @export
+#'
+#' @examples
+#' kb_predict_weight_by(fit_weight, by = "site") |>
+#'   kb_plot_predictions()
 kb_plot_predictions <- function(predictions,
                                 x = NULL,
                                 style = NULL,

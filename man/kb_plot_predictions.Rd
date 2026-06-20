@@ -38,16 +38,19 @@ A \code{ggplot} object.
 }
 \description{
 Render a \code{ggplot} from a \code{kb_predictions} object (the output of a
-\verb{kb_predict_*()} function). Operates on prediction data frames in a pipe-based
-workflow; it never takes a fit object. The result is a \code{ggplot} the user can
-extend with \code{+}.
+\verb{kb_predict_*()} function). It operates on prediction data frames, never on a
+fit object, and returns a \code{ggplot} the user can extend with \code{+}.
 }
 \details{
 \code{x}, \code{style}, and \code{facet} default to \code{NULL} and are inferred from the
 prediction's metadata (the predictor column, predictor type, and grouping
-variables); each remains an overridable argument. If the metadata has been
-stripped (e.g. by dplyr post-processing) and \code{x} cannot be inferred, the
-function errors and asks for \code{x}.
+variables); each remains overridable. If the metadata has been stripped (e.g.
+by dplyr post-processing) and \code{x} cannot be inferred, the function errors and
+asks for \code{x}.
+}
+\examples{
+kb_predict_weight_by(fit_weight, by = "site") |>
+  kb_plot_predictions()
 }
 \seealso{
 Other prediction: 

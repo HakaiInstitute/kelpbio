@@ -1,14 +1,8 @@
-# Single source of truth (R side) for the weight-model mean. Returns the linear
-# predictor on the log scale as a `posterior` rvar of length nrow(grid). Every
-# downstream consumer (posterior_linpred/epred/predict, augment, kb_predict_weight,
-# kb_predict_weight_by, biomass) calls this, so the mean is never re-implemented.
-# The Stan transformed-parameters block is the only other place the mean is defined.
-#
-# Conditioning is resolved per row, per factor: a row whose grouping level is
-# known (seen in the fit) is conditioned on its estimated random effect; a row
-# whose level is new, or whose grouping column is absent from the grid, is
-# handled by `new_levels` ("sample" draws a fresh effect from Normal(0, sd),
-# "average" holds it at zero). Known levels condition regardless of `new_levels`.
+# Single source of truth (R side) for the weight-model mean: the log-scale linear
+# predictor as a `posterior` rvar of length nrow(grid). Conditioning is resolved
+# per row and per factor: known levels take their estimated random effect; new or
+# absent levels are handled by `new_levels` ("sample" draws from Normal(0, sd),
+# "average" holds at zero).
 .weight_linpred <- function(fit, grid, new_levels) {
   d <- fit$draws
   n <- nrow(grid)
@@ -33,10 +27,8 @@
     re_site + re_slope * log_dc + re_sy
 }
 
-# Orchestrator for the new-data verb (kb_predict_weight) and the posterior_*
-# generics: predict at the supplied rows, or at the observed data when
-# new_data is NULL. Conditioning follows the grid's grouping columns and their
-# level membership inside .weight_linpred().
+# New-data verb (kb_predict_weight) and the posterior_* generics: predict at the
+# supplied rows, or the observed data when new_data is NULL.
 weight_data_linpred <- function(fit, new_data, new_levels) {
   .chk_kb_fit_weight(fit)
   new_levels <- rlang::arg_match(new_levels, c("sample", "average"))
@@ -48,8 +40,8 @@ weight_data_linpred <- function(fit, new_data, new_levels) {
   )
 }
 
-# Orchestrator for the curve/summary verb (kb_predict_weight_by): build a
-# diameter sequence crossed with the requested grouping levels, then predict.
+# Curve verb (kb_predict_weight_by): a diameter sequence crossed with the
+# requested grouping levels, then predict.
 weight_by_linpred <- function(fit, by, new_levels, diameter = NULL) {
   .chk_kb_fit_weight(fit)
   new_levels <- rlang::arg_match(new_levels, c("sample", "average"))
@@ -85,8 +77,7 @@ validate_by_weight <- function(by) {
 }
 
 # New-data grid: the supplied rows (must carry a `diameter` column), or the
-# observed data when new_data is NULL (ecosystem convention; matches base R
-# predict()).
+# observed data when new_data is NULL.
 build_data_grid <- function(fit, new_data) {
   if (is.null(new_data)) {
     return(tibble::as_tibble(fit$data))
@@ -135,9 +126,8 @@ re_draw <- function(new_levels, n, sd_rvar) {
 }
 
 # Resolve a vector-indexed random effect (site intercept or slope) to a length-n
-# rvar. `idx` is match() output against the estimated levels (NA = new or
-# absent). Known rows take the estimated effect; the rest are drawn per
-# `new_levels`.
+# rvar. `idx` is match() output (NA = new or absent): known rows take the
+# estimated effect, the rest are drawn per `new_levels`.
 resolve_re1 <- function(param, idx, new_levels, sd_rvar) {
   known <- !is.na(idx)
   if (all(known)) {
@@ -174,7 +164,6 @@ resolve_re2 <- function(param, i, j, new_levels, sd_rvar) {
   posterior::rvar(out)
 }
 
-# index a length-m vector rvar by an integer vector -> rvar of that length
 rvar_index1 <- function(rv, idx) {
   posterior::rvar(posterior::draws_of(rv)[, idx, drop = FALSE])
 }

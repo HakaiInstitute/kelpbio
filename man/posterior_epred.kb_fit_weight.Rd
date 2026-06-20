@@ -13,15 +13,11 @@
 \code{year} columns), or \code{NULL} for the observed data.}
 
 \item{new_levels}{A string, one of \code{"sample"} or \code{"average"}, controlling how
-random effects that are not conditioned on are treated: factors absent from
-the prediction, and (in \code{\link[=kb_predict_weight]{kb_predict_weight()}}) any new level not seen in the
-fit. \code{"sample"} draws a new random effect from \code{Normal(0, sd)} (a new,
-unsampled group), widening the interval to include between-group variation.
-\code{"average"} holds the random effects at their central (zero) value, giving
-the typical group on the linear-predictor scale. Known levels are always
-conditioned on, regardless of \code{new_levels}. Note that \code{"average"} on a new
-group reports the typical-group prediction, not a calibrated interval for
-that specific new group.}
+random effects that are not conditioned on are treated (factors absent from
+the prediction, and any new level not seen in the fit). \code{"sample"} draws a
+new random effect from \code{Normal(0, sd)}, widening the interval to include
+between-group variation; \code{"average"} holds the random effects at zero, giving
+the typical group. Known levels are always conditioned on.}
 
 \item{...}{Unused.}
 }
@@ -30,8 +26,7 @@ A draws-by-observations (\verb{D x N}) matrix.
 }
 \description{
 Draws from the expectation of the posterior predictive distribution
-(response-scale expected weight, \code{exp} of the linear predictor) for the
-weight model. The prediction engine; \code{\link[=kb_predict_weight]{kb_predict_weight()}} summarises it.
+(response-scale expected weight, \code{exp} of the linear predictor).
 }
 \details{
 Conditioning is inferred from the grouping columns present in \code{newdata}: a
@@ -40,7 +35,13 @@ factors with no column are handled by \code{new_levels}. With \code{newdata = NU
 observed data is used and conditioned on its site and year, so the central
 estimate agrees with \code{\link[=augment]{augment()}}.
 }
+\examples{
+ep <- posterior_epred(fit_weight)
+dim(ep)
+}
 \seealso{
+\code{\link[=kb_predict_weight]{kb_predict_weight()}}, which summarises these draws.
+
 Other generics: 
 \code{\link{augment.kb_fit_weight}()},
 \code{\link{coef.kb_fit_weight}()},

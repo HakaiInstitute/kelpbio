@@ -23,15 +23,11 @@ expanded over its observed levels and conditioned on at its estimated
 random effects.}
 
 \item{new_levels}{A string, one of \code{"sample"} or \code{"average"}, controlling how
-random effects that are not conditioned on are treated: factors absent from
-the prediction, and (in \code{\link[=kb_predict_weight]{kb_predict_weight()}}) any new level not seen in the
-fit. \code{"sample"} draws a new random effect from \code{Normal(0, sd)} (a new,
-unsampled group), widening the interval to include between-group variation.
-\code{"average"} holds the random effects at their central (zero) value, giving
-the typical group on the linear-predictor scale. Known levels are always
-conditioned on, regardless of \code{new_levels}. Note that \code{"average"} on a new
-group reports the typical-group prediction, not a calibrated interval for
-that specific new group.}
+random effects that are not conditioned on are treated (factors absent from
+the prediction, and any new level not seen in the fit). \code{"sample"} draws a
+new random effect from \code{Normal(0, sd)}, widening the interval to include
+between-group variation; \code{"average"} holds the random effects at zero, giving
+the typical group. Known levels are always conditioned on.}
 
 \item{diameter}{A numeric vector of diameters to predict over, or \code{NULL} for
 an automatic sequence spanning the observed range.}
@@ -48,23 +44,26 @@ A \code{kb_predictions} object: a summary tibble with \code{estimate}, \code{low
 \code{upper}, the \code{diameter} predictor, and the \code{by} grouping columns.
 }
 \description{
-Summarise the fitted weight-at-diameter relationship over a diameter
-sequence, as a \code{kb_predictions} object ready for \code{\link[=kb_plot_predictions]{kb_plot_predictions()}}.
-This is the visualisation entry point: it builds the diameter sequence for
-you (no data frame needed).
+Summarise the fitted weight-at-diameter relationship over a diameter sequence,
+as a \code{kb_predictions} object ready for \code{\link[=kb_plot_predictions]{kb_plot_predictions()}}. It builds the
+diameter sequence automatically. To predict weight for a data frame of measured
+diameters, use \code{\link[=kb_predict_weight]{kb_predict_weight()}}.
 }
 \details{
-\code{by} selects the grouping factors that each get their own curve, conditioned
-on their estimated random effects. \code{new_levels} controls the factors not
-named in \code{by}: \code{"sample"} (a new, unsampled group, widening the band to
-include between-group variation) or \code{"average"} (the typical group, random
-effects held at zero). The available \code{by} values are \code{NULL} (a single
-population curve), \code{"site"}, and \code{c("site", "year")}.
-
-To predict weight for a data frame of measured diameters, use
-\code{\link[=kb_predict_weight]{kb_predict_weight()}}.
+\code{by} selects the grouping factors that each get their own curve, conditioned on
+their estimated random effects. \code{new_levels} controls the factors not named in
+\code{by}: \code{"sample"} (a new, unsampled group, widening the band to include
+between-group variation) or \code{"average"} (the typical group, random effects held
+at zero). The available \code{by} values are \code{NULL} (a single population curve),
+\code{"site"}, and \code{c("site", "year")}. \code{"average"} reports the typical-group
+prediction, not a calibrated interval for a specific new group.
+}
+\examples{
+kb_predict_weight_by(fit_weight, by = "site")
 }
 \seealso{
+\code{\link[=kb_predict_weight]{kb_predict_weight()}} for predictions at supplied rows.
+
 Other prediction: 
 \code{\link{autoplot.kb_predictions}()},
 \code{\link{kb_plot_predictions}()},

@@ -21,15 +21,11 @@
 \code{year} columns), or \code{NULL} for the observed data.}
 
 \item{new_levels}{A string, one of \code{"sample"} or \code{"average"}, controlling how
-random effects that are not conditioned on are treated: factors absent from
-the prediction, and (in \code{\link[=kb_predict_weight]{kb_predict_weight()}}) any new level not seen in the
-fit. \code{"sample"} draws a new random effect from \code{Normal(0, sd)} (a new,
-unsampled group), widening the interval to include between-group variation.
-\code{"average"} holds the random effects at their central (zero) value, giving
-the typical group on the linear-predictor scale. Known levels are always
-conditioned on, regardless of \code{new_levels}. Note that \code{"average"} on a new
-group reports the typical-group prediction, not a calibrated interval for
-that specific new group.}
+random effects that are not conditioned on are treated (factors absent from
+the prediction, and any new level not seen in the fit). \code{"sample"} draws a
+new random effect from \code{Normal(0, sd)}, widening the interval to include
+between-group variation; \code{"average"} holds the random effects at zero, giving
+the typical group. Known levels are always conditioned on.}
 
 \item{...}{Unused.}
 }
@@ -44,6 +40,10 @@ Draws of the weight-model linear predictor on the log scale (or, with
 Conditioning is inferred from the grouping columns present in \code{newdata} (see
 \code{\link[=posterior_epred]{posterior_epred()}}); with \code{newdata = NULL} the observed data is used and
 conditioned on its site and year.
+}
+\examples{
+lp <- posterior_linpred(fit_weight)
+dim(lp)
 }
 \seealso{
 Other generics: 

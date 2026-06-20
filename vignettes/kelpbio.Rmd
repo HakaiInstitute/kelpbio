@@ -25,7 +25,7 @@ A fitted model exposes the `rstantools` generics, so it composes directly with
 fitting requires the compiled package).
 
 ```{r fit, eval = FALSE}
-fit <- kb_fit_weight(kb_data_weight)
+fit <- kb_fit_weight(data_weight_hakai)
 ```
 
 A posterior-predictive check uses the stored `yrep` via `posterior_predict()`:

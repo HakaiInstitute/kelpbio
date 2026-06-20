@@ -31,12 +31,11 @@
 #'
 #' @examples
 #' if (interactive()) {
-#'   # Prior predictive check: fit from the priors only, then predict and plot
-#'   # the implied weight-vs-diameter relationship over the data.
-#'   fit <- kb_fit_weight(kb_data_weight, prior_only = TRUE)
-#'   kb_predict_weight(fit, new_levels = "average") |>
-#'     kb_plot_predictions(observed = kb_data_weight)
+#'   fit <- kb_fit_weight(data_weight_sim)
+#'   tidy(fit)
 #' }
+#' # A pre-fit example model ships with the package:
+#' tidy(fit_weight)
 kb_fit_weight <- function(data,
                           species = "nereocystis",
                           priors = NULL,
@@ -65,9 +64,8 @@ kb_fit_weight <- function(data,
   priors <- resolve_priors(priors, kb_priors_weight(species))
   stan_data <- assemble_stan_data(data, priors, prior_only = prior_only)
 
-  # niters = saved post-warmup draws/chain. Translate to rstan's iter (which
-  # counts warmup): warmup = niters, post-warmup = niters * nthin thinned by
-  # nthin -> exactly niters saved draws.
+  # niters = saved post-warmup draws/chain. rstan's iter counts warmup, so set
+  # warmup = niters and thin the post-warmup phase to land exactly niters draws.
   warmup <- as.integer(niters)
   total_iter <- warmup + as.integer(niters) * as.integer(nthin)
 
@@ -82,8 +80,8 @@ kb_fit_weight <- function(data,
       cores = resolve_cores(cores, chains),
       refresh = if (quiet) 0L else max(1L, total_iter %/% 10L),
       show_messages = FALSE,
-      # Stream textual progress to the console; never open the HTML progress
-      # viewer (which triggers a "URL cannot be accessed" pop-up in some GUIs).
+      # Console progress only; the HTML viewer pops a "URL cannot be accessed"
+      # error in some GUIs.
       open_progress = FALSE,
       ...
     )
@@ -99,9 +97,8 @@ kb_fit_weight <- function(data,
   )
 }
 
-# Run a sampling call, muffling the post-sampling HMC diagnostic warnings
-# (divergences, treedepth, low ESS/Rhat) locally at the call site. Convergence
-# is surfaced through converged()/glance()/print() instead. Not a global option.
+# Muffle the post-sampling HMC diagnostic warnings (divergences, treedepth, low
+# ESS/Rhat); convergence is surfaced through converged()/glance() instead.
 with_quiet_sampler <- function(expr) {
   pattern <- paste(
     "divergent", "treedepth", "Effective Samples Size",
@@ -118,10 +115,8 @@ with_quiet_sampler <- function(expr) {
   )
 }
 
-# Resolve the number of cores for parallel chains. NULL respects
-# getOption("mc.cores") (the rstan/brms/rstanarm convention) and falls back to
-# `chains`. The result is capped at the available cores so the default never
-# oversubscribes the machine, and floored at 1.
+# NULL respects getOption("mc.cores") and falls back to `chains`, capped at the
+# available cores so the default never oversubscribes, floored at 1.
 resolve_cores <- function(cores, chains) {
   if (is.null(cores)) {
     cores <- getOption("mc.cores", chains)
@@ -143,17 +138,15 @@ new_kb_fit_weight <- function(stanfit, data, priors, species, prior_only, nthin)
     "bSite", "bSiteDiameter", "bSiteYear"
   )
   all_draws <- posterior::as_draws_rvars(stanfit)
-  # Parameter draws power tidy/coef/diagnostics/accessors. The log_lik / yrep
-  # generated quantities are stored separately (fit$gq) for loo / pp_check, so
-  # they do not pollute npars/pars/samples. They are absent under a zero-row fit.
+  # Keep model parameters separate from the log_lik / yrep generated quantities
+  # (stored in fit$gq for loo / pp_check) so they do not pollute pars/samples.
   draws <- posterior::subset_draws(all_draws, variable = param_vars)
   gq <- NULL
   if (nrow(data) > 0L) {
     gq <- posterior::subset_draws(all_draws, variable = c("log_lik", "yrep"))
   }
 
-  # Convergence summary over the model parameters only. Stored on the fit;
-  # converged()/print() surface them, so suppress the diagnostic warnings here.
+  # Convergence summary over the model parameters; suppress diagnostic warnings.
   summary <- suppressWarnings(posterior::summarise_draws(
     draws,
     rhat = posterior::rhat,

@@ -15,16 +15,20 @@ level.}
 \item{...}{Unused.}
 }
 \value{
-The input data with added columns \code{fitted}, \code{residual}, \code{lower},
+The input data with added columns \code{fitted}, \code{residual}, \code{lower}, and
 \code{upper}.
 }
 \description{
-Return the input data augmented with fitted values and residuals, evaluated
-at each observed row using that row's estimated random effects (site
-intercept, site slope, and site:year) via the shared \code{.weight_linpred()}
-engine. Full precision; for residual diagnostics.
+Return the input data augmented with fitted values and residuals, evaluated at
+each observed row using that row's estimated random effects (site intercept,
+site slope, and site:year).
+}
+\examples{
+augment(fit_weight)
 }
 \seealso{
+\code{\link[=kb_predict_weight]{kb_predict_weight()}} for predictions at supplied rows.
+
 Other generics: 
 \code{\link{coef.kb_fit_weight}()},
 \code{\link{converged.kb_fit}()},

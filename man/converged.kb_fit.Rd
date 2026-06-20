@@ -24,10 +24,11 @@ rates above \code{esr}.
 Convergence of a Model Fit
 }
 \details{
-The thresholds default to the \code{report} analysis-mode values (\code{rhat = 1.05},
-\code{esr = 0.1}). \code{esr} is the effective sample rate (effective sample size
-divided by the number of draws); a rate is used rather than an absolute ESS
-because it is stable under changes to the number of saved iterations.
+\code{esr} is the effective sample rate: the effective sample size divided by the
+number of draws. The defaults are \code{rhat = 1.05} and \code{esr = 0.1}.
+}
+\examples{
+converged(fit_weight)
 }
 \seealso{
 Other generics: 

@@ -17,6 +17,9 @@
 #' @return A draws-by-observations (`D x N`) matrix.
 #' @family generics
 #' @exportS3Method rstantools::posterior_linpred
+#' @examples
+#' lp <- posterior_linpred(fit_weight)
+#' dim(lp)
 posterior_linpred.kb_fit_weight <- function(object,
                                             transform = FALSE,
                                             newdata = NULL,

@@ -13,15 +13,11 @@
 \code{year} columns), or \code{NULL} for the stored \code{yrep} at the observed data.}
 
 \item{new_levels}{A string, one of \code{"sample"} or \code{"average"}, controlling how
-random effects that are not conditioned on are treated: factors absent from
-the prediction, and (in \code{\link[=kb_predict_weight]{kb_predict_weight()}}) any new level not seen in the
-fit. \code{"sample"} draws a new random effect from \code{Normal(0, sd)} (a new,
-unsampled group), widening the interval to include between-group variation.
-\code{"average"} holds the random effects at their central (zero) value, giving
-the typical group on the linear-predictor scale. Known levels are always
-conditioned on, regardless of \code{new_levels}. Note that \code{"average"} on a new
-group reports the typical-group prediction, not a calibrated interval for
-that specific new group.}
+random effects that are not conditioned on are treated (factors absent from
+the prediction, and any new level not seen in the fit). \code{"sample"} draws a
+new random effect from \code{Normal(0, sd)}, widening the interval to include
+between-group variation; \code{"average"} holds the random effects at zero, giving
+the typical group. Known levels are always conditioned on.}
 
 \item{...}{Unused.}
 }
@@ -31,14 +27,14 @@ A draws-by-observations (\verb{D x N}) matrix.
 \description{
 Draws from the posterior predictive distribution: the expected weight plus
 Student-t observation noise (scale \code{sWeight}, 4 degrees of freedom, matching
-the Stan likelihood). With \code{newdata = NULL} the stored \code{yrep} (the
-posterior-predictive replicate at the observed data) is returned, for use
-with \code{bayesplot::pp_check()}.
+the Stan likelihood). With \code{newdata = NULL} the stored \code{yrep} at the observed
+data is returned, for use with \code{bayesplot::pp_check()}. For supplied \code{newdata},
+conditioning is inferred from the grouping columns present (see
+\code{\link[=posterior_epred]{posterior_epred()}}).
 }
-\details{
-For supplied \code{newdata}, conditioning is inferred from the grouping columns
-present (see \code{\link[=posterior_epred]{posterior_epred()}}). With \code{newdata = NULL} the stored \code{yrep}
-(generated conditioned on the observed groups) is returned.
+\examples{
+pp <- posterior_predict(fit_weight)
+dim(pp)
 }
 \seealso{
 Other generics: 

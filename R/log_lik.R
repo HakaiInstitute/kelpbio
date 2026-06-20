@@ -9,6 +9,9 @@
 #' @return A draws-by-observations (`D x N`) matrix.
 #' @family generics
 #' @exportS3Method rstantools::log_lik
+#' @examples
+#' ll <- log_lik(fit_weight)
+#' dim(ll)
 log_lik.kb_fit_weight <- function(object, ...) {
   rlang::check_dots_empty()
   .chk_kb_fit_weight(object)

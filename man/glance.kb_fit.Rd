@@ -21,8 +21,10 @@ A one-row tibble with \code{n}, \code{K}, \code{nchains}, \code{niters}, \code{n
 \code{rhat}, and \code{converged}.
 }
 \description{
-One-row summary of a model fit with convergence verdict, using the
-\code{bboutools} column set.
+One-row summary of a model fit with a convergence verdict.
+}
+\examples{
+glance(fit_weight)
 }
 \seealso{
 Other generics: 

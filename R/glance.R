@@ -1,7 +1,6 @@
 #' Glance at a Model Fit
 #'
-#' One-row summary of a model fit with convergence verdict, using the
-#' `bboutools` column set.
+#' One-row summary of a model fit with a convergence verdict.
 #'
 #' @inheritParams converged.kb_fit
 #'
@@ -9,11 +8,13 @@
 #'   `rhat`, and `converged`.
 #' @family generics
 #' @exportS3Method generics::glance
+#' @examples
+#' glance(fit_weight)
 glance.kb_fit <- function(x, rhat = 1.05, esr = 0.1, ...) {
   rlang::check_dots_empty()
   s <- x$diagnostics$summary
-  # Evaluate the verdict before the tibble(): inside tibble() the bare `rhat`
-  # would mask to the `rhat = max(...)` column rather than the threshold arg.
+  # Evaluate the verdict before tibble(); inside it the bare `rhat` would mask
+  # to the column, not the threshold arg.
   is_converged <- converged(x, rhat = rhat, esr = esr)
   tibble::tibble(
     n = nobs(x),

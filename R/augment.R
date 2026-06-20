@@ -1,18 +1,20 @@
 #' Augment Weight Data with Fitted Values
 #'
-#' Return the input data augmented with fitted values and residuals, evaluated
-#' at each observed row using that row's estimated random effects (site
-#' intercept, site slope, and site:year) via the shared `.weight_linpred()`
-#' engine. Full precision; for residual diagnostics.
+#' Return the input data augmented with fitted values and residuals, evaluated at
+#' each observed row using that row's estimated random effects (site intercept,
+#' site slope, and site:year).
 #'
 #' @inheritParams params
 #' @param x A `kb_fit_weight` object.
 #' @param ... Unused.
 #'
-#' @return The input data with added columns `fitted`, `residual`, `lower`,
+#' @return The input data with added columns `fitted`, `residual`, `lower`, and
 #'   `upper`.
 #' @family generics
+#' @seealso [kb_predict_weight()] for predictions at supplied rows.
 #' @exportS3Method generics::augment
+#' @examples
+#' augment(fit_weight)
 augment.kb_fit_weight <- function(x, conf_level = 0.95, ...) {
   rlang::check_dots_empty()
   .chk_kb_fit_weight(x)

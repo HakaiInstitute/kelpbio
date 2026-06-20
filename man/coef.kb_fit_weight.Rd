@@ -13,11 +13,14 @@
 }
 \value{
 A tibble with one row per term and columns \code{term}, \code{estimate},
-\code{lower}, \code{upper}.
+\code{lower}, and \code{upper}.
 }
 \description{
-A pure wrapper on \link[=tidy.kb_fit_weight]{tidy()}, matching the \code{bboutools} /
-\code{ssdtools} convention. Returns the model-term posterior summaries.
+A wrapper on \link[=tidy.kb_fit_weight]{tidy()} returning the model-term posterior
+summaries.
+}
+\examples{
+coef(fit_weight)
 }
 \seealso{
 Other generics: 

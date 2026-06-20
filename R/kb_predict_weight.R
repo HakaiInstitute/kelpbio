@@ -1,18 +1,15 @@
 #' Predict Weight for New Data
 #'
-#' Predict weight at the rows you supply: a data frame of measured diameters
-#' (and, optionally, the site and year they were collected at). This is the
-#' entry point for turning cheaply-collected diameters into predicted weight
-#' without harvesting. With `new_data = NULL` it predicts at the observed data
-#' (matching [augment()]'s fitted values, the base R `predict()` convention).
+#' Predict weight at the rows you supply: a data frame of measured diameters and,
+#' optionally, the site and year they were collected at. With `new_data = NULL`
+#' it predicts at the observed data. For allometric curves over a diameter
+#' sequence, use [kb_predict_weight_by()].
 #'
+#' @details
 #' Conditioning is resolved per row: a `site`/`year` value the model has seen is
-#' conditioned on its estimated random effects; a new site or year (or an absent
-#' grouping column) is handled by `new_levels`. A mix of observed and new sites
-#' in one `new_data` is resolved row by row, in a single call.
-#'
-#' For allometric curves to visualise (one line per group over a diameter
-#' sequence) use [kb_predict_weight_by()].
+#' conditioned on its estimated random effects; a new site or year, or an absent
+#' grouping column, is handled by `new_levels`. A mix of observed and new sites in
+#' one `new_data` is resolved row by row, in a single call.
 #'
 #' @inheritParams params
 #' @param fit A `kb_fit_weight` object.
@@ -20,9 +17,15 @@
 #'   `year` columns), or `NULL` to predict at the observed data.
 #'
 #' @return A `kb_predictions` object: the input rows with added `estimate`,
-#'   `lower`, `upper` columns.
+#'   `lower`, and `upper` columns.
 #' @family prediction
+#' @seealso [kb_predict_weight_by()] for curves, and [augment()] for fitted
+#'   values at the observed data.
 #' @export
+#'
+#' @examples
+#' new_data <- data.frame(diameter = c(20, 40, 60))
+#' kb_predict_weight(fit_weight, new_data, new_levels = "average")
 kb_predict_weight <- function(fit,
                               new_data = NULL,
                               new_levels = c("sample", "average"),

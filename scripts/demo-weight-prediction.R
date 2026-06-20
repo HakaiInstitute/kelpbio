@@ -27,32 +27,32 @@ library(bayesplot)
 
 # A0. The data ---------------------------------------------------------------
 # Real Hakai Nereocystis sub-bulb diameter (mm) and wet weight (kg).
-str(kb_data_weight)
-kb_check_data_weight(kb_data_weight) # passes: validate before fitting
+str(data_weight_hakai)
+kb_check_data_weight(data_weight_hakai) # passes: validate before fitting
 
 # kb_check_data_weight() errors clearly on bad input (run these one at a time):
 #  - wrong column name
-bad_name <- kb_data_weight
+bad_name <- data_weight_hakai
 names(bad_name)[names(bad_name) == "diameter"] <- "diam"
 kb_check_data_weight(bad_name)
 #  - missing value in diameter
-bad_na <- kb_data_weight
+bad_na <- data_weight_hakai
 bad_na$diameter[1] <- NA_real_
 kb_check_data_weight(bad_na)
 #  - non-numeric (character) value in diameter
-bad_chr <- kb_data_weight
+bad_chr <- data_weight_hakai
 bad_chr$diameter <- as.character(bad_chr$diameter)
 bad_chr$diameter[1] <- "1.1o"
 kb_check_data_weight(bad_chr)
 
 # A1. Fit ---------------------------------------------------------------------
-fit <- kb_fit_weight(kb_data_weight, chains = 4, niters = 500, quiet = FALSE)
+fit <- kb_fit_weight(data_weight_hakai, nthin = 1, niters = 500L, quiet = FALSE)
 fit # print: model, data, sampler summary (no URL popup; progress streams)
 
 # A2. Inspect the fit via the generics ---------------------------------------
 converged(fit)
 glance(fit)
-tidy(fit, include_random_effects = FALSE)
+tidy(fit)
 coef(fit)
 prior_summary(fit)
 draws <- samples(fit) # posterior::draws_rvars for bespoke work
@@ -76,13 +76,16 @@ priors
 # whether the priors imply a plausible weight-at-diameter relationship by
 # overlaying the observed data on the prior-implied curve.
 prior_fit <- kb_fit_weight(
-  kb_data_weight,
-  priors = priors, prior_only = TRUE,
-  chains = 2, niters = 500, quiet = TRUE
+  data_weight_hakai,
+  priors = priors,
+  prior_only = TRUE,
+  chains = 2,
+  niters = 500,
+  quiet = TRUE
 )
 prior_summary(prior_fit) # confirms the priors actually used
 kb_predict_weight_by(prior_fit, new_levels = "sample") |>
-  kb_plot_predictions(observed = kb_data_weight) +
+  kb_plot_predictions(observed = data_weight_hakai) +
   ggtitle("A2b. Prior predictive curve vs observed data")
 
 # Prior predictive distribution of weight (from the prior-only yrep) against the
@@ -100,13 +103,14 @@ ppc_dens_overlay(
 # default-prior fit. The tight, off-target prior pulls bDiameter away from its
 # default-prior posterior; the other terms barely move.
 fit_custom <- kb_fit_weight(
-  kb_data_weight,
-  priors = priors, chains = 4, niters = 500, quiet = TRUE
+  data_weight_hakai,
+  priors = priors,
+  quiet = TRUE
 )
 
 coef_compare <- bind_rows(
-  mutate(coef(fit, include_random_effects = FALSE), priors = "default"),
-  mutate(coef(fit_custom, include_random_effects = FALSE), priors = "custom")
+  mutate(coef(fit), priors = "default"),
+  mutate(coef(fit_custom), priors = "custom")
 )
 # the slope is the term expected to move:
 filter(coef_compare, term == "bDiameter")
@@ -141,9 +145,9 @@ kb_predict_weight(fit, new_data = nd) # the same draws, summarised
 pop_avg <- kb_predict_weight_by(fit, new_levels = "average") # typical site
 pop_smp <- kb_predict_weight_by(fit, new_levels = "sample") # a new, unsampled site
 print(pop_smp)
-kb_plot_predictions(pop_avg, observed = kb_data_weight) +
+kb_plot_predictions(pop_avg, observed = data_weight_hakai) +
   ggtitle("A5. Typical-site weight-at-diameter")
-kb_plot_predictions(pop_smp, observed = kb_data_weight) +
+kb_plot_predictions(pop_smp, observed = data_weight_hakai) +
   ggtitle("A5. New-site weight-at-diameter (wider band)")
 
 # A6. Group-level curves ------------------------------------------------------
@@ -159,7 +163,7 @@ kb_predict_weight_by(fit, by = c("site", "year")) |>
   ggtitle("A6. Per-site-year (facet-capped)")
 
 # A7. Guard rail - year has no main effect (enters only via site:year):
-try(kb_predict_weight_by(fit, by = "year"))
+kb_predict_weight_by(fit, by = "year")
 
 
 # =============================================================================
@@ -183,7 +187,9 @@ predict(fit, new_data = newdata_new_site, new_levels = "sample")
 
 # B3. A NEW YEAR at existing sites (site conditioned, new site:year sampled) --
 newdata_new_year <- tidyr::expand_grid(
-  diameter = c(25, 40, 55), site = sites[1:2], year = "2099"
+  diameter = c(25, 40, 55),
+  site = sites[1:2],
+  year = "2099"
 )
 predict(fit, new_data = newdata_new_year, new_levels = "sample")
 

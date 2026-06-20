@@ -20,6 +20,10 @@ The Stan source as a string.
 \description{
 Return the Stan source code of the fitted model.
 }
+\examples{
+code <- kb_stancode(fit_weight)
+cat(code)
+}
 \seealso{
 Other generics: 
 \code{\link{augment.kb_fit_weight}()},

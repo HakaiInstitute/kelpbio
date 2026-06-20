@@ -8,6 +8,10 @@
 #' @return The Stan source as a string.
 #' @family generics
 #' @export
+#'
+#' @examples
+#' code <- kb_stancode(fit_weight)
+#' cat(code)
 kb_stancode <- function(x, ...) {
   UseMethod("kb_stancode")
 }

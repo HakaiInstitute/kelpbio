@@ -20,6 +20,9 @@ A \code{posterior} draws object.
 \description{
 Extract the raw posterior draws from a fitted model object.
 }
+\examples{
+samples(fit_weight)
+}
 \seealso{
 Other generics: 
 \code{\link{augment.kb_fit_weight}()},

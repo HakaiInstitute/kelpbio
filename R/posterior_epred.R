@@ -1,9 +1,9 @@
 #' Expected Weight Posterior Draws
 #'
 #' Draws from the expectation of the posterior predictive distribution
-#' (response-scale expected weight, `exp` of the linear predictor) for the
-#' weight model. The prediction engine; [kb_predict_weight()] summarises it.
+#' (response-scale expected weight, `exp` of the linear predictor).
 #'
+#' @details
 #' Conditioning is inferred from the grouping columns present in `newdata`: a
 #' `site` (and optionally `year`) column with known levels is conditioned on;
 #' factors with no column are handled by `new_levels`. With `newdata = NULL` the
@@ -18,7 +18,11 @@
 #'
 #' @return A draws-by-observations (`D x N`) matrix.
 #' @family generics
+#' @seealso [kb_predict_weight()], which summarises these draws.
 #' @exportS3Method rstantools::posterior_epred
+#' @examples
+#' ep <- posterior_epred(fit_weight)
+#' dim(ep)
 posterior_epred.kb_fit_weight <- function(object,
                                           newdata = NULL,
                                           new_levels = "sample",

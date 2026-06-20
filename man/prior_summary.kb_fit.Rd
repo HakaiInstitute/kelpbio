@@ -17,6 +17,9 @@ The named list of prior objects (see \code{\link[=kb_priors_weight]{kb_priors_we
 \description{
 The resolved prior objects used to fit the model.
 }
+\examples{
+prior_summary(fit_weight)
+}
 \seealso{
 Other generics: 
 \code{\link{augment.kb_fit_weight}()},

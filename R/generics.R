@@ -79,6 +79,8 @@ ggplot2::autoplot
 #' @return A `posterior` draws object.
 #' @family generics
 #' @export
+#' @examples
+#' samples(fit_weight)
 samples <- function(x, ...) {
   UseMethod("samples")
 }

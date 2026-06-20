@@ -17,13 +17,11 @@
 #'   (the likelihood is switched off), for prior predictive checks.
 #' @param chains A whole number of MCMC chains.
 #' @param niters A whole number of saved post-warmup draws per chain (warmup
-#'   defaults to match). Named `niters` (not `iter`) to avoid clashing with
-#'   rstan's own `iter`, which counts warmup too.
+#'   defaults to match).
 #' @param nthin A whole number giving the thinning interval.
 #' @param cores A whole number of cores for parallel chains, or `NULL` to use
 #'   `getOption("mc.cores")` (falling back to `chains`), capped at the available
-#'   cores. Use `cores = 1` (or `options(mc.cores = 1)`) on shared servers, in
-#'   containers, or when running from `devtools::load_all()` on Windows.
+#'   cores.
 #' @param quiet A flag specifying whether to suppress the sampler progress
 #'   output. Diagnostic warnings (divergences, etc.) are suppressed regardless
 #'   and surfaced through [converged()]/[glance()].
@@ -41,15 +39,11 @@
 #'   expanded over its observed levels and conditioned on at its estimated
 #'   random effects.
 #' @param new_levels A string, one of `"sample"` or `"average"`, controlling how
-#'   random effects that are not conditioned on are treated: factors absent from
-#'   the prediction, and (in [kb_predict_weight()]) any new level not seen in the
-#'   fit. `"sample"` draws a new random effect from `Normal(0, sd)` (a new,
-#'   unsampled group), widening the interval to include between-group variation.
-#'   `"average"` holds the random effects at their central (zero) value, giving
-#'   the typical group on the linear-predictor scale. Known levels are always
-#'   conditioned on, regardless of `new_levels`. Note that `"average"` on a new
-#'   group reports the typical-group prediction, not a calibrated interval for
-#'   that specific new group.
+#'   random effects that are not conditioned on are treated (factors absent from
+#'   the prediction, and any new level not seen in the fit). `"sample"` draws a
+#'   new random effect from `Normal(0, sd)`, widening the interval to include
+#'   between-group variation; `"average"` holds the random effects at zero, giving
+#'   the typical group. Known levels are always conditioned on.
 #' @keywords internal
 #' @aliases parameters arguments args
 #' @usage NULL

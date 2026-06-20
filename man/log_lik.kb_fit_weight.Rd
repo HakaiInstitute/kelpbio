@@ -18,6 +18,10 @@ A draws-by-observations (\verb{D x N}) matrix.
 The pointwise log-likelihood of the observed data (from the Stan generated
 quantities), suitable for \code{loo::loo()}.
 }
+\examples{
+ll <- log_lik(fit_weight)
+dim(ll)
+}
 \seealso{
 Other generics: 
 \code{\link{augment.kb_fit_weight}()},

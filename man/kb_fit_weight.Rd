@@ -32,15 +32,13 @@ defaults; unspecified entries keep their defaults.}
 \item{chains}{A whole number of MCMC chains.}
 
 \item{niters}{A whole number of saved post-warmup draws per chain (warmup
-defaults to match). Named \code{niters} (not \code{iter}) to avoid clashing with
-rstan's own \code{iter}, which counts warmup too.}
+defaults to match).}
 
 \item{nthin}{A whole number giving the thinning interval.}
 
 \item{cores}{A whole number of cores for parallel chains, or \code{NULL} to use
 \code{getOption("mc.cores")} (falling back to \code{chains}), capped at the available
-cores. Use \code{cores = 1} (or \code{options(mc.cores = 1)}) on shared servers, in
-containers, or when running from \code{devtools::load_all()} on Windows.}
+cores.}
 
 \item{quiet}{A flag specifying whether to suppress the sampler progress
 output. Diagnostic warnings (divergences, etc.) are suppressed regardless
@@ -77,11 +75,10 @@ run in separate processes that load the installed package, so use
 }
 \examples{
 if (interactive()) {
-  # Prior predictive check: fit from the priors only, then predict and plot
-  # the implied weight-vs-diameter relationship over the data.
-  fit <- kb_fit_weight(kb_data_weight, prior_only = TRUE)
-  kb_predict_weight(fit, new_levels = "average") |>
-    kb_plot_predictions(observed = kb_data_weight)
+  fit <- kb_fit_weight(data_weight_sim)
+  tidy(fit)
 }
+# A pre-fit example model ships with the package:
+tidy(fit_weight)
 }
 \concept{model}

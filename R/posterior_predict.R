@@ -2,13 +2,10 @@
 #'
 #' Draws from the posterior predictive distribution: the expected weight plus
 #' Student-t observation noise (scale `sWeight`, 4 degrees of freedom, matching
-#' the Stan likelihood). With `newdata = NULL` the stored `yrep` (the
-#' posterior-predictive replicate at the observed data) is returned, for use
-#' with `bayesplot::pp_check()`.
-#'
-#' For supplied `newdata`, conditioning is inferred from the grouping columns
-#' present (see [posterior_epred()]). With `newdata = NULL` the stored `yrep`
-#' (generated conditioned on the observed groups) is returned.
+#' the Stan likelihood). With `newdata = NULL` the stored `yrep` at the observed
+#' data is returned, for use with `bayesplot::pp_check()`. For supplied `newdata`,
+#' conditioning is inferred from the grouping columns present (see
+#' [posterior_epred()]).
 #'
 #' @inheritParams params
 #' @param object A `kb_fit_weight` object.
@@ -19,6 +16,9 @@
 #' @return A draws-by-observations (`D x N`) matrix.
 #' @family generics
 #' @exportS3Method rstantools::posterior_predict
+#' @examples
+#' pp <- posterior_predict(fit_weight)
+#' dim(pp)
 posterior_predict.kb_fit_weight <- function(object,
                                             newdata = NULL,
                                             new_levels = "sample",

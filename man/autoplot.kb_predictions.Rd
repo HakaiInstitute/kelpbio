@@ -20,6 +20,10 @@ The conventional \code{ggplot2::autoplot} entry point for a \code{kb_predictions
 object: a thin wrapper on \code{\link[=kb_plot_predictions]{kb_plot_predictions()}}. Dispatches on the
 prediction data frame (via its stored attributes), never on a fit.
 }
+\examples{
+p <- kb_predict_weight_by(fit_weight, by = "site")
+ggplot2::autoplot(p)
+}
 \seealso{
 Other prediction: 
 \code{\link{kb_plot_predictions}()},
