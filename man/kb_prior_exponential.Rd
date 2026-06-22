@@ -13,7 +13,7 @@ kb_prior_exponential(rate = 1)
 A \code{kb_prior_exponential} object.
 }
 \description{
-Construct an Exponential prior object for use in \code{\link[=kb_priors_weight]{kb_priors_weight()}} and the
+Construct an Exponential prior object for use in \code{\link[=kb_priors_weight_nereo]{kb_priors_weight_nereo()}} and the
 \code{priors} argument of the \verb{kb_fit_*()} functions. Used for the standard
 deviation (scale) hyperparameters.
 }
@@ -23,6 +23,6 @@ kb_prior_exponential(rate = 1)
 \seealso{
 Other priors: 
 \code{\link{kb_prior_normal}()},
-\code{\link{kb_priors_weight}()}
+\code{\link{kb_priors_weight_nereo}()}
 }
 \concept{priors}

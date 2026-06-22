@@ -60,7 +60,7 @@ at zero). The available \code{by} values are \code{NULL} (a single population cu
 prediction, not a calibrated interval for a specific new group.
 }
 \examples{
-kb_predict_weight_by(fit_weight, by = "site")
+kb_predict_weight_by(fit_weight_hakai_nereo, by = "site")
 }
 \seealso{
 \code{\link[=kb_predict_weight]{kb_predict_weight()}} for predictions at supplied rows.

@@ -21,7 +21,7 @@ response scale (the posterior median of the expected weight, equivalently
 row, matching \code{\link[=augment]{augment()}}'s \code{fitted} column.
 }
 \examples{
-fitted(fit_weight)
+fitted(fit_weight_hakai_nereo)
 }
 \seealso{
 \code{\link[=residuals]{residuals()}} for deviance residuals, and \code{\link[=augment]{augment()}}.

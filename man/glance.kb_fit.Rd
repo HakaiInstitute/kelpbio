@@ -24,7 +24,7 @@ A one-row tibble with \code{n}, \code{K}, \code{nchains}, \code{niters}, \code{n
 One-row summary of a model fit with a convergence verdict.
 }
 \examples{
-glance(fit_weight)
+glance(fit_weight_hakai_nereo)
 }
 \seealso{
 Other generics: 

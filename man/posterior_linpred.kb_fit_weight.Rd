@@ -51,7 +51,7 @@ Conditioning is inferred from the grouping columns present in \code{newdata} (se
 conditioned on its site and year.
 }
 \examples{
-lp <- posterior_linpred(fit_weight)
+lp <- posterior_linpred(fit_weight_hakai_nereo)
 dim(lp)
 }
 \seealso{

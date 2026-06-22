@@ -39,7 +39,7 @@ the group-level deviations. By default the per-level deviations are omitted,
 following the \code{broom.mixed} convention.
 }
 \examples{
-tidy(fit_weight)
+tidy(fit_weight_hakai_nereo)
 }
 \seealso{
 Other generics: 

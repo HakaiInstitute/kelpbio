@@ -55,7 +55,7 @@ rows (or the observed data when \code{new_data = NULL}). For allometric curves t
 visualise, use \code{\link[=kb_predict_weight_by]{kb_predict_weight_by()}}.
 }
 \examples{
-predict(fit_weight, data.frame(diameter = c(20, 40)))
+predict(fit_weight_hakai_nereo, data.frame(diameter = c(20, 40)))
 }
 \seealso{
 Other generics: 

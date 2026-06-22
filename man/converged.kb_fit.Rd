@@ -28,7 +28,7 @@ Convergence of a Model Fit
 number of draws. The defaults are \code{rhat = 1.05} and \code{esr = 0.1}.
 }
 \examples{
-converged(fit_weight)
+converged(fit_weight_hakai_nereo)
 }
 \seealso{
 Other generics: 

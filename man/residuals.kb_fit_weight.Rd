@@ -22,7 +22,7 @@ the posterior median. Returned as a numeric vector, one value per row,
 matching \code{\link[=augment]{augment()}}'s \code{residual} column.
 }
 \examples{
-residuals(fit_weight)
+residuals(fit_weight_hakai_nereo)
 }
 \seealso{
 \code{\link[=fitted]{fitted()}} for fitted values, and \code{\link[=augment]{augment()}}.

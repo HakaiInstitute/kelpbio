@@ -11,9 +11,7 @@
 
 \item{data}{A data frame of observations.}
 
-\item{species}{A string naming the species. One of \code{"nereocystis"}.}
-
-\item{priors}{A named list of prior objects (see \code{\link[=kb_priors_weight]{kb_priors_weight()}}), or
+\item{priors}{A named list of prior objects (see \code{\link[=kb_priors_weight_nereo]{kb_priors_weight_nereo()}}), or
 \code{NULL} to use the defaults. Supplied entries override the corresponding
 defaults; unspecified entries keep their defaults.}
 

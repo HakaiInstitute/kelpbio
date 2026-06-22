@@ -21,7 +21,7 @@ The Stan source as a string.
 Return the Stan source code of the fitted model.
 }
 \examples{
-code <- kb_stancode(fit_weight)
+code <- kb_stancode(fit_weight_hakai_nereo)
 cat(code)
 }
 \seealso{

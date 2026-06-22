@@ -20,7 +20,7 @@ A wrapper on \link[=tidy.kb_fit_weight]{tidy()} returning the model-term posteri
 summaries.
 }
 \examples{
-coef(fit_weight)
+coef(fit_weight_hakai_nereo)
 }
 \seealso{
 Other generics: 

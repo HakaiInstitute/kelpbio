@@ -47,7 +47,7 @@ conditioning is inferred from the grouping columns present (see
 \code{\link[=posterior_epred]{posterior_epred()}}).
 }
 \examples{
-pp <- posterior_predict(fit_weight)
+pp <- posterior_predict(fit_weight_hakai_nereo)
 dim(pp)
 }
 \seealso{

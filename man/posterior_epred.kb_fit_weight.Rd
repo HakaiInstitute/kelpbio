@@ -50,7 +50,7 @@ observed data is used and conditioned on its site and year, so the central
 estimate agrees with \code{\link[=augment]{augment()}}.
 }
 \examples{
-ep <- posterior_epred(fit_weight)
+ep <- posterior_epred(fit_weight_hakai_nereo)
 dim(ep)
 }
 \seealso{
