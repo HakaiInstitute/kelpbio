@@ -34,3 +34,17 @@ test_that("an unknown site level is sampled, not errored", {
   expect_equal(dim(m), c(posterior::ndraws(weight_fit$draws), 2L))
   expect_true(all(m > 0))
 })
+
+test_that("representative_site makes a new site borrow a known site's main effects", {
+  site1 <- weight_fit$meta$site_levels[1]
+  diameter <- c(20, 40, 60)
+  rep <- posterior_epred(
+    weight_fit, newdata = data.frame(diameter = diameter, site = "brand_new_site"),
+    new_levels = "average", representative_site = site1
+  )
+  known <- posterior_epred(
+    weight_fit, newdata = data.frame(diameter = diameter, site = site1),
+    new_levels = "average"
+  )
+  expect_equal(rep, known)
+})

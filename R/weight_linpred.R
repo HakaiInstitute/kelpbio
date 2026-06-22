@@ -2,8 +2,10 @@
 # predictor as a `posterior` rvar of length nrow(grid). Conditioning is resolved
 # per row and per factor: known levels take their estimated random effect; new or
 # absent levels are handled by `new_levels` ("sample" draws from Normal(0, sd),
-# "average" holds at zero).
-.weight_linpred <- function(fit, grid, new_levels) {
+# "average" holds at zero). When `representative_site` is supplied, a new/absent
+# site instead borrows the site main effects of those reference site(s); the
+# site:year interaction still follows `new_levels`.
+.weight_linpred <- function(fit, grid, new_levels, representative_site = NULL) {
   d <- fit$draws
   n <- nrow(grid)
   log_dc <- log(grid$diameter) - log(fit$meta$diameter_ref)
@@ -19,8 +21,14 @@
     rep(NA_integer_, n)
   }
 
-  re_site <- resolve_re1(d$bSite, si, new_levels, d$sSite)
-  re_slope <- resolve_re1(d$bSiteDiameter, si, new_levels, d$sSiteDiameter)
+  rep_idx <- if (!is.null(representative_site)) {
+    match(representative_site, fit$meta$site_levels)
+  } else {
+    NULL
+  }
+
+  re_site <- resolve_re1(d$bSite, si, new_levels, d$sSite, rep_idx)
+  re_slope <- resolve_re1(d$bSiteDiameter, si, new_levels, d$sSiteDiameter, rep_idx)
   re_sy <- resolve_re2(d$bSiteYear, si, yi, new_levels, d$sSiteYear)
 
   d$bWeight + d$bDiameter * log_dc + d$bDiameter2 * log_dc^2 +
@@ -36,14 +44,14 @@
 
 # New-data verb (kb_predict_weight) and the posterior_* generics: predict at the
 # supplied rows, or the observed data when new_data is NULL.
-weight_data_linpred <- function(fit, new_data, new_levels) {
+weight_data_linpred <- function(fit, new_data, new_levels, representative_site = NULL) {
   .chk_kb_fit_weight(fit)
   new_levels <- rlang::arg_match(new_levels, c("sample", "average"))
   grid <- build_data_grid(fit, new_data)
   list(
     grid = grid,
     group_vars = intersect(c("site", "year"), names(grid)),
-    linpred = .weight_linpred(fit, grid, new_levels)
+    linpred = .weight_linpred(fit, grid, new_levels, representative_site)
   )
 }
 
@@ -134,8 +142,10 @@ re_draw <- function(new_levels, n, sd_rvar) {
 
 # Resolve a vector-indexed random effect (site intercept or slope) to a length-n
 # rvar. `idx` is match() output (NA = new or absent): known rows take the
-# estimated effect, the rest are drawn per `new_levels`.
-resolve_re1 <- function(param, idx, new_levels, sd_rvar) {
+# estimated effect. Unknown rows take the per-draw average of the `rep_idx`
+# columns (the representative sites) when supplied, otherwise are drawn per
+# `new_levels`.
+resolve_re1 <- function(param, idx, new_levels, sd_rvar, rep_idx = NULL) {
   known <- !is.na(idx)
   if (all(known)) {
     return(rvar_index1(param, idx))
@@ -146,8 +156,13 @@ resolve_re1 <- function(param, idx, new_levels, sd_rvar) {
   if (any(known)) {
     out[, known] <- posterior::draws_of(param)[, idx[known], drop = FALSE]
   }
-  if (any(!known) && new_levels == "sample") {
-    out[, !known] <- posterior::draws_of(re_draw("sample", sum(!known), sd_rvar))
+  if (any(!known)) {
+    if (!is.null(rep_idx)) {
+      out[, !known] <- rowMeans(posterior::draws_of(param)[, rep_idx, drop = FALSE])
+    } else if (new_levels == "sample") {
+      out[, !known] <- posterior::draws_of(re_draw("sample", sum(!known), sd_rvar))
+    }
+    # new_levels == "average" leaves unknown columns at zero
   }
   posterior::rvar(out)
 }

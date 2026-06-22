@@ -44,6 +44,13 @@
 #'   new random effect from `Normal(0, sd)`, widening the interval to include
 #'   between-group variation; `"average"` holds the random effects at zero, giving
 #'   the typical group. Known levels are always conditioned on.
+#' @param representative_site A character vector of site levels present in the
+#'   fit, or `NULL` (the default). When supplied, a new or absent site takes its
+#'   site main effects (intercept and slope) from the named reference site, or
+#'   the per-draw average across several, instead of the `new_levels` treatment;
+#'   the `site:year` interaction still follows `new_levels`. The borrowed effects
+#'   carry the reference site's posterior, so the interval is narrower than a
+#'   calibrated interval for a genuinely new site.
 #' @keywords internal
 #' @aliases parameters arguments args
 #' @usage NULL

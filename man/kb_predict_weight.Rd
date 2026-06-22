@@ -8,6 +8,7 @@ kb_predict_weight(
   fit,
   new_data = NULL,
   new_levels = c("sample", "average"),
+  representative_site = NULL,
   conf_level = 0.95,
   estimate = stats::median,
   sig_fig = 3
@@ -25,6 +26,14 @@ the prediction, and any new level not seen in the fit). \code{"sample"} draws a
 new random effect from \code{Normal(0, sd)}, widening the interval to include
 between-group variation; \code{"average"} holds the random effects at zero, giving
 the typical group. Known levels are always conditioned on.}
+
+\item{representative_site}{A character vector of site levels present in the
+fit, or \code{NULL} (the default). When supplied, a new or absent site takes its
+site main effects (intercept and slope) from the named reference site, or
+the per-draw average across several, instead of the \code{new_levels} treatment;
+the \code{site:year} interaction still follows \code{new_levels}. The borrowed effects
+carry the reference site's posterior, so the interval is narrower than a
+calibrated interval for a genuinely new site.}
 
 \item{conf_level}{A number between 0 and 1 giving the compatibility-interval
 level.}
@@ -48,10 +57,24 @@ Conditioning is resolved per row: a \code{site}/\code{year} value the model has 
 conditioned on its estimated random effects; a new site or year, or an absent
 grouping column, is handled by \code{new_levels}. A mix of observed and new sites in
 one \code{new_data} is resolved row by row, in a single call.
+
+For a new site, \code{representative_site} offers a third treatment: instead of
+\code{new_levels} (\code{"sample"} or \code{"average"}) it borrows the site intercept and
+slope of one or more named reference sites (the per-draw average across
+several). The \code{site:year} interaction still follows \code{new_levels}. Because the
+borrowed effects use the reference site's posterior, the interval is narrower
+than a calibrated interval for a genuinely new site.
 }
 \examples{
 new_data <- data.frame(diameter = c(20, 40, 60))
 kb_predict_weight(fit_weight, new_data, new_levels = "average")
+
+# Predict a new site as if it behaves like a known reference site:
+new_site <- data.frame(diameter = c(20, 40, 60), site = "new_site")
+kb_predict_weight(
+  fit_weight, new_site,
+  representative_site = fit_weight$meta$site_levels[1]
+)
 }
 \seealso{
 \code{\link[=kb_predict_weight_by]{kb_predict_weight_by()}} for curves, and \code{\link[=augment]{augment()}} for fitted

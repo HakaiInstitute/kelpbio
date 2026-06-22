@@ -48,3 +48,35 @@ test_that("a mix of known and new sites resolves in one call", {
 test_that("new_data must have a diameter column", {
   expect_error(kb_predict_weight(weight_fit, new_data = data.frame(x = 1)))
 })
+
+test_that("representative_site borrows a known site's main effects for a new site", {
+  site1 <- weight_fit$meta$site_levels[1]
+  diameter <- c(20, 40, 60)
+  # With new_levels = "average" and no year column, the site:year term is zero
+  # for both, so a new site borrowing site1 must match predicting site1 itself.
+  rep <- kb_predict_weight(
+    weight_fit, data.frame(diameter = diameter, site = "brand_new_site"),
+    new_levels = "average", representative_site = site1
+  )
+  known <- kb_predict_weight(
+    weight_fit, data.frame(diameter = diameter, site = site1),
+    new_levels = "average"
+  )
+  expect_equal(rep$estimate, known$estimate)
+})
+
+test_that("multiple representative sites differ from a single one", {
+  sl <- weight_fit$meta$site_levels
+  nd <- data.frame(diameter = c(20, 40, 60), site = "brand_new_site")
+  one <- kb_predict_weight(weight_fit, nd, new_levels = "average", representative_site = sl[1])
+  many <- kb_predict_weight(weight_fit, nd, new_levels = "average", representative_site = sl[1:2])
+  expect_false(isTRUE(all.equal(one$estimate, many$estimate)))
+})
+
+test_that("representative_site rejects sites not in the fit", {
+  nd <- data.frame(diameter = 40, site = "brand_new_site")
+  expect_snapshot(
+    kb_predict_weight(weight_fit, nd, representative_site = "not_a_site"),
+    error = TRUE
+  )
+})

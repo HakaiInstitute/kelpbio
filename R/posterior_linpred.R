@@ -24,10 +24,13 @@ posterior_linpred.kb_fit_weight <- function(object,
                                             transform = FALSE,
                                             newdata = NULL,
                                             new_levels = "sample",
+                                            representative_site = NULL,
                                             ...) {
   rlang::check_dots_empty()
   chk::chk_flag(transform)
-  res <- weight_data_linpred(object, newdata, new_levels)
+  .chk_kb_fit_weight(object)
+  .chk_representative_site(object, representative_site)
+  res <- weight_data_linpred(object, newdata, new_levels, representative_site)
   m <- posterior::draws_of(res$linpred)
   if (transform) exp(m) else m
 }

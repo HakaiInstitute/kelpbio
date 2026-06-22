@@ -8,6 +8,7 @@
   object,
   new_data = NULL,
   new_levels = c("sample", "average"),
+  representative_site = NULL,
   conf_level = 0.95,
   estimate = stats::median,
   sig_fig = 3,
@@ -26,6 +27,14 @@ the prediction, and any new level not seen in the fit). \code{"sample"} draws a
 new random effect from \code{Normal(0, sd)}, widening the interval to include
 between-group variation; \code{"average"} holds the random effects at zero, giving
 the typical group. Known levels are always conditioned on.}
+
+\item{representative_site}{A character vector of site levels present in the
+fit, or \code{NULL} (the default). When supplied, a new or absent site takes its
+site main effects (intercept and slope) from the named reference site, or
+the per-draw average across several, instead of the \code{new_levels} treatment;
+the \code{site:year} interaction still follows \code{new_levels}. The borrowed effects
+carry the reference site's posterior, so the interval is narrower than a
+calibrated interval for a genuinely new site.}
 
 \item{conf_level}{A number between 0 and 1 giving the compatibility-interval
 level.}

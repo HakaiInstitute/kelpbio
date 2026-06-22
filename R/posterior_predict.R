@@ -22,16 +22,18 @@
 posterior_predict.kb_fit_weight <- function(object,
                                             newdata = NULL,
                                             new_levels = "sample",
+                                            representative_site = NULL,
                                             ...) {
   rlang::check_dots_empty()
   .chk_kb_fit_weight(object)
+  .chk_representative_site(object, representative_site)
   if (is.null(newdata)) {
     if (is.null(object$gq)) {
       cli::cli_abort("No posterior-predictive draws are stored (zero-observation fit).")
     }
     return(posterior::draws_of(object$gq$yrep))
   }
-  res <- weight_data_linpred(object, newdata, new_levels)
+  res <- weight_data_linpred(object, newdata, new_levels, representative_site)
   lp <- posterior::draws_of(res$linpred) # D x N
   sweight <- as.vector(posterior::draws_of(object$draws$sWeight)) # length D
   # student_t(nu, mu, sigma) = mu + sigma * t_nu; nu = 4 (fixed in weight.stan).
