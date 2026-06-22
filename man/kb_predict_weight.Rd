@@ -20,20 +20,19 @@ kb_predict_weight(
 \item{new_data}{A data frame with a \code{diameter} column (and optional \code{site} /
 \code{year} columns), or \code{NULL} to predict at the observed data.}
 
-\item{new_levels}{A string, one of \code{"sample"} or \code{"average"}, controlling how
-random effects that are not conditioned on are treated (factors absent from
-the prediction, and any new level not seen in the fit). \code{"sample"} draws a
-new random effect from \code{Normal(0, sd)}, widening the interval to include
-between-group variation; \code{"average"} holds the random effects at zero, giving
-the typical group. Known levels are always conditioned on.}
+\item{new_levels}{A string, one of \code{"sample"} (the default) or \code{"average"},
+controlling how random effects that are not conditioned on are treated
+(factors absent from the prediction, and any new level not seen in the fit).
+\code{"sample"} draws a new random effect from \code{Normal(0, sd)}, widening the
+interval to include between-group variation; \code{"average"} holds the random
+effects at zero, giving the typical group. Known levels are always
+conditioned on.}
 
 \item{representative_site}{A character vector of site levels present in the
 fit, or \code{NULL} (the default). When supplied, a new or absent site takes its
-site main effects (intercept and slope) from the named reference site, or
-the per-draw average across several, instead of the \code{new_levels} treatment;
-the \code{site:year} interaction still follows \code{new_levels}. The borrowed effects
-carry the reference site's posterior, so the interval is narrower than a
-calibrated interval for a genuinely new site.}
+site main effects (intercept and slope) from the named reference site (the
+per-draw average when several are named), instead of the \code{new_levels}
+treatment; the \code{site:year} interaction still follows \code{new_levels}.}
 
 \item{conf_level}{A number between 0 and 1 giving the compatibility-interval
 level.}
@@ -47,10 +46,9 @@ A \code{kb_predictions} object: the input rows with added \code{estimate},
 \code{lower}, and \code{upper} columns.
 }
 \description{
-Predict weight at the rows you supply: a data frame of measured diameters and,
-optionally, the site and year they were collected at. With \code{new_data = NULL}
-it predicts at the observed data. For allometric curves over a diameter
-sequence, use \code{\link[=kb_predict_weight_by]{kb_predict_weight_by()}}.
+Predict weight for the supplied rows, or for the observed data when
+\code{new_data = NULL}. For an allometric curve over a diameter sequence, use
+\code{\link[=kb_predict_weight_by]{kb_predict_weight_by()}} instead.
 }
 \details{
 Conditioning is resolved per row: a \code{site}/\code{year} value the model has seen is

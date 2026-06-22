@@ -17,17 +17,18 @@ kb_predict_weight_by(
 \arguments{
 \item{fit}{A \code{kb_fit_weight} object.}
 
-\item{by}{A character vector of grouping factors to draw a separate curve
-for, or \code{NULL} for a single population-level curve. Each named factor is
-expanded over its observed levels and conditioned on at its estimated
-random effects.}
+\item{by}{A character vector of grouping factors, each drawn as a separate
+curve, or \code{NULL} for a single population-level curve. Each named factor is
+expanded over its observed levels and conditioned on its estimated random
+effects.}
 
-\item{new_levels}{A string, one of \code{"sample"} or \code{"average"}, controlling how
-random effects that are not conditioned on are treated (factors absent from
-the prediction, and any new level not seen in the fit). \code{"sample"} draws a
-new random effect from \code{Normal(0, sd)}, widening the interval to include
-between-group variation; \code{"average"} holds the random effects at zero, giving
-the typical group. Known levels are always conditioned on.}
+\item{new_levels}{A string, one of \code{"sample"} (the default) or \code{"average"},
+controlling how random effects that are not conditioned on are treated
+(factors absent from the prediction, and any new level not seen in the fit).
+\code{"sample"} draws a new random effect from \code{Normal(0, sd)}, widening the
+interval to include between-group variation; \code{"average"} holds the random
+effects at zero, giving the typical group. Known levels are always
+conditioned on.}
 
 \item{diameter}{A numeric vector of sub-bulb diameters to predict over (in the
 same units as the fitted data), or \code{NULL} for an automatic sequence spanning
