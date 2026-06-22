@@ -93,6 +93,7 @@ summary.kb_fit <- function(object,
     species = fit$meta$species,
     family = descr$family,
     formula = descr$formula,
+    centered = descr$centered,
     groups = descr$groups,
     nobs = nobs(fit),
     nchains = nchains(fit),
@@ -111,18 +112,24 @@ fit_descriptor <- function(x) {
   model <- sub("^kb_fit_", "", class(x)[1])
   switch(model,
     weight = {
-      ref <- x$meta$diameter_ref
-      dc <- paste0("log(diameter_mm/", ref, ")")
+      dc <- "log(diameter/d0)"
       list(
-        family = "Student-t (df = 4); response modelled as log(weight_kg)",
+        family = "Student-t (df = 4); response modelled as log(weight)",
         formula = paste0(
-          "log(weight_kg) ~ 1 + ", dc, " + ", dc, "^2 + ",
+          "log(weight) ~ 1 + ", dc, " + ", dc, "^2 + ",
           "(1 + ", dc, " | site) + (1 | site:year)"
+        ),
+        centered = paste0(
+          "log-diameter at d0 = ", signif(x$meta$diameter_ref, 3),
+          " (geometric mean of diameter)"
         ),
         groups = weight_groups(x)
       )
     },
-    list(family = NA_character_, formula = NA_character_, groups = integer(0))
+    list(
+      family = NA_character_, formula = NA_character_,
+      centered = NA_character_, groups = integer(0)
+    )
   )
 }
 

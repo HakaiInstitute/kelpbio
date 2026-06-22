@@ -22,7 +22,7 @@ residuals.kb_fit_weight <- function(object, ...) {
   # matching the analysis project), summarised with the posterior median.
   mu <- posterior::draws_of(.weight_linpred_obs(object))
   sw <- as.vector(posterior::draws_of(object$draws$sWeight))
-  y <- log(object$data$weight_kg)
+  y <- log(object$data$weight)
   theta <- 1 / object$meta$nu
   res <- vapply(
     seq_len(nrow(mu)),

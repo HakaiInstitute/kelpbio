@@ -13,8 +13,8 @@
 #'
 #' @inheritParams params
 #' @param fit A `kb_fit_weight` object.
-#' @param new_data A data frame with a `diameter_mm` column (and optional `site`
-#'   / `year` columns), or `NULL` to predict at the observed data.
+#' @param new_data A data frame with a `diameter` column (and optional `site` /
+#'   `year` columns), or `NULL` to predict at the observed data.
 #'
 #' @return A `kb_predictions` object: the input rows with added `estimate`,
 #'   `lower`, and `upper` columns.
@@ -24,7 +24,7 @@
 #' @export
 #'
 #' @examples
-#' new_data <- data.frame(diameter_mm = c(20, 40, 60))
+#' new_data <- data.frame(diameter = c(20, 40, 60))
 #' kb_predict_weight(fit_weight, new_data, new_levels = "average")
 kb_predict_weight <- function(fit,
                               new_data = NULL,
@@ -61,7 +61,7 @@ summarise_weight_predictions <- function(grid, linpred, group_vars,
 
   new_kb_predictions(
     out,
-    predictor = "diameter_mm", group_vars = group_vars,
-    response = "weight_kg", response_units = "kg", predictor_units = "mm"
+    predictor = "diameter", group_vars = group_vars,
+    response = "weight"
   )
 }

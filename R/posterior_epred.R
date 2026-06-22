@@ -12,7 +12,7 @@
 #'
 #' @inheritParams params
 #' @param object A `kb_fit_weight` object.
-#' @param newdata A data frame with a `diameter_mm` column (and optional `site` /
+#' @param newdata A data frame with a `diameter` column (and optional `site` /
 #'   `year` columns), or `NULL` for the observed data.
 #' @param ... Unused.
 #'

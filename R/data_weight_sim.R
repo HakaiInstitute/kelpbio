@@ -7,8 +7,8 @@
 #'
 #' @format A data frame with columns:
 #' \describe{
-#'   \item{diameter_mm}{Sub-bulb diameter (mm), a positive number.}
-#'   \item{weight_kg}{Wet weight (kg), a positive number.}
+#'   \item{diameter}{Sub-bulb diameter (mm), a positive number.}
+#'   \item{weight}{Wet weight (kg), a positive number.}
 #'   \item{site}{Survey site, a factor (6 levels).}
 #'   \item{year}{Survey year, a factor (4 levels).}
 #' }

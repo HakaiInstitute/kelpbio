@@ -122,12 +122,13 @@ kb_plot_predictions <- function(predictions,
 }
 
 # Publication-ready axis title for a prediction column: a descriptive label for
-# the known model variables, with units appended in parentheses when available.
-# Unrecognised columns fall back to their name (sentence-cased).
+# the known model variables. Units are appended in parentheses when supplied, but
+# the weight model leaves them unset (units are the user's choice), so labels are
+# unit-free. Unrecognised columns fall back to their name (sentence-cased).
 kb_axis_label <- function(name, units = NA_character_) {
   base <- switch(name,
-    diameter_mm = "Sub-bulb diameter",
-    weight_kg = "Wet weight",
+    diameter = "Sub-bulb diameter",
+    weight = "Wet weight",
     site = "Site",
     year = "Year",
     estimate = "Estimate",

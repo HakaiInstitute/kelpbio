@@ -4,10 +4,12 @@
 #' appropriate types and values. Returns the data invisibly on success and
 #' errors via `chk` otherwise.
 #'
-#' Required columns: numeric `diameter_mm` (> 0), numeric `weight_kg` (> 0), and
-#' factor or character `site` and `year`, with no missing values. Diameter is
-#' the sub-bulb diameter in millimetres and weight the wet weight in kilograms;
-#' the model centres diameter at 30 mm, so the units are part of the contract.
+#' Required columns: numeric `diameter` (> 0), numeric `weight` (> 0), and factor
+#' or character `site` and `year`, with no missing values. Units are the user's
+#' choice: the model centres log-diameter at the geometric mean of the observed
+#' diameter, so the diameter unit does not affect the fit or predictions, and
+#' weight is returned in whatever unit it was supplied in. The only requirement
+#' is that prediction data use the same units as the fitted data.
 #'
 #' @inheritParams params
 #' @param x_name A string naming `data` in error messages.
@@ -18,7 +20,7 @@
 #'
 #' @examples
 #' data <- data.frame(
-#'   diameter_mm = c(20, 35), weight_kg = c(0.5, 2.1),
+#'   diameter = c(20, 35), weight = c(0.5, 2.1),
 #'   site = factor(c("a", "b")), year = factor(c("2020", "2021"))
 #' )
 #' kb_check_data_weight(data)
@@ -26,11 +28,11 @@ kb_check_data_weight <- function(data, x_name = deparse(substitute(data))) {
   chk::chk_data(data, x_name = x_name)
   chk::chk_superset(
     names(data),
-    c("diameter_mm", "weight_kg", "site", "year"),
+    c("diameter", "weight", "site", "year"),
     x_name = x_name
   )
 
-  for (col in c("diameter_mm", "weight_kg")) {
+  for (col in c("diameter", "weight")) {
     nm <- kb_xname(x_name, col)
     chk::chk_numeric(data[[col]], x_name = nm)
     chk::chk_not_any_na(data[[col]], x_name = nm)

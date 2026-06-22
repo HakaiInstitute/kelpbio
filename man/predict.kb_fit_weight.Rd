@@ -17,8 +17,8 @@
 \arguments{
 \item{object}{A \code{kb_fit_weight} object.}
 
-\item{new_data}{A data frame with a \code{diameter_mm} column (and optional \code{site}
-/ \code{year} columns), or \code{NULL} to predict at the observed data.}
+\item{new_data}{A data frame with a \code{diameter} column (and optional \code{site} /
+\code{year} columns), or \code{NULL} to predict at the observed data.}
 
 \item{new_levels}{A string, one of \code{"sample"} or \code{"average"}, controlling how
 random effects that are not conditioned on are treated (factors absent from
@@ -46,7 +46,7 @@ rows (or the observed data when \code{new_data = NULL}). For allometric curves t
 visualise, use \code{\link[=kb_predict_weight_by]{kb_predict_weight_by()}}.
 }
 \examples{
-predict(fit_weight, data.frame(diameter_mm = c(20, 40)))
+predict(fit_weight, data.frame(diameter = c(20, 40)))
 }
 \seealso{
 Other generics: 

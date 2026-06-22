@@ -9,7 +9,7 @@
 \arguments{
 \item{object}{A \code{kb_fit_weight} object.}
 
-\item{newdata}{A data frame with a \code{diameter_mm} column (and optional \code{site} /
+\item{newdata}{A data frame with a \code{diameter} column (and optional \code{site} /
 \code{year} columns), or \code{NULL} for the observed data.}
 
 \item{new_levels}{A string, one of \code{"sample"} or \code{"average"}, controlling how

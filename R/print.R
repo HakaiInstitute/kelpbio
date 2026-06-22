@@ -24,6 +24,7 @@ print.kb_prior_exponential <- function(x, ...) {
   cli::cat_line("Model:     ", h$model, " (", h$species, ")")
   if (!is.na(h$family)) cli::cat_line("Family:    ", h$family)
   if (!is.na(h$formula)) cli::cat_line("Formula:   ", h$formula)
+  if (!is.na(h$centered)) cli::cat_line("Centered:  ", h$centered)
   groups <- if (length(h$groups)) {
     paste0("; groups: ", paste0(names(h$groups), " (", h$groups, ")", collapse = ", "))
   } else {

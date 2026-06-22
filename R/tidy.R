@@ -31,7 +31,7 @@ tidy.kb_fit_weight <- function(x,
   chk::chk_flag(include_random_effects)
 
   variables <- c(
-    "bWeight30", "bDiameter", "bDiameter2",
+    "bWeight", "bDiameter", "bDiameter2",
     "sSite", "sSiteDiameter", "sSiteYear", "sWeight"
   )
   if (include_random_effects) {
