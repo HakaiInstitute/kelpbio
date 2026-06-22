@@ -1,9 +1,9 @@
-#' Allometric Weight Curves
+#' Predict Weight Over a Diameter Sequence by Grouping Factor
 #'
-#' Summarise the fitted weight-at-diameter relationship over a diameter sequence,
-#' as a `kb_predictions` object ready for [kb_plot_predictions()]. It builds the
-#' diameter sequence automatically. To predict weight for a data frame of measured
-#' diameters, use [kb_predict_weight()].
+#' Summarise the fitted relationship between weight and diameter over a generated
+#' prediction grid: a sequence of diameter values crossed with the grouping factors
+#' named in `by` (one curve per group). Returns a `kb_predictions` object ready for
+#' [kb_plot_predictions()].
 #'
 #' @details
 #' `by` selects the grouping factors that each get their own curve, conditioned on
@@ -23,7 +23,8 @@
 #' @return A `kb_predictions` object: a summary tibble with `estimate`, `lower`,
 #'   `upper`, the `diameter` predictor, and the `by` grouping columns.
 #' @family prediction
-#' @seealso [kb_predict_weight()] for predictions at supplied rows.
+#' @seealso [kb_predict_weight()] for predictions at the rows of a supplied data
+#'   frame.
 #' @export
 #'
 #' @examples

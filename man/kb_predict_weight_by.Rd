@@ -2,7 +2,7 @@
 % Please edit documentation in R/kb_predict_weight_by.R
 \name{kb_predict_weight_by}
 \alias{kb_predict_weight_by}
-\title{Allometric Weight Curves}
+\title{Predict Weight Over a Diameter Sequence by Grouping Factor}
 \usage{
 kb_predict_weight_by(
   fit,
@@ -46,10 +46,10 @@ A \code{kb_predictions} object: a summary tibble with \code{estimate}, \code{low
 \code{upper}, the \code{diameter} predictor, and the \code{by} grouping columns.
 }
 \description{
-Summarise the fitted weight-at-diameter relationship over a diameter sequence,
-as a \code{kb_predictions} object ready for \code{\link[=kb_plot_predictions]{kb_plot_predictions()}}. It builds the
-diameter sequence automatically. To predict weight for a data frame of measured
-diameters, use \code{\link[=kb_predict_weight]{kb_predict_weight()}}.
+Summarise the fitted relationship between weight and diameter over a generated
+prediction grid: a sequence of diameter values crossed with the grouping factors
+named in \code{by} (one curve per group). Returns a \code{kb_predictions} object ready for
+\code{\link[=kb_plot_predictions]{kb_plot_predictions()}}.
 }
 \details{
 \code{by} selects the grouping factors that each get their own curve, conditioned on
@@ -64,7 +64,8 @@ prediction, not a calibrated interval for a specific new group.
 kb_predict_weight_by(fit_weight_hakai_nereo, by = "site")
 }
 \seealso{
-\code{\link[=kb_predict_weight]{kb_predict_weight()}} for predictions at supplied rows.
+\code{\link[=kb_predict_weight]{kb_predict_weight()}} for predictions at the rows of a supplied data
+frame.
 
 Other prediction: 
 \code{\link{autoplot.kb_predictions}()},
