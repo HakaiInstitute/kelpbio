@@ -9,8 +9,7 @@
 \arguments{
 \item{object}{A \code{kb_predictions} object.}
 
-\item{...}{Passed to \code{\link[=kb_plot_predictions]{kb_plot_predictions()}} (e.g. \code{x}, \code{style}, \code{facet},
-\code{observed}).}
+\item{...}{Passed to \code{\link[=kb_plot_predictions]{kb_plot_predictions()}} (e.g. \code{x}, \code{observed}).}
 }
 \value{
 A \code{ggplot} object.

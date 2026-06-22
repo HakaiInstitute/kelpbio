@@ -5,18 +5,21 @@
 #' fit object, and returns a `ggplot` the user can extend with `+`.
 #'
 #' @details
-#' `x`, `style`, and `facet` default to `NULL` and are inferred from the
-#' prediction's metadata (the predictor column, predictor type, and grouping
-#' variables); each remains overridable. If the metadata has been stripped (e.g.
-#' by dplyr post-processing) and `x` cannot be inferred, the function errors and
-#' asks for `x`.
+#' `x` defaults to `NULL` and is inferred from the prediction's metadata (the
+#' predictor column, or the grouping factor when the predictor does not vary); it
+#' remains overridable. The layout follows from `x`: the remaining grouping
+#' variables are always faceted, so the variable on the x-axis is never also used
+#' as a facet. The plot style is derived, not an argument: a line with a
+#' credible-interval ribbon is drawn only for a generated curve (the output of
+#' [kb_predict_weight_by()] over a varying predictor); every other prediction
+#' renders as `geom_pointrange`. When the predictor does not vary (a held
+#' reference value, or a model with no continuous predictor) the last grouping
+#' factor goes on the x-axis. If the metadata has been stripped (e.g. by dplyr
+#' post-processing) and `x` cannot be inferred, the function errors and asks for
+#' `x`.
 #'
 #' @param predictions A `kb_predictions` object.
-#' @param x The predictor column name; `NULL` infers it from the metadata.
-#' @param style One of `"ribbon"` (continuous predictor) or `"pointrange"`;
-#'   `NULL` infers it from the predictor type.
-#' @param facet Grouping variables to facet by; `NULL` infers them from the
-#'   metadata.
+#' @param x The x-axis column name; `NULL` infers it from the metadata.
 #' @param observed Optional raw data to overlay as points; `NULL` for none.
 #' @param max_facets A whole number capping the facet panels drawn; if the
 #'   grouping has more groups, the first `max_facets` are shown with a warning.
@@ -28,12 +31,18 @@
 #' @export
 #'
 #' @examples
+#' # Allometric curve by site (ribbon):
 #' kb_predict_weight_by(fit_weight_hakai_nereo, by = "site") |>
+#'   kb_plot_predictions()
+#'
+#' # Weight at a reference diameter by site (pointrange, sites on the x-axis):
+#' kb_predict_weight_by(
+#'   fit_weight_hakai_nereo,
+#'   by = "site", diameter = 30, new_levels = "average"
+#' ) |>
 #'   kb_plot_predictions()
 kb_plot_predictions <- function(predictions,
                                 x = NULL,
-                                style = NULL,
-                                facet = NULL,
                                 observed = NULL,
                                 max_facets = 12L,
                                 ...) {
@@ -52,8 +61,17 @@ kb_plot_predictions <- function(predictions,
 
   predictor <- attr(predictions, "kb_predictor")
   response <- attr(predictions, "kb_response")
-  x <- x %||% predictor
-  facet <- facet %||% attr(predictions, "kb_group_vars")
+  group_vars <- attr(predictions, "kb_group_vars")
+
+  # A ribbon needs an ordered, generated grid over a varying predictor; supplied
+  # rows and held/absent predictors render as grouped points instead.
+  predictor_varies <- !is.null(predictor) && predictor %in% names(predictions) &&
+    length(unique(predictions[[predictor]])) > 1
+  x <- x %||% if (predictor_varies) predictor else group_vars[length(group_vars)]
+
+  # Layout follows from x: facet by the remaining grouping variables, never by
+  # the variable on the x-axis.
+  facet <- setdiff(group_vars, x)
 
   # Cap the number of facet panels so a many-group prediction (e.g. site x year
   # over many sites) stays readable; keep the first `max_facets` groups.
@@ -75,14 +93,17 @@ kb_plot_predictions <- function(predictions,
 
   if (is.null(x) || !x %in% names(predictions)) {
     cli::cli_abort(c(
-      "Cannot infer the predictor column from {.arg predictions}.",
-      i = "Supply {.arg x} (and {.arg facet} for grouping)."
+      "Cannot infer the x-axis column from {.arg predictions}.",
+      i = "Supply {.arg x}."
     ))
   }
-  if (is.null(style)) {
-    style <- if (is.numeric(predictions[[x]])) "ribbon" else "pointrange"
+  # Ribbon only for a generated curve over the varying predictor; else pointrange.
+  style <- if (isTRUE(attr(predictions, "kb_curve")) &&
+    identical(x, predictor) && predictor_varies) {
+    "ribbon"
+  } else {
+    "pointrange"
   }
-  style <- rlang::arg_match(style, c("ribbon", "pointrange"))
 
   gg <- ggplot2::ggplot(
     predictions,

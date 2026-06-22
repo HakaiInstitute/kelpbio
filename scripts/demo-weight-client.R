@@ -85,11 +85,11 @@ kb_predict_weight_by(fit, by = c("site", "year")) |>
   kb_plot_predictions() +
   ggtitle("Weight-at-diameter by site and year")
 
-# NOT YET WORKING WELL show point range estiamtes at ref diameter
-# kb_predict_weight_by(fit, by = "site", diameter = 30, new_levels = "average") |>
-#   kb_plot_predictions(style = "pointrange", facet = "") +
-#   ggtitle("Weight at 30 mm diameter by site")
-# question: how to remove facet? i.e. want to show site on x-axis
+# Pointrange estimates at a reference diameter. Holding diameter at one value
+# turns the curve into grouped points: sites land on the x-axis, no facet.
+kb_predict_weight_by(fit, by = "site", diameter = 30, new_levels = "average") |>
+  kb_plot_predictions() +
+  ggtitle("Weight at 30 mm diameter by site")
 
 # Note: year on its own won't work since intercept/slope doesnt vary by year alone (only site:year):
 # question: arguably for most general-prupose model intercept could also vary by year RE?

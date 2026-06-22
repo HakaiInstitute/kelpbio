@@ -57,15 +57,18 @@ kb_predict_weight <- function(fit,
   res <- weight_data_linpred(fit, new_data, new_levels, representative_site)
   summarise_weight_predictions(
     res$grid, res$linpred, res$group_vars,
-    conf_level = conf_level, estimate = estimate, sig_fig = sig_fig
+    conf_level = conf_level, estimate = estimate, sig_fig = sig_fig,
+    curve = FALSE
   )
 }
 
 # Shared summariser over a log-scale linpred rvar: exponentiate, reduce to
 # estimate/lower/upper, attach kb_predictions metadata. Used by both prediction
-# verbs so the summary is defined once.
+# verbs so the summary is defined once. `curve` is TRUE for the grid-generating
+# `_by` verb (ribbon-eligible) and FALSE for predictions at supplied rows.
 summarise_weight_predictions <- function(grid, linpred, group_vars,
-                                          conf_level, estimate, sig_fig) {
+                                          conf_level, estimate, sig_fig,
+                                          curve = FALSE) {
   epred <- exp(linpred)
   a <- (1 - conf_level) / 2
 
@@ -77,6 +80,6 @@ summarise_weight_predictions <- function(grid, linpred, group_vars,
   new_kb_predictions(
     out,
     predictor = "diameter", group_vars = group_vars,
-    response = "weight"
+    response = "weight", curve = curve
   )
 }

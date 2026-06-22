@@ -46,6 +46,7 @@ kb_predict_weight_by <- function(fit,
   res <- weight_by_linpred(fit, by, new_levels, diameter)
   summarise_weight_predictions(
     res$grid, res$linpred, res$by,
-    conf_level = conf_level, estimate = estimate, sig_fig = sig_fig
+    conf_level = conf_level, estimate = estimate, sig_fig = sig_fig,
+    curve = TRUE
   )
 }

@@ -7,8 +7,6 @@
 kb_plot_predictions(
   predictions,
   x = NULL,
-  style = NULL,
-  facet = NULL,
   observed = NULL,
   max_facets = 12L,
   ...
@@ -17,13 +15,7 @@ kb_plot_predictions(
 \arguments{
 \item{predictions}{A \code{kb_predictions} object.}
 
-\item{x}{The predictor column name; \code{NULL} infers it from the metadata.}
-
-\item{style}{One of \code{"ribbon"} (continuous predictor) or \code{"pointrange"};
-\code{NULL} infers it from the predictor type.}
-
-\item{facet}{Grouping variables to facet by; \code{NULL} infers them from the
-metadata.}
+\item{x}{The x-axis column name; \code{NULL} infers it from the metadata.}
 
 \item{observed}{Optional raw data to overlay as points; \code{NULL} for none.}
 
@@ -42,14 +34,29 @@ Render a \code{ggplot} from a \code{kb_predictions} object (the output of a
 fit object, and returns a \code{ggplot} the user can extend with \code{+}.
 }
 \details{
-\code{x}, \code{style}, and \code{facet} default to \code{NULL} and are inferred from the
-prediction's metadata (the predictor column, predictor type, and grouping
-variables); each remains overridable. If the metadata has been stripped (e.g.
-by dplyr post-processing) and \code{x} cannot be inferred, the function errors and
-asks for \code{x}.
+\code{x} defaults to \code{NULL} and is inferred from the prediction's metadata (the
+predictor column, or the grouping factor when the predictor does not vary); it
+remains overridable. The layout follows from \code{x}: the remaining grouping
+variables are always faceted, so the variable on the x-axis is never also used
+as a facet. The plot style is derived, not an argument: a line with a
+credible-interval ribbon is drawn only for a generated curve (the output of
+\code{\link[=kb_predict_weight_by]{kb_predict_weight_by()}} over a varying predictor); every other prediction
+renders as \code{geom_pointrange}. When the predictor does not vary (a held
+reference value, or a model with no continuous predictor) the last grouping
+factor goes on the x-axis. If the metadata has been stripped (e.g. by dplyr
+post-processing) and \code{x} cannot be inferred, the function errors and asks for
+\code{x}.
 }
 \examples{
+# Allometric curve by site (ribbon):
 kb_predict_weight_by(fit_weight_hakai_nereo, by = "site") |>
+  kb_plot_predictions()
+
+# Weight at a reference diameter by site (pointrange, sites on the x-axis):
+kb_predict_weight_by(
+  fit_weight_hakai_nereo,
+  by = "site", diameter = 30, new_levels = "average"
+) |>
   kb_plot_predictions()
 }
 \seealso{

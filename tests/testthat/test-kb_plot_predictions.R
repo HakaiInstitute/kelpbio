@@ -20,14 +20,45 @@ test_that("axis titles are publication-ready descriptive labels", {
   expect_identical(gg$labels$y, "Wet weight")
 })
 
-test_that("a categorical x axis gets a descriptive title", {
+test_that("a held predictor puts the grouping factor on a descriptive x axis", {
   p <- kb_predict_weight(
     weight_fit,
     new_data = data.frame(diameter = 30, site = levels(weight_fit$data$site)[1])
   )
-  gg <- kb_plot_predictions(p, x = "site", style = "pointrange")
+  gg <- kb_plot_predictions(p)
   expect_identical(gg$labels$x, "Site")
   expect_identical(gg$labels$y, "Wet weight")
+  geoms <- vapply(gg$layers, function(l) class(l$geom)[1], character(1))
+  expect_true(any(grepl("GeomPointrange", geoms)))
+})
+
+test_that("reference-diameter by site is pointrange with sites on x, no facet", {
+  p <- kb_predict_weight_by(
+    weight_fit,
+    by = "site", diameter = 30, new_levels = "average"
+  )
+  gg <- kb_plot_predictions(p)
+  expect_identical(gg$labels$x, "Site")
+  geoms <- vapply(gg$layers, function(l) class(l$geom)[1], character(1))
+  expect_true(any(grepl("GeomPointrange", geoms)))
+  expect_false(any(grepl("GeomRibbon", geoms)))
+  expect_s3_class(gg$facet, "FacetNull")
+})
+
+test_that("reference-diameter by site:year puts year on x, facets by site", {
+  p <- kb_predict_weight_by(weight_fit, by = c("site", "year"), diameter = 30)
+  gg <- kb_plot_predictions(p)
+  expect_identical(gg$labels$x, "Year")
+  expect_false(inherits(gg$facet, "FacetNull"))
+})
+
+test_that("scattered supplied rows render as points, not a ribbon", {
+  p <- kb_predict_weight(weight_fit, new_data = data.frame(diameter = c(20, 40, 60)))
+  gg <- kb_plot_predictions(p)
+  expect_identical(gg$labels$x, "Sub-bulb diameter")
+  geoms <- vapply(gg$layers, function(l) class(l$geom)[1], character(1))
+  expect_true(any(grepl("GeomPointrange", geoms)))
+  expect_false(any(grepl("GeomRibbon", geoms)))
 })
 
 test_that("facet is inferred from grouping variables", {
