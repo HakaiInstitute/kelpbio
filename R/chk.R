@@ -1,15 +1,6 @@
-# Validators for kb_fit objects (.vld_/.chk_ pattern). Public functions that take
-# a fit call .chk_kb_fit_weight() at their head so a wrong object errors clearly
-# rather than failing deep in the prediction engine; S3 dispatch alone does not
-# catch a non-fit passed to a function called directly.
-
-.vld_kb_fit <- function(x) {
-  inherits(x, "kb_fit")
-}
-
-.vld_kb_fit_weight <- function(x) {
-  inherits(x, "kb_fit_weight")
-}
+# Checkers paired with .vld_ in vld.R: abort via cli on failure, else return the
+# input invisibly. A fit is checked at the head of every function that takes one,
+# since S3 dispatch alone does not catch a non-fit passed in directly.
 
 .chk_kb_fit_weight <- function(x, x_name = deparse(substitute(x))) {
   if (.vld_kb_fit_weight(x)) {
@@ -17,25 +8,46 @@
   }
   cli::cli_abort(c(
     "{.arg {x_name}} must be a {.cls kb_fit_weight} object.",
-    i = "See {.fun kb_fit_weight}."
+    i = "See {.fun kb_fit_weight_nereo}."
   ))
 }
 
-# Validate representative_site: NULL, or a character vector of site levels
-# present in the fit. Shared by the prediction entry points so the message is
-# defined once.
+.chk_new_data_weight_nereo <- function(x, x_name = deparse(substitute(x))) {
+  if (.vld_new_data_weight_nereo(x)) {
+    return(invisible(x))
+  }
+  if (!is.data.frame(x)) {
+    cli::cli_abort("{.arg {x_name}} must be a data frame or {.code NULL}.")
+  }
+  cli::cli_abort("{.arg {x_name}} must have a {.field diameter} column.")
+}
+
 .chk_representative_site <- function(fit, representative_site) {
-  if (is.null(representative_site)) {
-    return(invisible(NULL))
+  if (.vld_representative_site(representative_site, fit$meta$site_levels)) {
+    return(invisible(representative_site))
   }
   chk::chk_character(representative_site)
   chk::chk_not_empty(representative_site)
   bad <- setdiff(representative_site, fit$meta$site_levels)
-  if (length(bad)) {
-    cli::cli_abort(c(
-      "Invalid {.arg representative_site} value{?s}: {.val {bad}}.",
-      i = "Available site{?s}: {.val {fit$meta$site_levels}}."
-    ))
+  cli::cli_abort(c(
+    "Invalid {.arg representative_site} value{?s}: {.val {bad}}.",
+    i = "Available site{?s}: {.val {fit$meta$site_levels}}."
+  ))
+}
+
+# Shared sampler-argument validation for every kb_fit_* wrapper.
+chk_sampler_args <- function(prior_only, chains, niters, nthin, cores, quiet) {
+  chk::chk_flag(prior_only)
+  chk::chk_whole_number(chains)
+  chk::chk_gt(chains, value = 0)
+  chk::chk_whole_number(niters)
+  chk::chk_gt(niters, value = 0)
+  chk::chk_whole_number(nthin)
+  chk::chk_gt(nthin, value = 0)
+  chk::chk_flag(quiet)
+  if (!is.null(cores)) {
+    chk::chk_whole_number(cores)
+    chk::chk_gt(cores, value = 0)
   }
   invisible(NULL)
 }
