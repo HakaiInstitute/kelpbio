@@ -27,8 +27,11 @@ Build the engine on the **`posterior` `rvar` datatype**:
 - The `rstantools` generics (`posterior_linpred`/`posterior_epred`/
   `posterior_predict`/`log_lik`) are thin faces over that helper, returning
   `D x N` matrices for ecosystem interop (`bayesplot`, `loo`).
-- Prediction grids are built with `newdata::xnew_data`; predictors enter on a
-  fixed-reference transform (`log(diameter) - log(30)`) with no rescaling step.
+- Prediction grids are built with `newdata::xnew_data`; the predictor enters on a
+  stored-reference transform (`log(diameter) - log(diameter_ref)`, where
+  `diameter_ref` is the geometric mean of the observed diameter, computed at fit
+  time and stored in `meta$diameter_ref`) with no per-newdata rescaling step.
+  Centering log-diameter at its mean makes the diameter unit immaterial.
 - Summaries, `augment()`, and the biomass composition all reuse the same engine;
   there is no bespoke `_samples()` function.
 

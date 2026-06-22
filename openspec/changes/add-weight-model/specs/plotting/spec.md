@@ -14,7 +14,7 @@
 
 #### Scenario: Publication-ready axis titles
 - **WHEN** `kb_plot_predictions()` labels the axes
-- **THEN** it uses descriptive titles for the known model variables, appending units where available (e.g. `Sub-bulb diameter (mm)`, `Wet weight (kg)`, `Site`), rather than the raw column names
+- **THEN** it uses descriptive titles for the known model variables (e.g. `Sub-bulb diameter`, `Wet weight`, `Site`) rather than the raw column names; units are not asserted in the labels (the weight model is unit-flexible), though a unit is appended in parentheses if one is supplied on the prediction's metadata
 
 ### Requirement: Metadata-driven, overridable defaults
 

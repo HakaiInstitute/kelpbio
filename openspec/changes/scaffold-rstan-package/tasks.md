@@ -11,7 +11,7 @@
 ## 2. Weight smoke-test Stan model
 
 - [x] 2.1 Write `inst/stan/weight.stan`: site-intercept-only allometric model — `data` block with `int<lower=0> nObs`, `nSite`, `site[]`, `weight[]`, `diameter[]`, priors-as-data (`prior_intercept_mu/sd`, `prior_slope_mu/sd`, `prior_sd_site_rate`, `prior_sd_residual_rate`), and `int<lower=0,upper=1> prior_only`
-- [x] 2.2 Parameters/transformed parameters: `bWeight30`, `bDiameter`, `sSite`, `sWeight`, non-centered `z_bSite`; `bSite = z_bSite * sSite`; linear predictor `bWeight30 + bSite[site] + bDiameter * log(diameter/30)`
+- [x] 2.2 Parameters/transformed parameters: `bWeight`, `bDiameter`, `sSite`, `sWeight`, non-centered `z_bSite`; `bSite = z_bSite * sSite`; linear predictor `bWeight + bSite[site] + bDiameter * log(diameter/30)`
 - [x] 2.3 Model block: priors from the data hyperparameters; Student-t(df=4) likelihood guarded by `if (prior_only == 0)` (no-op when `nObs == 0`)
 - [x] 2.4 `generated quantities`: `typical` (REs zeroed) and `marginal` (`normal_rng(0, sSite)`) terms on the observed grid
 - [x] 2.5 Confirm filename/convention rules (snake_case, no dashes/spaces/leading digits)
@@ -20,7 +20,7 @@
 
 - [x] 3.1 `devtools::install()` / `R CMD INSTALL` succeeds (compiled in a few minutes — deps pre-installed)
 - [x] 3.2 Confirm `kelpbio:::stanmodels$weight` loads as a compiled `stanmodel` (internal object, accessed via `:::`)
-- [x] 3.3 Smoke-test: `rstan::sampling(kelpbio:::stanmodels$weight, data = <minimal valid list>)` returns a `stanfit` with `bWeight30`, `bDiameter`, `sSite`, `sWeight`, `bSite`
+- [x] 3.3 Smoke-test: `rstan::sampling(kelpbio:::stanmodels$weight, data = <minimal valid list>)` returns a `stanfit` with `bWeight`, `bDiameter`, `sSite`, `sWeight`, `bSite`
 - [x] 3.4 Smoke-test prior-only path: a fit with `prior_only = 1` (and `nObs = 0`) samples without error
 - [x] 3.5 Add a `skip_on_cran()` testthat test (`tests/testthat/test-stanmodels.R`) asserting `stanmodels$weight` exists and samples (structure only; convergence warnings suppressed)
 

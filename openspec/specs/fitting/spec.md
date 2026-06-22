@@ -24,7 +24,7 @@ The returned `kb_fit` SHALL store extracted posterior draws (a `posterior` draws
 
 #### Scenario: Draws and diagnostics are retained, stanfit discarded
 - **WHEN** the fit object is inspected
-- **THEN** it exposes posterior draws (the fixed effects `bWeight30`, `bDiameter`, `bDiameter2`; the SDs `sSite`, `sSiteDiameter`, `sSiteYear`, `sWeight`; the per-site `bSite` and `bSiteDiameter`; the site-by-year `bSiteYear`; and the `log_lik` and `yrep` generated quantities) and diagnostics, and contains no live `stanfit`
+- **THEN** it exposes posterior draws (the fixed effects `bWeight`, `bDiameter`, `bDiameter2`; the SDs `sSite`, `sSiteDiameter`, `sSiteYear`, `sWeight`; the per-site `bSite` and `bSiteDiameter`; the site-by-year `bSiteYear`; and the `log_lik` and `yrep` generated quantities) and diagnostics, and contains no live `stanfit`
 
 #### Scenario: log_lik and yrep are stored for downstream tools
 - **WHEN** the fit object is inspected

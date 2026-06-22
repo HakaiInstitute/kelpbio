@@ -26,18 +26,18 @@ kb_check_data_weight(data_weight_hakai)
 
 # A column got renamed in the spreadsheet:
 bad_name <- data_weight_hakai
-names(bad_name)[names(bad_name) == "diameter_mm"] <- "diam"
+names(bad_name)[names(bad_name) == "diameter"] <- "diam"
 kb_check_data_weight(bad_name)
 
 # A measurement is missing:
 bad_na <- data_weight_hakai
-bad_na$diameter_mm[1] <- NA_real_
+bad_na$diameter[1] <- NA_real_
 kb_check_data_weight(bad_na)
 
 # A typo turned a number into text ("1.1o" instead of "1.10"):
 bad_chr <- data_weight_hakai
-bad_chr$diameter_mm <- as.character(bad_chr$diameter_mm)
-bad_chr$diameter_mm[1] <- "1.1o"
+bad_chr$diameter <- as.character(bad_chr$diameter)
+bad_chr$diameter[1] <- "1.1o"
 kb_check_data_weight(bad_chr)
 
 # =============================================================================
@@ -106,14 +106,14 @@ predict(fit)
 # New diameters at a site you have surveyed before (uses what we know there):
 predict(
   fit,
-  new_data = tibble(diameter_mm = c(25, 40, 55), site = sites[1]),
+  new_data = tibble(diameter = c(25, 40, 55), site = sites[1]),
   new_levels = "average"
 )
 
 # New diameters at a brand-new reef (works, just wider uncertainty):
 predict(
   fit,
-  new_data = tibble(diameter_mm = c(25, 40, 55), site = "new_reef"),
+  new_data = tibble(diameter = c(25, 40, 55), site = "new_reef"),
   new_levels = "sample"
 )
 
@@ -121,7 +121,7 @@ predict(
 predict(
   fit,
   new_data = tidyr::expand_grid(
-    diameter_mm = c(25, 40, 55),
+    diameter = c(25, 40, 55),
     site = sites[1:2],
     year = "2099"
   ),
@@ -133,7 +133,7 @@ predict(
 predict(
   fit,
   new_data = tibble(
-    diameter_mm = 30,
+    diameter = 30,
     site = c(sites[1], sites[2], "new_reef_A", "new_reef_B")
   ),
   new_levels = "sample"
@@ -153,7 +153,7 @@ ggplot(aug, aes(fitted, residual)) +
 # Simulated weights from the model should look like the real weights:
 yrep <- posterior_predict(fit)
 bayesplot::ppc_dens_overlay(
-  y = fit$data$weight_kg,
+  y = fit$data$weight,
   yrep = yrep[1:50, , drop = FALSE]
 ) +
   ggtitle("Model-simulated weights vs observed")
@@ -200,6 +200,6 @@ bind_rows(
 # Standard rstantools generics work and return the same predictions as the
 # kb_* verbs, as a draws-by-rows matrix for loo/bayesplot/bespoke analysis.
 prior_summary(fit)
-nd <- data.frame(diameter_mm = c(20, 40, 60))
+nd <- data.frame(diameter = c(20, 40, 60))
 dim(posterior_epred(fit, newdata = nd))
 samples(fit) |> posterior::summarise_draws() |> head()

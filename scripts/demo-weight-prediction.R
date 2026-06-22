@@ -33,16 +33,16 @@ kb_check_data_weight(data_weight_hakai) # passes: validate before fitting
 # kb_check_data_weight() errors clearly on bad input (run these one at a time):
 #  - wrong column name
 bad_name <- data_weight_hakai
-names(bad_name)[names(bad_name) == "diameter_mm"] <- "diam"
+names(bad_name)[names(bad_name) == "diameter"] <- "diam"
 kb_check_data_weight(bad_name)
 #  - missing value in diameter
 bad_na <- data_weight_hakai
-bad_na$diameter_mm[1] <- NA_real_
+bad_na$diameter[1] <- NA_real_
 kb_check_data_weight(bad_na)
 #  - non-numeric (character) value in diameter
 bad_chr <- data_weight_hakai
-bad_chr$diameter_mm <- as.character(bad_chr$diameter_mm)
-bad_chr$diameter_mm[1] <- "1.1o"
+bad_chr$diameter <- as.character(bad_chr$diameter)
+bad_chr$diameter[1] <- "1.1o"
 kb_check_data_weight(bad_chr)
 
 # A1. Fit ---------------------------------------------------------------------
@@ -93,7 +93,7 @@ kb_predict_weight_by(prior_fit, new_levels = "sample") |>
 # fitting? (Prior predictive draws can be widely dispersed; log the x axis.)
 prior_yrep <- posterior_predict(prior_fit)
 ppc_dens_overlay(
-  y = prior_fit$data$weight_kg,
+  y = prior_fit$data$weight,
   yrep = prior_yrep[1:50, , drop = FALSE]
 ) +
   scale_x_log10() +
@@ -131,13 +131,13 @@ ggplot(aug, aes(fitted, residual)) +
 
 # Posterior-predictive check from stored yrep (bayesplot-ready):
 yrep <- posterior_predict(fit) # D x N, conditioned on observed groups
-ppc_dens_overlay(y = fit$data$weight_kg, yrep = yrep[1:50, , drop = FALSE]) +
+ppc_dens_overlay(y = fit$data$weight, yrep = yrep[1:50, , drop = FALSE]) +
   ggtitle("A3. Posterior predictive check (yrep)")
 
 # A4. Raw posterior draws, if you need them (bayesplot / loo / bespoke work) ---
 # The rstantools generics return the SAME predictions as kb_predict_weight(),
 # just as a raw draws-by-rows matrix instead of a summary data frame.
-nd <- data.frame(diameter_mm = c(20, 40, 60))
+nd <- data.frame(diameter = c(20, 40, 60))
 dim(posterior_epred(fit, newdata = nd)) # draws x rows matrix
 kb_predict_weight(fit, new_data = nd) # the same draws, summarised
 
@@ -178,16 +178,16 @@ sites <- levels(fit$data$site)
 predict(fit) # one row per observed individual + estimate/lower/upper
 
 # B1. New diameters at an EXISTING site (conditioned on that site) ------------
-newdata_existing <- tibble(diameter_mm = c(25, 40, 55), site = sites[1])
+newdata_existing <- tibble(diameter = c(25, 40, 55), site = sites[1])
 predict(fit, new_data = newdata_existing, new_levels = "average")
 
 # B2. New diameters at a BRAND-NEW site - works, no error (sampled, wider) ----
-newdata_new_site <- tibble(diameter_mm = c(25, 40, 55), site = "new_reef")
+newdata_new_site <- tibble(diameter = c(25, 40, 55), site = "new_reef")
 predict(fit, new_data = newdata_new_site, new_levels = "sample")
 
 # B3. A NEW YEAR at existing sites (site conditioned, new site:year sampled) --
 newdata_new_year <- tidyr::expand_grid(
-  diameter_mm = c(25, 40, 55),
+  diameter = c(25, 40, 55),
   site = sites[1:2],
   year = "2099"
 )
@@ -195,7 +195,7 @@ predict(fit, new_data = newdata_new_year, new_levels = "sample")
 
 # B4. A MIX of existing and new sites - resolved per row, ONE call, no bind ---
 newdata_mix <- tibble(
-  diameter_mm = 30,
+  diameter = 30,
   site = c(sites[1], sites[2], "new_reef_A", "new_reef_B")
 )
 predict(fit, new_data = newdata_mix, new_levels = "sample")

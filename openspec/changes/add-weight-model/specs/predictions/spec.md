@@ -9,12 +9,12 @@
 - **THEN** it generates the diameter sequence with `newdata::xnew_data()` spanning the fit's observed range and returns a `kb_predictions` tibble with `estimate`, `lower`, `upper`
 
 #### Scenario: Prediction at supplied new_data
-- **WHEN** `new_data` is supplied with a `diameter_mm` column
+- **WHEN** `new_data` is supplied with a `diameter` column
 - **THEN** predictions are returned at exactly those diameters
 
-#### Scenario: Predictor enters on a fixed-reference scale
+#### Scenario: Predictor enters on a stored-reference scale
 - **WHEN** predictions are formed at any diameter
-- **THEN** the diameter enters through the fixed transform `log(diameter) - log(30)` with no training-data-dependent rescaling step
+- **THEN** the diameter enters through the transform `log(diameter) - log(diameter_ref)`, where `diameter_ref` is the geometric mean of the observed diameter computed at fit time and stored in `meta$diameter_ref`; new data uses that same stored reference (no re-derivation from the new data), and centering in log space makes the diameter unit immaterial and predictions scale-invariant
 
 ### Requirement: Grouping and uncertainty axes
 

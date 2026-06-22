@@ -8,23 +8,23 @@ Predicting from a fitted model: the two prediction verbs (kb_predict_weight() fo
 
 ### Requirement: Predict allometric curves
 
-Prediction is split into two verbs with independent arguments. `kb_predict_weight(fit, new_data, new_levels, conf_level, estimate, sig_fig)` SHALL predict weight at the rows supplied in `new_data` (a data frame with a `diameter_mm` column and optional `site` / `year` columns), or at the observed data when `new_data = NULL` (matching base R `predict()`), returning a `kb_predictions` object. It SHALL NOT take a `by` argument. Both verbs are computed from the fit's stored draws via the single internal helper `.weight_linpred()` specified in `decisions/prediction-engine.md`.
+Prediction is split into two verbs with independent arguments. `kb_predict_weight(fit, new_data, new_levels, conf_level, estimate, sig_fig)` SHALL predict weight at the rows supplied in `new_data` (a data frame with a `diameter` column and optional `site` / `year` columns), or at the observed data when `new_data = NULL` (matching base R `predict()`), returning a `kb_predictions` object. It SHALL NOT take a `by` argument. Both verbs are computed from the fit's stored draws via the single internal helper `.weight_linpred()` specified in `decisions/prediction-engine.md`.
 
 #### Scenario: Predict at observed data
 - **WHEN** `kb_predict_weight(fit)` is called with `new_data = NULL`
 - **THEN** it returns predictions at the observed rows, conditioned on each row's site and year, with `estimate`/`lower`/`upper`; the `estimate` equals `augment(fit)`'s fitted values
 
 #### Scenario: Prediction at supplied new_data
-- **WHEN** `new_data` is supplied with a `diameter_mm` column
+- **WHEN** `new_data` is supplied with a `diameter` column
 - **THEN** predictions are returned at exactly those rows
 
-#### Scenario: Predictor enters on a fixed-reference scale
+#### Scenario: Predictor enters on a stored-reference scale
 - **WHEN** predictions are formed at any diameter
-- **THEN** the diameter enters through the fixed transform `log(diameter) - log(30)` with no training-data-dependent rescaling step
+- **THEN** the diameter enters through the transform `log(diameter) - log(diameter_ref)`, where `diameter_ref` is the geometric mean of the observed diameter computed at fit time and stored in `meta$diameter_ref`; new data uses that same stored reference (no re-derivation from the new data), and centering in log space makes the diameter unit immaterial and predictions scale-invariant
 
 ### Requirement: Grouping and uncertainty axes
 
-`kb_predict_weight_by(fit, by, new_levels, diameter_mm, conf_level, estimate, sig_fig)` SHALL summarise the weight-at-diameter relationship over a diameter sequence (auto-generated over the observed range, or supplied via `diameter_mm`) as a `kb_predictions` object, with a `by` grouping axis and a `new_levels = c("sample", "average")` axis (`"sample"` default), validated with `rlang::arg_match()`. It SHALL NOT take a `new_data` argument. `by` names the grouping factors that each get their own curve, conditioned on their estimated random effects; its available values are `NULL`, `"site"`, and `c("site", "year")`. `new_levels` governs the factors not conditioned on: `"sample"` draws a new random effect from `Normal(0, s)`, `"average"` holds it at zero.
+`kb_predict_weight_by(fit, by, new_levels, diameter, conf_level, estimate, sig_fig)` SHALL summarise the weight-at-diameter relationship over a diameter sequence (auto-generated over the observed range, or supplied via `diameter`) as a `kb_predictions` object, with a `by` grouping axis and a `new_levels = c("sample", "average")` axis (`"sample"` default), validated with `rlang::arg_match()`. It SHALL NOT take a `new_data` argument. `by` names the grouping factors that each get their own curve, conditioned on their estimated random effects; its available values are `NULL`, `"site"`, and `c("site", "year")`. `new_levels` governs the factors not conditioned on: `"sample"` draws a new random effect from `Normal(0, s)`, `"average"` holds it at zero.
 
 #### Scenario: Population curve, new group vs typical group
 - **WHEN** `kb_predict_weight_by(fit, new_levels = "sample")` vs `new_levels = "average"` with `by = NULL`

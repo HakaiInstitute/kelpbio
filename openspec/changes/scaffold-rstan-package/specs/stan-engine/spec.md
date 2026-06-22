@@ -21,7 +21,7 @@ A compiled model SHALL be samplable through `rstan::sampling(stanmodels$<name>, 
 #### Scenario: Sampling the weight smoke-test model returns a stanfit
 
 - **WHEN** `rstan::sampling()` is called on `stanmodels$weight` with a valid data list (observation vectors, factor indices, and prior hyperparameters)
-- **THEN** it returns a `stanfit` object containing the parameters `bWeight30`, `bDiameter`, `sSite`, `sWeight`, and the per-site vector `bSite`
+- **THEN** it returns a `stanfit` object containing the parameters `bWeight`, `bDiameter`, `sSite`, `sWeight`, and the per-site vector `bSite`
 
 ### Requirement: The weight smoke-test model follows the engine conventions
 

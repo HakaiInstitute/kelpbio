@@ -27,7 +27,7 @@ A compiled model SHALL be samplable through `rstan::sampling(stanmodels$<name>, 
 #### Scenario: Sampling the weight model returns a stanfit
 
 - **WHEN** `rstan::sampling()` is called on `stanmodels$weight` with a valid data list (observation vectors, `site`/`year` factor indices, and prior hyperparameters)
-- **THEN** it returns a `stanfit` object containing the fixed effects `bWeight30`, `bDiameter`, `bDiameter2`, the random-effect SDs `sSite`, `sSiteDiameter`, `sSiteYear`, the residual scale `sWeight`, the per-site vectors `bSite` and `bSiteDiameter`, the site-by-year matrix `bSiteYear`, and the generated quantities `log_lik` and `yrep`
+- **THEN** it returns a `stanfit` object containing the fixed effects `bWeight`, `bDiameter`, `bDiameter2`, the random-effect SDs `sSite`, `sSiteDiameter`, `sSiteYear`, the residual scale `sWeight`, the per-site vectors `bSite` and `bSiteDiameter`, the site-by-year matrix `bSiteYear`, and the generated quantities `log_lik` and `yrep`
 
 ### Requirement: The weight model follows the engine conventions
 
@@ -36,7 +36,7 @@ The bundled `inst/stan/weight.stan` SHALL implement the full allometric weight s
 #### Scenario: The mean follows the full allometric structure
 
 - **WHEN** the linear predictor for an observation is formed in `transformed parameters`
-- **THEN** it is `bWeight30 + bSite[site] + (bDiameter + bSiteDiameter[site]) * log(diameter / 30) + bDiameter2 * log(diameter / 30)^2 + bSiteYear[site, year]`, with `bSite`, `bSiteDiameter`, and `bSiteYear` non-centered (`z_* * s_*`)
+- **THEN** it is `bWeight + bSite[site] + (bDiameter + bSiteDiameter[site]) * log(diameter / diameter_ref) + bDiameter2 * log(diameter / diameter_ref)^2 + bSiteYear[site, year]`, where `diameter_ref` is passed as data (the geometric mean of the observed diameter, so log-diameter is centered at its mean and the diameter unit is immaterial), with `bSite`, `bSiteDiameter`, and `bSiteYear` non-centered (`z_* * s_*`)
 
 #### Scenario: Prior hyperparameters are read from the data block
 
