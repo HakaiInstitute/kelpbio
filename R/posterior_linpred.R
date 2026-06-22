@@ -3,6 +3,7 @@
 #' Draws of the weight-model linear predictor on the log scale (or, with
 #' `transform = TRUE`, on the response scale).
 #'
+#' @details
 #' Conditioning is inferred from the grouping columns present in `newdata` (see
 #' [posterior_epred()]); with `newdata = NULL` the observed data is used and
 #' conditioned on its site and year.

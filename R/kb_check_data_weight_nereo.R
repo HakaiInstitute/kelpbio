@@ -5,11 +5,13 @@
 #' invisibly on success and errors via `chk` otherwise.
 #'
 #' Required columns: numeric `diameter` (> 0), numeric `weight` (> 0), and factor
-#' or character `site` and `year`, with no missing values. Units are the user's
-#' choice: the model centres log-diameter at the geometric mean of the observed
-#' diameter, so the diameter unit does not affect the fit or predictions, and
-#' weight is returned in whatever unit it was supplied in. The only requirement
-#' is that prediction data use the same units as the fitted data.
+#' or character `site` and `year`, with no missing values.
+#'
+#' @details
+#' Units are the user's choice: the model centres log-diameter at the geometric
+#' mean of the observed diameter, so the diameter unit does not affect the fit or
+#' predictions, and weight is returned in whatever unit it was supplied in. The
+#' only requirement is that prediction data use the same units as the fitted data.
 #'
 #' @inheritParams params
 #' @param x_name A string naming `data` in error messages.

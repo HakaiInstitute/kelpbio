@@ -41,9 +41,11 @@ A draws-by-observations (\verb{D x N}) matrix.
 Draws from the posterior predictive distribution: the expected weight plus
 Student-t observation noise (scale \code{sWeight}, 4 degrees of freedom, matching
 the Stan likelihood). With \code{newdata = NULL} the stored \code{yrep} at the observed
-data is returned, for use with \code{bayesplot::pp_check()}. For supplied \code{newdata},
-conditioning is inferred from the grouping columns present (see
-\code{\link[=posterior_epred]{posterior_epred()}}).
+data is returned, for use with \code{bayesplot::pp_check()}.
+}
+\details{
+For supplied \code{newdata}, conditioning is inferred from the grouping columns
+present (see \code{\link[=posterior_epred]{posterior_epred()}}).
 }
 \examples{
 pp <- posterior_predict(fit_weight_hakai_nereo)

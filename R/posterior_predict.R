@@ -3,9 +3,11 @@
 #' Draws from the posterior predictive distribution: the expected weight plus
 #' Student-t observation noise (scale `sWeight`, 4 degrees of freedom, matching
 #' the Stan likelihood). With `newdata = NULL` the stored `yrep` at the observed
-#' data is returned, for use with `bayesplot::pp_check()`. For supplied `newdata`,
-#' conditioning is inferred from the grouping columns present (see
-#' [posterior_epred()]).
+#' data is returned, for use with `bayesplot::pp_check()`.
+#'
+#' @details
+#' For supplied `newdata`, conditioning is inferred from the grouping columns
+#' present (see [posterior_epred()]).
 #'
 #' @inheritParams params
 #' @param object A `kb_fit_weight` object.
