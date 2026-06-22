@@ -2,7 +2,7 @@
 #
 # Requires the compiled package (run `devtools::install()` or
 # `devtools::load_all()` first; `load_all()` does not pick up Stan changes, so
-# reinstall after editing inst/stan/weight.stan). Re-run this script whenever the
+# reinstall after editing inst/stan/weight_nereo.stan). Re-run this script whenever the
 # Stan model or the kb_fit object structure changes. Reproducibility comes from
 # the sampler `seed`, not `set.seed()`.
 #
@@ -12,7 +12,7 @@ devtools::load_all(quiet = TRUE)
 
 # A small slice of the simulated data (see make-sim-data.R) spanning several
 # sites and years so that by = "site" and by = c("site", "year") predictions are
-# exercised downstream. Independent of the real bundled data_weight_hakai.
+# exercised downstream. Independent of the real bundled data_weight_hakai_nereo.
 sim_weight <- readRDS("tests/testthat/fixtures/sim_weight.rds")
 d <- subset(
   sim_weight,
@@ -22,7 +22,7 @@ d <- subset(
 d$site <- factor(d$site)
 d$year <- factor(d$year)
 
-weight_fit <- kb_fit_weight(
+weight_fit <- kb_fit_weight_nereo(
   d,
   chains = 2L, niters = 300L, nthin = 1L, cores = 2L,
   quiet = TRUE, seed = 42L

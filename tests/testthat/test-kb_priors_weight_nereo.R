@@ -1,5 +1,5 @@
 test_that("kb_priors_weight returns the default named prior list", {
-  p <- kb_priors_weight()
+  p <- kb_priors_weight_nereo()
   expect_named(p, c(
     "intercept", "diameter", "diameter2",
     "sd_site", "sd_site_diameter", "sd_site_year", "sd_residual"
@@ -14,7 +14,7 @@ test_that("kb_priors_weight returns the default named prior list", {
 })
 
 test_that("kb_priors_weight defaults match the validated analysis model", {
-  p <- kb_priors_weight()
+  p <- kb_priors_weight_nereo()
   expect_equal(p$intercept, kb_prior_normal(0, 2))
   expect_equal(p$diameter, kb_prior_normal(2, 1))
   expect_equal(p$diameter2, kb_prior_normal(0, 0.5))
@@ -23,5 +23,5 @@ test_that("kb_priors_weight defaults match the validated analysis model", {
 })
 
 test_that("kb_priors_weight validates species", {
-  expect_error(kb_priors_weight(species = "macrocystis"))
+  expect_error(kb_priors_weight_nereo(species = "macrocystis"))
 })

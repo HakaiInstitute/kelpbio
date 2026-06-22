@@ -16,7 +16,7 @@ test_that("kb_fit_weight returns a correctly-structured object", {
     sim_weight,
     site %in% c("site1", "site2") & year %in% c("2019", "2020")
   ))
-  fit <- kb_fit_weight(d, chains = 2, niters = 100, nthin = 1, cores = 2, quiet = TRUE, seed = 1)
+  fit <- kb_fit_weight_nereo(d, chains = 2, niters = 100, nthin = 1, cores = 2, quiet = TRUE, seed = 1)
 
   expect_s3_class(fit, "kb_fit_weight")
   expect_s3_class(fit, "kb_fit")
@@ -44,17 +44,17 @@ test_that("prior_only fit ignores the data", {
     sim_weight,
     site %in% c("site1", "site2") & year %in% c("2019", "2020")
   ))
-  f1 <- kb_fit_weight(d, prior_only = TRUE, chains = 1, niters = 300, nthin = 1, cores = 1, quiet = TRUE, seed = 7)
+  f1 <- kb_fit_weight_nereo(d, prior_only = TRUE, chains = 1, niters = 300, nthin = 1, cores = 1, quiet = TRUE, seed = 7)
   d2 <- d
   d2$weight <- rev(d2$weight)
-  f2 <- kb_fit_weight(d2, prior_only = TRUE, chains = 1, niters = 300, nthin = 1, cores = 1, quiet = TRUE, seed = 7)
+  f2 <- kb_fit_weight_nereo(d2, prior_only = TRUE, chains = 1, niters = 300, nthin = 1, cores = 1, quiet = TRUE, seed = 7)
   # likelihood off => permuting the response leaves the prior-only fit unchanged
   expect_equal(median(f1$draws$bWeight), median(f2$draws$bWeight), tolerance = 0.05)
 })
 
 test_that("zero-row data is accepted under prior_only", {
   skip_on_cran()
-  fit <- kb_fit_weight(sim_weight[0, ], prior_only = TRUE, chains = 1, niters = 100, nthin = 1, cores = 1, quiet = TRUE, seed = 1)
+  fit <- kb_fit_weight_nereo(sim_weight[0, ], prior_only = TRUE, chains = 1, niters = 100, nthin = 1, cores = 1, quiet = TRUE, seed = 1)
   expect_s3_class(fit, "kb_fit_weight")
   # no observations -> no generated quantities stored
   expect_null(fit$gq)

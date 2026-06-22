@@ -1,11 +1,11 @@
-test_that("assemble_stan_data maps data and priors to the Stan data block", {
+test_that("assemble_weight_nereo_data maps data and priors to the Stan data block", {
   data <- data.frame(
     diameter = c(20, 35, 50),
     weight = c(0.5, 2, 4),
     site = factor(c("a", "b", "a")),
     year = factor(c("2020", "2020", "2021"))
   )
-  sd <- assemble_stan_data(data, kb_priors_weight(), prior_only = FALSE)
+  sd <- assemble_weight_nereo_data(data, kb_priors_weight_nereo(), prior_only = FALSE)
 
   expect_equal(sd$nObs, 3L)
   expect_equal(sd$nSite, 2L)
@@ -25,12 +25,12 @@ test_that("assemble_stan_data maps data and priors to the Stan data block", {
   expect_equal(sd$prior_only, 0L)
 })
 
-test_that("assemble_stan_data accepts zero-row data", {
+test_that("assemble_weight_nereo_data accepts zero-row data", {
   data <- data.frame(
     diameter = numeric(0), weight = numeric(0),
     site = factor(character(0)), year = factor(character(0))
   )
-  sd <- assemble_stan_data(data, kb_priors_weight(), prior_only = TRUE)
+  sd <- assemble_weight_nereo_data(data, kb_priors_weight_nereo(), prior_only = TRUE)
   expect_equal(sd$nObs, 0L)
   expect_equal(sd$nSite, 1L)
   expect_equal(sd$nYear, 1L)
