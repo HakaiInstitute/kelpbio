@@ -1,9 +1,11 @@
-test_that("residuals returns a finite deviance-residual vector matching augment", {
+test_that("residuals returns an estimate/lower/upper tibble matching augment", {
   r <- residuals(weight_fit)
-  expect_type(r, "double")
-  expect_length(r, nobs(weight_fit))
-  expect_true(all(is.finite(r)))
-  expect_equal(r, augment(weight_fit)$residual)
+  expect_s3_class(r, "tbl_df")
+  expect_named(r, c("estimate", "lower", "upper"))
+  expect_equal(nrow(r), nobs(weight_fit))
+  expect_true(all(is.finite(r$estimate)))
+  expect_true(all(r$lower <= r$estimate & r$estimate <= r$upper))
+  expect_equal(r$estimate, augment(weight_fit)$residual)
 })
 
 test_that("residuals are deviance, not raw response residuals", {

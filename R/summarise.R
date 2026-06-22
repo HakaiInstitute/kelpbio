@@ -18,3 +18,16 @@ summarise_draws_terms <- function(draws, variables, conf_level = 0.95,
   }
   tibble::as_tibble(out)
 }
+
+# Reduce an rvar vector to a tibble with one row per element and the house
+# estimate / lower / upper columns (point estimate via `estimate`, equal-tailed
+# limits via empirical quantiles). Full precision: this feeds diagnostics, not a
+# terminal report table, so it does not round. Internal.
+summarise_rvar <- function(rv, conf_level = 0.95, estimate = stats::median) {
+  a <- (1 - conf_level) / 2
+  tibble::tibble(
+    estimate = estimate(rv),
+    lower = unname(posterior::quantile2(rv, a)),
+    upper = unname(posterior::quantile2(rv, 1 - a))
+  )
+}

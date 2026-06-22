@@ -4,21 +4,31 @@
 \alias{fitted.kb_fit_weight}
 \title{Fitted Weights}
 \usage{
-\method{fitted}{kb_fit_weight}(object, ...)
+\method{fitted}{kb_fit_weight}(object, conf_level = 0.95, estimate = stats::median, ...)
 }
 \arguments{
 \item{object}{A \code{kb_fit_weight} object.}
 
+\item{conf_level}{A number between 0 and 1 giving the compatibility-interval
+level.}
+
+\item{estimate}{A function giving the point estimate (e.g. \code{median}).}
+
 \item{...}{Unused.}
 }
 \value{
-A numeric vector of fitted weights, length \code{nobs(object)}.
+A tibble with one row per observed row and columns \code{estimate},
+\code{lower}, and \code{upper}.
 }
 \description{
-Posterior point estimates of the expected weight at each observed row, on the
-response scale (the posterior median of the expected weight, equivalently
-\code{\link[=posterior_epred]{posterior_epred()}} summarised). Returned as a numeric vector, one value per
-row, matching \code{\link[=augment]{augment()}}'s \code{fitted} column.
+Posterior summary of the expected weight at each observed row, on the response
+scale: the point estimate with a compatibility interval, one row per observed
+row.
+}
+\details{
+The expected weight is \code{\link[=posterior_epred]{posterior_epred()}} at the observed data; the \code{estimate}
+is its posterior point estimate and \code{lower}/\code{upper} its equal-tailed
+\code{conf_level} limits.
 }
 \examples{
 fitted(fit_weight_hakai_nereo)

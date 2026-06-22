@@ -16,10 +16,10 @@ The input data with added columns \code{fitted} (response-scale fitted
 weight) and \code{residual} (deviance residual).
 }
 \description{
-Return the input data with the \code{\link[=fitted]{fitted()}} values and deviance \code{\link[=residuals]{residuals()}}
-appended, for residual diagnostics. The columns come straight from the
-\code{fitted()} and \code{residuals()} methods, so they cannot diverge from them. For
-prediction intervals use \code{\link[=kb_predict_weight]{kb_predict_weight()}}.
+Return the input data with the \code{\link[=fitted]{fitted()}} weight and deviance \code{\link[=residuals]{residuals()}}
+point estimates appended, for residual diagnostics. Only the point estimates
+are added; for intervals call \code{\link[=fitted]{fitted()}}/\code{\link[=residuals]{residuals()}} directly, and for
+prediction intervals at supplied rows use \code{\link[=kb_predict_weight]{kb_predict_weight()}}.
 }
 \examples{
 augment(fit_weight_hakai_nereo)
