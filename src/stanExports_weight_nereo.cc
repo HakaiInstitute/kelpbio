@@ -2,12 +2,12 @@
 
 #include <Rcpp.h>
 using namespace Rcpp ;
-#include "stanExports_weight.h"
+#include "stanExports_weight_nereo.h"
 
-RCPP_MODULE(stan_fit4weight_mod) {
+RCPP_MODULE(stan_fit4weight_nereo_mod) {
 
 
-    class_<rstan::stan_fit<stan_model, stan::rng_t> >("rstantools_model_weight")
+    class_<rstan::stan_fit<stan_model, stan::rng_t> >("rstantools_model_weight_nereo")
 
     .constructor<SEXP,SEXP,SEXP>()
 
