@@ -1,10 +1,10 @@
-# Build data_weight_sim, a small simulated weight dataset for fast tests and
+# Build data_weight_sim_nereo, a small simulated weight dataset for fast tests and
 # runnable examples. Simulated from the weight-model structure (quadratic
 # log-diameter mean with site and site:year random effects, log-normal noise) so
-# it passes kb_check_data_weight() and kb_fit_weight() converges on it. Kept
+# it passes kb_check_data_weight_nereo() and kb_fit_weight_nereo() converges on it. Kept
 # small (6 sites x 4 years, one missing cell) and seeded for reproducibility.
 # Not for inference. Run from the package root:
-#   Rscript data-raw/data_weight_sim.R
+#   Rscript data-raw/data_weight_sim_nereo.R
 
 set.seed(101)
 
@@ -31,7 +31,8 @@ rows <- lapply(seq_len(nrow(grid)), function(i) {
   diameter <- exp(log_d)
   log_w <- b_weight30 +
     b_diameter * (log(diameter) - log(30)) +
-    a_site[[s]] + a_sy +
+    a_site[[s]] +
+    a_sy +
     stats::rnorm(n_per, 0, sd_resid)
   data.frame(
     diameter = round(diameter, 1),
@@ -41,10 +42,10 @@ rows <- lapply(seq_len(nrow(grid)), function(i) {
   )
 })
 
-data_weight_sim <- do.call(rbind, rows)
-data_weight_sim$site <- factor(data_weight_sim$site)
-data_weight_sim$year <- factor(data_weight_sim$year)
-rownames(data_weight_sim) <- NULL
-data_weight_sim <- tibble::as_tibble(data_weight_sim)
+data_weight_sim_nereo <- do.call(rbind, rows)
+data_weight_sim_nereo$site <- factor(data_weight_sim_nereo$site)
+data_weight_sim_nereo$year <- factor(data_weight_sim_nereo$year)
+rownames(data_weight_sim_nereo) <- NULL
+data_weight_sim_nereo <- tibble::as_tibble(data_weight_sim_nereo)
 
-usethis::use_data(data_weight_sim, overwrite = TRUE)
+usethis::use_data(data_weight_sim_nereo, overwrite = TRUE)
