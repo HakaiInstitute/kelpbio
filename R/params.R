@@ -33,23 +33,22 @@
 #' @param rhat A number giving the maximum acceptable Rhat.
 #' @param esr A number giving the minimum acceptable effective sample rate
 #'   (effective sample size divided by the number of draws).
-#' @param by A character vector of grouping factors to draw a separate curve
-#'   for, or `NULL` for a single population-level curve. Each named factor is
-#'   expanded over its observed levels and conditioned on at its estimated
-#'   random effects.
-#' @param new_levels A string, one of `"sample"` or `"average"`, controlling how
-#'   random effects that are not conditioned on are treated (factors absent from
-#'   the prediction, and any new level not seen in the fit). `"sample"` draws a
-#'   new random effect from `Normal(0, sd)`, widening the interval to include
-#'   between-group variation; `"average"` holds the random effects at zero, giving
-#'   the typical group. Known levels are always conditioned on.
+#' @param by A character vector of grouping factors, each drawn as a separate
+#'   curve, or `NULL` for a single population-level curve. Each named factor is
+#'   expanded over its observed levels and conditioned on its estimated random
+#'   effects.
+#' @param new_levels A string, one of `"sample"` (the default) or `"average"`,
+#'   controlling how random effects that are not conditioned on are treated
+#'   (factors absent from the prediction, and any new level not seen in the fit).
+#'   `"sample"` draws a new random effect from `Normal(0, sd)`, widening the
+#'   interval to include between-group variation; `"average"` holds the random
+#'   effects at zero, giving the typical group. Known levels are always
+#'   conditioned on.
 #' @param representative_site A character vector of site levels present in the
 #'   fit, or `NULL` (the default). When supplied, a new or absent site takes its
-#'   site main effects (intercept and slope) from the named reference site, or
-#'   the per-draw average across several, instead of the `new_levels` treatment;
-#'   the `site:year` interaction still follows `new_levels`. The borrowed effects
-#'   carry the reference site's posterior, so the interval is narrower than a
-#'   calibrated interval for a genuinely new site.
+#'   site main effects (intercept and slope) from the named reference site (the
+#'   per-draw average when several are named), instead of the `new_levels`
+#'   treatment; the `site:year` interaction still follows `new_levels`.
 #' @keywords internal
 #' @aliases parameters arguments args
 #' @usage NULL

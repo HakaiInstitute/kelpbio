@@ -1,9 +1,8 @@
 #' Predict Weight for New Data
 #'
-#' Predict weight at the rows you supply: a data frame of measured diameters and,
-#' optionally, the site and year they were collected at. With `new_data = NULL`
-#' it predicts at the observed data. For allometric curves over a diameter
-#' sequence, use [kb_predict_weight_by()].
+#' Predict weight for the supplied rows, or for the observed data when
+#' `new_data = NULL`. For an allometric curve over a diameter sequence, use
+#' [kb_predict_weight_by()] instead.
 #'
 #' @details
 #' Conditioning is resolved per row: a `site`/`year` value the model has seen is
