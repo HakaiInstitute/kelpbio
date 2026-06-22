@@ -3,9 +3,9 @@
 # Source: the prepared weight dataset from the analysis project
 # (hakai-kelp-biomass-25), `data_submax`, which already carries the analysis
 # cleaning (Hakai-only, max sub-bulb measurements, completeness, outlier
-# removal). No day-of-year filter is applied here. The columns are renamed to
-# carry units (diameter_mm, weight_kg) since the model centres diameter at
-# 30 mm and so the units are part of the data contract.
+# removal). No day-of-year filter is applied here. Columns are diameter (mm) and
+# weight (kg) as collected; the model centres log-diameter at its geometric mean,
+# so the diameter unit does not affect the fit.
 #
 # This script reads a machine-local path in the analysis project and is run by
 # the package maintainer, not by users.
@@ -14,7 +14,6 @@ src <- "~/Analyses/poissonconsulting/hakai-kelp-biomass-25/output/data/nereo/wei
 data_submax <- readRDS(path.expand(src))
 
 data_weight_hakai <- data_submax[c("diameter", "weight", "site", "year")]
-names(data_weight_hakai) <- c("diameter_mm", "weight_kg", "site", "year")
 data_weight_hakai$site <- droplevels(factor(data_weight_hakai$site))
 data_weight_hakai$year <- droplevels(factor(data_weight_hakai$year))
 data_weight_hakai <- tibble::as_tibble(data_weight_hakai)
