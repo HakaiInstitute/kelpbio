@@ -8,7 +8,9 @@ Predicting from a fitted model: the two prediction verbs (kb_predict_weight() fo
 
 ### Requirement: Predict allometric curves
 
-Prediction is split into two verbs with independent arguments. `kb_predict_weight(fit, new_data, new_levels, conf_level, estimate, sig_fig)` SHALL predict weight at the rows supplied in `new_data` (a data frame with a `diameter` column and optional `site` / `year` columns), or at the observed data when `new_data = NULL` (matching base R `predict()`), returning a `kb_predictions` object. It SHALL NOT take a `by` argument. Both verbs are computed from the fit's stored draws via the single internal helper `.weight_linpred()` specified in `decisions/prediction-engine.md`.
+Prediction is split into two verbs with independent arguments. `kb_predict_weight(fit, new_data, new_levels, representative_site, conf_level, estimate, sig_fig)` SHALL predict weight at the rows supplied in `new_data` (a data frame with a `diameter` column and optional `site` / `year` columns), or at the observed data when `new_data = NULL` (matching base R `predict()`), returning a `kb_predictions` object. It SHALL NOT take a `by` argument. Both verbs are computed from the fit's stored draws via the single internal helper `.weight_linpred()` specified in `decisions/prediction-engine.md`.
+
+`representative_site` SHALL be `NULL` (default) or a character vector of site levels present in the fit, validated with a `cli` error naming any value not in `meta$site_levels`. When non-`NULL`, any new or absent site SHALL take its site main effects (the `bSite` intercept and `bSiteDiameter` slope) from the named reference site, or the per-draw average across the reference sites when more than one is given, instead of the `new_levels` treatment. `representative_site` SHALL affect only the site main effects; the `site:year` interaction for new combinations is still governed by `new_levels`, which remains the sole control of new-site handling when `representative_site = NULL`. Rows whose site is a known level are conditioned on their own estimated effects regardless of `representative_site`.
 
 #### Scenario: Predict at observed data
 - **WHEN** `kb_predict_weight(fit)` is called with `new_data = NULL`
@@ -21,6 +23,14 @@ Prediction is split into two verbs with independent arguments. `kb_predict_weigh
 #### Scenario: Predictor enters on a stored-reference scale
 - **WHEN** predictions are formed at any diameter
 - **THEN** the diameter enters through the transform `log(diameter) - log(diameter_ref)`, where `diameter_ref` is the geometric mean of the observed diameter computed at fit time and stored in `meta$diameter_ref`; new data uses that same stored reference (no re-derivation from the new data), and centering in log space makes the diameter unit immaterial and predictions scale-invariant
+
+#### Scenario: Representative site borrows a known site's main effects
+- **WHEN** `new_data` contains a site the fit never saw and `representative_site` names one or more fit sites
+- **THEN** that row's `bSite` intercept and `bSiteDiameter` slope are the reference site's estimated effects (the per-draw average when several are named), while its `site:year` term still follows `new_levels`; with `new_levels = "average"` and no `year` column the prediction equals predicting the named reference site at the same diameter
+
+#### Scenario: Unknown representative site errors
+- **WHEN** `representative_site` contains a value not in `meta$site_levels`
+- **THEN** it errors with a `cli` message naming the offending value(s) and listing the available sites
 
 ### Requirement: Grouping and uncertainty axes
 
@@ -40,7 +50,7 @@ Prediction is split into two verbs with independent arguments. `kb_predict_weigh
 
 ### Requirement: Raw prediction draws via rstantools generics
 
-Raw posterior prediction draws SHALL be provided through the `rstantools` generics rather than a bespoke `_samples()` function. `posterior_epred()`, `posterior_linpred()`, and `posterior_predict()` SHALL return a draws-by-observations (`D x N`) matrix for a `kb_fit_weight`, accepting `newdata` and a `new_levels = c("sample", "average")` axis, with no `by` argument. Conditioning SHALL be resolved per row, per factor by level membership: a row whose `site`/`year` is a known level is conditioned on its estimated random effect; a new level, or an absent grouping column, is handled by `new_levels` (`"sample"` draws, `"average"` zeroes). A new (unseen) level SHALL NOT error. With `newdata = NULL` the generics use the observed data and condition on its site and year, so `posterior_epred()`, `posterior_predict()`, and `augment()` agree at the observed data.
+Raw posterior prediction draws SHALL be provided through the `rstantools` generics rather than a bespoke `_samples()` function. `posterior_epred()`, `posterior_linpred()`, and `posterior_predict()` SHALL return a draws-by-observations (`D x N`) matrix for a `kb_fit_weight`, accepting `newdata`, a `new_levels = c("sample", "average")` axis, and a `representative_site = NULL` axis, with no `by` argument. Conditioning SHALL be resolved per row, per factor by level membership: a row whose `site`/`year` is a known level is conditioned on its estimated random effect; a new level, or an absent grouping column, is handled by `new_levels` (`"sample"` draws, `"average"` zeroes), except that when `representative_site` is non-`NULL` a new/absent site takes its site main effects from the named reference site(s) (per-draw average across several). A new (unseen) level SHALL NOT error. With `newdata = NULL` the generics use the observed data and condition on its site and year, so `posterior_epred()`, `posterior_predict()`, and `augment()` agree at the observed data.
 
 #### Scenario: posterior_epred returns the prediction draws
 - **WHEN** `posterior_epred(fit, newdata = grid)` is called
@@ -49,6 +59,10 @@ Raw posterior prediction draws SHALL be provided through the `rstantools` generi
 #### Scenario: A new level is sampled, not errored
 - **WHEN** `newdata` contains a `site` (or `year`) level the fit never saw
 - **THEN** that row's affected random effects are drawn per `new_levels` (no error); a mix of known and new levels resolves per row in one call
+
+#### Scenario: Representative site borrows a known site's main effects
+- **WHEN** `posterior_epred(fit, newdata = grid, representative_site = s)` is called with `grid` containing a new site and `s` a fit site
+- **THEN** the new site's `bSite` and `bSiteDiameter` are taken from `s` (per-draw average if `s` names several), with the `site:year` term still resolved per `new_levels`
 
 #### Scenario: newdata = NULL conditions on the observed groups
 - **WHEN** any of `posterior_epred()`, `posterior_linpred()`, or `posterior_predict()` is called with `newdata = NULL`
