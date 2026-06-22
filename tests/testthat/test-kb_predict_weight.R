@@ -16,20 +16,20 @@ test_that("predictions are ordered and positive", {
 })
 
 test_that("predicts at supplied rows", {
-  nd <- data.frame(diameter_mm = c(20, 40, 60))
+  nd <- data.frame(diameter = c(20, 40, 60))
   p <- kb_predict_weight(weight_fit, new_data = nd)
   expect_equal(nrow(p), 3L)
-  expect_equal(p$diameter_mm, c(20, 40, 60))
+  expect_equal(p$diameter, c(20, 40, 60))
 })
 
 test_that("a new site is sampled, not errored, and is wider than a known site", {
   site1 <- weight_fit$meta$site_levels[1]
   known <- kb_predict_weight(
-    weight_fit, new_data = data.frame(diameter_mm = 40, site = site1),
+    weight_fit, new_data = data.frame(diameter = 40, site = site1),
     new_levels = "sample"
   )
   new <- kb_predict_weight(
-    weight_fit, new_data = data.frame(diameter_mm = 40, site = "brand_new_site"),
+    weight_fit, new_data = data.frame(diameter = 40, site = "brand_new_site"),
     new_levels = "sample"
   )
   expect_equal(nrow(new), 1L)
@@ -38,13 +38,13 @@ test_that("a new site is sampled, not errored, and is wider than a known site", 
 
 test_that("a mix of known and new sites resolves in one call", {
   site1 <- weight_fit$meta$site_levels[1]
-  nd <- data.frame(diameter_mm = 40, site = c(site1, "new_reef"))
+  nd <- data.frame(diameter = 40, site = c(site1, "new_reef"))
   p <- kb_predict_weight(weight_fit, new_data = nd, new_levels = "sample")
   expect_equal(nrow(p), 2L)
   # the new reef carries more between-site uncertainty than the known site
   expect_gt((p$upper - p$lower)[2], (p$upper - p$lower)[1])
 })
 
-test_that("new_data must have a diameter_mm column", {
+test_that("new_data must have a diameter column", {
   expect_error(kb_predict_weight(weight_fit, new_data = data.frame(x = 1)))
 })

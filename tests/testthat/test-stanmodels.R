@@ -20,6 +20,7 @@ weight_stan_data <- function(nObs = 6L, prior_only = 0L) {
   list(
     nObs = nObs, nSite = nSite, nYear = nYear,
     site = site, year = year, diameter = diameter, weight = weight,
+    diameter_ref = if (length(diameter)) exp(mean(log(diameter))) else 30,
     prior_intercept_mu = 0, prior_intercept_sd = 2,
     prior_diameter_mu = 2, prior_diameter_sd = 1,
     prior_diameter2_mu = 0, prior_diameter2_sd = 0.5,
@@ -44,7 +45,7 @@ test_that("the weight model samples and returns the declared parameters", {
   expect_s4_class(fit, "stanfit")
   expect_true(all(
     c(
-      "bWeight30", "bDiameter", "bDiameter2",
+      "bWeight", "bDiameter", "bDiameter2",
       "sSite", "sSiteDiameter", "sSiteYear", "sWeight",
       "bSite", "bSiteDiameter", "bSiteYear",
       "log_lik", "yrep"

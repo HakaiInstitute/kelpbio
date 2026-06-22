@@ -1,7 +1,7 @@
 test_that("assemble_stan_data maps data and priors to the Stan data block", {
   data <- data.frame(
-    diameter_mm = c(20, 35, 50),
-    weight_kg = c(0.5, 2, 4),
+    diameter = c(20, 35, 50),
+    weight = c(0.5, 2, 4),
     site = factor(c("a", "b", "a")),
     year = factor(c("2020", "2020", "2021"))
   )
@@ -14,6 +14,8 @@ test_that("assemble_stan_data maps data and priors to the Stan data block", {
   expect_equal(sd$year, c(1L, 1L, 2L))
   expect_equal(sd$diameter, c(20, 35, 50))
   expect_equal(sd$weight, c(0.5, 2, 4))
+  # log-diameter centering reference: geometric mean of the observed diameter
+  expect_equal(sd$diameter_ref, exp(mean(log(c(20, 35, 50)))))
   expect_equal(sd$prior_intercept_mu, 0)
   expect_equal(sd$prior_intercept_sd, 2)
   expect_equal(sd$prior_diameter_mu, 2)
@@ -25,7 +27,7 @@ test_that("assemble_stan_data maps data and priors to the Stan data block", {
 
 test_that("assemble_stan_data accepts zero-row data", {
   data <- data.frame(
-    diameter_mm = numeric(0), weight_kg = numeric(0),
+    diameter = numeric(0), weight = numeric(0),
     site = factor(character(0)), year = factor(character(0))
   )
   sd <- assemble_stan_data(data, kb_priors_weight(), prior_only = TRUE)

@@ -34,7 +34,7 @@ test_that("summary carries the fit metadata", {
   s <- summary(weight_fit)
   expect_equal(s$model, "weight")
   expect_match(s$family, "Student-t")
-  expect_match(s$formula, "log\\(weight_kg\\)")
+  expect_match(s$formula, "log\\(weight\\)")
   expect_named(s$groups, c("site", "site:year"))
   expect_equal(s$ndraws, posterior::ndraws(weight_fit$draws))
 })

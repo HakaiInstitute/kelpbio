@@ -13,21 +13,21 @@ test_that("the weight-vs-diameter ribbon plot is visually stable", {
   vdiffr::expect_doppelganger("weight ribbon", kb_plot_predictions(p))
 })
 
-test_that("axis titles are publication-ready with units", {
+test_that("axis titles are publication-ready descriptive labels", {
   p <- kb_predict_weight_by(weight_fit, new_levels = "average")
   gg <- kb_plot_predictions(p)
-  expect_identical(gg$labels$x, "Sub-bulb diameter (mm)")
-  expect_identical(gg$labels$y, "Wet weight (kg)")
+  expect_identical(gg$labels$x, "Sub-bulb diameter")
+  expect_identical(gg$labels$y, "Wet weight")
 })
 
-test_that("a categorical x axis gets a descriptive title without units", {
+test_that("a categorical x axis gets a descriptive title", {
   p <- kb_predict_weight(
     weight_fit,
-    new_data = data.frame(diameter_mm = 30, site = levels(weight_fit$data$site)[1])
+    new_data = data.frame(diameter = 30, site = levels(weight_fit$data$site)[1])
   )
   gg <- kb_plot_predictions(p, x = "site", style = "pointrange")
   expect_identical(gg$labels$x, "Site")
-  expect_identical(gg$labels$y, "Wet weight (kg)")
+  expect_identical(gg$labels$y, "Wet weight")
 })
 
 test_that("facet is inferred from grouping variables", {

@@ -25,7 +25,7 @@ test_that("kb_fit_weight returns a correctly-structured object", {
   expect_setequal(
     posterior::variables(fit$draws),
     c(
-      "bWeight30", "bDiameter", "bDiameter2",
+      "bWeight", "bDiameter", "bDiameter2",
       "sSite", "sSiteDiameter", "sSiteYear", "sWeight",
       "bSite", "bSiteDiameter", "bSiteYear"
     )
@@ -46,10 +46,10 @@ test_that("prior_only fit ignores the data", {
   ))
   f1 <- kb_fit_weight(d, prior_only = TRUE, chains = 1, niters = 300, nthin = 1, cores = 1, quiet = TRUE, seed = 7)
   d2 <- d
-  d2$weight_kg <- rev(d2$weight_kg)
+  d2$weight <- rev(d2$weight)
   f2 <- kb_fit_weight(d2, prior_only = TRUE, chains = 1, niters = 300, nthin = 1, cores = 1, quiet = TRUE, seed = 7)
   # likelihood off => permuting the response leaves the prior-only fit unchanged
-  expect_equal(median(f1$draws$bWeight30), median(f2$draws$bWeight30), tolerance = 0.05)
+  expect_equal(median(f1$draws$bWeight), median(f2$draws$bWeight), tolerance = 0.05)
 })
 
 test_that("zero-row data is accepted under prior_only", {

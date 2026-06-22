@@ -8,7 +8,7 @@ test_that("residuals returns a finite deviance-residual vector matching augment"
 
 test_that("residuals are deviance, not raw response residuals", {
   a <- augment(weight_fit)
-  expect_false(isTRUE(all.equal(a$residual, a$weight_kg - a$fitted)))
+  expect_false(isTRUE(all.equal(a$residual, a$weight - a$fitted)))
 })
 
 test_that("residuals rejects a non-fit and extra args", {

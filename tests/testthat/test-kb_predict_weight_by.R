@@ -4,9 +4,9 @@ test_that("population curve spans the observed diameter range", {
   p <- kb_predict_weight_by(weight_fit, new_levels = "average")
   expect_s3_class(p, "kb_predictions")
   expect_true(all(c("estimate", "lower", "upper") %in% names(p)))
-  rng <- range(weight_fit$data$diameter_mm)
-  expect_gte(min(p$diameter_mm), rng[1] - 1e-6)
-  expect_lte(max(p$diameter_mm), rng[2] + 1e-6)
+  rng <- range(weight_fit$data$diameter)
+  expect_gte(min(p$diameter), rng[1] - 1e-6)
+  expect_lte(max(p$diameter), rng[2] + 1e-6)
 })
 
 test_that("sample band is at least as wide as average (the population band)", {
@@ -24,8 +24,8 @@ test_that("by produces one curve per group", {
 })
 
 test_that("custom diameter sequence is honoured", {
-  p <- kb_predict_weight_by(weight_fit, diameter_mm = c(25, 50, 75))
-  expect_equal(p$diameter_mm, c(25, 50, 75))
+  p <- kb_predict_weight_by(weight_fit, diameter = c(25, 50, 75))
+  expect_equal(p$diameter, c(25, 50, 75))
 })
 
 test_that("wider conf_level gives a wider interval", {
