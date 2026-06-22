@@ -29,9 +29,9 @@ defaults to match).}
 \code{getOption("mc.cores")} (falling back to \code{chains}), capped at the available
 cores.}
 
-\item{quiet}{A flag specifying whether to suppress the sampler progress
-output. Diagnostic warnings (divergences, etc.) are suppressed regardless
-and surfaced through \code{\link[=converged]{converged()}}/\code{\link[=glance]{glance()}}.}
+\item{quiet}{A flag specifying whether to suppress console output. When
+\code{FALSE} (the default), rstan's sampling progress and warnings are printed;
+when \code{TRUE}, all sampler output is suppressed.}
 
 \item{conf_level}{A number between 0 and 1 giving the compatibility-interval
 level.}

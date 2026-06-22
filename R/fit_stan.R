@@ -30,7 +30,8 @@ fit_stan <- function(stanmodel, stan_data, param_vars,
         control = control
       ),
       dots
-    ))
+    )),
+    quiet = quiet
   )
 
   all_draws <- posterior::as_draws_rvars(stanfit)
@@ -57,9 +58,14 @@ fit_stan <- function(stanmodel, stan_data, param_vars,
   )
 }
 
-# Muffle the post-sampling HMC diagnostic warnings; convergence is surfaced
-# through converged()/glance() instead.
-with_quiet_sampler <- function(expr) {
+# Muffle rstan's post-sampling HMC diagnostic warnings only when quiet = TRUE.
+# With quiet = FALSE they propagate so the user sees rstan's full diagnostics
+# (divergences, treedepth, BFMI, Rhat/ESS) at fit time; converged()/glance()/
+# summary() give the structured convergence summary either way.
+with_quiet_sampler <- function(expr, quiet) {
+  if (!quiet) {
+    return(expr)
+  }
   pattern <- paste(
     "divergent", "treedepth", "Effective Samples Size",
     "Examine the pairs", "R-hat", "Bayesian Fraction of Missing",

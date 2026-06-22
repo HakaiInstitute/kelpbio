@@ -21,9 +21,9 @@
 #' @param cores A whole number of cores for parallel chains, or `NULL` to use
 #'   `getOption("mc.cores")` (falling back to `chains`), capped at the available
 #'   cores.
-#' @param quiet A flag specifying whether to suppress the sampler progress
-#'   output. Diagnostic warnings (divergences, etc.) are suppressed regardless
-#'   and surfaced through [converged()]/[glance()].
+#' @param quiet A flag specifying whether to suppress console output. When
+#'   `FALSE` (the default), rstan's sampling progress and warnings are printed;
+#'   when `TRUE`, all sampler output is suppressed.
 #' @param conf_level A number between 0 and 1 giving the compatibility-interval
 #'   level.
 #' @param estimate A function giving the point estimate (e.g. `median`).

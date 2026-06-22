@@ -37,9 +37,9 @@ defaults to match).}
 \code{getOption("mc.cores")} (falling back to \code{chains}), capped at the available
 cores.}
 
-\item{quiet}{A flag specifying whether to suppress the sampler progress
-output. Diagnostic warnings (divergences, etc.) are suppressed regardless
-and surfaced through \code{\link[=converged]{converged()}}/\code{\link[=glance]{glance()}}.}
+\item{quiet}{A flag specifying whether to suppress console output. When
+\code{FALSE} (the default), rstan's sampling progress and warnings are printed;
+when \code{TRUE}, all sampler output is suppressed.}
 
 \item{...}{Additional arguments passed to \code{\link[rstan:stanmodel-method-sampling]{rstan::sampling()}}, including a
 \code{control} list (merged over the \code{adapt_delta = 0.95} default).}
@@ -59,10 +59,9 @@ to match \code{niters} and the post-warmup phase is thinned by \code{nthin}. The
 posterior draws (including the \code{log_lik} and \code{yrep} generated quantities),
 diagnostics, data, and metadata.
 
-With the default \code{quiet = FALSE} the sampler shows its progress but other Stan
-output and the post-sampling HMC diagnostic warnings (divergences, treedepth,
-low ESS/Rhat) are suppressed; inspect convergence with \code{\link[=converged]{converged()}} /
-\code{\link[=glance]{glance()}}.
+With the default \code{quiet = FALSE} the sampler's progress and warnings are
+printed to the console; \code{quiet = TRUE} suppresses all sampler output. Inspect
+convergence with \code{\link[=converged]{converged()}} / \code{\link[=glance]{glance()}} / \code{\link[=summary]{summary()}}.
 
 Chains run in parallel by default (\code{cores = NULL} uses \code{getOption("mc.cores")},
 falling back to \code{chains}, capped at the available cores). Set

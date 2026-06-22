@@ -4,16 +4,16 @@
 #' log-diameter mean with site intercept, site slope, and site:year random
 #' effects, Student-t likelihood) to weight data via Stan.
 #'
+#' @details
 #' `niters` is the number of saved post-warmup draws per chain; warmup defaults
 #' to match `niters` and the post-warmup phase is thinned by `nthin`. The live
 #' `stanfit` is discarded after fitting: the returned object stores the extracted
 #' posterior draws (including the `log_lik` and `yrep` generated quantities),
 #' diagnostics, data, and metadata.
 #'
-#' With the default `quiet = FALSE` the sampler shows its progress but other Stan
-#' output and the post-sampling HMC diagnostic warnings (divergences, treedepth,
-#' low ESS/Rhat) are suppressed; inspect convergence with [converged()] /
-#' [glance()].
+#' With the default `quiet = FALSE` the sampler's progress and warnings are
+#' printed to the console; `quiet = TRUE` suppresses all sampler output. Inspect
+#' convergence with [converged()] / [glance()] / [summary()].
 #'
 #' Chains run in parallel by default (`cores = NULL` uses `getOption("mc.cores")`,
 #' falling back to `chains`, capped at the available cores). Set
