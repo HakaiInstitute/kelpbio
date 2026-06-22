@@ -9,8 +9,7 @@
 #
 #' @inheritParams rlang::args_dots_empty
 #' @param data A data frame of observations.
-#' @param species A string naming the species. One of `"nereocystis"`.
-#' @param priors A named list of prior objects (see [kb_priors_weight()]), or
+#' @param priors A named list of prior objects (see [kb_priors_weight_nereo()]), or
 #'   `NULL` to use the defaults. Supplied entries override the corresponding
 #'   defaults; unspecified entries keep their defaults.
 #' @param prior_only A flag specifying whether to sample from the priors only

@@ -39,7 +39,7 @@
 #' @family generics
 #' @exportS3Method base::summary
 #' @examples
-#' summary(fit_weight)
+#' summary(fit_weight_hakai_nereo)
 summary.kb_fit <- function(object,
                            conf_level = 0.95,
                            estimate = stats::median,

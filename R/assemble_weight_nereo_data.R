@@ -1,7 +1,7 @@
-#' Assemble the Stan Data List for the Weight Model
+#' Assemble the Stan Data List for the Nereocystis Weight Model
 #'
 #' Map validated weight data and a resolved prior list to the `data` block of
-#' `inst/stan/weight.stan`. `site` and `year` are encoded as integer factor
+#' `inst/stan/weight_nereo.stan`. `site` and `year` are encoded as integer factor
 #' codes; the raw `diameter` and `weight` vectors are passed through (the Stan
 #' model applies the `log(diameter) - log(diameter_ref)` and `log(weight)`
 #' transforms). `diameter_ref` is the geometric mean of the observed diameter;
@@ -12,9 +12,9 @@
 #' @inheritParams params
 #' @param priors A resolved named prior list (see `resolve_priors()`).
 #'
-#' @return A named list suitable for `rstan::sampling(stanmodels$weight, data = .)`.
+#' @return A named list suitable for `rstan::sampling(stanmodels$weight_nereo, data = .)`.
 #' @noRd
-assemble_stan_data <- function(data, priors, prior_only = FALSE) {
+assemble_weight_nereo_data <- function(data, priors, prior_only = FALSE) {
   site <- factor(data$site)
   year <- factor(data$year)
   nObs <- nrow(data)

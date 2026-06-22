@@ -27,7 +27,7 @@
 #' @export
 #'
 #' @examples
-#' kb_predict_weight_by(fit_weight, by = "site")
+#' kb_predict_weight_by(fit_weight_hakai_nereo, by = "site")
 kb_predict_weight_by <- function(fit,
                                  by = NULL,
                                  new_levels = c("sample", "average"),

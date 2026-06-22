@@ -1,6 +1,6 @@
 #' Exponential Prior
 #'
-#' Construct an Exponential prior object for use in [kb_priors_weight()] and the
+#' Construct an Exponential prior object for use in [kb_priors_weight_nereo()] and the
 #' `priors` argument of the `kb_fit_*()` functions. Used for the standard
 #' deviation (scale) hyperparameters.
 #'

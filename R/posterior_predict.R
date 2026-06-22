@@ -17,7 +17,7 @@
 #' @family generics
 #' @exportS3Method rstantools::posterior_predict
 #' @examples
-#' pp <- posterior_predict(fit_weight)
+#' pp <- posterior_predict(fit_weight_hakai_nereo)
 #' dim(pp)
 posterior_predict.kb_fit_weight <- function(object,
                                             newdata = NULL,
@@ -36,7 +36,7 @@ posterior_predict.kb_fit_weight <- function(object,
   res <- weight_data_linpred(object, newdata, new_levels, representative_site)
   lp <- posterior::draws_of(res$linpred) # D x N
   sweight <- as.vector(posterior::draws_of(object$draws$sWeight)) # length D
-  # student_t(nu, mu, sigma) = mu + sigma * t_nu; nu = 4 (fixed in weight.stan).
+  # student_t(nu, mu, sigma) = mu + sigma * t_nu; nu = 4 (fixed in weight_nereo.stan).
   noise <- matrix(stats::rt(length(lp), df = 4), nrow = nrow(lp))
   exp(lp + sweight * noise)
 }

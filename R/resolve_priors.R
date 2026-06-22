@@ -7,7 +7,7 @@
 #' (class) of the default it replaces (the prior family is fixed).
 #'
 #' @param priors A named list of prior objects, or `NULL` for the defaults.
-#' @param defaults The default named prior list (e.g. from [kb_priors_weight()]).
+#' @param defaults The default named prior list (e.g. from [kb_priors_weight_nereo()]).
 #'
 #' @return A named list of prior objects with the same names as `defaults`.
 #' @noRd

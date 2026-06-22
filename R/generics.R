@@ -80,7 +80,7 @@ ggplot2::autoplot
 #' @family generics
 #' @export
 #' @examples
-#' samples(fit_weight)
+#' samples(fit_weight_hakai_nereo)
 samples <- function(x, ...) {
   UseMethod("samples")
 }

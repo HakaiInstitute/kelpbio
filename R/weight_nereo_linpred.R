@@ -1,11 +1,6 @@
-# Single source of truth (R side) for the weight-model mean: the log-scale linear
-# predictor as a `posterior` rvar of length nrow(grid). Conditioning is resolved
-# per row and per factor: known levels take their estimated random effect; new or
-# absent levels are handled by `new_levels` ("sample" draws from Normal(0, sd),
-# "average" holds at zero). When `representative_site` is supplied, a new/absent
-# site instead borrows the site main effects of those reference site(s); the
-# site:year interaction still follows `new_levels`.
-.weight_linpred <- function(fit, grid, new_levels, representative_site = NULL) {
+# Single R-side source of the Nereocystis weight-model mean (log scale), as a
+# posterior rvar over grid rows. All predict paths route through here.
+.weight_nereo_linpred <- function(fit, grid, new_levels, representative_site = NULL) {
   d <- fit$draws
   n <- nrow(grid)
   log_dc <- log(grid$diameter) - log(fit$meta$diameter_ref)
@@ -35,28 +30,28 @@
     re_site + re_slope * log_dc + re_sy
 }
 
-# Observed-data linear predictor (log scale), conditioned on each row's own site
-# and year. The shared basis for fitted() and residuals(). new_levels is
-# immaterial here: every observed row is a known level, conditioned regardless.
-.weight_linpred_obs <- function(fit) {
-  .weight_linpred(fit, tibble::as_tibble(fit$data), new_levels = "average")
+# new_levels is immaterial: every observed row is a known level.
+.weight_nereo_linpred_obs <- function(fit) {
+  .weight_nereo_linpred(fit, tibble::as_tibble(fit$data), new_levels = "average")
 }
 
-# New-data verb (kb_predict_weight) and the posterior_* generics: predict at the
-# supplied rows, or the observed data when new_data is NULL.
 weight_data_linpred <- function(fit, new_data, new_levels, representative_site = NULL) {
   .chk_kb_fit_weight(fit)
   new_levels <- rlang::arg_match(new_levels, c("sample", "average"))
-  grid <- build_data_grid(fit, new_data)
+  if (is.null(new_data)) {
+    # fit$data already passed kb_check_data_weight_nereo() at fit time.
+    grid <- tibble::as_tibble(fit$data)
+  } else {
+    .chk_new_data_weight_nereo(new_data)
+    grid <- tibble::as_tibble(new_data)
+  }
   list(
     grid = grid,
     group_vars = intersect(c("site", "year"), names(grid)),
-    linpred = .weight_linpred(fit, grid, new_levels, representative_site)
+    linpred = .weight_nereo_linpred(fit, grid, new_levels, representative_site)
   )
 }
 
-# Curve verb (kb_predict_weight_by): a diameter sequence crossed with the
-# requested grouping levels, then predict.
 weight_by_linpred <- function(fit, by, new_levels, diameter = NULL) {
   .chk_kb_fit_weight(fit)
   new_levels <- rlang::arg_match(new_levels, c("sample", "average"))
@@ -65,11 +60,10 @@ weight_by_linpred <- function(fit, by, new_levels, diameter = NULL) {
   list(
     grid = grid,
     by = by,
-    linpred = .weight_linpred(fit, grid, new_levels)
+    linpred = .weight_nereo_linpred(fit, grid, new_levels)
   )
 }
 
-# Validate the `by` axis for the weight model. Returns a character vector.
 validate_by_weight <- function(by) {
   if (is.null(by)) by <- character(0)
   chk::chk_character(by)
@@ -81,6 +75,7 @@ validate_by_weight <- function(by) {
       i = "Available grouping factors: {.val {valid}}."
     ))
   }
+  # Year has no main effect, only the site:year interaction.
   if ("year" %in% by && !"site" %in% by) {
     cli::cli_abort(c(
       "{.code by = \"year\"} is not available for the weight model.",
@@ -91,23 +86,6 @@ validate_by_weight <- function(by) {
   by
 }
 
-# New-data grid: the supplied rows (must carry a `diameter` column), or the
-# observed data when new_data is NULL.
-build_data_grid <- function(fit, new_data) {
-  if (is.null(new_data)) {
-    return(tibble::as_tibble(fit$data))
-  }
-  if (!is.data.frame(new_data)) {
-    cli::cli_abort("{.arg new_data} must be a data frame or {.code NULL}.")
-  }
-  if (!"diameter" %in% names(new_data)) {
-    cli::cli_abort("{.arg new_data} must have a {.field diameter} column.")
-  }
-  tibble::as_tibble(new_data)
-}
-
-# Curve grid: a diameter sequence (auto over the observed range, or supplied)
-# crossed with the levels of the grouping factors named in `by`.
 build_by_grid <- function(fit, by, diameter = NULL) {
   if (is.null(diameter)) {
     rng <- range(fit$data$diameter, na.rm = TRUE)
@@ -124,6 +102,7 @@ build_by_grid <- function(fit, by, diameter = NULL) {
       stringsAsFactors = FALSE
     )
   } else {
+    # Cross diameter only with site:year combinations that were observed.
     obs <- unique(as.data.frame(fit$data)[c("site", "year")])
     obs[] <- lapply(obs, as.character)
     g <- merge(data.frame(diameter = diameter), obs)
@@ -131,8 +110,6 @@ build_by_grid <- function(fit, by, diameter = NULL) {
   tibble::as_tibble(g)
 }
 
-# Draw a length-n random-effect rvar from Normal(0, sd_rvar) ("sample"), or a
-# scalar zero ("average"). Used for new/absent levels.
 re_draw <- function(new_levels, n, sd_rvar) {
   if (new_levels == "average") {
     return(0)
@@ -140,11 +117,9 @@ re_draw <- function(new_levels, n, sd_rvar) {
   posterior::rvar_rng(stats::rnorm, n, mean = 0, sd = sd_rvar)
 }
 
-# Resolve a vector-indexed random effect (site intercept or slope) to a length-n
-# rvar. `idx` is match() output (NA = new or absent): known rows take the
-# estimated effect. Unknown rows take the per-draw average of the `rep_idx`
-# columns (the representative sites) when supplied, otherwise are drawn per
-# `new_levels`.
+# Site intercept/slope per row: known rows take their estimated effect; unknown
+# rows borrow the per-draw mean of the representative sites (rep_idx) if given,
+# else follow new_levels.
 resolve_re1 <- function(param, idx, new_levels, sd_rvar, rep_idx = NULL) {
   known <- !is.na(idx)
   if (all(known)) {
@@ -162,14 +137,12 @@ resolve_re1 <- function(param, idx, new_levels, sd_rvar, rep_idx = NULL) {
     } else if (new_levels == "sample") {
       out[, !known] <- posterior::draws_of(re_draw("sample", sum(!known), sd_rvar))
     }
-    # new_levels == "average" leaves unknown columns at zero
+    # new_levels == "average" leaves unknown columns at zero.
   }
   posterior::rvar(out)
 }
 
-# Resolve the site:year interaction to a length-n rvar. A row is conditioned
-# only when both its site and year are known levels; otherwise it is drawn per
-# `new_levels`.
+# site:year: conditioned only where both site and year are known, else new_levels.
 resolve_re2 <- function(param, i, j, new_levels, sd_rvar) {
   known <- !is.na(i) & !is.na(j)
   n <- length(i)

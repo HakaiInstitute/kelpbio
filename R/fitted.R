@@ -13,9 +13,9 @@
 #' @seealso [residuals()] for deviance residuals, and [augment()].
 #' @exportS3Method stats::fitted
 #' @examples
-#' fitted(fit_weight)
+#' fitted(fit_weight_hakai_nereo)
 fitted.kb_fit_weight <- function(object, ...) {
   rlang::check_dots_empty()
   .chk_kb_fit_weight(object)
-  as.numeric(stats::median(exp(.weight_linpred_obs(object))))
+  as.numeric(stats::median(exp(.weight_nereo_linpred_obs(object))))
 }

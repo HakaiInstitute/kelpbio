@@ -14,7 +14,7 @@
 #' @family generics
 #' @exportS3Method generics::tidy
 #' @examples
-#' tidy(fit_weight)
+#' tidy(fit_weight_hakai_nereo)
 tidy.kb_fit_weight <- function(x,
                                conf_level = 0.95,
                                estimate = stats::median,

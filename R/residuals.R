@@ -14,13 +14,13 @@
 #' @seealso [fitted()] for fitted values, and [augment()].
 #' @exportS3Method stats::residuals
 #' @examples
-#' residuals(fit_weight)
+#' residuals(fit_weight_hakai_nereo)
 residuals.kb_fit_weight <- function(object, ...) {
   rlang::check_dots_empty()
   .chk_kb_fit_weight(object)
   # Per-draw deviance residual via the Student-t likelihood (extras::res_student,
   # matching the analysis project), summarised with the posterior median.
-  mu <- posterior::draws_of(.weight_linpred_obs(object))
+  mu <- posterior::draws_of(.weight_nereo_linpred_obs(object))
   sw <- as.vector(posterior::draws_of(object$draws$sWeight))
   y <- log(object$data$weight)
   theta <- 1 / object$meta$nu

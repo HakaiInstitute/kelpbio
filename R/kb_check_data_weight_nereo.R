@@ -1,8 +1,8 @@
-#' Validate Weight Model Input Data
+#' Validate Nereocystis Weight Model Input Data
 #'
-#' Check that `data` contains the columns required to fit the weight model, with
-#' appropriate types and values. Returns the data invisibly on success and
-#' errors via `chk` otherwise.
+#' Check that `data` contains the columns required to fit the *Nereocystis
+#' luetkeana* weight model, with appropriate types and values. Returns the data
+#' invisibly on success and errors via `chk` otherwise.
 #'
 #' Required columns: numeric `diameter` (> 0), numeric `weight` (> 0), and factor
 #' or character `site` and `year`, with no missing values. Units are the user's
@@ -23,8 +23,8 @@
 #'   diameter = c(20, 35), weight = c(0.5, 2.1),
 #'   site = factor(c("a", "b")), year = factor(c("2020", "2021"))
 #' )
-#' kb_check_data_weight(data)
-kb_check_data_weight <- function(data, x_name = deparse(substitute(data))) {
+#' kb_check_data_weight_nereo(data)
+kb_check_data_weight_nereo <- function(data, x_name = deparse(substitute(data))) {
   chk::chk_data(data, x_name = x_name)
   chk::chk_superset(
     names(data),

@@ -11,7 +11,7 @@
 #' @family generics
 #' @exportS3Method stats::coef
 #' @examples
-#' coef(fit_weight)
+#' coef(fit_weight_hakai_nereo)
 coef.kb_fit_weight <- function(object, ...) {
   tidy(object, ...)
 }
