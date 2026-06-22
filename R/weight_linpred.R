@@ -6,7 +6,7 @@
 .weight_linpred <- function(fit, grid, new_levels) {
   d <- fit$draws
   n <- nrow(grid)
-  log_dc <- log(grid$diameter_mm) - log(fit$meta$diameter_ref)
+  log_dc <- log(grid$diameter) - log(fit$meta$diameter_ref)
 
   si <- if ("site" %in% names(grid)) {
     match(as.character(grid$site), fit$meta$site_levels)
@@ -23,7 +23,7 @@
   re_slope <- resolve_re1(d$bSiteDiameter, si, new_levels, d$sSiteDiameter)
   re_sy <- resolve_re2(d$bSiteYear, si, yi, new_levels, d$sSiteYear)
 
-  d$bWeight30 + d$bDiameter * log_dc + d$bDiameter2 * log_dc^2 +
+  d$bWeight + d$bDiameter * log_dc + d$bDiameter2 * log_dc^2 +
     re_site + re_slope * log_dc + re_sy
 }
 
@@ -49,11 +49,11 @@ weight_data_linpred <- function(fit, new_data, new_levels) {
 
 # Curve verb (kb_predict_weight_by): a diameter sequence crossed with the
 # requested grouping levels, then predict.
-weight_by_linpred <- function(fit, by, new_levels, diameter_mm = NULL) {
+weight_by_linpred <- function(fit, by, new_levels, diameter = NULL) {
   .chk_kb_fit_weight(fit)
   new_levels <- rlang::arg_match(new_levels, c("sample", "average"))
   by <- validate_by_weight(by)
-  grid <- build_by_grid(fit, by, diameter_mm)
+  grid <- build_by_grid(fit, by, diameter)
   list(
     grid = grid,
     by = by,
@@ -83,7 +83,7 @@ validate_by_weight <- function(by) {
   by
 }
 
-# New-data grid: the supplied rows (must carry a `diameter_mm` column), or the
+# New-data grid: the supplied rows (must carry a `diameter` column), or the
 # observed data when new_data is NULL.
 build_data_grid <- function(fit, new_data) {
   if (is.null(new_data)) {
@@ -92,33 +92,33 @@ build_data_grid <- function(fit, new_data) {
   if (!is.data.frame(new_data)) {
     cli::cli_abort("{.arg new_data} must be a data frame or {.code NULL}.")
   }
-  if (!"diameter_mm" %in% names(new_data)) {
-    cli::cli_abort("{.arg new_data} must have a {.field diameter_mm} column.")
+  if (!"diameter" %in% names(new_data)) {
+    cli::cli_abort("{.arg new_data} must have a {.field diameter} column.")
   }
   tibble::as_tibble(new_data)
 }
 
 # Curve grid: a diameter sequence (auto over the observed range, or supplied)
 # crossed with the levels of the grouping factors named in `by`.
-build_by_grid <- function(fit, by, diameter_mm = NULL) {
-  if (is.null(diameter_mm)) {
-    rng <- range(fit$data$diameter_mm, na.rm = TRUE)
-    diameter_mm <- seq(rng[1], rng[2], length.out = 30L)
+build_by_grid <- function(fit, by, diameter = NULL) {
+  if (is.null(diameter)) {
+    rng <- range(fit$data$diameter, na.rm = TRUE)
+    diameter <- seq(rng[1], rng[2], length.out = 30L)
   } else {
-    chk::chk_numeric(diameter_mm)
+    chk::chk_numeric(diameter)
   }
   if (length(by) == 0) {
-    return(tibble::tibble(diameter_mm = diameter_mm))
+    return(tibble::tibble(diameter = diameter))
   }
   if (setequal(by, "site")) {
     g <- expand.grid(
-      diameter_mm = diameter_mm, site = fit$meta$site_levels,
+      diameter = diameter, site = fit$meta$site_levels,
       stringsAsFactors = FALSE
     )
   } else {
     obs <- unique(as.data.frame(fit$data)[c("site", "year")])
     obs[] <- lapply(obs, as.character)
-    g <- merge(data.frame(diameter_mm = diameter_mm), obs)
+    g <- merge(data.frame(diameter = diameter), obs)
   }
   tibble::as_tibble(g)
 }

@@ -1,9 +1,11 @@
 // Full allometric weight model (site-year resolution).
 // log(weight) ~ student_t(4, mu, sWeight) where
-//   mu = bWeight30 + bSite[site]
-//      + (bDiameter + bSiteDiameter[site]) * log(diameter / 30)
-//      + bDiameter2 * log(diameter / 30)^2
+//   mu = bWeight + bSite[site]
+//      + (bDiameter + bSiteDiameter[site]) * log(diameter / diameter_ref)
+//      + bDiameter2 * log(diameter / diameter_ref)^2
 //      + bSiteYear[site, year]
+// log-diameter is centered at diameter_ref (passed as data: the geometric mean
+// of the observed diameter), so the diameter unit does not affect the fit.
 // Random effects: site intercept, site slope (on log diameter), and site:year.
 // Priors are passed as data; the prior family is fixed at compile time.
 data {
@@ -14,6 +16,7 @@ data {
   array[nObs] int<lower=1, upper=nYear> year;
   vector<lower=0>[nObs] diameter;
   vector<lower=0>[nObs] weight;
+  real<lower=0> diameter_ref;             // log-diameter centering reference
 
   // priors (hyperparameters passed as data)
   real prior_intercept_mu;
@@ -31,12 +34,12 @@ data {
 }
 transformed data {
   real nu = 4.0;                          // Student-t degrees of freedom (fixed)
-  real log_diameter_ref = log(30);
+  real log_diameter_ref = log(diameter_ref);
   vector[nObs] log_diameter = log(diameter) - log_diameter_ref;
   vector[nObs] log_weight = log(weight);
 }
 parameters {
-  real bWeight30;                         // intercept: expected log(weight) at diameter = 30
+  real bWeight;                           // intercept: expected log(weight) at diameter_ref
   real bDiameter;                         // linear log-diameter slope
   real bDiameter2;                        // quadratic log-diameter slope
   real<lower=0> sSite;                    // site intercept SD
@@ -53,14 +56,14 @@ transformed parameters {
   matrix[nSite, nYear] bSiteYear = z_bSiteYear * sSiteYear;
   vector[nObs] log_eWeight;
   for (i in 1:nObs) {
-    log_eWeight[i] = bWeight30 + bSite[site[i]]
+    log_eWeight[i] = bWeight + bSite[site[i]]
       + (bDiameter + bSiteDiameter[site[i]]) * log_diameter[i]
       + bDiameter2 * log_diameter[i]^2
       + bSiteYear[site[i], year[i]];
   }
 }
 model {
-  bWeight30 ~ normal(prior_intercept_mu, prior_intercept_sd);
+  bWeight ~ normal(prior_intercept_mu, prior_intercept_sd);
   bDiameter ~ normal(prior_diameter_mu, prior_diameter_sd);
   bDiameter2 ~ normal(prior_diameter2_mu, prior_diameter2_sd);
   sSite ~ exponential(prior_sd_site_rate);

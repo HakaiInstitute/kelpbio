@@ -151,7 +151,7 @@ resolve_cores <- function(cores, chains) {
 # diagnostics, data, and meta; discard the stanfit.
 new_kb_fit_weight <- function(stanfit, data, priors, species, prior_only, nthin) {
   param_vars <- c(
-    "bWeight30", "bDiameter", "bDiameter2",
+    "bWeight", "bDiameter", "bDiameter2",
     "sSite", "sSiteDiameter", "sSiteYear", "sWeight",
     "bSite", "bSiteDiameter", "bSiteYear"
   )
@@ -181,7 +181,9 @@ new_kb_fit_weight <- function(stanfit, data, priors, species, prior_only, nthin)
     stancode = rstan::get_stancode(stanfit),
     site_levels = levels(factor(data$site)),
     year_levels = levels(factor(data$year)),
-    diameter_ref = 30,
+    # Same reference passed to Stan (assemble_stan_data); geometric mean of the
+    # observed diameter, so the fit and R-side predictions share one center.
+    diameter_ref = weight_diameter_ref(data$diameter),
     nu = 4, # Student-t degrees of freedom (fixed in inst/stan/weight.stan)
     nthin = nthin
   )
