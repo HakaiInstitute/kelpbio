@@ -22,8 +22,16 @@
 #' run in separate processes that load the installed package, so use
 #' `cores = 1` when running from `devtools::load_all()`.
 #'
+#' The sampler runs with `adapt_delta = 0.95` (a smaller leapfrog step than
+#' Stan's 0.8 default, suited to the hierarchical geometry and reducing
+#' divergences). Override it, or set any other sampler control, by passing a
+#' `control` list through `...`, e.g.
+#' `kb_fit_weight(data, control = list(adapt_delta = 0.99))`; only the entries
+#' supplied are changed.
+#'
 #' @inheritParams params
-#' @param ... Additional arguments passed to [rstan::sampling()].
+#' @param ... Additional arguments passed to [rstan::sampling()], including a
+#'   `control` list (merged over the `adapt_delta = 0.95` default).
 #'
 #' @return An object of class `c("kb_fit_weight", "kb_fit")`.
 #' @family model
@@ -69,22 +77,32 @@ kb_fit_weight <- function(data,
   warmup <- as.integer(niters)
   total_iter <- warmup + as.integer(niters) * as.integer(nthin)
 
+  # Raise adapt_delta above Stan's 0.8 default for the hierarchical geometry;
+  # power users can override any control entry via `control` in `...`. Merge so a
+  # user `control` does not collide with the default or drop our other entries.
+  dots <- list(...)
+  control <- utils::modifyList(list(adapt_delta = 0.95), dots$control %||% list())
+  dots$control <- NULL
+
   fit <- with_quiet_sampler(
-    rstan::sampling(
-      stanmodels$weight,
-      data = stan_data,
-      chains = as.integer(chains),
-      iter = total_iter,
-      warmup = warmup,
-      thin = as.integer(nthin),
-      cores = resolve_cores(cores, chains),
-      refresh = if (quiet) 0L else max(1L, total_iter %/% 10L),
-      show_messages = FALSE,
-      # Console progress only; the HTML viewer pops a "URL cannot be accessed"
-      # error in some GUIs.
-      open_progress = FALSE,
-      ...
-    )
+    do.call(rstan::sampling, c(
+      list(
+        stanmodels$weight,
+        data = stan_data,
+        chains = as.integer(chains),
+        iter = total_iter,
+        warmup = warmup,
+        thin = as.integer(nthin),
+        cores = resolve_cores(cores, chains),
+        refresh = if (quiet) 0L else max(1L, total_iter %/% 10L),
+        show_messages = FALSE,
+        # Console progress only; the HTML viewer pops a "URL cannot be accessed"
+        # error in some GUIs.
+        open_progress = FALSE,
+        control = control
+      ),
+      dots
+    ))
   )
 
   new_kb_fit_weight(

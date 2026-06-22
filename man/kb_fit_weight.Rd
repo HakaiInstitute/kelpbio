@@ -44,7 +44,8 @@ cores.}
 output. Diagnostic warnings (divergences, etc.) are suppressed regardless
 and surfaced through \code{\link[=converged]{converged()}}/\code{\link[=glance]{glance()}}.}
 
-\item{...}{Additional arguments passed to \code{\link[rstan:stanmodel-method-sampling]{rstan::sampling()}}.}
+\item{...}{Additional arguments passed to \code{\link[rstan:stanmodel-method-sampling]{rstan::sampling()}}, including a
+\code{control} list (merged over the \code{adapt_delta = 0.95} default).}
 }
 \value{
 An object of class \code{c("kb_fit_weight", "kb_fit")}.
@@ -72,6 +73,13 @@ falling back to \code{chains}, capped at the available cores). Set
 containers, or inside another parallel context. On Windows, parallel chains
 run in separate processes that load the installed package, so use
 \code{cores = 1} when running from \code{devtools::load_all()}.
+
+The sampler runs with \code{adapt_delta = 0.95} (a smaller leapfrog step than
+Stan's 0.8 default, suited to the hierarchical geometry and reducing
+divergences). Override it, or set any other sampler control, by passing a
+\code{control} list through \code{...}, e.g.
+\code{kb_fit_weight(data, control = list(adapt_delta = 0.99))}; only the entries
+supplied are changed.
 }
 \examples{
 if (interactive()) {
