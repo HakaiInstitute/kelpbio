@@ -66,10 +66,27 @@ Access via `$`: `x$draws`, `x$data`, `x$meta`. `samples(x)` returns a `posterior
 ## Package Conventions
 
 - **Prefix**: all exported functions use `kb_`
-- **Validation**: all exported function arguments validated with `chk`; user-facing messages via `cli`
+- **Validation**: all exported function arguments validated with `chk`; user-facing messages via `cli`. Bespoke internal validators follow the bboutools `.vld_`/`.chk_` split: a `.vld_<name>()` in `R/vld.R` is a pure predicate returning a logical scalar (minimal args, no messaging); its `.chk_<name>()` partner in `R/chk.R` calls it and either returns the input invisibly or aborts via `cli`. Every bespoke `.chk_` has a matching `.vld_` (multi-arg `chk::` bundles like `chk_sampler_args()` are exempt: no single predicate to pair). The `.chk_` may layer `chk::` primitives or re-derive granular messages where one boolean would be too coarse. Both are internal (leading dot, unexported). Example:
+
+  ```r
+  # R/vld.R
+  .vld_new_data_weight_nereo <- function(x) {
+    is.data.frame(x) && "diameter" %in% names(x)
+  }
+  # R/chk.R
+  .chk_new_data_weight_nereo <- function(x, x_name = deparse(substitute(x))) {
+    if (.vld_new_data_weight_nereo(x)) {
+      return(invisible(x))
+    }
+    if (!is.data.frame(x)) {
+      cli::cli_abort("{.arg {x_name}} must be a data frame or {.code NULL}.")
+    }
+    cli::cli_abort("{.arg {x_name}} must have a {.field diameter} column.")
+  }
+  ```
 - **Documentation**: roxygen2 with markdown; `@inheritParams` for shared parameters
 - **Writing** (docs, README, vignettes, roxygen, PR/commit text): follow the writing style in `~/.claude/CLAUDE.md`; in particular no em-dashes or en-dashes (use hyphens, commas, or colons) and no mid-sentence bold for emphasis; concise technical register
-- **File layout**: one function per file, file named after the function (`kb_fit_weight()` → `R/kb_fit_weight.R`). S3 methods grouped one file per generic, named after the generic (`R/print.R` holds all `print.*` methods, `R/tidy.R` all `tidy.*`, etc.). Internal helpers in clearly-named files, never a catch-all `utils.R`.
+- **File layout**: one function per file, file named after the function (`kb_fit_weight_nereo()` → `R/kb_fit_weight_nereo.R`). S3 methods grouped one file per generic, named after the generic (`R/print.R` holds all `print.*` methods, `R/tidy.R` all `tidy.*`, etc.). Internal helpers in clearly-named files, never a catch-all `utils.R`.
 - **Testing**: testthat 3e; strict 1:1 test mirroring (`R/<name>.R` ↔ `tests/testthat/test-<name>.R`). Test the wrapper, not the model's numbers. Snapshot print methods + messages; NEVER snapshot MCMC numerics (test structure + invariants instead). Small pre-built fits in `tests/testthat/fixtures/` (built with `rstan::sampling(seed=)`, not `set.seed`); slow end-to-end fits `skip_on_cran()`. Factor pure logic (data/prior assembly) out of fit functions for MCMC-free testing. See `decisions/bboutools-api-review.md` for the testing rationale.
 - **Code style**: tidyverse; no lubridate, reshape2, plyr, or data.table
 - **No `library()` calls** in package code; use `@importFrom` or `pkg::fun()`

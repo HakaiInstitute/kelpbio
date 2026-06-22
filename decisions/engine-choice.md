@@ -43,7 +43,9 @@ motivates cmdstanr does not bite.
   or changing `Makevars`. `devtools::load_all()` does not pick up Stan changes;
   use `devtools::install()`. (These are restated as rules in `config.yaml`.)
 - Runtime flexibility comes from priors-as-data, binary structural flags, and
-  separate Stan files per major variant; species enters as data, not a variant.
+  separate Stan files per major variant. Species is one such variant axis: each
+  species gets its own `.stan` and its own `kb_fit_<model>_<species>()` wrapper
+  (see `decisions/species-as-variant.md`).
 - Revisit `instantiate` only if a newer Stan feature becomes necessary, rstan's
   compile cost becomes a real bottleneck, or the audience shifts to
   CmdStan-equipped users.

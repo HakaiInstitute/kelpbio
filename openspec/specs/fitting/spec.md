@@ -6,17 +6,17 @@ Fitting the weight model and the kb_fit object contract: draws-not-stanfit stora
 
 ## Requirements
 
-### Requirement: Fit the weight model
+### Requirement: Fit the Nereocystis weight model
 
-`kb_fit_weight(data, species, priors, prior_only, chains, niters, nthin, cores, quiet, ...)` SHALL fit the full allometric weight model (quadratic log-diameter mean with site intercept, site slope, and site:year random effects) via `stanmodels$weight` and return an object of class `c("kb_fit_weight", "kb_fit")`.
+`kb_fit_weight_nereo(data, priors, prior_only, chains, niters, nthin, cores, quiet, ...)` SHALL fit the full *Nereocystis luetkeana* allometric weight model (quadratic log-diameter mean with site intercept, site slope, and site:year random effects) via `stanmodels$weight_nereo` and return an object of class `c("kb_fit_weight", "kb_fit")`. The species is fixed by the function (there is no `species` argument); it is recorded as `"nereocystis"` in `meta$species`.
 
 #### Scenario: Returns a kb_fit_weight object
-- **WHEN** `kb_fit_weight()` is called on valid weight data
-- **THEN** it returns an object of class `c("kb_fit_weight", "kb_fit")`
+- **WHEN** `kb_fit_weight_nereo()` is called on valid weight data
+- **THEN** it returns an object of class `c("kb_fit_weight", "kb_fit")` with `meta$species` equal to `"nereocystis"`
 
 #### Scenario: Arguments are validated at entry
-- **WHEN** `kb_fit_weight()` is called with an invalid argument (e.g. bad `data`, unknown `species`, a `priors` entry of the wrong family)
-- **THEN** it errors at entry via `chk`/`cli` before sampling (family mismatch reports that a family change needs a different model variant)
+- **WHEN** `kb_fit_weight_nereo()` is called with an invalid argument (e.g. bad `data`, a `priors` entry of the wrong family)
+- **THEN** it errors at entry via `chk`/`cli` before sampling (a family mismatch reports that a family change needs a different model variant)
 
 ### Requirement: Fit object stores draws, not the stanfit
 
@@ -32,26 +32,26 @@ The returned `kb_fit` SHALL store extracted posterior draws (a `posterior` draws
 
 ### Requirement: Prior-only and zero-observation fits
 
-`kb_fit_weight()` SHALL support fitting from the priors alone.
+`kb_fit_weight_nereo()` SHALL support fitting from the priors alone.
 
 #### Scenario: prior_only ignores the data
-- **WHEN** `kb_fit_weight(data, prior_only = TRUE)` is called
+- **WHEN** `kb_fit_weight_nereo(data, prior_only = TRUE)` is called
 - **THEN** the resulting draws reflect the priors only (a fit on permuted responses yields the same prior-only distribution)
 
 #### Scenario: Empty data is accepted under prior_only
-- **WHEN** `kb_fit_weight()` is given a zero-row data frame with `prior_only = TRUE`
+- **WHEN** `kb_fit_weight_nereo()` is given a zero-row data frame with `prior_only = TRUE`
 - **THEN** it returns a valid `kb_fit_weight` object sampled from the priors
 
 ### Requirement: Sampler control
 
-`kb_fit_weight()` SHALL expose `chains`, `niters`, `nthin`, `cores`, and `quiet` as first-class arguments and forward other arguments to `rstan::sampling()` via `...`. `niters` is the number of saved post-warmup draws per chain (default `1000`); warmup defaults to match and the post-warmup phase is thinned by `nthin` (default `1`, no thinning). The sampler SHALL run with `adapt_delta = 0.95` by default (raised above Stan's `0.8` for the hierarchical geometry); `adapt_delta` is not a first-class argument, but a `control` list passed through `...` SHALL be merged over this default so power users can override `adapt_delta` or set other control entries (e.g. `max_treedepth`) without dropping it. The sampler SHALL NOT open an HTML progress viewer (`open_progress = FALSE`); with `quiet = FALSE` progress is streamed to the console as text. `cores = NULL` SHALL resolve to `getOption("mc.cores")` (falling back to `chains`), capped at the available cores so the default never oversubscribes; servers, containers, and `load_all()`-on-Windows users can throttle via `options(mc.cores = 1)` or `cores = 1`.
+`kb_fit_weight_nereo()` SHALL expose `chains`, `niters`, `nthin`, `cores`, and `quiet` as first-class arguments and forward other arguments to `rstan::sampling()` via `...`. `niters` is the number of saved post-warmup draws per chain (default `1000`); warmup defaults to match and the post-warmup phase is thinned by `nthin` (default `1`, no thinning). The sampler SHALL run with `adapt_delta = 0.95` by default (raised above Stan's `0.8` for the hierarchical geometry); `adapt_delta` is not a first-class argument, but a `control` list passed through `...` SHALL be merged over this default so power users can override `adapt_delta` or set other control entries (e.g. `max_treedepth`) without dropping it. The sampler SHALL NOT open an HTML progress viewer (`open_progress = FALSE`); with `quiet = FALSE` progress is streamed to the console as text. `cores = NULL` SHALL resolve to `getOption("mc.cores")` (falling back to `chains`), capped at the available cores so the default never oversubscribes; servers, containers, and `load_all()`-on-Windows users can throttle via `options(mc.cores = 1)` or `cores = 1`.
 
 #### Scenario: niters means saved post-warmup draws
-- **WHEN** `kb_fit_weight(niters = 1000, nthin = 2, chains = 4)` is called
+- **WHEN** `kb_fit_weight_nereo(niters = 1000, nthin = 2, chains = 4)` is called
 - **THEN** `niters(fit)` is `1000` (saved draws per chain) regardless of `nthin`
 
 #### Scenario: Defaults and parallelism
-- **WHEN** `kb_fit_weight()` is called with defaults
+- **WHEN** `kb_fit_weight_nereo()` is called with defaults
 - **THEN** it fits `chains = 4` with `nthin = 1`, runs chains in parallel using `getOption("mc.cores")` (falling back to `chains`) capped at the available cores, and (`quiet = FALSE`) streams textual sampling progress to the console without opening an HTML progress viewer
 
 #### Scenario: Parallelism can be throttled
@@ -59,9 +59,9 @@ The returned `kb_fit` SHALL store extracted posterior draws (a `posterior` draws
 - **THEN** the fit runs the chains serially, so it is safe on shared servers, in containers, and from `devtools::load_all()` on Windows
 
 #### Scenario: adapt_delta default and override
-- **WHEN** `kb_fit_weight()` is called with defaults, and separately with `control = list(adapt_delta = 0.99)` or `control = list(max_treedepth = 12)`
+- **WHEN** `kb_fit_weight_nereo()` is called with defaults, and separately with `control = list(adapt_delta = 0.99)` or `control = list(max_treedepth = 12)`
 - **THEN** the default fit samples at `adapt_delta = 0.95`; a supplied `control` is merged over the default so `adapt_delta = 0.99` overrides it and `max_treedepth = 12` is added while `adapt_delta = 0.95` is retained
 
 #### Scenario: Progress shown, diagnostic noise suppressed
-- **WHEN** `kb_fit_weight()` is called with the default `quiet = FALSE`
+- **WHEN** `kb_fit_weight_nereo()` is called with the default `quiet = FALSE`
 - **THEN** it shows the sampling progress but suppresses other Stan messages and the post-sampling HMC diagnostic warnings (divergent transitions, treedepth, low BFMI, Rhat/ESS) at the call site (not via a global option); convergence is surfaced through `converged()`/`glance()`/`print()`

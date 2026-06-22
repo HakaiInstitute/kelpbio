@@ -13,12 +13,12 @@ The package SHALL pre-compile every Stan source file under `inst/stan/` at `R CM
 #### Scenario: Installed package exposes the compiled weight model
 
 - **WHEN** the package is installed with `devtools::install()` and loaded
-- **THEN** `kelpbio::stanmodels$weight` exists and is a compiled Stan model object (S4 `stanmodel`)
+- **THEN** `kelpbio::stanmodels$weight_nereo` exists and is a compiled Stan model object (S4 `stanmodel`)
 
 #### Scenario: Stan source filename maps to the model name
 
-- **WHEN** `inst/stan/weight.stan` is present at install time
-- **THEN** the compiled model is reachable as `stanmodels$weight` (snake_case filename, no spaces/dashes/leading digits)
+- **WHEN** `inst/stan/weight_nereo.stan` is present at install time
+- **THEN** the compiled model is reachable as `stanmodels$weight_nereo` (snake_case filename, no spaces/dashes/leading digits)
 
 ### Requirement: Compiled models are samplable via `rstan::sampling()`
 
@@ -26,12 +26,12 @@ A compiled model SHALL be samplable through `rstan::sampling(stanmodels$<name>, 
 
 #### Scenario: Sampling the weight model returns a stanfit
 
-- **WHEN** `rstan::sampling()` is called on `stanmodels$weight` with a valid data list (observation vectors, `site`/`year` factor indices, and prior hyperparameters)
+- **WHEN** `rstan::sampling()` is called on `stanmodels$weight_nereo` with a valid data list (observation vectors, `site`/`year` factor indices, and prior hyperparameters)
 - **THEN** it returns a `stanfit` object containing the fixed effects `bWeight`, `bDiameter`, `bDiameter2`, the random-effect SDs `sSite`, `sSiteDiameter`, `sSiteYear`, the residual scale `sWeight`, the per-site vectors `bSite` and `bSiteDiameter`, the site-by-year matrix `bSiteYear`, and the generated quantities `log_lik` and `yrep`
 
 ### Requirement: The weight model follows the engine conventions
 
-The bundled `inst/stan/weight.stan` SHALL implement the full allometric weight structure -- a quadratic log-diameter mean with site intercept, site slope (on log diameter), and site:year random effects, and a Student-t(4) likelihood -- with priors passed as data, a likelihood guard, and `log_lik`/`yrep` generated quantities, per `decisions/engine-choice.md` and the model catalogue in `decisions/bboutools-api-review.md`. The mean (`log_eWeight`) SHALL be defined once, in `transformed parameters`, and reused by both the likelihood and the generated quantities.
+The bundled `inst/stan/weight_nereo.stan` SHALL implement the full allometric weight structure -- a quadratic log-diameter mean with site intercept, site slope (on log diameter), and site:year random effects, and a Student-t(4) likelihood -- with priors passed as data, a likelihood guard, and `log_lik`/`yrep` generated quantities, per `decisions/engine-choice.md` and the model catalogue in `decisions/bboutools-api-review.md`. The mean (`log_eWeight`) SHALL be defined once, in `transformed parameters`, and reused by both the likelihood and the generated quantities.
 
 #### Scenario: The mean follows the full allometric structure
 

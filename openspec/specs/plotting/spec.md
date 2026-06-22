@@ -43,7 +43,7 @@ Plotting predictions from a kb_predictions data frame: kb_plot_predictions() and
 `kb_plot_predictions()` SHALL overlay raw observations when the user supplies `observed`, mapping its columns via the prediction's stored predictor/response names; the overlay is off by default.
 
 #### Scenario: Observed points overlaid
-- **WHEN** `observed = kb_data_weight` is supplied
+- **WHEN** `observed = data_weight_hakai_nereo` is supplied
 - **THEN** the plot adds a points layer of the raw observations aligned to the prediction's axes
 
 ### Requirement: autoplot method on predictions

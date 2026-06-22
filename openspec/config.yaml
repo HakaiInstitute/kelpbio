@@ -27,8 +27,13 @@ context: |
     edit (or an rstan/StanHeaders/Makevars change) requires devtools::install() to
     recompile (first compile 10-20 min); devtools::load_all() does NOT pick up Stan
     changes. Toggle small RE terms with binary structural flags in one .stan; use a
-    separate .stan only for a different likelihood / major variant. Species enters as
-    data, not a variant. Rationale: decisions/engine-choice.md.
+    separate .stan only for a different likelihood / major variant. Species IS such a
+    variant: the models differ structurally across species (e.g. Nereocystis weight is
+    Student-t on a log-diameter quadratic, Macrocystis weight is Gamma on log-fronds),
+    so each species gets its own .stan and its own kb_fit_<model>_<species>() wrapper
+    over a shared internal engine (fit_stan()); the S3 class stays model-level
+    (kb_fit_<model>) with the species recorded in meta$species. Rationale:
+    decisions/species-as-variant.md, decisions/engine-choice.md.
   - Fit objects (kb_fit / kb_fit_<type>) store EXTRACTED posterior draws (the posterior
     package) + diagnostics + data + meta, NOT the live stanfit. niters = saved
     post-warmup draws per chain (warmup matches; thinned by nthin).
@@ -37,8 +42,12 @@ context: |
     (kb_prior_normal(), kb_prior_exponential()) returned in a named list by kb_priors_*().
     A prior_only flag (and nObs >= 0) supports prior-only / prior-predictive fits.
   - Validation: every exported argument is validated with chk at entry; user-facing
-    messages use cli. Enumerated args (species, family, uncertainty, by) are character
-    vectors validated with rlang::arg_match(); default is the first value.
+    messages use cli. Enumerated args (family, uncertainty, by) are character
+    vectors validated with rlang::arg_match(); default is the first value. Bespoke
+    internal validators follow the bboutools .vld_/.chk_ split: a .vld_<name>() in
+    R/vld.R returns a logical predicate (no messaging), its .chk_<name>() partner in
+    R/chk.R calls it and aborts via cli; every bespoke .chk_ has a matching .vld_
+    (multi-arg chk:: bundles like chk_sampler_args() are exempt). See CLAUDE.md.
   - Prediction / derived-quantity engine: posterior rvar over the stored draws; the
     per-model mean lives in one .<model>_linpred() helper, surfaced through the
     rstantools generics (posterior_epred / posterior_linpred / posterior_predict /

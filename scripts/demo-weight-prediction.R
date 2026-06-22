@@ -27,26 +27,26 @@ library(bayesplot)
 
 # A0. The data ---------------------------------------------------------------
 # Real Hakai Nereocystis sub-bulb diameter (mm) and wet weight (kg).
-str(data_weight_hakai)
-kb_check_data_weight(data_weight_hakai) # passes: validate before fitting
+str(data_weight_hakai_nereo)
+kb_check_data_weight_nereo(data_weight_hakai_nereo) # passes: validate before fitting
 
-# kb_check_data_weight() errors clearly on bad input (run these one at a time):
+# kb_check_data_weight_nereo() errors clearly on bad input (run these one at a time):
 #  - wrong column name
-bad_name <- data_weight_hakai
+bad_name <- data_weight_hakai_nereo
 names(bad_name)[names(bad_name) == "diameter"] <- "diam"
-kb_check_data_weight(bad_name)
+kb_check_data_weight_nereo(bad_name)
 #  - missing value in diameter
-bad_na <- data_weight_hakai
+bad_na <- data_weight_hakai_nereo
 bad_na$diameter[1] <- NA_real_
-kb_check_data_weight(bad_na)
+kb_check_data_weight_nereo(bad_na)
 #  - non-numeric (character) value in diameter
-bad_chr <- data_weight_hakai
+bad_chr <- data_weight_hakai_nereo
 bad_chr$diameter <- as.character(bad_chr$diameter)
 bad_chr$diameter[1] <- "1.1o"
-kb_check_data_weight(bad_chr)
+kb_check_data_weight_nereo(bad_chr)
 
 # A1. Fit ---------------------------------------------------------------------
-fit <- kb_fit_weight(data_weight_hakai, nthin = 1, niters = 500L, quiet = FALSE)
+fit <- kb_fit_weight_nereo(data_weight_hakai_nereo, nthin = 1, niters = 500L, quiet = FALSE)
 fit # print: model, data, sampler summary (no URL popup; progress streams)
 
 # A2. Inspect the fit via the generics ---------------------------------------
@@ -61,13 +61,13 @@ posterior::summarise_draws(draws) |> head()
 # A2b. Custom priors and prior predictive check ------------------------------
 # Defaults: a named list of structured prior objects. The prior FAMILY is fixed
 # (population terms Normal, SDs Exponential); only the hyperparameters change.
-kb_priors_weight()
+kb_priors_weight_nereo()
 
 # Override a couple of entries; unmodified entries keep their defaults. Here we
 # deliberately impose a tight, biased prior on the allometric slope (bDiameter)
 # so its posterior is pulled well away from the data estimate (~2.6) - enough to
 # show the prior visibly moving the result.
-priors <- kb_priors_weight()
+priors <- kb_priors_weight_nereo()
 priors$sd_site <- kb_prior_exponential(rate = 3) # tighter between-site spread
 priors$diameter <- kb_prior_normal(mean = 1.5, sd = 0.05) # strong, off-target slope
 priors
@@ -75,8 +75,8 @@ priors
 # Prior predictive check: fit from the priors only (likelihood off), then judge
 # whether the priors imply a plausible weight-at-diameter relationship by
 # overlaying the observed data on the prior-implied curve.
-prior_fit <- kb_fit_weight(
-  data_weight_hakai,
+prior_fit <- kb_fit_weight_nereo(
+  data_weight_hakai_nereo,
   priors = priors,
   prior_only = TRUE,
   chains = 2,
@@ -85,7 +85,7 @@ prior_fit <- kb_fit_weight(
 )
 prior_summary(prior_fit) # confirms the priors actually used
 kb_predict_weight_by(prior_fit, new_levels = "sample") |>
-  kb_plot_predictions(observed = data_weight_hakai) +
+  kb_plot_predictions(observed = data_weight_hakai_nereo) +
   ggtitle("A2b. Prior predictive curve vs observed data")
 
 # Prior predictive distribution of weight (from the prior-only yrep) against the
@@ -102,8 +102,8 @@ ppc_dens_overlay(
 # Refit with the custom priors (likelihood on) and compare coefficients to the
 # default-prior fit. The tight, off-target prior pulls bDiameter away from its
 # default-prior posterior; the other terms barely move.
-fit_custom <- kb_fit_weight(
-  data_weight_hakai,
+fit_custom <- kb_fit_weight_nereo(
+  data_weight_hakai_nereo,
   priors = priors,
   quiet = TRUE
 )
@@ -145,9 +145,9 @@ kb_predict_weight(fit, new_data = nd) # the same draws, summarised
 pop_avg <- kb_predict_weight_by(fit, new_levels = "average") # typical site
 pop_smp <- kb_predict_weight_by(fit, new_levels = "sample") # a new, unsampled site
 print(pop_smp)
-kb_plot_predictions(pop_avg, observed = data_weight_hakai) +
+kb_plot_predictions(pop_avg, observed = data_weight_hakai_nereo) +
   ggtitle("A5. Typical-site weight-at-diameter")
-kb_plot_predictions(pop_smp, observed = data_weight_hakai) +
+kb_plot_predictions(pop_smp, observed = data_weight_hakai_nereo) +
   ggtitle("A5. New-site weight-at-diameter (wider band)")
 
 # A6. Group-level curves ------------------------------------------------------
