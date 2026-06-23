@@ -19,7 +19,8 @@
 \item{conf_level}{A number between 0 and 1 giving the compatibility-interval
 level.}
 
-\item{estimate}{A function giving the point estimate (e.g. \code{median}).}
+\item{estimate}{A function that reduces a numeric vector of posterior draws to
+a scalar point estimate (e.g. \code{median} or \code{mean}).}
 
 \item{sig_fig}{A whole number of significant figures for summary output.}
 

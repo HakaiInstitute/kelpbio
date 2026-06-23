@@ -23,6 +23,7 @@ test_that("predicts at supplied rows", {
 })
 
 test_that("a new site is sampled, not errored, and is wider than a known site", {
+  set.seed(1)
   site1 <- weight_fit$meta$site_levels[1]
   known <- kb_predict_weight(
     weight_fit, new_data = data.frame(diameter = 40, site = site1),
@@ -37,12 +38,32 @@ test_that("a new site is sampled, not errored, and is wider than a known site", 
 })
 
 test_that("a mix of known and new sites resolves in one call", {
+  set.seed(1)
   site1 <- weight_fit$meta$site_levels[1]
   nd <- data.frame(diameter = 40, site = c(site1, "new_reef"))
   p <- kb_predict_weight(weight_fit, new_data = nd, new_levels = "sample")
   expect_equal(nrow(p), 2L)
   # the new reef carries more between-site uncertainty than the known site
   expect_gt((p$upper - p$lower)[2], (p$upper - p$lower)[1])
+})
+
+test_that("default new_levels is \"sample\", and set.seed makes it reproducible", {
+  nd <- data.frame(diameter = c(20, 40), site = "brand_new_site")
+  set.seed(1)
+  default <- kb_predict_weight(weight_fit, nd)
+  set.seed(1)
+  sampled <- kb_predict_weight(weight_fit, nd, new_levels = "sample")
+  expect_equal(default$lower, sampled$lower)
+  expect_equal(default$upper, sampled$upper)
+})
+
+test_that("estimate reduces each row's draws (custom function, matches posterior_epred)", {
+  nd <- data.frame(diameter = c(20, 40), site = weight_fit$meta$site_levels[1])
+  # A trimmed mean has no rvar method; it must be applied to the numeric draws.
+  trimmed <- function(x) mean(x, trim = 0.1)
+  p <- kb_predict_weight(weight_fit, nd, new_levels = "average", estimate = trimmed)
+  ep <- posterior_epred(weight_fit, newdata = nd, new_levels = "average")
+  expect_equal(p$estimate, signif(apply(ep, 2L, trimmed), 3))
 })
 
 test_that("new_data must have a diameter column", {

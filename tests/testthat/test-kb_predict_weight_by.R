@@ -9,7 +9,15 @@ test_that("population curve spans the observed diameter range", {
   expect_lte(max(p$diameter), rng[2] + 1e-6)
 })
 
+test_that("default new_levels is \"average\" (deterministic band)", {
+  d1 <- kb_predict_weight_by(weight_fit, by = "site")
+  d2 <- kb_predict_weight_by(weight_fit, by = "site", new_levels = "average")
+  expect_equal(d1$lower, d2$lower)
+  expect_equal(d1$upper, d2$upper)
+})
+
 test_that("sample band is at least as wide as average (the population band)", {
+  set.seed(1)
   avg <- kb_predict_weight_by(weight_fit, new_levels = "average")
   smp <- kb_predict_weight_by(weight_fit, new_levels = "sample")
   expect_true(all((smp$upper - smp$lower) >= (avg$upper - avg$lower)))

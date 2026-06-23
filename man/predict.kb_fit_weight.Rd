@@ -21,13 +21,14 @@
 \item{new_data}{A data frame with a \code{diameter} column (and optional \code{site} /
 \code{year} columns), or \code{NULL} to predict at the observed data.}
 
-\item{new_levels}{A string, one of \code{"sample"} (the default) or \code{"average"},
-controlling how random effects that are not conditioned on are treated
-(factors absent from the prediction, and any new level not seen in the fit).
-\code{"sample"} draws a new random effect from \code{Normal(0, sd)}, widening the
-interval to include between-group variation; \code{"average"} holds the random
-effects at zero, giving the typical group. Known levels are always
-conditioned on.}
+\item{new_levels}{A string, one of \code{"sample"} or \code{"average"}, controlling how
+random effects that are not conditioned on are treated (factors absent from
+the prediction, and any new level not seen in the fit). \code{"sample"} draws a
+new random effect from \code{Normal(0, sd)}, widening the interval to include
+between-group variation; \code{"average"} holds the random effects at zero,
+giving the typical group. Known levels are always conditioned on. \code{"sample"}
+draws fresh randomness on each call, so set a seed with \code{set.seed()} for a
+reproducible interval.}
 
 \item{representative_site}{A character vector of site levels present in the
 fit, or \code{NULL} (the default). When supplied, a new or absent site takes its
@@ -38,7 +39,8 @@ treatment; the \code{site:year} interaction still follows \code{new_levels}.}
 \item{conf_level}{A number between 0 and 1 giving the compatibility-interval
 level.}
 
-\item{estimate}{A function giving the point estimate (e.g. \code{median}).}
+\item{estimate}{A function that reduces a numeric vector of posterior draws to
+a scalar point estimate (e.g. \code{median} or \code{mean}).}
 
 \item{sig_fig}{A whole number of significant figures for summary output.}
 

@@ -8,11 +8,12 @@
 #' @details
 #' `by` selects the grouping factors that each get their own curve, conditioned on
 #' their estimated random effects. `new_levels` controls the factors not named in
-#' `by`: `"sample"` (a new, unsampled group, widening the band to include
-#' between-group variation) or `"average"` (the typical group, random effects held
-#' at zero). The available `by` values are `NULL` (a single population curve),
-#' `"site"`, and `c("site", "year")`. `"average"` reports the typical-group
-#' prediction, not a calibrated interval for a specific new group.
+#' `by`. The default `"average"` holds those random effects at zero, giving the
+#' typical-group curve. `"sample"` instead draws a new random effect from its
+#' estimated distribution, widening the band to include between-group variation;
+#' it draws fresh values on each call, so set a seed with `set.seed()` for a
+#' reproducible band. The available `by` values are `NULL` (a single population
+#' curve), `"site"`, and `c("site", "year")`.
 #'
 #' @inheritParams params
 #' @param fit A `kb_fit_weight` object.
@@ -31,7 +32,7 @@
 #' kb_predict_weight_by(fit_weight_hakai_nereo, by = "site")
 kb_predict_weight_by <- function(fit,
                                  by = NULL,
-                                 new_levels = c("sample", "average"),
+                                 new_levels = c("average", "sample"),
                                  diameter = NULL,
                                  conf_level = 0.95,
                                  estimate = stats::median,

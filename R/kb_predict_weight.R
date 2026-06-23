@@ -10,6 +10,12 @@
 #' grouping column, is handled by `new_levels`. A mix of observed and new sites in
 #' one `new_data` is resolved row by row, in a single call.
 #'
+#' With the default `new_levels = "sample"`, an absent or new group draws a random
+#' effect from its estimated distribution, so the interval includes between-group
+#' variation; `"average"` instead holds those random effects at zero. `"sample"`
+#' draws fresh values on each call, so set a seed with `set.seed()` for a
+#' reproducible interval.
+#'
 #' For a new site, `representative_site` offers a third treatment: instead of
 #' `new_levels` (`"sample"` or `"average"`) it borrows the site intercept and
 #' slope of one or more named reference sites (the per-draw average across
@@ -69,7 +75,11 @@ summarise_weight_predictions <- function(grid, linpred, group_vars,
   a <- (1 - conf_level) / 2
 
   out <- grid
-  out$estimate <- signif(estimate(epred), sig_fig)
+  # estimate reduces each row's posterior draws to a scalar, the same contract as
+  # in tidy()/summary(): apply it per row over the draws matrix, not to the rvar.
+  out$estimate <- signif(
+    apply(posterior::draws_of(epred), 2L, estimate), sig_fig
+  )
   out$lower <- signif(unname(posterior::quantile2(epred, a)), sig_fig)
   out$upper <- signif(unname(posterior::quantile2(epred, 1 - a)), sig_fig)
 

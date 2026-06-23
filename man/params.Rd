@@ -18,6 +18,11 @@ defaults; unspecified entries keep their defaults.}
 \item{prior_only}{A flag specifying whether to sample from the priors only
 (the likelihood is switched off), for prior predictive checks.}
 
+\item{site_year_on}{A flag specifying whether to include the site:year random
+effect. When \code{FALSE} the term is set to zero (structurally dropped),
+collapsing the model to site intercept and site slope effects. Defaults to
+\code{TRUE}.}
+
 \item{chains}{A whole number of MCMC chains.}
 
 \item{niters}{A whole number of saved post-warmup draws per chain (warmup
@@ -29,6 +34,11 @@ defaults to match).}
 \code{getOption("mc.cores")} (falling back to \code{chains}), capped at the available
 cores.}
 
+\item{seed}{A whole number passed to \code{\link[rstan:stanmodel-method-sampling]{rstan::sampling()}} to make the fit
+reproducible, or \code{NULL} (the default). When \code{NULL}, rstan draws its own seed
+from R's RNG, so a preceding \code{set.seed()} also makes the fit reproducible; an
+explicit \code{seed} takes precedence over the RNG state.}
+
 \item{quiet}{A flag specifying whether to suppress console output. When
 \code{FALSE} (the default), rstan's sampling progress and warnings are printed;
 when \code{TRUE}, all sampler output is suppressed.}
@@ -36,7 +46,8 @@ when \code{TRUE}, all sampler output is suppressed.}
 \item{conf_level}{A number between 0 and 1 giving the compatibility-interval
 level.}
 
-\item{estimate}{A function giving the point estimate (e.g. \code{median}).}
+\item{estimate}{A function that reduces a numeric vector of posterior draws to
+a scalar point estimate (e.g. \code{median} or \code{mean}).}
 
 \item{sig_fig}{A whole number of significant figures for summary output.}
 
@@ -53,13 +64,14 @@ curve, or \code{NULL} for a single population-level curve. Each named factor is
 expanded over its observed levels and conditioned on its estimated random
 effects.}
 
-\item{new_levels}{A string, one of \code{"sample"} (the default) or \code{"average"},
-controlling how random effects that are not conditioned on are treated
-(factors absent from the prediction, and any new level not seen in the fit).
-\code{"sample"} draws a new random effect from \code{Normal(0, sd)}, widening the
-interval to include between-group variation; \code{"average"} holds the random
-effects at zero, giving the typical group. Known levels are always
-conditioned on.}
+\item{new_levels}{A string, one of \code{"sample"} or \code{"average"}, controlling how
+random effects that are not conditioned on are treated (factors absent from
+the prediction, and any new level not seen in the fit). \code{"sample"} draws a
+new random effect from \code{Normal(0, sd)}, widening the interval to include
+between-group variation; \code{"average"} holds the random effects at zero,
+giving the typical group. Known levels are always conditioned on. \code{"sample"}
+draws fresh randomness on each call, so set a seed with \code{set.seed()} for a
+reproducible interval.}
 
 \item{representative_site}{A character vector of site levels present in the
 fit, or \code{NULL} (the default). When supplied, a new or absent site takes its

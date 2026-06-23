@@ -20,13 +20,14 @@ kb_predict_weight(
 \item{new_data}{A data frame with a \code{diameter} column (and optional \code{site} /
 \code{year} columns), or \code{NULL} to predict at the observed data.}
 
-\item{new_levels}{A string, one of \code{"sample"} (the default) or \code{"average"},
-controlling how random effects that are not conditioned on are treated
-(factors absent from the prediction, and any new level not seen in the fit).
-\code{"sample"} draws a new random effect from \code{Normal(0, sd)}, widening the
-interval to include between-group variation; \code{"average"} holds the random
-effects at zero, giving the typical group. Known levels are always
-conditioned on.}
+\item{new_levels}{A string, one of \code{"sample"} or \code{"average"}, controlling how
+random effects that are not conditioned on are treated (factors absent from
+the prediction, and any new level not seen in the fit). \code{"sample"} draws a
+new random effect from \code{Normal(0, sd)}, widening the interval to include
+between-group variation; \code{"average"} holds the random effects at zero,
+giving the typical group. Known levels are always conditioned on. \code{"sample"}
+draws fresh randomness on each call, so set a seed with \code{set.seed()} for a
+reproducible interval.}
 
 \item{representative_site}{A character vector of site levels present in the
 fit, or \code{NULL} (the default). When supplied, a new or absent site takes its
@@ -37,7 +38,8 @@ treatment; the \code{site:year} interaction still follows \code{new_levels}.}
 \item{conf_level}{A number between 0 and 1 giving the compatibility-interval
 level.}
 
-\item{estimate}{A function giving the point estimate (e.g. \code{median}).}
+\item{estimate}{A function that reduces a numeric vector of posterior draws to
+a scalar point estimate (e.g. \code{median} or \code{mean}).}
 
 \item{sig_fig}{A whole number of significant figures for summary output.}
 }
@@ -55,6 +57,12 @@ Conditioning is resolved per row: a \code{site}/\code{year} value the model has 
 conditioned on its estimated random effects; a new site or year, or an absent
 grouping column, is handled by \code{new_levels}. A mix of observed and new sites in
 one \code{new_data} is resolved row by row, in a single call.
+
+With the default \code{new_levels = "sample"}, an absent or new group draws a random
+effect from its estimated distribution, so the interval includes between-group
+variation; \code{"average"} instead holds those random effects at zero. \code{"sample"}
+draws fresh values on each call, so set a seed with \code{set.seed()} for a
+reproducible interval.
 
 For a new site, \code{representative_site} offers a third treatment: instead of
 \code{new_levels} (\code{"sample"} or \code{"average"}) it borrows the site intercept and

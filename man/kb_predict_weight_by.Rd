@@ -7,7 +7,7 @@
 kb_predict_weight_by(
   fit,
   by = NULL,
-  new_levels = c("sample", "average"),
+  new_levels = c("average", "sample"),
   diameter = NULL,
   conf_level = 0.95,
   estimate = stats::median,
@@ -22,13 +22,14 @@ curve, or \code{NULL} for a single population-level curve. Each named factor is
 expanded over its observed levels and conditioned on its estimated random
 effects.}
 
-\item{new_levels}{A string, one of \code{"sample"} (the default) or \code{"average"},
-controlling how random effects that are not conditioned on are treated
-(factors absent from the prediction, and any new level not seen in the fit).
-\code{"sample"} draws a new random effect from \code{Normal(0, sd)}, widening the
-interval to include between-group variation; \code{"average"} holds the random
-effects at zero, giving the typical group. Known levels are always
-conditioned on.}
+\item{new_levels}{A string, one of \code{"sample"} or \code{"average"}, controlling how
+random effects that are not conditioned on are treated (factors absent from
+the prediction, and any new level not seen in the fit). \code{"sample"} draws a
+new random effect from \code{Normal(0, sd)}, widening the interval to include
+between-group variation; \code{"average"} holds the random effects at zero,
+giving the typical group. Known levels are always conditioned on. \code{"sample"}
+draws fresh randomness on each call, so set a seed with \code{set.seed()} for a
+reproducible interval.}
 
 \item{diameter}{A numeric vector of sub-bulb diameters to predict over (in the
 same units as the fitted data), or \code{NULL} for an automatic sequence spanning
@@ -37,7 +38,8 @@ the observed range.}
 \item{conf_level}{A number between 0 and 1 giving the compatibility-interval
 level.}
 
-\item{estimate}{A function giving the point estimate (e.g. \code{median}).}
+\item{estimate}{A function that reduces a numeric vector of posterior draws to
+a scalar point estimate (e.g. \code{median} or \code{mean}).}
 
 \item{sig_fig}{A whole number of significant figures for summary output.}
 }
@@ -54,11 +56,12 @@ named in \code{by} (one curve per group). Returns a \code{kb_predictions} object
 \details{
 \code{by} selects the grouping factors that each get their own curve, conditioned on
 their estimated random effects. \code{new_levels} controls the factors not named in
-\code{by}: \code{"sample"} (a new, unsampled group, widening the band to include
-between-group variation) or \code{"average"} (the typical group, random effects held
-at zero). The available \code{by} values are \code{NULL} (a single population curve),
-\code{"site"}, and \code{c("site", "year")}. \code{"average"} reports the typical-group
-prediction, not a calibrated interval for a specific new group.
+\code{by}. The default \code{"average"} holds those random effects at zero, giving the
+typical-group curve. \code{"sample"} instead draws a new random effect from its
+estimated distribution, widening the band to include between-group variation;
+it draws fresh values on each call, so set a seed with \code{set.seed()} for a
+reproducible band. The available \code{by} values are \code{NULL} (a single population
+curve), \code{"site"}, and \code{c("site", "year")}.
 }
 \examples{
 kb_predict_weight_by(fit_weight_hakai_nereo, by = "site")
