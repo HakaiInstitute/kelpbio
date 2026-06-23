@@ -1,23 +1,57 @@
 
-# kelpbio
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+# kelpbio <img src="man/figures/logo.png" align="right" height="139" />
 
 <!-- badges: start -->
+
+[![R-CMD-check](https://github.com/HakaiInstitute/kelpbio/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/HakaiInstitute/kelpbio/actions/workflows/R-CMD-check.yaml)
+[![R-universe
+version](https://hakaiinstitute.r-universe.dev/kelpbio/badges/version)](https://hakaiinstitute.r-universe.dev/kelpbio)
+[![R-universe
+status](https://hakaiinstitute.r-universe.dev/kelpbio/badges/checks)](https://hakaiinstitute.r-universe.dev/kelpbio)
+[![Lifecycle:
+experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
 <!-- badges: end -->
 
-The goal of kelpbio is to ...
+kelpbio fits Bayesian hierarchical models to estimate kelp biomass and
+carbon from field measurements.
 
 ## Installation
 
-
-## Example
-
-This is a basic example which shows you how to solve a common problem:
+Install the pre-built binary from the Hakai R-universe (macOS and
+Windows):
 
 ``` r
-library(kelpbio)
-## basic example code
+install.packages(
+  "kelpbio",
+  repos = c("https://hakaiinstitute.r-universe.dev", getOption("repos"))
+)
 ```
 
-```{r, results = "asis", echo = FALSE}
-cat(licensing_md())
+Install from source (Linux, or to build from GitHub):
+
+``` r
+# install.packages("pak")
+pak::pak("HakaiInstitute/kelpbio")
 ```
+
+Source builds require a C++ toolchain:
+
+- Linux: `sudo apt install build-essential`
+- Windows: [Rtools](https://cran.r-project.org/bin/windows/Rtools/)
+- macOS: `xcode-select --install`
+
+## Usage
+
+<!-- Worked example to follow once the `kb_` API is available. -->
+
+## Citation
+
+<!-- Citation guidance to follow once the `kb_` API is available. -->
+
+## Licensing
+
+Copyright 2026 Tula Foundation.
+
+The code is released under the [MIT License](LICENSE.md).

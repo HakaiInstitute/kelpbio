@@ -1,0 +1,17 @@
+on:
+  push:
+    branches: main
+  pull_request:
+
+name: jarl-check
+
+permissions: read-all
+
+jobs:
+  jarl-check:
+    name: jarl-check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: etiennebacher/setup-jarl@c35ca3e867df86402478ea1dbfae36419c80ac2b
+      - run: jarl check .

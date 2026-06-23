@@ -1,0 +1,53 @@
+## 1. Dependencies and shared scaffolding
+
+- [ ] 1.1 Add Imports to `DESCRIPTION`: chk, cli, rlang, posterior, generics, universals, ggplot2, tibble, dplyr
+- [ ] 1.2 Set up `R/params.R` as the `@inheritParams` donor for shared args (`data`, `species`, `priors`, `prior_only`, `chains`, `iter`, `nthin`, `cores`, `quiet`, `conf_level`, `estimate`, `sig_fig`, `by`, `uncertainty`)
+- [ ] 1.3 Re-export the broom/universals generics (`tidy`, `glance`, `augment`, `converged`, `samples`, `rhat`, `ess`, `nobs`, `nchains`, `niters`, `npars`, `nterms`, `pars`)
+
+## 2. Data (pure)
+
+- [ ] 2.1 `R/kb_check_data_weight.R` — chk validation of `diameter`, `weight`, `site`, `year` (+ cli errors); 1:1 test with snapshot of the cli messages
+- [ ] 2.2 `data-raw/kb_data_weight.R` — build a small simulated/anonymized dataset; `usethis::use_data(kb_data_weight)`; test it passes `kb_check_data_weight()`
+
+## 3. Priors (pure)
+
+- [ ] 3.1 `R/kb_prior_normal.R`, `R/kb_prior_exponential.R` — constructors + chk validation + print methods (snapshot prints)
+- [ ] 3.2 `R/kb_priors_weight.R` — named default list (`intercept`, `diameter`, `sd_site`, `sd_residual`); tests for structure/defaults
+
+## 4. Prior + data assembly (pure — highest bug density)
+
+- [ ] 4.1 `R/resolve_priors.R` — merge overrides into defaults; validate names ⊆ defaults, family match (class equality), hyperparameter ranges; cli on mismatch; full unit tests
+- [ ] 4.2 `R/assemble_stan_data.R` — map resolved priors + data to the Stan data list (`prior_*` hyperparameters, `nObs`, `nsite`, integer `site`, `weight`, `log(diameter/30)`, `prior_only`); unit tests including `nObs == 0`
+
+## 5. Fitting (install-gated)
+
+- [ ] 5.1 `R/kb_fit_weight.R` — wire pure helpers + single `rstan::sampling()` (translate `iter`/warmup/`nthin`, `cores` parallel, `quiet`); `new_kb_fit_weight()` constructor that extracts draws via `posterior`, captures diagnostics + stancode, discards the stanfit; returns `c("kb_fit_weight","kb_fit")`
+- [ ] 5.2 Layer-3 test (`skip_on_cran`): a real fit on tiny data returns a correctly-structured object (classes, draws present, stanfit absent); a `prior_only = TRUE` fit ignores the data
+
+## 6. Test fixtures
+
+- [ ] 6.1 `tests/testthat/fixtures/make-fixtures.R` — build a tiny seeded `weight_fit.rds` via `rstan::sampling(seed = ...)` (header documents: requires `devtools::install()`, re-run on Stan change)
+- [ ] 6.2 `tests/testthat/helper-fixtures.R` — load the fixture(s) and any custom expectations
+
+## 7. Summaries and diagnostics (on fixture)
+
+- [ ] 7.1 `R/samples.R` + `R/accessors.R` (`rhat`/`ess`/`nobs`/`nchains`/`niters`/`npars`/`nterms`/`pars`) + `R/kb_stancode.R`
+- [ ] 7.2 `R/tidy.R`, `R/coef.R`, `R/glance.R` (thresholds `rhat`/`ess`), `R/converged.R`
+- [ ] 7.3 `R/augment.R` (`.fitted`/`.resid`/`.lower`/`.upper`, full precision) and `R/print.R` (stable metadata, snapshot)
+- [ ] 7.4 Tests: structure + invariants for numeric output; snapshot prints/messages only
+
+## 8. Predictions (on fixture)
+
+- [ ] 8.1 `R/kb_predictions.R` — `kb_predictions` subclass constructor + metadata attributes + `print` method
+- [ ] 8.2 `R/kb_predict_weight.R` — R-side typical/marginal reconstruction, `by`/`uncertainty` axes (arg_match), auto-sequence when `new_data = NULL`, the marginal-requires-omitted-RE guard; `kb_predict_weight_samples()` returns the draws container; the summary is the summariser over the samples (one codepath)
+- [ ] 8.3 Tests (invariants): lower ≤ estimate ≤ upper; weight > 0; marginal width ≥ typical; wider `conf_level` → wider interval; `new_data = NULL` spans observed range; `kb_predictions` metadata present
+
+## 9. Plotting (on fixture)
+
+- [ ] 9.1 `R/kb_plot_predictions.R` — ggplot from `kb_predictions`; ribbon for continuous predictor; metadata-driven `x`/`style`/`facet` with overrides + graceful fallback; optional `observed` overlay
+- [ ] 9.2 Tests: structure assertions (ggplot class, layers, mappings) + a sparse `vdiffr` doppelganger
+
+## 10. Documentation and check
+
+- [ ] 10.1 roxygen for all exports (plain-language `marginal`/`typical`); a prior-predictive example (`prior_only = TRUE` → predict → plot)
+- [ ] 10.2 `devtools::document()`; `R CMD check` clean; confirm 1:1 test mirroring
