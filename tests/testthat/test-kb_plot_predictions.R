@@ -81,6 +81,11 @@ test_that("observed overlay adds a points layer", {
   expect_true(any(grepl("GeomPoint", geoms)))
 })
 
+test_that("a single ungrouped row errors helpfully rather than cryptically", {
+  p <- kb_predict_weight(weight_fit, new_data = data.frame(diameter = 30))
+  expect_error(kb_plot_predictions(p), "Supply")
+})
+
 test_that("errors helpfully when metadata is stripped", {
   p <- kb_predict_weight_by(weight_fit, new_levels = "average")
   bare <- tibble::as_tibble(unclass(p))

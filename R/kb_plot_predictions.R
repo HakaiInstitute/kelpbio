@@ -52,6 +52,9 @@ kb_plot_predictions <- function(predictions,
   }
   chk::chk_number(max_facets)
   chk::chk_gt(max_facets, value = 0)
+  if (is.finite(max_facets)) {
+    chk::chk_whole_number(max_facets)
+  }
   if (!is.data.frame(predictions)) {
     cli::cli_abort("{.arg predictions} must be a {.cls kb_predictions} data frame.")
   }
@@ -67,7 +70,10 @@ kb_plot_predictions <- function(predictions,
   # rows and held/absent predictors render as grouped points instead.
   predictor_varies <- !is.null(predictor) && predictor %in% names(predictions) &&
     length(unique(predictions[[predictor]])) > 1
-  x <- x %||% if (predictor_varies) predictor else group_vars[length(group_vars)]
+  inferred <- if (predictor_varies) predictor else group_vars[length(group_vars)]
+  # group_vars[length(0)] is character(0); fall through to NULL so the guard
+  # below raises the helpful "supply x" error rather than a cryptic one.
+  x <- x %||% if (length(inferred)) inferred else NULL
 
   # Layout follows from x: facet by the remaining grouping variables, never by
   # the variable on the x-axis.
