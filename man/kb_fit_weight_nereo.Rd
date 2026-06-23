@@ -8,10 +8,12 @@ kb_fit_weight_nereo(
   data,
   priors = NULL,
   prior_only = FALSE,
+  site_year_on = TRUE,
   chains = 4L,
   niters = 1000L,
   nthin = 1L,
   cores = NULL,
+  seed = NULL,
   quiet = FALSE,
   ...
 )
@@ -26,6 +28,11 @@ defaults; unspecified entries keep their defaults.}
 \item{prior_only}{A flag specifying whether to sample from the priors only
 (the likelihood is switched off), for prior predictive checks.}
 
+\item{site_year_on}{A flag specifying whether to include the site:year random
+effect. When \code{FALSE} the term is set to zero (structurally dropped),
+collapsing the model to site intercept and site slope effects. Defaults to
+\code{TRUE}.}
+
 \item{chains}{A whole number of MCMC chains.}
 
 \item{niters}{A whole number of saved post-warmup draws per chain (warmup
@@ -36,6 +43,11 @@ defaults to match).}
 \item{cores}{A whole number of cores for parallel chains, or \code{NULL} to use
 \code{getOption("mc.cores")} (falling back to \code{chains}), capped at the available
 cores.}
+
+\item{seed}{A whole number passed to \code{\link[rstan:stanmodel-method-sampling]{rstan::sampling()}} to make the fit
+reproducible, or \code{NULL} (the default). When \code{NULL}, rstan draws its own seed
+from R's RNG, so a preceding \code{set.seed()} also makes the fit reproducible; an
+explicit \code{seed} takes precedence over the RNG state.}
 
 \item{quiet}{A flag specifying whether to suppress console output. When
 \code{FALSE} (the default), rstan's sampling progress and warnings are printed;

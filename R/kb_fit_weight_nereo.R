@@ -47,20 +47,25 @@
 kb_fit_weight_nereo <- function(data,
                                 priors = NULL,
                                 prior_only = FALSE,
+                                site_year_on = TRUE,
                                 chains = 4L,
                                 niters = 1000L,
                                 nthin = 1L,
                                 cores = NULL,
+                                seed = NULL,
                                 quiet = FALSE,
                                 ...) {
   .chk_sampler_args(
     prior_only = prior_only, chains = chains, niters = niters,
-    nthin = nthin, cores = cores, quiet = quiet
+    nthin = nthin, cores = cores, seed = seed, quiet = quiet
   )
+  chk::chk_flag(site_year_on)
 
   kb_check_data_weight_nereo(data)
   priors <- resolve_priors(priors, kb_priors_weight_nereo())
-  stan_data <- assemble_weight_nereo_data(data, priors, prior_only = prior_only)
+  stan_data <- assemble_weight_nereo_data(
+    data, priors, prior_only = prior_only, site_year_on = site_year_on
+  )
 
   core <- fit_stan(
     stanmodels$weight_nereo,
@@ -75,6 +80,7 @@ kb_fit_weight_nereo <- function(data,
     niters = niters,
     nthin = nthin,
     cores = cores,
+    seed = seed,
     quiet = quiet,
     ...
   )
@@ -89,6 +95,7 @@ kb_fit_weight_nereo <- function(data,
     meta_extra = list(
       # Shared by the Stan fit and R-side predictions so both center identically.
       diameter_ref = weight_diameter_ref(data$diameter),
+      site_year_on = site_year_on,
       nu = 4
     )
   )

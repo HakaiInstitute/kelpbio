@@ -31,6 +31,7 @@ data {
   real<lower=0> prior_sd_residual_rate;
 
   int<lower=0, upper=1> prior_only;       // 1 = skip likelihood, sample from priors
+  int<lower=0, upper=1> site_year_on;     // 0 = drop the site:year term (set to 0)
 }
 transformed data {
   real nu = 4.0;                          // Student-t degrees of freedom (fixed)
@@ -59,7 +60,7 @@ transformed parameters {
     log_eWeight[i] = bWeight + bSite[site[i]]
       + (bDiameter + bSiteDiameter[site[i]]) * log_diameter[i]
       + bDiameter2 * log_diameter[i]^2
-      + bSiteYear[site[i], year[i]];
+      + site_year_on * bSiteYear[site[i], year[i]];
   }
 }
 model {

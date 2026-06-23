@@ -5,7 +5,7 @@
 # phase is thinned by nthin to land exactly niters draws.
 fit_stan <- function(stanmodel, stan_data, param_vars,
                      gq_vars = NULL,
-                     chains, niters, nthin, cores, quiet, ...) {
+                     chains, niters, nthin, cores, quiet, seed = NULL, ...) {
   warmup <- as.integer(niters)
   total_iter <- warmup + as.integer(niters) * as.integer(nthin)
 
@@ -13,24 +13,28 @@ fit_stan <- function(stanmodel, stan_data, param_vars,
   control <- utils::modifyList(list(adapt_delta = 0.95), dots$control %||% list())
   dots$control <- NULL
 
+  args <- list(
+    stanmodel,
+    data = stan_data,
+    chains = as.integer(chains),
+    iter = total_iter,
+    warmup = warmup,
+    thin = as.integer(nthin),
+    cores = resolve_cores(cores, chains),
+    refresh = if (quiet) 0L else max(1L, total_iter %/% 10L),
+    show_messages = FALSE,
+    # The HTML progress viewer errors in some GUIs.
+    open_progress = FALSE,
+    control = control
+  )
+  # Pass seed only when supplied; absent, rstan derives its own from R's RNG, so
+  # set.seed() still makes the fit reproducible.
+  if (!is.null(seed)) {
+    args$seed <- as.integer(seed)
+  }
+
   stanfit <- with_quiet_sampler(
-    do.call(rstan::sampling, c(
-      list(
-        stanmodel,
-        data = stan_data,
-        chains = as.integer(chains),
-        iter = total_iter,
-        warmup = warmup,
-        thin = as.integer(nthin),
-        cores = resolve_cores(cores, chains),
-        refresh = if (quiet) 0L else max(1L, total_iter %/% 10L),
-        show_messages = FALSE,
-        # The HTML progress viewer errors in some GUIs.
-        open_progress = FALSE,
-        control = control
-      ),
-      dots
-    )),
+    do.call(rstan::sampling, c(args, dots)),
     quiet = quiet
   )
 

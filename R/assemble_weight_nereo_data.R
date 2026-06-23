@@ -14,7 +14,8 @@
 #'
 #' @return A named list suitable for `rstan::sampling(stanmodels$weight_nereo, data = .)`.
 #' @noRd
-assemble_weight_nereo_data <- function(data, priors, prior_only = FALSE) {
+assemble_weight_nereo_data <- function(data, priors, prior_only = FALSE,
+                                       site_year_on = TRUE) {
   site <- factor(data$site)
   year <- factor(data$year)
   nObs <- nrow(data)
@@ -38,7 +39,8 @@ assemble_weight_nereo_data <- function(data, priors, prior_only = FALSE) {
     prior_sd_site_diameter_rate = priors$sd_site_diameter$rate,
     prior_sd_site_year_rate = priors$sd_site_year$rate,
     prior_sd_residual_rate = priors$sd_residual$rate,
-    prior_only = as.integer(prior_only)
+    prior_only = as.integer(prior_only),
+    site_year_on = as.integer(site_year_on)
   )
 }
 
