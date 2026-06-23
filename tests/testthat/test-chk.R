@@ -1,3 +1,9 @@
+test_that(".chk_kb_fit passes a fit through invisibly and errors on a non-fit", {
+  expect_invisible(.chk_kb_fit(weight_fit))
+  expect_identical(.chk_kb_fit(weight_fit), weight_fit)
+  expect_error(.chk_kb_fit(1), "kb_fit")
+})
+
 test_that(".chk_kb_fit_weight passes a fit through invisibly", {
   expect_invisible(.chk_kb_fit_weight(weight_fit))
   expect_identical(.chk_kb_fit_weight(weight_fit), weight_fit)

@@ -2,6 +2,16 @@
 # input invisibly. A fit is checked at the head of every function that takes one,
 # since S3 dispatch alone does not catch a non-fit passed in directly.
 
+.chk_kb_fit <- function(x, x_name = deparse(substitute(x))) {
+  if (.vld_kb_fit(x)) {
+    return(invisible(x))
+  }
+  cli::cli_abort(c(
+    "{.arg {x_name}} must be a {.cls kb_fit} object.",
+    i = "See {.fun kb_fit_weight_nereo}."
+  ))
+}
+
 .chk_kb_fit_weight <- function(x, x_name = deparse(substitute(x))) {
   if (.vld_kb_fit_weight(x)) {
     return(invisible(x))
@@ -47,7 +57,7 @@
 }
 
 # Shared sampler-argument validation for every kb_fit_* wrapper.
-.chk_sampler_args <- function(prior_only, chains, niters, nthin, cores, quiet) {
+.chk_sampler_args <- function(prior_only, chains, niters, nthin, cores, seed = NULL, quiet) {
   chk::chk_flag(prior_only)
   chk::chk_whole_number(chains)
   chk::chk_gt(chains, value = 0)
@@ -59,6 +69,9 @@
   if (!is.null(cores)) {
     chk::chk_whole_number(cores)
     chk::chk_gt(cores, value = 0)
+  }
+  if (!is.null(seed)) {
+    chk::chk_whole_number(seed)
   }
   invisible(NULL)
 }
