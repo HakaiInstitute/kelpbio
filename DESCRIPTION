@@ -27,7 +27,7 @@ VignetteBuilder: knitr
 Config/testthat/edition: 3
 Biarch: true
 Depends:
-    R (>= 3.5)
+    R (>= 4.2.0)
 Imports:
     chk,
     cli,
