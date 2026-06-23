@@ -31,7 +31,6 @@ Depends:
 Imports:
     chk,
     cli,
-    dplyr,
     extras,
     generics,
     ggplot2,

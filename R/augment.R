@@ -19,9 +19,8 @@
 augment.kb_fit_weight <- function(x, ...) {
   rlang::check_dots_empty()
   .chk_kb_fit_weight(x)
-  dplyr::mutate(
-    tibble::as_tibble(x$data),
-    fitted = stats::fitted(x),
-    residual = stats::residuals(x)
-  )
+  out <- tibble::as_tibble(x$data)
+  out$fitted <- stats::fitted(x)
+  out$residual <- stats::residuals(x)
+  out
 }
