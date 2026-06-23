@@ -3,7 +3,7 @@
 ## Pure helpers (no recompile)
 - [x] Add shared engine `R/fit_stan.R` (`fit_stan()`, `with_quiet_sampler()`,
       `resolve_cores()`).
-- [x] Add `chk_sampler_args()` to `R/chk.R`; fix the `{.fun}` hint in
+- [x] Add `.chk_sampler_args()` to `R/chk.R`; fix the `{.fun}` hint in
       `.chk_kb_fit_weight()`.
 - [x] Rename + rewrite `R/kb_fit_weight_nereo.R` as a thin wrapper over
       `fit_stan()`; `new_kb_fit_weight()` takes engine output + `meta_extra`,

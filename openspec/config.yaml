@@ -47,7 +47,7 @@ context: |
     internal validators follow the bboutools .vld_/.chk_ split: a .vld_<name>() in
     R/vld.R returns a logical predicate (no messaging), its .chk_<name>() partner in
     R/chk.R calls it and aborts via cli; every bespoke .chk_ has a matching .vld_
-    (multi-arg chk:: bundles like chk_sampler_args() are exempt). See CLAUDE.md.
+    (multi-arg chk:: bundles like .chk_sampler_args() are exempt). See CLAUDE.md.
   - Prediction / derived-quantity engine: posterior rvar over the stored draws; the
     per-model mean lives in one .<model>_linpred() helper, surfaced through the
     rstantools generics (posterior_epred / posterior_linpred / posterior_predict /
@@ -57,9 +57,12 @@ context: |
     the posterior_* generics; there are no _samples() functions. Rationale:
     decisions/prediction-engine.md.
   - Summary/output columns use the house convention term / estimate / lower / upper
-    (shared with bboutools/ssdtools). Summary functions (kb_predict_*, tidy, coef)
-    carry sig_fig; converged()/glance() default to report-mode thresholds rhat = 1.05,
-    esr = 0.1 (esr = effective sample rate = ess_bulk / ndraws).
+    (following bboutools; ssdtools differs, using est / lcl / ucl and a `level` arg).
+    Summary functions (kb_predict_*, tidy, coef) carry conf_level + sig_fig;
+    fitted()/residuals() are plain accessors (numeric vectors, no interval args),
+    with the full posterior available from posterior_epred(). converged()/glance()
+    default to report-mode thresholds rhat = 1.05, esr = 0.1 (esr = effective sample
+    rate = ess_bulk / ndraws).
   - Documentation: roxygen2 with markdown; @inheritParams donor (params.R) for shared args.
   - Writing (all generated prose: proposals, design, specs): concise technical,
     scientific register; NO em-dashes or en-dashes (use hyphens, commas, or colons); no

@@ -37,11 +37,7 @@ kb_predict_weight_by <- function(fit,
                                  estimate = stats::median,
                                  sig_fig = 3) {
   .chk_kb_fit_weight(fit)
-  chk::chk_number(conf_level)
-  chk::chk_range(conf_level)
-  chk::chk_function(estimate)
-  chk::chk_whole_number(sig_fig)
-  chk::chk_gt(sig_fig, value = 0)
+  .chk_summary_args(conf_level, estimate, sig_fig)
 
   res <- weight_by_linpred(fit, by, new_levels, diameter)
   summarise_weight_predictions(

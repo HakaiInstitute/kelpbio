@@ -35,8 +35,19 @@
   ))
 }
 
+# Shared summary-argument validation for the report-view functions (kb_predict_*,
+# tidy, summary).
+.chk_summary_args <- function(conf_level, estimate, sig_fig) {
+  chk::chk_number(conf_level)
+  chk::chk_range(conf_level)
+  chk::chk_function(estimate)
+  chk::chk_whole_number(sig_fig)
+  chk::chk_gt(sig_fig, value = 0)
+  invisible(NULL)
+}
+
 # Shared sampler-argument validation for every kb_fit_* wrapper.
-chk_sampler_args <- function(prior_only, chains, niters, nthin, cores, quiet) {
+.chk_sampler_args <- function(prior_only, chains, niters, nthin, cores, quiet) {
   chk::chk_flag(prior_only)
   chk::chk_whole_number(chains)
   chk::chk_gt(chains, value = 0)

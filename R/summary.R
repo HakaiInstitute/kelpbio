@@ -47,11 +47,7 @@ summary.kb_fit <- function(object,
                            include_random_effects = FALSE,
                            ...) {
   rlang::check_dots_empty()
-  chk::chk_number(conf_level)
-  chk::chk_range(conf_level)
-  chk::chk_function(estimate)
-  chk::chk_whole_number(sig_fig)
-  chk::chk_gt(sig_fig, value = 0)
+  .chk_summary_args(conf_level, estimate, sig_fig)
   chk::chk_flag(include_random_effects)
 
   # Term table from the subclass tidy() (subclass-aware term selection), then

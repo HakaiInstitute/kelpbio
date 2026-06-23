@@ -53,7 +53,7 @@ kb_fit_weight_nereo <- function(data,
                                 cores = NULL,
                                 quiet = FALSE,
                                 ...) {
-  chk_sampler_args(
+  .chk_sampler_args(
     prior_only = prior_only, chains = chains, niters = niters,
     nthin = nthin, cores = cores, quiet = quiet
   )

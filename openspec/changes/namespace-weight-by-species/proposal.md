@@ -21,7 +21,7 @@ belongs as a function/`.stan` variant, not a data argument. See
   internal engine `fit_stan()` (sampler invocation, control merge, warmup/thin
   math, core resolution, draws-to-rvars extraction, generated-quantity split,
   diagnostics). The species wrapper supplies only validation, priors, assembled
-  Stan data, the compiled model, and the parameter vector. Add `chk_sampler_args()`.
+  Stan data, the compiled model, and the parameter vector. Add `.chk_sampler_args()`.
 - Rename `inst/stan/weight.stan` -> `inst/stan/weight_nereo.stan`
   (`stanmodels$weight` -> `stanmodels$weight_nereo`); content unchanged.
 - Rename the bundled objects: `data_weight_hakai` -> `data_weight_hakai_nereo`,
@@ -45,7 +45,7 @@ belongs as a function/`.stan` variant, not a data argument. See
 
 ## Impact
 
-- New `R/fit_stan.R`; `chk_sampler_args()` in `R/chk.R`. Renamed
+- New `R/fit_stan.R`; `.chk_sampler_args()` in `R/chk.R`. Renamed
   `R/kb_fit_weight_nereo.R`, `R/kb_priors_weight_nereo.R`,
   `R/kb_check_data_weight_nereo.R`, `R/assemble_weight_nereo_data.R`,
   `R/weight_nereo_linpred.R`, `R/{data_weight_hakai_nereo,data_weight_sim_nereo,fit_weight_hakai_nereo}.R`.
