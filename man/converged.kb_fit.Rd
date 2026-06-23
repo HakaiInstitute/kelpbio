@@ -17,15 +17,16 @@
 \item{...}{Unused.}
 }
 \value{
-A flag: \code{TRUE} if all Rhat are below \code{rhat} and all effective sample
-rates above \code{esr}.
+A flag: \code{TRUE} if all Rhat are below \code{rhat} and all bulk effective
+sample rates above \code{esr}.
 }
 \description{
 Convergence of a Model Fit
 }
 \details{
-\code{esr} is the effective sample rate: the effective sample size divided by the
-number of draws. The defaults are \code{rhat = 1.05} and \code{esr = 0.1}.
+\code{esr} is the effective sample rate: the bulk effective sample size divided by
+the number of draws. Convergence is assessed on the bulk effective sample size
+only, not the tail. The defaults are \code{rhat = 1.05} and \code{esr = 0.1}.
 }
 \examples{
 converged(fit_weight_hakai_nereo)

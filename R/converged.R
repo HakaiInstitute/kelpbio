@@ -5,11 +5,12 @@
 #' @param ... Unused.
 #'
 #' @details
-#' `esr` is the effective sample rate: the effective sample size divided by the
-#' number of draws. The defaults are `rhat = 1.05` and `esr = 0.1`.
+#' `esr` is the effective sample rate: the bulk effective sample size divided by
+#' the number of draws. Convergence is assessed on the bulk effective sample size
+#' only, not the tail. The defaults are `rhat = 1.05` and `esr = 0.1`.
 #'
-#' @return A flag: `TRUE` if all Rhat are below `rhat` and all effective sample
-#'   rates above `esr`.
+#' @return A flag: `TRUE` if all Rhat are below `rhat` and all bulk effective
+#'   sample rates above `esr`.
 #' @family generics
 #' @exportS3Method universals::converged
 #' @examples

@@ -17,8 +17,9 @@
 \item{...}{Unused.}
 }
 \value{
-A one-row tibble with \code{n}, \code{K}, \code{nchains}, \code{niters}, \code{nthin}, \code{ess},
-\code{rhat}, and \code{converged}.
+A one-row tibble with \code{n}, \code{K}, \code{nchains}, \code{niters}, \code{nthin}, \code{ess}
+(the minimum bulk effective sample size), \code{rhat} (the maximum Rhat), and
+\code{converged}.
 }
 \description{
 One-row summary of a model fit with a convergence verdict.

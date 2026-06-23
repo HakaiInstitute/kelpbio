@@ -4,8 +4,9 @@
 #'
 #' @inheritParams converged.kb_fit
 #'
-#' @return A one-row tibble with `n`, `K`, `nchains`, `niters`, `nthin`, `ess`,
-#'   `rhat`, and `converged`.
+#' @return A one-row tibble with `n`, `K`, `nchains`, `niters`, `nthin`, `ess`
+#'   (the minimum bulk effective sample size), `rhat` (the maximum Rhat), and
+#'   `converged`.
 #' @family generics
 #' @exportS3Method generics::glance
 #' @examples
