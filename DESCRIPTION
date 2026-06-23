@@ -24,8 +24,8 @@ Suggests:
 VignetteBuilder: knitr
 Config/testthat/edition: 3
 Biarch: true
-Depends: 
-    R (>= 3.4.0)
+Depends:
+    R (>= 4.2.0)
 Imports: 
     methods,
     Rcpp (>= 0.12.0),
