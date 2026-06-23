@@ -51,7 +51,7 @@ context: |
   - Prediction / derived-quantity engine: posterior rvar over the stored draws; the
     per-model mean lives in one .<model>_linpred() helper, surfaced through the
     rstantools generics (posterior_epred / posterior_linpred / posterior_predict /
-    log_lik). Grids via newdata::xnew_data; predictors enter on a fixed-reference
+    log_lik). Grids built over the observed predictor range/levels; predictors enter on a fixed-reference
     transform (no rescale step). Two axes: by (character vector of grouping factors)
     and uncertainty = c("marginal","typical") (marginal default). Raw draws come from
     the posterior_* generics; there are no _samples() functions. Rationale:

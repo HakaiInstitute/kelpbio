@@ -9,10 +9,6 @@
 #' @useDynLib kelpbio, .registration = TRUE
 "_PACKAGE"
 
-# `diameter` is referenced via non-standard evaluation inside
-# newdata::xnew_seq() when auto-generating the prediction grid.
-utils::globalVariables("diameter")
-
 ## usethis namespace: start
 ## usethis namespace: end
 NULL
