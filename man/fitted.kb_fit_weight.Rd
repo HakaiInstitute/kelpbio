@@ -4,37 +4,27 @@
 \alias{fitted.kb_fit_weight}
 \title{Fitted Weights}
 \usage{
-\method{fitted}{kb_fit_weight}(object, conf_level = 0.95, estimate = stats::median, ...)
+\method{fitted}{kb_fit_weight}(object, ...)
 }
 \arguments{
 \item{object}{A \code{kb_fit_weight} object.}
 
-\item{conf_level}{A number between 0 and 1 giving the compatibility-interval
-level.}
-
-\item{estimate}{A function giving the point estimate (e.g. \code{median}).}
-
 \item{...}{Unused.}
 }
 \value{
-A tibble with one row per observed row and columns \code{estimate},
-\code{lower}, and \code{upper}.
+A numeric vector of fitted weights, length \code{nobs(object)}.
 }
 \description{
-Posterior summary of the expected weight at each observed row, on the response
-scale: the point estimate with a compatibility interval, one row per observed
-row.
-}
-\details{
-The expected weight is \code{\link[=posterior_epred]{posterior_epred()}} at the observed data; the \code{estimate}
-is its posterior point estimate and \code{lower}/\code{upper} its equal-tailed
-\code{conf_level} limits.
+Posterior point estimates of the expected weight at each observed row, on the
+response scale (the posterior median of the expected weight), matching
+\code{\link[=augment]{augment()}}'s \code{fitted} column. For the full posterior, use \code{\link[=posterior_epred]{posterior_epred()}}.
 }
 \examples{
 fitted(fit_weight_hakai_nereo)
 }
 \seealso{
-\code{\link[=residuals]{residuals()}} for deviance residuals, and \code{\link[=augment]{augment()}}.
+\code{\link[=residuals]{residuals()}} for deviance residuals, \code{\link[=augment]{augment()}}, and
+\code{\link[=posterior_epred]{posterior_epred()}} for the full posterior.
 
 Other generics: 
 \code{\link{augment.kb_fit_weight}()},

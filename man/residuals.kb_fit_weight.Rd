@@ -4,30 +4,23 @@
 \alias{residuals.kb_fit_weight}
 \title{Deviance Residuals}
 \usage{
-\method{residuals}{kb_fit_weight}(object, conf_level = 0.95, estimate = stats::median, ...)
+\method{residuals}{kb_fit_weight}(object, ...)
 }
 \arguments{
 \item{object}{A \code{kb_fit_weight} object.}
 
-\item{conf_level}{A number between 0 and 1 giving the compatibility-interval
-level.}
-
-\item{estimate}{A function giving the point estimate (e.g. \code{median}).}
-
 \item{...}{Unused.}
 }
 \value{
-A tibble with one row per observed row and columns \code{estimate},
-\code{lower}, and \code{upper}.
+A numeric vector of deviance residuals, length \code{nobs(object)}.
 }
 \description{
-Posterior summary of the deviance residual at each observed row, from the
-Student-t log-weight likelihood: the point estimate with a compatibility
-interval, one row per observed row.
+Posterior point estimates of the deviance residual at each observed row, from
+the Student-t log-weight likelihood, matching \code{\link[=augment]{augment()}}'s \code{residual} column.
 }
 \details{
-The deviance residual is computed per draw; the \code{estimate} is its posterior
-point estimate and \code{lower}/\code{upper} its equal-tailed \code{conf_level} limits.
+The deviance residual is computed per draw, then summarised with the posterior
+median.
 }
 \examples{
 residuals(fit_weight_hakai_nereo)

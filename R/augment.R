@@ -1,9 +1,9 @@
 #' Augment Weight Data with Fitted Values
 #'
 #' Return the input data with the [fitted()] weight and deviance [residuals()]
-#' point estimates appended, for residual diagnostics. Only the point estimates
-#' are added; for intervals call [fitted()]/[residuals()] directly, and for
-#' prediction intervals at supplied rows use [kb_predict_weight()].
+#' appended, for residual diagnostics. The columns come straight from the
+#' `fitted()` and `residuals()` methods, so they cannot diverge from them. For
+#' prediction intervals use [kb_predict_weight()].
 #'
 #' @param x A `kb_fit_weight` object.
 #' @param ... Unused.
@@ -21,7 +21,7 @@ augment.kb_fit_weight <- function(x, ...) {
   .chk_kb_fit_weight(x)
   dplyr::mutate(
     tibble::as_tibble(x$data),
-    fitted = stats::fitted(x)$estimate,
-    residual = stats::residuals(x)$estimate
+    fitted = stats::fitted(x),
+    residual = stats::residuals(x)
   )
 }
