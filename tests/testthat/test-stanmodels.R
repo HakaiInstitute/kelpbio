@@ -26,7 +26,7 @@ weight_stan_data <- function(nObs = 6L, prior_only = 0L) {
     prior_diameter2_mu = 0, prior_diameter2_sd = 0.5,
     prior_sd_site_rate = 1, prior_sd_site_diameter_rate = 1,
     prior_sd_site_year_rate = 1, prior_sd_residual_rate = 1,
-    prior_only = prior_only
+    prior_only = prior_only, site_year_on = 1L
   )
 }
 
