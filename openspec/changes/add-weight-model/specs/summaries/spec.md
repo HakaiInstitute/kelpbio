@@ -58,9 +58,9 @@
 
 ### Requirement: Summary and print methods
 
-`summary(x)` SHALL return a classed `summary_kb_fit` object collecting fit-level metadata and a per-term posterior summary table (with its own `print` method), in the style of `brms`/`rstanarm`. `print(x)` SHALL display a stable, human-readable overview of a `kb_fit` (model, species, n obs, draws, convergence) without embedding raw MCMC numbers, so it is snapshot-testable.
+`summary(x)` SHALL return a classed `summary_kb_fit` object collecting fit-level metadata and a per-term posterior summary table (with its own `print` method), laid out as a fit-metadata header, a coefficient table, and a diagnostics footer. The header SHALL describe the model's effect structure in prose (fixed- and random-effect terms) rather than a mixed-model formula, so the output does not imply a formula interface or a particular fitting engine. `print(x)` SHALL display a stable, human-readable overview of a `kb_fit` (model, species, n obs, draws, convergence) without embedding raw MCMC numbers, so it is snapshot-testable.
 
-The `summary_kb_fit` coefficient table SHALL carry columns `term`, `estimate`, `lower`, `upper`, `rhat`, `ess_bulk`, `ess_tail`, with the diagnostic columns taken from the stored fit diagnostics (the same source as `converged()`/`glance()`). It SHALL show population-level terms and random-effect SDs, including the per-level group deviations only when `include_random_effects = TRUE` (default `FALSE`, matching `tidy()`). Its `print` method SHALL render a header (likelihood family, model formula, observation and group counts, sampler configuration, convergence verdict), the coefficient table, and a diagnostics footer defining the columns and reporting the divergent-transition count.
+The `summary_kb_fit` coefficient table SHALL carry columns `term`, `estimate`, `lower`, `upper`, `rhat`, `ess_bulk`, `ess_tail`, with the diagnostic columns taken from the stored fit diagnostics (the same source as `converged()`/`glance()`). It SHALL show population-level terms and random-effect SDs, including the per-level group deviations only when `include_random_effects = TRUE` (default `FALSE`, matching `tidy()`). Its `print` method SHALL render a header (likelihood family, fixed- and random-effect structure, observation and group counts, sampler configuration, convergence verdict), the coefficient table, and a diagnostics footer defining the columns and reporting the divergent-transition count.
 
 #### Scenario: print shows stable metadata
 - **WHEN** `print(fit)` is called
@@ -68,7 +68,7 @@ The `summary_kb_fit` coefficient table SHALL carry columns `term`, `estimate`, `
 
 #### Scenario: summary returns metadata and a diagnostic table
 - **WHEN** `summary(fit)` is called
-- **THEN** it returns a `summary_kb_fit` object carrying fit metadata (family, formula, observation and group counts, sampler draws) and a `coefficients` tibble with columns `term`, `estimate`, `lower`, `upper`, `rhat`, `ess_bulk`, `ess_tail`, whose `print` method renders the header, table, and diagnostics footer
+- **THEN** it returns a `summary_kb_fit` object carrying fit metadata (family, fixed- and random-effect structure, observation and group counts, sampler draws) and a `coefficients` tibble with columns `term`, `estimate`, `lower`, `upper`, `rhat`, `ess_bulk`, `ess_tail`, whose `print` method renders the header, table, and diagnostics footer
 
 #### Scenario: summary omits group-level deviations by default
 - **WHEN** `summary(fit)` is called

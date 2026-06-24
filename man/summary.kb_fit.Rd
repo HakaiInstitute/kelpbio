@@ -36,12 +36,13 @@ A \code{summary_kb_fit} object: a list of fit metadata and a
 }
 \description{
 Return a classed \code{summary_kb_fit} object collecting fit-level metadata and a
-per-term posterior summary table, in the style of \code{brms} and \code{rstanarm}.
+per-term posterior summary table.
 }
 \details{
-The \code{print} method renders a header (likelihood family, model formula,
-observation and group counts, sampler configuration, and the convergence
-verdict), the coefficient table, and a diagnostics footer. For the
+The \code{print} method renders a header (likelihood family, fixed- and
+random-effect structure, observation and group counts, sampler configuration,
+and the convergence verdict), the coefficient table, and a diagnostics footer.
+For the
 snapshot-safe overview without the numeric table, call \code{print()} on the fit
 itself.
 

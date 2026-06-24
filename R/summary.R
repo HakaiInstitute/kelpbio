@@ -1,12 +1,13 @@
 #' Summarise a Model Fit
 #'
 #' Return a classed `summary_kb_fit` object collecting fit-level metadata and a
-#' per-term posterior summary table, in the style of `brms` and `rstanarm`.
+#' per-term posterior summary table.
 #'
 #' @details
-#' The `print` method renders a header (likelihood family, model formula,
-#' observation and group counts, sampler configuration, and the convergence
-#' verdict), the coefficient table, and a diagnostics footer. For the
+#' The `print` method renders a header (likelihood family, fixed- and
+#' random-effect structure, observation and group counts, sampler configuration,
+#' and the convergence verdict), the coefficient table, and a diagnostics footer.
+#' For the
 #' snapshot-safe overview without the numeric table, call `print()` on the fit
 #' itself.
 #'
@@ -88,7 +89,8 @@ summary.kb_fit <- function(object,
     model = sub("^kb_fit_", "", class(fit)[1]),
     species = fit$meta$species,
     family = descr$family,
-    formula = descr$formula,
+    fixed = descr$fixed,
+    random = descr$random,
     centered = descr$centered,
     groups = descr$groups,
     nobs = nobs(fit),
@@ -101,20 +103,19 @@ summary.kb_fit <- function(object,
   )
 }
 
-# Model-specific descriptor (likelihood family, formula, group structure) for the
-# summary header. Switches on the fit subclass; unknown models fall back to NA so
-# the print method omits those lines.
+# Model-specific descriptor (likelihood family, effect structure, group counts)
+# for the summary header. Switches on the fit subclass; unknown models fall back
+# to NA so the print method omits those lines. The fixed/random lines describe the
+# structure in prose rather than a mixed-model formula, so the output does not
+# imply a formula interface or a particular fitting engine.
 fit_descriptor <- function(x) {
   model <- sub("^kb_fit_", "", class(x)[1])
   switch(model,
     weight = {
-      dc <- "log(diameter/d0)"
       list(
-        family = "Student-t (df = 4); response modelled as log(weight)",
-        formula = paste0(
-          "log(weight) ~ 1 + ", dc, " + ", dc, "^2 + ",
-          "(1 + ", dc, " | site) + (1 | site:year)"
-        ),
+        family = "Student-t (df = 4); response log(weight)",
+        fixed = "intercept + linear + quadratic log(diameter/d0)",
+        random = "site (intercept, slope); site:year (intercept)",
         centered = paste0(
           "log-diameter at d0 = ", signif(x$meta$diameter_ref, 3),
           " (geometric mean of diameter)"
@@ -123,7 +124,7 @@ fit_descriptor <- function(x) {
       )
     },
     list(
-      family = NA_character_, formula = NA_character_,
+      family = NA_character_, fixed = NA_character_, random = NA_character_,
       centered = NA_character_, groups = integer(0)
     )
   )
