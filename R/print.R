@@ -3,6 +3,12 @@
 # cli markup (e.g. {.cls}).
 
 #' @export
+print.kb_stancode <- function(x, ...) {
+  cat(unclass(x), sep = "\n")
+  invisible(x)
+}
+
+#' @export
 print.kb_prior_normal <- function(x, ...) {
   cli::cat_line(cli::format_inline(
     "normal(mean = {format(x$mean)}, sd = {format(x$sd)})"
@@ -23,7 +29,8 @@ print.kb_prior_exponential <- function(x, ...) {
 .print_kb_fit_header <- function(h) {
   cli::cat_line("Model:     ", h$model, " (", h$species, ")")
   if (!is.na(h$family)) cli::cat_line("Family:    ", h$family)
-  if (!is.na(h$formula)) cli::cat_line("Formula:   ", h$formula)
+  if (!is.na(h$fixed)) cli::cat_line("Fixed:     ", h$fixed)
+  if (!is.na(h$random)) cli::cat_line("Random:    ", h$random)
   if (!is.na(h$centered)) cli::cat_line("Centered:  ", h$centered)
   groups <- if (length(h$groups)) {
     paste0("; groups: ", paste0(names(h$groups), " (", h$groups, ")", collapse = ", "))

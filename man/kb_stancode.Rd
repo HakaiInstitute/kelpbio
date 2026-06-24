@@ -15,14 +15,14 @@ kb_stancode(x, ...)
 \item{...}{Unused.}
 }
 \value{
-The Stan source as a string.
+A \code{kb_stancode} object: the Stan source string, which prints as
+readable code. Use \code{\link[=as.character]{as.character()}} for the plain string.
 }
 \description{
 Return the Stan source code of the fitted model.
 }
 \examples{
-code <- kb_stancode(fit_weight_hakai_nereo)
-cat(code)
+kb_stancode(fit_weight_hakai_nereo)
 }
 \seealso{
 Other generics: 

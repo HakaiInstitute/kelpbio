@@ -5,13 +5,13 @@
 #' @param x A `kb_fit` object.
 #' @param ... Unused.
 #'
-#' @return The Stan source as a string.
+#' @return A `kb_stancode` object: the Stan source string, which prints as
+#'   readable code. Use [as.character()] for the plain string.
 #' @family generics
 #' @export
 #'
 #' @examples
-#' code <- kb_stancode(fit_weight_hakai_nereo)
-#' cat(code)
+#' kb_stancode(fit_weight_hakai_nereo)
 kb_stancode <- function(x, ...) {
   UseMethod("kb_stancode")
 }
@@ -21,5 +21,7 @@ kb_stancode <- function(x, ...) {
 kb_stancode.kb_fit <- function(x, ...) {
   rlang::check_dots_empty()
   .chk_kb_fit(x)
-  x$meta$stancode
+  # as.character() drops the model_name attribute rstan::get_stancode() carries,
+  # leaving a clean classed string.
+  structure(as.character(x$meta$stancode), class = "kb_stancode")
 }
