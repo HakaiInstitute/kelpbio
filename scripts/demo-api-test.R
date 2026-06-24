@@ -17,15 +17,15 @@ kb_check_data_weight_nereo(data_weight_hakai_nereo)
 
 bad <- data_weight_hakai_nereo
 names(bad)[names(bad) == "diameter"] <- "diam"
-try(kb_check_data_weight_nereo(bad))                 # missing column
+try(kb_check_data_weight_nereo(bad)) # missing column
 
 bad <- data_weight_hakai_nereo
 bad$weight[1] <- -1
-try(kb_check_data_weight_nereo(bad))                 # not > 0
+try(kb_check_data_weight_nereo(bad)) # not > 0
 
 bad <- data_weight_hakai_nereo
 bad$diameter[1] <- NA_real_
-try(kb_check_data_weight_nereo(bad))                 # missing value
+try(kb_check_data_weight_nereo(bad)) # missing value
 
 # --- priors -------------------------------------------------------------------
 kb_priors_weight_nereo()
@@ -43,12 +43,21 @@ fit
 
 fit_prior <- kb_fit_weight_nereo(
   data_weight_hakai_nereo,
-  prior_only = TRUE, chains = 2, niters = 500, quiet = TRUE
+  prior_only = TRUE,
+  chains = 2,
+  niters = 500,
+  quiet = TRUE
 )
-fit_custom <- kb_fit_weight_nereo(data_weight_hakai_nereo, priors = priors, quiet = TRUE)
+fit_custom <- kb_fit_weight_nereo(
+  data_weight_hakai_nereo,
+  priors = priors,
+  quiet = TRUE
+)
 fit_ctrl <- kb_fit_weight_nereo(
   data_weight_hakai_nereo,
-  chains = 1, niters = 200, quiet = TRUE,
+  chains = 1,
+  niters = 200,
+  quiet = TRUE,
   control = list(adapt_delta = 0.99, max_treedepth = 12)
 )
 
@@ -76,7 +85,10 @@ nchains(fit)
 npars(fit)
 nterms(fit)
 pars(fit)
-rhat(fit)
+# bayesplot (and posterior) export their own rhat() generic, which masks the
+# kelpbio/universals one once attached; namespace it, or read rhat/ESS off
+# glance(fit) / summary(fit), which never collide.
+kelpbio::rhat(fit)
 esr(fit)
 estimates(fit)
 
@@ -105,9 +117,15 @@ dim(posterior_linpred(fit, transform = TRUE))
 dim(posterior_predict(fit))
 dim(posterior_predict(fit, newdata = nd))
 
-ppc_dens_overlay(fit$data$weight, posterior_predict(fit)[1:50, , drop = FALSE]) +
+ppc_dens_overlay(
+  fit$data$weight,
+  posterior_predict(fit)[1:50, , drop = FALSE]
+) +
   scale_x_log10()
-ppc_dens_overlay(fit_prior$data$weight, posterior_predict(fit_prior)[1:50, , drop = FALSE]) +
+ppc_dens_overlay(
+  fit_prior$data$weight,
+  posterior_predict(fit_prior)[1:50, , drop = FALSE]
+) +
   scale_x_log10() # prior predictive
 
 # --- kb_predict_weight() (new-data verb) + predict() wrapper ------------------
@@ -116,10 +134,28 @@ sites <- levels(fit$data$site)
 kb_predict_weight(fit)
 kb_predict_weight(fit, new_data = nd)
 kb_predict_weight(fit, new_data = tibble(diameter = 40, site = sites[1]))
-kb_predict_weight(fit, new_data = tibble(diameter = 40, site = "new_reef"), new_levels = "sample")
-kb_predict_weight(fit, new_data = tibble(diameter = 40, site = "new_reef"), representative_site = sites[1])
-kb_predict_weight(fit, new_data = nd, conf_level = 0.8, estimate = mean, sig_fig = 4)
-try(kb_predict_weight(fit, new_data = tibble(diameter = 40, site = "new_reef"), representative_site = "nope"))
+kb_predict_weight(
+  fit,
+  new_data = tibble(diameter = 40, site = "new_reef"),
+  new_levels = "sample"
+)
+kb_predict_weight(
+  fit,
+  new_data = tibble(diameter = 40, site = "new_reef"),
+  representative_site = sites[1]
+)
+kb_predict_weight(
+  fit,
+  new_data = nd,
+  conf_level = 0.8,
+  estimate = mean,
+  sig_fig = 4
+)
+try(kb_predict_weight(
+  fit,
+  new_data = tibble(diameter = 40, site = "new_reef"),
+  representative_site = "nope"
+))
 
 predict(fit)
 predict(fit, new_data = nd, new_levels = "average")
@@ -130,7 +166,7 @@ kb_predict_weight_by(fit, new_levels = "average")
 kb_predict_weight_by(fit, by = "site")
 kb_predict_weight_by(fit, by = c("site", "year"))
 kb_predict_weight_by(fit, diameter = seq(10, 80, by = 5))
-try(kb_predict_weight_by(fit, by = "year"))          # no year main effect
+try(kb_predict_weight_by(fit, by = "year")) # no year main effect
 
 # --- kb_plot_predictions() / autoplot() ---------------------------------------
 pop <- kb_predict_weight_by(fit, new_levels = "sample")
