@@ -29,10 +29,10 @@ Running pkgdown over the installed package SHALL produce a complete static site,
 - **WHEN** `pkgdown::build_site()` (or `build_site_github_pages()`) is run against the installed package
 - **THEN** it completes without error and writes a site whose navbar includes a "Get started" entry sourced from `vignettes/kelpbio.Rmd`
 
-#### Scenario: The Get started vignette is a valid, minimal article
+#### Scenario: The Get started vignette demonstrates the kb_ API
 
 - **WHEN** `vignettes/kelpbio.Rmd` is inspected
-- **THEN** it is a valid `rmarkdown::html_vignette` with a `\VignetteIndexEntry` and contains only placeholder overview prose (no evaluated `kb_*()` code), so it renders cleanly while the API is unbuilt
+- **THEN** it is a valid `rmarkdown::html_vignette` with a `\VignetteIndexEntry`, a package overview, and illustrative `kb_*()` usage in non-evaluated chunks (`eval = FALSE`), so it renders without a compiled package or a live Stan fit
 
 ### Requirement: The reference index is organized into thematic sections
 
