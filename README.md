@@ -112,6 +112,25 @@ kb_predict_weight_by(fit, by = "site") |>
 
 ![](man/figures/README-weight-curve-1.png)<!-- -->
 
+Predict weight at new diameters with `kb_predict_weight()`. It returns a
+table with a point estimate and `conf_level` compatibility limits for
+each row:
+
+``` r
+new_data <- data.frame(diameter = c(20, 35, 50, 65, 80))
+
+kb_predict_weight(fit, new_data, new_levels = "average")
+#> <kb_predictions> predictor: diameter | response: weight
+#> # A tibble: 5 × 4
+#>   diameter estimate  lower  upper
+#>      <dbl>    <dbl>  <dbl>  <dbl>
+#> 1       20    0.036 0.0222 0.0599
+#> 2       35    0.151 0.128  0.181 
+#> 3       50    0.376 0.322  0.451 
+#> 4       65    0.736 0.567  0.95  
+#> 5       80    1.26  0.839  1.87
+```
+
 The fitted object exposes the standard `rstantools` generics
 (`posterior_predict()`, `log_lik()`, and others), so it composes
 directly with `bayesplot` and `loo`. See `vignette("kelpbio")` for model
