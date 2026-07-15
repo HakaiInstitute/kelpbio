@@ -19,7 +19,7 @@ The pointwise log-likelihood of the observed data (from the Stan generated
 quantities), suitable for \code{loo::loo()}.
 }
 \examples{
-ll <- log_lik(fit_weight_hakai_nereo)
+ll <- log_lik(fit_weight_sim_nereo)
 dim(ll)
 }
 \seealso{

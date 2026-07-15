@@ -29,7 +29,7 @@ the number of draws. Convergence is assessed on the bulk effective sample size
 only, not the tail. The defaults are \code{rhat = 1.05} and \code{esr = 0.1}.
 }
 \examples{
-converged(fit_weight_hakai_nereo)
+converged(fit_weight_sim_nereo)
 }
 \seealso{
 Other generics: 

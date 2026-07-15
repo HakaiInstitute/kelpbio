@@ -22,7 +22,7 @@ appended, for residual diagnostics. The columns come straight from the
 prediction intervals use \code{\link[=kb_predict_weight]{kb_predict_weight()}}.
 }
 \examples{
-augment(fit_weight_hakai_nereo)
+augment(fit_weight_sim_nereo)
 }
 \seealso{
 \code{\link[=fitted]{fitted()}}, \code{\link[=residuals]{residuals()}}, and \code{\link[=kb_predict_weight]{kb_predict_weight()}} for predictions

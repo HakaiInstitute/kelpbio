@@ -10,7 +10,7 @@
 #' @family generics
 #' @exportS3Method rstantools::log_lik
 #' @examples
-#' ll <- log_lik(fit_weight_hakai_nereo)
+#' ll <- log_lik(fit_weight_sim_nereo)
 #' dim(ll)
 log_lik.kb_fit_weight <- function(object, ...) {
   rlang::check_dots_empty()

@@ -15,7 +15,7 @@
 #' @seealso [fitted()] for fitted values, and [augment()].
 #' @exportS3Method stats::residuals
 #' @examples
-#' residuals(fit_weight_hakai_nereo)
+#' residuals(fit_weight_sim_nereo)
 residuals.kb_fit_weight <- function(object, ...) {
   rlang::check_dots_empty()
   .chk_kb_fit_weight(object)

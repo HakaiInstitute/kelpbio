@@ -8,26 +8,27 @@ library(dplyr)
 # 1. data and check data
 # =============================================================================
 
-# Diameter and wet weight for harvested Nereocystis plants.
-str(data_weight_hakai_nereo)
+# Simulated diameter and wet weight for harvested Nereocystis plants (the bundled
+# example dataset; the real survey data lives in the companion data package).
+str(data_weight_sim_nereo)
 
 # check data fits model expectation
-kb_check_data_weight_nereo(data_weight_hakai_nereo)
+kb_check_data_weight_nereo(data_weight_sim_nereo)
 
 # common catches:
 
 # wrong column name
-bad_name <- data_weight_hakai_nereo
+bad_name <- data_weight_sim_nereo
 names(bad_name)[names(bad_name) == "diameter"] <- "diam"
 kb_check_data_weight_nereo(bad_name)
 
 # missing diameter
-bad_na <- data_weight_hakai_nereo
+bad_na <- data_weight_sim_nereo
 bad_na$diameter[1] <- NA_real_
 kb_check_data_weight_nereo(bad_na)
 
 # A typo turned a number into text ("1.1o" instead of "1.10"):
-bad_chr <- data_weight_hakai_nereo
+bad_chr <- data_weight_sim_nereo
 bad_chr$diameter <- as.character(bad_chr$diameter)
 bad_chr$diameter[1] <- "1.1o"
 kb_check_data_weight_nereo(bad_chr)
@@ -37,7 +38,7 @@ kb_check_data_weight_nereo(bad_chr)
 # =============================================================================
 
 ?kb_fit_weight_nereo
-fit <- kb_fit_weight_nereo(data_weight_hakai_nereo, niters = 500L)
+fit <- kb_fit_weight_nereo(data_weight_sim_nereo, niters = 500L)
 fit
 
 # =============================================================================
@@ -66,12 +67,12 @@ augment(fit)
 
 # A typical site: the average plant for this dataset.
 typical <- kb_predict_weight_by(fit, new_levels = "average")
-kb_plot_predictions(typical, observed = data_weight_hakai_nereo) +
+kb_plot_predictions(typical, observed = data_weight_sim_nereo) +
   ggtitle("Weight-at-diameter, typical site")
 
 # A new, unsurveyed site: same curve, wider band
 new_site <- kb_predict_weight_by(fit, new_levels = "sample")
-kb_plot_predictions(new_site, observed = data_weight_hakai_nereo) +
+kb_plot_predictions(new_site, observed = data_weight_sim_nereo) +
   ggtitle("Weight-at-diameter, a new site (wider uncertainty)")
 
 # One curve per site
@@ -197,19 +198,19 @@ priors
 # Prior predictive check: fit from the priors alone (no data) and see whether
 # the assumed curve is even plausible against the observed plants.
 prior_fit <- kb_fit_weight_nereo(
-  data_weight_hakai_nereo,
+  data_weight_sim_nereo,
   priors = priors,
   prior_only = TRUE,
   quiet = TRUE
 )
 kb_predict_weight_by(prior_fit, new_levels = "sample") |>
-  kb_plot_predictions(observed = data_weight_hakai_nereo) +
+  kb_plot_predictions(observed = data_weight_sim_nereo) +
   ggtitle("Prior-implied curve vs observed data")
 
 # Refit with the data and compare: the strong prior pulls the slope away from
 # what the data alone would say, while the other terms barely move.
 fit_custom <- kb_fit_weight_nereo(
-  data_weight_hakai_nereo,
+  data_weight_sim_nereo,
   priors = priors,
   quiet = TRUE
 )

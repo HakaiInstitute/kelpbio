@@ -1,4 +1,4 @@
-# Build fit_weight_hakai_nereo, a slim pre-fit weight model for runnable examples and
+# Build fit_weight_sim_nereo, a slim pre-fit weight model for runnable examples and
 # tests. Fitted to a downsampled data_weight_sim_nereo with reduced chains and
 # draws so the object stays small (the stored log_lik / yrep generated quantities
 # scale with the number of observations). Not for inference. Reproducibility
@@ -7,7 +7,7 @@
 # Requires the compiled package (run `devtools::load_all()` or
 # `devtools::install()` first). Re-run whenever the Stan model or the kb_fit
 # object structure changes. Run from the package root:
-#   Rscript data-raw/fit_weight_hakai_nereo.R
+#   Rscript data-raw/fit_weight_sim_nereo.R
 
 devtools::load_all(quiet = TRUE)
 
@@ -27,7 +27,7 @@ d$site <- droplevels(factor(d$site))
 d$year <- droplevels(factor(d$year))
 rownames(d) <- NULL
 
-fit_weight_hakai_nereo <- kb_fit_weight_nereo(
+fit_weight_sim_nereo <- kb_fit_weight_nereo(
   d,
   chains = 2L,
   niters = 400L,
@@ -37,4 +37,4 @@ fit_weight_hakai_nereo <- kb_fit_weight_nereo(
   seed = 42L
 )
 
-usethis::use_data(fit_weight_hakai_nereo, overwrite = TRUE)
+usethis::use_data(fit_weight_sim_nereo, overwrite = TRUE)

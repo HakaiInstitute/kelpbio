@@ -49,12 +49,12 @@ post-processing) and \code{x} cannot be inferred, the function errors and asks f
 }
 \examples{
 # Allometric curve by site (ribbon):
-kb_predict_weight_by(fit_weight_hakai_nereo, by = "site") |>
+kb_predict_weight_by(fit_weight_sim_nereo, by = "site") |>
   kb_plot_predictions()
 
 # Weight at a reference diameter by site (pointrange, sites on the x-axis):
 kb_predict_weight_by(
-  fit_weight_hakai_nereo,
+  fit_weight_sim_nereo,
   by = "site", diameter = 30, new_levels = "average"
 ) |>
   kb_plot_predictions()

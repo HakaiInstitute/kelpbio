@@ -18,7 +18,7 @@ The named list of prior objects (see \code{\link[=kb_priors_weight_nereo]{kb_pri
 The resolved prior objects used to fit the model.
 }
 \examples{
-prior_summary(fit_weight_hakai_nereo)
+prior_summary(fit_weight_sim_nereo)
 }
 \seealso{
 Other generics: 

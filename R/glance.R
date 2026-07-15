@@ -10,7 +10,7 @@
 #' @family generics
 #' @exportS3Method generics::glance
 #' @examples
-#' glance(fit_weight_hakai_nereo)
+#' glance(fit_weight_sim_nereo)
 glance.kb_fit <- function(x, rhat = 1.05, esr = 0.1, ...) {
   rlang::check_dots_empty()
   s <- x$diagnostics$summary

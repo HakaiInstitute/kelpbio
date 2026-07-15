@@ -16,22 +16,22 @@ library(bayesplot)
 set.seed(42)
 
 # --- bundled data + pre-fit ---------------------------------------------------
-str(data_weight_hakai_nereo)
 str(data_weight_sim_nereo)
-fit_weight_hakai_nereo
+str(data_weight_sim_nereo)
+fit_weight_sim_nereo
 
 # --- kb_check_data_weight_nereo() ---------------------------------------------
-kb_check_data_weight_nereo(data_weight_hakai_nereo)
+kb_check_data_weight_nereo(data_weight_sim_nereo)
 
-bad <- data_weight_hakai_nereo
+bad <- data_weight_sim_nereo
 names(bad)[names(bad) == "diameter"] <- "diam"
 try(kb_check_data_weight_nereo(bad)) # missing column
 
-bad <- data_weight_hakai_nereo
+bad <- data_weight_sim_nereo
 bad$weight[1] <- -1
 try(kb_check_data_weight_nereo(bad)) # not > 0
 
-bad <- data_weight_hakai_nereo
+bad <- data_weight_sim_nereo
 bad$diameter[1] <- NA_real_
 try(kb_check_data_weight_nereo(bad)) # missing value
 
@@ -48,14 +48,14 @@ priors$sd_site <- kb_prior_exponential(rate = 3)
 priors
 
 # --- kb_fit_weight_nereo() ----------------------------------------------------
-fit <- kb_fit_weight_nereo(data_weight_hakai_nereo, chains = 2, niters = 500)
+fit <- kb_fit_weight_nereo(data_weight_sim_nereo, chains = 2, niters = 500)
 # summary - print key model info (see other generics inclduing summary() below)
 fit
 
 # prior_only ignores observed weights; supplied data informs RE dimensions,
 # centering reference, and prior-predictive checks
 fit_prior <- kb_fit_weight_nereo(
-  data_weight_hakai_nereo,
+  data_weight_sim_nereo,
   prior_only = TRUE,
   chains = 2,
   niters = 500,
@@ -64,14 +64,14 @@ fit_prior <- kb_fit_weight_nereo(
 
 # custom priors
 fit_custom <- kb_fit_weight_nereo(
-  data_weight_hakai_nereo,
+  data_weight_sim_nereo,
   priors = priors,
   quiet = TRUE
 )
 
 # pass more technical rstan sampling args through control
 fit_ctrl <- kb_fit_weight_nereo(
-  data_weight_hakai_nereo,
+  data_weight_sim_nereo,
   chains = 1,
   niters = 200,
   quiet = TRUE,
@@ -101,7 +101,12 @@ aliased <- data_weight_sim_nereo |>
       (site == "site4" & year == "2022")
   ) |>
   droplevels()
-fit_aliased <- kb_fit_weight_nereo(aliased, chains = 2, niters = 300, quiet = TRUE)
+fit_aliased <- kb_fit_weight_nereo(
+  aliased,
+  chains = 2,
+  niters = 300,
+  quiet = TRUE
+)
 fit_aliased$meta$site_year_on # TRUE (retained despite non-identifiability)
 
 # custom priors move the slope away from the default-prior posterior
@@ -148,6 +153,7 @@ loo::loo(log_lik(fit))
 # --- fitted / residuals / augment (observed-data diagnostics) -----------------
 head(fitted(fit))
 head(residuals(fit))
+# appends fitted and residuals point estimates
 augment(fit)
 
 augment(fit) |>
@@ -156,7 +162,9 @@ augment(fit) |>
   geom_point(alpha = 0.3)
 
 # --- raw posterior draws (rstantools generics) --------------------------------
+# users may want more low-level access to the draws to do their own diagnostics/derived quants
 nd <- data.frame(diameter = c(20, 40, 60))
+class(posterior_epred(fit))
 dim(posterior_epred(fit))
 dim(posterior_epred(fit, newdata = nd))
 dim(posterior_linpred(fit))
@@ -175,7 +183,8 @@ ppc_dens_overlay(
 ) +
   scale_x_log10() # prior predictive
 
-# --- kb_predict_weight() (new-data verb) + predict() wrapper ------------------
+# --- kb_predict_weight()  + predict() wrapper ------------------
+# expects user to provide new_data, gets predictions row-by-row
 sites <- levels(fit$data$site)
 
 kb_predict_weight(fit)
@@ -186,11 +195,22 @@ kb_predict_weight(
   new_data = tibble(diameter = 40, site = "new_reef"),
   new_levels = "sample"
 )
+# gives users ability to select a representative site(s) to apply to new sites (not existing in fit dataset)
+# this was requested from feedback in workshop
+# these estimates are similar - but not identical because rep._site uses the site effect but draws randomly from site:year interaction
+# (i.e., doesnt use the reference site's 2020 exactly, just a 'typical' year for it)
+
 kb_predict_weight(
-  fit,
-  new_data = tibble(diameter = 40, site = "new_reef"),
+  kelpbio::fit_weight_sim_nereo, # the bundled simulated example fit
+  new_data = tibble(
+    diameter = c(40, 40),
+    site = c("new_reef", sites[1]),
+    year = c(2020, 2020)
+  ),
   representative_site = sites[1]
 )
+
+# tinker with how estimates summarised
 kb_predict_weight(
   fit,
   new_data = nd,
@@ -198,28 +218,48 @@ kb_predict_weight(
   estimate = mean,
   sig_fig = 4
 )
+# fails if rep._site not in existing fit site levels
 try(kb_predict_weight(
   fit,
   new_data = tibble(diameter = 40, site = "new_reef"),
   representative_site = "nope"
 ))
 
+# use generic (wrapper of kb_predict_weight)
+# if new_data not supplied, use fit data
 predict(fit)
+# for new_levels, 'average' zeros out RE instead of sampling from distribution
 predict(fit, new_data = nd, new_levels = "average")
 
-# --- kb_predict_weight_by() (curve verb) --------------------------------------
+# --- kb_predict_weight_by()  --------------------------------------
+# builds a new_data grid based on 'by' grouping (for getting group-level effect estimates and plotting curves by group)
+# 'new_levels' arg dictates behaviour where site/year levels are not in fit data
+#  - 'average' =  zero out RE, 'sample' = draw from RE distributions
+# default is for 'average' site and year (RE zeroed) over diameter sequence spaning observed range
 kb_predict_weight_by(fit)
-kb_predict_weight_by(fit, new_levels = "average")
+# sample from RE dist for wider uncertainty, i.e. for new, unobserved site/year
+kb_predict_weight_by(fit, new_levels = "sample")
 kb_predict_weight_by(fit, by = "site")
 kb_predict_weight_by(fit, by = c("site", "year"))
-kb_predict_weight_by(fit, diameter = seq(10, 80, by = 5))
+kb_predict_weight_by(fit, diameter = c(5, 15, 25))
 try(kb_predict_weight_by(fit, by = "year")) # no year main effect
 
 # --- kb_plot_predictions() / autoplot() ---------------------------------------
 pop <- kb_predict_weight_by(fit, new_levels = "sample")
 kb_plot_predictions(pop)
-kb_plot_predictions(pop, observed = data_weight_hakai_nereo)
+kb_plot_predictions(pop, observed = data_weight_sim_nereo)
 autoplot(pop)
 
-kb_predict_weight_by(fit, by = "site") |> kb_plot_predictions()
-kb_predict_weight(fit, new_data = nd) |> kb_plot_predictions()
+# plot allometric curves for 'typical' year by site
+# grouping from kb_predict function is stored and retrieved by plot function so is aware of how to facet
+# note the default is to cap facets - user can set max_facets or pre-filter (see warning)
+kb_predict_weight_by(fit, by = "site") |>
+  kb_plot_predictions()
+
+# when only one diameter per group, plot function knows to plot pointrange instead of line/ribbon
+kb_predict_weight_by(fit, by = "site", diameter = 30) |>
+  kb_plot_predictions() +
+  coord_flip()
+
+kb_predict_weight(fit) |>
+  kb_plot_predictions()

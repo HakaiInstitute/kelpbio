@@ -64,7 +64,7 @@ reproducible band. The available \code{by} values are \code{NULL} (a single popu
 curve), \code{"site"}, and \code{c("site", "year")}.
 }
 \examples{
-kb_predict_weight_by(fit_weight_hakai_nereo, by = "site")
+kb_predict_weight_by(fit_weight_sim_nereo, by = "site")
 }
 \seealso{
 \code{\link[=kb_predict_weight]{kb_predict_weight()}} for predictions at the rows of a supplied data

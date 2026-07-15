@@ -22,7 +22,7 @@ readable code. Use \code{\link[=as.character]{as.character()}} for the plain str
 Return the Stan source code of the fitted model.
 }
 \examples{
-kb_stancode(fit_weight_hakai_nereo)
+kb_stancode(fit_weight_sim_nereo)
 }
 \seealso{
 Other generics: 

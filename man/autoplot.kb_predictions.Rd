@@ -20,7 +20,7 @@ object: a thin wrapper on \code{\link[=kb_plot_predictions]{kb_plot_predictions(
 prediction data frame (via its stored attributes), never on a fit.
 }
 \examples{
-p <- kb_predict_weight_by(fit_weight_hakai_nereo, by = "site")
+p <- kb_predict_weight_by(fit_weight_sim_nereo, by = "site")
 ggplot2::autoplot(p)
 }
 \seealso{

@@ -19,7 +19,7 @@
 #' @family generics
 #' @exportS3Method rstantools::posterior_predict
 #' @examples
-#' pp <- posterior_predict(fit_weight_hakai_nereo)
+#' pp <- posterior_predict(fit_weight_sim_nereo)
 #' dim(pp)
 posterior_predict.kb_fit_weight <- function(object,
                                             newdata = NULL,

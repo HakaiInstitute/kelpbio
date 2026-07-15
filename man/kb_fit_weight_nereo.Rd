@@ -95,6 +95,6 @@ if (interactive()) {
   tidy(fit)
 }
 # A pre-fit example model ships with the package:
-tidy(fit_weight_hakai_nereo)
+tidy(fit_weight_sim_nereo)
 }
 \concept{model}

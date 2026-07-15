@@ -4,5 +4,5 @@
 weight_fit <- readRDS(testthat::test_path("fixtures", "weight_fit.rds"))
 
 # Small simulated dataset (fixtures/make-sim-data.R) for the fit/check tests, so
-# they stay fast and independent of the real bundled data_weight_hakai_nereo.
+# they stay fast and independent of the bundled datasets.
 sim_weight <- readRDS(testthat::test_path("fixtures", "sim_weight.rds"))

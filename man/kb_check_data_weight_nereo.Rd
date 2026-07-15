@@ -36,9 +36,8 @@ data <- data.frame(
 kb_check_data_weight_nereo(data)
 }
 \seealso{
-Other data: 
-\code{\link{data_weight_hakai_nereo}},
+Other data:
 \code{\link{data_weight_sim_nereo}},
-\code{\link{fit_weight_hakai_nereo}}
+\code{\link{fit_weight_sim_nereo}}
 }
 \concept{data}

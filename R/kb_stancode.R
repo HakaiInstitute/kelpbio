@@ -11,7 +11,7 @@
 #' @export
 #'
 #' @examples
-#' kb_stancode(fit_weight_hakai_nereo)
+#' kb_stancode(fit_weight_sim_nereo)
 kb_stancode <- function(x, ...) {
   UseMethod("kb_stancode")
 }

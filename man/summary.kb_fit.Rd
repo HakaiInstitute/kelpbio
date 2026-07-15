@@ -66,7 +66,7 @@ reports the variance hyperparameters rather than the per-level effects (the
 latter are the \code{tidy()} default).
 }
 \examples{
-summary(fit_weight_hakai_nereo)
+summary(fit_weight_sim_nereo)
 }
 \seealso{
 Other generics: 

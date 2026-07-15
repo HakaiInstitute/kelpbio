@@ -1,6 +1,6 @@
 # Build the small SIMULATED weight dataset used to build the test fixture and to
 # drive the fit/check tests. Kept small and controlled (6 sites x 4 years, one
-# missing cell) and independent of the real bundled data_weight_hakai_nereo, so tests
+# missing cell) and independent of the bundled datasets, so tests
 # stay fast and stable. NOT run during testing.
 #
 # Run from the package root:  Rscript tests/testthat/fixtures/make-sim-data.R

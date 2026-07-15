@@ -21,7 +21,7 @@ A \code{posterior} draws object.
 Extract the raw posterior draws from a fitted model object.
 }
 \examples{
-samples(fit_weight_hakai_nereo)
+samples(fit_weight_sim_nereo)
 }
 \seealso{
 Other generics: 

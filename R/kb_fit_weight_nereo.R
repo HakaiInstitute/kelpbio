@@ -49,7 +49,7 @@
 #'   tidy(fit)
 #' }
 #' # A pre-fit example model ships with the package:
-#' tidy(fit_weight_hakai_nereo)
+#' tidy(fit_weight_sim_nereo)
 kb_fit_weight_nereo <- function(data,
                                 priors = NULL,
                                 prior_only = FALSE,

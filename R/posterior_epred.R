@@ -21,7 +21,7 @@
 #' @seealso [kb_predict_weight()], which summarises these draws.
 #' @exportS3Method rstantools::posterior_epred
 #' @examples
-#' ep <- posterior_epred(fit_weight_hakai_nereo)
+#' ep <- posterior_epred(fit_weight_sim_nereo)
 #' dim(ep)
 posterior_epred.kb_fit_weight <- function(object,
                                           newdata = NULL,

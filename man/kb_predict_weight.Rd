@@ -73,13 +73,13 @@ than a calibrated interval for a genuinely new site.
 }
 \examples{
 new_data <- data.frame(diameter = c(20, 40, 60))
-kb_predict_weight(fit_weight_hakai_nereo, new_data, new_levels = "average")
+kb_predict_weight(fit_weight_sim_nereo, new_data, new_levels = "average")
 
 # Predict a new site as if it behaves like a known reference site:
 new_site <- data.frame(diameter = c(20, 40, 60), site = "new_site")
 kb_predict_weight(
-  fit_weight_hakai_nereo, new_site,
-  representative_site = fit_weight_hakai_nereo$meta$site_levels[1]
+  fit_weight_sim_nereo, new_site,
+  representative_site = fit_weight_sim_nereo$meta$site_levels[1]
 )
 }
 \seealso{

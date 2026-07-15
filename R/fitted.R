@@ -13,7 +13,7 @@
 #'   [posterior_epred()] for the full posterior.
 #' @exportS3Method stats::fitted
 #' @examples
-#' fitted(fit_weight_hakai_nereo)
+#' fitted(fit_weight_sim_nereo)
 fitted.kb_fit_weight <- function(object, ...) {
   rlang::check_dots_empty()
   .chk_kb_fit_weight(object)

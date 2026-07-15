@@ -15,7 +15,7 @@
 #'   at supplied rows.
 #' @exportS3Method generics::augment
 #' @examples
-#' augment(fit_weight_hakai_nereo)
+#' augment(fit_weight_sim_nereo)
 augment.kb_fit_weight <- function(x, ...) {
   rlang::check_dots_empty()
   .chk_kb_fit_weight(x)

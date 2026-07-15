@@ -17,18 +17,16 @@ A data frame with columns:
 data_weight_sim_nereo
 }
 \description{
-A small simulated dataset of sub-bulb diameter and wet weight with the same
-columns as \link{data_weight_hakai_nereo}, for fast tests and runnable examples. It is
-simulated from the weight-model structure, not real survey data, and is not
+A small simulated dataset of sub-bulb diameter and wet weight (columns
+\code{diameter}, \code{weight}, \code{site}, \code{year}), for fast tests and runnable examples. It
+is simulated from the weight-model structure, not real survey data, and is not
 intended for inference. Built by \code{data-raw/data_weight_sim_nereo.R}.
 }
 \seealso{
-\link{data_weight_hakai_nereo} for the real survey data, and
-\link{fit_weight_hakai_nereo} for a fit to this dataset.
+\link{fit_weight_sim_nereo} for a fit to this dataset.
 
-Other data: 
-\code{\link{data_weight_hakai_nereo}},
-\code{\link{fit_weight_hakai_nereo}},
+Other data:
+\code{\link{fit_weight_sim_nereo}},
 \code{\link{kb_check_data_weight_nereo}()}
 }
 \concept{data}

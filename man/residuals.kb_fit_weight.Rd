@@ -23,7 +23,7 @@ The deviance residual is computed per draw, then summarised with the posterior
 median.
 }
 \examples{
-residuals(fit_weight_hakai_nereo)
+residuals(fit_weight_sim_nereo)
 }
 \seealso{
 \code{\link[=fitted]{fitted()}} for fitted values, and \code{\link[=augment]{augment()}}.

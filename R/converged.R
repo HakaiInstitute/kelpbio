@@ -14,7 +14,7 @@
 #' @family generics
 #' @exportS3Method universals::converged
 #' @examples
-#' converged(fit_weight_hakai_nereo)
+#' converged(fit_weight_sim_nereo)
 converged.kb_fit <- function(x, rhat = 1.05, esr = 0.1, ...) {
   rlang::check_dots_empty()
   chk::chk_number(rhat)

@@ -20,7 +20,7 @@ response scale (the posterior median of the expected weight), matching
 \code{\link[=augment]{augment()}}'s \code{fitted} column. For the full posterior, use \code{\link[=posterior_epred]{posterior_epred()}}.
 }
 \examples{
-fitted(fit_weight_hakai_nereo)
+fitted(fit_weight_sim_nereo)
 }
 \seealso{
 \code{\link[=residuals]{residuals()}} for deviance residuals, \code{\link[=augment]{augment()}}, and

@@ -19,7 +19,7 @@
 #' @family generics
 #' @exportS3Method rstantools::posterior_linpred
 #' @examples
-#' lp <- posterior_linpred(fit_weight_hakai_nereo)
+#' lp <- posterior_linpred(fit_weight_sim_nereo)
 #' dim(lp)
 posterior_linpred.kb_fit_weight <- function(object,
                                             transform = FALSE,
