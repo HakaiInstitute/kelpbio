@@ -29,7 +29,7 @@ defaults to match).}
 \code{getOption("mc.cores")} (falling back to \code{chains}), capped at the available
 cores.}
 
-\item{seed}{A whole number passed to \code{\link[rstan:stanmodel-method-sampling]{rstan::sampling()}} to make the fit
+\item{seed}{A whole number passed to \code{\link[rstan:sampling]{rstan::sampling()}} to make the fit
 reproducible, or \code{NULL} (the default). When \code{NULL}, rstan draws its own seed
 from R's RNG, so a preceding \code{set.seed()} also makes the fit reproducible; an
 explicit \code{seed} takes precedence over the RNG state.}

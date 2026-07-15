@@ -60,9 +60,9 @@ kb_predict_weight_by(
   kb_plot_predictions()
 }
 \seealso{
-Other prediction: 
-\code{\link{autoplot.kb_predictions}()},
-\code{\link{kb_predict_weight}()},
-\code{\link{kb_predict_weight_by}()}
+Other prediction:
+\code{\link[=autoplot.kb_predictions]{autoplot.kb_predictions()}},
+\code{\link[=kb_predict_weight]{kb_predict_weight()}},
+\code{\link[=kb_predict_weight_by]{kb_predict_weight_by()}}
 }
 \concept{prediction}

@@ -69,21 +69,21 @@ latter are the \code{tidy()} default).
 summary(fit_weight_sim_nereo)
 }
 \seealso{
-Other generics: 
-\code{\link{augment.kb_fit_weight}()},
-\code{\link{coef.kb_fit_weight}()},
-\code{\link{converged.kb_fit}()},
-\code{\link{fitted.kb_fit_weight}()},
-\code{\link{glance.kb_fit}()},
-\code{\link{kb_stancode}()},
-\code{\link{log_lik.kb_fit_weight}()},
-\code{\link{posterior_epred.kb_fit_weight}()},
-\code{\link{posterior_linpred.kb_fit_weight}()},
-\code{\link{posterior_predict.kb_fit_weight}()},
-\code{\link{predict.kb_fit_weight}()},
-\code{\link{prior_summary.kb_fit}()},
-\code{\link{residuals.kb_fit_weight}()},
-\code{\link{samples}()},
-\code{\link{tidy.kb_fit_weight}()}
+Other generics:
+\code{\link[=augment.kb_fit_weight]{augment.kb_fit_weight()}},
+\code{\link[=coef.kb_fit_weight]{coef.kb_fit_weight()}},
+\code{\link[=converged.kb_fit]{converged.kb_fit()}},
+\code{\link[=fitted.kb_fit_weight]{fitted.kb_fit_weight()}},
+\code{\link[=glance.kb_fit]{glance.kb_fit()}},
+\code{\link[=kb_stancode]{kb_stancode()}},
+\code{\link[=log_lik.kb_fit_weight]{log_lik.kb_fit_weight()}},
+\code{\link[=posterior_epred.kb_fit_weight]{posterior_epred.kb_fit_weight()}},
+\code{\link[=posterior_linpred.kb_fit_weight]{posterior_linpred.kb_fit_weight()}},
+\code{\link[=posterior_predict.kb_fit_weight]{posterior_predict.kb_fit_weight()}},
+\code{\link[=predict.kb_fit_weight]{predict.kb_fit_weight()}},
+\code{\link[=prior_summary.kb_fit]{prior_summary.kb_fit()}},
+\code{\link[=residuals.kb_fit_weight]{residuals.kb_fit_weight()}},
+\code{\link[=samples]{samples()}},
+\code{\link[=tidy.kb_fit_weight]{tidy.kb_fit_weight()}}
 }
 \concept{generics}

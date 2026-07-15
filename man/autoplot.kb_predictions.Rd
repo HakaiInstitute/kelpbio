@@ -24,9 +24,9 @@ p <- kb_predict_weight_by(fit_weight_sim_nereo, by = "site")
 ggplot2::autoplot(p)
 }
 \seealso{
-Other prediction: 
-\code{\link{kb_plot_predictions}()},
-\code{\link{kb_predict_weight}()},
-\code{\link{kb_predict_weight_by}()}
+Other prediction:
+\code{\link[=kb_plot_predictions]{kb_plot_predictions()}},
+\code{\link[=kb_predict_weight]{kb_predict_weight()}},
+\code{\link[=kb_predict_weight_by]{kb_predict_weight_by()}}
 }
 \concept{prediction}

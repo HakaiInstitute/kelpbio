@@ -22,7 +22,7 @@ inference. Built by \code{data-raw/fit_weight_sim_nereo.R}.
 
 Other data:
 \code{\link{data_weight_sim_nereo}},
-\code{\link{kb_check_data_weight_nereo}()}
+\code{\link[=kb_check_data_weight_nereo]{kb_check_data_weight_nereo()}}
 }
 \concept{data}
 \keyword{datasets}

@@ -70,9 +70,9 @@ kb_predict_weight_by(fit_weight_sim_nereo, by = "site")
 \code{\link[=kb_predict_weight]{kb_predict_weight()}} for predictions at the rows of a supplied data
 frame.
 
-Other prediction: 
-\code{\link{autoplot.kb_predictions}()},
-\code{\link{kb_plot_predictions}()},
-\code{\link{kb_predict_weight}()}
+Other prediction:
+\code{\link[=autoplot.kb_predictions]{autoplot.kb_predictions()}},
+\code{\link[=kb_plot_predictions]{kb_plot_predictions()}},
+\code{\link[=kb_predict_weight]{kb_predict_weight()}}
 }
 \concept{prediction}

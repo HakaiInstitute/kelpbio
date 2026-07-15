@@ -86,9 +86,9 @@ kb_predict_weight(
 \code{\link[=kb_predict_weight_by]{kb_predict_weight_by()}} for curves, and \code{\link[=augment]{augment()}} for fitted
 values at the observed data.
 
-Other prediction: 
-\code{\link{autoplot.kb_predictions}()},
-\code{\link{kb_plot_predictions}()},
-\code{\link{kb_predict_weight_by}()}
+Other prediction:
+\code{\link[=autoplot.kb_predictions]{autoplot.kb_predictions()}},
+\code{\link[=kb_plot_predictions]{kb_plot_predictions()}},
+\code{\link[=kb_predict_weight_by]{kb_predict_weight_by()}}
 }
 \concept{prediction}

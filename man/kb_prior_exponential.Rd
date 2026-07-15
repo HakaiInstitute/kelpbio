@@ -21,8 +21,8 @@ deviation (scale) hyperparameters.
 kb_prior_exponential(rate = 1)
 }
 \seealso{
-Other priors: 
-\code{\link{kb_prior_normal}()},
-\code{\link{kb_priors_weight_nereo}()}
+Other priors:
+\code{\link[=kb_prior_normal]{kb_prior_normal()}},
+\code{\link[=kb_priors_weight_nereo]{kb_priors_weight_nereo()}}
 }
 \concept{priors}
