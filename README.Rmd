@@ -105,7 +105,7 @@ kb_predict_weight(fit, new_data, new_levels = "average")
 
 The fitted object exposes the standard `rstantools` generics
 (`posterior_predict()`, `log_lik()`, and others), so it composes directly with
-`bayesplot` and `loo`. See `vignette("kelpbio")` for model checking.
+`bayesplot` and `loo`.
 
 ## Citation
 
