@@ -67,7 +67,10 @@ test_that("estimate reduces each row's draws (custom function, matches posterior
 })
 
 test_that("new_data must have a diameter column", {
-  expect_error(kb_predict_weight(weight_fit, new_data = data.frame(x = 1)))
+  expect_error(
+    kb_predict_weight(weight_fit, new_data = data.frame(x = 1)),
+    "diameter"
+  )
 })
 
 test_that("representative_site borrows a known site's main effects for a new site", {

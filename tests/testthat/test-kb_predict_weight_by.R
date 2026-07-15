@@ -43,6 +43,6 @@ test_that("wider conf_level gives a wider interval", {
 })
 
 test_that("invalid by errors", {
-  expect_error(kb_predict_weight_by(weight_fit, by = "year"))
-  expect_error(kb_predict_weight_by(weight_fit, by = "bogus"))
+  expect_error(kb_predict_weight_by(weight_fit, by = "year"), "not available")
+  expect_error(kb_predict_weight_by(weight_fit, by = "bogus"), "Invalid")
 })

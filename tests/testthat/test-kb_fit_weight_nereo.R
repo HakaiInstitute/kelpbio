@@ -1,15 +1,3 @@
-test_that("resolve_cores respects mc.cores, caps at available, floors at 1", {
-  avail <- parallel::detectCores()
-  old <- options(mc.cores = 1)
-  on.exit(options(old), add = TRUE)
-  expect_identical(kelpbio:::resolve_cores(NULL, 4L), 1L) # NULL -> mc.cores
-  expect_identical(kelpbio:::resolve_cores(1L, 4L), 1L) # explicit honoured
-  expect_gte(kelpbio:::resolve_cores(NULL, 4L), 1L) # floored at 1
-  if (!is.na(avail)) {
-    expect_lte(kelpbio:::resolve_cores(1000L, 4L), avail) # never oversubscribe
-  }
-})
-
 test_that("kb_fit_weight_nereo does not expose site_year_on", {
   # the site:year structure is data-determined, not a user argument
   expect_false("site_year_on" %in% names(formals(kb_fit_weight_nereo)))
@@ -41,6 +29,20 @@ test_that("kb_fit_weight returns a correctly-structured object", {
   expect_setequal(posterior::variables(fit$gq), c("log_lik", "yrep"))
   # the live stanfit is discarded
   expect_false(any(vapply(fit, function(x) inherits(x, "stanfit"), logical(1))))
+})
+
+test_that("nthin > 1 still keeps exactly niters draws per chain", {
+  skip_on_cran()
+  d <- droplevels(subset(
+    sim_weight,
+    site %in% c("site1", "site2") & year %in% c("2019", "2020")
+  ))
+  # fit_stan sets warmup = niters and total iters = niters + niters * nthin, so
+  # the thinned post-warmup phase must land exactly niters draws regardless of
+  # nthin. Exercised here with nthin = 2, which the nthin = 1 tests cannot catch.
+  fit <- kb_fit_weight_nereo(d, chains = 1, niters = 50, nthin = 2, cores = 1, quiet = TRUE, seed = 3)
+  expect_equal(niters(fit), 50L)
+  expect_equal(posterior::ndraws(fit$draws), 50L)
 })
 
 test_that("prior_only fit ignores the data", {

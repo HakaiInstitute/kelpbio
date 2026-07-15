@@ -86,8 +86,9 @@ test_that("a fit without the site_year_on flag defaults to keeping site:year", {
 })
 
 test_that("validate_by_weight enforces the valid by set", {
-  expect_error(kelpbio:::validate_by_weight("year"))
-  expect_error(kelpbio:::validate_by_weight("bogus"))
+  # two distinct rejections: year-alone (no main effect) vs an unknown factor
+  expect_error(kelpbio:::validate_by_weight("year"), "not available")
+  expect_error(kelpbio:::validate_by_weight("bogus"), "Invalid")
   expect_identical(kelpbio:::validate_by_weight(NULL), character(0))
   expect_identical(kelpbio:::validate_by_weight("site"), "site")
   expect_identical(kelpbio:::validate_by_weight(c("site", "year")), c("site", "year"))
