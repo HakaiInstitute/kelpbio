@@ -119,16 +119,17 @@ each row:
 ``` r
 new_data <- data.frame(diameter = c(20, 35, 50, 65, 80))
 
-kb_predict_weight(fit, new_data, new_levels = "average")
+set.seed(1)
+kb_predict_weight(fit, new_data)
 #> <kb_predictions> predictor: diameter | response: weight
 #> # A tibble: 5 × 4
 #>   diameter estimate  lower  upper
 #>      <dbl>    <dbl>  <dbl>  <dbl>
-#> 1       20    0.036 0.0222 0.0599
-#> 2       35    0.151 0.128  0.181 
-#> 3       50    0.376 0.322  0.451 
-#> 4       65    0.736 0.567  0.95  
-#> 5       80    1.26  0.839  1.87
+#> 1       20   0.0362 0.0164 0.0801
+#> 2       35   0.151  0.101  0.247 
+#> 3       50   0.374  0.246  0.607 
+#> 4       65   0.746  0.38   1.36  
+#> 5       80   1.27   0.541  2.63
 ```
 
 The fitted object exposes the standard `rstantools` generics
