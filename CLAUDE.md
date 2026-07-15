@@ -2,6 +2,20 @@
 
 R package for Bayesian kelp biomass estimation. All exported functions use the `kb_` prefix.
 
+## Common Commands
+
+| Task | Command |
+|------|---------|
+| Routine build + QC | `Rscript scripts/build.R` (runs `rstan_config()` → `roxygen2md()` → `styler` → `document()` → `test()`) |
+| Full check (slow) | `KELPBIO_FULL_CHECK=true Rscript scripts/build.R` (adds `R CMD check` + pkgdown, recompiles Stan) |
+| Run all tests | `devtools::test()` |
+| Run one test file | `testthat::test_file("tests/testthat/test-<name>.R")` or `devtools::test_active_file()` |
+| Document | `devtools::document()` |
+
+- **After editing any `inst/stan/*.stan` file**: run `rstantools::rstan_config()` (regenerates `src/stanExports_*` and `R/stanmodels.R`), then `devtools::install()`. `devtools::load_all()`/`test()` compile from the generated C++ but do NOT re-transpile the Stan source, so `.stan` edits are silently missed without `rstan_config()` first.
+- Generated files (`R/stanmodels.R`, `src/stanExports_*`, `src/RcppExports.cpp`) are never hand-edited and are excluded from styling and linting.
+- **Linting** runs in CI via jarl (`.github/workflows/lint-with-jarl.yaml`, config `jarl.toml`); the build script does not lint, so local and CI checks stay in sync.
+
 ## Key Reference Locations
 
 | Resource | Path |
