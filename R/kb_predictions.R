@@ -19,17 +19,3 @@ new_kb_predictions <- function(x, predictor, group_vars, response,
     kb_curve = curve
   )
 }
-
-#' @export
-print.kb_predictions <- function(x, ...) {
-  gv <- attr(x, "kb_group_vars")
-  cat(
-    "<kb_predictions> predictor: ", attr(x, "kb_predictor"),
-    " | response: ", attr(x, "kb_response"),
-    if (length(gv)) paste0(" | by: ", paste(gv, collapse = ", ")) else "",
-    "\n",
-    sep = ""
-  )
-  print(tibble::as_tibble(x), ...)
-  invisible(x)
-}

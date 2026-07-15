@@ -38,7 +38,8 @@ posterior_predict.kb_fit_weight <- function(object,
   res <- weight_data_linpred(object, newdata, new_levels, representative_site)
   lp <- posterior::draws_of(res$linpred) # D x N
   sweight <- as.vector(posterior::draws_of(object$draws$sWeight)) # length D
-  # student_t(nu, mu, sigma) = mu + sigma * t_nu; nu = 4 (fixed in weight_nereo.stan).
-  noise <- matrix(stats::rt(length(lp), df = 4), nrow = nrow(lp))
+  # student_t(nu, mu, sigma) = mu + sigma * t_nu; nu is fixed in weight_nereo.stan
+  # and stored in meta so this path cannot drift from the model.
+  noise <- matrix(stats::rt(length(lp), df = object$meta$nu), nrow = nrow(lp))
   exp(lp + sweight * noise)
 }
