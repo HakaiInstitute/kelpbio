@@ -14,10 +14,6 @@
 #'   defaults; unspecified entries keep their defaults.
 #' @param prior_only A flag specifying whether to sample from the priors only
 #'   (the likelihood is switched off), for prior predictive checks.
-#' @param site_year_on A flag specifying whether to include the site:year random
-#'   effect. When `FALSE` the term is set to zero (structurally dropped),
-#'   collapsing the model to site intercept and site slope effects. Defaults to
-#'   `TRUE`.
 #' @param chains A whole number of MCMC chains.
 #' @param niters A whole number of saved post-warmup draws per chain (warmup
 #'   defaults to match).

@@ -8,7 +8,6 @@ kb_fit_weight_nereo(
   data,
   priors = NULL,
   prior_only = FALSE,
-  site_year_on = TRUE,
   chains = 4L,
   niters = 1000L,
   nthin = 1L,
@@ -27,11 +26,6 @@ defaults; unspecified entries keep their defaults.}
 
 \item{prior_only}{A flag specifying whether to sample from the priors only
 (the likelihood is switched off), for prior predictive checks.}
-
-\item{site_year_on}{A flag specifying whether to include the site:year random
-effect. When \code{FALSE} the term is set to zero (structurally dropped),
-collapsing the model to site intercept and site slope effects. Defaults to
-\code{TRUE}.}
 
 \item{chains}{A whole number of MCMC chains.}
 
@@ -88,6 +82,12 @@ divergences). Override it, or set any other sampler control, by passing a
 \code{control} list through \code{...}, e.g.
 \code{kb_fit_weight_nereo(data, control = list(adapt_delta = 0.99))}; only the
 entries supplied are changed.
+
+The site:year random effect is determined from the data rather than chosen: it
+is included whenever the data span more than one year, and omitted when they do
+not (the interaction is then confounded with the site effect). When years are
+present but no site was sampled in more than one year, the effect is retained
+but the site vs site:year split is not identifiable, and a warning is issued.
 }
 \examples{
 if (interactive()) {

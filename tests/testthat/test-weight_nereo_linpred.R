@@ -46,6 +46,45 @@ test_that("sample widens vs average when a factor is omitted", {
   expect_true(all(sd_smp >= sd_avg))
 })
 
+test_that("a dropped site:year effect contributes nothing to the linear predictor", {
+  on <- weight_fit
+  on$meta$site_year_on <- TRUE
+  off <- weight_fit
+  off$meta$site_year_on <- FALSE
+  s <- weight_fit$meta$site_levels[1]
+  y <- weight_fit$meta$year_levels[1]
+  grid <- data.frame(diameter = 40, site = s, year = y)
+
+  lp_on <- kelpbio:::.weight_nereo_linpred(on, grid, "average")
+  lp_off <- kelpbio:::.weight_nereo_linpred(off, grid, "average")
+  diff <- posterior::draws_of(lp_on) - posterior::draws_of(lp_off)
+
+  # removing the term shifts the mean, so the two are not identical
+  expect_false(isTRUE(all.equal(as.numeric(diff), rep(0, length(diff)))))
+  # and the removed contribution is exactly the conditioned bSiteYear[s, y] draws
+  si <- match(s, weight_fit$meta$site_levels)
+  yi <- match(y, weight_fit$meta$year_levels)
+  bsy <- posterior::draws_of(weight_fit$draws$bSiteYear)[, si, yi]
+  expect_equal(as.numeric(diff), as.numeric(bsy))
+})
+
+test_that("a fit without the site_year_on flag defaults to keeping site:year", {
+  # legacy fits (built before meta$site_year_on was recorded) must not lose the
+  # effect: a missing flag is treated as on, matching an explicit TRUE.
+  legacy <- weight_fit
+  legacy$meta$site_year_on <- NULL
+  on <- weight_fit
+  on$meta$site_year_on <- TRUE
+  grid <- data.frame(
+    diameter = 40,
+    site = weight_fit$meta$site_levels[1],
+    year = weight_fit$meta$year_levels[1]
+  )
+  lp_legacy <- posterior::draws_of(kelpbio:::.weight_nereo_linpred(legacy, grid, "average"))
+  lp_on <- posterior::draws_of(kelpbio:::.weight_nereo_linpred(on, grid, "average"))
+  expect_equal(as.numeric(lp_legacy), as.numeric(lp_on))
+})
+
 test_that("validate_by_weight enforces the valid by set", {
   expect_error(kelpbio:::validate_by_weight("year"))
   expect_error(kelpbio:::validate_by_weight("bogus"))

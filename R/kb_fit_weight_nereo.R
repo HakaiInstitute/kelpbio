@@ -29,6 +29,12 @@
 #' `kb_fit_weight_nereo(data, control = list(adapt_delta = 0.99))`; only the
 #' entries supplied are changed.
 #'
+#' The site:year random effect is determined from the data rather than chosen: it
+#' is included whenever the data span more than one year, and omitted when they do
+#' not (the interaction is then confounded with the site effect). When years are
+#' present but no site was sampled in more than one year, the effect is retained
+#' but the site vs site:year split is not identifiable, and a warning is issued.
+#'
 #' @inheritParams params
 #' @param ... Additional arguments passed to [rstan::sampling()], including a
 #'   `control` list (merged over the `adapt_delta = 0.95` default).
@@ -47,7 +53,6 @@
 kb_fit_weight_nereo <- function(data,
                                 priors = NULL,
                                 prior_only = FALSE,
-                                site_year_on = TRUE,
                                 chains = 4L,
                                 niters = 1000L,
                                 nthin = 1L,
@@ -59,12 +64,15 @@ kb_fit_weight_nereo <- function(data,
     prior_only = prior_only, chains = chains, niters = niters,
     nthin = nthin, cores = cores, seed = seed, quiet = quiet
   )
-  chk::chk_flag(site_year_on)
 
   kb_check_data_weight_nereo(data)
+  # The site:year effect is determined from the data, not chosen by the user.
+  site_year <- site_year_structure(data)
+  notify_site_year(site_year, quiet = quiet)
+
   priors <- resolve_priors(priors, kb_priors_weight_nereo())
   stan_data <- assemble_weight_nereo_data(
-    data, priors, prior_only = prior_only, site_year_on = site_year_on
+    data, priors, prior_only = prior_only, site_year_on = site_year$on
   )
 
   core <- fit_stan(
@@ -95,7 +103,7 @@ kb_fit_weight_nereo <- function(data,
     meta_extra = list(
       # Shared by the Stan fit and R-side predictions so both center identically.
       diameter_ref = weight_diameter_ref(data$diameter),
-      site_year_on = site_year_on,
+      site_year_on = site_year$on,
       nu = 4
     )
   )

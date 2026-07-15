@@ -24,7 +24,15 @@
 
   re_site <- resolve_re1(d$bSite, si, new_levels, d$sSite, rep_idx)
   re_slope <- resolve_re1(d$bSiteDiameter, si, new_levels, d$sSiteDiameter, rep_idx)
-  re_sy <- resolve_re2(d$bSiteYear, si, yi, new_levels, d$sSiteYear)
+  # When the fit omitted the site:year effect its draws are prior-only noise, so
+  # predictions must add nothing rather than reintroduce spurious variation. A
+  # missing flag (fits built before it was recorded) defaults to on, since those
+  # fits always included the effect; only an explicit FALSE disables it.
+  re_sy <- if (isFALSE(fit$meta$site_year_on)) {
+    0
+  } else {
+    resolve_re2(d$bSiteYear, si, yi, new_levels, d$sSiteYear)
+  }
 
   d$bWeight + d$bDiameter * log_dc + d$bDiameter2 * log_dc^2 +
     re_site + re_slope * log_dc + re_sy
