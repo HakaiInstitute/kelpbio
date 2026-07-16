@@ -11,10 +11,12 @@ R package for Bayesian kelp biomass estimation. All exported functions use the `
 | Run all tests | `devtools::test()` |
 | Run one test file | `testthat::test_file("tests/testthat/test-<name>.R")` or `devtools::test_active_file()` |
 | Document | `devtools::document()` |
+| Regenerate architecture HTML | `quarto render decisions/architecture.md --to html --embed-resources` (needs Quarto; RStudio bundles it) |
 
 - **After editing any `inst/stan/*.stan` file**: run `rstantools::rstan_config()` (regenerates `src/stanExports_*` and `R/stanmodels.R`), then `devtools::install()`. `devtools::load_all()`/`test()` compile from the generated C++ but do NOT re-transpile the Stan source, so `.stan` edits are silently missed without `rstan_config()` first.
 - Generated files (`R/stanmodels.R`, `src/stanExports_*`, `src/RcppExports.cpp`) are never hand-edited and are excluded from styling and linting.
 - **Linting** runs in CI via jarl (`.github/workflows/lint-with-jarl.yaml`, config `jarl.toml`); the build script does not lint, so local and CI checks stay in sync.
+- `decisions/architecture.html` is a gitignored local render of `architecture.md` (self-contained, via the command above); regenerate it after editing the doc. It is a local preview only, not a committed artifact.
 
 ## Key Reference Locations
 
