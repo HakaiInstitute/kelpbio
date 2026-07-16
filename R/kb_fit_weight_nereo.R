@@ -1,8 +1,7 @@
-#' Fit the Nereocystis Weight Model
+#' Fit a Nereocystis Weight Model
 #'
-#' Fit the full allometric weight model for *Nereocystis luetkeana* (quadratic
-#' log-diameter mean with site intercept, site slope, and site:year random
-#' effects, Student-t likelihood) to weight data via Stan.
+#' Fit an allometric weight model for *Nereocystis luetkeana*  weight and
+#' sub-bulb diameter observations via Stan.
 #'
 #' @details
 #' `niters` is the number of saved post-warmup draws per chain; warmup defaults
@@ -52,19 +51,26 @@
 #' }
 #' # A pre-fit example model ships with the package:
 #' tidy(fit_weight_sim_nereo)
-kb_fit_weight_nereo <- function(data,
-                                priors = NULL,
-                                ...,
-                                prior_only = FALSE,
-                                chains = 4L,
-                                niters = 1000L,
-                                nthin = 1L,
-                                cores = NULL,
-                                seed = NULL,
-                                quiet = FALSE) {
+kb_fit_weight_nereo <- function(
+  data,
+  priors = NULL,
+  ...,
+  prior_only = FALSE,
+  chains = 4L,
+  niters = 1000L,
+  nthin = 1L,
+  cores = NULL,
+  seed = NULL,
+  quiet = FALSE
+) {
   .chk_sampler_args(
-    prior_only = prior_only, chains = chains, niters = niters,
-    nthin = nthin, cores = cores, seed = seed, quiet = quiet
+    prior_only = prior_only,
+    chains = chains,
+    niters = niters,
+    nthin = nthin,
+    cores = cores,
+    seed = seed,
+    quiet = quiet
   )
 
   kb_check_data_weight_nereo(data)
@@ -74,17 +80,26 @@ kb_fit_weight_nereo <- function(data,
 
   priors <- resolve_priors(priors, kb_priors_weight_nereo())
   stan_data <- assemble_weight_nereo_data(
-    data, priors,
-    prior_only = prior_only, site_year_on = site_year$on
+    data,
+    priors,
+    prior_only = prior_only,
+    site_year_on = site_year$on
   )
 
   core <- fit_stan(
     stanmodels$weight_nereo,
     stan_data,
     param_vars = c(
-      "bWeight", "bDiameter", "bDiameter2",
-      "sSite", "sSiteDiameter", "sSiteYear", "sWeight",
-      "bSite", "bSiteDiameter", "bSiteYear"
+      "bWeight",
+      "bDiameter",
+      "bDiameter2",
+      "sSite",
+      "sSiteDiameter",
+      "sSiteYear",
+      "sWeight",
+      "bSite",
+      "bSiteDiameter",
+      "bSiteYear"
     ),
     gq_vars = if (nrow(data) > 0L) c("log_lik", "yrep") else NULL,
     chains = chains,
@@ -114,8 +129,15 @@ kb_fit_weight_nereo <- function(data,
 
 # The S3 class is model-level (kb_fit_weight); species lives in meta$species and
 # species-specific metadata enters via meta_extra.
-new_kb_fit_weight <- function(core, data, priors, species, prior_only, nthin,
-                              meta_extra = list()) {
+new_kb_fit_weight <- function(
+  core,
+  data,
+  priors,
+  species,
+  prior_only,
+  nthin,
+  meta_extra = list()
+) {
   meta <- c(
     list(
       species = species,

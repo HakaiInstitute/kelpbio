@@ -1,8 +1,7 @@
 #' Augment Model Data
 #'
-#' Append the [fitted()] values and deviance [residuals()]
-#' to the input data. The columns come straight from the
-#' `fitted()` and `residuals()` methods, so they cannot diverge from them.
+#' Append the [fitted()] and deviance [residuals()] values
+#' to the input data. Values are the point etsimate (median) of the posterior distributions.
 #'
 #' @param x A `kb_fit` object.
 #' @param ... Unused.

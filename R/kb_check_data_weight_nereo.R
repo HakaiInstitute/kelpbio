@@ -1,8 +1,7 @@
-#' Validate Nereocystis Weight Model Input Data
+#' Validate Nereocystis Weight Model Data
 #'
 #' Check that `data` contains the columns required to fit the *Nereocystis
-#' luetkeana* weight model, with appropriate types and values, erroring if it
-#' does not.
+#' luetkeana* weight model, with appropriate types and values.
 #'
 #' Required columns: numeric `diameter` (> 0), numeric `weight` (> 0), and factor
 #' or character `site` and `year`, with no missing values.
@@ -14,7 +13,7 @@
 #' @inheritParams params
 #' @param x_name A string naming `data` in error messages.
 #'
-#' @return `data`, invisibly; called for its side effect of validating `data`.
+#' @return `data`, invisibly.
 #' @family data
 #' @export
 #'

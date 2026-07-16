@@ -2,7 +2,7 @@
 % Please edit documentation in R/augment.R
 \name{augment.kb_fit}
 \alias{augment.kb_fit}
-\title{Augment Model Data with Fitted Values}
+\title{Augment Model Data}
 \usage{
 \method{augment}{kb_fit}(x, ...)
 }
@@ -16,9 +16,8 @@ The input data with added columns \code{fitted} (response-scale fitted
 value) and \code{residual} (deviance residual).
 }
 \description{
-The input data with the \code{\link[=fitted]{fitted()}} values and deviance \code{\link[=residuals]{residuals()}}
-appended, for residual diagnostics. The columns come straight from the
-\code{fitted()} and \code{residuals()} methods, so they cannot diverge from them.
+Append the \code{\link[=fitted]{fitted()}} and deviance \code{\link[=residuals]{residuals()}} values
+to the input data. Values are the point etsimate (median) of the posterior distributions.
 }
 \examples{
 augment(fit_weight_sim_nereo)

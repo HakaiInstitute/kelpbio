@@ -2,7 +2,7 @@
 % Please edit documentation in R/kb_check_data_weight_nereo.R
 \name{kb_check_data_weight_nereo}
 \alias{kb_check_data_weight_nereo}
-\title{Validate Nereocystis Weight Model Input Data}
+\title{Validate Nereocystis Weight Model Data}
 \usage{
 kb_check_data_weight_nereo(data, x_name = deparse(substitute(data)))
 }
@@ -13,12 +13,11 @@ kb_check_data_weight_nereo(data, x_name = deparse(substitute(data)))
 \item{x_name}{A string naming \code{data} in error messages.}
 }
 \value{
-\code{data}, invisibly; called for its side effect of validating \code{data}.
+\code{data}, invisibly.
 }
 \description{
 Check that \code{data} contains the columns required to fit the \emph{Nereocystis
-luetkeana} weight model, with appropriate types and values, erroring if it
-does not.
+luetkeana} weight model, with appropriate types and values.
 }
 \details{
 Required columns: numeric \code{diameter} (> 0), numeric \code{weight} (> 0), and factor

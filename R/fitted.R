@@ -1,7 +1,7 @@
 #' Fitted Weights
 #'
-#' Posterior point estimates of the expected weight at each observed row, on the
-#' response scale (the posterior median of the expected weight), matching
+#' Posterior point estimates (median) of the expected weight at each observed row, on the
+#' response scale, matching
 #' [augment()]'s `fitted` column. For the full posterior, use [posterior_epred()].
 #'
 #' @param object A `kb_fit_weight` object.

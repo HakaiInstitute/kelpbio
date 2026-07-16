@@ -1,6 +1,6 @@
-#' Glance at a Model Fit
+#' Model Fit Diagnostic Summary
 #'
-#' One-row summary of a model fit with a convergence verdict.
+#' One-row summary of a model fit with convergence diagnostics.
 #'
 #' @inheritParams converged.kb_fit
 #'
