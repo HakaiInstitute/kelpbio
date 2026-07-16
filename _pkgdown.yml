@@ -23,13 +23,13 @@ reference:
   desc: "Validate and explore input data."
   contents:
     - kb_check_data_weight_nereo
-    - data_weight_hakai_nereo
     - data_weight_sim_nereo
-    - fit_weight_hakai_nereo
+    - fit_weight_sim_nereo
 - title: "Predictions and Plotting"
   desc: "Predict and visualise model output."
   contents:
     - kb_predict_weight
+    - kb_predict_weight_by
     - kb_plot_predictions
 - title: "Model Summaries and Diagnostics"
   desc: "Summarise fits, extract coefficients and draws, and assess convergence."
