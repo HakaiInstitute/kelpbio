@@ -15,11 +15,13 @@ kb_stancode(fit, ...)
 \item{...}{Unused.}
 }
 \value{
-A \code{kb_stancode} object: the Stan source string, which prints as
-readable code. Use \code{\link[=as.character]{as.character()}} for the plain string.
+A \code{kb_stancode} object: the comment-stripped Stan source string, which
+prints as readable code. Use \code{\link[=as.character]{as.character()}} for the plain string.
 }
 \description{
-The Stan source code of the fitted model.
+The Stan source code of the fitted model, with comments stripped for a clean
+read. The raw source (comments included) is stored on the fit in
+\code{fit$meta$stancode}.
 }
 \examples{
 kb_stancode(fit_weight_sim_nereo)
