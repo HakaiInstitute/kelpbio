@@ -58,12 +58,12 @@ head(data_weight_sim_nereo)
 #> # A tibble: 6 × 4
 #>   diameter weight site  year 
 #>      <dbl>  <dbl> <fct> <fct>
-#> 1     38.7  0.255 site1 2019 
-#> 2     52.7  0.264 site1 2019 
-#> 3     37.4  0.245 site1 2019 
-#> 4     46.8  0.273 site1 2019 
-#> 5     31.5  0.122 site1 2019 
-#> 6     61.4  0.831 site1 2019
+#> 1     53.8  0.473 site1 2019 
+#> 2     38.2  0.145 site1 2019 
+#> 3     25.2  0.051 site1 2019 
+#> 4     54.5  0.325 site1 2019 
+#> 5     25.6  0.045 site1 2019 
+#> 6     49.5  0.318 site1 2019
 ```
 
 Fit the model with `kb_fit_weight_nereo()`:
@@ -87,19 +87,19 @@ glance(fit)
 #> # A tibble: 1 × 8
 #>       n     K nchains niters nthin   ess  rhat converged
 #>   <int> <int>   <int>  <dbl> <int> <dbl> <dbl> <lgl>    
-#> 1    46    10       2    400     1  197.  1.01 TRUE
+#> 1   234    10       2    400     1  223.  1.02 TRUE
 
 tidy(fit)
 #> # A tibble: 7 × 4
-#>   term          estimate    lower  upper
-#>   <chr>            <dbl>    <dbl>  <dbl>
-#> 1 bWeight        -1.48   -1.62    -1.3  
-#> 2 bDiameter       2.56    2.14     2.97 
-#> 3 bDiameter2     -0.0132 -0.67     0.713
-#> 4 sSite           0.107   0.00744  0.354
-#> 5 sSiteDiameter   0.225   0.00777  0.871
-#> 6 sSiteYear       0.0911  0.00611  0.227
-#> 7 sWeight         0.209   0.152    0.295
+#>   term          estimate   lower  upper
+#>   <chr>            <dbl>   <dbl>  <dbl>
+#> 1 bWeight        -1.43   -1.62   -1.27 
+#> 2 bDiameter       2.51    2.34    2.69 
+#> 3 bDiameter2      0.0897 -0.093   0.289
+#> 4 sSite           0.229   0.137   0.489
+#> 5 sSiteDiameter   0.211   0.0723  0.451
+#> 6 sSiteYear       0.146   0.102   0.215
+#> 7 sWeight         0.164   0.145   0.189
 ```
 
 Predict the weight-diameter curve for each site with
@@ -117,19 +117,19 @@ table with a point estimate and `conf_level` compatibility limits for
 each row:
 
 ``` r
-new_data <- data.frame(diameter = c(20, 35, 50, 65, 80))
+new_data <- data.frame(diameter = c(20, 35, 50, 65, 80), site = "site1")
 
 set.seed(1)
 kb_predict_weight(fit, new_data)
-#> <kb_predictions> predictor: diameter | response: weight
-#> # A tibble: 5 × 4
-#>   diameter estimate  lower  upper
-#>      <dbl>    <dbl>  <dbl>  <dbl>
-#> 1       20   0.0362 0.0164 0.0801
-#> 2       35   0.151  0.101  0.247 
-#> 3       50   0.374  0.246  0.607 
-#> 4       65   0.746  0.38   1.36  
-#> 5       80   1.27   0.541  2.63
+#> <kb_predictions> predictor: diameter | response: weight | by: site
+#> # A tibble: 5 × 5
+#>   diameter site  estimate  lower  upper
+#>      <dbl> <chr>    <dbl>  <dbl>  <dbl>
+#> 1       20 site1   0.0318 0.0218 0.0461
+#> 2       35 site1   0.131  0.092  0.19  
+#> 3       50 site1   0.333  0.237  0.47  
+#> 4       65 site1   0.681  0.468  0.966 
+#> 5       80 site1   1.17   0.825  1.72
 ```
 
 The fitted object exposes the standard `rstantools` generics
@@ -138,7 +138,27 @@ directly with `bayesplot` and `loo`.
 
 ## Citation
 
-<!-- Citation guidance to follow once the `kb_` API is available. -->
+If you use kelpbio in your work, please cite it. Use `citation()` to get
+a formatted citation and BibTeX entry:
+
+``` r
+citation("kelpbio")
+#> To cite kelpbio in publications use:
+#> 
+#>   Dalgarno S (2026). _kelpbio: Bayesian Kelp Biomass Estimation_. R
+#>   package version 0.0.0.9000,
+#>   <https://github.com/HakaiInstitute/kelpbio>.
+#> 
+#> A BibTeX entry for LaTeX users is
+#> 
+#>   @Manual{,
+#>     title = {kelpbio: Bayesian Kelp Biomass Estimation},
+#>     author = {Seb Dalgarno},
+#>     year = {2026},
+#>     note = {R package version 0.0.0.9000},
+#>     url = {https://github.com/HakaiInstitute/kelpbio},
+#>   }
+```
 
 ## Licensing
 

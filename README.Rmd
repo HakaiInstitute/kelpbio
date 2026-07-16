@@ -98,7 +98,7 @@ Predict weight at new diameters with `kb_predict_weight()`. It returns a table
 with a point estimate and `conf_level` compatibility limits for each row:
 
 ```{r predict}
-new_data <- data.frame(diameter = c(20, 35, 50, 65, 80))
+new_data <- data.frame(diameter = c(20, 35, 50, 65, 80), site = "site1")
 
 set.seed(1)
 kb_predict_weight(fit, new_data)
@@ -110,7 +110,12 @@ The fitted object exposes the standard `rstantools` generics
 
 ## Citation
 
-<!-- Citation guidance to follow once the `kb_` API is available. -->
+If you use kelpbio in your work, please cite it. Use `citation()` to get a
+formatted citation and BibTeX entry:
+
+```{r citation}
+citation("kelpbio")
+```
 
 ## Licensing
 
