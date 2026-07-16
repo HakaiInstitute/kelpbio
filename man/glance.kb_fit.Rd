@@ -2,7 +2,7 @@
 % Please edit documentation in R/glance.R
 \name{glance.kb_fit}
 \alias{glance.kb_fit}
-\title{Glance at a Model Fit}
+\title{Model Fit Diagnostic Summary}
 \usage{
 \method{glance}{kb_fit}(x, ..., rhat = 1.05, esr = 0.1)
 }
@@ -22,7 +22,7 @@ A one-row tibble with \code{n}, \code{K}, \code{nchains}, \code{niters}, \code{n
 \code{converged}.
 }
 \description{
-One-row summary of a model fit with a convergence verdict.
+One-row summary of a model fit with convergence diagnostics.
 }
 \examples{
 glance(fit_weight_sim_nereo)

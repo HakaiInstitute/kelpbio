@@ -32,8 +32,7 @@ A \code{ggplot} object.
 }
 \description{
 Render a \code{ggplot} from a \code{kb_predictions} object (the output of a
-\verb{kb_predict_*()} function). It operates on prediction data frames, never on a
-fit object.
+\verb{kb_predict_*()} function).
 }
 \details{
 \code{x} defaults to \code{NULL} and is inferred from the prediction's metadata (the
@@ -54,12 +53,13 @@ post-processing) and \code{x} cannot be inferred, the function errors and asks f
 kb_predict_weight_by(fit_weight_sim_nereo, by = "site") |>
   kb_plot_predictions()
 
-# Weight at a reference diameter by site (pointrange, sites on the x-axis):
+# Weight at a reference diameter by site (pointrange, sites on the y-axis):
 kb_predict_weight_by(
   fit_weight_sim_nereo,
   by = "site", diameter = 30, new_levels = "average"
 ) |>
-  kb_plot_predictions()
+  kb_plot_predictions() +
+  coord_flip()
 }
 \seealso{
 Other prediction:

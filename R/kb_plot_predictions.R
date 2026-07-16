@@ -1,8 +1,7 @@
 #' Plot Model Predictions
 #'
 #' Render a `ggplot` from a `kb_predictions` object (the output of a
-#' `kb_predict_*()` function). It operates on prediction data frames, never on a
-#' fit object.
+#' `kb_predict_*()` function).
 #'
 #' @details
 #' `x` defaults to `NULL` and is inferred from the prediction's metadata (the
@@ -37,17 +36,20 @@
 #' kb_predict_weight_by(fit_weight_sim_nereo, by = "site") |>
 #'   kb_plot_predictions()
 #'
-#' # Weight at a reference diameter by site (pointrange, sites on the x-axis):
+#' # Weight at a reference diameter by site (pointrange, sites on the y-axis):
 #' kb_predict_weight_by(
 #'   fit_weight_sim_nereo,
 #'   by = "site", diameter = 30, new_levels = "average"
 #' ) |>
-#'   kb_plot_predictions()
-kb_plot_predictions <- function(predictions,
-                                ...,
-                                x = NULL,
-                                observed = NULL,
-                                max_facets = 12L) {
+#'   kb_plot_predictions() +
+#'   coord_flip()
+kb_plot_predictions <- function(
+  predictions,
+  ...,
+  x = NULL,
+  observed = NULL,
+  max_facets = 12L
+) {
   rlang::check_dots_empty()
   if (!is.null(observed)) {
     chk::chk_data(observed)
@@ -58,10 +60,14 @@ kb_plot_predictions <- function(predictions,
     chk::chk_whole_number(max_facets)
   }
   if (!is.data.frame(predictions)) {
-    cli::cli_abort("{.arg predictions} must be a {.cls kb_predictions} data frame.")
+    cli::cli_abort(
+      "{.arg predictions} must be a {.cls kb_predictions} data frame."
+    )
   }
   if (!all(c("estimate", "lower", "upper") %in% names(predictions))) {
-    cli::cli_abort("{.arg predictions} must have {.field estimate}, {.field lower}, and {.field upper} columns.")
+    cli::cli_abort(
+      "{.arg predictions} must have {.field estimate}, {.field lower}, and {.field upper} columns."
+    )
   }
 
   predictor <- attr(predictions, "kb_predictor")
@@ -70,9 +76,14 @@ kb_plot_predictions <- function(predictions,
 
   # A ribbon needs an ordered, generated grid over a varying predictor; supplied
   # rows and held/absent predictors render as grouped points instead.
-  predictor_varies <- !is.null(predictor) && predictor %in% names(predictions) &&
+  predictor_varies <- !is.null(predictor) &&
+    predictor %in% names(predictions) &&
     length(unique(predictions[[predictor]])) > 1
-  inferred <- if (predictor_varies) predictor else group_vars[length(group_vars)]
+  inferred <- if (predictor_varies) {
+    predictor
+  } else {
+    group_vars[length(group_vars)]
+  }
   # group_vars[length(0)] is character(0); fall through to NULL so the guard
   # below raises the helpful "supply x" error rather than a cryptic one.
   x <- x %||% if (length(inferred)) inferred else NULL
@@ -94,7 +105,11 @@ kb_plot_predictions <- function(predictions,
       ))
       predictions <- predictions[keys %in% keep, , drop = FALSE]
       if (!is.null(observed) && all(facet %in% names(observed))) {
-        observed <- observed[do.call(paste, c(observed[facet], sep = "\r")) %in% keep, , drop = FALSE]
+        observed <- observed[
+          do.call(paste, c(observed[facet], sep = "\r")) %in% keep,
+          ,
+          drop = FALSE
+        ]
       }
     }
   }
@@ -106,8 +121,11 @@ kb_plot_predictions <- function(predictions,
     ))
   }
   # Ribbon only for a generated curve over the varying predictor; else pointrange.
-  style <- if (isTRUE(attr(predictions, "kb_curve")) &&
-    identical(x, predictor) && predictor_varies) {
+  style <- if (
+    isTRUE(attr(predictions, "kb_curve")) &&
+      identical(x, predictor) &&
+      predictor_varies
+  ) {
     "ribbon"
   } else {
     "pointrange"
@@ -135,19 +153,31 @@ kb_plot_predictions <- function(predictions,
   }
   if (!is.null(observed)) {
     if (is.null(predictor) || is.null(response)) {
-      cli::cli_abort("An {.arg observed} overlay needs predictor/response metadata on {.arg predictions}.")
+      cli::cli_abort(
+        "An {.arg observed} overlay needs predictor/response metadata on {.arg predictions}."
+      )
     }
-    gg <- gg + ggplot2::geom_point(
-      data = observed,
-      mapping = ggplot2::aes(x = .data[[predictor]], y = .data[[response]]),
-      inherit.aes = FALSE, alpha = 0.3
-    )
+    gg <- gg +
+      ggplot2::geom_point(
+        data = observed,
+        mapping = ggplot2::aes(x = .data[[predictor]], y = .data[[response]]),
+        inherit.aes = FALSE,
+        alpha = 0.3
+      )
   }
-  x_units <- if (identical(x, predictor)) attr(predictions, "kb_predictor_units") else NA_character_
-  gg + ggplot2::labs(
-    x = kb_axis_label(x, x_units),
-    y = kb_axis_label(response %||% "estimate", attr(predictions, "kb_response_units"))
-  )
+  x_units <- if (identical(x, predictor)) {
+    attr(predictions, "kb_predictor_units")
+  } else {
+    NA_character_
+  }
+  gg +
+    ggplot2::labs(
+      x = kb_axis_label(x, x_units),
+      y = kb_axis_label(
+        response %||% "estimate",
+        attr(predictions, "kb_response_units")
+      )
+    )
 }
 
 # Publication-ready axis title for a prediction column: a descriptive label for
@@ -155,7 +185,8 @@ kb_plot_predictions <- function(predictions,
 # the weight model leaves them unset (units are the user's choice), so labels are
 # unit-free. Unrecognised columns fall back to their name (sentence-cased).
 kb_axis_label <- function(name, units = NA_character_) {
-  base <- switch(name,
+  base <- switch(
+    name,
     diameter = "Sub-bulb diameter",
     weight = "Wet weight",
     site = "Site",

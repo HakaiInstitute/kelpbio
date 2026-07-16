@@ -1,14 +1,19 @@
 #' Fit a Nereocystis Weight Model
 #'
-#' Fit an allometric weight model for *Nereocystis luetkeana*  weight and
-#' sub-bulb diameter observations via Stan.
+#' Fit an allometric weight model for *Nereocystis luetkeana* via Stan.
 #'
 #' @details
+#' The response is log wet weight, modelled with a Student-t likelihood (4
+#' degrees of freedom, for robustness to outliers). Expected log weight is a
+#' quadratic (allometric) function of log sub-bulb diameter, centered at its
+#' geometric mean so the intercept is the expected log weight at a typical
+#' diameter. The intercept and the allometric slope vary by site, and the
+#' intercept also varies by `site:year`.
+#'
 #' `niters` is the number of saved post-warmup draws per chain; warmup defaults
-#' to match `niters` and the post-warmup phase is thinned by `nthin`. The live
-#' `stanfit` is discarded after fitting: the returned object stores the extracted
-#' posterior draws (including the `log_lik` and `yrep` generated quantities),
-#' diagnostics, data, and metadata.
+#' to match `niters` and the post-warmup phase is thinned by `nthin`.
+#'  The returned object stores the extracted posterior draws (including the
+#' `log_lik` and `yrep` generated quantities), diagnostics, data, and metadata.
 #'
 #' With the default `quiet = FALSE` the sampler's progress and warnings are
 #' printed to the console; `quiet = TRUE` suppresses all sampler output. Inspect
@@ -26,14 +31,10 @@
 #' entries supplied are changed. See the `control` argument of [rstan::stan()]
 #' for the full set of tunable entries (e.g. `adapt_delta`, `max_treedepth`).
 #'
-#' The site:year random effect is determined from the data rather than chosen: it
-#' is included whenever the data span more than one year, and omitted when they do
-#' not (the interaction is then confounded with the site effect). When years are
-#' present but no site was sampled in more than one year, the effect is retained
-#' and a warning is issued: predictions conditioned on the observed site-years are
-#' unaffected, but the site and site:year contributions are not separately
-#' identified, so the individual terms and their standard deviations (`sSite`,
-#' `sSiteYear`) should not be interpreted apart.
+#' The site:year effect is set from the data: it is dropped when the data span a
+#' single year (then confounded with the site effect) and included otherwise.
+#' When no site spans more than one year it is kept with a warning, since `sSite`
+#' and `sSiteYear` are not then separately identified.
 #'
 #' @inheritParams params
 #' @param ... Additional arguments passed to [rstan::sampling()], including a
@@ -74,7 +75,7 @@ kb_fit_weight_nereo <- function(
   )
 
   kb_check_data_weight_nereo(data)
-  # The site:year effect is determined from the data, not chosen by the user.
+  # The site:year effect is determined from the data
   site_year <- site_year_structure(data)
   notify_site_year(site_year, quiet = quiet)
 
