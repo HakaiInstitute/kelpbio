@@ -5,12 +5,12 @@
 \alias{kb_stancode.kb_fit}
 \title{Stan Source for a Model Fit}
 \usage{
-kb_stancode(x, ...)
+kb_stancode(fit, ...)
 
-\method{kb_stancode}{kb_fit}(x, ...)
+\method{kb_stancode}{kb_fit}(fit, ...)
 }
 \arguments{
-\item{x}{A \code{kb_fit} object.}
+\item{fit}{A \code{kb_fit} object.}
 
 \item{...}{Unused.}
 }

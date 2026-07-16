@@ -19,8 +19,10 @@
 #' `x`.
 #'
 #' @param predictions A `kb_predictions` object.
-#' @param x The x-axis column name; `NULL` infers it from the metadata.
-#' @param observed Optional raw data to overlay as points; `NULL` for none.
+#' @param x A string naming the x-axis column, or `NULL` to infer it from the
+#'   metadata.
+#' @param observed A data frame of raw observations to overlay as points, or
+#'   `NULL` for none.
 #' @param max_facets A whole number capping the facet panels drawn; if the
 #'   grouping has more groups, the first `max_facets` are shown with a warning.
 #'   Use `Inf` to disable.

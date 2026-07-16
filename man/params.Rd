@@ -9,7 +9,8 @@
 \arguments{
 \item{...}{These dots are for future extensions and must be empty.}
 
-\item{data}{A data frame of observations.}
+\item{data}{A data frame of weight observations (see
+\code{\link[=kb_check_data_weight_nereo]{kb_check_data_weight_nereo()}} for the required columns).}
 
 \item{priors}{A named list of prior objects (see \code{\link[=kb_priors_weight_nereo]{kb_priors_weight_nereo()}}), or
 \code{NULL} to use the defaults. Supplied entries override the corresponding

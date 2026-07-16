@@ -6,7 +6,7 @@
 \usage{
 \method{posterior_epred}{kb_fit_weight}(
   object,
-  newdata = NULL,
+  new_data = NULL,
   new_levels = "sample",
   representative_site = NULL,
   ...
@@ -15,7 +15,7 @@
 \arguments{
 \item{object}{A \code{kb_fit_weight} object.}
 
-\item{newdata}{A data frame with a \code{diameter} column (and optional \code{site} /
+\item{new_data}{A data frame with a \code{diameter} column (and optional \code{site} /
 \code{year} columns), or \code{NULL} for the observed data.}
 
 \item{new_levels}{A string, one of \code{"sample"} or \code{"average"}, controlling how
@@ -43,9 +43,9 @@ Draws from the expectation of the posterior predictive distribution
 (response-scale expected weight, \code{exp} of the linear predictor).
 }
 \details{
-Conditioning is inferred from the grouping columns present in \code{newdata}: a
+Conditioning is inferred from the grouping columns present in \code{new_data}: a
 \code{site} (and optionally \code{year}) column with known levels is conditioned on;
-factors with no column are handled by \code{new_levels}. With \code{newdata = NULL} the
+factors with no column are handled by \code{new_levels}. With \code{new_data = NULL} the
 observed data is used and conditioned on its site and year, so the central
 estimate agrees with \code{\link[=augment]{augment()}}.
 }

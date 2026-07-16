@@ -4,15 +4,15 @@
 #' (response-scale expected weight, `exp` of the linear predictor).
 #'
 #' @details
-#' Conditioning is inferred from the grouping columns present in `newdata`: a
+#' Conditioning is inferred from the grouping columns present in `new_data`: a
 #' `site` (and optionally `year`) column with known levels is conditioned on;
-#' factors with no column are handled by `new_levels`. With `newdata = NULL` the
+#' factors with no column are handled by `new_levels`. With `new_data = NULL` the
 #' observed data is used and conditioned on its site and year, so the central
 #' estimate agrees with [augment()].
 #'
 #' @inheritParams params
 #' @param object A `kb_fit_weight` object.
-#' @param newdata A data frame with a `diameter` column (and optional `site` /
+#' @param new_data A data frame with a `diameter` column (and optional `site` /
 #'   `year` columns), or `NULL` for the observed data.
 #' @param ... Unused.
 #'
@@ -24,13 +24,13 @@
 #' ep <- posterior_epred(fit_weight_sim_nereo)
 #' dim(ep)
 posterior_epred.kb_fit_weight <- function(object,
-                                          newdata = NULL,
+                                          new_data = NULL,
                                           new_levels = "sample",
                                           representative_site = NULL,
                                           ...) {
   rlang::check_dots_empty()
   .chk_kb_fit_weight(object)
   .chk_representative_site(object, representative_site)
-  res <- weight_data_linpred(object, newdata, new_levels, representative_site)
+  res <- weight_data_linpred(object, new_data, new_levels, representative_site)
   exp(posterior::draws_of(res$linpred))
 }

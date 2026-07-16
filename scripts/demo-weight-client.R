@@ -225,6 +225,6 @@ bind_rows(
 # kb_* verbs, as a draws-by-rows matrix for loo/bayesplot/bespoke analysis.
 prior_summary(fit)
 nd <- data.frame(diameter = c(20, 40, 60))
-dim(posterior_epred(fit, newdata = nd))
-class(posterior_epred(fit, newdata = nd))
+dim(posterior_epred(fit, new_data = nd))
+class(posterior_epred(fit, new_data = nd))
 samples(fit) |> posterior::summarise_draws() |> head()

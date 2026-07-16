@@ -74,13 +74,13 @@ ggplot2::autoplot
 #'
 #' Extract the raw posterior draws from a fitted model object.
 #'
-#' @param x A fitted model object.
+#' @param fit A fitted model object.
 #' @param ... Unused.
 #' @return A `posterior` draws object.
 #' @family generics
 #' @export
 #' @examples
 #' samples(fit_weight_sim_nereo)
-samples <- function(x, ...) {
+samples <- function(fit, ...) {
   UseMethod("samples")
 }

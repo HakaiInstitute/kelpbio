@@ -7,7 +7,8 @@
 kb_check_data_weight_nereo(data, x_name = deparse(substitute(data)))
 }
 \arguments{
-\item{data}{A data frame of observations.}
+\item{data}{A data frame of weight observations (see
+\code{\link[=kb_check_data_weight_nereo]{kb_check_data_weight_nereo()}} for the required columns).}
 
 \item{x_name}{A string naming \code{data} in error messages.}
 }

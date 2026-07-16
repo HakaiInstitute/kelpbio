@@ -166,11 +166,11 @@ augment(fit) |>
 nd <- data.frame(diameter = c(20, 40, 60))
 class(posterior_epred(fit))
 dim(posterior_epred(fit))
-dim(posterior_epred(fit, newdata = nd))
+dim(posterior_epred(fit, new_data = nd))
 dim(posterior_linpred(fit))
 dim(posterior_linpred(fit, transform = TRUE))
 dim(posterior_predict(fit))
-dim(posterior_predict(fit, newdata = nd))
+dim(posterior_predict(fit, new_data = nd))
 
 ppc_dens_overlay(
   fit$data$weight,

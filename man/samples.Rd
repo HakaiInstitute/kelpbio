@@ -5,12 +5,12 @@
 \alias{samples.kb_fit}
 \title{Posterior Draws}
 \usage{
-samples(x, ...)
+samples(fit, ...)
 
-\method{samples}{kb_fit}(x, ...)
+\method{samples}{kb_fit}(fit, ...)
 }
 \arguments{
-\item{x}{A fitted model object.}
+\item{fit}{A fitted model object.}
 
 \item{...}{Unused.}
 }

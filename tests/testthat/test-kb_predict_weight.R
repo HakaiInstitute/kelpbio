@@ -64,7 +64,7 @@ test_that("estimate reduces each row's draws (custom function, matches posterior
   # A trimmed mean has no rvar method; it must be applied to the numeric draws.
   trimmed <- function(x) mean(x, trim = 0.1)
   p <- kb_predict_weight(weight_fit, nd, new_levels = "average", estimate = trimmed)
-  ep <- posterior_epred(weight_fit, newdata = nd, new_levels = "average")
+  ep <- posterior_epred(weight_fit, new_data = nd, new_levels = "average")
   expect_equal(p$estimate, signif(apply(ep, 2L, trimmed), 3))
 })
 

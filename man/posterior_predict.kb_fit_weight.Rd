@@ -6,7 +6,7 @@
 \usage{
 \method{posterior_predict}{kb_fit_weight}(
   object,
-  newdata = NULL,
+  new_data = NULL,
   new_levels = "sample",
   representative_site = NULL,
   ...
@@ -15,7 +15,7 @@
 \arguments{
 \item{object}{A \code{kb_fit_weight} object.}
 
-\item{newdata}{A data frame with a \code{diameter} column (and optional \code{site} /
+\item{new_data}{A data frame with a \code{diameter} column (and optional \code{site} /
 \code{year} columns), or \code{NULL} for the stored \code{yrep} at the observed data.}
 
 \item{new_levels}{A string, one of \code{"sample"} or \code{"average"}, controlling how
@@ -41,11 +41,11 @@ A draws-by-observations (\verb{D x N}) matrix.
 \description{
 Draws from the posterior predictive distribution: the expected weight plus
 Student-t observation noise (scale \code{sWeight}, 4 degrees of freedom, matching
-the Stan likelihood). With \code{newdata = NULL} the stored \code{yrep} at the observed
+the Stan likelihood). With \code{new_data = NULL} the stored \code{yrep} at the observed
 data is returned, for use with \code{bayesplot::pp_check()}.
 }
 \details{
-For supplied \code{newdata}, conditioning is inferred from the grouping columns
+For supplied \code{new_data}, conditioning is inferred from the grouping columns
 present (see \code{\link[=posterior_epred]{posterior_epred()}}).
 }
 \examples{

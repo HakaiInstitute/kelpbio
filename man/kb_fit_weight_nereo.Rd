@@ -18,7 +18,8 @@ kb_fit_weight_nereo(
 )
 }
 \arguments{
-\item{data}{A data frame of observations.}
+\item{data}{A data frame of weight observations (see
+\code{\link[=kb_check_data_weight_nereo]{kb_check_data_weight_nereo()}} for the required columns).}
 
 \item{priors}{A named list of prior objects (see \code{\link[=kb_priors_weight_nereo]{kb_priors_weight_nereo()}}), or
 \code{NULL} to use the defaults. Supplied entries override the corresponding
@@ -48,7 +49,8 @@ explicit \code{seed} takes precedence over the RNG state.}
 when \code{TRUE}, all sampler output is suppressed.}
 
 \item{...}{Additional arguments passed to \code{\link[rstan:sampling]{rstan::sampling()}}, including a
-\code{control} list (merged over the \code{adapt_delta = 0.95} default).}
+\code{control} list (merged over the \code{adapt_delta = 0.95} default); see the
+\code{control} argument of \code{\link[rstan:stan]{rstan::stan()}} for the available entries.}
 }
 \value{
 An object of class \code{c("kb_fit_weight", "kb_fit")}.
@@ -81,13 +83,17 @@ Stan's 0.8 default, suited to the hierarchical geometry and reducing
 divergences). Override it, or set any other sampler control, by passing a
 \code{control} list through \code{...}, e.g.
 \code{kb_fit_weight_nereo(data, control = list(adapt_delta = 0.99))}; only the
-entries supplied are changed.
+entries supplied are changed. See the \code{control} argument of \code{\link[rstan:stan]{rstan::stan()}}
+for the full set of tunable entries (e.g. \code{adapt_delta}, \code{max_treedepth}).
 
 The site:year random effect is determined from the data rather than chosen: it
 is included whenever the data span more than one year, and omitted when they do
 not (the interaction is then confounded with the site effect). When years are
 present but no site was sampled in more than one year, the effect is retained
-but the site vs site:year split is not identifiable, and a warning is issued.
+and a warning is issued: predictions conditioned on the observed site-years are
+unaffected, but the site and site:year contributions are not separately
+identified, so the individual terms and their standard deviations (\code{sSite},
+\code{sSiteYear}) should not be interpreted apart.
 }
 \examples{
 if (interactive()) {

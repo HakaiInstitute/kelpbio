@@ -15,9 +15,11 @@ kb_plot_predictions(
 \arguments{
 \item{predictions}{A \code{kb_predictions} object.}
 
-\item{x}{The x-axis column name; \code{NULL} infers it from the metadata.}
+\item{x}{A string naming the x-axis column, or \code{NULL} to infer it from the
+metadata.}
 
-\item{observed}{Optional raw data to overlay as points; \code{NULL} for none.}
+\item{observed}{A data frame of raw observations to overlay as points, or
+\code{NULL} for none.}
 
 \item{max_facets}{A whole number capping the facet panels drawn; if the
 grouping has more groups, the first \code{max_facets} are shown with a warning.

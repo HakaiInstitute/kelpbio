@@ -8,7 +8,8 @@
 #' A string is a non-missing character scalar.
 #
 #' @inheritParams rlang::args_dots_empty
-#' @param data A data frame of observations.
+#' @param data A data frame of weight observations (see
+#'   [kb_check_data_weight_nereo()] for the required columns).
 #' @param priors A named list of prior objects (see [kb_priors_weight_nereo()]), or
 #'   `NULL` to use the defaults. Supplied entries override the corresponding
 #'   defaults; unspecified entries keep their defaults.

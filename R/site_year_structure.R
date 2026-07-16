@@ -24,7 +24,7 @@ notify_site_year <- function(status, quiet = FALSE) {
   if (status$aliased) {
     cli::cli_warn(c(
       "Site and site:year effects are not separately identifiable: no site was sampled in more than one year.",
-      i = "The site:year term is retained but its magnitude reflects the prior."
+      i = "The term is retained and predictions are unaffected, but do not interpret the site and site:year contributions separately."
     ))
   } else if (!status$on && !quiet) {
     cli::cli_inform(c(

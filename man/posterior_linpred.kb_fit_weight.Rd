@@ -7,7 +7,7 @@
 \method{posterior_linpred}{kb_fit_weight}(
   object,
   transform = FALSE,
-  newdata = NULL,
+  new_data = NULL,
   new_levels = "sample",
   representative_site = NULL,
   ...
@@ -16,9 +16,10 @@
 \arguments{
 \item{object}{A \code{kb_fit_weight} object.}
 
-\item{transform}{A flag: if \code{TRUE}, return the response-scale value (\code{exp}).}
+\item{transform}{A flag specifying whether to return the response-scale
+value (\code{exp}).}
 
-\item{newdata}{A data frame with a \code{diameter} column (and optional \code{site} /
+\item{new_data}{A data frame with a \code{diameter} column (and optional \code{site} /
 \code{year} columns), or \code{NULL} for the observed data.}
 
 \item{new_levels}{A string, one of \code{"sample"} or \code{"average"}, controlling how
@@ -46,8 +47,8 @@ Draws of the weight-model linear predictor on the log scale (or, with
 \code{transform = TRUE}, on the response scale).
 }
 \details{
-Conditioning is inferred from the grouping columns present in \code{newdata} (see
-\code{\link[=posterior_epred]{posterior_epred()}}); with \code{newdata = NULL} the observed data is used and
+Conditioning is inferred from the grouping columns present in \code{new_data} (see
+\code{\link[=posterior_epred]{posterior_epred()}}); with \code{new_data = NULL} the observed data is used and
 conditioned on its site and year.
 }
 \examples{
