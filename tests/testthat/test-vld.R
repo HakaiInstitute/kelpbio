@@ -16,8 +16,9 @@ test_that(".vld_representative_site accepts NULL and known site levels", {
   expect_false(.vld_representative_site(1, levels))
 })
 
-test_that(".vld_new_data_weight_nereo requires a data frame with diameter", {
+test_that(".vld_new_data_weight_nereo requires a data frame with diameter or NULL", {
   expect_true(.vld_new_data_weight_nereo(data.frame(diameter = 30)))
+  expect_true(.vld_new_data_weight_nereo(NULL)) # NULL means the observed data
   expect_false(.vld_new_data_weight_nereo(data.frame(x = 1)))
   expect_false(.vld_new_data_weight_nereo(1))
   expect_false(.vld_new_data_weight_nereo(list(diameter = 30)))

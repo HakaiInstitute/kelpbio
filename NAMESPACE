@@ -69,7 +69,10 @@ importFrom(generics,
   tidy
 )
 importFrom(ggplot2,autoplot)
-importFrom(rlang,.data)
+importFrom(rlang,
+  "%||%",
+  .data
+)
 importFrom(rstan,sampling)
 importFrom(rstantools,
   log_lik,

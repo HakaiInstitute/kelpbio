@@ -2,6 +2,7 @@
 #'
 #' Append the [fitted()] and deviance [residuals()] values
 #' to the input data. Values are the point estimate (median) of the posterior distributions.
+#'
 #' @param x A `kb_fit` object.
 #' @param ... Unused.
 #'

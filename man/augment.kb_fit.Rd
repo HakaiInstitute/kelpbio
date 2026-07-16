@@ -17,7 +17,7 @@ value) and \code{residual} (deviance residual).
 }
 \description{
 Append the \code{\link[=fitted]{fitted()}} and deviance \code{\link[=residuals]{residuals()}} values
-to the input data. Values are the point etsimate (median) of the posterior distributions.
+to the input data. Values are the point estimate (median) of the posterior distributions.
 }
 \examples{
 augment(fit_weight_sim_nereo)

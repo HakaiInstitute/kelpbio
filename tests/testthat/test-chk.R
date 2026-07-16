@@ -18,6 +18,7 @@ test_that(".chk_new_data_weight_nereo passes valid new_data through invisibly", 
   d <- data.frame(diameter = c(20, 40))
   expect_invisible(.chk_new_data_weight_nereo(d))
   expect_identical(.chk_new_data_weight_nereo(d), d)
+  expect_invisible(.chk_new_data_weight_nereo(NULL)) # NULL means the observed data
 })
 
 test_that(".chk_new_data_weight_nereo errors on a non-data-frame or missing diameter", {
