@@ -26,11 +26,13 @@ test_that("a new site is sampled, not errored, and is wider than a known site", 
   set.seed(1)
   site1 <- weight_fit$meta$site_levels[1]
   known <- kb_predict_weight(
-    weight_fit, new_data = data.frame(diameter = 40, site = site1),
+    weight_fit,
+    new_data = data.frame(diameter = 40, site = site1),
     new_levels = "sample"
   )
   new <- kb_predict_weight(
-    weight_fit, new_data = data.frame(diameter = 40, site = "brand_new_site"),
+    weight_fit,
+    new_data = data.frame(diameter = 40, site = "brand_new_site"),
     new_levels = "sample"
   )
   expect_equal(nrow(new), 1L)

@@ -72,7 +72,8 @@ kb_fit_weight_nereo <- function(data,
 
   priors <- resolve_priors(priors, kb_priors_weight_nereo())
   stan_data <- assemble_weight_nereo_data(
-    data, priors, prior_only = prior_only, site_year_on = site_year$on
+    data, priors,
+    prior_only = prior_only, site_year_on = site_year$on
   )
 
   core <- fit_stan(

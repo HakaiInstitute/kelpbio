@@ -69,8 +69,8 @@ kb_predict_weight <- function(fit,
 # verbs so the summary is defined once. `curve` is TRUE for the grid-generating
 # `_by` verb (ribbon-eligible) and FALSE for predictions at supplied rows.
 summarise_weight_predictions <- function(grid, linpred, group_vars,
-                                          conf_level, estimate, sig_fig,
-                                          curve = FALSE) {
+                                         conf_level, estimate, sig_fig,
+                                         curve = FALSE) {
   epred <- exp(linpred)
   a <- (1 - conf_level) / 2
 
