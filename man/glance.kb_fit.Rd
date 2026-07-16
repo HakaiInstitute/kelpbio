@@ -4,17 +4,17 @@
 \alias{glance.kb_fit}
 \title{Glance at a Model Fit}
 \usage{
-\method{glance}{kb_fit}(x, rhat = 1.05, esr = 0.1, ...)
+\method{glance}{kb_fit}(x, ..., rhat = 1.05, esr = 0.1)
 }
 \arguments{
 \item{x}{A \code{kb_fit} object.}
+
+\item{...}{Unused.}
 
 \item{rhat}{A number giving the maximum acceptable Rhat.}
 
 \item{esr}{A number giving the minimum acceptable effective sample rate
 (effective sample size divided by the number of draws).}
-
-\item{...}{Unused.}
 }
 \value{
 A one-row tibble with \code{n}, \code{K}, \code{nchains}, \code{niters}, \code{nthin}, \code{ess}

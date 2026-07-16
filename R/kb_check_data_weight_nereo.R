@@ -1,8 +1,8 @@
 #' Validate Nereocystis Weight Model Input Data
 #'
 #' Check that `data` contains the columns required to fit the *Nereocystis
-#' luetkeana* weight model, with appropriate types and values. Returns the data
-#' invisibly on success and errors via `chk` otherwise.
+#' luetkeana* weight model, with appropriate types and values, erroring if it
+#' does not.
 #'
 #' Required columns: numeric `diameter` (> 0), numeric `weight` (> 0), and factor
 #' or character `site` and `year`, with no missing values.
@@ -16,7 +16,7 @@
 #' @inheritParams params
 #' @param x_name A string naming `data` in error messages.
 #'
-#' @return `data`, invisibly.
+#' @return `data`, invisibly; called for its side effect of validating `data`.
 #' @family data
 #' @export
 #'
@@ -26,7 +26,10 @@
 #'   site = factor(c("a", "b")), year = factor(c("2020", "2021"))
 #' )
 #' kb_check_data_weight_nereo(data)
-kb_check_data_weight_nereo <- function(data, x_name = deparse(substitute(data))) {
+kb_check_data_weight_nereo <- function(
+  data,
+  x_name = deparse(substitute(data))
+) {
   chk::chk_data(data, x_name = x_name)
   chk::chk_superset(
     names(data),

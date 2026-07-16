@@ -19,7 +19,7 @@ A \code{kb_stancode} object: the Stan source string, which prints as
 readable code. Use \code{\link[=as.character]{as.character()}} for the plain string.
 }
 \description{
-Return the Stan source code of the fitted model.
+The Stan source code of the fitted model.
 }
 \examples{
 kb_stancode(fit_weight_sim_nereo)

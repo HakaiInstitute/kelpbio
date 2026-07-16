@@ -13,12 +13,12 @@ kb_check_data_weight_nereo(data, x_name = deparse(substitute(data)))
 \item{x_name}{A string naming \code{data} in error messages.}
 }
 \value{
-\code{data}, invisibly.
+\code{data}, invisibly; called for its side effect of validating \code{data}.
 }
 \description{
 Check that \code{data} contains the columns required to fit the \emph{Nereocystis
-luetkeana} weight model, with appropriate types and values. Returns the data
-invisibly on success and errors via \code{chk} otherwise.
+luetkeana} weight model, with appropriate types and values, erroring if it
+does not.
 }
 \details{
 Required columns: numeric \code{diameter} (> 0), numeric \code{weight} (> 0), and factor

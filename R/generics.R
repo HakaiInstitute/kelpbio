@@ -72,7 +72,7 @@ ggplot2::autoplot
 
 #' Posterior Draws
 #'
-#' Extract the raw posterior draws from a fitted model object.
+#' The raw posterior draws from a fitted model object.
 #'
 #' @param fit A fitted model object.
 #' @param ... Unused.

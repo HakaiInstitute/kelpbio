@@ -4,24 +4,25 @@
 \alias{converged.kb_fit}
 \title{Convergence of a Model Fit}
 \usage{
-\method{converged}{kb_fit}(x, rhat = 1.05, esr = 0.1, ...)
+\method{converged}{kb_fit}(x, ..., rhat = 1.05, esr = 0.1)
 }
 \arguments{
 \item{x}{A \code{kb_fit} object.}
+
+\item{...}{Unused.}
 
 \item{rhat}{A number giving the maximum acceptable Rhat.}
 
 \item{esr}{A number giving the minimum acceptable effective sample rate
 (effective sample size divided by the number of draws).}
-
-\item{...}{Unused.}
 }
 \value{
 A flag: \code{TRUE} if all Rhat are below \code{rhat} and all bulk effective
 sample rates above \code{esr}.
 }
 \description{
-Convergence of a Model Fit
+Whether a model fit has converged, from the Rhat and bulk effective sample
+rate of its parameters.
 }
 \details{
 \code{esr} is the effective sample rate: the bulk effective sample size divided by

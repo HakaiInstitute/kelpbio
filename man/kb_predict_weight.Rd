@@ -7,6 +7,7 @@
 kb_predict_weight(
   fit,
   new_data = NULL,
+  ...,
   new_levels = c("sample", "average"),
   representative_site = NULL,
   conf_level = 0.95,
@@ -19,6 +20,8 @@ kb_predict_weight(
 
 \item{new_data}{A data frame with a \code{diameter} column (and optional \code{site} /
 \code{year} columns), or \code{NULL} to predict at the observed data.}
+
+\item{...}{These dots are for future extensions and must be empty.}
 
 \item{new_levels}{A string, one of \code{"sample"} or \code{"average"}, controlling how
 random effects that are not conditioned on are treated (factors absent from

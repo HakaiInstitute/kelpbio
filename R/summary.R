@@ -1,7 +1,7 @@
 #' Summarise a Model Fit
 #'
-#' Return a classed `summary_kb_fit` object collecting fit-level metadata and a
-#' per-term posterior summary table.
+#' A model fit's metadata paired with a per-term posterior summary table,
+#' assembled for printing.
 #'
 #' @details
 #' The `print` method renders a header (likelihood family, fixed- and
@@ -42,11 +42,11 @@
 #' @examples
 #' summary(fit_weight_sim_nereo)
 summary.kb_fit <- function(object,
+                           ...,
                            conf_level = 0.95,
                            estimate = stats::median,
                            sig_fig = 3,
-                           include_random_effects = FALSE,
-                           ...) {
+                           include_random_effects = FALSE) {
   rlang::check_dots_empty()
   .chk_summary_args(conf_level, estimate, sig_fig)
   chk::chk_flag(include_random_effects)

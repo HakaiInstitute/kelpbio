@@ -47,11 +47,13 @@
 #' )
 kb_predict_weight <- function(fit,
                               new_data = NULL,
+                              ...,
                               new_levels = c("sample", "average"),
                               representative_site = NULL,
                               conf_level = 0.95,
                               estimate = stats::median,
                               sig_fig = 3) {
+  rlang::check_dots_empty()
   .chk_kb_fit_weight(fit)
   .chk_representative_site(fit, representative_site)
   .chk_summary_args(conf_level, estimate, sig_fig)

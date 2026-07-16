@@ -7,8 +7,9 @@
 kb_predict_weight_by(
   fit,
   by = NULL,
-  new_levels = c("average", "sample"),
   diameter = NULL,
+  ...,
+  new_levels = c("average", "sample"),
   conf_level = 0.95,
   estimate = stats::median,
   sig_fig = 3
@@ -22,6 +23,12 @@ curve, or \code{NULL} for a single population-level curve. Each named factor is
 expanded over its observed levels and conditioned on its estimated random
 effects.}
 
+\item{diameter}{A numeric vector of sub-bulb diameters to predict over (in the
+same units as the fitted data), or \code{NULL} for an automatic sequence spanning
+the observed range.}
+
+\item{...}{These dots are for future extensions and must be empty.}
+
 \item{new_levels}{A string, one of \code{"sample"} or \code{"average"}, controlling how
 random effects that are not conditioned on are treated (factors absent from
 the prediction, and any new level not seen in the fit). \code{"sample"} draws a
@@ -30,10 +37,6 @@ between-group variation; \code{"average"} holds the random effects at zero,
 giving the typical group. Known levels are always conditioned on. \code{"sample"}
 draws fresh randomness on each call, so set a seed with \code{set.seed()} for a
 reproducible interval.}
-
-\item{diameter}{A numeric vector of sub-bulb diameters to predict over (in the
-same units as the fitted data), or \code{NULL} for an automatic sequence spanning
-the observed range.}
 
 \item{conf_level}{A number between 0 and 1 giving the compatibility-interval
 level.}
@@ -50,8 +53,7 @@ A \code{kb_predictions} object: a summary tibble with \code{estimate}, \code{low
 \description{
 Summarise the fitted relationship between weight and diameter over a generated
 prediction grid: a sequence of diameter values crossed with the grouping factors
-named in \code{by} (one curve per group). Returns a \code{kb_predictions} object ready for
-\code{\link[=kb_plot_predictions]{kb_plot_predictions()}}.
+named in \code{by} (one curve per group).
 }
 \details{
 \code{by} selects the grouping factors that each get their own curve, conditioned on

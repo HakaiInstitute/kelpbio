@@ -7,12 +7,12 @@
 \method{predict}{kb_fit_weight}(
   object,
   new_data = NULL,
+  ...,
   new_levels = c("sample", "average"),
   representative_site = NULL,
   conf_level = 0.95,
   estimate = stats::median,
-  sig_fig = 3,
-  ...
+  sig_fig = 3
 )
 }
 \arguments{
@@ -20,6 +20,8 @@
 
 \item{new_data}{A data frame with a \code{diameter} column (and optional \code{site} /
 \code{year} columns), or \code{NULL} to predict at the observed data.}
+
+\item{...}{Unused.}
 
 \item{new_levels}{A string, one of \code{"sample"} or \code{"average"}, controlling how
 random effects that are not conditioned on are treated (factors absent from
@@ -43,8 +45,6 @@ level.}
 a scalar point estimate (e.g. \code{median} or \code{mean}).}
 
 \item{sig_fig}{A whole number of significant figures for summary output.}
-
-\item{...}{Unused.}
 }
 \value{
 A \code{kb_predictions} object.

@@ -23,9 +23,9 @@
 #' dim(pp)
 posterior_predict.kb_fit_weight <- function(object,
                                             new_data = NULL,
+                                            ...,
                                             new_levels = "sample",
-                                            representative_site = NULL,
-                                            ...) {
+                                            representative_site = NULL) {
   rlang::check_dots_empty()
   .chk_kb_fit_weight(object)
   .chk_representative_site(object, representative_site)

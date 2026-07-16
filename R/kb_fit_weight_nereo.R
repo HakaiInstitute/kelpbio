@@ -57,14 +57,14 @@
 #' tidy(fit_weight_sim_nereo)
 kb_fit_weight_nereo <- function(data,
                                 priors = NULL,
+                                ...,
                                 prior_only = FALSE,
                                 chains = 4L,
                                 niters = 1000L,
                                 nthin = 1L,
                                 cores = NULL,
                                 seed = NULL,
-                                quiet = FALSE,
-                                ...) {
+                                quiet = FALSE) {
   .chk_sampler_args(
     prior_only = prior_only, chains = chains, niters = niters,
     nthin = nthin, cores = cores, seed = seed, quiet = quiet

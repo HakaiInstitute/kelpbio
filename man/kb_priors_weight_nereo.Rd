@@ -13,9 +13,9 @@ A named list of prior objects with entries \code{intercept}, \code{diameter},
 }
 \description{
 The default prior list for the \emph{Nereocystis luetkeana} allometric weight
-model, returned as a named list of prior objects. Edit individual entries and
-pass the list to the \code{priors} argument of \code{\link[=kb_fit_weight_nereo]{kb_fit_weight_nereo()}} to override
-defaults; unmodified entries keep their defaults.
+model. Edit individual entries and pass the list to the \code{priors} argument of
+\code{\link[=kb_fit_weight_nereo]{kb_fit_weight_nereo()}} to override defaults; unmodified entries keep their
+defaults.
 }
 \details{
 The prior family of each entry is fixed (the population-level terms are

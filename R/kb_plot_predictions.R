@@ -2,7 +2,7 @@
 #'
 #' Render a `ggplot` from a `kb_predictions` object (the output of a
 #' `kb_predict_*()` function). It operates on prediction data frames, never on a
-#' fit object, and returns a `ggplot` the user can extend with `+`.
+#' fit object.
 #'
 #' @details
 #' `x` defaults to `NULL` and is inferred from the prediction's metadata (the
@@ -44,10 +44,10 @@
 #' ) |>
 #'   kb_plot_predictions()
 kb_plot_predictions <- function(predictions,
+                                ...,
                                 x = NULL,
                                 observed = NULL,
-                                max_facets = 12L,
-                                ...) {
+                                max_facets = 12L) {
   rlang::check_dots_empty()
   if (!is.null(observed)) {
     chk::chk_data(observed)

@@ -7,14 +7,14 @@
 kb_fit_weight_nereo(
   data,
   priors = NULL,
+  ...,
   prior_only = FALSE,
   chains = 4L,
   niters = 1000L,
   nthin = 1L,
   cores = NULL,
   seed = NULL,
-  quiet = FALSE,
-  ...
+  quiet = FALSE
 )
 }
 \arguments{
@@ -24,6 +24,10 @@ kb_fit_weight_nereo(
 \item{priors}{A named list of prior objects (see \code{\link[=kb_priors_weight_nereo]{kb_priors_weight_nereo()}}), or
 \code{NULL} to use the defaults. Supplied entries override the corresponding
 defaults; unspecified entries keep their defaults.}
+
+\item{...}{Additional arguments passed to \code{\link[rstan:sampling]{rstan::sampling()}}, including a
+\code{control} list (merged over the \code{adapt_delta = 0.95} default); see the
+\code{control} argument of \code{\link[rstan:stan]{rstan::stan()}} for the available entries.}
 
 \item{prior_only}{A flag specifying whether to sample from the priors only
 (the likelihood is switched off), for prior predictive checks.}
@@ -47,10 +51,6 @@ explicit \code{seed} takes precedence over the RNG state.}
 \item{quiet}{A flag specifying whether to suppress console output. When
 \code{FALSE} (the default), rstan's sampling progress and warnings are printed;
 when \code{TRUE}, all sampler output is suppressed.}
-
-\item{...}{Additional arguments passed to \code{\link[rstan:sampling]{rstan::sampling()}}, including a
-\code{control} list (merged over the \code{adapt_delta = 0.95} default); see the
-\code{control} argument of \code{\link[rstan:stan]{rstan::stan()}} for the available entries.}
 }
 \value{
 An object of class \code{c("kb_fit_weight", "kb_fit")}.

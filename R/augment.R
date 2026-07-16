@@ -1,6 +1,6 @@
 #' Augment Weight Data with Fitted Values
 #'
-#' Return the input data with the [fitted()] weight and deviance [residuals()]
+#' The input data with the [fitted()] weight and deviance [residuals()]
 #' appended, for residual diagnostics. The columns come straight from the
 #' `fitted()` and `residuals()` methods, so they cannot diverge from them. For
 #' prediction intervals use [kb_predict_weight()].

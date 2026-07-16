@@ -25,9 +25,9 @@
 posterior_linpred.kb_fit_weight <- function(object,
                                             transform = FALSE,
                                             new_data = NULL,
+                                            ...,
                                             new_levels = "sample",
-                                            representative_site = NULL,
-                                            ...) {
+                                            representative_site = NULL) {
   rlang::check_dots_empty()
   chk::chk_flag(transform)
   .chk_kb_fit_weight(object)

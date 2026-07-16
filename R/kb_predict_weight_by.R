@@ -2,8 +2,7 @@
 #'
 #' Summarise the fitted relationship between weight and diameter over a generated
 #' prediction grid: a sequence of diameter values crossed with the grouping factors
-#' named in `by` (one curve per group). Returns a `kb_predictions` object ready for
-#' [kb_plot_predictions()].
+#' named in `by` (one curve per group).
 #'
 #' @details
 #' `by` selects the grouping factors that each get their own curve, conditioned on
@@ -32,11 +31,13 @@
 #' kb_predict_weight_by(fit_weight_sim_nereo, by = "site")
 kb_predict_weight_by <- function(fit,
                                  by = NULL,
-                                 new_levels = c("average", "sample"),
                                  diameter = NULL,
+                                 ...,
+                                 new_levels = c("average", "sample"),
                                  conf_level = 0.95,
                                  estimate = stats::median,
                                  sig_fig = 3) {
+  rlang::check_dots_empty()
   .chk_kb_fit_weight(fit)
   .chk_summary_args(conf_level, estimate, sig_fig)
 

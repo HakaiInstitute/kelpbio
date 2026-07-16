@@ -6,14 +6,16 @@
 \usage{
 kb_plot_predictions(
   predictions,
+  ...,
   x = NULL,
   observed = NULL,
-  max_facets = 12L,
-  ...
+  max_facets = 12L
 )
 }
 \arguments{
 \item{predictions}{A \code{kb_predictions} object.}
+
+\item{...}{Unused.}
 
 \item{x}{A string naming the x-axis column, or \code{NULL} to infer it from the
 metadata.}
@@ -24,8 +26,6 @@ metadata.}
 \item{max_facets}{A whole number capping the facet panels drawn; if the
 grouping has more groups, the first \code{max_facets} are shown with a warning.
 Use \code{Inf} to disable.}
-
-\item{...}{Unused.}
 }
 \value{
 A \code{ggplot} object.
@@ -33,7 +33,7 @@ A \code{ggplot} object.
 \description{
 Render a \code{ggplot} from a \code{kb_predictions} object (the output of a
 \verb{kb_predict_*()} function). It operates on prediction data frames, never on a
-fit object, and returns a \code{ggplot} the user can extend with \code{+}.
+fit object.
 }
 \details{
 \code{x} defaults to \code{NULL} and is inferred from the prediction's metadata (the

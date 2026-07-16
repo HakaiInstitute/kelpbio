@@ -1,6 +1,6 @@
 #' Stan Source for a Model Fit
 #'
-#' Return the Stan source code of the fitted model.
+#' The Stan source code of the fitted model.
 #'
 #' @param fit A `kb_fit` object.
 #' @param ... Unused.

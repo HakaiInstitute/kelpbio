@@ -6,15 +6,17 @@
 \usage{
 \method{tidy}{kb_fit_weight}(
   x,
+  ...,
   conf_level = 0.95,
   estimate = stats::median,
   sig_fig = 3,
-  include_random_effects = FALSE,
-  ...
+  include_random_effects = FALSE
 )
 }
 \arguments{
 \item{x}{A \code{kb_fit_weight} object.}
+
+\item{...}{Unused.}
 
 \item{conf_level}{A number between 0 and 1 giving the compatibility-interval
 level.}
@@ -26,8 +28,6 @@ a scalar point estimate (e.g. \code{median} or \code{mean}).}
 
 \item{include_random_effects}{A flag specifying whether to include the
 group-level random-effect terms in the output.}
-
-\item{...}{Unused.}
 }
 \value{
 A tibble with one row per term and columns \code{term}, \code{estimate},

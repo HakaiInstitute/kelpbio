@@ -16,11 +16,11 @@
 #' @examples
 #' tidy(fit_weight_sim_nereo)
 tidy.kb_fit_weight <- function(x,
+                               ...,
                                conf_level = 0.95,
                                estimate = stats::median,
                                sig_fig = 3,
-                               include_random_effects = FALSE,
-                               ...) {
+                               include_random_effects = FALSE) {
   rlang::check_dots_empty()
   .chk_kb_fit_weight(x)
   .chk_summary_args(conf_level, estimate, sig_fig)

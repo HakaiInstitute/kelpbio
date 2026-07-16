@@ -11,7 +11,7 @@
 #' @exportS3Method generics::glance
 #' @examples
 #' glance(fit_weight_sim_nereo)
-glance.kb_fit <- function(x, rhat = 1.05, esr = 0.1, ...) {
+glance.kb_fit <- function(x, ..., rhat = 1.05, esr = 0.1) {
   rlang::check_dots_empty()
   s <- x$diagnostics$summary
   # Evaluate the verdict before tibble(); inside it the bare `rhat` would mask

@@ -16,7 +16,7 @@ The input data with added columns \code{fitted} (response-scale fitted
 weight) and \code{residual} (deviance residual).
 }
 \description{
-Return the input data with the \code{\link[=fitted]{fitted()}} weight and deviance \code{\link[=residuals]{residuals()}}
+The input data with the \code{\link[=fitted]{fitted()}} weight and deviance \code{\link[=residuals]{residuals()}}
 appended, for residual diagnostics. The columns come straight from the
 \code{fitted()} and \code{residuals()} methods, so they cannot diverge from them. For
 prediction intervals use \code{\link[=kb_predict_weight]{kb_predict_weight()}}.

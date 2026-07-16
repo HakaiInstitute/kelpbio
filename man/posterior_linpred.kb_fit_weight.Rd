@@ -8,9 +8,9 @@
   object,
   transform = FALSE,
   new_data = NULL,
+  ...,
   new_levels = "sample",
-  representative_site = NULL,
-  ...
+  representative_site = NULL
 )
 }
 \arguments{
@@ -21,6 +21,8 @@ value (\code{exp}).}
 
 \item{new_data}{A data frame with a \code{diameter} column (and optional \code{site} /
 \code{year} columns), or \code{NULL} for the observed data.}
+
+\item{...}{Unused.}
 
 \item{new_levels}{A string, one of \code{"sample"} or \code{"average"}, controlling how
 random effects that are not conditioned on are treated (factors absent from
@@ -36,8 +38,6 @@ fit, or \code{NULL} (the default). When supplied, a new or absent site takes its
 site main effects (intercept and slope) from the named reference site (the
 per-draw average when several are named), instead of the \code{new_levels}
 treatment; the \code{site:year} interaction still follows \code{new_levels}.}
-
-\item{...}{Unused.}
 }
 \value{
 A draws-by-observations (\verb{D x N}) matrix.

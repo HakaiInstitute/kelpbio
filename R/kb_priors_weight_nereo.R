@@ -1,9 +1,9 @@
 #' Default Priors for the Nereocystis Weight Model
 #'
 #' The default prior list for the *Nereocystis luetkeana* allometric weight
-#' model, returned as a named list of prior objects. Edit individual entries and
-#' pass the list to the `priors` argument of [kb_fit_weight_nereo()] to override
-#' defaults; unmodified entries keep their defaults.
+#' model. Edit individual entries and pass the list to the `priors` argument of
+#' [kb_fit_weight_nereo()] to override defaults; unmodified entries keep their
+#' defaults.
 #'
 #' The prior family of each entry is fixed (the population-level terms are
 #' Normal, the standard deviations are Exponential); only the hyperparameters

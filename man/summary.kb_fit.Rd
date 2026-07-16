@@ -6,15 +6,17 @@
 \usage{
 \method{summary}{kb_fit}(
   object,
+  ...,
   conf_level = 0.95,
   estimate = stats::median,
   sig_fig = 3,
-  include_random_effects = FALSE,
-  ...
+  include_random_effects = FALSE
 )
 }
 \arguments{
 \item{object}{A \code{kb_fit} object.}
+
+\item{...}{Unused.}
 
 \item{conf_level}{A number between 0 and 1 giving the compatibility-interval
 level.}
@@ -26,8 +28,6 @@ a scalar point estimate (e.g. \code{median} or \code{mean}).}
 
 \item{include_random_effects}{A flag specifying whether to include the
 group-level random-effect terms in the output.}
-
-\item{...}{Unused.}
 }
 \value{
 A \code{summary_kb_fit} object: a list of fit metadata and a
@@ -35,8 +35,8 @@ A \code{summary_kb_fit} object: a list of fit metadata and a
 \code{rhat}, \code{ess_bulk}, and \code{ess_tail}.
 }
 \description{
-Return a classed \code{summary_kb_fit} object collecting fit-level metadata and a
-per-term posterior summary table.
+A model fit's metadata paired with a per-term posterior summary table,
+assembled for printing.
 }
 \details{
 The \code{print} method renders a header (likelihood family, fixed- and

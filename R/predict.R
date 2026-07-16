@@ -17,12 +17,12 @@
 #' predict(fit_weight_sim_nereo, data.frame(diameter = c(20, 40)))
 predict.kb_fit_weight <- function(object,
                                   new_data = NULL,
+                                  ...,
                                   new_levels = c("sample", "average"),
                                   representative_site = NULL,
                                   conf_level = 0.95,
                                   estimate = stats::median,
-                                  sig_fig = 3,
-                                  ...) {
+                                  sig_fig = 3) {
   rlang::check_dots_empty()
   kb_predict_weight(
     object,
