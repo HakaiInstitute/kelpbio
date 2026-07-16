@@ -39,7 +39,7 @@
 #'   by = "site", diameter = 30, new_levels = "average"
 #' ) |>
 #'   kb_plot_predictions() +
-#'   coord_flip()
+#'   ggplot2::coord_flip()
 kb_plot_predictions <- function(
   predictions,
   ...,
