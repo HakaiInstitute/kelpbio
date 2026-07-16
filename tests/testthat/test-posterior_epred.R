@@ -30,7 +30,7 @@ test_that("a site column conditions on that site", {
 
 test_that("an unknown site level is sampled, not errored", {
   nd <- data.frame(diameter = c(30, 30), site = "brand_new_site")
-  expect_no_error(m <- posterior_epred(weight_fit, newdata = nd, new_levels = "sample"))
+  m <- posterior_epred(weight_fit, newdata = nd, new_levels = "sample")
   expect_equal(dim(m), c(posterior::ndraws(weight_fit$draws), 2L))
   expect_true(all(m > 0))
 })

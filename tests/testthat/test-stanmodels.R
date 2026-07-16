@@ -32,13 +32,13 @@ weight_stan_data <- function(nObs = 6L, prior_only = 0L) {
 
 test_that("stanmodels$weight_nereo is a compiled Stan model", {
   skip_on_cran()
-  expect_s4_class(kelpbio:::stanmodels$weight_nereo, "stanmodel")
+  expect_s4_class(stanmodels$weight_nereo, "stanmodel")
 })
 
 test_that("the weight model samples and returns the declared parameters", {
   skip_on_cran()
   fit <- suppressWarnings(rstan::sampling(
-    kelpbio:::stanmodels$weight_nereo,
+    stanmodels$weight_nereo,
     data = weight_stan_data(),
     chains = 1, iter = 200, refresh = 0, seed = 1
   ))
@@ -56,7 +56,7 @@ test_that("the weight model samples and returns the declared parameters", {
 test_that("a prior-only fit accepts zero observations", {
   skip_on_cran()
   fit <- suppressWarnings(rstan::sampling(
-    kelpbio:::stanmodels$weight_nereo,
+    stanmodels$weight_nereo,
     data = weight_stan_data(nObs = 0L, prior_only = 1L),
     chains = 1, iter = 200, refresh = 0, seed = 1
   ))

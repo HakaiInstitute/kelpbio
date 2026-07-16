@@ -45,7 +45,7 @@ npars.kb_fit <- function(x, ...) {
 
 #' @exportS3Method universals::nterms
 nterms.kb_fit <- function(x, ...) {
-  sum(vapply(x$draws, length, integer(1)))
+  sum(lengths(x$draws))
 }
 
 #' @exportS3Method universals::pars

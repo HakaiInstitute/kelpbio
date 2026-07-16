@@ -139,7 +139,7 @@ resolve_re1 <- function(param, idx, new_levels, sd_rvar, rep_idx = NULL) {
   if (any(known)) {
     out[, known] <- posterior::draws_of(param)[, idx[known], drop = FALSE]
   }
-  if (any(!known)) {
+  if (!all(known)) {
     if (!is.null(rep_idx)) {
       out[, !known] <- rowMeans(posterior::draws_of(param)[, rep_idx, drop = FALSE])
     } else if (new_levels == "sample") {
@@ -161,7 +161,7 @@ resolve_re2 <- function(param, i, j, new_levels, sd_rvar) {
     kk <- which(known)
     out[, kk] <- vapply(kk, function(r) a[, i[r], j[r]], numeric(ndraws))
   }
-  if (any(!known) && new_levels == "sample") {
+  if (!all(known) && new_levels == "sample") {
     out[, !known] <- posterior::draws_of(re_draw("sample", sum(!known), sd_rvar))
   }
   posterior::rvar(out)
