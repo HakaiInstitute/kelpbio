@@ -1,7 +1,6 @@
 #' Summarise a Model Fit
 #'
-#' A model fit's metadata paired with a per-term posterior summary table,
-#' assembled for printing.
+#' A model fit's metadata paired with a per-term posterior summary table.
 #'
 #' @details
 #' The `print` method renders a header (likelihood family, fixed- and
@@ -40,12 +39,14 @@
 #' @exportS3Method base::summary
 #' @examples
 #' summary(fit_weight_sim_nereo)
-summary.kb_fit <- function(object,
-                           ...,
-                           conf_level = 0.95,
-                           estimate = stats::median,
-                           sig_fig = 3,
-                           include_random_effects = FALSE) {
+summary.kb_fit <- function(
+  object,
+  ...,
+  conf_level = 0.95,
+  estimate = stats::median,
+  sig_fig = 3,
+  include_random_effects = FALSE
+) {
   rlang::check_dots_empty()
   .chk_summary_args(conf_level, estimate, sig_fig)
   chk::chk_flag(include_random_effects)
@@ -109,22 +110,27 @@ summary.kb_fit <- function(object,
 # imply a formula interface or a particular fitting engine.
 fit_descriptor <- function(x) {
   model <- sub("^kb_fit_", "", class(x)[1])
-  switch(model,
+  switch(
+    model,
     weight = {
       list(
         family = "Student-t (df = 4); response log(weight)",
         fixed = "intercept + linear + quadratic log(diameter/d0)",
         random = "site (intercept, slope); site:year (intercept)",
         centered = paste0(
-          "log-diameter at d0 = ", signif(x$meta$diameter_ref, 3),
+          "log-diameter at d0 = ",
+          signif(x$meta$diameter_ref, 3),
           " (geometric mean of diameter)"
         ),
         groups = weight_groups(x)
       )
     },
     list(
-      family = NA_character_, fixed = NA_character_, random = NA_character_,
-      centered = NA_character_, groups = integer(0)
+      family = NA_character_,
+      fixed = NA_character_,
+      random = NA_character_,
+      centered = NA_character_,
+      groups = integer(0)
     )
   )
 }

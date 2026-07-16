@@ -50,8 +50,7 @@ a scalar point estimate (e.g. \code{median} or \code{mean}).}
 A \code{kb_predictions} object.
 }
 \description{
-A thin wrapper on \code{\link[=kb_predict_weight]{kb_predict_weight()}} providing the conventional
-\code{stats::predict} entry point: predict weight at the supplied \code{new_data}
+A thin wrapper on \code{\link[=kb_predict_weight]{kb_predict_weight()}}: predict weight at the supplied \code{new_data}
 rows (or the observed data when \code{new_data = NULL}). For allometric curves to
 visualise, use \code{\link[=kb_predict_weight_by]{kb_predict_weight_by()}}.
 }

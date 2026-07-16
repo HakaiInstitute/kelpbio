@@ -35,8 +35,7 @@ A \code{summary_kb_fit} object: a list of fit metadata and a
 \code{rhat}, \code{ess_bulk}, and \code{ess_tail}.
 }
 \description{
-A model fit's metadata paired with a per-term posterior summary table,
-assembled for printing.
+A model fit's metadata paired with a per-term posterior summary table.
 }
 \details{
 The \code{print} method renders a header (likelihood family, fixed- and

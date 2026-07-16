@@ -58,21 +58,19 @@ Predict weight for the supplied rows, or for the observed data when
 \details{
 Conditioning is resolved per row: a \code{site}/\code{year} value the model has seen is
 conditioned on its estimated random effects; a new site or year, or an absent
-grouping column, is handled by \code{new_levels}. A mix of observed and new sites in
-one \code{new_data} is resolved row by row, in a single call.
+grouping column, is handled by \code{new_levels}.
 
 With the default \code{new_levels = "sample"}, an absent or new group draws a random
 effect from its estimated distribution, so the interval includes between-group
 variation; \code{"average"} instead holds those random effects at zero. \code{"sample"}
-draws fresh values on each call, so set a seed with \code{set.seed()} for a
-reproducible interval.
+draws fresh values on each call; set a seed with \code{set.seed()} for a
+reproducible interval. \code{"sample"} is the default because it produces honest
+uncertainty for a new, unobserved site/year.
 
-For a new site, \code{representative_site} offers a third treatment: instead of
+For a new site, \code{representative_site} offers a third approach: instead of
 \code{new_levels} (\code{"sample"} or \code{"average"}) it borrows the site intercept and
 slope of one or more named reference sites (the per-draw average across
-several). The \code{site:year} interaction still follows \code{new_levels}. Because the
-borrowed effects use the reference site's posterior, the interval is narrower
-than a calibrated interval for a genuinely new site.
+several). The \code{site:year} interaction still follows \code{new_levels}.
 }
 \examples{
 new_data <- data.frame(diameter = c(20, 40, 60))
@@ -86,8 +84,9 @@ kb_predict_weight(
 )
 }
 \seealso{
-\code{\link[=kb_predict_weight_by]{kb_predict_weight_by()}} for curves, and \code{\link[=augment]{augment()}} for fitted
-values at the observed data.
+\code{\link[=kb_predict_weight_by]{kb_predict_weight_by()}} to generate new_data by grouping factors
+and diameter sequence, and \code{\link[=augment]{augment()}} for fitted/residual values at
+the observed data.
 
 Other prediction:
 \code{\link[=autoplot.kb_predictions]{autoplot.kb_predictions()}},
