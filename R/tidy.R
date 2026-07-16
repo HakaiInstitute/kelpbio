@@ -26,6 +26,9 @@ tidy.kb_fit_weight <- function(x,
   .chk_summary_args(conf_level, estimate, sig_fig)
   chk::chk_flag(include_random_effects)
 
+  # Terms are named explicitly rather than inferred from parameter shape: a
+  # scalar can be a population effect, an SD, or a single-level random effect,
+  # and a fixed effect can be vector-valued, so shape does not identify the role.
   variables <- c(
     "bWeight", "bDiameter", "bDiameter2",
     "sSite", "sSiteDiameter", "sSiteYear", "sWeight"

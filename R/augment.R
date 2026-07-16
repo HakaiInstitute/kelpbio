@@ -1,24 +1,22 @@
-#' Augment Weight Data with Fitted Values
+#' Augment Model Data
 #'
-#' The input data with the [fitted()] weight and deviance [residuals()]
-#' appended, for residual diagnostics. The columns come straight from the
-#' `fitted()` and `residuals()` methods, so they cannot diverge from them. For
-#' prediction intervals use [kb_predict_weight()].
+#' Append the [fitted()] values and deviance [residuals()]
+#' to the input data. The columns come straight from the
+#' `fitted()` and `residuals()` methods, so they cannot diverge from them.
 #'
-#' @param x A `kb_fit_weight` object.
+#' @param x A `kb_fit` object.
 #' @param ... Unused.
 #'
 #' @return The input data with added columns `fitted` (response-scale fitted
-#'   weight) and `residual` (deviance residual).
+#'   value) and `residual` (deviance residual).
 #' @family generics
-#' @seealso [fitted()], [residuals()], and [kb_predict_weight()] for predictions
-#'   at supplied rows.
+#' @seealso [fitted()] and [residuals()].
 #' @exportS3Method generics::augment
 #' @examples
 #' augment(fit_weight_sim_nereo)
-augment.kb_fit_weight <- function(x, ...) {
+augment.kb_fit <- function(x, ...) {
   rlang::check_dots_empty()
-  .chk_kb_fit_weight(x)
+  .chk_kb_fit(x)
   out <- tibble::as_tibble(x$data)
   out$fitted <- stats::fitted(x)
   out$residual <- stats::residuals(x)

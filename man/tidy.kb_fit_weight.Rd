@@ -44,13 +44,13 @@ tidy(fit_weight_sim_nereo)
 }
 \seealso{
 Other generics:
-\code{\link[=augment.kb_fit_weight]{augment.kb_fit_weight()}},
-\code{\link[=coef.kb_fit_weight]{coef.kb_fit_weight()}},
+\code{\link[=augment.kb_fit]{augment.kb_fit()}},
+\code{\link[=coef.kb_fit]{coef.kb_fit()}},
 \code{\link[=converged.kb_fit]{converged.kb_fit()}},
 \code{\link[=fitted.kb_fit_weight]{fitted.kb_fit_weight()}},
 \code{\link[=glance.kb_fit]{glance.kb_fit()}},
 \code{\link[=kb_stancode]{kb_stancode()}},
-\code{\link[=log_lik.kb_fit_weight]{log_lik.kb_fit_weight()}},
+\code{\link[=log_lik.kb_fit]{log_lik.kb_fit()}},
 \code{\link[=posterior_epred.kb_fit_weight]{posterior_epred.kb_fit_weight()}},
 \code{\link[=posterior_linpred.kb_fit_weight]{posterior_linpred.kb_fit_weight()}},
 \code{\link[=posterior_predict.kb_fit_weight]{posterior_predict.kb_fit_weight()}},

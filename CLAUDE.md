@@ -69,8 +69,8 @@ fit <- list(draws = <posterior draws>, diagnostics = <sampler diag>, data = data
 class(fit) <- c("kb_fit_weight", "kb_fit")
 
 # S3 methods dispatch to parent by default
-augment.kb_fit    # all subclasses
-tidy.kb_fit_weight  # subclass-specific
+augment.kb_fit         # parent: model-agnostic (coef/glance/converged/log_lik/samples/summary too)
+tidy.kb_fit_weight     # subclass-specific: names its own terms (also fitted/residuals/predict/posterior_*)
 ```
 
 Access via `$`: `x$draws`, `x$data`, `x$meta`. `samples(x)` returns a `posterior` `draws_rvars` object. The live `stanfit` is discarded after fitting — see the `fitting` spec. Single package (R-universe, not CRAN): demo + coastwide data + slim pre-fit models in `data/`; no companion data package.

@@ -74,7 +74,7 @@ Raw posterior prediction draws SHALL be provided through the `rstantools` generi
 
 ### Requirement: Pointwise log-likelihood and prior summary
 
-`log_lik()` SHALL return the `D x N` pointwise log-likelihood for a `kb_fit_weight` (from the Stan generated quantities), enabling `loo::loo()`; `prior_summary()` SHALL return the resolved priors.
+`log_lik()` SHALL return the `D x N` pointwise log-likelihood for a `kb_fit` (from the Stan generated quantities), enabling `loo::loo()`; `prior_summary()` SHALL return the resolved priors.
 
 #### Scenario: log_lik enables loo
 - **WHEN** `log_lik(fit)` is called

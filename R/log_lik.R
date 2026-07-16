@@ -3,7 +3,7 @@
 #' The pointwise log-likelihood of the observed data (from the Stan generated
 #' quantities), suitable for `loo::loo()`.
 #'
-#' @param object A `kb_fit_weight` object.
+#' @param object A `kb_fit` object.
 #' @param ... Unused.
 #'
 #' @return A draws-by-observations (`D x N`) matrix.
@@ -12,9 +12,9 @@
 #' @examples
 #' ll <- log_lik(fit_weight_sim_nereo)
 #' dim(ll)
-log_lik.kb_fit_weight <- function(object, ...) {
+log_lik.kb_fit <- function(object, ...) {
   rlang::check_dots_empty()
-  .chk_kb_fit_weight(object)
+  .chk_kb_fit(object)
   if (is.null(object$gq)) {
     cli::cli_abort("No pointwise log-likelihood is stored (zero-observation fit).")
   }
