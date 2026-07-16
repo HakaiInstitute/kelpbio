@@ -4,18 +4,15 @@
 #' `kb_predict_*()` function).
 #'
 #' @details
-#' `x` defaults to `NULL` and is inferred from the prediction's metadata (the
-#' predictor column, or the grouping factor when the predictor does not vary); it
-#' remains overridable. The layout follows from `x`: the remaining grouping
-#' variables are always faceted, so the variable on the x-axis is never also used
-#' as a facet. The plot style is derived, not an argument: a line with a
-#' credible-interval ribbon is drawn only for a generated curve (the output of
-#' [kb_predict_weight_by()] over a varying predictor); every other prediction
-#' renders as `geom_pointrange`. When the predictor does not vary (a held
-#' reference value, or a model with no continuous predictor) the last grouping
-#' factor goes on the x-axis. If the metadata has been stripped (e.g. by dplyr
-#' post-processing) and `x` cannot be inferred, the function errors and asks for
-#' `x`.
+#' Called with just the predictions, the plot configures itself: the x-axis,
+#' faceting, and geometry are inferred from the prediction's metadata. The result
+#' is a standard `ggplot` that can be refined with `+` (scales, labels, themes,
+#' `coord_flip()`).
+#'
+#' The geometry is chosen automatically, not set by an argument: a line with a
+#' compatibility-interval ribbon for a generated curve ([kb_predict_weight_by()]
+#' over a varying predictor), and `geom_pointrange` otherwise. Override the
+#' inferred x-axis with `x`, and overlay the raw data with `observed`.
 #'
 #' @param predictions A `kb_predictions` object.
 #' @param x A string naming the x-axis column, or `NULL` to infer it from the

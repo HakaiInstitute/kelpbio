@@ -60,10 +60,9 @@ named in \code{by} (one curve per group).
 their estimated random effects. \code{new_levels} controls the factors not named in
 \code{by}. The default \code{"average"} holds those random effects at zero, giving the
 typical-group curve. \code{"sample"} instead draws a new random effect from its
-estimated distribution, widening the band to include between-group variation;
-it draws fresh values on each call, so set a seed with \code{set.seed()} for a
-reproducible band. The available \code{by} values are \code{NULL} (a single population
-curve), \code{"site"}, and \code{c("site", "year")}.
+estimated distribution, widening the uncertainty to include between-group variation;
+Set a seed with \code{set.seed()} for a reproducible CIs. The available \code{by} values
+are \code{NULL} (a single population curve), \code{"site"}, and \code{c("site", "year")}.
 }
 \examples{
 kb_predict_weight_by(fit_weight_sim_nereo, by = "site")

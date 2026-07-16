@@ -35,18 +35,15 @@ Render a \code{ggplot} from a \code{kb_predictions} object (the output of a
 \verb{kb_predict_*()} function).
 }
 \details{
-\code{x} defaults to \code{NULL} and is inferred from the prediction's metadata (the
-predictor column, or the grouping factor when the predictor does not vary); it
-remains overridable. The layout follows from \code{x}: the remaining grouping
-variables are always faceted, so the variable on the x-axis is never also used
-as a facet. The plot style is derived, not an argument: a line with a
-credible-interval ribbon is drawn only for a generated curve (the output of
-\code{\link[=kb_predict_weight_by]{kb_predict_weight_by()}} over a varying predictor); every other prediction
-renders as \code{geom_pointrange}. When the predictor does not vary (a held
-reference value, or a model with no continuous predictor) the last grouping
-factor goes on the x-axis. If the metadata has been stripped (e.g. by dplyr
-post-processing) and \code{x} cannot be inferred, the function errors and asks for
-\code{x}.
+Called with just the predictions, the plot configures itself: the x-axis,
+faceting, and geometry are inferred from the prediction's metadata. The result
+is a standard \code{ggplot} that can be refined with \code{+} (scales, labels, themes,
+\code{coord_flip()}).
+
+The geometry is chosen automatically, not set by an argument: a line with a
+compatibility-interval ribbon for a generated curve (\code{\link[=kb_predict_weight_by]{kb_predict_weight_by()}}
+over a varying predictor), and \code{geom_pointrange} otherwise. Override the
+inferred x-axis with \code{x}, and overlay the raw data with \code{observed}.
 }
 \examples{
 # Allometric curve by site (ribbon):
