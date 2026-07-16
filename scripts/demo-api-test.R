@@ -17,7 +17,6 @@ set.seed(42)
 
 # --- bundled data + pre-fit ---------------------------------------------------
 str(data_weight_sim_nereo)
-str(data_weight_sim_nereo)
 fit_weight_sim_nereo
 
 # --- kb_check_data_weight_nereo() ---------------------------------------------
@@ -49,7 +48,7 @@ priors
 
 # --- kb_fit_weight_nereo() ----------------------------------------------------
 fit <- kb_fit_weight_nereo(data_weight_sim_nereo, chains = 2, niters = 500)
-# summary - print key model info (see other generics inclduing summary() below)
+# summary - print key model info (see other generics including summary() below)
 fit
 
 # prior_only ignores observed weights; supplied data informs RE dimensions,

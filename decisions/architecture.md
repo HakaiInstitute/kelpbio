@@ -6,7 +6,7 @@
 
 kelpbio fits Bayesian hierarchical kelp-biomass models with Stan and exposes them through a small S3 surface built on the tidyverse/`posterior` stack. The engine is `rstan` + `rstantools`: Stan sources in `inst/stan/` are transpiled to C++ and compiled into the package binary at `R CMD INSTALL` time, so users never need `cmdstanr` or a separate Stan toolchain. See `decisions/engine-choice.md`.
 
-The package is designed around one organising decision: a fit object stores **extracted posterior draws, not the live `stanfit`**. Fitting is the only stochastic step; everything downstream (summaries, diagnostics, predictions, plots) is pure `posterior` arithmetic over stored draws. This makes fit objects small, portable, robust across rstan versions, and makes a pre-fit model a non-special case (the bundled `fit_weight_hakai_nereo` is just a fit object). See `decisions/prediction-engine.md` and the `fitting` spec.
+The package is designed around one organising decision: a fit object stores **extracted posterior draws, not the live `stanfit`**. Fitting is the only stochastic step; everything downstream (summaries, diagnostics, predictions, plots) is pure `posterior` arithmetic over stored draws. This makes fit objects small, portable, robust across rstan versions, and makes a pre-fit model a non-special case (the bundled `fit_weight_sim_nereo` is just a fit object). See `decisions/prediction-engine.md` and the `fitting` spec.
 
 The eventual package composes six sub-models (weight, size, density, blade fraction, wet/dry, carbon) into a biomass estimate by size-integration. On this branch only the weight model exists; the other five and the biomass composition are out of scope. The architecture here is deliberately the template the rest will follow.
 
@@ -116,7 +116,7 @@ The S3 class is model-level (`kb_fit_weight`), not species-level; the species li
 
 `by = "year"` is rejected (`validate_by_weight()`): year has no main effect, only the site:year interaction. `build_by_grid()` crosses diameter only with *observed* site:year combinations. Both verbs share `summarise_weight_predictions()`, which exponentiates the log-scale rvar, reduces each row to `estimate`/`lower`/`upper` (the `estimate` function plus equal-tailed `conf_level` limits, `signif`-rounded), and wraps the result as a `kb_predictions` object.
 
-**`rstantools` generics** (`R/posterior_epred.R`, `posterior_linpred.R`, `posterior_predict.R`, `log_lik.R`, `predict.R`, `prior_summary.R`) are thin faces over the same helper, returning a draws-by-observations (`D x N`) matrix rather than a summary: `posterior_linpred` is the raw linpred, `posterior_epred` exponentiates, `posterior_predict` adds Student-t noise (and returns stored `yrep` when `newdata = NULL`), `log_lik` returns the stored pointwise matrix (feeds `loo::loo`). `predict.kb_fit_weight` wraps `kb_predict_weight`.
+**`rstantools` generics** (`R/posterior_epred.R`, `posterior_linpred.R`, `posterior_predict.R`, `log_lik.R`, `predict.R`, `prior_summary.R`) are thin faces over the same helper, returning a draws-by-observations (`D x N`) matrix rather than a summary: `posterior_linpred` is the raw linpred, `posterior_epred` exponentiates, `posterior_predict` adds Student-t noise (and returns stored `yrep` when `new_data = NULL`), `log_lik` returns the stored pointwise matrix (feeds `loo::loo`). `predict.kb_fit_weight` wraps `kb_predict_weight`.
 
 ## Summary and Diagnostic Surface
 
@@ -128,11 +128,11 @@ The `generics` contract is shape-only, so output uses Poisson house vocabulary r
 
 `summary.kb_fit` (`R/summary.R`) returns a classed `summary_kb_fit` combining a metadata header and the coefficient table augmented with `rhat`/`ess_bulk`/`ess_tail` from the stored diagnostics (same source as `converged()`/`glance()`, so numbers agree). `fit_descriptor()` supplies the model-specific header (likelihood family, effect structure in prose, group counts, centering reference); it switches on the fit subclass and returns `NA` fields for unknown models, so new models slot in by adding a `switch` branch. The header prose deliberately avoids a mixed-model formula so the output implies no formula interface.
 
-`converged()` (`R/converged.R`) and `glance()` assess convergence on Rhat and the bulk effective sample *rate* (`esr` = `ess_bulk / ndraws`), with report-mode defaults `rhat = 1.05`, `esr = 0.1`. Structural accessors (`R/accessors.R`) all read from `x$draws` / `x$diagnostics` via `posterior`. `augment()` (`R/augment.R`) returns the data with `fitted`/`residual`/`lower`/`upper` computed through the same linpred helper, so its central estimate agrees with `posterior_epred(newdata = NULL)`.
+`converged()` (`R/converged.R`) and `glance()` assess convergence on Rhat and the bulk effective sample *rate* (`esr` = `ess_bulk / ndraws`), with report-mode defaults `rhat = 1.05`, `esr = 0.1`. Structural accessors (`R/accessors.R`) all read from `x$draws` / `x$diagnostics` via `posterior`. `augment()` (`R/augment.R`) returns the data with `fitted`/`residual` computed through the same linpred helper, so its central estimate agrees with `posterior_epred(new_data = NULL)`.
 
 ## Objects and Metadata
 
-**`kb_fit` / `kb_fit_weight`** — the draws-not-stanfit fit object (slots above). Accessed with `$` (`x$draws`, `x$meta`); `samples(x)` returns a `posterior` `draws_rvars`. Constructed only internally by `new_kb_fit_weight()`.
+**`kb_fit` / `kb_fit_weight`** — the draws-not-stanfit fit object (slots above). Accessed with `$` (`x$draws`, `x$meta`); `samples(fit)` returns a `posterior` `draws_rvars`. Constructed only internally by `new_kb_fit_weight()`.
 
 **`kb_predictions`** (`R/kb_predictions.R`) — a tibble subclass carrying column-role metadata as attributes: `kb_predictor`, `kb_predictor_units`, `kb_group_vars`, `kb_response`, `kb_response_units`, and `kb_curve` (whether rows form an ordered generated grid, hence ribbon-eligible; not recoverable from the data shape). `kb_plot_predictions()` (`R/kb_plot_predictions.R`) resolves its `x`/`style`/`facet` defaults from these attributes and falls back with a helpful error if a dplyr verb has stripped them; `autoplot.kb_predictions()` (`R/autoplot.R`) is the conventional entry point and dispatches on the prediction data frame, never on a fit.
 
@@ -162,14 +162,14 @@ Tests mirror sources 1:1 (`R/<name>.R` \<-\> `tests/testthat/test-<name>.R`).
 | Prior objects | `R/kb_prior_normal.R`, `R/kb_prior_exponential.R`, `R/kb_priors_weight_nereo.R` | `kb_prior_normal()`, `kb_prior_exponential()`, `kb_priors_weight_nereo()` |
 | Mean helper | `R/weight_nereo_linpred.R` | `.weight_nereo_linpred()`, `resolve_re1()`, `resolve_re2()`, `re_draw()`, `validate_by_weight()`, `build_by_grid()` |
 | Prediction verbs | `R/kb_predict_weight.R`, `R/kb_predict_weight_by.R` | `kb_predict_weight()`, `kb_predict_weight_by()`, `summarise_weight_predictions()` |
-| rstantools generics | `R/posterior_epred.R`, `R/posterior_linpred.R`, `R/posterior_predict.R`, `R/log_lik.R`, `R/predict.R`, `R/prior_summary.R` | `posterior_epred.kb_fit_weight()`, etc. |
+| rstantools generics | `R/posterior_epred.R`, `R/posterior_linpred.R`, `R/posterior_predict.R`, `R/log_lik.R`, `R/predict.R`, `R/prior_summary.R` | `posterior_epred.kb_fit_weight()`, `log_lik.kb_fit()`, etc. |
 | Predictions object | `R/kb_predictions.R` | `new_kb_predictions()`, `print.kb_predictions()` |
 | Plotting | `R/kb_plot_predictions.R`, `R/autoplot.R` | `kb_plot_predictions()`, `autoplot.kb_predictions()` |
 | Parameter summaries | `R/tidy.R`, `R/coef.R`, `R/glance.R`, `R/summary.R`, `R/summarise.R` | `tidy.kb_fit_weight()`, `summary.kb_fit()`, `fit_descriptor()`, `summarise_draws_terms()` |
 | Diagnostics / accessors | `R/converged.R`, `R/accessors.R`, `R/samples.R`, `R/kb_stancode.R` | `converged.kb_fit()`, `esr.kb_fit()`, `rhat.kb_fit()` |
-| Augment | `R/augment.R` | `augment.kb_fit_weight()` |
+| Augment | `R/augment.R` | `augment.kb_fit()` |
 | Generic re-exports | `R/generics.R`, `R/kelpbio-package.R` | re-exported `generics`/`universals`/`rstantools`/`ggplot2` generics |
-| Bundled data / fit | `data/`, `data-raw/` | `data_weight_hakai_nereo`, `data_weight_sim_nereo`, `fit_weight_hakai_nereo` |
+| Bundled data / fit | `data/`, `data-raw/` | `data_weight_sim_nereo`, `fit_weight_sim_nereo` |
 
 ## Glossary
 
