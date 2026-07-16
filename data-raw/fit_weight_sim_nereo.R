@@ -11,10 +11,12 @@
 
 devtools::load_all(quiet = TRUE)
 
-# A few rows per site-year cell, keeping the full grid so by = "site" and
-# by = c("site", "year") examples exercise every level.
+# Several rows per site-year cell, keeping the full grid so by = "site" and
+# by = c("site", "year") examples exercise every level. Enough observations to
+# identify the site intercept and site slope SDs (a sparser sample lets the
+# regularizing priors shrink both toward zero).
 set.seed(42)
-keep_per_cell <- 2L
+keep_per_cell <- 6L
 d <- do.call(
   rbind,
   by(
