@@ -13,7 +13,7 @@
       .chk_new_data_weight_nereo(not_df)
     Condition
       Error in `.chk_new_data_weight_nereo()`:
-      ! `not_df` must be a data frame or `NULL`.
+      ! `not_df` must be a data frame.
 
 ---
 

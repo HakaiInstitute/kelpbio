@@ -16,5 +16,5 @@
 }
 
 .vld_new_data_weight_nereo <- function(x) {
-  is.null(x) || (is.data.frame(x) && "diameter" %in% names(x))
+  is.data.frame(x) && "diameter" %in% names(x)
 }

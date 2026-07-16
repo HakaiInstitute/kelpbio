@@ -27,7 +27,7 @@
     return(invisible(x))
   }
   if (!is.data.frame(x)) {
-    cli::cli_abort("{.arg {x_name}} must be a data frame or {.code NULL}.")
+    cli::cli_abort("{.arg {x_name}} must be a data frame.")
   }
   cli::cli_abort("{.arg {x_name}} must have a {.field diameter} column.")
 }
