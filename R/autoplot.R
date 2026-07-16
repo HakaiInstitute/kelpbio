@@ -2,7 +2,7 @@
 #'
 #' The conventional `ggplot2::autoplot` entry point for a `kb_predictions`
 #' object: a thin wrapper on [kb_plot_predictions()]. Dispatches on the
-#' prediction data frame (via its stored attributes), never on a fit.
+#' prediction data frame, never on a fit.
 #'
 #' @param object A `kb_predictions` object.
 #' @param ... Passed to [kb_plot_predictions()] (e.g. `x`, `observed`).

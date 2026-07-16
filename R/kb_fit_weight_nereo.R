@@ -18,14 +18,11 @@
 #' Chains run in parallel by default (`cores = NULL` uses `getOption("mc.cores")`,
 #' falling back to `chains`, capped at the available cores). Set
 #' `options(mc.cores = 1)` (or pass `cores = 1`) on shared servers, in
-#' containers, or inside another parallel context. On Windows, parallel chains
-#' run in separate processes that load the installed package, so use
-#' `cores = 1` when running from `devtools::load_all()`.
+#' containers, or inside another parallel context.
 #'
-#' The sampler runs with `adapt_delta = 0.95` (a smaller leapfrog step than
-#' Stan's 0.8 default, suited to the hierarchical geometry and reducing
-#' divergences). Override it, or set any other sampler control, by passing a
-#' `control` list through `...`, e.g.
+#' The sampler runs with a conservative `adapt_delta = 0.95` by default, which
+#' reduces divergences at the cost of slightly longer runtime. Override it, or
+#' set any other sampler control, by passing a `control` list through `...`, e.g.
 #' `kb_fit_weight_nereo(data, control = list(adapt_delta = 0.99))`; only the
 #' entries supplied are changed. See the `control` argument of [rstan::stan()]
 #' for the full set of tunable entries (e.g. `adapt_delta`, `max_treedepth`).

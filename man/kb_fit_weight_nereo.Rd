@@ -74,14 +74,11 @@ convergence with \code{\link[=converged]{converged()}} / \code{\link[=glance]{gl
 Chains run in parallel by default (\code{cores = NULL} uses \code{getOption("mc.cores")},
 falling back to \code{chains}, capped at the available cores). Set
 \code{options(mc.cores = 1)} (or pass \code{cores = 1}) on shared servers, in
-containers, or inside another parallel context. On Windows, parallel chains
-run in separate processes that load the installed package, so use
-\code{cores = 1} when running from \code{devtools::load_all()}.
+containers, or inside another parallel context.
 
-The sampler runs with \code{adapt_delta = 0.95} (a smaller leapfrog step than
-Stan's 0.8 default, suited to the hierarchical geometry and reducing
-divergences). Override it, or set any other sampler control, by passing a
-\code{control} list through \code{...}, e.g.
+The sampler runs with a conservative \code{adapt_delta = 0.95} by default, which
+reduces divergences at the cost of slightly longer runtime. Override it, or
+set any other sampler control, by passing a \code{control} list through \code{...}, e.g.
 \code{kb_fit_weight_nereo(data, control = list(adapt_delta = 0.99))}; only the
 entries supplied are changed. See the \code{control} argument of \code{\link[rstan:stan]{rstan::stan()}}
 for the full set of tunable entries (e.g. \code{adapt_delta}, \code{max_treedepth}).

@@ -7,8 +7,7 @@
 #' The `print` method renders a header (likelihood family, fixed- and
 #' random-effect structure, observation and group counts, sampler configuration,
 #' and the convergence verdict), the coefficient table, and a diagnostics footer.
-#' For the
-#' snapshot-safe overview without the numeric table, call `print()` on the fit
+#' For a compact overview without the numeric table, call `print()` on the fit
 #' itself.
 #'
 #' The coefficient table reports, per term:

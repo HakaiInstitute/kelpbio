@@ -86,7 +86,9 @@ with_quiet_sampler <- function(expr, quiet) {
 }
 
 # NULL respects getOption("mc.cores"), falling back to chains, capped at the
-# available cores so the default never oversubscribes.
+# available cores so the default never oversubscribes. On Windows, dev runs via
+# load_all() should pass cores = 1: parallel chains spawn separate processes that
+# load the installed package, not the load_all() session.
 resolve_cores <- function(cores, chains) {
   if (is.null(cores)) {
     cores <- getOption("mc.cores", chains)
