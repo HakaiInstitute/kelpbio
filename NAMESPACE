@@ -63,35 +63,27 @@ export(tidy)
 import(Rcpp)
 import(methods)
 importFrom(RcppParallel,RcppParallelLibs)
-importFrom(generics,
-  augment,
-  glance,
-  tidy
-)
+importFrom(generics,augment)
+importFrom(generics,glance)
+importFrom(generics,tidy)
 importFrom(ggplot2,autoplot)
-importFrom(rlang,
-  "%||%",
-  .data
-)
+importFrom(rlang,"%||%")
+importFrom(rlang,.data)
 importFrom(rstan,sampling)
-importFrom(rstantools,
-  log_lik,
-  posterior_epred,
-  posterior_linpred,
-  posterior_predict,
-  prior_summary,
-  rstan_config
-)
+importFrom(rstantools,log_lik)
+importFrom(rstantools,posterior_epred)
+importFrom(rstantools,posterior_linpred)
+importFrom(rstantools,posterior_predict)
+importFrom(rstantools,prior_summary)
+importFrom(rstantools,rstan_config)
 importFrom(stats,nobs)
-importFrom(universals,
-  converged,
-  esr,
-  estimates,
-  nchains,
-  niters,
-  npars,
-  nterms,
-  pars,
-  rhat
-)
+importFrom(universals,converged)
+importFrom(universals,esr)
+importFrom(universals,estimates)
+importFrom(universals,nchains)
+importFrom(universals,niters)
+importFrom(universals,npars)
+importFrom(universals,nterms)
+importFrom(universals,pars)
+importFrom(universals,rhat)
 useDynLib(kelpbio, .registration = TRUE)
