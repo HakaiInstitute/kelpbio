@@ -65,3 +65,4 @@
 
 - [x] 10.1 roxygen for all exports (plain-language `marginal`/`typical`); a prior-predictive example; a `pp_check`/`loo` demonstration in a vignette; ensure `decisions/prediction-engine.md` matches the implemented surface.
 - [x] 10.2 `devtools::document()`; `R CMD check` clean; confirm 1:1 test mirroring.
+- [x] 10.3 Package-review follow-ups (`poissonconsulting/kelpbio#1`, `#5`): the Get started vignette becomes a worked example that runs live against the bundled `fit_weight_sim_nereo` (only the `kb_fit_weight_nereo()` call left `eval = FALSE`), and `_pkgdown.yml` lists the reference topics explicitly instead of `matches("\\.")`. Update the `openspec/specs/website` requirements + this change's delta.
