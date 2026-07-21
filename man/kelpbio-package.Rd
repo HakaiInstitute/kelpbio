@@ -8,7 +8,7 @@
 \description{
 \if{html}{\figure{logo.png}{options: style='float: right' alt='logo' width='120'}}
 
-Fit Bayesian hierarchical Stan models via 'rstan' to estimate kelp biomass and carbon from in-situ observations, including allometric weight, plant size distribution, density, and wet-to-dry and carbon tissue conversions.
+Fit a Bayesian hierarchical Stan model via 'rstan' to estimate the allometric relationship between kelp weight and size from in-situ observations. Further biomass components (plant size distribution, density, and wet-to-dry and carbon tissue conversions) are in development.
 }
 \seealso{
 Useful links:

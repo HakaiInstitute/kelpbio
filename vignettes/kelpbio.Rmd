@@ -7,38 +7,136 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-```{r setup, include = FALSE}
-knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
 ```
 
-kelpbio fits Bayesian hierarchical Stan models to estimate kelp biomass and
-carbon from field measurements, combining allometric weight, plant size
-distribution, density, and wet-to-dry and carbon tissue conversions. This
-article will walk through a complete worked example once the modelling
-functions are available; for now it serves as a placeholder while the package
-API is under development.
-
-## Model checking with the standard Bayesian tooling
-
-A fitted model exposes the `rstantools` generics, so it composes directly with
-`bayesplot` and `loo`. The chunks below are illustrative (not run here, as
-fitting requires the compiled package).
-
-```{r fit, eval = FALSE}
-fit <- kb_fit_weight_nereo(data_weight_sim_nereo)
+```{r setup, message = FALSE, warning = FALSE}
+library(kelpbio)
 ```
 
-A posterior-predictive check uses the stored `yrep` via `posterior_predict()`:
+kelpbio fits Bayesian hierarchical Stan models to estimate kelp biomass from
+field measurements. This article walks through the allometric weight model for
+*Nereocystis luetkeana*, which relates wet weight to sub-bulb diameter with
+random effects for site and site-by-year. Further biomass components (plant size
+distribution, density, and wet-to-dry and carbon tissue conversions) are in
+development.
 
-```{r ppc, eval = FALSE}
+Under the hood, models are fitted with [rstan](https://mc-stan.org/rstan/). The
+Stan code is pre-compiled when the package is installed, so no separate Stan
+installation is required.
+
+## Providing data
+
+The weight model is fitted to a data frame with a numeric `diameter`, a numeric
+`weight`, and `site` and `year` grouping factors. A small simulated dataset
+ships with the package:
+
+```{r}
+data_weight_sim_nereo
+```
+
+`kb_check_data_weight_nereo()` confirms the data are in the expected format,
+returning the data invisibly if the checks pass and raising an informative error
+otherwise:
+
+```{r}
+kb_check_data_weight_nereo(data_weight_sim_nereo)
+```
+
+## Fitting the model
+
+`kb_fit_weight_nereo()` fits the model. Set `quiet = TRUE` to suppress the
+sampler's progress and warnings, and `seed` for a reproducible fit.
+
+```{r, eval = FALSE}
+fit <- kb_fit_weight_nereo(data_weight_sim_nereo, seed = 1)
+```
+
+Fitting compiles and samples the Stan model, which takes a few minutes. To keep
+this article quick to build, the remaining steps use `fit_weight_sim_nereo`, a
+pre-fit model on the same dataset that ships with the package.
+
+```{r, echo = FALSE}
+fit <- fit_weight_sim_nereo
+```
+
+## Checking convergence
+
+`glance()` returns a one-row summary of the fit, including the sampler settings
+and the convergence diagnostics. `converged` is `TRUE` when the split R-hat is
+below its threshold (1.05 by default) and the effective sample size is adequate.
+
+```{r}
+glance(fit)
+```
+
+## Summarising the fit
+
+`tidy()` returns the model terms with a point estimate and compatibility limits.
+The intercept and slopes describe the allometric relationship on the log scale;
+the `s`-prefixed terms are the random-effect standard deviations.
+
+```{r}
+tidy(fit)
+```
+
+## Priors
+
+`kb_priors_weight_nereo()` returns the default priors, which are weakly
+informative on the model's centered log scale.
+
+```{r}
+kb_priors_weight_nereo()
+```
+
+Adjust a prior by replacing an element with `kb_prior_normal()` or
+`kb_prior_exponential()` and passing the result to the `priors` argument of
+`kb_fit_weight_nereo()`:
+
+```{r, eval = FALSE}
+priors <- kb_priors_weight_nereo()
+priors$sd_site <- kb_prior_exponential(2)
+fit <- kb_fit_weight_nereo(data_weight_sim_nereo, priors = priors, seed = 1)
+```
+
+## Predictions
+
+`kb_predict_weight_by()` summarises the fitted weight-diameter curve over a
+generated diameter sequence, one curve per group named in `by`. Pass the result
+to `kb_plot_predictions()` to plot the curve with its compatibility band:
+
+```{r, fig.width = 7, fig.height = 4.5}
+kb_predict_weight_by(fit, by = "site") |>
+  kb_plot_predictions()
+```
+
+`kb_predict_weight()` instead predicts at the rows of a supplied data frame,
+returning a point estimate and compatibility limits for each row:
+
+```{r}
+new_data <- data.frame(diameter = c(20, 35, 50, 65, 80), site = "site1")
+kb_predict_weight(fit, new_data)
+```
+
+## Standard Bayesian tooling
+
+The fitted object exposes the `rstantools` generics, so it composes directly
+with `bayesplot` and `loo`. A posterior-predictive check uses the stored `yrep`
+via `posterior_predict()`:
+
+```{r, eval = FALSE}
 bayesplot::ppc_dens_overlay(
   y = fit$data$weight,
   yrep = posterior_predict(fit)
 )
 ```
 
-Leave-one-out model comparison uses the pointwise `log_lik()`:
+Leave-one-out cross-validation uses the pointwise `log_lik()`:
 
-```{r loo, eval = FALSE}
+```{r, eval = FALSE}
 loo::loo(log_lik(fit))
 ```

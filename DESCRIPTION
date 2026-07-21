@@ -5,10 +5,9 @@ Authors@R: c(
     person("Seb", "Dalgarno", , "seb@poissonconsulting.ca", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0002-3658-4517")),
     person("Tula Foundation", role = c("fnd", "cph")))
-Description: Fit Bayesian hierarchical Stan models via 'rstan' to estimate kelp
-    biomass and carbon from in-situ observations, including allometric weight,
-    plant size distribution, density, and wet-to-dry and carbon
-    tissue conversions.
+Description: Fit a Bayesian hierarchical Stan model via 'rstan' to estimate the
+    allometric relationship between kelp weight and size from in-situ
+    observations.
 License: MIT + file LICENSE
 URL: https://github.com/HakaiInstitute/kelpbio,
     https://hakaiinstitute.github.io/kelpbio/
