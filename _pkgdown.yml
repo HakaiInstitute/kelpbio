@@ -36,4 +36,18 @@ reference:
   contents:
     - samples
     - kb_stancode
-    - matches("\\.")
+    - tidy.kb_fit_weight
+    - coef.kb_fit
+    - glance.kb_fit
+    - summary.kb_fit
+    - augment.kb_fit
+    - converged.kb_fit
+    - prior_summary.kb_fit
+    - log_lik.kb_fit
+    - fitted.kb_fit_weight
+    - residuals.kb_fit_weight
+    - predict.kb_fit_weight
+    - posterior_epred.kb_fit_weight
+    - posterior_linpred.kb_fit_weight
+    - posterior_predict.kb_fit_weight
+    - autoplot.kb_predictions
