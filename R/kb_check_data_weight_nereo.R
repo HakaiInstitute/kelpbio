@@ -25,7 +25,7 @@
 #' kb_check_data_weight_nereo(data)
 kb_check_data_weight_nereo <- function(
   data,
-  x_name = deparse(substitute(data))
+  x_name = chk::deparse_backtick_chk(substitute(data))
 ) {
   chk::chk_data(data, x_name = x_name)
   chk::chk_superset(
