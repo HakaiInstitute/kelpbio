@@ -60,8 +60,8 @@ named in \code{by} (one curve per group).
 their estimated random effects. \code{new_levels} controls the factors not named in
 \code{by}. The default \code{"average"} holds those random effects at zero, giving the
 typical-group curve. \code{"sample"} instead draws a new random effect from its
-estimated distribution, widening the uncertainty to include between-group variation;
-Set a seed with \code{set.seed()} for a reproducible CIs. The available \code{by} values
+estimated distribution, widening the uncertainty to include between-group
+variation. Set a seed with \code{set.seed()} for reproducible CIs. The available \code{by} values
 are \code{NULL} (a single population curve), \code{"site"}, and \code{c("site", "year")}.
 }
 \examples{

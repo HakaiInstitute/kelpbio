@@ -9,8 +9,8 @@
 #' their estimated random effects. `new_levels` controls the factors not named in
 #' `by`. The default `"average"` holds those random effects at zero, giving the
 #' typical-group curve. `"sample"` instead draws a new random effect from its
-#' estimated distribution, widening the uncertainty to include between-group variation;
-#' Set a seed with `set.seed()` for a reproducible CIs. The available `by` values
+#' estimated distribution, widening the uncertainty to include between-group
+#' variation. Set a seed with `set.seed()` for reproducible CIs. The available `by` values
 #' are `NULL` (a single population curve), `"site"`, and `c("site", "year")`.
 #'
 #' @inheritParams params
