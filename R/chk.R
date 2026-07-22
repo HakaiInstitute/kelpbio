@@ -56,8 +56,33 @@
   invisible(NULL)
 }
 
+.chk_progress <- function(x, x_name = deparse(substitute(x))) {
+  if (.vld_progress(x)) {
+    return(invisible(x))
+  }
+  cli::cli_abort(
+    "{.arg {x_name}} must be one of {.val bar}, {.val verbose}, or {.val none}."
+  )
+}
+
+.chk_progress_dir <- function(x, x_name = deparse(substitute(x))) {
+  if (.vld_progress_dir(x)) {
+    if (is.null(x) || file.access(x, mode = 2L) == 0L) {
+      return(invisible(x))
+    }
+    cli::cli_abort("{.arg {x_name}} must be a writable directory.")
+  }
+  if (!is.character(x) || length(x) != 1L || is.na(x)) {
+    cli::cli_abort("{.arg {x_name}} must be a directory path or {.code NULL}.")
+  }
+  cli::cli_abort(
+    "{.arg {x_name}} must be a path to an existing directory, or {.code NULL}."
+  )
+}
+
 # Shared sampler-argument validation for every kb_fit_* wrapper.
-.chk_sampler_args <- function(prior_only, chains, niters, nthin, cores, seed = NULL, quiet) {
+.chk_sampler_args <- function(prior_only, chains, niters, nthin, cores,
+                              seed = NULL, progress, progress_dir = NULL) {
   chk::chk_flag(prior_only)
   chk::chk_whole_number(chains)
   chk::chk_gt(chains, value = 0)
@@ -65,7 +90,8 @@
   chk::chk_gt(niters, value = 0)
   chk::chk_whole_number(nthin)
   chk::chk_gt(nthin, value = 0)
-  chk::chk_flag(quiet)
+  .chk_progress(progress)
+  .chk_progress_dir(progress_dir)
   if (!is.null(cores)) {
     chk::chk_whole_number(cores)
     chk::chk_gt(cores, value = 0)

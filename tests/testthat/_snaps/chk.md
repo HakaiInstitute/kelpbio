@@ -23,3 +23,27 @@
       Error in `.chk_new_data_weight_nereo()`:
       ! `no_diameter` must have a diameter column.
 
+# .chk_progress passes a valid mode through invisibly and errors otherwise
+
+    Code
+      .chk_progress("loud")
+    Condition
+      Error in `.chk_progress()`:
+      ! `"loud"` must be one of "bar", "verbose", or "none".
+
+# .chk_progress_dir errors on a non-directory or non-string
+
+    Code
+      .chk_progress_dir(missing_dir)
+    Condition
+      Error in `.chk_progress_dir()`:
+      ! `missing_dir` must be a path to an existing directory, or `NULL`.
+
+---
+
+    Code
+      .chk_progress_dir(1)
+    Condition
+      Error in `.chk_progress_dir()`:
+      ! `1` must be a directory path or `NULL`.
+

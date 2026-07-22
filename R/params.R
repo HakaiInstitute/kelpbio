@@ -26,9 +26,12 @@
 #'   reproducible, or `NULL` (the default). When `NULL`, rstan draws its own seed
 #'   from R's RNG, so a preceding `set.seed()` also makes the fit reproducible; an
 #'   explicit `seed` takes precedence over the RNG state.
-#' @param quiet A flag specifying whether to suppress console output. When
-#'   `FALSE` (the default), rstan's sampling progress and warnings are printed;
-#'   when `TRUE`, all sampler output is suppressed.
+#' @param progress A string, one of `"bar"` (the default, a console progress
+#'   bar), `"verbose"` (rstan's per-iteration output and diagnostic warnings), or
+#'   `"none"` (silent). Controls fit-time console output only.
+#' @param progress_dir A string giving an existing directory in which to write a
+#'   pollable progress artifact (read by [kb_fit_progress()]), or `NULL` (the
+#'   default) to write none.
 #' @param conf_level A number between 0 and 1 giving the compatibility-interval
 #'   level.
 #' @param estimate A function that reduces a numeric vector of posterior draws to

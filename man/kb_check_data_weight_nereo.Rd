@@ -4,7 +4,10 @@
 \alias{kb_check_data_weight_nereo}
 \title{Validate Nereocystis Weight Model Data}
 \usage{
-kb_check_data_weight_nereo(data, x_name = deparse(substitute(data)))
+kb_check_data_weight_nereo(
+  data,
+  x_name = chk::deparse_backtick_chk(substitute(data))
+)
 }
 \arguments{
 \item{data}{A data frame of weight observations (see

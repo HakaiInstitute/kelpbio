@@ -1,42 +1,75 @@
+# Seconds between progress polls in the console "bar" path.
+POLL_INTERVAL <- 0.2
+
 # Model- and species-agnostic sampling engine shared by every kb_fit_* function:
 # sample, extract the draws as rvars, split off the generated quantities,
 # summarise convergence, and discard the live stanfit. niters is saved post-warmup
 # draws/chain; rstan's iter counts warmup, so warmup = niters and the post-warmup
 # phase is thinned by nthin to land exactly niters draws.
+#
+# progress controls fit-time console output ("bar", "verbose", "none"); see the
+# fitting spec. "bar" runs sampling in a callr background process and polls a
+# progress artifact to drive a cli bar (stanmodel_name re-fetches the compiled
+# model in that process, since the model's external pointer cannot cross it).
+# "verbose"/"none" sample in-process. A progress artifact is written whenever
+# progress_dir is supplied (any mode) or for the internal "bar" temp directory.
 fit_stan <- function(stanmodel, stan_data, param_vars,
                      gq_vars = NULL,
-                     chains, niters, nthin, cores, quiet, seed = NULL, ...) {
+                     chains, niters, nthin, cores, progress,
+                     progress_dir = NULL, stanmodel_name = NULL,
+                     seed = NULL, ...) {
   warmup <- as.integer(niters)
   total_iter <- warmup + as.integer(niters) * as.integer(nthin)
+  chains <- as.integer(chains)
 
   dots <- list(...)
   control <- utils::modifyList(list(adapt_delta = 0.95), dots$control %||% list())
   dots$control <- NULL
 
-  args <- list(
-    stanmodel,
+  art <- resolve_progress_dir(progress, progress_dir)
+  if (art$owned) {
+    on.exit(unlink(art$dir, recursive = TRUE), add = TRUE)
+  }
+  if (!is.null(art$dir)) {
+    write_progress_manifest(art$dir, chains, warmup, niters, nthin)
+  }
+
+  # Model-free, serialisable argument list (shared by the in-process and
+  # background paths); the compiled model is prepended separately.
+  sampling_args <- list(
     data = stan_data,
-    chains = as.integer(chains),
+    chains = chains,
     iter = total_iter,
     warmup = warmup,
     thin = as.integer(nthin),
     cores = resolve_cores(cores, chains),
-    refresh = if (quiet) 0L else max(1L, total_iter %/% 10L),
+    refresh = if (identical(progress, "verbose")) max(1L, total_iter %/% 10L) else 0L,
     show_messages = FALSE,
     # The HTML progress viewer errors in some GUIs.
     open_progress = FALSE,
     control = control
   )
+  if (!is.null(art$dir)) {
+    sampling_args$sample_file <- progress_sample_file(art$dir)
+  }
   # Pass seed only when supplied; absent, rstan derives its own from R's RNG, so
   # set.seed() still makes the fit reproducible.
   if (!is.null(seed)) {
-    args$seed <- as.integer(seed)
+    sampling_args$seed <- as.integer(seed)
   }
+  sampling_args <- c(sampling_args, dots)
 
-  stanfit <- with_quiet_sampler(
-    do.call(rstan::sampling, c(args, dots)),
-    quiet = quiet
-  )
+  stanfit <- if (identical(progress, "bar")) {
+    sample_with_bar(
+      stanmodel_name, sampling_args, art$dir,
+      chains, warmup, niters, nthin
+    )
+  } else {
+    with_quiet_sampler(
+      do.call(rstan::sampling, c(list(stanmodel), sampling_args)),
+      muffle = !identical(progress, "verbose")
+    )
+  }
 
   all_draws <- posterior::as_draws_rvars(stanfit)
   draws <- posterior::subset_draws(all_draws, variable = param_vars)
@@ -62,12 +95,47 @@ fit_stan <- function(stanmodel, stan_data, param_vars,
   )
 }
 
-# Muffle rstan's post-sampling HMC diagnostic warnings only when quiet = TRUE.
-# With quiet = FALSE they propagate so the user sees rstan's full diagnostics
-# (divergences, treedepth, BFMI, Rhat/ESS) at fit time; converged()/glance()/
-# summary() give the structured convergence summary either way.
-with_quiet_sampler <- function(expr, quiet) {
-  if (!quiet) {
+# Run sampling in a callr background process and poll the progress artifact to
+# drive a cli progress bar. The background process re-fetches the compiled model
+# by name (its external pointer cannot cross the process boundary); rstan remains
+# the source of truth for the returned stanfit. The bar is fed rows counted from
+# the sample_file, so a polling glitch can only misplace the bar, never the fit.
+sample_with_bar <- function(stanmodel_name, sampling_args, dir,
+                            chains, warmup, niters, nthin) {
+  if (is.null(stanmodel_name)) {
+    cli::cli_abort("Internal: {.code progress = \"bar\"} requires {.arg stanmodel_name}.")
+  }
+  bg <- callr::r_bg(
+    func = function(stanmodel_name, sampling_args) {
+      model <- get("stanmodels", envir = asNamespace("kelpbio"))[[stanmodel_name]]
+      do.call(rstan::sampling, c(list(model), sampling_args))
+    },
+    args = list(stanmodel_name = stanmodel_name, sampling_args = sampling_args),
+    supervise = TRUE
+  )
+  on.exit(if (bg$is_alive()) bg$kill(), add = TRUE)
+
+  manifest <- list(chains = chains, warmup = warmup, niters = niters, nthin = nthin)
+  total_rows <- progress_rows_per_chain(warmup, niters, nthin) * chains
+  reporter <- progress_reporter("bar")
+  reporter$start(total_rows)
+  while (bg$is_alive()) {
+    Sys.sleep(POLL_INTERVAL)
+    reporter$update(count_progress_rows(dir, manifest))
+  }
+  reporter$update(total_rows)
+  reporter$finish()
+  # Surfaces the child's error (with its backtrace) if sampling failed.
+  bg$get_result()
+}
+
+# Muffle rstan's post-sampling HMC diagnostic warnings (progress "bar"/"none").
+# With progress = "verbose" they propagate so the user sees rstan's full
+# diagnostics (divergences, treedepth, BFMI, Rhat/ESS) at fit time;
+# converged()/glance()/summary() give the structured convergence summary either
+# way.
+with_quiet_sampler <- function(expr, muffle) {
+  if (!muffle) {
     return(expr)
   }
   pattern <- paste(

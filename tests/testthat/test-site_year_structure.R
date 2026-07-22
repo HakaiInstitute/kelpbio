@@ -53,13 +53,13 @@ test_that("notify_site_year warns on an aliased design", {
   )
 })
 
-test_that("notify_site_year reports an omitted effect unless quiet", {
+test_that("notify_site_year reports an omitted effect unless progress is none", {
   expect_message(
     notify_site_year(list(on = FALSE, aliased = FALSE)),
     "site:year effect is omitted"
   )
   expect_no_message(
-    notify_site_year(list(on = FALSE, aliased = FALSE), quiet = TRUE)
+    notify_site_year(list(on = FALSE, aliased = FALSE), progress = "none")
   )
 })
 

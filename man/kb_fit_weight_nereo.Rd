@@ -14,7 +14,8 @@ kb_fit_weight_nereo(
   nthin = 1L,
   cores = NULL,
   seed = NULL,
-  quiet = FALSE
+  progress = c("bar", "verbose", "none"),
+  progress_dir = NULL
 )
 }
 \arguments{
@@ -48,9 +49,13 @@ reproducible, or \code{NULL} (the default). When \code{NULL}, rstan draws its ow
 from R's RNG, so a preceding \code{set.seed()} also makes the fit reproducible; an
 explicit \code{seed} takes precedence over the RNG state.}
 
-\item{quiet}{A flag specifying whether to suppress console output. When
-\code{FALSE} (the default), rstan's sampling progress and warnings are printed;
-when \code{TRUE}, all sampler output is suppressed.}
+\item{progress}{A string, one of \code{"bar"} (the default, a console progress
+bar), \code{"verbose"} (rstan's per-iteration output and diagnostic warnings), or
+\code{"none"} (silent). Controls fit-time console output only.}
+
+\item{progress_dir}{A string giving an existing directory in which to write a
+pollable progress artifact (read by \code{\link[=kb_fit_progress]{kb_fit_progress()}}), or \code{NULL} (the
+default) to write none.}
 }
 \value{
 An object of class \code{c("kb_fit_weight", "kb_fit")}.
@@ -71,9 +76,16 @@ to match \code{niters} and the post-warmup phase is thinned by \code{nthin}.
 The returned object stores the extracted posterior draws (including the
 \code{log_lik} and \code{yrep} generated quantities), diagnostics, data, and metadata.
 
-With the default \code{quiet = FALSE} the sampler's progress and warnings are
-printed to the console; \code{quiet = TRUE} suppresses all sampler output. Inspect
-convergence with \code{\link[=converged]{converged()}} / \code{\link[=glance]{glance()}} / \code{\link[=summary]{summary()}}.
+\code{progress} controls fit-time console output. The default \code{"bar"} shows a
+progress bar; \code{"verbose"} streams rstan's per-iteration output and its
+post-sampling diagnostic warnings; \code{"none"} is silent. \code{progress} changes only
+console output, never the fit; inspect convergence with \code{\link[=converged]{converged()}} /
+\code{\link[=glance]{glance()}} / \code{\link[=summary]{summary()}} in every mode.
+
+Supply \code{progress_dir} (an existing directory) to have the fit write a pollable
+progress artifact there, which \code{\link[=kb_fit_progress]{kb_fit_progress()}} reads to report the
+completed fraction from another R process (for example, to drive a progress
+indicator while the fit runs in the background).
 
 Chains run in parallel by default (\code{cores = NULL} uses \code{getOption("mc.cores")},
 falling back to \code{chains}, capped at the available cores). Set

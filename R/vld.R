@@ -18,3 +18,13 @@
 .vld_new_data_weight_nereo <- function(x) {
   is.data.frame(x) && "diameter" %in% names(x)
 }
+
+.vld_progress <- function(x) {
+  is.character(x) && length(x) == 1L && !is.na(x) &&
+    x %in% c("bar", "verbose", "none")
+}
+
+.vld_progress_dir <- function(x) {
+  is.null(x) ||
+    (is.character(x) && length(x) == 1L && !is.na(x) && dir.exists(x))
+}

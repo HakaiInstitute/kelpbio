@@ -25,7 +25,7 @@ d$year <- factor(d$year)
 weight_fit <- kb_fit_weight_nereo(
   d,
   chains = 2L, niters = 300L, nthin = 1L, cores = 2L,
-  quiet = TRUE, seed = 42L
+  progress = "none", seed = 42L
 )
 
 saveRDS(weight_fit, "tests/testthat/fixtures/weight_fit.rds")

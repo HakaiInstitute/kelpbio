@@ -35,9 +35,13 @@ reproducible, or \code{NULL} (the default). When \code{NULL}, rstan draws its ow
 from R's RNG, so a preceding \code{set.seed()} also makes the fit reproducible; an
 explicit \code{seed} takes precedence over the RNG state.}
 
-\item{quiet}{A flag specifying whether to suppress console output. When
-\code{FALSE} (the default), rstan's sampling progress and warnings are printed;
-when \code{TRUE}, all sampler output is suppressed.}
+\item{progress}{A string, one of \code{"bar"} (the default, a console progress
+bar), \code{"verbose"} (rstan's per-iteration output and diagnostic warnings), or
+\code{"none"} (silent). Controls fit-time console output only.}
+
+\item{progress_dir}{A string giving an existing directory in which to write a
+pollable progress artifact (read by \code{\link[=kb_fit_progress]{kb_fit_progress()}}), or \code{NULL} (the
+default) to write none.}
 
 \item{conf_level}{A number between 0 and 1 giving the compatibility-interval
 level.}

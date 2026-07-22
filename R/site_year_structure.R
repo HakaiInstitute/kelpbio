@@ -19,14 +19,14 @@ site_year_structure <- function(data) {
 }
 
 # Emit the structural notice. The aliasing warning always shows; the drop notice
-# is informational and suppressed with quiet = TRUE.
-notify_site_year <- function(status, quiet = FALSE) {
+# is informational and suppressed when progress = "none".
+notify_site_year <- function(status, progress = "bar") {
   if (status$aliased) {
     cli::cli_warn(c(
       "Site and site:year effects are not separately identifiable: no site was sampled in more than one year.",
       i = "The term is retained and predictions are unaffected, but do not interpret the site and site:year contributions separately."
     ))
-  } else if (!status$on && !quiet) {
+  } else if (!status$on && !identical(progress, "none")) {
     cli::cli_inform(c(
       i = "The site:year effect is omitted: fewer than two years are present."
     ))

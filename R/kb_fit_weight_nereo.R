@@ -15,9 +15,16 @@
 #'  The returned object stores the extracted posterior draws (including the
 #' `log_lik` and `yrep` generated quantities), diagnostics, data, and metadata.
 #'
-#' With the default `quiet = FALSE` the sampler's progress and warnings are
-#' printed to the console; `quiet = TRUE` suppresses all sampler output. Inspect
-#' convergence with [converged()] / [glance()] / [summary()].
+#' `progress` controls fit-time console output. The default `"bar"` shows a
+#' progress bar; `"verbose"` streams rstan's per-iteration output and its
+#' post-sampling diagnostic warnings; `"none"` is silent. `progress` changes only
+#' console output, never the fit; inspect convergence with [converged()] /
+#' [glance()] / [summary()] in every mode.
+#'
+#' Supply `progress_dir` (an existing directory) to have the fit write a pollable
+#' progress artifact there, which [kb_fit_progress()] reads to report the
+#' completed fraction from another R process (for example, to drive a progress
+#' indicator while the fit runs in the background).
 #'
 #' Chains run in parallel by default (`cores = NULL` uses `getOption("mc.cores")`,
 #' falling back to `chains`, capped at the available cores). Set
@@ -62,8 +69,10 @@ kb_fit_weight_nereo <- function(
   nthin = 1L,
   cores = NULL,
   seed = NULL,
-  quiet = FALSE
+  progress = c("bar", "verbose", "none"),
+  progress_dir = NULL
 ) {
+  progress <- rlang::arg_match(progress)
   .chk_sampler_args(
     prior_only = prior_only,
     chains = chains,
@@ -71,13 +80,14 @@ kb_fit_weight_nereo <- function(
     nthin = nthin,
     cores = cores,
     seed = seed,
-    quiet = quiet
+    progress = progress,
+    progress_dir = progress_dir
   )
 
   kb_check_data_weight_nereo(data)
   # The site:year effect is determined from the data
   site_year <- site_year_structure(data)
-  notify_site_year(site_year, quiet = quiet)
+  notify_site_year(site_year, progress = progress)
 
   priors <- resolve_priors(priors, kb_priors_weight_nereo())
   stan_data <- assemble_weight_nereo_data(
@@ -108,7 +118,9 @@ kb_fit_weight_nereo <- function(
     nthin = nthin,
     cores = cores,
     seed = seed,
-    quiet = quiet,
+    progress = progress,
+    progress_dir = progress_dir,
+    stanmodel_name = "weight_nereo",
     ...
   )
 

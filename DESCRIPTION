@@ -20,13 +20,15 @@ Suggests:
     loo,
     rmarkdown,
     testthat (>= 3.0.0),
-    vdiffr
+    vdiffr,
+    withr
 VignetteBuilder: knitr
 Config/testthat/edition: 3
 Biarch: true
 Depends:
     R (>= 4.2.0)
 Imports:
+    callr,
     chk,
     cli,
     extras,
