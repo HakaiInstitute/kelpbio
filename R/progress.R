@@ -160,25 +160,36 @@ noop_reporter <- function() {
 }
 
 bar_reporter <- function() {
-  # baseenv() parent so cli can resolve `::` when it evaluates the progress
-  # format ({cli::pb_bar} etc.); emptyenv() would leave `::` unreachable.
-  state <- new.env(parent = baseenv())
+  id <- NULL
   structure(
     list(
+      # Scope the bar to the caller's frame (the fit loop, alive for the whole
+      # run) via .envir = parent.frame(); a detached environment is not on the
+      # call stack, so cli would drop the bar between poll ticks ("cannot find
+      # progress bar"). The bar is looked up by id thereafter.
       start = function(total) {
-        state$id <- cli::cli_progress_bar(
+        id <<- cli::cli_progress_bar(
           "Fitting model",
           total = total,
           clear = FALSE,
-          .envir = state
+          .envir = parent.frame()
         )
       },
+      # cli auto-terminates the bar once it reaches total, after which a further
+      # update()/finish() errors. Progress is cosmetic and must never abort the
+      # fit, so tolerate a since-terminated bar.
       update = function(completed) {
-        cli::cli_progress_update(set = completed, id = state$id, .envir = state)
+        tryCatch(
+          cli::cli_progress_update(set = completed, id = id),
+          error = function(e) invisible(NULL)
+        )
       },
       finish = function() {
-        if (!is.null(state$id)) {
-          cli::cli_progress_done(id = state$id, .envir = state)
+        if (!is.null(id)) {
+          tryCatch(
+            cli::cli_progress_done(id = id),
+            error = function(e) invisible(NULL)
+          )
         }
       }
     ),

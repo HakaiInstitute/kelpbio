@@ -90,7 +90,8 @@ test_that("the bar reporter runs its lifecycle without error", {
   expect_no_error({
     r$start(10)
     r$update(5)
-    r$update(10)
+    r$update(10) # reaches total: cli auto-terminates the bar here
+    r$update(10) # tolerated no-op on the since-terminated bar
     r$finish()
   })
 })
