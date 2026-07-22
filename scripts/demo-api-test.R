@@ -58,14 +58,14 @@ fit_prior <- kb_fit_weight_nereo(
   prior_only = TRUE,
   chains = 2,
   niters = 500,
-  quiet = TRUE
+  progress = "none"
 )
 
 # custom priors
 fit_custom <- kb_fit_weight_nereo(
   data_weight_sim_nereo,
   priors = priors,
-  quiet = TRUE
+  progress = "none"
 )
 
 # pass more technical rstan sampling args through control
@@ -73,16 +73,46 @@ fit_ctrl <- kb_fit_weight_nereo(
   data_weight_sim_nereo,
   chains = 1,
   niters = 200,
-  quiet = TRUE,
+  progress = "none",
   control = list(adapt_delta = 0.99, max_treedepth = 12)
 )
+
+# --- progress reporting -------------------------------------------------------
+# progress controls fit-time console output only (it never changes the draws).
+# rstan's own per-iteration output is verbose and confusing for a non-technical
+# audience, so the default is a clean progress bar.
+#   "bar"     - a tidy console progress bar (default)
+#   "verbose" - rstan's raw per-iteration output and HMC diagnostics (debugging)
+#   "none"    - silent (scripts, batch runs)
+fit_bar <- kb_fit_weight_nereo(data_weight_sim_nereo, chains = 2, niters = 300)
+fit_verbose <- kb_fit_weight_nereo(
+  data_weight_sim_nereo,
+  chains = 2, niters = 300, progress = "verbose"
+)
+fit_none <- kb_fit_weight_nereo(
+  data_weight_sim_nereo,
+  chains = 2, niters = 300, progress = "none"
+)
+
+# The same progress signal drives a Shiny app: point the fit at a directory with
+# progress_dir, run it in a background process (e.g. shiny::ExtendedTask), and
+# poll kb_fit_progress() from the app to read the completed fraction (0 to 1)
+# while the fit runs. Here the fit is synchronous, so progress reads 1 once done.
+progress_dir <- tempfile()
+dir.create(progress_dir)
+fit_polled <- kb_fit_weight_nereo(
+  data_weight_sim_nereo,
+  chains = 2, niters = 300,
+  progress = "none", progress_dir = progress_dir
+)
+kb_fit_progress(progress_dir) # 1 (complete)
 
 # The site:year effect is determined automatically from the data (there is no
 # site_year_on argument). Two edge cases a reviewer should see, using subsets of
 # the bundled example data:
 
 # (a) Single year of data: the site:year effect is confounded with the site
-# effect, so it is omitted. An informational notice prints (unless quiet = TRUE).
+# effect, so it is omitted. An informational notice prints (unless progress = "none").
 one_year <- data_weight_sim_nereo |>
   filter(year == "2019") |>
   droplevels()
@@ -91,7 +121,7 @@ fit_one_year$meta$site_year_on # FALSE (effect omitted)
 
 # (b) Aliased design: several years, but each site sampled in only one year, so
 # site and site:year cannot be separated. The effect is retained and a warning is
-# issued (shown regardless of quiet).
+# issued (shown regardless of progress).
 aliased <- data_weight_sim_nereo |>
   filter(
     (site == "site1" & year == "2019") |
@@ -104,7 +134,7 @@ fit_aliased <- kb_fit_weight_nereo(
   aliased,
   chains = 2,
   niters = 300,
-  quiet = TRUE
+  progress = "none"
 )
 fit_aliased$meta$site_year_on # TRUE (retained despite non-identifiability)
 

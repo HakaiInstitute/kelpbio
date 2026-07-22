@@ -201,7 +201,7 @@ prior_fit <- kb_fit_weight_nereo(
   data_weight_sim_nereo,
   priors = priors,
   prior_only = TRUE,
-  quiet = TRUE
+  progress = "none"
 )
 kb_predict_weight_by(prior_fit, new_levels = "sample") |>
   kb_plot_predictions(observed = data_weight_sim_nereo) +
@@ -212,7 +212,7 @@ kb_predict_weight_by(prior_fit, new_levels = "sample") |>
 fit_custom <- kb_fit_weight_nereo(
   data_weight_sim_nereo,
   priors = priors,
-  quiet = TRUE
+  progress = "none"
 )
 bind_rows(
   mutate(coef(fit), priors = "default"),
@@ -227,4 +227,6 @@ prior_summary(fit)
 nd <- data.frame(diameter = c(20, 40, 60))
 dim(posterior_epred(fit, new_data = nd))
 class(posterior_epred(fit, new_data = nd))
-samples(fit) |> posterior::summarise_draws() |> head()
+samples(fit) |>
+  posterior::summarise_draws() |>
+  head()
