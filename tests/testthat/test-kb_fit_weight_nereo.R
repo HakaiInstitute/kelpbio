@@ -9,7 +9,15 @@ test_that("kb_fit_weight returns a correctly-structured object", {
     sim_weight,
     site %in% c("site1", "site2") & year %in% c("2019", "2020")
   ))
-  fit <- kb_fit_weight_nereo(d, chains = 2, niters = 100, nthin = 1, cores = 2, progress = "none", seed = 1)
+  fit <- kb_fit_weight_nereo(
+    d,
+    chains = 2,
+    niters = 100,
+    nthin = 1,
+    cores = 2,
+    progress = "none",
+    seed = 1
+  )
 
   expect_s3_class(fit, "kb_fit_weight")
   expect_s3_class(fit, "kb_fit")
@@ -18,9 +26,16 @@ test_that("kb_fit_weight returns a correctly-structured object", {
   expect_setequal(
     posterior::variables(fit$draws),
     c(
-      "bWeight", "bDiameter", "bDiameter2",
-      "sSite", "sSiteDiameter", "sSiteYear", "sWeight",
-      "bSite", "bSiteDiameter", "bSiteYear"
+      "bWeight",
+      "bDiameter",
+      "bDiameter2",
+      "sSite",
+      "sSiteDiameter",
+      "sSiteYear",
+      "sWeight",
+      "bSite",
+      "bSiteDiameter",
+      "bSiteYear"
     )
   )
   # niters = saved post-warmup draws per chain
@@ -40,7 +55,15 @@ test_that("nthin > 1 still keeps exactly niters draws per chain", {
   # fit_stan sets warmup = niters and total iters = niters + niters * nthin, so
   # the thinned post-warmup phase must land exactly niters draws regardless of
   # nthin. Exercised here with nthin = 2, which the nthin = 1 tests cannot catch.
-  fit <- kb_fit_weight_nereo(d, chains = 1, niters = 50, nthin = 2, cores = 1, progress = "none", seed = 3)
+  fit <- kb_fit_weight_nereo(
+    d,
+    chains = 1,
+    niters = 50,
+    nthin = 2,
+    cores = 1,
+    progress = "none",
+    seed = 3
+  )
   expect_equal(niters(fit), 50L)
   expect_equal(posterior::ndraws(fit$draws), 50L)
 })
@@ -51,17 +74,48 @@ test_that("prior_only fit ignores the data", {
     sim_weight,
     site %in% c("site1", "site2") & year %in% c("2019", "2020")
   ))
-  f1 <- kb_fit_weight_nereo(d, prior_only = TRUE, chains = 1, niters = 300, nthin = 1, cores = 1, progress = "none", seed = 7)
+  f1 <- kb_fit_weight_nereo(
+    d,
+    prior_only = TRUE,
+    chains = 1,
+    niters = 300,
+    nthin = 1,
+    cores = 1,
+    progress = "none",
+    seed = 7
+  )
   d2 <- d
   d2$weight <- rev(d2$weight)
-  f2 <- kb_fit_weight_nereo(d2, prior_only = TRUE, chains = 1, niters = 300, nthin = 1, cores = 1, progress = "none", seed = 7)
+  f2 <- kb_fit_weight_nereo(
+    d2,
+    prior_only = TRUE,
+    chains = 1,
+    niters = 300,
+    nthin = 1,
+    cores = 1,
+    progress = "none",
+    seed = 7
+  )
   # likelihood off => permuting the response leaves the prior-only fit unchanged
-  expect_equal(median(f1$draws$bWeight), median(f2$draws$bWeight), tolerance = 0.05)
+  expect_equal(
+    median(f1$draws$bWeight),
+    median(f2$draws$bWeight),
+    tolerance = 0.05
+  )
 })
 
 test_that("zero-row data is accepted under prior_only", {
   skip_on_cran()
-  fit <- kb_fit_weight_nereo(sim_weight[0, ], prior_only = TRUE, chains = 1, niters = 100, nthin = 1, cores = 1, progress = "none", seed = 1)
+  fit <- kb_fit_weight_nereo(
+    sim_weight[0, ],
+    prior_only = TRUE,
+    chains = 1,
+    niters = 100,
+    nthin = 1,
+    cores = 1,
+    progress = "none",
+    seed = 1
+  )
   expect_s3_class(fit, "kb_fit_weight")
   # no observations -> no generated quantities stored
   expect_null(fit$gq)
@@ -83,13 +137,18 @@ test_that("progress_dir writes an artifact that kb_fit_progress reads as complet
   dir <- withr::local_tempdir()
   fit <- kb_fit_weight_nereo(
     d,
-    chains = 1, niters = 50, nthin = 1, cores = 1,
-    progress = "none", progress_dir = dir, seed = 1
+    chains = 1,
+    niters = 50,
+    nthin = 1,
+    cores = 1,
+    progress = "bar",
+    progress_dir = dir,
+    seed = 1
   )
   expect_s3_class(fit, "kb_fit_weight")
   # a caller-supplied progress_dir is left in place and reads complete
   expect_true(file.exists(file.path(dir, "manifest.rds")))
-  expect_true(file.exists(file.path(dir, "samples_1.csv")))
+  expect_true(length(list.files(dir, pattern = "^samples.*\\.csv$")) >= 1L)
   expect_identical(kb_fit_progress(dir), 1)
 })
 

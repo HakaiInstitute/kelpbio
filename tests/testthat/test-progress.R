@@ -41,8 +41,18 @@ test_that("read_progress_fraction is 0 with no artifact, partway mid-run, 1 when
 test_that("read_progress_fraction caps an over-full chain and never exceeds 1", {
   d <- withr::local_tempdir()
   write_progress_manifest(d, chains = 1L, warmup = 4L, niters = 4L, nthin = 1L)
-  write_fake_chain(file.path(d, "samples_1.csv"), n_rows = 20L)
+  # a single chain has no _1 suffix (see progress_chain_files)
+  write_fake_chain(file.path(d, "samples.csv"), n_rows = 20L)
   expect_identical(read_progress_fraction(d), 1)
+})
+
+test_that("progress_chain_files matches rstan's single- vs multi-chain naming", {
+  d <- withr::local_tempdir()
+  expect_identical(progress_chain_files(d, 1L), file.path(d, "samples.csv"))
+  expect_identical(
+    progress_chain_files(d, 3L),
+    file.path(d, c("samples_1.csv", "samples_2.csv", "samples_3.csv"))
+  )
 })
 
 test_that("resolve_progress_dir honours a supplied dir, else temp for bar only", {
@@ -73,10 +83,14 @@ test_that("the no-op reporter methods run silently", {
 })
 
 test_that("the bar reporter runs its lifecycle without error", {
+  # force cli to actually render, so the format string ({cli::pb_bar}, ...) is
+  # evaluated in the reporter's environment (guards the base-parent env fix).
+  withr::local_options(cli.dynamic = TRUE, cli.progress_show_after = 0)
   r <- bar_reporter()
   expect_no_error({
     r$start(10)
     r$update(5)
+    r$update(10)
     r$finish()
   })
 })

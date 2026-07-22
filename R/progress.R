@@ -13,8 +13,18 @@ progress_sample_file <- function(dir) {
   file.path(dir, "samples.csv")
 }
 
+# rstan writes the sample_file as-is for a single chain, and inserts _<chain>
+# before the extension (samples_1.csv, samples_2.csv, ...) for multiple chains.
 progress_chain_files <- function(dir, chains) {
-  file.path(dir, sprintf("samples_%d.csv", seq_len(chains)))
+  base <- progress_sample_file(dir)
+  if (chains == 1L) {
+    return(base)
+  }
+  vapply(
+    seq_len(chains),
+    function(i) sub("\\.csv$", sprintf("_%d.csv", i), base),
+    character(1)
+  )
 }
 
 progress_manifest_file <- function(dir) {
@@ -150,7 +160,9 @@ noop_reporter <- function() {
 }
 
 bar_reporter <- function() {
-  state <- new.env(parent = emptyenv())
+  # baseenv() parent so cli can resolve `::` when it evaluates the progress
+  # format ({cli::pb_bar} etc.); emptyenv() would leave `::` unreachable.
+  state <- new.env(parent = baseenv())
   structure(
     list(
       start = function(total) {

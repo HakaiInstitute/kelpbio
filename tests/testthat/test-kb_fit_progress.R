@@ -31,7 +31,8 @@ test_that("kb_fit_progress returns 1 once every chain is complete", {
 test_that("kb_fit_progress does not error on a torn read", {
   d <- withr::local_tempdir()
   write_progress_manifest(d, chains = 1L, warmup = 4L, niters = 4L, nthin = 1L)
-  write_fake_chain(file.path(d, "samples_1.csv"), n_rows = 3L, torn = TRUE)
+  # a single chain has no _1 suffix (see progress_chain_files)
+  write_fake_chain(file.path(d, "samples.csv"), n_rows = 3L, torn = TRUE)
   expect_no_error(p <- kb_fit_progress(d))
   expect_equal(p, 3 / 8)
 })
