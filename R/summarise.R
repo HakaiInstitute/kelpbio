@@ -6,15 +6,15 @@ summarise_draws_terms <- function(draws, variables, conf_level = 0.95,
                                   estimate = stats::median, sig_fig = 3) {
   a <- (1 - conf_level) / 2
   sub <- posterior::subset_draws(draws, variable = variables)
-  out <- posterior::summarise_draws(
+  posterior::summarise_draws(
     sub,
     estimate = estimate,
     lower = function(x) unname(posterior::quantile2(x, a)),
     upper = function(x) unname(posterior::quantile2(x, 1 - a))
-  )
-  names(out)[names(out) == "variable"] <- "term"
-  for (col in c("estimate", "lower", "upper")) {
-    out[[col]] <- signif(out[[col]], sig_fig)
-  }
-  tibble::as_tibble(out)
+  ) |>
+    dplyr::rename(term = "variable") |>
+    dplyr::mutate(
+      dplyr::across(c("estimate", "lower", "upper"), function(x) signif(x, sig_fig))
+    ) |>
+    tibble::as_tibble()
 }

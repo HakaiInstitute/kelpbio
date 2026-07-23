@@ -1,7 +1,7 @@
 # Single R-side source of the Nereocystis weight-model mean (log scale), as a
 # posterior rvar over grid rows. All predict paths route through here.
 .weight_nereo_linpred <- function(fit, grid, new_levels, representative_site = NULL) {
-  d <- fit$draws
+  draws <- fit$draws
   n <- nrow(grid)
   log_dc <- log(grid$diameter) - log(fit$meta$diameter_ref)
 
@@ -22,8 +22,10 @@
     NULL
   }
 
-  re_site <- resolve_re1(d$bSite, si, new_levels, d$sSite, rep_idx)
-  re_slope <- resolve_re1(d$bSiteDiameter, si, new_levels, d$sSiteDiameter, rep_idx)
+  re_site <- resolve_re1(draws$bSite, si, new_levels, draws$sSite, rep_idx)
+  re_slope <- resolve_re1(
+    draws$bSiteDiameter, si, new_levels, draws$sSiteDiameter, rep_idx
+  )
   # When the fit omitted the site:year effect its draws are prior-only noise, so
   # predictions must add nothing rather than reintroduce spurious variation. A
   # missing flag (fits built before it was recorded) defaults to on, since those
@@ -31,10 +33,10 @@
   re_sy <- if (isFALSE(fit$meta$site_year_on)) {
     0
   } else {
-    resolve_re2(d$bSiteYear, si, yi, new_levels, d$sSiteYear)
+    resolve_re2(draws$bSiteYear, si, yi, new_levels, draws$sSiteYear)
   }
 
-  d$bWeight + d$bDiameter * log_dc + d$bDiameter2 * log_dc^2 +
+  draws$bWeight + draws$bDiameter * log_dc + draws$bDiameter2 * log_dc^2 +
     re_site + re_slope * log_dc + re_sy
 }
 
@@ -104,27 +106,31 @@ build_by_grid <- function(fit, by, diameter = NULL) {
   if (length(by) == 0) {
     return(tibble::tibble(diameter = diameter))
   }
+  site_levels <- fit$meta$site_levels
+  diameters <- tibble::tibble(diameter = diameter)
   if (setequal(by, "site")) {
-    g <- expand.grid(
-      diameter = diameter,
-      site = factor(fit$meta$site_levels, levels = fit$meta$site_levels),
-      stringsAsFactors = FALSE
-    )
+    sites <- tibble::tibble(site = factor(site_levels, levels = site_levels))
+    dplyr::cross_join(sites, diameters) |>
+      dplyr::arrange(site, diameter)
   } else {
-    # Cross diameter only with site:year combinations that were observed, keeping
-    # site/year as factors so the fit's level order survives downstream sorting.
-    obs <- unique(as.data.frame(fit$data)[c("site", "year")])
-    obs$site <- factor(as.character(obs$site), levels = fit$meta$site_levels)
-    obs$year <- factor(as.character(obs$year), levels = fit$meta$year_levels)
-    g <- merge(data.frame(diameter = diameter), obs)
+    # Cross diameter only with the observed site:year combinations, as ordered
+    # factors sorted by level, so the returned row order follows the fit's level
+    # order rather than the (arbitrary) row order of fit$data.
+    obs <- fit$data |>
+      dplyr::distinct(site, year) |>
+      dplyr::mutate(
+        site = factor(as.character(site), levels = site_levels),
+        year = factor(as.character(year), levels = fit$meta$year_levels)
+      )
+    dplyr::cross_join(obs, diameters) |>
+      dplyr::arrange(site, year, diameter)
   }
-  tibble::as_tibble(g)
 }
 
-re_draw <- function(new_levels, n, sd_rvar) {
-  if (new_levels == "average") {
-    return(0)
-  }
+# Draw fresh random effects for n new/unknown levels from their estimated
+# distribution N(0, sd_rvar). Only the "sample" mode reaches here; the "average"
+# mode leaves those rows at zero in the caller (no draw needed).
+re_draw <- function(n, sd_rvar) {
   posterior::rvar_rng(stats::rnorm, n, mean = 0, sd = sd_rvar)
 }
 
@@ -137,16 +143,17 @@ resolve_re1 <- function(param, idx, new_levels, sd_rvar, rep_idx = NULL) {
     return(rvar_index1(param, idx))
   }
   n <- length(idx)
-  ndraws <- posterior::ndraws(param)
+  param_draws <- posterior::draws_of(param)
+  ndraws <- nrow(param_draws)
   out <- matrix(0, nrow = ndraws, ncol = n)
   if (any(known)) {
-    out[, known] <- posterior::draws_of(param)[, idx[known], drop = FALSE]
+    out[, known] <- param_draws[, idx[known], drop = FALSE]
   }
   if (!all(known)) {
     if (!is.null(rep_idx)) {
-      out[, !known] <- rowMeans(posterior::draws_of(param)[, rep_idx, drop = FALSE])
+      out[, !known] <- rowMeans(param_draws[, rep_idx, drop = FALSE])
     } else if (new_levels == "sample") {
-      out[, !known] <- posterior::draws_of(re_draw("sample", sum(!known), sd_rvar))
+      out[, !known] <- posterior::draws_of(re_draw(sum(!known), sd_rvar))
     }
     # new_levels == "average" leaves unknown columns at zero.
   }
@@ -160,12 +167,12 @@ resolve_re2 <- function(param, i, j, new_levels, sd_rvar) {
   ndraws <- posterior::ndraws(param)
   out <- matrix(0, nrow = ndraws, ncol = n)
   if (any(known)) {
-    a <- posterior::draws_of(param)
+    param_draws <- posterior::draws_of(param)
     kk <- which(known)
-    out[, kk] <- vapply(kk, function(r) a[, i[r], j[r]], numeric(ndraws))
+    out[, kk] <- vapply(kk, function(r) param_draws[, i[r], j[r]], numeric(ndraws))
   }
   if (!all(known) && new_levels == "sample") {
-    out[, !known] <- posterior::draws_of(re_draw("sample", sum(!known), sd_rvar))
+    out[, !known] <- posterior::draws_of(re_draw(sum(!known), sd_rvar))
   }
   posterior::rvar(out)
 }

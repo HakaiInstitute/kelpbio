@@ -17,10 +17,9 @@ progress_chain_files <- function(dir, chains) {
   if (chains == 1L) {
     return(base)
   }
-  vapply(
+  purrr::map_chr(
     seq_len(chains),
-    function(i) sub("\\.csv$", sprintf("_%d.csv", i), base),
-    character(1)
+    function(i) sub("\\.csv$", sprintf("_%d.csv", i), base)
   )
 }
 
@@ -71,9 +70,7 @@ count_chain_rows <- function(csv) {
   if (!length(data_lines)) {
     return(0L)
   }
-  fields <- vapply(
-    strsplit(data_lines, ",", fixed = TRUE), length, integer(1)
-  )
+  fields <- purrr::map_int(strsplit(data_lines, ",", fixed = TRUE), length)
   sum(fields == n_fields)
 }
 
@@ -93,15 +90,13 @@ count_progress_rows <- function(dir, manifest) {
     manifest$warmup, manifest$niters, manifest$nthin
   )
   files <- progress_chain_files(dir, manifest$chains)
-  total <- 0L
-  for (csv in files) {
+  sum(purrr::map_int(files, function(csv) {
     if (chain_is_complete(csv)) {
-      total <- total + per_chain
+      per_chain
     } else {
-      total <- total + min(count_chain_rows(csv), per_chain)
+      min(count_chain_rows(csv), per_chain)
     }
-  }
-  total
+  }))
 }
 
 # Completed fraction in [0, 1]: 0 before any artifact or rows, 1 at completion.

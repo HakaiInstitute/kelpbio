@@ -85,7 +85,7 @@ fit_stan <- function(stanmodel, stan_data, param_vars,
     ess_tail = posterior::ess_tail
   ))
   sampler <- rstan::get_sampler_params(stanfit, inc_warmup = FALSE)
-  ndivergent <- sum(vapply(sampler, function(x) sum(x[, "divergent__"]), numeric(1)))
+  ndivergent <- sum(purrr::map_dbl(sampler, function(x) sum(x[, "divergent__"])))
 
   list(
     draws = draws,
