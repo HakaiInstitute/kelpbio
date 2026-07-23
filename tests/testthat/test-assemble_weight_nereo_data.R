@@ -16,15 +16,10 @@ test_that("assemble_weight_nereo_data maps data and priors to the Stan data bloc
   expect_equal(sd$weight, c(0.5, 2, 4))
   # log-diameter centering reference: geometric mean of the observed diameter
   expect_equal(sd$diameter_ref, exp(mean(log(c(20, 35, 50)))))
-  expect_equal(sd$prior_intercept_mu, 0)
-  expect_equal(sd$prior_intercept_sd, 2)
-  expect_equal(sd$prior_diameter_mu, 2)
-  expect_equal(sd$prior_diameter2_sd, 0.5)
-  expect_equal(sd$prior_sd_site_rate, 1)
-  expect_equal(sd$prior_sd_site_year_rate, 1)
   expect_equal(sd$prior_only, 0L)
   # site:year random effect included by default
   expect_equal(sd$site_year_on, 1L)
+  # prior hyperparameters are mapped exhaustively in the next test
 })
 
 test_that("assemble_weight_nereo_data maps every prior hyperparameter to its own Stan field", {

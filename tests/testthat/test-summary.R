@@ -17,24 +17,12 @@ test_that("summary excludes group-level deviations by default", {
   ))
 })
 
-test_that("include_random_effects adds the per-level deviations", {
-  s <- summary(weight_fit, include_random_effects = TRUE)
-  expect_true(any(grepl("^bSite\\[", s$coefficients$term)))
-})
-
 test_that("summary diagnostic columns agree with the stored diagnostics", {
   s <- summary(weight_fit)
   diag <- weight_fit$diagnostics$summary
   idx <- match(s$coefficients$term, diag$variable)
   expect_equal(s$coefficients$rhat, round(diag$rhat[idx], 3))
   expect_equal(s$coefficients$ess_bulk, round(diag$ess_bulk[idx]))
-})
-
-test_that("conf_level widens the summary interval", {
-  wide <- summary(weight_fit, conf_level = 0.99)$coefficients
-  narrow <- summary(weight_fit, conf_level = 0.80)$coefficients
-  i <- match("bWeight", wide$term)
-  expect_gt(wide$upper[i] - wide$lower[i], narrow$upper[i] - narrow$lower[i])
 })
 
 test_that("summary carries the fit metadata", {

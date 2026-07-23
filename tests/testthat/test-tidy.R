@@ -2,7 +2,6 @@ test_that("tidy returns house columns and omits group-level terms by default", {
   t <- tidy(weight_fit)
   expect_s3_class(t, "tbl_df")
   expect_named(t, c("term", "estimate", "lower", "upper"))
-  expect_true(all(t$lower <= t$estimate & t$estimate <= t$upper))
   # default include_random_effects = FALSE -> per-level deviations absent
   expect_false(any(grepl("^bSite\\[", t$term)))
   expect_setequal(
@@ -16,25 +15,17 @@ test_that("include_random_effects = TRUE adds the group-level deviations", {
   expect_true(any(grepl("^bSite\\[", t$term)))
 })
 
-test_that("sig_fig rounds the estimate", {
-  t <- tidy(weight_fit, sig_fig = 2)
-  expect_equal(t$estimate, signif(t$estimate, 2))
-})
-
-test_that("estimate selects the point-estimate function (mean vs median)", {
-  tm <- tidy(weight_fit, estimate = mean)
-  tmed <- tidy(weight_fit)
-  # the mean differs from the default median (right-skewed SD terms at least)
-  expect_false(isTRUE(all.equal(tm$estimate, tmed$estimate)))
-  # and matches the posterior mean computed independently of tidy()
-  bw_mean <- signif(mean(posterior::draws_of(weight_fit$draws$bWeight)), 3)
-  expect_equal(tm$estimate[tm$term == "bWeight"], bw_mean)
-})
-
-test_that("conf_level widens the interval", {
+test_that("tidy forwards conf_level/estimate/sig_fig to the summariser", {
+  # the interval/estimate/rounding behaviour itself is proven in test-summarise.R;
+  # here we only confirm tidy passes each argument through (does not drop it).
   wide <- tidy(weight_fit, conf_level = 0.99)
   narrow <- tidy(weight_fit, conf_level = 0.80)
-  w <- wide$upper[wide$term == "bWeight"] - wide$lower[wide$term == "bWeight"]
-  n <- narrow$upper[narrow$term == "bWeight"] - narrow$lower[narrow$term == "bWeight"]
-  expect_gt(w, n)
+  i <- match("bWeight", wide$term)
+  expect_gt(wide$upper[i] - wide$lower[i], narrow$upper[i] - narrow$lower[i])
+  expect_false(isTRUE(all.equal(
+    tidy(weight_fit, estimate = mean)$estimate,
+    tidy(weight_fit)$estimate
+  )))
+  t2 <- tidy(weight_fit, sig_fig = 2)
+  expect_equal(t2$estimate, signif(t2$estimate, 2))
 })

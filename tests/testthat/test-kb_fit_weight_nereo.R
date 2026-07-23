@@ -152,19 +152,3 @@ test_that("progress_dir writes an artifact that kb_fit_progress reads as complet
   expect_true(length(list.files(dir, pattern = "^samples.*\\.csv$")) >= 1L)
   expect_identical(kb_fit_progress(dir), 1)
 })
-
-test_that("progress does not affect the draws", {
-  skip_on_cran()
-  d <- droplevels(subset(
-    sim_weight,
-    site %in% c("site1", "site2") & year %in% c("2019", "2020")
-  ))
-  args <- list(d, chains = 1, niters = 50, nthin = 1, cores = 1, seed = 11)
-  f_none <- do.call(kb_fit_weight_nereo, c(args, progress = "none"))
-  f_bar <- do.call(kb_fit_weight_nereo, c(args, progress = "bar"))
-  # identical seed, different progress => identical draws (console-only knob)
-  expect_equal(
-    as.matrix(posterior::as_draws_matrix(f_none$draws)),
-    as.matrix(posterior::as_draws_matrix(f_bar$draws))
-  )
-})

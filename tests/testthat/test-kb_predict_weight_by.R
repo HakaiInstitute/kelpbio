@@ -1,9 +1,11 @@
 # kb_predict_weight_by(): allometric curve(s) over a diameter sequence.
 
 test_that("population curve spans the observed diameter range", {
+  # class/column contract in test-kb_predictions.R; ordering + sample-vs-average
+  # widening are proven on the shared engine (test-weight_nereo_linpred.R) and
+  # summariser (test-kb_predict_weight.R).
   p <- kb_predict_weight_by(weight_fit, new_levels = "average")
   expect_s3_class(p, "kb_predictions")
-  expect_true(all(c("estimate", "lower", "upper") %in% names(p)))
   rng <- range(weight_fit$data$diameter)
   expect_gte(min(p$diameter), rng[1] - 1e-6)
   expect_lte(max(p$diameter), rng[2] + 1e-6)
@@ -14,18 +16,6 @@ test_that("default new_levels is \"average\" (deterministic band)", {
   d2 <- kb_predict_weight_by(weight_fit, by = "site", new_levels = "average")
   expect_equal(d1$lower, d2$lower)
   expect_equal(d1$upper, d2$upper)
-})
-
-test_that("sample band is at least as wide as average (the population band)", {
-  set.seed(1)
-  avg <- kb_predict_weight_by(weight_fit, new_levels = "average")
-  smp <- kb_predict_weight_by(weight_fit, new_levels = "sample")
-  expect_true(all((smp$upper - smp$lower) >= (avg$upper - avg$lower)))
-})
-
-test_that("predictions are ordered within the band", {
-  p <- kb_predict_weight_by(weight_fit, new_levels = "average")
-  expect_true(all(p$lower <= p$estimate & p$estimate <= p$upper))
 })
 
 test_that("by produces one curve per group", {
@@ -49,12 +39,10 @@ test_that("custom diameter sequence is honoured", {
 })
 
 test_that("wider conf_level gives a wider interval", {
+  # the one prediction-path conf_level check (the summariser differs from the
+  # draws summariser tested in test-summarise.R); by-verb validation of `by` is
+  # covered directly on validate_by_weight() in test-weight_nereo_linpred.R.
   p90 <- kb_predict_weight_by(weight_fit, new_levels = "average", conf_level = 0.90)
   p99 <- kb_predict_weight_by(weight_fit, new_levels = "average", conf_level = 0.99)
   expect_true(all((p99$upper - p99$lower) >= (p90$upper - p90$lower)))
-})
-
-test_that("invalid by errors", {
-  expect_error(kb_predict_weight_by(weight_fit, by = "year"), "not available")
-  expect_error(kb_predict_weight_by(weight_fit, by = "bogus"), "Invalid")
 })

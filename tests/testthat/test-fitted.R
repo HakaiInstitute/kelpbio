@@ -1,10 +1,10 @@
-test_that("fitted returns a positive response-scale vector matching augment", {
+test_that("fitted returns a positive, finite response-scale vector", {
+  # the fitted == augment()$fitted linkage is asserted once, in test-augment.R
   f <- fitted(weight_fit)
   expect_type(f, "double")
   expect_length(f, nobs(weight_fit))
   expect_true(all(is.finite(f)))
   expect_true(all(f > 0))
-  expect_equal(f, augment(weight_fit)$fitted)
 })
 
 test_that("fitted rejects a non-fit and extra args", {

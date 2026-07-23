@@ -21,30 +21,22 @@ test_that("resolve_cores falls back to chains when mc.cores is unset", {
   expect_identical(resolve_cores(NULL, 2L), expected)
 })
 
-test_that("with_quiet_sampler returns the expression value under either setting", {
-  expect_identical(with_quiet_sampler(42L, muffle = TRUE), 42L)
+test_that("with_quiet_sampler passes the value and warnings through when muffle = FALSE", {
   expect_identical(with_quiet_sampler(42L, muffle = FALSE), 42L)
-})
-
-test_that("with_quiet_sampler propagates warnings when muffle = FALSE", {
   expect_warning(
     with_quiet_sampler(warning("some divergent transitions"), muffle = FALSE),
     "divergent"
   )
 })
 
-test_that("with_quiet_sampler muffles HMC diagnostic warnings when muffle = TRUE", {
+test_that("with_quiet_sampler muffles only HMC diagnostics when muffle = TRUE", {
+  expect_identical(with_quiet_sampler(42L, muffle = TRUE), 42L)
+  # sampler diagnostic warnings are muffled ...
   expect_no_warning(
     with_quiet_sampler(warning("There were 3 divergent transitions"), muffle = TRUE)
   )
-  expect_no_warning(
-    with_quiet_sampler(warning("R-hat is too high"), muffle = TRUE)
-  )
-})
-
-test_that("with_quiet_sampler still surfaces non-HMC warnings when muffle = TRUE", {
-  # only the sampler's own diagnostic warnings are muffled; genuine warnings
-  # from elsewhere must still reach the user.
+  expect_no_warning(with_quiet_sampler(warning("R-hat is too high"), muffle = TRUE))
+  # ... but genuine warnings from elsewhere still reach the user
   expect_warning(
     with_quiet_sampler(warning("something unrelated"), muffle = TRUE),
     "unrelated"
