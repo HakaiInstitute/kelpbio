@@ -32,7 +32,7 @@ Users of this tool are researchers who will publish results. The app must:
 | **Data sensitivity** | Some ecological survey data is proprietary or sensitive (endangered species locations). On-premises deployment must be possible. |
 | **Target users** | Marine ecologists, resource managers, conservation biologists. No coding experience assumed. Familiar with spreadsheets and basic statistics. |
 | **Developer tooling** | Claude Code available for development. Open to non-R solutions if outputs can be validated through testing and viewing. |
-| **Engine decision** | The R package uses cmdstanr + `instantiate` (see `engine-decision.md`). The app must work with this backend. |
+| **Engine decision** | The R package uses rstan + rstantools, with Stan models pre-compiled into the package binary at install time (see `engine-choice.md`). The app must work with this backend. |
 
 ---
 
@@ -48,7 +48,7 @@ Users of this tool are researchers who will publish results. The app must:
 
 - **Native R integration**: Shiny server code calls `kb_predict_weight()`, `kb_fit_density()`, and `kb_plot_biomass()` directly as R function calls. No serialization, no API translation, no data format conversion. The app is a thin UI layer over the package API.
 
-- **`ExtendedTask` for async MCMC**: Shiny 1.8.1+ provides `ExtendedTask`, which runs long computations in a background R process without blocking the user session. The user sees a progress indicator and can interact with other parts of the app while MCMC runs. This directly addresses the long-running computation constraint. **Note: cmdstanr is a significantly better Shiny backend than brms/rstan** -- cmdstanr runs MCMC as an external process (does not block R), while brms/rstan runs MCMC inside the R process (blocks the session, requires `future` workaround). See `engine-decision.md` for the full analysis. This Shiny integration advantage is a key factor favoring cmdstanr for the package engine.
+- **`ExtendedTask` for async MCMC**: Shiny 1.8.1+ provides `ExtendedTask`, which runs long computations in a background R process without blocking the user session. The user sees a progress indicator and can interact with other parts of the app while MCMC runs. This directly addresses the long-running computation constraint. The package already runs `rstan::sampling()` inside a `callr::r_bg()` background process (the `progress = "bar"` path in `fit_stan()`), so a fit does not block the R session and plugs into `ExtendedTask` by returning a promise. An earlier draft of this doc claimed cmdstanr was a better Shiny backend because it "runs MCMC as an external process (does not block R)"; that is incorrect and has been removed. `cmdstanr$sample()` also blocks its calling session (native async is unimplemented), and rstan inside `callr` matches cmdstan's process model. See `engine-choice.md`.
 
 - **Modern UI via `bslib`**: Bootstrap 5 components (`page_sidebar()`, `card()`, `value_box()`, `accordion()`, `navset_pill()`) provide a polished, responsive dashboard without custom CSS. `shinyssdtools` already uses bslib, so this is familiar territory.
 
@@ -194,7 +194,7 @@ kelpbiomassapp::run_kelp_app()
 
 **Project-specific cons**:
 
-- **MCMC is not feasible**: Stan/cmdstanr cannot run in WebAssembly. Custom model fitting is impossible in webR. This rules out the secondary use case entirely.
+- **MCMC is not feasible**: Stan (rstan or cmdstanr) cannot run in WebAssembly. Custom model fitting is impossible in webR. This rules out the secondary use case entirely.
 - **Package support**: webR supports many CRAN packages but has gaps, especially for packages with compiled code or system dependencies. The kelpbiomass package's dependencies (mcmcr, chk) would need to be verified.
 - **Experimental**: webR is actively developed by the Posit team but is still maturing. Production use for complex applications is uncommon.
 - **UI framework**: Building a rich UI around webR requires HTML/CSS/JavaScript. There is no Shiny-like reactive framework for webR (shinylive exists but is experimental and limited).
@@ -248,7 +248,7 @@ kelpbiomassapp::run_kelp_app()
 Follow the `bbousuite` pattern:
 
 ```
-kelpbiomass/         # Core R package (engine-decision.md)
+kelpbiomass/         # Core R package (engine-choice.md)
 kelpbiomassapp/      # Shiny companion package
 kelpbiomassdata/     # Example/demo datasets (optional, if licensing allows)
 ```
@@ -411,19 +411,20 @@ The two-tier package architecture (pre-fit predictions vs. custom MCMC fitting) 
 **Mode 1: shinyapps.io (development, demos, pre-fit only)**
 - Deploys the Shiny app with pre-fit prediction functionality only
 - Custom model fitting is disabled (greyed out UI with message: "Custom model fitting requires the full deployment -- contact Hakai for access")
-- No cmdstanr or CmdStan needed on the server
 - Works because `kb_predict_*()` with default draws is pure R matrix algebra
 - Free tier is sufficient for development and demos
 - Useful for: stakeholder demos, workshops, testing the UI, sharing with collaborators
 
+Note: custom fitting is disabled here for resource reasons (multi-minute fits, per-session memory, concurrency, free-tier timeouts), not because the engine cannot run. Because the rstan models are compiled into the package binary and need no Stan toolchain, `rstan::sampling()` would in fact run on shinyapps.io; the free tier is simply the wrong place for 2-20 minute fits.
+
 **Mode 2: Docker (production, full features)**
 - Full Shiny app with both pre-fit predictions and custom MCMC fitting
-- CmdStan pre-installed in the Docker image
-- Pre-compiled Stan models via `instantiate` -- zero compilation at runtime
+- No CmdStan or Stan toolchain needed in the image: the `kelpbiomass` binary already contains the compiled rstan models (rstantools)
+- Fits run via `rstan::sampling()` inside a `callr::r_bg()` background process, so the session stays responsive
 - Deployable to Hakai's infrastructure, a cloud VM, or Hugging Face Spaces
 - Supports concurrent users, data privacy controls, authentication (via nginx reverse proxy)
 
-This approach means the engine choice (cmdstanr) does not block shinyapps.io for development. The same app codebase serves both modes -- a runtime check (`cmdstanr::cmdstan_path()`) determines which features are available.
+The same app codebase serves both modes; the two differ only in whether custom fitting is enabled. Because the rstan models ship inside the package binary, neither target needs a Stan toolchain, which removes the CmdStan-on-the-server problem entirely and is a direct consequence of the `engine-choice.md` decision.
 
 ### Deployment options
 
@@ -439,7 +440,7 @@ This approach means the engine choice (cmdstanr) does not block shinyapps.io for
 
 1. **Start with shinyapps.io** for development and stakeholder demos (pre-fit predictions only).
 2. **Build the Docker image** in parallel for production deployment with full features.
-3. **Deploy to Hakai's infrastructure** (or a cloud VM) for production. The Docker image includes CmdStan and pre-compiled Stan models. Hakai's IT team can run it with `docker-compose up`.
+3. **Deploy to Hakai's infrastructure** (or a cloud VM) for production. The Docker image bundles the `kelpbiomass` package with its pre-compiled rstan models, so no CmdStan or Stan toolchain is required in the image. Hakai's IT team can run it with `docker-compose up`.
 4. Evaluate Hugging Face Spaces as a free public-facing option if the app should be broadly accessible.
 
 ---
@@ -460,8 +461,8 @@ This approach means the engine choice (cmdstanr) does not block shinyapps.io for
 
 ## Phased Implementation
 
-1. **Phase 1**: Core package with pre-fit predictions (no app, no fitting -- see `engine-decision.md`)
-2. **Phase 2**: Package custom fitting via cmdstanr + `instantiate`
+1. **Phase 1**: Core package with pre-fit predictions (no app, no fitting -- see `engine-choice.md`)
+2. **Phase 2**: Package custom fitting via rstan (rstantools, models pre-compiled into the package binary at install)
 3. **Phase 3**: Shiny app with pre-fit prediction workflow (upload data, get estimates, download results)
 4. **Phase 4**: Shiny app custom fitting workflow (`ExtendedTask`, diagnostics, R code generation)
 5. **Phase 5**: Polish, deployment, documentation, and (optionally) webR supplementary tool
