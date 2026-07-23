@@ -1,3 +1,12 @@
+# .chk_kb_fit_weight passes a fit through invisibly and errors on a non-fit
+
+    Code
+      .chk_kb_fit_weight(1)
+    Condition
+      Error in `.chk_kb_fit_weight()`:
+      ! `1` must be a <kb_fit_weight> object.
+      i See `kb_fit_weight_nereo()`.
+
 # .chk_new_data_weight_nereo errors on a non-data-frame or missing diameter
 
     Code
@@ -21,6 +30,22 @@
     Condition
       Error in `.chk_progress()`:
       ! `"loud"` must be one of "bar", "verbose", or "none".
+
+# .chk_progress_dir accepts NULL/an existing directory and errors otherwise
+
+    Code
+      .chk_progress_dir(missing_dir)
+    Condition
+      Error in `.chk_progress_dir()`:
+      ! `missing_dir` must be a path to an existing directory, or `NULL`.
+
+---
+
+    Code
+      .chk_progress_dir(1)
+    Condition
+      Error in `.chk_progress_dir()`:
+      ! `1` must be a directory path or `NULL`.
 
 # .chk_representative_site passes NULL/known sites and errors on unknown
 
