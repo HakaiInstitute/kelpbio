@@ -43,7 +43,12 @@ bad$diameter[1] <- NA_real_
 try(kb_check_data_weight_nereo(bad)) # missing value
 
 # --- kb_fit_weight_nereo() ----------------------------------------------------
-fit <- kb_fit_weight_nereo(data_weight_sim_nereo, chains = 4, niters = 500, nthin = 2)
+fit <- kb_fit_weight_nereo(
+  data_weight_sim_nereo,
+  chains = 4,
+  niters = 500,
+  nthin = 2
+)
 # print key model info (see other generics including summary() below)
 fit
 
@@ -56,7 +61,6 @@ coef(fit)
 glance(fit)
 converged(fit)
 summary(fit)
-print(summary(fit))
 
 nobs(fit)
 niters(fit)
@@ -93,18 +97,17 @@ augment(fit) |>
 
 # --- kb_predict_weight()  + predict() wrapper ---------------------------------
 # expects user to provide new_data, gets predictions row-by-row
-nd <- data.frame(diameter = c(20, 40, 60))
+nd <- data.frame(diameter = c(22, 41, 38, 12))
 sites <- levels(fit$data$site)
 
+# by default, get predictions on observed data used to fit model
 kb_predict_weight(fit)
+# supply new data
 kb_predict_weight(fit, new_data = nd)
 kb_predict_weight(fit, new_data = tibble(diameter = 40, site = sites[1]))
 
 # use generic (wrapper of kb_predict_weight)
-# if new_data not supplied, use fit data
 predict(fit)
-# for new_levels, 'average' zeros out RE instead of sampling from distribution
-predict(fit, new_data = nd, new_levels = "average")
 
 # --- kb_predict_weight_by()  --------------------------------------------------
 # builds a new_data grid based on 'by' grouping (for getting group-level effect
@@ -112,16 +115,46 @@ predict(fit, new_data = nd, new_levels = "average")
 # default is for 'average' site and year (RE zeroed) over diameter sequence
 # spanning observed range
 kb_predict_weight_by(fit)
+# by default generate sequence of diameters across range
 kb_predict_weight_by(fit, by = "site")
+# set diameter
+kb_predict_weight_by(fit, by = "site", diameter = 5)
 kb_predict_weight_by(fit, by = c("site", "year"))
+# typical site and year
 kb_predict_weight_by(fit, diameter = c(5, 15, 25))
 try(kb_predict_weight_by(fit, by = "year")) # no year main effect
+
+# sample from RE dist for wider uncertainty, i.e. for new, unobserved site/year
+kb_predict_weight_by(fit, new_levels = "sample")
+kb_predict_weight(
+  fit,
+  new_data = tibble(diameter = 40, site = "new_reef"),
+  new_levels = "sample"
+)
+
+# gives users ability to select a representative site(s) to apply to new sites (not existing in fit dataset)
+# this was requested from feedback in workshop
+# these estimates are similar - but not identical because rep._site uses the site effect but draws randomly from site:year interaction
+# (i.e., doesnt use the reference site's 2020 exactly, just a 'typical' year for it)
+kb_predict_weight(
+  kelpbio::fit_weight_sim_nereo, # the bundled simulated example fit
+  new_data = tibble(
+    diameter = c(40, 40),
+    site = c("new_reef", sites[1]),
+    year = c(2020, 2020)
+  ),
+  representative_site = sites[1]
+)
 
 # --- kb_plot_predictions() / autoplot() ---------------------------------------
 pop <- kb_predict_weight_by(fit)
 kb_plot_predictions(pop)
 kb_plot_predictions(pop, observed = data_weight_sim_nereo)
 autoplot(pop)
+
+# wider uncertainty - draw from RE distributions (i.e. new, unobserved site)
+pop <- kb_predict_weight_by(fit, new_levels = "sample")
+kb_plot_predictions(pop)
 
 # plot allometric curves for 'typical' year by site
 # grouping from kb_predict function is stored and retrieved by plot function so is aware of how to facet
@@ -134,8 +167,16 @@ kb_predict_weight_by(fit, by = "site", diameter = 30) |>
   kb_plot_predictions() +
   coord_flip()
 
+# predicted vs observed: kb_predict_weight() on the fit data returns the observed
+# weight alongside the model estimate, so it plots directly against a 1:1 line as
+# a quick fit/calibration check (log-log, since weights span two orders of magnitude)
 kb_predict_weight(fit) |>
-  kb_plot_predictions()
+  ggplot(aes(weight, estimate)) +
+  geom_abline(slope = 1, intercept = 0, linetype = 2) +
+  geom_point(alpha = 0.3) +
+  scale_x_log10() +
+  scale_y_log10() +
+  labs(x = "Observed weight", y = "Predicted weight")
 
 # =============================================================================
 # ADVANCED USAGE
@@ -160,7 +201,7 @@ fit_custom <- kb_fit_weight_nereo(
   progress = "none"
 )
 
-# custom priors move the slope away from the default-prior posterior
+# very tight prior on bDiameter move the slope away from the default-prior posterior
 bind_rows(
   mutate(coef(fit), priors = "default"),
   mutate(coef(fit_custom), priors = "custom")
@@ -181,6 +222,8 @@ prior_summary(fit_prior)
 
 # --- control (technical rstan sampling args) ----------------------------------
 # pass more technical rstan sampling args through control
+# see control argument in ?rstan::stan for options - control is passed via ...
+# through to underlying sample arg
 fit_ctrl <- kb_fit_weight_nereo(
   data_weight_sim_nereo,
   chains = 1,
@@ -272,6 +315,8 @@ ppc_dens_overlay(
   posterior_predict(fit)[1:50, , drop = FALSE]
 ) +
   scale_x_log10()
+
+# compare this to prior predictive simulation (from prior-only model)
 ppc_dens_overlay(
   fit_prior$data$weight,
   posterior_predict(fit_prior)[1:50, , drop = FALSE]
@@ -279,28 +324,6 @@ ppc_dens_overlay(
   scale_x_log10() # prior predictive
 
 # --- advanced prediction arguments --------------------------------------------
-# sample from RE dist for wider uncertainty, i.e. for new, unobserved site/year
-kb_predict_weight_by(fit, new_levels = "sample")
-kb_predict_weight(
-  fit,
-  new_data = tibble(diameter = 40, site = "new_reef"),
-  new_levels = "sample"
-)
-
-# gives users ability to select a representative site(s) to apply to new sites (not existing in fit dataset)
-# this was requested from feedback in workshop
-# these estimates are similar - but not identical because rep._site uses the site effect but draws randomly from site:year interaction
-# (i.e., doesnt use the reference site's 2020 exactly, just a 'typical' year for it)
-kb_predict_weight(
-  kelpbio::fit_weight_sim_nereo, # the bundled simulated example fit
-  new_data = tibble(
-    diameter = c(40, 40),
-    site = c("new_reef", sites[1]),
-    year = c(2020, 2020)
-  ),
-  representative_site = sites[1]
-)
-
 # tinker with how estimates summarised
 kb_predict_weight(
   fit,
