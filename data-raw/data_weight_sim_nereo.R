@@ -54,8 +54,10 @@ rows <- lapply(seq_len(nrow(grid)), function(i) {
 })
 
 data_weight_sim_nereo <- do.call(rbind, rows)
-data_weight_sim_nereo$site <- factor(data_weight_sim_nereo$site)
-data_weight_sim_nereo$year <- factor(data_weight_sim_nereo$year)
+# Pin levels to creation order (site1..site10) so they are not string-sorted to
+# site1, site10, site2, ...; this order carries through to fits and predictions.
+data_weight_sim_nereo$site <- factor(data_weight_sim_nereo$site, levels = sites)
+data_weight_sim_nereo$year <- factor(data_weight_sim_nereo$year, levels = years)
 rownames(data_weight_sim_nereo) <- NULL
 data_weight_sim_nereo <- tibble::as_tibble(data_weight_sim_nereo)
 

@@ -106,13 +106,16 @@ build_by_grid <- function(fit, by, diameter = NULL) {
   }
   if (setequal(by, "site")) {
     g <- expand.grid(
-      diameter = diameter, site = fit$meta$site_levels,
+      diameter = diameter,
+      site = factor(fit$meta$site_levels, levels = fit$meta$site_levels),
       stringsAsFactors = FALSE
     )
   } else {
-    # Cross diameter only with site:year combinations that were observed.
+    # Cross diameter only with site:year combinations that were observed, keeping
+    # site/year as factors so the fit's level order survives downstream sorting.
     obs <- unique(as.data.frame(fit$data)[c("site", "year")])
-    obs[] <- lapply(obs, as.character)
+    obs$site <- factor(as.character(obs$site), levels = fit$meta$site_levels)
+    obs$year <- factor(as.character(obs$year), levels = fit$meta$year_levels)
     g <- merge(data.frame(diameter = diameter), obs)
   }
   tibble::as_tibble(g)

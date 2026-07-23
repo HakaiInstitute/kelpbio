@@ -35,7 +35,7 @@ fit_weight_sim_nereo <- kb_fit_weight_nereo(
   niters = 400L,
   nthin = 1L,
   cores = 2L,
-  quiet = TRUE,
+  progress = "none",
   seed = 42L
 )
 
