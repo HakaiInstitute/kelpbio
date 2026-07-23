@@ -24,8 +24,7 @@ print.kb_prior_exponential <- function(x, ...) {
 
 # Render the shared fit metadata header (used by print.kb_fit and
 # print.summary_kb_fit). `h` is the field list from .kb_fit_header(); the
-# summary_kb_fit object carries the same fields. No raw MCMC numerics, so both
-# callers stay snapshot-safe.
+# summary_kb_fit object carries the same fields.
 .print_kb_fit_header <- function(h) {
   cli::cat_line("Model:     ", h$model, " (", h$species, ")")
   if (!is.na(h$family)) cli::cat_line("Family:    ", h$family)

@@ -1,5 +1,4 @@
 test_that("fitted returns a positive, finite response-scale vector", {
-  # the fitted == augment()$fitted linkage is asserted once, in test-augment.R
   f <- fitted(weight_fit)
   expect_type(f, "double")
   expect_length(f, nobs(weight_fit))

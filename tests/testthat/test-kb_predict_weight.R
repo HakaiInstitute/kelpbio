@@ -1,7 +1,6 @@
 # kb_predict_weight(): predict at supplied rows (or observed data when NULL).
 
 test_that("new_data = NULL predicts at the observed rows, conditioned", {
-  # the kb_predictions class/column contract lives in test-kb_predictions.R
   p <- kb_predict_weight(weight_fit)
   expect_s3_class(p, "kb_predictions")
   expect_equal(nrow(p), nrow(weight_fit$data))

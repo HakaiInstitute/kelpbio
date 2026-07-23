@@ -1,11 +1,8 @@
 # Progress infrastructure for the fitting engine. A fit can write a kelpbio-owned,
-# pollable artifact into a directory: a manifest plus rstan's per-chain
-# sample_file CSVs. The row-counting here turns that artifact into a completed
-# fraction, which both the console reporter (in fit_stan()) and the public
-# kb_fit_progress() reader consume. See decisions in the change design (D3/D5/D6):
-# rstan writes thinned warmup rows by default and a "# Elapsed Time" footer at
-# chain completion; the exact row denominator is non-critical because completion
-# is signalled by that footer (and, for real callers, out of band).
+# pollable artifact (a manifest plus rstan's per-chain sample_file CSVs) that the
+# console reporter and the public kb_fit_progress() reader turn into a completed
+# fraction. rstan writes thinned warmup rows by default and an "# Elapsed Time"
+# footer at chain completion (see the change design for the full rationale).
 
 # Base name for the rstan sample_file; rstan appends _<chain> before the
 # extension, giving samples_1.csv, samples_2.csv, ...
@@ -171,6 +168,14 @@ bar_reporter <- function() {
         id <<- cli::cli_progress_bar(
           "Fitting model",
           total = total,
+          format = paste(
+            "{cli::pb_spin} Fitting model {cli::pb_bar}",
+            "{cli::pb_percent} | {cli::pb_eta_str}"
+          ),
+          format_done = paste(
+            "{cli::col_green(cli::symbol$tick)} Fitting model",
+            "[{cli::pb_elapsed}]"
+          ),
           clear = FALSE,
           .envir = parent.frame()
         )

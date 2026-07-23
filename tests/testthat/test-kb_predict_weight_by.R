@@ -1,9 +1,6 @@
 # kb_predict_weight_by(): allometric curve(s) over a diameter sequence.
 
 test_that("population curve spans the observed diameter range", {
-  # class/column contract in test-kb_predictions.R; ordering + sample-vs-average
-  # widening are proven on the shared engine (test-weight_nereo_linpred.R) and
-  # summariser (test-kb_predict_weight.R).
   p <- kb_predict_weight_by(weight_fit, new_levels = "average")
   expect_s3_class(p, "kb_predictions")
   rng <- range(weight_fit$data$diameter)
@@ -39,9 +36,6 @@ test_that("custom diameter sequence is honoured", {
 })
 
 test_that("wider conf_level gives a wider interval", {
-  # the one prediction-path conf_level check (the summariser differs from the
-  # draws summariser tested in test-summarise.R); by-verb validation of `by` is
-  # covered directly on validate_by_weight() in test-weight_nereo_linpred.R.
   p90 <- kb_predict_weight_by(weight_fit, new_levels = "average", conf_level = 0.90)
   p99 <- kb_predict_weight_by(weight_fit, new_levels = "average", conf_level = 0.99)
   expect_true(all((p99$upper - p99$lower) >= (p90$upper - p90$lower)))

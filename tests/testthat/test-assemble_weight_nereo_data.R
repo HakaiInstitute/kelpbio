@@ -19,7 +19,6 @@ test_that("assemble_weight_nereo_data maps data and priors to the Stan data bloc
   expect_equal(sd$prior_only, 0L)
   # site:year random effect included by default
   expect_equal(sd$site_year_on, 1L)
-  # prior hyperparameters are mapped exhaustively in the next test
 })
 
 test_that("assemble_weight_nereo_data maps every prior hyperparameter to its own Stan field", {

@@ -1,5 +1,4 @@
 test_that("residuals returns a finite deviance-residual vector", {
-  # the residuals == augment()$residual linkage is asserted once, in test-augment.R
   r <- residuals(weight_fit)
   expect_type(r, "double")
   expect_length(r, nobs(weight_fit))

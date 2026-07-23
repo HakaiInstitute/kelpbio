@@ -117,6 +117,7 @@ sample_with_bar <- function(stanmodel_name, sampling_args, dir,
 
   manifest <- list(chains = chains, warmup = warmup, niters = niters, nthin = nthin)
   total_rows <- progress_rows_per_chain(warmup, niters, nthin) * chains
+  announce_sampling(chains, sampling_args$cores)
   reporter <- progress_reporter("bar")
   reporter$start(total_rows)
   while (bg$is_alive()) {

@@ -1,10 +1,5 @@
-# Determine the site:year random-effect structure from the data, and notify the
-# user. The site:year effect is kept whenever more than one year is present (the
-# regularizing prior shrinks it when weakly supported); it is dropped only when
-# the year dimension is degenerate (fewer than two years), where the interaction
-# is structurally confounded with the site effect. When years exist but no site
-# was sampled in more than one year the design is aliased: the effect is kept but
-# the site vs site:year split is not identifiable and reflects the prior.
+# Determine the site:year random-effect structure from the data and notify the
+# user (the confounding/aliasing rationale lives in the fitting spec).
 
 # Pure: returns list(on, aliased). Uses distinct values present, so unused factor
 # levels do not affect the result.

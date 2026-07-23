@@ -1,7 +1,5 @@
-# kb_fit_progress() is a thin wrapper: chk_string(progress_dir) then
-# read_progress_fraction(). The fraction logic (0 / mid-run / complete / torn)
-# is covered directly in test-progress.R; here we only test the wrapper's
-# validation and that it delegates. write_fake_chain() is in helper-progress.R.
+# kb_fit_progress() is a thin wrapper over read_progress_fraction() (the fraction
+# logic is tested in test-progress.R). write_fake_chain() is in helper-progress.R.
 
 test_that("kb_fit_progress validates progress_dir", {
   expect_snapshot(error = TRUE, kb_fit_progress(1))

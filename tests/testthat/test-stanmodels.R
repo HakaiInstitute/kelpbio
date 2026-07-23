@@ -36,9 +36,7 @@ test_that("stanmodels$weight_nereo is a compiled Stan model", {
 })
 
 test_that("the weight model samples and returns the declared parameters", {
-  # One raw-Stan smoke: the only direct check of the model's declared
-  # parameter block. Zero-observation / prior-only sampling is covered
-  # end-to-end through the wrapper (test-kb_fit_weight_nereo.R).
+  # the only direct check of the model's declared parameter block
   skip_on_cran()
   fit <- suppressWarnings(rstan::sampling(
     stanmodels$weight_nereo,

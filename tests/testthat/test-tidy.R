@@ -16,8 +16,7 @@ test_that("include_random_effects = TRUE adds the group-level deviations", {
 })
 
 test_that("tidy forwards conf_level/estimate/sig_fig to the summariser", {
-  # the interval/estimate/rounding behaviour itself is proven in test-summarise.R;
-  # here we only confirm tidy passes each argument through (does not drop it).
+  # behaviour is proven in test-summarise.R; here just confirm each arg is passed
   wide <- tidy(weight_fit, conf_level = 0.99)
   narrow <- tidy(weight_fit, conf_level = 0.80)
   i <- match("bWeight", wide$term)
