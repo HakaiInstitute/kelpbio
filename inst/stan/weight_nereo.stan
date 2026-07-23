@@ -8,6 +8,8 @@
 // of the observed diameter), so the diameter unit does not affect the fit.
 // Random effects: site intercept, site slope (on log diameter), and site:year.
 // Priors are passed as data; the prior family is fixed at compile time.
+// The mean is computed with vectorised indexing (no per-observation loop) for a
+// smaller autodiff graph.
 data {
   int<lower=0> nObs;                      // 0 allowed: supports prior-only / empty fits
   int<lower=1> nSite;
@@ -37,7 +39,14 @@ transformed data {
   real nu = 4.0;                          // Student-t degrees of freedom (fixed)
   real log_diameter_ref = log(diameter_ref);
   vector[nObs] log_diameter = log(diameter) - log_diameter_ref;
+  vector[nObs] log_diameter_sq = log_diameter .* log_diameter;  // precomputed
   vector[nObs] log_weight = log(weight);
+  // column-major linear index into to_vector(bSiteYear): (site, year) ->
+  // site + (year - 1) * nSite. Lets the site:year term be one vectorised gather.
+  array[nObs] int sy_idx;
+  for (i in 1:nObs) {
+    sy_idx[i] = site[i] + (year[i] - 1) * nSite;
+  }
 }
 parameters {
   real bWeight;                           // intercept: expected log(weight) at diameter_ref
@@ -55,13 +64,11 @@ transformed parameters {
   vector[nSite] bSite = z_bSite * sSite;
   vector[nSite] bSiteDiameter = z_bSiteDiameter * sSiteDiameter;
   matrix[nSite, nYear] bSiteYear = z_bSiteYear * sSiteYear;
-  vector[nObs] log_eWeight;
-  for (i in 1:nObs) {
-    log_eWeight[i] = bWeight + bSite[site[i]]
-      + (bDiameter + bSiteDiameter[site[i]]) * log_diameter[i]
-      + bDiameter2 * log_diameter[i]^2
-      + site_year_on * bSiteYear[site[i], year[i]];
-  }
+  // Vectorised mean: gather random effects by observation, combine elementwise.
+  vector[nObs] log_eWeight = bWeight + bSite[site]
+    + (bDiameter + bSiteDiameter[site]) .* log_diameter
+    + bDiameter2 * log_diameter_sq
+    + site_year_on * to_vector(bSiteYear)[sy_idx];
 }
 model {
   bWeight ~ normal(prior_intercept_mu, prior_intercept_sd);
