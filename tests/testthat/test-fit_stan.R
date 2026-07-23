@@ -21,6 +21,24 @@ test_that("resolve_cores falls back to chains when mc.cores is unset", {
   expect_identical(resolve_cores(NULL, 2L), expected)
 })
 
+test_that("announce_sampling nudges only when idle cores exist", {
+  testthat::local_mocked_bindings(
+    detectCores = function(...) 4L,
+    .package = "parallel"
+  )
+  expect_snapshot(announce_sampling(4L, 1L)) # idle cores: nudge
+  expect_no_message(announce_sampling(4L, 4L)) # parallel: silent
+  expect_no_message(announce_sampling(1L, 1L)) # single chain: silent
+})
+
+test_that("announce_sampling stays silent on a single-core machine", {
+  testthat::local_mocked_bindings(
+    detectCores = function(...) 1L,
+    .package = "parallel"
+  )
+  expect_no_message(announce_sampling(4L, 1L))
+})
+
 test_that("with_quiet_sampler passes the value and warnings through when muffle = FALSE", {
   expect_identical(with_quiet_sampler(42L, muffle = FALSE), 42L)
   expect_warning(

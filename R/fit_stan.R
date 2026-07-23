@@ -130,6 +130,21 @@ sample_with_bar <- function(stanmodel_name, sampling_args, dir,
   bg$get_result()
 }
 
+# The default fits chains in parallel across the available cores with no user
+# action, so the happy path stays silent (the bar carries it). Speak only when
+# there are idle cores to use: more than one core exists but the run is sampling
+# one chain at a time, the sole case where the user can act on the advice.
+announce_sampling <- function(chains, cores) {
+  avail <- parallel::detectCores()
+  cores_unused <- !is.na(avail) && avail > 1L && chains > 1L && min(chains, cores) == 1L
+  if (cores_unused) {
+    cli::cli_alert_info(
+      "Sampling {chains} chains one at a time. Set {.arg cores} (e.g. {.code cores = {chains}}) to run them in parallel and finish sooner."
+    )
+  }
+  invisible(NULL)
+}
+
 # Muffle rstan's post-sampling HMC diagnostic warnings (progress "bar"/"none").
 # With progress = "verbose" they propagate so the user sees rstan's full
 # diagnostics (divergences, treedepth, BFMI, Rhat/ESS) at fit time;
