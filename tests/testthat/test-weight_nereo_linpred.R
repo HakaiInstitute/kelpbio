@@ -40,6 +40,7 @@ test_that("per-row resolution: known rows conditioned, new rows drawn", {
 })
 
 test_that("sample widens vs average when a factor is omitted", {
+  withr::local_seed(1) # the "sample" path draws random effects; pin them
   grid <- data.frame(diameter = c(20, 40, 60))
   sd_avg <- apply(posterior::draws_of(.weight_nereo_linpred(weight_fit, grid, "average")), 2, stats::sd)
   sd_smp <- apply(posterior::draws_of(.weight_nereo_linpred(weight_fit, grid, "sample")), 2, stats::sd)

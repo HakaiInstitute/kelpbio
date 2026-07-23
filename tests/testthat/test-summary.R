@@ -30,6 +30,13 @@ test_that("summary diagnostic columns agree with the stored diagnostics", {
   expect_equal(s$coefficients$ess_bulk, round(diag$ess_bulk[idx]))
 })
 
+test_that("conf_level widens the summary interval", {
+  wide <- summary(weight_fit, conf_level = 0.99)$coefficients
+  narrow <- summary(weight_fit, conf_level = 0.80)$coefficients
+  i <- match("bWeight", wide$term)
+  expect_gt(wide$upper[i] - wide$lower[i], narrow$upper[i] - narrow$lower[i])
+})
+
 test_that("summary carries the fit metadata", {
   s <- summary(weight_fit)
   expect_equal(s$model, "weight")

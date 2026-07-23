@@ -64,9 +64,9 @@ test_that("resolve_progress_dir honours a supplied dir, else temp for bar only",
   expect_identical(none, list(dir = NULL, owned = FALSE))
 
   bar <- resolve_progress_dir("bar", NULL)
+  withr::defer(unlink(bar$dir, recursive = TRUE))
   expect_true(bar$owned)
   expect_true(dir.exists(bar$dir))
-  unlink(bar$dir, recursive = TRUE)
 })
 
 test_that("progress_reporter binds a bar for 'bar' and a no-op otherwise", {

@@ -4,6 +4,14 @@ test_that("posterior_predict returns stored yrep at observed data", {
   expect_equal(ncol(yrep), nrow(weight_fit$data))
   expect_equal(nrow(yrep), posterior::ndraws(weight_fit$draws))
   expect_true(all(yrep > 0))
+  # it is exactly the stored yrep generated quantity, not a recomputation
+  expect_equal(yrep, posterior::draws_of(weight_fit$gq$yrep))
+})
+
+test_that("posterior_predict aborts at observed data for a zero-observation fit", {
+  fit0 <- weight_fit
+  fit0$gq <- NULL
+  expect_error(posterior_predict(fit0), "zero-observation fit")
 })
 
 test_that("posterior_predict at new data is wider than posterior_epred", {

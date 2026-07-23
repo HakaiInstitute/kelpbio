@@ -6,3 +6,9 @@ test_that("log_lik returns a D x N matrix usable by loo", {
   skip_if_not_installed("loo")
   expect_s3_class(suppressWarnings(loo::loo(ll)), "loo")
 })
+
+test_that("log_lik aborts for a zero-observation fit", {
+  fit0 <- weight_fit
+  fit0$gq <- NULL
+  expect_error(log_lik(fit0), "zero-observation fit")
+})

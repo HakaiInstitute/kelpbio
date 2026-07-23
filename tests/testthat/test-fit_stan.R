@@ -8,7 +8,7 @@ test_that("resolve_cores respects mc.cores, caps at available, floors at 1", {
   on.exit(options(old), add = TRUE)
   expect_identical(resolve_cores(NULL, 4L), 1L) # NULL -> mc.cores
   expect_identical(resolve_cores(1L, 4L), 1L) # explicit honoured
-  expect_gte(resolve_cores(NULL, 4L), 1L) # floored at 1
+  expect_identical(resolve_cores(0L, 4L), 1L) # floored at 1 (max(1L, .))
   skip_if(is.na(avail), "detectCores() returned NA")
   expect_lte(resolve_cores(1000L, 4L), avail) # never oversubscribe
 })

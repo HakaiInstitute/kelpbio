@@ -27,3 +27,9 @@ test_that("resolve_priors errors on a family mismatch", {
     "wrong family"
   )
 })
+
+test_that("resolve_priors rejects a non-list or unnamed priors", {
+  d <- kb_priors_weight_nereo()
+  expect_error(resolve_priors(1:3, d))
+  expect_error(resolve_priors(list(kb_prior_normal(0, 1)), d))
+})

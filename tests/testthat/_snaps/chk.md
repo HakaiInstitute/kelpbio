@@ -47,3 +47,12 @@
       Error in `.chk_progress_dir()`:
       ! `1` must be a directory path or `NULL`.
 
+# .chk_representative_site passes NULL/known sites and errors on unknown
+
+    Code
+      .chk_representative_site(weight_fit, "not_a_site")
+    Condition
+      Error in `.chk_representative_site()`:
+      ! Invalid `representative_site` value: "not_a_site".
+      i Available sites: "site1", "site2", "site3", and "site4".
+

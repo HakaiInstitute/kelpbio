@@ -75,6 +75,13 @@ test_that("new_data must have a diameter column", {
   )
 })
 
+test_that("wider conf_level widens the interval", {
+  nd <- data.frame(diameter = c(20, 40), site = weight_fit$meta$site_levels[1])
+  narrow <- kb_predict_weight(weight_fit, nd, new_levels = "average", conf_level = 0.80)
+  wide <- kb_predict_weight(weight_fit, nd, new_levels = "average", conf_level = 0.99)
+  expect_true(all((wide$upper - wide$lower) >= (narrow$upper - narrow$lower)))
+})
+
 test_that("representative_site borrows a known site's main effects for a new site", {
   site1 <- weight_fit$meta$site_levels[1]
   diameter <- c(20, 40, 60)

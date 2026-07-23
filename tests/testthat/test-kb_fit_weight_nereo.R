@@ -96,11 +96,11 @@ test_that("prior_only fit ignores the data", {
     progress = "none",
     seed = 7
   )
-  # likelihood off => permuting the response leaves the prior-only fit unchanged
+  # likelihood off + same seed => permuting the response leaves the RNG stream
+  # untouched, so the full draws are identical, not merely close in one term.
   expect_equal(
-    median(f1$draws$bWeight),
-    median(f2$draws$bWeight),
-    tolerance = 0.05
+    as.matrix(posterior::as_draws_matrix(f1$draws)),
+    as.matrix(posterior::as_draws_matrix(f2$draws))
   )
 })
 
@@ -123,12 +123,13 @@ test_that("zero-row data is accepted under prior_only", {
 
 test_that("progress accepts only the three modes", {
   d <- droplevels(subset(sim_weight, site == "site1" & year == "2019"))
-  expect_error(kb_fit_weight_nereo(d, progress = "loud"), "bar")
+  expect_error(kb_fit_weight_nereo(d, progress = "loud"), "must be one of")
 })
 
 test_that("progress_dir writes an artifact that kb_fit_progress reads as complete", {
-  # The background "bar" path needs the installed package; skip on CRAN and use
-  # the in-process "none" path with an external progress_dir (the Shiny seam).
+  # Exercises the background "bar" path (callr subprocess) writing to a
+  # caller-supplied progress_dir; the subprocess loads the installed package, so
+  # skip on CRAN.
   skip_on_cran()
   d <- droplevels(subset(
     sim_weight,

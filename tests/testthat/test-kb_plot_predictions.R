@@ -90,5 +90,5 @@ test_that("errors helpfully when metadata is stripped", {
   p <- kb_predict_weight_by(weight_fit, new_levels = "average")
   bare <- tibble::as_tibble(unclass(p))
   attr(bare, "kb_predictor") <- NULL
-  expect_error(kb_plot_predictions(bare))
+  expect_error(kb_plot_predictions(bare), "Cannot infer the x-axis")
 })

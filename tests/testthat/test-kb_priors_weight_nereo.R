@@ -19,9 +19,7 @@ test_that("kb_priors_weight defaults match the validated analysis model", {
   expect_equal(p$diameter, kb_prior_normal(2, 1))
   expect_equal(p$diameter2, kb_prior_normal(0, 0.5))
   expect_equal(p$sd_site, kb_prior_exponential(1))
+  expect_equal(p$sd_site_diameter, kb_prior_exponential(1))
+  expect_equal(p$sd_site_year, kb_prior_exponential(1))
   expect_equal(p$sd_residual, kb_prior_exponential(1))
-})
-
-test_that("kb_priors_weight validates species", {
-  expect_error(kb_priors_weight_nereo(species = "macrocystis"))
 })

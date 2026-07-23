@@ -29,3 +29,24 @@ test_that("missing, mistyped, and impossible values error via cli", {
   bad_value$weight <- -1
   expect_snapshot(kb_check_data_weight_nereo(bad_value), error = TRUE)
 })
+
+test_that("NA values, non-numeric grouping, and zero weight error", {
+  good <- data.frame(
+    diameter = 20, weight = 0.5, site = factor("a"), year = factor("2020")
+  )
+  na_diameter <- good
+  na_diameter$diameter <- NA_real_
+  expect_error(kb_check_data_weight_nereo(na_diameter), "missing")
+
+  na_weight <- good
+  na_weight$weight <- NA_real_
+  expect_error(kb_check_data_weight_nereo(na_weight), "missing")
+
+  numeric_site <- good
+  numeric_site$site <- 1
+  expect_error(kb_check_data_weight_nereo(numeric_site))
+
+  zero_weight <- good
+  zero_weight$weight <- 0 # boundary: weight must be > 0
+  expect_error(kb_check_data_weight_nereo(zero_weight))
+})
