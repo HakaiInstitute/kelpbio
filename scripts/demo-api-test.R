@@ -382,8 +382,9 @@ summary(fit_m)
 kb_predict_weight(fit_m, new_data = tibble(fronds = c(2, 5, 10, 15)))
 
 # macro HAS a year main effect, so by = "year" is available (it errors for nereo)
-kb_predict_weight_by(fit_m, by = "year") |>
-  kb_plot_predictions()
+kb_predict_weight_by(fit_m, by = "year", predictor = 10) |>
+  kb_plot_predictions() +
+  coord_flip()
 
 kb_predict_weight_by(fit_m, by = "site") |>
   kb_plot_predictions(observed = data_weight_sim_macro)
