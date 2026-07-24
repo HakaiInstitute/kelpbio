@@ -87,19 +87,19 @@ glance(fit)
 #> # A tibble: 1 × 8
 #>       n     K nchains niters nthin   ess  rhat converged
 #>   <int> <int>   <int>  <dbl> <int> <dbl> <dbl> <lgl>    
-#> 1   234    10       2    400     1  223.  1.02 TRUE
+#> 1   234    10       2    400     1  182.  1.01 TRUE
 
 tidy(fit)
 #> # A tibble: 7 × 4
 #>   term          estimate   lower  upper
 #>   <chr>            <dbl>   <dbl>  <dbl>
-#> 1 bWeight        -1.43   -1.62   -1.27 
-#> 2 bDiameter       2.51    2.34    2.69 
-#> 3 bDiameter2      0.0897 -0.093   0.289
-#> 4 sSite           0.229   0.137   0.489
-#> 5 sSiteDiameter   0.211   0.0723  0.451
-#> 6 sSiteYear       0.146   0.102   0.215
-#> 7 sWeight         0.164   0.145   0.189
+#> 1 bWeight         -1.34  -1.51   -1.17 
+#> 2 bDiameter        2.52   2.34    2.71 
+#> 3 bDiameter2       0.13  -0.0715  0.342
+#> 4 sSite            0.244  0.15    0.52 
+#> 5 sSiteDiameter    0.219  0.0727  0.439
+#> 6 sSiteYear        0.131  0.086   0.192
+#> 7 sWeight          0.171  0.151   0.196
 ```
 
 Predict the weight-diameter curve for each site with
@@ -125,11 +125,11 @@ kb_predict_weight(fit, new_data)
 #> # A tibble: 5 × 5
 #>   diameter site  estimate  lower  upper
 #>      <dbl> <chr>    <dbl>  <dbl>  <dbl>
-#> 1       20 site1   0.0318 0.0218 0.0461
-#> 2       35 site1   0.131  0.092  0.19  
-#> 3       50 site1   0.333  0.237  0.47  
-#> 4       65 site1   0.681  0.468  0.966 
-#> 5       80 site1   1.17   0.825  1.72
+#> 1       20 site1    0.032 0.0226 0.0459
+#> 2       35 site1    0.13  0.0955 0.179 
+#> 3       50 site1    0.331 0.24   0.463 
+#> 4       65 site1    0.672 0.473  0.953 
+#> 5       80 site1    1.18  0.844  1.68
 ```
 
 The fitted object exposes the standard `rstantools` generics
