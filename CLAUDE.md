@@ -31,6 +31,15 @@ R package for Bayesian kelp biomass estimation. All exported functions use the `
 
 Knowledge lives in OpenSpec, not a `docs/` design-doc tree (one fact, one home): behaviour in `openspec/specs/`, cross-cutting rules in `openspec/config.yaml`, cross-cutting rationale in `decisions/`, per-change rationale in that change's `design.md`. When implementing any feature, read the corresponding analysis project script and Stan file first; the analysis project contains the final, validated model code that kelpbio adapts.
 
+## Spec & Change Workflow (learned conventions)
+
+- **One feature = one change.** Keep at most one change touching a given capability in flight at a time. Two unarchived changes that rewrite the same requirement produce stale deltas that regress the spec on a later sync/archive (this is what happened when the `quiet` fitting delta was superseded by `progress` while both sat unarchived).
+- **Definition of done, all in the same PR:** code + tests green in CI, main spec synced, reader docs (roxygen / README / vignette) updated, and the change archived. Do NOT defer sync/archive to a later cleanup pass; deferring is what let the `quiet` -> `progress` rename drift out of the spec and vignette.
+- **Archive each change on completion** (pre-release: deleting the change folder is fine, since `openspec/specs/` is the source of truth and git keeps history). Never let change folders accumulate. `sync` is the escape hatch for updating the contract mid-flight; `archive` is the normal completion step (it syncs the delta and files the folder). Default to archive-on-completion.
+- **Sub-model changes are thin.** The weight model settled the shared fit/predict/summarise/plot patterns; the remaining sub-models (size, density, blade fraction, wet/dry, carbon) reference the weight contract and spell out only their differences (distribution, columns, random-effect structure, month handling). Do not re-derive the shared contract for each.
+- **Trust the test suite + green CI as the "done" signal, not `tasks.md` checkboxes** (checkboxes drift out of date).
+- **Before requesting review or archiving, run a quick drift check** (specs vs code, reader docs vs code).
+
 ## Analysis Project Structure
 
 The analysis project uses `embr`/`cmdstanr`. kelpbio re-implements the same models using `rstan`/`rstantools` (pre-compiled Stan, no cmdstan required at runtime). Key analysis scripts:
