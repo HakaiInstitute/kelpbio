@@ -6,3 +6,7 @@ test_that("prior print methods show family and hyperparameters", {
 test_that("print.kb_fit shows stable metadata", {
   expect_snapshot(print(weight_fit))
 })
+
+test_that("print.kb_fit shows the macro Gamma family and structure", {
+  expect_snapshot(print(weight_macro_fit))
+})

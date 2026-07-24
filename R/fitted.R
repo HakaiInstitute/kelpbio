@@ -17,5 +17,5 @@
 fitted.kb_fit_weight <- function(object, ...) {
   rlang::check_dots_empty()
   .chk_kb_fit_weight(object)
-  as.numeric(stats::median(exp(.weight_nereo_linpred_obs(object))))
+  as.numeric(stats::median(exp(.weight_linpred_obs(object))))
 }

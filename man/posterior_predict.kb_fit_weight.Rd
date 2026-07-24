@@ -15,8 +15,9 @@
 \arguments{
 \item{object}{A \code{kb_fit_weight} object.}
 
-\item{new_data}{A data frame with a \code{diameter} column (and optional \code{site} /
-\code{year} columns), or \code{NULL} for the stored \code{yrep} at the observed data.}
+\item{new_data}{A data frame with the fit's predictor column (and optional
+\code{site} / \code{year} columns), or \code{NULL} for the stored \code{yrep} at the observed
+data.}
 
 \item{...}{Unused.}
 
@@ -40,9 +41,10 @@ A draws-by-observations (\verb{D x N}) matrix.
 }
 \description{
 Draws from the posterior predictive distribution: the expected weight plus
-Student-t observation noise (scale \code{sWeight}, 4 degrees of freedom, matching
-the Stan likelihood). With \code{new_data = NULL} the stored \code{yrep} at the observed
-data is returned, for use with \code{bayesplot::pp_check()}.
+species-appropriate observation noise (Student-t on log-weight with scale
+\code{sWeight} for \emph{Nereocystis}; Gamma with shape \code{alpha * fronds} for
+\emph{Macrocystis}, matching the Stan likelihood). With \code{new_data = NULL} the stored
+\code{yrep} at the observed data is returned, for use with \code{bayesplot::pp_check()}.
 }
 \details{
 For supplied \code{new_data}, conditioning is inferred from the grouping columns

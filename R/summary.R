@@ -110,39 +110,58 @@ summary.kb_fit <- function(
 # imply a formula interface or a particular fitting engine.
 fit_descriptor <- function(x) {
   model <- sub("^kb_fit_", "", class(x)[1])
-  switch(
-    model,
-    weight = {
-      list(
-        family = "Student-t (df = 4); response log(weight)",
-        fixed = "intercept + linear + quadratic log(diameter/d0)",
-        random = "site (intercept, slope); site:year (intercept)",
-        centered = paste0(
-          "log-diameter at d0 = ",
-          signif(x$meta$diameter_ref, 3),
-          " (geometric mean of diameter)"
-        ),
-        groups = weight_groups(x)
-      )
-    },
-    list(
+  if (model != "weight") {
+    return(list(
       family = NA_character_,
       fixed = NA_character_,
       random = NA_character_,
       centered = NA_character_,
       groups = integer(0)
+    ))
+  }
+  # Both species are class kb_fit_weight; the descriptor branches on meta$species
+  # because the two weight models differ in likelihood and effect structure.
+  if (identical(x$meta$species, "macrocystis")) {
+    list(
+      family = "Gamma (shape proportional to fronds); response weight",
+      fixed = "intercept + linear log(fronds/f0)",
+      random = "site (intercept); year (intercept); site:year (intercept)",
+      centered = paste0(
+        "log-fronds at f0 = ",
+        signif(x$meta$fronds_ref, 3),
+        " (geometric mean of fronds)"
+      ),
+      groups = weight_groups(x, year = TRUE)
     )
-  )
+  } else {
+    list(
+      family = "Student-t (df = 4); response log(weight)",
+      fixed = "intercept + linear + quadratic log(diameter/d0)",
+      random = "site (intercept, slope); site:year (intercept)",
+      centered = paste0(
+        "log-diameter at d0 = ",
+        signif(x$meta$diameter_ref, 3),
+        " (geometric mean of diameter)"
+      ),
+      groups = weight_groups(x)
+    )
+  }
 }
 
-# Number of levels of each grouping factor in the weight model.
-weight_groups <- function(x) {
+# Number of levels of each grouping factor in the weight model. `year` adds the
+# standalone year group count (the Macrocystis model has a year main effect).
+weight_groups <- function(x, year = FALSE) {
   d <- as.data.frame(x$data)
   n_site <- length(x$meta$site_levels)
+  n_year <- length(x$meta$year_levels)
   n_site_year <- if (nrow(d) && all(c("site", "year") %in% names(d))) {
     nrow(unique(d[c("site", "year")]))
   } else {
     0L
   }
-  c(site = n_site, "site:year" = n_site_year)
+  if (year) {
+    c(site = n_site, year = n_year, "site:year" = n_site_year)
+  } else {
+    c(site = n_site, "site:year" = n_site_year)
+  }
 }

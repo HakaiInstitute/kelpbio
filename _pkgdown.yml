@@ -13,19 +13,24 @@ reference:
   desc: "Fit Bayesian Stan models."
   contents:
     - kb_fit_weight_nereo
+    - kb_fit_weight_macro
     - kb_fit_progress
 - title: "Priors"
   desc: "Specify priors for model parameters."
   contents:
     - kb_priors_weight_nereo
+    - kb_priors_weight_macro
     - kb_prior_normal
     - kb_prior_exponential
 - title: "Data"
   desc: "Validate and explore input data."
   contents:
     - kb_check_data_weight_nereo
+    - kb_check_data_weight_macro
     - data_weight_sim_nereo
+    - data_weight_sim_macro
     - fit_weight_sim_nereo
+    - fit_weight_sim_macro
 - title: "Predictions and Plotting"
   desc: "Predict and visualise model output."
   contents:

@@ -35,3 +35,27 @@ weight_fit <- kb_fit_weight_nereo(
 
 saveRDS(weight_fit, "tests/testthat/fixtures/weight_fit.rds")
 message("Wrote tests/testthat/fixtures/weight_fit.rds")
+
+# Macrocystis fixture (Gamma weight model), same downsampling approach.
+sim_weight_macro <- readRDS("tests/testthat/fixtures/sim_weight_macro.rds")
+dm <- subset(
+  sim_weight_macro,
+  site %in%
+    c("site1", "site2", "site3", "site4") &
+    year %in% c("2019", "2020", "2021")
+)
+dm$site <- factor(dm$site)
+dm$year <- factor(dm$year)
+
+weight_macro_fit <- kb_fit_weight_macro(
+  dm,
+  chains = 2L,
+  niters = 300L,
+  nthin = 1L,
+  cores = 2L,
+  progress = "none",
+  seed = 42L
+)
+
+saveRDS(weight_macro_fit, "tests/testthat/fixtures/weight_macro_fit.rds")
+message("Wrote tests/testthat/fixtures/weight_macro_fit.rds")

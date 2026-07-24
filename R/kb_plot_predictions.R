@@ -36,7 +36,7 @@
 #' # Weight at a reference diameter by site (pointrange, sites on the y-axis):
 #' kb_predict_weight_by(
 #'   fit_weight_sim_nereo,
-#'   by = "site", diameter = 30, new_levels = "average"
+#'   by = "site", predictor = 30, new_levels = "average"
 #' ) |>
 #'   kb_plot_predictions() +
 #'   ggplot2::coord_flip()
@@ -185,6 +185,7 @@ kb_axis_label <- function(name, units = NA_character_) {
   base <- switch(
     name,
     diameter = "Sub-bulb diameter",
+    fronds = "Fronds",
     weight = "Wet weight",
     site = "Site",
     year = "Year",

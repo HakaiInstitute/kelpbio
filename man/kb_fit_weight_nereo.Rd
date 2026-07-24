@@ -112,4 +112,8 @@ if (interactive()) {
 # A pre-fit example model is included with the package:
 tidy(fit_weight_sim_nereo)
 }
+\seealso{
+Other model:
+\code{\link[=kb_fit_weight_macro]{kb_fit_weight_macro()}}
+}
 \concept{model}

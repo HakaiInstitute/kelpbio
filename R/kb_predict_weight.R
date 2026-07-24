@@ -64,6 +64,7 @@ kb_predict_weight <- function(
     res$grid,
     res$linpred,
     res$group_vars,
+    predictor = fit$meta$predictor %||% "diameter",
     conf_level = conf_level,
     estimate = estimate,
     sig_fig = sig_fig,
@@ -79,6 +80,7 @@ summarise_weight_predictions <- function(
   grid,
   linpred,
   group_vars,
+  predictor,
   conf_level,
   estimate,
   sig_fig,
@@ -99,7 +101,7 @@ summarise_weight_predictions <- function(
 
   new_kb_predictions(
     out,
-    predictor = "diameter",
+    predictor = predictor,
     group_vars = group_vars,
     response = "weight",
     curve = curve

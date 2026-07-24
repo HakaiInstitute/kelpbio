@@ -35,6 +35,20 @@ test_that("summary carries the fit metadata", {
   expect_equal(s$ndraws, posterior::ndraws(weight_fit$draws))
 })
 
+test_that("macro summary carries the Gamma family, term list, and year group", {
+  s <- summary(weight_macro_fit)
+  expect_equal(s$model, "weight")
+  expect_match(s$family, "Gamma")
+  expect_match(s$fixed, "log\\(fronds/f0\\)")
+  expect_match(s$random, "year")
+  expect_named(s$groups, c("site", "year", "site:year"))
+  expect_true(all(
+    c("bWeight", "bFronds", "alpha", "sSite", "sYear", "sSiteYear") %in%
+      s$coefficients$term
+  ))
+  expect_false(any(grepl("^bYear\\[", s$coefficients$term)))
+})
+
 test_that("print.summary_kb_fit shows the header, table, and footer", {
   out <- capture.output(print(summary(weight_fit)))
   expect_true(any(grepl("summary_kb_fit", out)))

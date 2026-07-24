@@ -23,6 +23,18 @@ test_that("include_random_effects = TRUE adds the group-level deviations", {
   expect_true(any(grepl("^bSite\\[", t$term)))
 })
 
+test_that("tidy uses the macro term list for a macro fit", {
+  t <- tidy(weight_macro_fit)
+  expect_named(t, c("term", "estimate", "lower", "upper"))
+  expect_setequal(
+    t$term,
+    c("bWeight", "bFronds", "alpha", "sSite", "sYear", "sSiteYear")
+  )
+  # the year main effect appears among the per-level deviations
+  tr <- tidy(weight_macro_fit, include_random_effects = TRUE)
+  expect_true(any(grepl("^bYear\\[", tr$term)))
+})
+
 test_that("tidy forwards conf_level/estimate/sig_fig to the summariser", {
   # behaviour is proven in test-summarise.R; here just confirm each arg is passed
   wide <- tidy(weight_fit, conf_level = 0.99)

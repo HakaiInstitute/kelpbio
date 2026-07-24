@@ -21,9 +21,14 @@ library(kelpbio)
 kelpbio fits Bayesian hierarchical Stan models to estimate kelp biomass from
 field measurements. This article walks through the allometric weight model for
 *Nereocystis luetkeana*, which relates wet weight to sub-bulb diameter with
-random effects for site and site-by-year. Further biomass components (plant size
-distribution, density, and wet-to-dry and carbon tissue conversions) are in
-development.
+random effects for site and site-by-year, then shows the parallel model for
+*Macrocystis pyrifera*. Further biomass components (plant size distribution,
+density, and wet-to-dry and carbon tissue conversions) are in development.
+
+Each species has its own fit function, priors, and data check, because the
+models differ in structure, not just in data. The fitted objects share one class
+and one set of methods, so once the *Nereocystis* workflow below is familiar the
+*Macrocystis* model is used the same way.
 
 Under the hood, models are fitted with [rstan](https://mc-stan.org/rstan/). The
 Stan code is pre-compiled when the package is installed, so no separate Stan
@@ -124,6 +129,49 @@ returning a point estimate and compatibility limits for each row:
 ```{r}
 new_data <- data.frame(diameter = c(20, 35, 50, 65, 80), site = "site1")
 kb_predict_weight(fit, new_data)
+```
+
+## The Macrocystis weight model
+
+*Macrocystis pyrifera* is measured differently in the field: the size predictor
+is a frond count (`fronds`) rather than a diameter, and wet weight is modelled
+with a Gamma likelihood whose dispersion scales with the frond count. The model
+also carries a year main effect in addition to site and site-by-year. These
+differences are why *Macrocystis* has its own functions rather than a `species`
+argument. The bundled `data_weight_sim_macro` has the same shape as the
+*Nereocystis* dataset, with `fronds` in place of `diameter`:
+
+```{r}
+data_weight_sim_macro
+```
+
+`kb_fit_weight_macro()` fits the model, with `kb_check_data_weight_macro()` and
+`kb_priors_weight_macro()` as the matching data check and default priors. As
+before, a pre-fit model on the simulated data ships with the package:
+
+```{r, eval = FALSE}
+fit_macro <- kb_fit_weight_macro(data_weight_sim_macro, seed = 1)
+```
+
+```{r, echo = FALSE}
+fit_macro <- fit_weight_sim_macro
+```
+
+The fit object is the same class as the *Nereocystis* fit, so `glance()`,
+`tidy()`, and the prediction functions work identically. The term table reflects
+the *Macrocystis* structure: a single frond slope (`bFronds`), the Gamma shape
+(`alpha`), and a year standard deviation (`sYear`).
+
+```{r}
+tidy(fit_macro)
+```
+
+Because the *Macrocystis* model has a year main effect, `by = "year"` is an
+available grouping for `kb_predict_weight_by()` (it is not for *Nereocystis*):
+
+```{r, fig.width = 7, fig.height = 4.5}
+kb_predict_weight_by(fit_macro, by = "year") |>
+  kb_plot_predictions()
 ```
 
 ## Standard Bayesian tooling

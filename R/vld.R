@@ -19,6 +19,10 @@
   is.data.frame(x) && "diameter" %in% names(x)
 }
 
+.vld_new_data_weight_macro <- function(x) {
+  is.data.frame(x) && "fronds" %in% names(x)
+}
+
 .vld_progress <- function(x) {
   is.character(x) &&
     length(x) == 1L &&

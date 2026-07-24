@@ -8,7 +8,7 @@
   }
   cli::cli_abort(c(
     "{.arg {x_name}} must be a {.cls kb_fit} object.",
-    i = "See {.fun kb_fit_weight_nereo}."
+    i = "See {.fun kb_fit_weight_nereo} or {.fun kb_fit_weight_macro}."
   ))
 }
 
@@ -18,7 +18,7 @@
   }
   cli::cli_abort(c(
     "{.arg {x_name}} must be a {.cls kb_fit_weight} object.",
-    i = "See {.fun kb_fit_weight_nereo}."
+    i = "See {.fun kb_fit_weight_nereo} or {.fun kb_fit_weight_macro}."
   ))
 }
 
@@ -30,6 +30,16 @@
     cli::cli_abort("{.arg {x_name}} must be a data frame.")
   }
   cli::cli_abort("{.arg {x_name}} must have a {.field diameter} column.")
+}
+
+.chk_new_data_weight_macro <- function(x, x_name = deparse(substitute(x))) {
+  if (.vld_new_data_weight_macro(x)) {
+    return(invisible(x))
+  }
+  if (!is.data.frame(x)) {
+    cli::cli_abort("{.arg {x_name}} must be a data frame.")
+  }
+  cli::cli_abort("{.arg {x_name}} must have a {.field fronds} column.")
 }
 
 .chk_representative_site <- function(fit, representative_site) {

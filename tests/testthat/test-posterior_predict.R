@@ -22,3 +22,16 @@ test_that("posterior_predict at new data is wider than posterior_epred", {
   # observation noise widens the predictive spread relative to the mean structure
   expect_gt(mean(apply(pp, 2, stats::sd)), mean(apply(ep, 2, stats::sd)))
 })
+
+test_that("macro posterior_predict draws positive Gamma noise, wider than epred", {
+  nd <- data.frame(fronds = c(2, 5, 10))
+  pp <- posterior_predict(
+    weight_macro_fit,
+    new_data = nd,
+    new_levels = "average"
+  )
+  ep <- posterior_epred(weight_macro_fit, new_data = nd, new_levels = "average")
+  expect_equal(dim(pp), dim(ep))
+  expect_true(all(pp > 0)) # Gamma support is strictly positive
+  expect_gt(mean(apply(pp, 2, stats::sd)), mean(apply(ep, 2, stats::sd)))
+})

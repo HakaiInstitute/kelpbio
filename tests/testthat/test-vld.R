@@ -23,6 +23,13 @@ test_that(".vld_new_data_weight_nereo requires a data frame with diameter", {
   expect_false(.vld_new_data_weight_nereo(list(diameter = 30)))
 })
 
+test_that(".vld_new_data_weight_macro requires a data frame with fronds", {
+  expect_true(.vld_new_data_weight_macro(data.frame(fronds = 5)))
+  expect_false(.vld_new_data_weight_macro(data.frame(diameter = 30)))
+  expect_false(.vld_new_data_weight_macro(1))
+  expect_false(.vld_new_data_weight_macro(list(fronds = 5)))
+})
+
 test_that(".vld_progress accepts the three modes only", {
   expect_true(.vld_progress("bar"))
   expect_true(.vld_progress("verbose"))

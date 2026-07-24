@@ -137,7 +137,11 @@ kb_fit_weight_nereo <- function(
     meta_extra = list(
       diameter_ref = diameter_ref,
       site_year_on = site_year$on,
-      nu = 4
+      nu = 4,
+      # Predictor/response column names let the model-level prediction and plot
+      # code stay species-agnostic (macro uses "fronds").
+      predictor = "diameter",
+      response = "weight"
     )
   )
 }

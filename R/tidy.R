@@ -31,17 +31,32 @@ tidy.kb_fit_weight <- function(
   # Terms are named explicitly rather than inferred from parameter shape: a
   # scalar can be a population effect, an SD, or a single-level random effect,
   # and a fixed effect can be vector-valued, so shape does not identify the role.
-  variables <- c(
-    "bWeight",
-    "bDiameter",
-    "bDiameter2",
-    "sSite",
-    "sSiteDiameter",
-    "sSiteYear",
-    "sWeight"
-  )
-  if (include_random_effects) {
-    variables <- c(variables, "bSite", "bSiteDiameter", "bSiteYear")
+  # The term set is species-specific (the two weight models differ structurally).
+  if (identical(x$meta$species, "macrocystis")) {
+    variables <- c(
+      "bWeight",
+      "bFronds",
+      "alpha",
+      "sSite",
+      "sYear",
+      "sSiteYear"
+    )
+    if (include_random_effects) {
+      variables <- c(variables, "bSite", "bYear", "bSiteYear")
+    }
+  } else {
+    variables <- c(
+      "bWeight",
+      "bDiameter",
+      "bDiameter2",
+      "sSite",
+      "sSiteDiameter",
+      "sSiteYear",
+      "sWeight"
+    )
+    if (include_random_effects) {
+      variables <- c(variables, "bSite", "bSiteDiameter", "bSiteYear")
+    }
   }
   summarise_draws_terms(
     x$draws,

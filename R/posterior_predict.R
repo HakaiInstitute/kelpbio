@@ -1,9 +1,10 @@
 #' Posterior-Predictive Weight Draws
 #'
 #' Draws from the posterior predictive distribution: the expected weight plus
-#' Student-t observation noise (scale `sWeight`, 4 degrees of freedom, matching
-#' the Stan likelihood). With `new_data = NULL` the stored `yrep` at the observed
-#' data is returned, for use with `bayesplot::pp_check()`.
+#' species-appropriate observation noise (Student-t on log-weight with scale
+#' `sWeight` for *Nereocystis*; Gamma with shape `alpha * fronds` for
+#' *Macrocystis*, matching the Stan likelihood). With `new_data = NULL` the stored
+#' `yrep` at the observed data is returned, for use with `bayesplot::pp_check()`.
 #'
 #' @details
 #' For supplied `new_data`, conditioning is inferred from the grouping columns
@@ -11,8 +12,9 @@
 #'
 #' @inheritParams params
 #' @param object A `kb_fit_weight` object.
-#' @param new_data A data frame with a `diameter` column (and optional `site` /
-#'   `year` columns), or `NULL` for the stored `yrep` at the observed data.
+#' @param new_data A data frame with the fit's predictor column (and optional
+#'   `site` / `year` columns), or `NULL` for the stored `yrep` at the observed
+#'   data.
 #' @param ... Unused.
 #'
 #' @return A draws-by-observations (`D x N`) matrix.
@@ -40,7 +42,23 @@ posterior_predict.kb_fit_weight <- function(
     return(posterior::draws_of(object$gq$yrep))
   }
   res <- weight_data_linpred(object, new_data, new_levels, representative_site)
-  lp <- posterior::draws_of(res$linpred) # D x N
+  lp <- posterior::draws_of(res$linpred) # D x N, log scale
+
+  if (identical(object$meta$species, "macrocystis")) {
+    # weight ~ gamma(alpha * fronds, alpha * fronds / eWeight); the compound-sum
+    # shape (proportional to frond count) matches weight_macro.stan.
+    ewt <- exp(lp)
+    alpha <- as.vector(posterior::draws_of(object$draws$alpha)) # length D
+    shape <- outer(alpha, as.numeric(res$grid$fronds)) # D x N
+    rate <- shape / ewt
+    draws <- stats::rgamma(
+      length(shape),
+      shape = as.vector(shape),
+      rate = as.vector(rate)
+    )
+    return(matrix(draws, nrow = nrow(shape)))
+  }
+
   sweight <- as.vector(posterior::draws_of(object$draws$sWeight)) # length D
   # student_t(nu, mu, sigma) = mu + sigma * t_nu; nu is fixed in weight_nereo.stan
   # and stored in meta so this path cannot drift from the model.

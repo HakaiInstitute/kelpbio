@@ -117,12 +117,12 @@ predict(fit)
 kb_predict_weight_by(fit)
 # by default generate sequence of diameters across range
 kb_predict_weight_by(fit, by = "site")
-# set diameter
-kb_predict_weight_by(fit, by = "site", diameter = 5)
+# set the predictor sequence (diameter for nereo; the arg is named `predictor`)
+kb_predict_weight_by(fit, by = "site", predictor = 5)
 kb_predict_weight_by(fit, by = c("site", "year"))
 # typical site and year
-kb_predict_weight_by(fit, diameter = c(5, 15, 25))
-try(kb_predict_weight_by(fit, by = "year")) # no year main effect
+kb_predict_weight_by(fit, predictor = c(5, 15, 25))
+try(kb_predict_weight_by(fit, by = "year")) # no year main effect (nereo)
 
 # sample from RE dist for wider uncertainty, i.e. for new, unobserved site/year
 kb_predict_weight_by(fit, new_levels = "sample")
@@ -162,8 +162,8 @@ kb_plot_predictions(pop)
 kb_predict_weight_by(fit, by = "site") |>
   kb_plot_predictions()
 
-# when only one diameter per group, plot function knows to plot pointrange instead of line/ribbon
-kb_predict_weight_by(fit, by = "site", diameter = 30) |>
+# when only one predictor value per group, plot function knows to plot pointrange instead of line/ribbon
+kb_predict_weight_by(fit, by = "site", predictor = 30) |>
   kb_plot_predictions() +
   coord_flip()
 
@@ -338,3 +338,59 @@ try(kb_predict_weight(
   new_data = tibble(diameter = 40, site = "new_reef"),
   representative_site = "nope"
 ))
+
+# =============================================================================
+# SECOND SPECIES: MACROCYSTIS (Gamma on frond count)
+# =============================================================================
+# Macrocystis has its own fit function, priors, and data check because the model
+# differs structurally from nereo: the predictor is a frond COUNT (`fronds`), the
+# response is Gamma (dispersion scales with frond count via `alpha`), and there
+# is a year main effect. The fit object is the same class, so every accessor,
+# generic, and prediction/plot function above works unchanged.
+
+# --- bundled data + pre-fit model ---------------------------------------------
+str(data_weight_sim_macro)
+fit_weight_sim_macro
+
+# --- data check (requires a `fronds` column, whole numbers > 0) ---------------
+kb_check_data_weight_macro(data_weight_sim_macro)
+
+bad <- data_weight_sim_macro
+bad$fronds[1] <- 5.5
+try(kb_check_data_weight_macro(bad)) # not a whole number
+
+# --- priors (macro-specific parameter set) ------------------------------------
+kb_priors_weight_macro() # intercept, fronds, shape (alpha), sd_site/year/site_year
+
+# --- fit ----------------------------------------------------------------------
+fit_m <- kb_fit_weight_macro(
+  data_weight_sim_macro,
+  chains = 4,
+  niters = 500,
+  nthin = 2
+)
+fit_m # header shows the Gamma family and the site/year/site:year structure
+
+# same accessors as nereo; the term list is macro's (bFronds, alpha, sYear)
+
+tidy(fit_m)
+glance(fit_m)
+summary(fit_m)
+
+# --- predictions --------------------------------------------------------------
+# new_data uses the `fronds` predictor (not diameter)
+kb_predict_weight(fit_m, new_data = tibble(fronds = c(2, 5, 10, 15)))
+
+# macro HAS a year main effect, so by = "year" is available (it errors for nereo)
+kb_predict_weight_by(fit_m, by = "year") |>
+  kb_plot_predictions()
+
+kb_predict_weight_by(fit_m, by = "site") |>
+  kb_plot_predictions(observed = data_weight_sim_macro)
+
+# posterior_predict draws strictly positive Gamma replicates
+pp_m <- posterior_predict(fit_m, new_data = tibble(fronds = c(2, 5, 10)))
+range(pp_m) # all > 0
+
+# residuals are Gamma deviance residuals
+head(residuals(fit_m))

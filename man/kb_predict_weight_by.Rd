@@ -2,12 +2,12 @@
 % Please edit documentation in R/kb_predict_weight_by.R
 \name{kb_predict_weight_by}
 \alias{kb_predict_weight_by}
-\title{Predict Weight Over a Diameter Sequence by Grouping Factor}
+\title{Predict Weight Over a Predictor Sequence by Grouping Factor}
 \usage{
 kb_predict_weight_by(
   fit,
   by = NULL,
-  diameter = NULL,
+  predictor = NULL,
   ...,
   new_levels = c("average", "sample"),
   conf_level = 0.95,
@@ -23,9 +23,9 @@ curve, or \code{NULL} for a single population-level curve. Each named factor is
 expanded over its observed levels and conditioned on its estimated random
 effects.}
 
-\item{diameter}{A numeric vector of sub-bulb diameters to predict over (in the
-same units as the fitted data), or \code{NULL} for an automatic sequence spanning
-the observed range.}
+\item{predictor}{A numeric vector of predictor values to predict over (diameter
+for \emph{Nereocystis}, fronds for \emph{Macrocystis}, in the same units as the fitted
+data), or \code{NULL} for an automatic sequence spanning the observed range.}
 
 \item{...}{These dots are for future extensions and must be empty.}
 
@@ -48,12 +48,13 @@ a scalar point estimate (e.g. \code{median} or \code{mean}).}
 }
 \value{
 A \code{kb_predictions} object: a summary tibble with \code{estimate}, \code{lower},
-\code{upper}, the \code{diameter} predictor, and the \code{by} grouping columns.
+\code{upper}, the predictor column, and the \code{by} grouping columns.
 }
 \description{
-Summarise the fitted relationship between weight and diameter over a generated
-prediction grid: a sequence of diameter values crossed with the grouping factors
-named in \code{by} (one curve per group).
+Summarise the fitted allometric relationship over a generated prediction grid:
+a sequence of predictor values (diameter for \emph{Nereocystis}, fronds for
+\emph{Macrocystis}) crossed with the grouping factors named in \code{by} (one curve per
+group).
 }
 \details{
 \code{by} selects the grouping factors that each get their own curve, conditioned on
@@ -61,8 +62,12 @@ their estimated random effects. \code{new_levels} controls the factors not named
 \code{by}. The default \code{"average"} holds those random effects at zero, giving the
 typical-group curve. \code{"sample"} instead draws a new random effect from its
 estimated distribution, widening the uncertainty to include between-group
-variation. Set a seed with \code{set.seed()} for reproducible CIs. The available \code{by} values
-are \code{NULL} (a single population curve), \code{"site"}, and \code{c("site", "year")}.
+variation. Set a seed with \code{set.seed()} for reproducible CIs.
+
+The available \code{by} values are \code{NULL} (a single population curve), \code{"site"}, and
+\code{c("site", "year")} for both species; the \emph{Macrocystis} model additionally
+allows \code{"year"}, since it has a year main effect (the \emph{Nereocystis} model does
+not, so \code{by = "year"} errors there).
 }
 \examples{
 kb_predict_weight_by(fit_weight_sim_nereo, by = "site")
