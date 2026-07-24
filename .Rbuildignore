@@ -18,4 +18,6 @@
 ^\.claude$
 ^CLAUDE\.md$
 ^jarl\.toml$
+^[.]?air[.]toml$
+^\.vscode$
 ^decisions$

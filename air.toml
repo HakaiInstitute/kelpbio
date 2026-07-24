@@ -1,0 +1,10 @@
+[format]
+line-width = 80
+indent-width = 2
+indent-style = "space"
+line-ending = "auto"
+persistent-line-breaks = true
+default-exclude = true
+# Skip the rstantools-generated file (regenerated at build; not hand-edited),
+# matching jarl.toml.
+exclude = ["R/stanmodels.R"]
