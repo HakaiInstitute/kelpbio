@@ -50,8 +50,7 @@ kb_check_data_weight_nereo(data_weight_sim_nereo)
 ## Fitting the model
 
 `kb_fit_weight_nereo()` fits the model. Set `progress = "none"` to silence the
-sampler's console output, and `seed` for a reproducible fit. Fitting compiles
-and samples the Stan model, which takes a few minutes.
+sampler's console output, and `seed` for a reproducible fit. 
 
 ```{r, eval = FALSE}
 fit <- kb_fit_weight_nereo(
