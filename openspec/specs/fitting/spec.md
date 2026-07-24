@@ -3,9 +3,7 @@
 ## Purpose
 
 Fitting the weight model and the kb_fit object contract: draws-not-stanfit storage, prior-only / zero-observation support, and sampler control.
-
 ## Requirements
-
 ### Requirement: Fit the Nereocystis weight model
 
 `kb_fit_weight_nereo(data, priors, prior_only, chains, niters, nthin, cores, seed, progress, ...)` SHALL fit the *Nereocystis luetkeana* allometric weight model (quadratic log-diameter mean with site intercept, site slope, and a data-determined site:year random effect) via `stanmodels$weight_nereo` and return an object of class `c("kb_fit_weight", "kb_fit")`. The species is fixed by the function (there is no `species` argument); it is recorded as `"nereocystis"` in `meta$species`. There SHALL be no `site_year_on` argument: the site:year effect is determined from the data (see below) and the determination is recorded in `meta$site_year_on`.
@@ -129,3 +127,54 @@ A structured convergence summary SHALL be available regardless of `progress` thr
 #### Scenario: Does not error on a torn read
 - **WHEN** `kb_fit_progress(progress_dir)` reads the artifact while another process is writing a row to it
 - **THEN** it ignores the incomplete trailing row and returns a valid fraction rather than erroring
+
+### Requirement: Fit the Macrocystis weight model
+
+`kb_fit_weight_macro(data, priors, ..., prior_only, chains, niters, nthin,
+cores, seed, progress, progress_dir)` SHALL fit the *Macrocystis pyrifera*
+allometric weight model via `stanmodels$weight_macro` and return an object of
+class `c("kb_fit_weight", "kb_fit")`. The model is a Gamma GLM: the expected
+weight is `exp(bWeight + bSite[site] + bFronds * (log(fronds) -
+log(fronds_ref)) + bYear[year] + site:year)`, and the response is
+`weight ~ Gamma(shape = alpha * fronds, rate = shape / eWeight)`, so the Gamma
+shape grows linearly with frond count (a compound-sum dispersion). The species is
+fixed by the function (there is no `species` argument); it is recorded as
+`"macrocystis"` in `meta$species`. The sampler invocation, draw extraction, and
+diagnostics are delegated to the shared internal engine `fit_stan()`.
+
+#### Scenario: Returns a kb_fit_weight object
+- **WHEN** `kb_fit_weight_macro()` is called on valid macro weight data
+- **THEN** it returns an object of class `c("kb_fit_weight", "kb_fit")` with
+  `meta$species` equal to `"macrocystis"`
+
+#### Scenario: Stores the macro parameters
+- **WHEN** the fit object is inspected
+- **THEN** it exposes draws for the fixed effects `bWeight`, `bFronds`; the Gamma
+  shape `alpha`; the SDs `sSite`, `sYear`, `sSiteYear`; the per-level `bSite`,
+  `bYear`, `bSiteYear`; and the `log_lik` and `yrep` generated quantities, and
+  retains no live `stanfit`
+
+#### Scenario: Arguments are validated at entry
+- **WHEN** `kb_fit_weight_macro()` is called with an invalid argument (bad
+  `data`, or a `priors` entry of the wrong family)
+- **THEN** it errors at entry via `chk`/`cli` before sampling
+
+#### Scenario: Prior-only and zero-observation fits
+- **WHEN** `kb_fit_weight_macro(data, prior_only = TRUE)` is called, including on
+  a zero-row data frame
+- **THEN** it returns a valid `kb_fit_weight` object whose draws reflect the
+  priors only; `fronds_ref` falls back to 5 when there are no observations
+
+### Requirement: Weight fit metadata carries the predictor and response names
+
+A `kb_fit_weight` object SHALL record `meta$predictor` and `meta$response` so the
+model-level prediction, grid, and plotting code is species-agnostic:
+`meta$predictor` is `"diameter"` for nereo and `"fronds"` for macro, and
+`meta$response` is `"weight"` for both. Macro additionally stores
+`meta$fronds_ref` (the geometric mean of the observed `fronds`, or 5 when there
+are none).
+
+#### Scenario: Predictor name is available for downstream code
+- **WHEN** `meta$predictor` is read from a macro fit
+- **THEN** it is `"fronds"`, and from a nereo fit it is `"diameter"`
+

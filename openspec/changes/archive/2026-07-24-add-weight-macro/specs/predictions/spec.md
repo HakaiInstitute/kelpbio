@@ -1,9 +1,5 @@
-# predictions
+## MODIFIED Requirements
 
-## Purpose
-
-Predicting from a fitted model: the two prediction verbs (kb_predict_weight() for new data, kb_predict_weight_by() for curves), the rstantools generics (posterior_epred / posterior_linpred / posterior_predict / log_lik), per-row level resolution, the new_levels axis, prior_summary(), and the kb_predictions object.
-## Requirements
 ### Requirement: Predict allometric curves
 
 Prediction is split into two verbs with independent arguments. `kb_predict_weight(fit, new_data, new_levels, representative_site, conf_level, estimate, sig_fig)` SHALL predict weight at the rows supplied in `new_data` (a data frame with the fit's predictor column -- `diameter` for *Nereocystis*, `fronds` for *Macrocystis* -- and optional `site` / `year` columns), or at the observed data when `new_data = NULL` (matching base R `predict()`), returning a `kb_predictions` object. It SHALL NOT take a `by` argument. Both verbs are computed from the fit's stored draws via the species-specific linear-predictor builder (`.weight_nereo_linpred()` or `.weight_macro_linpred()`) selected on `meta$species`, per `decisions/prediction-engine.md`.
@@ -85,40 +81,3 @@ Raw posterior prediction draws SHALL be provided through the `rstantools` generi
 #### Scenario: Macro posterior_predict adds Gamma noise
 - **WHEN** `posterior_predict(macro_fit, newdata = grid)` is called
 - **THEN** it returns a `D x N` matrix of strictly positive weights drawn from `gamma(alpha * fronds, alpha * fronds / eWeight)`; with `newdata = NULL` it returns the stored `yrep`
-
-### Requirement: Pointwise log-likelihood and prior summary
-
-`log_lik()` SHALL return the `D x N` pointwise log-likelihood for a `kb_fit` (from the Stan generated quantities), enabling `loo::loo()`; `prior_summary()` SHALL return the resolved priors.
-
-#### Scenario: log_lik enables loo
-- **WHEN** `log_lik(fit)` is called
-- **THEN** it returns the `D x N` pointwise log-likelihood matrix suitable for `loo::loo()`
-
-#### Scenario: prior_summary reports the priors
-- **WHEN** `prior_summary(fit)` is called
-- **THEN** it returns the resolved prior objects used in the fit
-
-### Requirement: kb_predictions carries plotting metadata
-
-The `kb_predictions` object SHALL be a tibble subclass carrying column-role metadata (predictor, grouping variables, response and units) as attributes. It SHALL also carry a `kb_curve` flag recording whether the rows form an ordered, generated grid over the predictor (ribbon-eligible) rather than scattered supplied rows. The grid-generating verb (`kb_predict_weight_by()`) SHALL set it true; the row-wise verb (`kb_predict_weight()` / `predict()`) SHALL set it false. Plotting consumes the flag to choose a ribbon (only for a generated curve over a varying predictor) versus grouped points.
-
-#### Scenario: Metadata attributes present
-- **WHEN** a `kb_predictions` object is produced
-- **THEN** it records the predictor column, the grouping variables (from `by`), the response name/units, and the `kb_curve` flag, while still behaving as a tibble
-
-#### Scenario: Curve flag distinguishes the prediction verbs
-- **WHEN** the prediction comes from `kb_predict_weight_by()` versus `kb_predict_weight()`
-- **THEN** `kb_curve` is true for the former (a generated curve) and false for the latter (supplied rows)
-
-### Requirement: Predictions respect the fitted site:year structure
-
-Predictions SHALL reflect whether the fit retained the site:year effect. When the fit omitted the effect (`meta$site_year_on` is `FALSE`), the prediction engine `.weight_nereo_linpred()` and all verbs and generics built on it SHALL add no site:year contribution or variation, for any `new_levels` value; the prior-only `bSiteYear` / `sSiteYear` draws SHALL NOT be reintroduced.
-
-#### Scenario: Omitted site:year adds no variation
-- **WHEN** predictions are formed from a fit whose `meta$site_year_on` is `FALSE`
-- **THEN** the site:year term contributes nothing to the linear predictor, and `new_levels = "sample"` adds no site:year between-year variation (only the site intercept and site-slope effects vary)
-
-#### Scenario: Retained site:year behaves as specified
-- **WHEN** predictions are formed from a fit whose `meta$site_year_on` is `TRUE`
-- **THEN** the site:year term is resolved per row and per `new_levels` as specified by the other prediction requirements
-

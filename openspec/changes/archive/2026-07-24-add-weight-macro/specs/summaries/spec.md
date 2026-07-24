@@ -1,9 +1,5 @@
-# summaries
+## MODIFIED Requirements
 
-## Purpose
-
-Model summaries and diagnostics over a kb_fit: tidy / coef / glance / converged / fitted / residuals / augment / summary / print, the universals accessors, and samples().
-## Requirements
 ### Requirement: Tidy and group-level summaries
 
 `tidy(x, conf_level, estimate, sig_fig, include_random_effects)` and `coef()` SHALL summarise a `kb_fit` from its stored draws. `tidy()` carries `conf_level` (default `0.95`), `estimate` (a point-estimate function, default `median`), `sig_fig` (default `3`), and `include_random_effects` (default `FALSE`, omitting the per-level group deviations and leaving the population-level terms and random-effect SDs, following the `broom.mixed` convention). `coef()` is a pure wrapper on `tidy()` forwarding all arguments, so it inherits the same default. Output columns are `term`, `estimate`, `lower`, `upper` (the house convention shared with `bboutools`/`ssdtools`), with `lower`/`upper` the `conf_level` compatibility limits from the posterior draws and all numeric columns rounded to `sig_fig`. The set of `term` rows is species-specific, selected on `meta$species`.
@@ -28,26 +24,6 @@ Model summaries and diagnostics over a kb_fit: tidy / coef / glance / converged 
 - **WHEN** `tidy(macro_fit)` is called
 - **THEN** it returns one row per population-level term (`bWeight`, `bFronds`), the Gamma shape (`alpha`), and each random-effect SD (`sSite`, `sYear`, `sSiteYear`), with the per-level deviations (`bSite[.]`, `bYear[.]`, `bSiteYear[.,.]`) omitted by default and added when `include_random_effects = TRUE`
 
-### Requirement: Glance and convergence
-
-`glance(x, rhat, esr, ...)` and `converged(x, rhat, esr, ...)` SHALL report model-level summaries and a convergence verdict using exposed thresholds. The thresholds default to the `report` analysis-mode values `rhat = 1.05` and `esr = 0.1`, where `esr` is the effective sample **rate** (`ess_bulk / ndraws`); both are arguments so they can be tightened. `esr` is preferred over an absolute ESS because the rate is stable under changes to the number of saved iterations.
-
-#### Scenario: glance one-row summary
-- **WHEN** `glance(fit)` is called
-- **THEN** it returns a one-row tibble with columns `n`, `K`, `nchains`, `niters`, `nthin`, `ess`, `rhat`, and `converged` (the `bboutools` column set)
-
-#### Scenario: converged honours thresholds
-- **WHEN** `converged(fit, rhat = 1.05, esr = 0.1)` is called
-- **THEN** it returns a single logical, `TRUE` only if all Rhat `<` `rhat` and all effective sample rates `>` `esr`
-
-### Requirement: Augmented fitted values
-
-`augment(x)` SHALL return the input data with two columns appended: `fitted` (response-scale fitted weight, from `fitted(x)`) and `residual` (deviance residual, from `residuals(x)`), evaluated at the observed rows. The columns SHALL be taken directly from the `fitted()` and `residuals()` methods so they cannot diverge from them. `augment()` SHALL NOT add interval (`lower`/`upper`) columns; prediction intervals are obtained from `kb_predict_weight()`.
-
-#### Scenario: augment adds fitted/residual columns
-- **WHEN** `augment(fit)` is called
-- **THEN** it returns the original data columns plus `fitted` and `residual` (and no `lower`/`upper`), with `fitted` matching `fitted(fit)` and `residual` matching `residuals(fit)`
-
 ### Requirement: Fitted values and deviance residuals
 
 `fitted(object)` SHALL return a numeric vector of posterior point estimates of the expected weight at each observed row, on the response scale (the posterior median of `posterior_epred()` at the observed data; the full posterior is available from `posterior_epred()`). `residuals(object)` SHALL return a numeric vector of deviance residuals at each observed row, computed per draw from the fitted likelihood and summarised to the posterior median: the Student-t log-weight likelihood for *Nereocystis*, and the Gamma likelihood (shape `alpha * fronds`, rate `shape / eWeight`) for *Macrocystis*. Both return a vector of length `nobs(object)`, suitable for appending to the data. Neither takes interval or `estimate` arguments, and `residuals()` SHALL NOT take a residual-type argument.
@@ -63,22 +39,6 @@ Model summaries and diagnostics over a kb_fit: tidy / coef / glance / converged 
 #### Scenario: Macro residuals are Gamma deviance residuals
 - **WHEN** `residuals(macro_fit)` is called
 - **THEN** it returns a numeric vector of length `nobs(macro_fit)` of Gamma deviance residuals whose values equal `augment(macro_fit)$residual`
-
-### Requirement: Draws accessor and diagnostics surface
-
-`samples(x)` SHALL return the raw parameter draws as a `posterior` draws object, and the accessors `rhat`, `esr`, `nobs`, `nchains`, `niters`, `npars`, `nterms`, `pars`, `estimates` and `kb_stancode(x)` SHALL operate on the fit object. All summaries and diagnostics are computed from the stored draws via `posterior` (see `decisions/prediction-engine.md`).
-
-#### Scenario: samples returns a draws container
-- **WHEN** `samples(fit)` is called
-- **THEN** it returns a `posterior` draws object (`draws_rvars`), not a melted one-row-per-draw tibble, that interoperates with bayesplot/coda/posterior
-
-#### Scenario: accessors return scalar/structural values
-- **WHEN** `rhat(fit)`, `esr(fit)`, `nobs(fit)`, `nchains(fit)`, `niters(fit)`, `npars(fit)`, `pars(fit)` are called
-- **THEN** each returns the documented scalar or vector for the fit (`esr` being the effective sample rate `ess_bulk / ndraws`)
-
-#### Scenario: kb_stancode returns the model source
-- **WHEN** `kb_stancode(fit)` is called
-- **THEN** it returns the Stan source for the fitted model
 
 ### Requirement: Summary and print methods
 
@@ -101,4 +61,3 @@ The `summary_kb_fit` coefficient table SHALL carry columns `term`, `estimate`, `
 #### Scenario: Macro header reports the Gamma family and macro structure
 - **WHEN** `print(macro_fit)` or `print(summary(macro_fit))` is called
 - **THEN** the header shows `species = macrocystis`, a Gamma family string, and the fixed (`bWeight`, `bFronds`) and random (`bSite`, `bYear`, `bSiteYear`) structure, with no raw MCMC numerics in `print()`
-
