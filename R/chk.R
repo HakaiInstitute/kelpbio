@@ -81,8 +81,16 @@
 }
 
 # Shared sampler-argument validation for every kb_fit_* wrapper.
-.chk_sampler_args <- function(prior_only, chains, niters, nthin, cores,
-                              seed = NULL, progress, progress_dir = NULL) {
+.chk_sampler_args <- function(
+  prior_only,
+  chains,
+  niters,
+  nthin,
+  cores,
+  seed = NULL,
+  progress,
+  progress_dir = NULL
+) {
   chk::chk_flag(prior_only)
   chk::chk_whole_number(chains)
   chk::chk_gt(chains, value = 0)

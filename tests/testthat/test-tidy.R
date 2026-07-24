@@ -6,7 +6,15 @@ test_that("tidy returns house columns and omits group-level terms by default", {
   expect_false(any(grepl("^bSite\\[", t$term)))
   expect_setequal(
     t$term,
-    c("bWeight", "bDiameter", "bDiameter2", "sSite", "sSiteDiameter", "sSiteYear", "sWeight")
+    c(
+      "bWeight",
+      "bDiameter",
+      "bDiameter2",
+      "sSite",
+      "sSiteDiameter",
+      "sSiteYear",
+      "sWeight"
+    )
   )
 })
 

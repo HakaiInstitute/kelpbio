@@ -5,7 +5,11 @@ test_that("assemble_weight_nereo_data maps data and priors to the Stan data bloc
     site = factor(c("a", "b", "a")),
     year = factor(c("2020", "2020", "2021"))
   )
-  sd <- assemble_weight_nereo_data(data, kb_priors_weight_nereo(), prior_only = FALSE)
+  sd <- assemble_weight_nereo_data(
+    data,
+    kb_priors_weight_nereo(),
+    prior_only = FALSE
+  )
 
   expect_equal(sd$nObs, 3L)
   expect_equal(sd$nSite, 2L)
@@ -30,13 +34,13 @@ test_that("assemble_weight_nereo_data maps every prior hyperparameter to its own
   )
   # Every hyperparameter distinct, so a transposed or dropped wiring cannot pass.
   priors <- list(
-    intercept        = kb_prior_normal(0.1, 1.1),
-    diameter         = kb_prior_normal(0.2, 1.2),
-    diameter2        = kb_prior_normal(0.3, 1.3),
-    sd_site          = kb_prior_exponential(2.1),
+    intercept = kb_prior_normal(0.1, 1.1),
+    diameter = kb_prior_normal(0.2, 1.2),
+    diameter2 = kb_prior_normal(0.3, 1.3),
+    sd_site = kb_prior_exponential(2.1),
     sd_site_diameter = kb_prior_exponential(2.2),
-    sd_site_year     = kb_prior_exponential(2.3),
-    sd_residual      = kb_prior_exponential(2.4)
+    sd_site_year = kb_prior_exponential(2.3),
+    sd_residual = kb_prior_exponential(2.4)
   )
   sd <- assemble_weight_nereo_data(data, priors, prior_only = FALSE)
   expect_equal(sd$prior_intercept_mu, 0.1)
@@ -58,18 +62,32 @@ test_that("assemble_weight_nereo_data encodes site_year_on as 0/1", {
     site = factor(c("a", "b", "a")),
     year = factor(c("2020", "2020", "2021"))
   )
-  on <- assemble_weight_nereo_data(data, kb_priors_weight_nereo(), site_year_on = TRUE)
-  off <- assemble_weight_nereo_data(data, kb_priors_weight_nereo(), site_year_on = FALSE)
+  on <- assemble_weight_nereo_data(
+    data,
+    kb_priors_weight_nereo(),
+    site_year_on = TRUE
+  )
+  off <- assemble_weight_nereo_data(
+    data,
+    kb_priors_weight_nereo(),
+    site_year_on = FALSE
+  )
   expect_equal(on$site_year_on, 1L)
   expect_equal(off$site_year_on, 0L)
 })
 
 test_that("assemble_weight_nereo_data accepts zero-row data", {
   data <- data.frame(
-    diameter = numeric(0), weight = numeric(0),
-    site = factor(character(0)), year = factor(character(0))
+    diameter = numeric(0),
+    weight = numeric(0),
+    site = factor(character(0)),
+    year = factor(character(0))
   )
-  sd <- assemble_weight_nereo_data(data, kb_priors_weight_nereo(), prior_only = TRUE)
+  sd <- assemble_weight_nereo_data(
+    data,
+    kb_priors_weight_nereo(),
+    prior_only = TRUE
+  )
   expect_equal(sd$nObs, 0L)
   expect_equal(sd$nSite, 1L)
   expect_equal(sd$nYear, 1L)

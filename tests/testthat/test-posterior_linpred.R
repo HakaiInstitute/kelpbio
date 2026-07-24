@@ -12,7 +12,9 @@ test_that("transform = TRUE is exp of the log-scale linear predictor", {
   lp <- posterior_linpred(weight_fit, new_data = nd, new_levels = "average")
   lpt <- posterior_linpred(
     weight_fit,
-    transform = TRUE, new_data = nd, new_levels = "average"
+    transform = TRUE,
+    new_data = nd,
+    new_levels = "average"
   )
   expect_equal(lpt, exp(lp))
   # untransformed is genuinely the log scale, not the response scale

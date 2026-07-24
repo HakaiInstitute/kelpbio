@@ -22,12 +22,14 @@
 #' @examples
 #' lp <- posterior_linpred(fit_weight_sim_nereo)
 #' dim(lp)
-posterior_linpred.kb_fit_weight <- function(object,
-                                            transform = FALSE,
-                                            new_data = NULL,
-                                            ...,
-                                            new_levels = "sample",
-                                            representative_site = NULL) {
+posterior_linpred.kb_fit_weight <- function(
+  object,
+  transform = FALSE,
+  new_data = NULL,
+  ...,
+  new_levels = "sample",
+  representative_site = NULL
+) {
   rlang::check_dots_empty()
   chk::chk_flag(transform)
   .chk_kb_fit_weight(object)

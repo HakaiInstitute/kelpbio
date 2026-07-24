@@ -13,17 +13,30 @@ POLL_INTERVAL <- 0.2
 # model in that process, since the model's external pointer cannot cross it).
 # "verbose"/"none" sample in-process. A progress artifact is written whenever
 # progress_dir is supplied (any mode) or for the internal "bar" temp directory.
-fit_stan <- function(stanmodel, stan_data, param_vars,
-                     gq_vars = NULL,
-                     chains, niters, nthin, cores, progress,
-                     progress_dir = NULL, stanmodel_name = NULL,
-                     seed = NULL, ...) {
+fit_stan <- function(
+  stanmodel,
+  stan_data,
+  param_vars,
+  gq_vars = NULL,
+  chains,
+  niters,
+  nthin,
+  cores,
+  progress,
+  progress_dir = NULL,
+  stanmodel_name = NULL,
+  seed = NULL,
+  ...
+) {
   warmup <- as.integer(niters)
   total_iter <- warmup + as.integer(niters) * as.integer(nthin)
   chains <- as.integer(chains)
 
   dots <- list(...)
-  control <- utils::modifyList(list(adapt_delta = 0.95), dots$control %||% list())
+  control <- utils::modifyList(
+    list(adapt_delta = 0.95),
+    dots$control %||% list()
+  )
   dots$control <- NULL
 
   art <- resolve_progress_dir(progress, progress_dir)
@@ -43,7 +56,11 @@ fit_stan <- function(stanmodel, stan_data, param_vars,
     warmup = warmup,
     thin = as.integer(nthin),
     cores = resolve_cores(cores, chains),
-    refresh = if (identical(progress, "verbose")) max(1L, total_iter %/% 10L) else 0L,
+    refresh = if (identical(progress, "verbose")) {
+      max(1L, total_iter %/% 10L)
+    } else {
+      0L
+    },
     show_messages = FALSE,
     # The HTML progress viewer errors in some GUIs.
     open_progress = FALSE,
@@ -61,8 +78,13 @@ fit_stan <- function(stanmodel, stan_data, param_vars,
 
   stanfit <- if (identical(progress, "bar")) {
     sample_with_bar(
-      stanmodel_name, sampling_args, art$dir,
-      chains, warmup, niters, nthin
+      stanmodel_name,
+      sampling_args,
+      art$dir,
+      chains,
+      warmup,
+      niters,
+      nthin
     )
   } else {
     with_quiet_sampler(
@@ -85,7 +107,9 @@ fit_stan <- function(stanmodel, stan_data, param_vars,
     ess_tail = posterior::ess_tail
   ))
   sampler <- rstan::get_sampler_params(stanfit, inc_warmup = FALSE)
-  ndivergent <- sum(purrr::map_dbl(sampler, function(x) sum(x[, "divergent__"])))
+  ndivergent <- sum(purrr::map_dbl(sampler, function(x) {
+    sum(x[, "divergent__"])
+  }))
 
   list(
     draws = draws,
@@ -100,14 +124,25 @@ fit_stan <- function(stanmodel, stan_data, param_vars,
 # by name (its external pointer cannot cross the process boundary); rstan remains
 # the source of truth for the returned stanfit. The bar is fed rows counted from
 # the sample_file, so a polling glitch can only misplace the bar, never the fit.
-sample_with_bar <- function(stanmodel_name, sampling_args, dir,
-                            chains, warmup, niters, nthin) {
+sample_with_bar <- function(
+  stanmodel_name,
+  sampling_args,
+  dir,
+  chains,
+  warmup,
+  niters,
+  nthin
+) {
   if (is.null(stanmodel_name)) {
-    cli::cli_abort("Internal: {.code progress = \"bar\"} requires {.arg stanmodel_name}.")
+    cli::cli_abort(
+      "Internal: {.code progress = \"bar\"} requires {.arg stanmodel_name}."
+    )
   }
   bg <- callr::r_bg(
     func = function(stanmodel_name, sampling_args) {
-      model <- get("stanmodels", envir = asNamespace("kelpbio"))[[stanmodel_name]]
+      model <- get("stanmodels", envir = asNamespace("kelpbio"))[[
+        stanmodel_name
+      ]]
       do.call(rstan::sampling, c(list(model), sampling_args))
     },
     args = list(stanmodel_name = stanmodel_name, sampling_args = sampling_args),
@@ -115,7 +150,12 @@ sample_with_bar <- function(stanmodel_name, sampling_args, dir,
   )
   on.exit(if (bg$is_alive()) bg$kill(), add = TRUE)
 
-  manifest <- list(chains = chains, warmup = warmup, niters = niters, nthin = nthin)
+  manifest <- list(
+    chains = chains,
+    warmup = warmup,
+    niters = niters,
+    nthin = nthin
+  )
   total_rows <- progress_rows_per_chain(warmup, niters, nthin) * chains
   announce_sampling(chains, sampling_args$cores)
   reporter <- progress_reporter("bar")
@@ -136,7 +176,10 @@ sample_with_bar <- function(stanmodel_name, sampling_args, dir,
 # one chain at a time, the sole case where the user can act on the advice.
 announce_sampling <- function(chains, cores) {
   avail <- parallel::detectCores()
-  cores_unused <- !is.na(avail) && avail > 1L && chains > 1L && min(chains, cores) == 1L
+  cores_unused <- !is.na(avail) &&
+    avail > 1L &&
+    chains > 1L &&
+    min(chains, cores) == 1L
   if (cores_unused) {
     cli::cli_alert_info(
       "Sampling {chains} chains one at a time. Set {.arg cores} (e.g. {.code cores = {chains}}) to run them in parallel and finish sooner."
@@ -155,8 +198,12 @@ with_quiet_sampler <- function(expr, muffle) {
     return(expr)
   }
   pattern <- paste(
-    "divergent", "treedepth", "Effective Samples Size",
-    "Examine the pairs", "R-hat", "Bayesian Fraction of Missing",
+    "divergent",
+    "treedepth",
+    "Effective Samples Size",
+    "Examine the pairs",
+    "R-hat",
+    "Bayesian Fraction of Missing",
     sep = "|"
   )
   withCallingHandlers(

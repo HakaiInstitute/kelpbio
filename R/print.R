@@ -27,19 +27,37 @@ print.kb_prior_exponential <- function(x, ...) {
 # summary_kb_fit object carries the same fields.
 .print_kb_fit_header <- function(h) {
   cli::cat_line("Model:     ", h$model, " (", h$species, ")")
-  if (!is.na(h$family)) cli::cat_line("Family:    ", h$family)
-  if (!is.na(h$fixed)) cli::cat_line("Fixed:     ", h$fixed)
-  if (!is.na(h$random)) cli::cat_line("Random:    ", h$random)
-  if (!is.na(h$centered)) cli::cat_line("Centered:  ", h$centered)
+  if (!is.na(h$family)) {
+    cli::cat_line("Family:    ", h$family)
+  }
+  if (!is.na(h$fixed)) {
+    cli::cat_line("Fixed:     ", h$fixed)
+  }
+  if (!is.na(h$random)) {
+    cli::cat_line("Random:    ", h$random)
+  }
+  if (!is.na(h$centered)) {
+    cli::cat_line("Centered:  ", h$centered)
+  }
   groups <- if (length(h$groups)) {
-    paste0("; groups: ", paste0(names(h$groups), " (", h$groups, ")", collapse = ", "))
+    paste0(
+      "; groups: ",
+      paste0(names(h$groups), " (", h$groups, ")", collapse = ", ")
+    )
   } else {
     ""
   }
   cli::cat_line("Data:      ", h$nobs, " observations", groups)
   cli::cat_line(
-    "Draws:     ", h$nchains, " chains, ", h$niters,
-    " post-warmup draws each (thin = ", h$nthin, "), ", h$ndraws, " total"
+    "Draws:     ",
+    h$nchains,
+    " chains, ",
+    h$niters,
+    " post-warmup draws each (thin = ",
+    h$nthin,
+    "), ",
+    h$ndraws,
+    " total"
   )
   if (isTRUE(h$prior_only)) {
     cli::cat_line("Note:      prior-only fit (likelihood off)")
@@ -63,7 +81,8 @@ print.summary_kb_fit <- function(x, ...) {
   cli::cat_line("")
   pct <- format(x$conf_level * 100)
   cli::cat_line(cli::col_grey(
-    "estimate: posterior point estimate; lower, upper: ", pct,
+    "estimate: posterior point estimate; lower, upper: ",
+    pct,
     "% compatibility limits."
   ))
   cli::cat_line(cli::col_grey(
@@ -73,7 +92,10 @@ print.summary_kb_fit <- function(x, ...) {
     "ess_bulk, ess_tail: bulk and tail effective sample sizes."
   ))
   cli::cat_line(cli::col_grey(
-    x$ndivergent, " divergent transition", if (x$ndivergent == 1) "" else "s", "."
+    x$ndivergent,
+    " divergent transition",
+    if (x$ndivergent == 1) "" else "s",
+    "."
   ))
   invisible(x)
 }

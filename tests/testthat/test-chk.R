@@ -40,19 +40,37 @@ test_that(".chk_progress_dir accepts NULL/an existing directory and errors other
 
 test_that(".chk_sampler_args validates progress, progress_dir, and the numeric args", {
   expect_null(.chk_sampler_args(
-    prior_only = FALSE, chains = 4L, niters = 1000L, nthin = 1L,
-    cores = NULL, seed = NULL, progress = "bar", progress_dir = NULL
+    prior_only = FALSE,
+    chains = 4L,
+    niters = 1000L,
+    nthin = 1L,
+    cores = NULL,
+    seed = NULL,
+    progress = "bar",
+    progress_dir = NULL
   ))
   expect_error(
     .chk_sampler_args(
-      prior_only = FALSE, chains = 4L, niters = 1000L, nthin = 1L,
-      cores = NULL, seed = NULL, progress = "loud", progress_dir = NULL
+      prior_only = FALSE,
+      chains = 4L,
+      niters = 1000L,
+      nthin = 1L,
+      cores = NULL,
+      seed = NULL,
+      progress = "loud",
+      progress_dir = NULL
     ),
     "progress"
   )
   expect_error(.chk_sampler_args(
-    prior_only = FALSE, chains = 0L, niters = 1000L, nthin = 1L,
-    cores = NULL, seed = NULL, progress = "bar", progress_dir = NULL
+    prior_only = FALSE,
+    chains = 0L,
+    niters = 1000L,
+    nthin = 1L,
+    cores = NULL,
+    seed = NULL,
+    progress = "bar",
+    progress_dir = NULL
   ))
 })
 
@@ -60,5 +78,8 @@ test_that(".chk_representative_site passes NULL/known sites and errors on unknow
   expect_invisible(.chk_representative_site(weight_fit, NULL))
   site1 <- weight_fit$meta$site_levels[1]
   expect_identical(.chk_representative_site(weight_fit, site1), site1)
-  expect_snapshot(error = TRUE, .chk_representative_site(weight_fit, "not_a_site"))
+  expect_snapshot(
+    error = TRUE,
+    .chk_representative_site(weight_fit, "not_a_site")
+  )
 })

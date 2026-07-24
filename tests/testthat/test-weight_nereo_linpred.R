@@ -13,8 +13,16 @@ test_that("conditioning follows the grid columns", {
   bare <- data.frame(diameter = c(30, 30))
   with_site <- data.frame(diameter = c(30, 30), site = site1)
 
-  lp_avg <- posterior::draws_of(.weight_nereo_linpred(weight_fit, bare, "average"))
-  lp_site <- posterior::draws_of(.weight_nereo_linpred(weight_fit, with_site, "average"))
+  lp_avg <- posterior::draws_of(.weight_nereo_linpred(
+    weight_fit,
+    bare,
+    "average"
+  ))
+  lp_site <- posterior::draws_of(.weight_nereo_linpred(
+    weight_fit,
+    with_site,
+    "average"
+  ))
   # Conditioning on a specific site shifts the mean off the typical (zeroed)
   # curve, so the two differ.
   expect_false(isTRUE(all.equal(as.numeric(lp_avg), as.numeric(lp_site))))
@@ -24,13 +32,25 @@ test_that("per-row resolution: known rows conditioned, new rows drawn", {
   site1 <- weight_fit$meta$site_levels[1]
   grid <- data.frame(diameter = c(30, 30), site = c(site1, "brand_new_site"))
   # Must not error on the unknown level.
-  expect_no_error(.weight_nereo_linpred(weight_fit, grid, new_levels = "sample"))
+  expect_no_error(.weight_nereo_linpred(
+    weight_fit,
+    grid,
+    new_levels = "sample"
+  ))
 
   # Under "average" the conditioned components are deterministic: the known row
   # matches a single-site call, and the new row matches the typical curve.
-  lp_avg <- posterior::draws_of(.weight_nereo_linpred(weight_fit, grid, "average"))
+  lp_avg <- posterior::draws_of(.weight_nereo_linpred(
+    weight_fit,
+    grid,
+    "average"
+  ))
   lp_known <- posterior::draws_of(
-    .weight_nereo_linpred(weight_fit, data.frame(diameter = 30, site = site1), "average")
+    .weight_nereo_linpred(
+      weight_fit,
+      data.frame(diameter = 30, site = site1),
+      "average"
+    )
   )
   lp_typical <- posterior::draws_of(
     .weight_nereo_linpred(weight_fit, data.frame(diameter = 30), "average")
@@ -42,8 +62,16 @@ test_that("per-row resolution: known rows conditioned, new rows drawn", {
 test_that("sample widens vs average when a factor is omitted", {
   withr::local_seed(1) # the "sample" path draws random effects; pin them
   grid <- data.frame(diameter = c(20, 40, 60))
-  sd_avg <- apply(posterior::draws_of(.weight_nereo_linpred(weight_fit, grid, "average")), 2, stats::sd)
-  sd_smp <- apply(posterior::draws_of(.weight_nereo_linpred(weight_fit, grid, "sample")), 2, stats::sd)
+  sd_avg <- apply(
+    posterior::draws_of(.weight_nereo_linpred(weight_fit, grid, "average")),
+    2,
+    stats::sd
+  )
+  sd_smp <- apply(
+    posterior::draws_of(.weight_nereo_linpred(weight_fit, grid, "sample")),
+    2,
+    stats::sd
+  )
   expect_true(all(sd_smp >= sd_avg))
 })
 
@@ -81,7 +109,11 @@ test_that("a fit without the site_year_on flag defaults to keeping site:year", {
     site = weight_fit$meta$site_levels[1],
     year = weight_fit$meta$year_levels[1]
   )
-  lp_legacy <- posterior::draws_of(.weight_nereo_linpred(legacy, grid, "average"))
+  lp_legacy <- posterior::draws_of(.weight_nereo_linpred(
+    legacy,
+    grid,
+    "average"
+  ))
   lp_on <- posterior::draws_of(.weight_nereo_linpred(on, grid, "average"))
   expect_equal(as.numeric(lp_legacy), as.numeric(lp_on))
 })

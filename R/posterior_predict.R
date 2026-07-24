@@ -21,17 +21,21 @@
 #' @examples
 #' pp <- posterior_predict(fit_weight_sim_nereo)
 #' dim(pp)
-posterior_predict.kb_fit_weight <- function(object,
-                                            new_data = NULL,
-                                            ...,
-                                            new_levels = "sample",
-                                            representative_site = NULL) {
+posterior_predict.kb_fit_weight <- function(
+  object,
+  new_data = NULL,
+  ...,
+  new_levels = "sample",
+  representative_site = NULL
+) {
   rlang::check_dots_empty()
   .chk_kb_fit_weight(object)
   .chk_representative_site(object, representative_site)
   if (is.null(new_data)) {
     if (is.null(object$gq)) {
-      cli::cli_abort("No posterior-predictive draws are stored (zero-observation fit).")
+      cli::cli_abort(
+        "No posterior-predictive draws are stored (zero-observation fit)."
+      )
     }
     return(posterior::draws_of(object$gq$yrep))
   }

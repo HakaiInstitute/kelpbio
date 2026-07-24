@@ -51,9 +51,15 @@ test_that("with_quiet_sampler muffles only HMC diagnostics when muffle = TRUE", 
   expect_identical(with_quiet_sampler(42L, muffle = TRUE), 42L)
   # sampler diagnostic warnings are muffled ...
   expect_no_warning(
-    with_quiet_sampler(warning("There were 3 divergent transitions"), muffle = TRUE)
+    with_quiet_sampler(
+      warning("There were 3 divergent transitions"),
+      muffle = TRUE
+    )
   )
-  expect_no_warning(with_quiet_sampler(warning("R-hat is too high"), muffle = TRUE))
+  expect_no_warning(with_quiet_sampler(
+    warning("R-hat is too high"),
+    muffle = TRUE
+  ))
   # ... but genuine warnings from elsewhere still reach the user
   expect_warning(
     with_quiet_sampler(warning("something unrelated"), muffle = TRUE),

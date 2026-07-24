@@ -18,15 +18,26 @@ weight_stan_data <- function(nObs = 6L, prior_only = 0L) {
     nYear <- 2L
   }
   list(
-    nObs = nObs, nSite = nSite, nYear = nYear,
-    site = site, year = year, diameter = diameter, weight = weight,
+    nObs = nObs,
+    nSite = nSite,
+    nYear = nYear,
+    site = site,
+    year = year,
+    diameter = diameter,
+    weight = weight,
     diameter_ref = if (length(diameter)) exp(mean(log(diameter))) else 30,
-    prior_intercept_mu = 0, prior_intercept_sd = 2,
-    prior_diameter_mu = 2, prior_diameter_sd = 1,
-    prior_diameter2_mu = 0, prior_diameter2_sd = 0.5,
-    prior_sd_site_rate = 1, prior_sd_site_diameter_rate = 1,
-    prior_sd_site_year_rate = 1, prior_sd_residual_rate = 1,
-    prior_only = prior_only, site_year_on = 1L
+    prior_intercept_mu = 0,
+    prior_intercept_sd = 2,
+    prior_diameter_mu = 2,
+    prior_diameter_sd = 1,
+    prior_diameter2_mu = 0,
+    prior_diameter2_sd = 0.5,
+    prior_sd_site_rate = 1,
+    prior_sd_site_diameter_rate = 1,
+    prior_sd_site_year_rate = 1,
+    prior_sd_residual_rate = 1,
+    prior_only = prior_only,
+    site_year_on = 1L
   )
 }
 
@@ -41,15 +52,27 @@ test_that("the weight model samples and returns the declared parameters", {
   fit <- suppressWarnings(rstan::sampling(
     stanmodels$weight_nereo,
     data = weight_stan_data(),
-    chains = 1, iter = 200, refresh = 0, seed = 1
+    chains = 1,
+    iter = 200,
+    refresh = 0,
+    seed = 1
   ))
   expect_s4_class(fit, "stanfit")
   expect_true(all(
     c(
-      "bWeight", "bDiameter", "bDiameter2",
-      "sSite", "sSiteDiameter", "sSiteYear", "sWeight",
-      "bSite", "bSiteDiameter", "bSiteYear",
-      "log_lik", "yrep"
-    ) %in% fit@model_pars
+      "bWeight",
+      "bDiameter",
+      "bDiameter2",
+      "sSite",
+      "sSiteDiameter",
+      "sSiteYear",
+      "sWeight",
+      "bSite",
+      "bSiteDiameter",
+      "bSiteYear",
+      "log_lik",
+      "yrep"
+    ) %in%
+      fit@model_pars
   ))
 })

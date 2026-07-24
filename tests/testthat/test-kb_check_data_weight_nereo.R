@@ -1,7 +1,9 @@
 test_that("valid weight data passes invisibly", {
   data <- data.frame(
-    diameter = c(20, 35), weight = c(0.5, 2),
-    site = factor(c("a", "b")), year = factor(c("2020", "2021"))
+    diameter = c(20, 35),
+    weight = c(0.5, 2),
+    site = factor(c("a", "b")),
+    year = factor(c("2020", "2021"))
   )
   expect_silent(kb_check_data_weight_nereo(data))
   expect_identical(kb_check_data_weight_nereo(data), data)
@@ -9,7 +11,10 @@ test_that("valid weight data passes invisibly", {
 
 test_that("character site/year is accepted", {
   data <- data.frame(
-    diameter = 20, weight = 0.5, site = "a", year = "2020",
+    diameter = 20,
+    weight = 0.5,
+    site = "a",
+    year = "2020",
     stringsAsFactors = FALSE
   )
   expect_silent(kb_check_data_weight_nereo(data))
@@ -17,10 +22,16 @@ test_that("character site/year is accepted", {
 
 test_that("missing, mistyped, and impossible values error", {
   good <- data.frame(
-    diameter = 20, weight = 0.5, site = factor("a"), year = factor("2020")
+    diameter = 20,
+    weight = 0.5,
+    site = factor("a"),
+    year = factor("2020")
   )
   # distinct cli messages (missing column, wrong type, non-positive) snapshotted
-  expect_snapshot(kb_check_data_weight_nereo(good[c("weight", "site", "year")]), error = TRUE)
+  expect_snapshot(
+    kb_check_data_weight_nereo(good[c("weight", "site", "year")]),
+    error = TRUE
+  )
   bad_type <- good
   bad_type$diameter <- "x"
   expect_snapshot(kb_check_data_weight_nereo(bad_type), error = TRUE)

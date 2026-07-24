@@ -31,7 +31,8 @@ sd_resid <- 0.2
 
 a_site <- stats::setNames(stats::rnorm(length(sites), 0, sd_site), sites)
 a_site_slope <- stats::setNames(
-  stats::rnorm(length(sites), 0, sd_site_slope), sites
+  stats::rnorm(length(sites), 0, sd_site_slope),
+  sites
 )
 
 rows <- lapply(seq_len(nrow(grid)), function(i) {

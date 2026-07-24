@@ -20,12 +20,12 @@
 #' priors$sd_site <- kb_prior_exponential(2)
 kb_priors_weight_nereo <- function() {
   list(
-    intercept        = kb_prior_normal(mean = 0, sd = 2),
-    diameter         = kb_prior_normal(mean = 2, sd = 1),
-    diameter2        = kb_prior_normal(mean = 0, sd = 0.5),
-    sd_site          = kb_prior_exponential(rate = 1),
+    intercept = kb_prior_normal(mean = 0, sd = 2),
+    diameter = kb_prior_normal(mean = 2, sd = 1),
+    diameter2 = kb_prior_normal(mean = 0, sd = 0.5),
+    sd_site = kb_prior_exponential(rate = 1),
     sd_site_diameter = kb_prior_exponential(rate = 1),
-    sd_site_year     = kb_prior_exponential(rate = 1),
-    sd_residual      = kb_prior_exponential(rate = 1)
+    sd_site_year = kb_prior_exponential(rate = 1),
+    sd_residual = kb_prior_exponential(rate = 1)
   )
 }

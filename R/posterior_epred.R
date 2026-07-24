@@ -23,11 +23,13 @@
 #' @examples
 #' ep <- posterior_epred(fit_weight_sim_nereo)
 #' dim(ep)
-posterior_epred.kb_fit_weight <- function(object,
-                                          new_data = NULL,
-                                          ...,
-                                          new_levels = "sample",
-                                          representative_site = NULL) {
+posterior_epred.kb_fit_weight <- function(
+  object,
+  new_data = NULL,
+  ...,
+  new_levels = "sample",
+  representative_site = NULL
+) {
   rlang::check_dots_empty()
   .chk_kb_fit_weight(object)
   .chk_representative_site(object, representative_site)

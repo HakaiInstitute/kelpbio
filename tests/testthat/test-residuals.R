@@ -12,5 +12,8 @@ test_that("residuals are deviance, not raw response residuals", {
 
 test_that("residuals rejects a non-fit and extra args", {
   expect_error(residuals.kb_fit_weight(1), "kb_fit_weight")
-  expect_error(residuals(weight_fit, type = "pearson"), class = "rlib_error_dots_nonempty")
+  expect_error(
+    residuals(weight_fit, type = "pearson"),
+    class = "rlib_error_dots_nonempty"
+  )
 })

@@ -16,7 +16,8 @@ devtools::load_all(quiet = TRUE)
 sim_weight <- readRDS("tests/testthat/fixtures/sim_weight.rds")
 d <- subset(
   sim_weight,
-  site %in% c("site1", "site2", "site3", "site4") &
+  site %in%
+    c("site1", "site2", "site3", "site4") &
     year %in% c("2019", "2020", "2021")
 )
 d$site <- factor(d$site)
@@ -24,8 +25,12 @@ d$year <- factor(d$year)
 
 weight_fit <- kb_fit_weight_nereo(
   d,
-  chains = 2L, niters = 300L, nthin = 1L, cores = 2L,
-  progress = "none", seed = 42L
+  chains = 2L,
+  niters = 300L,
+  nthin = 1L,
+  cores = 2L,
+  progress = "none",
+  seed = 42L
 )
 
 saveRDS(weight_fit, "tests/testthat/fixtures/weight_fit.rds")

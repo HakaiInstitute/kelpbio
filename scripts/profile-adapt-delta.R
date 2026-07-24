@@ -48,22 +48,36 @@ one_fit <- function(adapt_delta) {
   )
 }
 
-cat(sprintf("chains=%d cores=%d niters=%d reps=%d\n\n", CHAINS, CORES, NITERS, REPS))
+cat(sprintf(
+  "chains=%d cores=%d niters=%d reps=%d\n\n",
+  CHAINS,
+  CORES,
+  NITERS,
+  REPS
+))
 
 # Warm-up fit (discarded) so one-time costs miss the first timed value.
 invisible(one_fit(0.95))
 
-cat(sprintf("%-11s  %-22s  %-8s  %-11s  %s\n",
-  "adapt_delta", "elapsed (s)", "median", "divergences", "max_rhat"))
+cat(sprintf(
+  "%-11s  %-22s  %-8s  %-11s  %s\n",
+  "adapt_delta",
+  "elapsed (s)",
+  "median",
+  "divergences",
+  "max_rhat"
+))
 for (ad in ADAPT_DELTA) {
   runs <- lapply(seq_len(REPS), function(i) one_fit(ad))
   secs <- vapply(runs, `[[`, numeric(1), "elapsed")
   div <- vapply(runs, `[[`, numeric(1), "ndivergent")
   rh <- vapply(runs, `[[`, numeric(1), "max_rhat")
-  cat(sprintf("%-11.2f  %-22s  %-8.1f  %-11s  %.3f\n",
+  cat(sprintf(
+    "%-11.2f  %-22s  %-8.1f  %-11s  %.3f\n",
     ad,
     paste(sprintf("%.1f", secs), collapse = " "),
     median(secs),
     paste(div, collapse = "/"),
-    max(rh)))
+    max(rh)
+  ))
 }

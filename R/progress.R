@@ -59,7 +59,9 @@ count_chain_rows <- function(csv) {
   if (!file.exists(csv)) {
     return(0L)
   }
-  lines <- tryCatch(readLines(csv, warn = FALSE), error = function(e) character())
+  lines <- tryCatch(readLines(csv, warn = FALSE), error = function(e) {
+    character()
+  })
   lines <- lines[nzchar(lines) & !startsWith(lines, "#")]
   header_at <- which(grepl("lp__", lines, fixed = TRUE))
   if (!length(header_at)) {
@@ -79,7 +81,9 @@ chain_is_complete <- function(csv) {
   if (!file.exists(csv)) {
     return(FALSE)
   }
-  lines <- tryCatch(readLines(csv, warn = FALSE), error = function(e) character())
+  lines <- tryCatch(readLines(csv, warn = FALSE), error = function(e) {
+    character()
+  })
   any(grepl("Elapsed Time", lines, fixed = TRUE))
 }
 
@@ -87,7 +91,9 @@ chain_is_complete <- function(csv) {
 # completion footer as fully done.
 count_progress_rows <- function(dir, manifest) {
   per_chain <- progress_rows_per_chain(
-    manifest$warmup, manifest$niters, manifest$nthin
+    manifest$warmup,
+    manifest$niters,
+    manifest$nthin
   )
   files <- progress_chain_files(dir, manifest$chains)
   sum(purrr::map_int(files, function(csv) {
@@ -106,8 +112,11 @@ read_progress_fraction <- function(dir) {
     return(0)
   }
   total <- progress_rows_per_chain(
-    manifest$warmup, manifest$niters, manifest$nthin
-  ) * manifest$chains
+    manifest$warmup,
+    manifest$niters,
+    manifest$nthin
+  ) *
+    manifest$chains
   if (total <= 0L) {
     return(0)
   }

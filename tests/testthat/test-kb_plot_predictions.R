@@ -35,7 +35,9 @@ test_that("a held predictor puts the grouping factor on a descriptive x axis", {
 test_that("reference-diameter by site is pointrange with sites on x, no facet", {
   p <- kb_predict_weight_by(
     weight_fit,
-    by = "site", diameter = 30, new_levels = "average"
+    by = "site",
+    diameter = 30,
+    new_levels = "average"
   )
   gg <- kb_plot_predictions(p)
   expect_identical(gg$labels$x, "Site")
@@ -53,7 +55,10 @@ test_that("reference-diameter by site:year puts year on x, facets by site", {
 })
 
 test_that("scattered supplied rows render as points, not a ribbon", {
-  p <- kb_predict_weight(weight_fit, new_data = data.frame(diameter = c(20, 40, 60)))
+  p <- kb_predict_weight(
+    weight_fit,
+    new_data = data.frame(diameter = c(20, 40, 60))
+  )
   gg <- kb_plot_predictions(p)
   expect_identical(gg$labels$x, "Sub-bulb diameter")
   geoms <- vapply(gg$layers, function(l) class(l$geom)[1], character(1))

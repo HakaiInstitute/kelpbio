@@ -37,13 +37,27 @@ QUICK <- !identical(Sys.getenv("SIM_FULL"), "1")
 # of 0.2) to test whether, under full aliasing, the tight prior under-disperses
 # new-site-year predictions because the data cannot pull the unidentified split.
 cfg <- if (QUICK) {
-  list(chains = 2L, niters = 300L, cores = 2L,
-       reps_a = 3L, rates_a = c(1, 5), sigmas_a = c(0, 0.35),
-       reps_b = 2L, sigmas_b = c(0, 0.5))
+  list(
+    chains = 2L,
+    niters = 300L,
+    cores = 2L,
+    reps_a = 3L,
+    rates_a = c(1, 5),
+    sigmas_a = c(0, 0.35),
+    reps_b = 2L,
+    sigmas_b = c(0, 0.5)
+  )
 } else {
-  list(chains = 2L, niters = 500L, cores = max(1L, parallel::detectCores() - 1L),
-       reps_a = 30L, rates_a = c(1, 2, 5, 10, 25), sigmas_a = c(0, 0.15, 0.35),
-       reps_b = 20L, sigmas_b = c(0, 0.15, 0.25, 0.5))
+  list(
+    chains = 2L,
+    niters = 500L,
+    cores = max(1L, parallel::detectCores() - 1L),
+    reps_a = 30L,
+    rates_a = c(1, 2, 5, 10, 25),
+    sigmas_a = c(0, 0.15, 0.35),
+    reps_b = 20L,
+    sigmas_b = c(0, 0.15, 0.25, 0.5)
+  )
 }
 
 # Experiment B arms: loose/equal prior, tight prior, and the structural drop.
@@ -67,13 +81,13 @@ true_base <- list(
 )
 
 designs <- list(
-  rich    = list(n_sites = 8L, n_years = 5L, plants = 20L, aliased = FALSE),
-  sparse  = list(n_sites = 5L, n_years = 3L, plants = 4L,  aliased = FALSE),
+  rich = list(n_sites = 8L, n_years = 5L, plants = 20L, aliased = FALSE),
+  sparse = list(n_sites = 5L, n_years = 3L, plants = 4L, aliased = FALSE),
   aliased = list(n_sites = 6L, n_years = 6L, plants = 15L, aliased = TRUE)
 )
-n_test <- 10L          # held-out plants per observed site-year
-n_new_years <- 2L      # held-out new years (observed sites) for marginal scoring
-n_test_newyear <- 8L   # held-out plants per new site-year
+n_test <- 10L # held-out plants per observed site-year
+n_new_years <- 2L # held-out new years (observed sites) for marginal scoring
+n_test_newyear <- 8L # held-out plants per new site-year
 
 # =============================================================================
 # Generative model (matches inst/stan/weight_nereo.stan)
@@ -83,8 +97,11 @@ build_cells <- function(design) {
   sites <- paste0("site", seq_len(design$n_sites))
   years <- paste0("yr", seq_len(design$n_years))
   if (design$aliased) {
-    cells <- data.frame(site = sites, year = years[seq_along(sites)],
-                        stringsAsFactors = FALSE)
+    cells <- data.frame(
+      site = sites,
+      year = years[seq_along(sites)],
+      stringsAsFactors = FALSE
+    )
   } else {
     cells <- expand.grid(site = sites, year = years, stringsAsFactors = FALSE)
   }
@@ -93,7 +110,9 @@ build_cells <- function(design) {
 }
 
 rule_diagnostics <- function(cells) {
-  per_site_years <- tapply(cells$year, cells$site, function(x) length(unique(x)))
+  per_site_years <- tapply(cells$year, cells$site, function(x) {
+    length(unique(x))
+  })
   list(
     n_sites_multiyear = sum(per_site_years > 1),
     n_cells = nrow(cells),
@@ -111,13 +130,19 @@ gen_plants <- function(cells_df, a_sy_vec, a_site, b_site_d, true) {
     diameter <- exp(log_d)
     ld <- log(diameter) - log(true$diameter_ref)
     asy <- a_sy_vec[[paste(s, y, sep = ":")]]
-    log_w <- true$b_weight + a_site[[s]] +
+    log_w <- true$b_weight +
+      a_site[[s]] +
       (true$b_diameter + b_site_d[[s]]) * ld +
       true$b_diameter2 * ld^2 +
       asy +
       stats::rt(n, df = 4) * true$sd_resid
-    data.frame(diameter = diameter, weight = exp(log_w),
-               site = s, year = y, stringsAsFactors = FALSE)
+    data.frame(
+      diameter = diameter,
+      weight = exp(log_w),
+      site = s,
+      year = y,
+      stringsAsFactors = FALSE
+    )
   })
   df <- do.call(rbind, rows)
   df$site <- factor(df$site)
@@ -132,7 +157,8 @@ simulate_weight_data <- function(cells, true, seed) {
   sites <- unique(cells$site)
   a_site <- stats::setNames(stats::rnorm(length(sites), 0, true$sd_site), sites)
   b_site_d <- stats::setNames(
-    stats::rnorm(length(sites), 0, true$sd_site_diameter), sites
+    stats::rnorm(length(sites), 0, true$sd_site_diameter),
+    sites
   )
   a_sy <- stats::setNames(
     stats::rnorm(nrow(cells), 0, true$sd_site_year),
@@ -147,8 +173,11 @@ simulate_weight_data <- function(cells, true, seed) {
   # fresh site-years at the observed sites
   existing_years <- unique(cells$year)
   new_years <- paste0("newyr", seq_len(n_new_years))
-  new_cells <- expand.grid(site = sites, year = new_years,
-                           stringsAsFactors = FALSE)
+  new_cells <- expand.grid(
+    site = sites,
+    year = new_years,
+    stringsAsFactors = FALSE
+  )
   new_cells$n <- n_test_newyear
   a_sy_new <- stats::setNames(
     stats::rnorm(nrow(new_cells), 0, true$sd_site_year),
@@ -206,24 +235,32 @@ elpd_holdout <- function(fit, test, site_year_on, marginal) {
 
   dref <- fit$meta$diameter_ref
   s_idx <- match(as.character(test$site), fit$meta$site_levels)
-  y_idx <- if (!marginal) match(as.character(test$year), fit$meta$year_levels) else NULL
+  y_idx <- if (!marginal) {
+    match(as.character(test$year), fit$meta$year_levels)
+  } else {
+    NULL
+  }
   ld <- log(test$diameter) - log(dref)
   lw <- log(test$weight)
 
   set.seed(7L) # reproducible marginal draws
-  lpd <- vapply(seq_len(nrow(test)), function(j) {
-    s <- s_idx[j]
-    mu <- bW + bSite[, s] + (bD + bSiteD[, s]) * ld[j] + bD2 * ld[j]^2
-    if (site_year_on) {
-      if (marginal) {
-        mu <- mu + stats::rnorm(ndraws, 0, sy)
-      } else {
-        mu <- mu + bSY[, s, y_idx[j]]
+  lpd <- vapply(
+    seq_len(nrow(test)),
+    function(j) {
+      s <- s_idx[j]
+      mu <- bW + bSite[, s] + (bD + bSiteD[, s]) * ld[j] + bD2 * ld[j]^2
+      if (site_year_on) {
+        if (marginal) {
+          mu <- mu + stats::rnorm(ndraws, 0, sy)
+        } else {
+          mu <- mu + bSY[, s, y_idx[j]]
+        }
       }
-    }
-    ll <- stats::dt((lw[j] - mu) / sW, df = 4, log = TRUE) - log(sW)
-    .lme(ll)
-  }, numeric(1))
+      ll <- stats::dt((lw[j] - mu) / sW, df = 4, log = TRUE) - log(sW)
+      .lme(ll)
+    },
+    numeric(1)
+  )
   sum(lpd)
 }
 
@@ -252,7 +289,12 @@ extract_metrics <- function(fit, true, sim, site_year_on) {
     sd_site_med = stats::median(ss),
     sd_total_med = total_med,
     elpd = elpd_holdout(fit, sim$test, site_year_on, marginal = FALSE),
-    elpd_newyear = elpd_holdout(fit, sim$test_newyear, site_year_on, marginal = TRUE),
+    elpd_newyear = elpd_holdout(
+      fit,
+      sim$test_newyear,
+      site_year_on,
+      marginal = TRUE
+    ),
     ndivergent = fit$diagnostics$ndivergent,
     max_rhat = max(diag$rhat, na.rm = TRUE),
     min_ess = min(diag$ess_bulk, na.rm = TRUE)
@@ -264,17 +306,23 @@ extract_metrics <- function(fit, true, sim, site_year_on) {
 # =============================================================================
 
 grid_a <- expand.grid(
-  experiment = "A", design = "sparse",
-  true_sd_site_year = cfg$sigmas_a, rate = cfg$rates_a,
-  rep = seq_len(cfg$reps_a), stringsAsFactors = FALSE
+  experiment = "A",
+  design = "sparse",
+  true_sd_site_year = cfg$sigmas_a,
+  rate = cfg$rates_a,
+  rep = seq_len(cfg$reps_a),
+  stringsAsFactors = FALSE
 )
 grid_a$site_year_on <- TRUE
 grid_a$arm <- ifelse(grid_a$rate <= 1, "loose (equal)", "tight")
 
 grid_b <- expand.grid(
-  experiment = "B", design = names(designs),
-  true_sd_site_year = cfg$sigmas_b, arm = arms_b$arm,
-  rep = seq_len(cfg$reps_b), stringsAsFactors = FALSE
+  experiment = "B",
+  design = names(designs),
+  true_sd_site_year = cfg$sigmas_b,
+  arm = arms_b$arm,
+  rep = seq_len(cfg$reps_b),
+  stringsAsFactors = FALSE
 )
 grid_b <- dplyr::left_join(grid_b, arms_b, by = "arm")
 
@@ -295,25 +343,42 @@ run_row <- function(r) {
   seed_data <- base_seed + r$row
   seed_fit <- base_seed + 100000L + r$row
 
-  res <- tryCatch({
-    sim <- simulate_weight_data(cells, true, seed_data)
-    fit <- fit_one(sim$train, r$rate, r$site_year_on, cfg, seed_fit)
-    cbind(extract_metrics(fit, true, sim, r$site_year_on), error = NA_character_)
-  }, error = function(e) {
-    tibble::tibble(
-      sd_site_year_med = NA_real_, sd_site_year_covers = NA,
-      sd_site_med = NA_real_, sd_total_med = NA_real_, elpd = NA_real_,
-      elpd_newyear = NA_real_, ndivergent = NA_integer_, max_rhat = NA_real_,
-      min_ess = NA_real_, error = conditionMessage(e)
-    )
-  })
+  res <- tryCatch(
+    {
+      sim <- simulate_weight_data(cells, true, seed_data)
+      fit <- fit_one(sim$train, r$rate, r$site_year_on, cfg, seed_fit)
+      cbind(
+        extract_metrics(fit, true, sim, r$site_year_on),
+        error = NA_character_
+      )
+    },
+    error = function(e) {
+      tibble::tibble(
+        sd_site_year_med = NA_real_,
+        sd_site_year_covers = NA,
+        sd_site_med = NA_real_,
+        sd_total_med = NA_real_,
+        elpd = NA_real_,
+        elpd_newyear = NA_real_,
+        ndivergent = NA_integer_,
+        max_rhat = NA_real_,
+        min_ess = NA_real_,
+        error = conditionMessage(e)
+      )
+    }
+  )
 
   cbind(
     tibble::tibble(
-      experiment = r$experiment, design = r$design,
-      true_sd_site_year = r$true_sd_site_year, rate = r$rate,
-      site_year_on = r$site_year_on, arm = r$arm, rep = r$rep,
-      n_sites_multiyear = rd$n_sites_multiyear, n_cells = rd$n_cells,
+      experiment = r$experiment,
+      design = r$design,
+      true_sd_site_year = r$true_sd_site_year,
+      rate = r$rate,
+      site_year_on = r$site_year_on,
+      arm = r$arm,
+      rep = r$rep,
+      n_sites_multiyear = rd$n_sites_multiyear,
+      n_cells = rd$n_cells,
       rule_fires = rd$rule_fires
     ),
     res
@@ -341,8 +406,11 @@ for (ci in seq_along(chunks)) {
   utils::write.csv(done, raw_csv, row.names = FALSE)
 }
 results <- dplyr::bind_rows(results)
-message(sprintf("Completed %d fits; %d errored.",
-                nrow(results), sum(!is.na(results$error))))
+message(sprintf(
+  "Completed %d fits; %d errored.",
+  nrow(results),
+  sum(!is.na(results$error))
+))
 
 # =============================================================================
 # Summary tables
@@ -353,16 +421,25 @@ summary_a <- results |>
   dplyr::group_by(true_sd_site_year, rate) |>
   dplyr::summarise(
     n = dplyr::n(),
-    bias_sd_site_year = mean(sd_site_year_med - true_sd_site_year, na.rm = TRUE),
-    rmse_sd_site_year = sqrt(mean((sd_site_year_med - true_sd_site_year)^2, na.rm = TRUE)),
+    bias_sd_site_year = mean(
+      sd_site_year_med - true_sd_site_year,
+      na.rm = TRUE
+    ),
+    rmse_sd_site_year = sqrt(mean(
+      (sd_site_year_med - true_sd_site_year)^2,
+      na.rm = TRUE
+    )),
     coverage_95 = mean(sd_site_year_covers, na.rm = TRUE),
     bias_sd_site = mean(sd_site_med - 0.3, na.rm = TRUE),
     mean_elpd = mean(elpd, na.rm = TRUE),
     mean_divergent = mean(ndivergent, na.rm = TRUE),
     .groups = "drop"
   )
-utils::write.csv(summary_a, file.path(out_dir, "summary-calibration.csv"),
-                 row.names = FALSE)
+utils::write.csv(
+  summary_a,
+  file.path(out_dir, "summary-calibration.csv"),
+  row.names = FALSE
+)
 
 true_total <- function(sd_sy) sqrt(0.3^2 + sd_sy^2)
 summary_b <- results |>
@@ -379,8 +456,11 @@ summary_b <- results |>
     mean_divergent = mean(ndivergent, na.rm = TRUE),
     .groups = "drop"
   )
-utils::write.csv(summary_b, file.path(out_dir, "summary-identifiability.csv"),
-                 row.names = FALSE)
+utils::write.csv(
+  summary_b,
+  file.path(out_dir, "summary-identifiability.csv"),
+  row.names = FALSE
+)
 
 # =============================================================================
 # Plots
@@ -392,35 +472,49 @@ res_b$arm <- factor(res_b$arm, levels = arm_levels)
 res_b$design <- factor(res_b$design, levels = c("rich", "sparse", "aliased"))
 
 sigma_facet <- function() {
-  facet_wrap(~true_sd_site_year, labeller = labeller(
-    true_sd_site_year = function(x) paste0("true sigma[s:y] = ", x)
-  ))
+  facet_wrap(
+    ~true_sd_site_year,
+    labeller = labeller(
+      true_sd_site_year = function(x) paste0("true sigma[s:y] = ", x)
+    )
+  )
 }
 grid_facet <- function() {
-  facet_grid(true_sd_site_year ~ design, labeller = labeller(
-    true_sd_site_year = function(x) paste0("sigma[s:y] = ", x)
-  ))
+  facet_grid(
+    true_sd_site_year ~ design,
+    labeller = labeller(
+      true_sd_site_year = function(x) paste0("sigma[s:y] = ", x)
+    )
+  )
 }
 
 # 1. Calibration (Experiment A)
 p1 <- ggplot(res_a, aes(factor(rate), sd_site_year_med)) +
   geom_boxplot(outlier.size = 0.6) +
-  geom_hline(aes(yintercept = true_sd_site_year), linetype = "dashed",
-             colour = "firebrick") +
+  geom_hline(
+    aes(yintercept = true_sd_site_year),
+    linetype = "dashed",
+    colour = "firebrick"
+  ) +
   sigma_facet() +
-  labs(title = "Recovery of the site:year SD vs prior rate (Exp A)",
-       subtitle = "Dashed = truth. All arms include the term (flag on).",
-       x = "site:year SD exponential prior rate",
-       y = "posterior median site:year SD (one point per rep)")
+  labs(
+    title = "Recovery of the site:year SD vs prior rate (Exp A)",
+    subtitle = "Dashed = truth. All arms include the term (flag on).",
+    x = "site:year SD exponential prior rate",
+    y = "posterior median site:year SD (one point per rep)"
+  )
 
 # 2. Marginal distortion (Experiment A)
 p2 <- ggplot(res_a, aes(factor(rate), sd_site_med)) +
   geom_boxplot(outlier.size = 0.6) +
   geom_hline(yintercept = 0.3, linetype = "dashed", colour = "firebrick") +
   sigma_facet() +
-  labs(title = "Site SD vs prior rate (Exp A)",
-       subtitle = "Dashed = true site SD (0.3).",
-       x = "site:year SD exponential prior rate", y = "posterior median site SD")
+  labs(
+    title = "Site SD vs prior rate (Exp A)",
+    subtitle = "Dashed = true site SD (0.3).",
+    x = "site:year SD exponential prior rate",
+    y = "posterior median site SD"
+  )
 
 # 3. Predictive accuracy, observed cells (Experiment A)
 res_a_elpd <- res_a |>
@@ -431,9 +525,12 @@ p3 <- ggplot(res_a_elpd, aes(factor(rate), delta_elpd)) +
   geom_boxplot(outlier.size = 0.6) +
   geom_hline(yintercept = 0, linetype = "dotted") +
   sigma_facet() +
-  labs(title = "Held-out accuracy (observed cells) vs prior rate (Exp A)",
-       subtitle = "elpd relative to the best rate per rep (0 = best).",
-       x = "site:year SD exponential prior rate", y = "elpd minus per-rep best")
+  labs(
+    title = "Held-out accuracy (observed cells) vs prior rate (Exp A)",
+    subtitle = "elpd relative to the best rate per rep (0 = best).",
+    x = "site:year SD exponential prior rate",
+    y = "elpd minus per-rep best"
+  )
 
 # 4. Total intercept SD recovery across the gradient (Experiment B)
 true_lines <- res_b |>
@@ -441,45 +538,73 @@ true_lines <- res_b |>
   dplyr::mutate(true_total = true_total(true_sd_site_year))
 p4 <- ggplot(res_b, aes(arm, sd_total_med)) +
   geom_boxplot(outlier.size = 0.5) +
-  geom_hline(data = true_lines, aes(yintercept = true_total),
-             linetype = "dashed", colour = "firebrick") +
+  geom_hline(
+    data = true_lines,
+    aes(yintercept = true_total),
+    linetype = "dashed",
+    colour = "firebrick"
+  ) +
   grid_facet() +
-  labs(title = "Total intercept SD recovery (Exp B)",
-       subtitle = "Dashed = true total intercept SD. Drop = structural flag off.",
-       x = "prior arm", y = "posterior median total intercept SD") +
+  labs(
+    title = "Total intercept SD recovery (Exp B)",
+    subtitle = "Dashed = true total intercept SD. Drop = structural flag off.",
+    x = "prior arm",
+    y = "posterior median total intercept SD"
+  ) +
   theme(axis.text.x = element_text(angle = 20, hjust = 1))
 
 # 5. DECISION plot: new-site-year predictive accuracy (Experiment B)
 res_b_newyear <- res_b |>
   dplyr::group_by(design, true_sd_site_year, rep) |>
-  dplyr::mutate(delta_elpd_newyear = elpd_newyear - max(elpd_newyear, na.rm = TRUE)) |>
+  dplyr::mutate(
+    delta_elpd_newyear = elpd_newyear - max(elpd_newyear, na.rm = TRUE)
+  ) |>
   dplyr::ungroup()
 p5 <- ggplot(res_b_newyear, aes(arm, delta_elpd_newyear)) +
   geom_boxplot(outlier.size = 0.5) +
   geom_hline(yintercept = 0, linetype = "dotted") +
   grid_facet() +
-  labs(title = "New-site-year predictive accuracy (Exp B): the decision plot",
-       subtitle = "Marginal elpd for fresh site-years, relative to best arm per rep (0 = best).",
-       x = "prior arm", y = "new-site-year elpd minus per-rep best") +
+  labs(
+    title = "New-site-year predictive accuracy (Exp B): the decision plot",
+    subtitle = "Marginal elpd for fresh site-years, relative to best arm per rep (0 = best).",
+    x = "prior arm",
+    y = "new-site-year elpd minus per-rep best"
+  ) +
   theme(axis.text.x = element_text(angle = 20, hjust = 1))
 
 # 6. Sampler health (Experiment B)
 p6 <- ggplot(res_b, aes(arm, ndivergent)) +
   geom_boxplot(outlier.size = 0.5) +
   facet_wrap(~design) +
-  labs(title = "Divergences across the gradient (Exp B)",
-       x = "prior arm", y = "divergent transitions per fit") +
+  labs(
+    title = "Divergences across the gradient (Exp B)",
+    x = "prior arm",
+    y = "divergent transitions per fit"
+  ) +
   theme(axis.text.x = element_text(angle = 20, hjust = 1))
 
-plots <- list(calibration = p1, marginal_distortion = p2, predictive = p3,
-              identifiability = p4, decision_newyear = p5, sampler_health = p6)
+plots <- list(
+  calibration = p1,
+  marginal_distortion = p2,
+  predictive = p3,
+  identifiability = p4,
+  decision_newyear = p5,
+  sampler_health = p6
+)
 
 for (nm in names(plots)) {
-  ggsave(file.path(out_dir, paste0("plot-", nm, ".png")), plots[[nm]],
-         width = 9, height = 6, dpi = 150)
+  ggsave(
+    file.path(out_dir, paste0("plot-", nm, ".png")),
+    plots[[nm]],
+    width = 9,
+    height = 6,
+    dpi = 150
+  )
 }
 grDevices::pdf(file.path(out_dir, "plots-all.pdf"), width = 9, height = 6)
-for (p in plots) print(p)
+for (p in plots) {
+  print(p)
+}
 grDevices::dev.off()
 
 message("Done. Outputs in ", out_dir)

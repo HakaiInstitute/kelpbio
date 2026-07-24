@@ -30,17 +30,22 @@ if (rmarkdown::pandoc_available()) {
 
   # embed local PNG figures as base64 data URIs
   matches <- unique(unlist(regmatches(
-    txt, gregexpr("\\([A-Za-z0-9_./-]+\\.png\\)", txt)
+    txt,
+    gregexpr("\\([A-Za-z0-9_./-]+\\.png\\)", txt)
   )))
   for (m in matches) {
     path <- sub("^\\((.*)\\)$", "\\1", m)
     full <- file.path(dirname(src), basename(path))
     if (file.exists(full)) {
-      txt <- gsub(m, paste0("(", xfun::base64_uri(full), ")"), txt, fixed = TRUE)
+      txt <- gsub(
+        m,
+        paste0("(", xfun::base64_uri(full), ")"),
+        txt,
+        fixed = TRUE
+      )
     }
   }
 
-  markdown::mark_html(text = txt, output = out,
-                      meta = list(title = title))
+  markdown::mark_html(text = txt, output = out, meta = list(title = title))
   message("Rendered via markdown (pandoc-free): ", out)
 }

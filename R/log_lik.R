@@ -16,7 +16,9 @@ log_lik.kb_fit <- function(object, ...) {
   rlang::check_dots_empty()
   .chk_kb_fit(object)
   if (is.null(object$gq)) {
-    cli::cli_abort("No pointwise log-likelihood is stored (zero-observation fit).")
+    cli::cli_abort(
+      "No pointwise log-likelihood is stored (zero-observation fit)."
+    )
   }
   posterior::draws_of(object$gq$log_lik)
 }

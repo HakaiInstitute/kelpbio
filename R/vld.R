@@ -20,7 +20,9 @@
 }
 
 .vld_progress <- function(x) {
-  is.character(x) && length(x) == 1L && !is.na(x) &&
+  is.character(x) &&
+    length(x) == 1L &&
+    !is.na(x) &&
     x %in% c("bar", "verbose", "none")
 }
 

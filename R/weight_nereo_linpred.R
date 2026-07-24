@@ -1,6 +1,11 @@
 # Single R-side source of the Nereocystis weight-model mean (log scale), as a
 # posterior rvar over grid rows. All predict paths route through here.
-.weight_nereo_linpred <- function(fit, grid, new_levels, representative_site = NULL) {
+.weight_nereo_linpred <- function(
+  fit,
+  grid,
+  new_levels,
+  representative_site = NULL
+) {
   draws <- fit$draws
   n <- nrow(grid)
   log_dc <- log(grid$diameter) - log(fit$meta$diameter_ref)
@@ -24,7 +29,11 @@
 
   re_site <- resolve_re1(draws$bSite, si, new_levels, draws$sSite, rep_idx)
   re_slope <- resolve_re1(
-    draws$bSiteDiameter, si, new_levels, draws$sSiteDiameter, rep_idx
+    draws$bSiteDiameter,
+    si,
+    new_levels,
+    draws$sSiteDiameter,
+    rep_idx
   )
   # When the fit omitted the site:year effect its draws are prior-only noise, so
   # predictions must add nothing rather than reintroduce spurious variation. A
@@ -36,16 +45,29 @@
     resolve_re2(draws$bSiteYear, si, yi, new_levels, draws$sSiteYear)
   }
 
-  draws$bWeight + draws$bDiameter * log_dc + draws$bDiameter2 * log_dc^2 +
-    re_site + re_slope * log_dc + re_sy
+  draws$bWeight +
+    draws$bDiameter * log_dc +
+    draws$bDiameter2 * log_dc^2 +
+    re_site +
+    re_slope * log_dc +
+    re_sy
 }
 
 # new_levels is immaterial: every observed row is a known level.
 .weight_nereo_linpred_obs <- function(fit) {
-  .weight_nereo_linpred(fit, tibble::as_tibble(fit$data), new_levels = "average")
+  .weight_nereo_linpred(
+    fit,
+    tibble::as_tibble(fit$data),
+    new_levels = "average"
+  )
 }
 
-weight_data_linpred <- function(fit, new_data, new_levels, representative_site = NULL) {
+weight_data_linpred <- function(
+  fit,
+  new_data,
+  new_levels,
+  representative_site = NULL
+) {
   .chk_kb_fit_weight(fit)
   new_levels <- rlang::arg_match(new_levels, c("sample", "average"))
   if (is.null(new_data)) {
@@ -75,7 +97,9 @@ weight_by_linpred <- function(fit, by, new_levels, diameter = NULL) {
 }
 
 validate_by_weight <- function(by) {
-  if (is.null(by)) by <- character(0)
+  if (is.null(by)) {
+    by <- character(0)
+  }
   chk::chk_character(by)
   valid <- c("site", "year")
   bad <- setdiff(by, valid)
@@ -169,7 +193,11 @@ resolve_re2 <- function(param, i, j, new_levels, sd_rvar) {
   if (any(known)) {
     param_draws <- posterior::draws_of(param)
     kk <- which(known)
-    out[, kk] <- vapply(kk, function(r) param_draws[, i[r], j[r]], numeric(ndraws))
+    out[, kk] <- vapply(
+      kk,
+      function(r) param_draws[, i[r], j[r]],
+      numeric(ndraws)
+    )
   }
   if (!all(known) && new_levels == "sample") {
     out[, !known] <- posterior::draws_of(re_draw(sum(!known), sd_rvar))

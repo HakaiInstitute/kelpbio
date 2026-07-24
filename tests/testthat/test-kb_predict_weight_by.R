@@ -36,7 +36,15 @@ test_that("custom diameter sequence is honoured", {
 })
 
 test_that("wider conf_level gives a wider interval", {
-  p90 <- kb_predict_weight_by(weight_fit, new_levels = "average", conf_level = 0.90)
-  p99 <- kb_predict_weight_by(weight_fit, new_levels = "average", conf_level = 0.99)
+  p90 <- kb_predict_weight_by(
+    weight_fit,
+    new_levels = "average",
+    conf_level = 0.90
+  )
+  p99 <- kb_predict_weight_by(
+    weight_fit,
+    new_levels = "average",
+    conf_level = 0.99
+  )
   expect_true(all((p99$upper - p99$lower) >= (p90$upper - p90$lower)))
 })

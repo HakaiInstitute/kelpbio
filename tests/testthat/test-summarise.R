@@ -11,19 +11,28 @@ test_that("summarise_draws_terms returns house columns bracketing the estimate",
 
 test_that("summarise_draws_terms widens the interval with conf_level", {
   wide <- summarise_draws_terms(weight_fit$draws, "bWeight", conf_level = 0.99)
-  narrow <- summarise_draws_terms(weight_fit$draws, "bWeight", conf_level = 0.80)
+  narrow <- summarise_draws_terms(
+    weight_fit$draws,
+    "bWeight",
+    conf_level = 0.80
+  )
   expect_gt(wide$upper - wide$lower, narrow$upper - narrow$lower)
 })
 
 test_that("summarise_draws_terms applies the estimate function and sig_fig", {
   mean_est <- summarise_draws_terms(
-    weight_fit$draws, "bWeight",
+    weight_fit$draws,
+    "bWeight",
     estimate = mean
   )$estimate
   expect_equal(
     mean_est,
     signif(mean(posterior::draws_of(weight_fit$draws$bWeight)), 3)
   )
-  two <- summarise_draws_terms(weight_fit$draws, "bWeight", sig_fig = 2)$estimate
+  two <- summarise_draws_terms(
+    weight_fit$draws,
+    "bWeight",
+    sig_fig = 2
+  )$estimate
   expect_equal(two, signif(two, 2))
 })

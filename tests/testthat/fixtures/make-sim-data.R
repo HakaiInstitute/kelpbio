@@ -30,7 +30,8 @@ rows <- lapply(seq_len(nrow(grid)), function(i) {
   diameter <- exp(log_d)
   log_w <- b_weight30 +
     b_diameter * (log(diameter) - log(30)) +
-    a_site[[s]] + a_sy +
+    a_site[[s]] +
+    a_sy +
     stats::rnorm(n_per, 0, sd_resid)
   data.frame(
     diameter = round(diameter, 1),
