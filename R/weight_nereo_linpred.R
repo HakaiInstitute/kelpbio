@@ -135,19 +135,19 @@ build_by_grid <- function(fit, by, diameter = NULL) {
   if (setequal(by, "site")) {
     sites <- tibble::tibble(site = factor(site_levels, levels = site_levels))
     dplyr::cross_join(sites, diameters) |>
-      dplyr::arrange(site, diameter)
+      dplyr::arrange(.data$site, .data$diameter)
   } else {
     # Cross diameter only with the observed site:year combinations, as ordered
     # factors sorted by level, so the returned row order follows the fit's level
     # order rather than the (arbitrary) row order of fit$data.
     obs <- fit$data |>
-      dplyr::distinct(site, year) |>
+      dplyr::distinct(.data$site, .data$year) |>
       dplyr::mutate(
-        site = factor(as.character(site), levels = site_levels),
-        year = factor(as.character(year), levels = fit$meta$year_levels)
+        site = factor(as.character(.data$site), levels = site_levels),
+        year = factor(as.character(.data$year), levels = fit$meta$year_levels)
       )
     dplyr::cross_join(obs, diameters) |>
-      dplyr::arrange(site, year, diameter)
+      dplyr::arrange(.data$site, .data$year, .data$diameter)
   }
 }
 
