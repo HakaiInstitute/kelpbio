@@ -23,9 +23,9 @@
 #'   `getOption("mc.cores")` (falling back to `chains`), capped at the available
 #'   cores.
 #' @param seed A whole number passed to [rstan::sampling()] to make the fit
-#'   reproducible, or `NULL` (the default). When `NULL`, rstan draws its own seed
-#'   from R's RNG, so a preceding `set.seed()` also makes the fit reproducible; an
-#'   explicit `seed` takes precedence over the RNG state.
+#'   reproducible, or `NULL` (the default). When `NULL`, a seed is drawn from R's
+#'   RNG, so a preceding `set.seed()` also makes the fit reproducible; an explicit
+#'   `seed` takes precedence over the RNG state.
 #' @param progress A string, one of `"bar"` (the default, a console progress
 #'   bar), `"verbose"` (rstan's per-iteration output and diagnostic warnings), or
 #'   `"none"` (silent). Controls fit-time console output only.

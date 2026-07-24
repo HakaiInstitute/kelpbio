@@ -69,11 +69,10 @@ fit_stan <- function(
   if (!is.null(art$dir)) {
     sampling_args$sample_file <- progress_sample_file(art$dir)
   }
-  # Pass seed only when supplied; absent, rstan derives its own from R's RNG, so
-  # set.seed() still makes the fit reproducible.
-  if (!is.null(seed)) {
-    sampling_args$seed <- as.integer(seed)
-  }
+  # Resolve here (parent process) so set.seed() reproducibility survives the
+  # "bar" path's callr subprocess, which starts with its own RNG.
+  seed <- seed %||% sample.int(.Machine$integer.max, 1L)
+  sampling_args$seed <- as.integer(seed)
   sampling_args <- c(sampling_args, dots)
 
   stanfit <- if (identical(progress, "bar")) {
@@ -132,8 +131,7 @@ sample_with_bar <- function(
       "Internal: {.code progress = \"bar\"} requires {.arg stanmodel_name}."
     )
   }
-  # chains/warmup/thin live in sampling_args (rstan's vocabulary); niters is the
-  # package-level count the progress bar needs but rstan folds into iter.
+  # niters isn't in sampling_args (rstan folds it into iter); the rest are.
   chains <- sampling_args$chains
   warmup <- sampling_args$warmup
   nthin <- sampling_args$thin
