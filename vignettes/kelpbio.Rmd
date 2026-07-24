@@ -50,19 +50,24 @@ kb_check_data_weight_nereo(data_weight_sim_nereo)
 ## Fitting the model
 
 `kb_fit_weight_nereo()` fits the model. Set `progress = "none"` to silence the
-sampler's console output, and `seed` for a reproducible fit.
+sampler's console output, and `seed` for a reproducible fit. Fitting compiles
+and samples the Stan model, which takes a few minutes.
 
 ```{r, eval = FALSE}
-fit <- kb_fit_weight_nereo(data_weight_sim_nereo, seed = 1)
+fit <- kb_fit_weight_nereo(
+  data_weight_sim_nereo,
+  chains = 2,
+  niters = 400,
+  seed = 42
+)
 ```
-
-Fitting compiles and samples the Stan model, which takes a few minutes. To keep
-this article quick to build, the remaining steps use `fit_weight_sim_nereo`, a
-pre-fit model on the same dataset that ships with the package.
 
 ```{r, echo = FALSE}
 fit <- fit_weight_sim_nereo
 ```
+
+The short run above keeps the example quick; for a real analysis use the
+defaults (`chains = 4`, `niters = 1000`) or more.
 
 ## Checking convergence
 
