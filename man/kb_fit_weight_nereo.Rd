@@ -45,9 +45,9 @@ defaults to match).}
 cores.}
 
 \item{seed}{A whole number passed to \code{\link[rstan:sampling]{rstan::sampling()}} to make the fit
-reproducible, or \code{NULL} (the default). When \code{NULL}, rstan draws its own seed
-from R's RNG, so a preceding \code{set.seed()} also makes the fit reproducible; an
-explicit \code{seed} takes precedence over the RNG state.}
+reproducible, or \code{NULL} (the default). When \code{NULL}, a seed is drawn from R's
+RNG, so a preceding \code{set.seed()} also makes the fit reproducible; an explicit
+\code{seed} takes precedence over the RNG state.}
 
 \item{progress}{A string, one of \code{"bar"} (the default, a console progress
 bar), \code{"verbose"} (rstan's per-iteration output and diagnostic warnings), or
@@ -109,7 +109,7 @@ if (interactive()) {
   fit <- kb_fit_weight_nereo(data_weight_sim_nereo)
   tidy(fit)
 }
-# A pre-fit example model ships with the package:
+# A pre-fit example model is included with the package:
 tidy(fit_weight_sim_nereo)
 }
 \concept{model}

@@ -31,9 +31,9 @@ defaults to match).}
 cores.}
 
 \item{seed}{A whole number passed to \code{\link[rstan:sampling]{rstan::sampling()}} to make the fit
-reproducible, or \code{NULL} (the default). When \code{NULL}, rstan draws its own seed
-from R's RNG, so a preceding \code{set.seed()} also makes the fit reproducible; an
-explicit \code{seed} takes precedence over the RNG state.}
+reproducible, or \code{NULL} (the default). When \code{NULL}, a seed is drawn from R's
+RNG, so a preceding \code{set.seed()} also makes the fit reproducible; an explicit
+\code{seed} takes precedence over the RNG state.}
 
 \item{progress}{A string, one of \code{"bar"} (the default, a console progress
 bar), \code{"verbose"} (rstan's per-iteration output and diagnostic warnings), or
