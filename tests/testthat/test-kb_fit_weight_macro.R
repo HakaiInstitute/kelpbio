@@ -6,7 +6,7 @@ test_that("kb_fit_weight_macro does not expose site_year_on", {
 test_that("kb_fit_weight_macro returns a correctly-structured object", {
   skip_on_cran()
   d <- droplevels(subset(
-    sim_weight_macro,
+    data_weight_sim_macro,
     site %in% c("site1", "site2") & year %in% c("2019", "2020")
   ))
   fit <- kb_fit_weight_macro(
@@ -47,7 +47,7 @@ test_that("kb_fit_weight_macro returns a correctly-structured object", {
 test_that("prior_only fit ignores the data", {
   skip_on_cran()
   d <- droplevels(subset(
-    sim_weight_macro,
+    data_weight_sim_macro,
     site %in% c("site1", "site2") & year %in% c("2019", "2020")
   ))
   f1 <- kb_fit_weight_macro(
@@ -81,7 +81,7 @@ test_that("prior_only fit ignores the data", {
 test_that("zero-row data is accepted under prior_only", {
   skip_on_cran()
   fit <- kb_fit_weight_macro(
-    sim_weight_macro[0, ],
+    data_weight_sim_macro[0, ],
     prior_only = TRUE,
     chains = 1,
     niters = 100,

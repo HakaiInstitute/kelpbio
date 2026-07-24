@@ -36,16 +36,16 @@ weight_fit <- kb_fit_weight_nereo(
 saveRDS(weight_fit, "tests/testthat/fixtures/weight_fit.rds")
 message("Wrote tests/testthat/fixtures/weight_fit.rds")
 
-# Macrocystis fixture (Gamma weight model), same downsampling approach.
-sim_weight_macro <- readRDS("tests/testthat/fixtures/sim_weight_macro.rds")
+# Macrocystis fixture (Gamma weight model): a subset of the bundled
+# data_weight_sim_macro, mirroring the nereo fixture above (single source).
 dm <- subset(
-  sim_weight_macro,
+  data_weight_sim_macro,
   site %in%
     c("site1", "site2", "site3", "site4") &
     year %in% c("2019", "2020", "2021")
 )
-dm$site <- factor(dm$site)
-dm$year <- factor(dm$year)
+dm$site <- droplevels(factor(dm$site))
+dm$year <- droplevels(factor(dm$year))
 
 weight_macro_fit <- kb_fit_weight_macro(
   dm,

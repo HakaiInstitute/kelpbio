@@ -14,7 +14,10 @@ set.seed(202)
 
 sites <- paste0("site", 1:10)
 years <- as.character(2019:2022)
-n_per <- 25L
+# Sized so the bundled pre-fit (fit_weight_sim_macro) can be fit on the WHOLE
+# dataset while staying small: the stored log_lik/yrep scale with the number of
+# observations, so ~6 per site-year cell keeps the shipped fit slim.
+n_per <- 6L
 
 grid <- expand.grid(site = sites, year = years, stringsAsFactors = FALSE)
 grid <- grid[!(grid$site == "site10" & grid$year == "2022"), ] # missing cell
