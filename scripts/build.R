@@ -20,7 +20,8 @@
 full_check <- isTRUE(as.logical(Sys.getenv("KELPBIO_FULL_CHECK", "false")))
 
 # Regenerate C++ from the current Stan source (picks up inst/stan/*.stan edits).
-rstantools::rstan_config()
+rstantools::rstan_config() # regenerate stanExports + stanmodels.R
+devtools::install(build = FALSE, quick = TRUE, upgrade = FALSE)
 
 roxygen2md::roxygen2md()
 
