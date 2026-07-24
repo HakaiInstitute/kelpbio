@@ -4,19 +4,21 @@
 #' `inst/stan/weight_nereo.stan`. `site` and `year` are encoded as integer factor
 #' codes; the raw `diameter` and `weight` vectors are passed through (the Stan
 #' model applies the `log(diameter) - log(diameter_ref)` and `log(weight)`
-#' transforms). `diameter_ref` is the geometric mean of the observed diameter;
-#' centering log-diameter on it makes the diameter unit immaterial. Zero-row data
-#' is supported (for prior-only fits): `nObs` is `0` and `nSite` / `nYear` fall
-#' back to `1`.
+#' transforms). Centering log-diameter on `diameter_ref` makes the diameter unit
+#' immaterial. Zero-row data is supported (for prior-only fits): `nObs` is `0`
+#' and `nSite` / `nYear` fall back to `1`.
 #'
 #' @inheritParams params
-#' @param priors A resolved named prior list (see `resolve_priors()`).
+#' @param priors A list of the resolved named priors (see `resolve_priors()`).
+#' @param diameter_ref A number of the centering reference for log-diameter, from
+#'   `weight_diameter_ref()`.
 #'
 #' @return A named list suitable for `rstan::sampling(stanmodels$weight_nereo, data = .)`.
 #' @noRd
 assemble_weight_nereo_data <- function(
   data,
   priors,
+  diameter_ref,
   prior_only = FALSE,
   site_year_on = TRUE
 ) {
@@ -32,7 +34,7 @@ assemble_weight_nereo_data <- function(
     year = as.integer(year),
     diameter = as.numeric(data$diameter),
     weight = as.numeric(data$weight),
-    diameter_ref = weight_diameter_ref(data$diameter),
+    diameter_ref = diameter_ref,
     prior_intercept_mu = priors$intercept$mean,
     prior_intercept_sd = priors$intercept$sd,
     prior_diameter_mu = priors$diameter$mean,

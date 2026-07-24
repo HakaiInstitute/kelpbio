@@ -90,9 +90,13 @@ kb_fit_weight_nereo <- function(
   notify_site_year(site_year, progress = progress)
 
   priors <- resolve_priors(priors, kb_priors_weight_nereo())
+  # One centering reference shared by the Stan fit and the R-side predictions
+  # (stored in the fit meta below) so both center log-diameter identically.
+  diameter_ref <- weight_diameter_ref(data$diameter)
   stan_data <- assemble_weight_nereo_data(
     data,
     priors,
+    diameter_ref,
     prior_only = prior_only,
     site_year_on = site_year$on
   )
@@ -132,8 +136,7 @@ kb_fit_weight_nereo <- function(
     prior_only = prior_only,
     nthin = as.integer(nthin),
     meta_extra = list(
-      # Shared by the Stan fit and R-side predictions so both center identically.
-      diameter_ref = weight_diameter_ref(data$diameter),
+      diameter_ref = diameter_ref,
       site_year_on = site_year$on,
       nu = 4
     )
