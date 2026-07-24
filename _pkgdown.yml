@@ -13,6 +13,7 @@ reference:
   desc: "Fit Bayesian Stan models."
   contents:
     - kb_fit_weight_nereo
+    - kb_fit_progress
 - title: "Priors"
   desc: "Specify priors for model parameters."
   contents:
