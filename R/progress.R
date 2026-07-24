@@ -63,7 +63,7 @@ count_chain_rows <- function(csv) {
     character()
   })
   lines <- lines[nzchar(lines) & !startsWith(lines, "#")]
-  header_at <- which(grepl("lp__", lines, fixed = TRUE))
+  header_at <- grep("lp__", lines, fixed = TRUE)
   if (!length(header_at)) {
     return(0L)
   }
@@ -72,7 +72,7 @@ count_chain_rows <- function(csv) {
   if (!length(data_lines)) {
     return(0L)
   }
-  fields <- purrr::map_int(strsplit(data_lines, ",", fixed = TRUE), length)
+  fields <- lengths(strsplit(data_lines, ",", fixed = TRUE))
   sum(fields == n_fields)
 }
 
