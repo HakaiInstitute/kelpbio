@@ -6,7 +6,7 @@ test_that("kb_fit_weight_nereo does not expose site_year_on", {
 test_that("kb_fit_weight returns a correctly-structured object", {
   skip_on_cran()
   d <- droplevels(subset(
-    sim_weight,
+    data_weight_sim_nereo,
     site %in% c("site1", "site2") & year %in% c("2019", "2020")
   ))
   fit <- kb_fit_weight_nereo(
@@ -49,7 +49,7 @@ test_that("kb_fit_weight returns a correctly-structured object", {
 test_that("nthin > 1 still keeps exactly niters draws per chain", {
   skip_on_cran()
   d <- droplevels(subset(
-    sim_weight,
+    data_weight_sim_nereo,
     site %in% c("site1", "site2") & year %in% c("2019", "2020")
   ))
   # fit_stan sets warmup = niters and total iters = niters + niters * nthin, so
@@ -71,7 +71,7 @@ test_that("nthin > 1 still keeps exactly niters draws per chain", {
 test_that("prior_only fit ignores the data", {
   skip_on_cran()
   d <- droplevels(subset(
-    sim_weight,
+    data_weight_sim_nereo,
     site %in% c("site1", "site2") & year %in% c("2019", "2020")
   ))
   f1 <- kb_fit_weight_nereo(
@@ -107,7 +107,7 @@ test_that("prior_only fit ignores the data", {
 test_that("zero-row data is accepted under prior_only", {
   skip_on_cran()
   fit <- kb_fit_weight_nereo(
-    sim_weight[0, ],
+    data_weight_sim_nereo[0, ],
     prior_only = TRUE,
     chains = 1,
     niters = 100,
@@ -122,7 +122,7 @@ test_that("zero-row data is accepted under prior_only", {
 })
 
 test_that("progress accepts only the three modes", {
-  d <- droplevels(subset(sim_weight, site == "site1" & year == "2019"))
+  d <- droplevels(subset(data_weight_sim_nereo, site == "site1" & year == "2019"))
   expect_error(kb_fit_weight_nereo(d, progress = "loud"), "must be one of")
 })
 
@@ -132,7 +132,7 @@ test_that("progress_dir writes an artifact that kb_fit_progress reads as complet
   # skip on CRAN.
   skip_on_cran()
   d <- droplevels(subset(
-    sim_weight,
+    data_weight_sim_nereo,
     site %in% c("site1", "site2") & year %in% c("2019", "2020")
   ))
   dir <- withr::local_tempdir()

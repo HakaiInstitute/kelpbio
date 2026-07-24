@@ -22,8 +22,8 @@
       Family:    Student-t (df = 4); response log(weight)
       Fixed:     intercept + linear + quadratic log(diameter/d0)
       Random:    site (intercept, slope); site:year (intercept)
-      Centered:  log-diameter at d0 = 39 (geometric mean of diameter)
-      Data:      300 observations; groups: site (4), site:year (12)
+      Centered:  log-diameter at d0 = 38.8 (geometric mean of diameter)
+      Data:      72 observations; groups: site (4), site:year (12)
       Draws:     2 chains, 300 post-warmup draws each (thin = 1), 600 total
       Converged: TRUE
 
