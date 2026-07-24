@@ -57,7 +57,7 @@
 #'   fit <- kb_fit_weight_nereo(data_weight_sim_nereo)
 #'   tidy(fit)
 #' }
-#' # A pre-fit example model ships with the package:
+#' # A pre-fit example model is included with the package:
 #' tidy(fit_weight_sim_nereo)
 kb_fit_weight_nereo <- function(
   data,

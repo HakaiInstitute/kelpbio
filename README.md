@@ -49,7 +49,7 @@ The allometric weight model relates wet weight to sub-bulb diameter,
 with random effects for site and site-by-year.
 
 The model is fitted to a data frame of `diameter`, `weight`, `site`, and
-`year`. A small simulated dataset ships with the package:
+`year`. A small simulated dataset is included with the package:
 
 ``` r
 library(kelpbio)
@@ -73,7 +73,7 @@ fit <- kb_fit_weight_nereo(data_weight_sim_nereo, seed = 1)
 ```
 
 Fitting compiles and samples the Stan model, so a pre-fit model on this
-dataset ships with the package for quick exploration:
+dataset is included with the package for quick exploration:
 
 ``` r
 fit <- fit_weight_sim_nereo

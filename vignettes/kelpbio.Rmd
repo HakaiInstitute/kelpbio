@@ -33,7 +33,7 @@ installation is required.
 
 The weight model is fitted to a data frame with a numeric `diameter`, a numeric
 `weight`, and `site` and `year` grouping factors. A small simulated dataset
-ships with the package:
+is included with the package:
 
 ```{r}
 data_weight_sim_nereo
