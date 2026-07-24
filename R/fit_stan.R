@@ -81,10 +81,7 @@ fit_stan <- function(
       stanmodel_name,
       sampling_args,
       art$dir,
-      chains,
-      warmup,
-      niters,
-      nthin
+      niters
     )
   } else {
     with_quiet_sampler(
@@ -128,16 +125,18 @@ sample_with_bar <- function(
   stanmodel_name,
   sampling_args,
   dir,
-  chains,
-  warmup,
-  niters,
-  nthin
+  niters
 ) {
   if (is.null(stanmodel_name)) {
     cli::cli_abort(
       "Internal: {.code progress = \"bar\"} requires {.arg stanmodel_name}."
     )
   }
+  # chains/warmup/thin live in sampling_args (rstan's vocabulary); niters is the
+  # package-level count the progress bar needs but rstan folds into iter.
+  chains <- sampling_args$chains
+  warmup <- sampling_args$warmup
+  nthin <- sampling_args$thin
   bg <- callr::r_bg(
     func = function(stanmodel_name, sampling_args) {
       model <- get("stanmodels", envir = asNamespace("kelpbio"))[[
