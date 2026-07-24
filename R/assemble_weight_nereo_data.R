@@ -53,7 +53,7 @@ assemble_weight_nereo_data <- function(
 # the data and stored in the fit meta, so the Stan fit and the R-side predictions
 # share one reference. Falls back to 30 for zero-row (prior-only) data.
 weight_diameter_ref <- function(diameter) {
-  if (length(diameter) == 0L) {
+  if (rlang::is_empty(diameter)) {
     return(30)
   }
   exp(mean(log(diameter)))
