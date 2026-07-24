@@ -53,7 +53,8 @@ context: |
     rstantools generics (posterior_epred / posterior_linpred / posterior_predict /
     log_lik). Grids built over the observed predictor range/levels; predictors enter on a fixed-reference
     transform (no rescale step). Two axes: by (character vector of grouping factors)
-    and uncertainty = c("marginal","typical") (marginal default). Raw draws come from
+    and new_levels = c("sample","average") (sample default for kb_predict_weight,
+    average for kb_predict_weight_by). Raw draws come from
     the posterior_* generics; there are no _samples() functions. Rationale:
     decisions/prediction-engine.md.
   - Summary/output columns use the house convention term / estimate / lower / upper
@@ -76,7 +77,9 @@ context: |
     structure + invariants; snapshot only prints and cli messages. Small pre-built fits
     live in tests/testthat/fixtures/ built with rstan::sampling(seed=) (not set.seed);
     slow end-to-end fits use skip_on_cran(). Distribution target is the Hakai R-universe
-    (not CRAN); demo + coastwide data + slim pre-fit models ship in the package data/.
+    (not CRAN); kelpbio's data/ ships only simulated demo data + slim pre-fit models,
+    while the real publicly shared coastwide data and model fits ship in a companion
+    data package (kelpbiodata).
 
 rules:
   proposal:

@@ -75,7 +75,7 @@ augment.kb_fit         # parent: model-agnostic (coef/glance/converged/log_lik/s
 tidy.kb_fit_weight     # subclass-specific: names its own terms (also fitted/residuals/predict/posterior_*)
 ```
 
-Access via `$`: `x$draws`, `x$data`, `x$meta`. `samples(x)` returns a `posterior` `draws_rvars` object. The live `stanfit` is discarded after fitting — see the `fitting` spec. Single package (R-universe, not CRAN): demo + coastwide data + slim pre-fit models in `data/`; no companion data package.
+Access via `$`: `x$draws`, `x$data`, `x$meta`. `samples(x)` returns a `posterior` `draws_rvars` object. The live `stanfit` is discarded after fitting — see the `fitting` spec. kelpbio ships via R-universe (not CRAN); its `data/` holds only simulated demo data and slim pre-fit models. The real publicly shared coastwide data and model fits live in a companion data package (`kelpbiodata`).
 
 **Prediction / derived-quantity engine.** Predictions, summaries, and the biomass composition are computed from the stored draws with the `posterior` `rvar` datatype (per-model prediction is plain `rvar` arithmetic); grids built with `newdata::xnew_data` (no `rescale`); `coef`/`tidy`/`glance`/`augment`/`samples`/diagnostics reconstructed from the draws via `posterior`. The `predictions`/`summaries` specs are the behavioural contract and `decisions/prediction-engine.md` the rationale — read them before touching any `kb_predict_*`, summary, or biomass code.
 
