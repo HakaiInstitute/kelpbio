@@ -2,33 +2,70 @@ schema: spec-driven
 
 context: |
   kelpbio: an R package for Bayesian kelp biomass estimation (Hakai Institute / Poisson
-  Consulting). The design docs are the source of truth and should be referenced rather
-  than restated: docs/package-design.md, docs/bayesian-engine.md, docs/vertical-slice.md,
-  docs/testing-strategy.md, docs/bboutools-api-review.md. Architecture follows the
-  bboutools R package (S3).
+  Consulting). Architecture follows the bboutools R package (S3).
+
+  Sources of truth (one fact, one home):
+  - openspec/specs/        -> observable behaviour (the package contract).
+  - this config (context)  -> cross-cutting rules / conventions.
+  - decisions/             -> cross-cutting decision records (ADRs): engine-choice,
+                              prediction-engine, s3-vs-s7, bboutools-api-review, webapp-decision.
+  - a change's design.md   -> rationale specific to that change (frozen on archive).
+  - openspec/tutorial.md   -> the OpenSpec workflow for this repo.
+  There is no separate docs/ design-doc tree (docs/ is pkgdown build output).
+
+  Orientation: kelpbio implements six sub-models composing into biomass via
+  size-integration (density x E_size[weight(diameter)] x dry:wet x carbon), NOT
+  density x weight. Order: weight (done), then size, density, blade, wetdry, carbon.
+  weight/blade/wetdry/carbon are coastwide pre-fit (kb_default_*); size/density are
+  user-fit. Each model ships a kb_data_<model> example dataset. Everything is at
+  site-year resolution (no month dimension).
 
   Conventions:
   - All exported functions use the kb_ prefix.
   - Bayesian engine: rstan + rstantools. Stan models live in inst/stan/ and are
-    pre-compiled at R CMD INSTALL (exposed as stanmodels$<name>). NO cmdstan.
-    devtools::load_all() does NOT pick up Stan changes; use devtools::install()
-    (first compile is 10-20 min). Sampling: rstan::sampling(stanmodels$<name>, data=...).
+    pre-compiled at R CMD INSTALL (exposed as stanmodels$<name>). NO cmdstan. A .stan
+    edit (or an rstan/StanHeaders/Makevars change) requires devtools::install() to
+    recompile (first compile 10-20 min); devtools::load_all() does NOT pick up Stan
+    changes. Toggle small RE terms with binary structural flags in one .stan; use a
+    separate .stan only for a different likelihood / major variant. Species IS such a
+    variant: the models differ structurally across species (e.g. Nereocystis weight is
+    Student-t on a log-diameter quadratic, Macrocystis weight is Gamma on log-fronds),
+    so each species gets its own .stan and its own kb_fit_<model>_<species>() wrapper
+    over a shared internal engine (fit_stan()); the S3 class stays model-level
+    (kb_fit_<model>) with the species recorded in meta$species. Rationale:
+    decisions/species-as-variant.md, decisions/engine-choice.md.
   - Fit objects (kb_fit / kb_fit_<type>) store EXTRACTED posterior draws (the posterior
-    package) + sampler diagnostics + data + meta, NOT the live stanfit.
+    package) + diagnostics + data + meta, NOT the live stanfit. niters = saved
+    post-warmup draws per chain (warmup matches; thinned by nthin).
   - Priors are passed as data: hyperparameters go in the Stan data block; the prior
     FAMILY is fixed at compile time. The user-facing surface is structured prior objects
     (kb_prior_normal(), kb_prior_exponential()) returned in a named list by kb_priors_*().
     A prior_only flag (and nObs >= 0) supports prior-only / prior-predictive fits.
   - Validation: every exported argument is validated with chk at entry; user-facing
-    messages use cli. Enumerated args (species, family, uncertainty, by) are character
-    vectors validated with rlang::arg_match(); default is the first value.
-  - Predictions have two orthogonal axes: `by` (character vector of grouping factors)
-    and `uncertainty = c("marginal","typical")` (marginal is the default). Summary
-    functions (kb_predict_*, tidy, coef) carry sig_fig; the _samples() variants return
-    full-precision draws and take no sig_fig. Everything is at site-year resolution
-    (no month dimension).
+    messages use cli. Enumerated args (family, uncertainty, by) are character
+    vectors validated with rlang::arg_match(); default is the first value. Bespoke
+    internal validators follow the bboutools .vld_/.chk_ split: a .vld_<name>() in
+    R/vld.R returns a logical predicate (no messaging), its .chk_<name>() partner in
+    R/chk.R calls it and aborts via cli; every bespoke .chk_ has a matching .vld_
+    (multi-arg chk:: bundles like .chk_sampler_args() are exempt). See CLAUDE.md.
+  - Prediction / derived-quantity engine: posterior rvar over the stored draws; the
+    per-model mean lives in one .<model>_linpred() helper, surfaced through the
+    rstantools generics (posterior_epred / posterior_linpred / posterior_predict /
+    log_lik). Grids built over the observed predictor range/levels; predictors enter on a fixed-reference
+    transform (no rescale step). Two axes: by (character vector of grouping factors)
+    and new_levels = c("sample","average") (sample default for kb_predict_weight,
+    average for kb_predict_weight_by). Raw draws come from
+    the posterior_* generics; there are no _samples() functions. Rationale:
+    decisions/prediction-engine.md.
+  - Summary/output columns use the house convention term / estimate / lower / upper
+    (following bboutools; ssdtools differs, using est / lcl / ucl and a `level` arg).
+    Summary functions (kb_predict_*, tidy, coef) carry conf_level + sig_fig;
+    fitted()/residuals() are plain accessors (numeric vectors, no interval args),
+    with the full posterior available from posterior_epred(). converged()/glance()
+    default to report-mode thresholds rhat = 1.05, esr = 0.1 (esr = effective sample
+    rate = ess_bulk / ndraws).
   - Documentation: roxygen2 with markdown; @inheritParams donor (params.R) for shared args.
-  - Writing (all generated prose: proposals, design, specs, docs): concise technical,
+  - Writing (all generated prose: proposals, design, specs): concise technical,
     scientific register; NO em-dashes or en-dashes (use hyphens, commas, or colons); no
     mid-sentence bold for emphasis; no hedging or filler adverbs ("basically", "essentially",
     "actually"); third-person passive for report-style prose. Follows ~/.claude/CLAUDE.md.
@@ -40,17 +77,20 @@ context: |
     structure + invariants; snapshot only prints and cli messages. Small pre-built fits
     live in tests/testthat/fixtures/ built with rstan::sampling(seed=) (not set.seed);
     slow end-to-end fits use skip_on_cran(). Distribution target is the Hakai R-universe
-    (not CRAN); demo + coastwide data + slim pre-fit models ship in the package data/.
+    (not CRAN); kelpbio's data/ ships only simulated demo data + slim pre-fit models,
+    while the real publicly shared coastwide data and model fits ship in a companion
+    data package (kelpbiodata).
 
 rules:
   proposal:
     - Keep focused; include a Non-goals section.
-    - Reference the relevant design doc rather than restating its content.
+    - Cite the relevant decisions/ ADR or capability spec rather than restating it.
   specs:
     - Express observable behavior as requirements with Given/When/Then scenarios.
     - Describe behavior (signatures, return shapes, errors), not implementation.
   design:
-    - Cite the design doc(s) and capture only decisions/mechanisms not already in them.
+    - Capture rationale specific to this change; cite decisions/ ADRs for cross-cutting
+      decisions rather than restating them.
   tasks:
-    - Ground tasks in the design docs; order pure helpers before install-gated Stan steps.
+    - Order pure helpers before install-gated Stan steps.
     - Mark devtools::install() checkpoints (Stan changes are not picked up by load_all).

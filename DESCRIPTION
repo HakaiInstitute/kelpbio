@@ -5,33 +5,47 @@ Authors@R: c(
     person("Seb", "Dalgarno", , "seb@poissonconsulting.ca", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0002-3658-4517")),
     person("Tula Foundation", role = c("fnd", "cph")))
-Description: Fit Bayesian hierarchical Stan models via 'rstan' to estimate kelp
-    biomass and carbon from in-situ observations, including allometric weight,
-    plant size distribution, density, and wet-to-dry and carbon
-    tissue conversions.
+Description: Fit a Bayesian hierarchical Stan model via 'rstan' to estimate the
+    allometric relationship between kelp weight and size from in-situ
+    observations.
 License: MIT + file LICENSE
 URL: https://github.com/HakaiInstitute/kelpbio,
     https://hakaiinstitute.github.io/kelpbio/
 BugReports: https://github.com/HakaiInstitute/kelpbio/issues
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.3.9000
 Suggests:
+    bayesplot,
     knitr,
+    loo,
     rmarkdown,
-    rlang,
-    testthat (>= 3.0.0)
+    testthat (>= 3.0.0),
+    vdiffr,
+    withr
 VignetteBuilder: knitr
 Config/testthat/edition: 3
 Biarch: true
 Depends:
     R (>= 4.2.0)
-Imports: 
+Imports:
+    callr,
+    chk,
+    cli,
+    dplyr,
+    extras,
+    generics,
+    ggplot2,
     methods,
+    parallel,
+    posterior,
+    purrr,
     Rcpp (>= 0.12.0),
     RcppParallel (>= 5.0.1),
+    rlang,
     rstan (>= 2.32.0),
-    rstantools (>= 2.4.0)
+    rstantools (>= 2.4.0),
+    tibble,
+    universals
 LinkingTo: 
     BH (>= 1.66.0),
     Rcpp (>= 0.12.0),
@@ -40,3 +54,5 @@ LinkingTo:
     rstan (>= 2.32.0),
     StanHeaders (>= 2.32.0)
 SystemRequirements: GNU make
+LazyData: true
+Config/roxygen2/version: 8.0.0

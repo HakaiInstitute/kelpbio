@@ -1,0 +1,18 @@
+#' Autoplot Method for Predictions
+#'
+#' The conventional `ggplot2::autoplot` entry point for a `kb_predictions`
+#' object: a thin wrapper on [kb_plot_predictions()]. Dispatches on the
+#' prediction data frame, never on a fit.
+#'
+#' @param object A `kb_predictions` object.
+#' @param ... Passed to [kb_plot_predictions()] (e.g. `x`, `observed`).
+#'
+#' @return A `ggplot` object.
+#' @family prediction
+#' @exportS3Method ggplot2::autoplot
+#' @examples
+#' p <- kb_predict_weight_by(fit_weight_sim_nereo, by = "site")
+#' ggplot2::autoplot(p)
+autoplot.kb_predictions <- function(object, ...) {
+  kb_plot_predictions(object, ...)
+}

@@ -8,6 +8,76 @@
 \title{Parameter Descriptions for Package}
 \arguments{
 \item{...}{These dots are for future extensions and must be empty.}
+
+\item{data}{A data frame of weight observations (see
+\code{\link[=kb_check_data_weight_nereo]{kb_check_data_weight_nereo()}} for the required columns).}
+
+\item{priors}{A named list of prior objects (see \code{\link[=kb_priors_weight_nereo]{kb_priors_weight_nereo()}}), or
+\code{NULL} to use the defaults. Supplied entries override the corresponding
+defaults; unspecified entries keep their defaults.}
+
+\item{prior_only}{A flag specifying whether to sample from the priors only
+(the likelihood is switched off), for prior predictive checks.}
+
+\item{chains}{A whole number of MCMC chains.}
+
+\item{niters}{A whole number of saved post-warmup draws per chain (warmup
+defaults to match).}
+
+\item{nthin}{A whole number giving the thinning interval.}
+
+\item{cores}{A whole number of cores for parallel chains, or \code{NULL} to use
+\code{getOption("mc.cores")} (falling back to \code{chains}), capped at the available
+cores.}
+
+\item{seed}{A whole number passed to \code{\link[rstan:sampling]{rstan::sampling()}} to make the fit
+reproducible, or \code{NULL} (the default). When \code{NULL}, a seed is drawn from R's
+RNG, so a preceding \code{set.seed()} also makes the fit reproducible; an explicit
+\code{seed} takes precedence over the RNG state.}
+
+\item{progress}{A string, one of \code{"bar"} (the default, a console progress
+bar), \code{"verbose"} (rstan's per-iteration output and diagnostic warnings), or
+\code{"none"} (silent). Controls fit-time console output only.}
+
+\item{progress_dir}{A string giving an existing directory in which to write a
+pollable progress artifact (read by \code{\link[=kb_fit_progress]{kb_fit_progress()}}), or \code{NULL} (the
+default) to write none.}
+
+\item{conf_level}{A number between 0 and 1 giving the compatibility-interval
+level.}
+
+\item{estimate}{A function that reduces a numeric vector of posterior draws to
+a scalar point estimate (e.g. \code{median} or \code{mean}).}
+
+\item{sig_fig}{A whole number of significant figures for summary output.}
+
+\item{include_random_effects}{A flag specifying whether to include the
+group-level random-effect terms in the output.}
+
+\item{rhat}{A number giving the maximum acceptable Rhat.}
+
+\item{esr}{A number giving the minimum acceptable effective sample rate
+(effective sample size divided by the number of draws).}
+
+\item{by}{A character vector of grouping factors, each drawn as a separate
+curve, or \code{NULL} for a single population-level curve. Each named factor is
+expanded over its observed levels and conditioned on its estimated random
+effects.}
+
+\item{new_levels}{A string, one of \code{"sample"} or \code{"average"}, controlling how
+random effects that are not conditioned on are treated (factors absent from
+the prediction, and any new level not seen in the fit). \code{"sample"} draws a
+new random effect from \code{Normal(0, sd)}, widening the interval to include
+between-group variation; \code{"average"} holds the random effects at zero,
+giving the typical group. Known levels are always conditioned on. \code{"sample"}
+draws fresh randomness on each call, so set a seed with \code{set.seed()} for a
+reproducible interval.}
+
+\item{representative_site}{A character vector of site levels present in the
+fit, or \code{NULL} (the default). When supplied, a new or absent site takes its
+site main effects (intercept and slope) from the named reference site (the
+per-draw average when several are named), instead of the \code{new_levels}
+treatment; the \code{site:year} interaction still follows \code{new_levels}.}
 }
 \description{
 Default parameter descriptions which may be overridden in individual

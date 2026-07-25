@@ -2,7 +2,7 @@
 
 kelpbio is at usethis template stage with no Bayesian engine: there is no `src/`, `inst/stan/`, `configure`, or `R/stanmodels.R`. Every model in the package depends on a working rstan/rstantools build, and that build (first compile 10-20 min, C++17 toolchain, version coupling, Apple-Silicon fragility) is the single highest-risk, slowest-feedback part of the whole package. It must be stood up and proven on its own before any `kb_` API is layered on top.
 
-This is Change A of the weight-model vertical slice; it delivers the build infrastructure only, validated end-to-end with one real (simplified) Stan model as the compile smoke-test. See `docs/bayesian-engine.md` and `docs/vertical-slice.md`.
+This is Change A of the weight-model vertical slice; it delivers the build infrastructure only, validated end-to-end with one real (simplified) Stan model as the compile smoke-test. See `decisions/engine-choice.md` and `openspec/specs/stan-engine/spec.md`.
 
 ## What Changes
 
@@ -10,7 +10,7 @@ This is Change A of the weight-model vertical slice; it delivers the build infra
 - Reconcile the generated `DESCRIPTION`/`NAMESPACE` with the existing stub (keep author/ORCID; set real Title/Description/license; pin `rstan` and `StanHeaders (>= 2.32.0)`).
 - Add `inst/stan/weight.stan` as the compile smoke-test: a site-intercept-only allometric model following the priors-as-data, `prior_only`, and marginal/typical conventions (the real Stan source the weight model will use; the `kb_` wrapper around it is deferred to Change B).
 - Verify the build end-to-end: `devtools::install()` succeeds and `kelpbio::stanmodels$weight` is samplable via `rstan::sampling()`.
-- Add a GitHub Actions R-CMD-check workflow (macOS/Linux/Windows) with package-library caching; record the first-install timing in `docs/bayesian-engine.md`.
+- Add a GitHub Actions R-CMD-check workflow (macOS/Linux/Windows) with package-library caching; record the first-install timing in `decisions/engine-choice.md`.
 
 ## Capabilities
 

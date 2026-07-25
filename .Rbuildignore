@@ -3,6 +3,7 @@
 ^\.github$
 ^data-raw$
 ^docs$
+^README\.html$
 ^pkgdown$
 ^revdep$
 ^scripts$
@@ -17,3 +18,6 @@
 ^\.claude$
 ^CLAUDE\.md$
 ^jarl\.toml$
+^[.]?air[.]toml$
+^\.vscode$
+^decisions$

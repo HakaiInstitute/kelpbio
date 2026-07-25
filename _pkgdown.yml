@@ -7,3 +7,48 @@ template:
     link-color: "#aa2025"
     navbar-bg: "#2c3e50"
     navbar-dark: true
+
+reference:
+- title: "Fitting Models"
+  desc: "Fit Bayesian Stan models."
+  contents:
+    - kb_fit_weight_nereo
+    - kb_fit_progress
+- title: "Priors"
+  desc: "Specify priors for model parameters."
+  contents:
+    - kb_priors_weight_nereo
+    - kb_prior_normal
+    - kb_prior_exponential
+- title: "Data"
+  desc: "Validate and explore input data."
+  contents:
+    - kb_check_data_weight_nereo
+    - data_weight_sim_nereo
+    - fit_weight_sim_nereo
+- title: "Predictions and Plotting"
+  desc: "Predict and visualise model output."
+  contents:
+    - kb_predict_weight
+    - kb_predict_weight_by
+    - kb_plot_predictions
+- title: "Model Summaries and Diagnostics"
+  desc: "Summarise fits, extract coefficients and draws, and assess convergence."
+  contents:
+    - samples
+    - kb_stancode
+    - tidy.kb_fit_weight
+    - coef.kb_fit
+    - glance.kb_fit
+    - summary.kb_fit
+    - augment.kb_fit
+    - converged.kb_fit
+    - prior_summary.kb_fit
+    - log_lik.kb_fit
+    - fitted.kb_fit_weight
+    - residuals.kb_fit_weight
+    - predict.kb_fit_weight
+    - posterior_epred.kb_fit_weight
+    - posterior_linpred.kb_fit_weight
+    - posterior_predict.kb_fit_weight
+    - autoplot.kb_predictions

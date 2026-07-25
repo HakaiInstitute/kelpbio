@@ -21,11 +21,11 @@ A compiled model SHALL be samplable through `rstan::sampling(stanmodels$<name>, 
 #### Scenario: Sampling the weight smoke-test model returns a stanfit
 
 - **WHEN** `rstan::sampling()` is called on `stanmodels$weight` with a valid data list (observation vectors, factor indices, and prior hyperparameters)
-- **THEN** it returns a `stanfit` object containing the parameters `bWeight30`, `bDiameter`, `sSite`, `sWeight`, and the per-site vector `bSite`
+- **THEN** it returns a `stanfit` object containing the parameters `bWeight`, `bDiameter`, `sSite`, `sWeight`, and the per-site vector `bSite`
 
 ### Requirement: The weight smoke-test model follows the engine conventions
 
-The bundled `inst/stan/weight.stan` SHALL implement the site-intercept-only allometric structure with priors passed as data, a likelihood guard, and both prediction terms, per `docs/bayesian-engine.md` and `docs/vertical-slice.md`.
+The bundled `inst/stan/weight.stan` SHALL implement the site-intercept-only allometric structure with priors passed as data, a likelihood guard, and both prediction terms, per `decisions/engine-choice.md` and `openspec/specs/stan-engine/spec.md`.
 
 #### Scenario: Prior hyperparameters are read from the data block
 

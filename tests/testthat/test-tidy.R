@@ -1,0 +1,38 @@
+test_that("tidy returns house columns and omits group-level terms by default", {
+  t <- tidy(weight_fit)
+  expect_s3_class(t, "tbl_df")
+  expect_named(t, c("term", "estimate", "lower", "upper"))
+  # default include_random_effects = FALSE -> per-level deviations absent
+  expect_false(any(grepl("^bSite\\[", t$term)))
+  expect_setequal(
+    t$term,
+    c(
+      "bWeight",
+      "bDiameter",
+      "bDiameter2",
+      "sSite",
+      "sSiteDiameter",
+      "sSiteYear",
+      "sWeight"
+    )
+  )
+})
+
+test_that("include_random_effects = TRUE adds the group-level deviations", {
+  t <- tidy(weight_fit, include_random_effects = TRUE)
+  expect_true(any(grepl("^bSite\\[", t$term)))
+})
+
+test_that("tidy forwards conf_level/estimate/sig_fig to the summariser", {
+  # behaviour is proven in test-summarise.R; here just confirm each arg is passed
+  wide <- tidy(weight_fit, conf_level = 0.99)
+  narrow <- tidy(weight_fit, conf_level = 0.80)
+  i <- match("bWeight", wide$term)
+  expect_gt(wide$upper[i] - wide$lower[i], narrow$upper[i] - narrow$lower[i])
+  expect_false(isTRUE(all.equal(
+    tidy(weight_fit, estimate = mean)$estimate,
+    tidy(weight_fit)$estimate
+  )))
+  t2 <- tidy(weight_fit, sig_fig = 2)
+  expect_equal(t2$estimate, signif(t2$estimate, 2))
+})

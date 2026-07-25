@@ -12,6 +12,10 @@
 - **WHEN** the prediction's predictor is continuous (an allometric weight-vs-diameter curve) and `style = NULL`
 - **THEN** it draws a line with a credible-interval ribbon
 
+#### Scenario: Publication-ready axis titles
+- **WHEN** `kb_plot_predictions()` labels the axes
+- **THEN** it uses descriptive titles for the known model variables (e.g. `Sub-bulb diameter`, `Wet weight`, `Site`) rather than the raw column names; units are not asserted in the labels (the weight model is unit-flexible), though a unit is appended in parentheses if one is supplied on the prediction's metadata
+
 ### Requirement: Metadata-driven, overridable defaults
 
 `x`, `style`, and `facet` SHALL default to `NULL` and be inferred from the prediction's metadata, while remaining overridable arguments.
@@ -31,3 +35,11 @@
 #### Scenario: Observed points overlaid
 - **WHEN** `observed = kb_data_weight` is supplied
 - **THEN** the plot adds a points layer of the raw observations aligned to the prediction's axes
+
+### Requirement: autoplot method on predictions
+
+`autoplot.kb_predictions()` SHALL provide the conventional `ggplot2::autoplot` entry point, dispatching on the `kb_predictions` data frame (via its stored column-role attributes) and wrapping `kb_plot_predictions()`. It SHALL NOT dispatch on a fit object, preserving the rule that plotting functions take data frames, not fits.
+
+#### Scenario: autoplot on a kb_predictions object
+- **WHEN** `autoplot(predictions)` is called on a `kb_predictions` object
+- **THEN** it returns the same `ggplot` as `kb_plot_predictions(predictions)`, inferring `x`/`style`/`facet` from the stored metadata

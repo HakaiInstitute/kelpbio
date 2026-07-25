@@ -24,12 +24,6 @@ rstantools::rstan_config()
 
 roxygen2md::roxygen2md()
 
-styler::style_pkg(
-  scope = "line_breaks",
-  filetype = c("R", "Rmd"),
-  exclude_files = "R/stanmodels.R"
-)
-
 devtools::document()
 devtools::test()
 

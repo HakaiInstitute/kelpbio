@@ -1,53 +1,68 @@
+> Note: tasks 0-10 were implemented against the original (broom-flavoured, rvar-`_samples`) design.
+> This change realigns the surface to the `generics`/`stats`/`base`/`universals`/`rstantools` generics
+> and the house vocabulary (see `decisions/prediction-engine.md`). Items reopened below (`[ ]`) need rework; pure
+> helpers unaffected by the realignment stay `[x]`.
+
+## 0. Stan source — full weight model (install-gated)
+
+- [x] 0.1 `inst/stan/weight.stan`: define the mean `log_eWeight` **once** in `transformed parameters`; replace the dead `typical`/`marginal` generated quantities with `log_lik[i] = student_t_lpdf(log_weight[i] | nu, log_eWeight[i], sWeight)` and `yrep[i] = exp(student_t_rng(nu, log_eWeight[i], sWeight))` (both reuse `log_eWeight`; loops are no-ops when `nObs == 0`). Keep priors-as-data, the `prior_only` guard, and all parameters.
+- [x] 0.2 **Checkpoint:** `devtools::install()` to recompile; confirm `rstan::sampling(stanmodels$weight, ...)` returns a stanfit exposing the parameters plus `log_lik` and `yrep`.
+
 ## 1. Dependencies and shared scaffolding
 
-- [ ] 1.1 Add Imports to `DESCRIPTION`: chk, cli, rlang, posterior, generics, universals, ggplot2, tibble, dplyr
-- [ ] 1.2 Set up `R/params.R` as the `@inheritParams` donor for shared args (`data`, `species`, `priors`, `prior_only`, `chains`, `iter`, `nthin`, `cores`, `quiet`, `conf_level`, `estimate`, `sig_fig`, `by`, `uncertainty`)
-- [ ] 1.3 Re-export the broom/universals generics (`tidy`, `glance`, `augment`, `converged`, `samples`, `rhat`, `ess`, `nobs`, `nchains`, `niters`, `npars`, `nterms`, `pars`)
+- [x] 1.1 `DESCRIPTION` Imports: add `rstantools`; keep chk, cli, rlang, posterior, newdata, generics, universals, ggplot2, tibble, dplyr. Add `loo` and `bayesplot` to Suggests (for the `loo`/`pp_check` examples).
+- [x] 1.2 `R/params.R` donor: rename `iter` → `niters`; ensure `estimate`, `sig_fig`, `conf_level`, `by`, `uncertainty`, `rhat`, `esr`, `include_random_effects` are documented.
+- [x] 1.3 Re-export generics: `generics` (`tidy`/`glance`/`augment`), `universals` (`converged`/`rhat`/`esr`/`npars`/`nterms`/`nchains`/`niters`/`pars`/`estimates`), `rstantools` (`posterior_epred`/`posterior_linpred`/`posterior_predict`/`log_lik`/`prior_summary`), `ggplot2` (`autoplot`); kelpbio's own `samples`. Drop the bespoke `ess` generic (use `universals::esr`).
 
 ## 2. Data (pure)
 
-- [ ] 2.1 `R/kb_check_data_weight.R` — chk validation of `diameter`, `weight`, `site`, `year` (+ cli errors); 1:1 test with snapshot of the cli messages
-- [ ] 2.2 `data-raw/kb_data_weight.R` — build a small simulated/anonymized dataset; `usethis::use_data(kb_data_weight)`; test it passes `kb_check_data_weight()`
+- [x] 2.1 `R/kb_check_data_weight.R` — rewrite with `chk` validators (bboudata conventions): `chk_superset` for columns, `chk_character_or_factor` for `site`/`year`, `chk_numeric` + positivity for `diameter`/`weight`, `chk_not_any_na`; column-qualified messages. Update test (snapshot the chk errors).
+- [x] 2.2 `data-raw/kb_data_weight.R` — simulated dataset spanning sites/years incl. a missing site-year cell (still valid).
 
-## 3. Priors (pure)
+## 3. Priors (pure) — unchanged
 
-- [ ] 3.1 `R/kb_prior_normal.R`, `R/kb_prior_exponential.R` — constructors + chk validation + print methods (snapshot prints)
-- [ ] 3.2 `R/kb_priors_weight.R` — named default list (`intercept`, `diameter`, `sd_site`, `sd_residual`); tests for structure/defaults
+- [x] 3.1 `R/kb_prior_normal.R`, `R/kb_prior_exponential.R` — constructors + chk + print.
+- [x] 3.2 `R/kb_priors_weight.R` — named default list.
 
-## 4. Prior + data assembly (pure — highest bug density)
+## 4. Prior + data assembly (pure) — unchanged
 
-- [ ] 4.1 `R/resolve_priors.R` — merge overrides into defaults; validate names ⊆ defaults, family match (class equality), hyperparameter ranges; cli on mismatch; full unit tests
-- [ ] 4.2 `R/assemble_stan_data.R` — map resolved priors + data to the Stan data list (`prior_*` hyperparameters, `nObs`, `nsite`, integer `site`, `weight`, `log(diameter/30)`, `prior_only`); unit tests including `nObs == 0`
+- [x] 4.1 `R/resolve_priors.R`
+- [x] 4.2 `R/assemble_stan_data.R`
 
 ## 5. Fitting (install-gated)
 
-- [ ] 5.1 `R/kb_fit_weight.R` — wire pure helpers + single `rstan::sampling()` (translate `iter`/warmup/`nthin`, `cores` parallel, `quiet`); `new_kb_fit_weight()` constructor that extracts draws via `posterior`, captures diagnostics + stancode, discards the stanfit; returns `c("kb_fit_weight","kb_fit")`
-- [ ] 5.2 Layer-3 test (`skip_on_cran`): a real fit on tiny data returns a correctly-structured object (classes, draws present, stanfit absent); a `prior_only = TRUE` fit ignores the data
+- [x] 5.1 `R/kb_fit_weight.R` — rename `iter` → `niters` (saved draws/chain; translate to rstan `iter`/`warmup`/`thin`); `quiet = FALSE` default that shows sampling progress (`refresh`) but suppresses other Stan messages and the HMC diagnostic warnings via a local `withCallingHandlers` (no global option). `new_kb_fit_weight()` additionally keeps the `log_lik` and `yrep` draws.
+- [x] 5.2 Layer-3 test (`skip_on_cran`): correctly-structured object incl. `log_lik`/`yrep` draws; `niters(fit)` equals `niters`; `prior_only = TRUE` ignores data.
 
 ## 6. Test fixtures
 
-- [ ] 6.1 `tests/testthat/fixtures/make-fixtures.R` — build a tiny seeded `weight_fit.rds` via `rstan::sampling(seed = ...)` (header documents: requires `devtools::install()`, re-run on Stan change)
-- [ ] 6.2 `tests/testthat/helper-fixtures.R` — load the fixture(s) and any custom expectations
+- [x] 6.1 Rebuild `tests/testthat/fixtures/weight_fit.rds` against the recompiled model (now carrying `log_lik`/`yrep`).
+- [x] 6.2 `tests/testthat/helper-fixtures.R`
 
 ## 7. Summaries and diagnostics (on fixture)
 
-- [ ] 7.1 `R/samples.R` + `R/accessors.R` (`rhat`/`ess`/`nobs`/`nchains`/`niters`/`npars`/`nterms`/`pars`) + `R/kb_stancode.R`
-- [ ] 7.2 `R/tidy.R`, `R/coef.R`, `R/glance.R` (thresholds `rhat`/`ess`), `R/converged.R`
-- [ ] 7.3 `R/augment.R` (`.fitted`/`.resid`/`.lower`/`.upper`, full precision) and `R/print.R` (stable metadata, snapshot)
-- [ ] 7.4 Tests: structure + invariants for numeric output; snapshot prints/messages only
+- [x] 7.1 `R/summarise.R` — shared draws-summariser producing `term`/`estimate`/`lower`/`upper` (empirical `quantile2`, `estimate` fn, `sig_fig` rounding). `R/samples.R` + `R/accessors.R` (`rhat`, **`esr`** = `ess_bulk/ndraws`, `nobs`, `nchains`, `niters`, `npars`, `nterms`, `pars`, `estimates`) + `R/kb_stancode.R`.
+- [x] 7.2 `R/tidy.R` (`term`/`estimate`/`lower`/`upper`; args `conf_level`/`estimate`/`sig_fig`/`include_random_effects`), `R/coef.R` (pure wrapper on `tidy`), `R/glance.R` (columns `n,K,nchains,niters,nthin,ess,rhat,converged`), `R/converged.R` (`rhat`/`esr` thresholds, defaults `1.05`/`0.1`).
+- [x] 7.3 `R/augment.R` (`fitted`/`residual`/`lower`/`upper`, no dot prefix, full precision, via `.weight_linpred`), `R/print.R` (stable metadata, snapshot), `R/summary.R` (classed `summary_kb_fit` + print).
+- [x] 7.4 Tests: structure + invariants; snapshot prints/messages only; assert house column names.
+- [x] 7.5 Align `summary.kb_fit` with the `brms`/`rstanarm` idiom: a metadata header (likelihood family, model formula, observation/group counts, sampler draws, convergence verdict), the coefficient table gaining `rhat`/`ess_bulk`/`ess_tail` from the stored diagnostics, an `include_random_effects` arg (default `FALSE`) toggling the per-level deviations, and a diagnostics footer. Flip the `tidy()`/`coef()` `include_random_effects` default to `FALSE` to match (`broom.mixed` convention). Update `openspec/specs/summaries` + this change's delta and the summary/tidy tests.
+- [x] 7.7 Default the sampler to `adapt_delta = 0.95` (raised above Stan's 0.8 for the hierarchical geometry) inside `kb_fit_weight()`, merging any user-supplied `control` (via `...`) over the default so `adapt_delta` is overridable and other control entries (e.g. `max_treedepth`) compose without dropping it. `adapt_delta` is deliberately not a first-class argument (kept off the typical-user surface). Update `openspec/specs/fitting` + this change's delta.
+- [x] 7.6 Make the weight model unit-flexible by centering log-diameter at the geometric mean of the observed diameter (passed to Stan as `diameter_ref` data, stored in `meta$diameter_ref`) instead of a fixed 30. Centering in log space is scale-invariant, so the diameter unit no longer affects the fit or predictions; the data columns therefore keep their plain names `diameter`/`weight` (an earlier `diameter_mm`/`weight_kg` rename is reverted). Rename the intercept `bWeight30` -> `bWeight` (no longer "weight at 30 mm"). Recompile Stan (`inst/stan/weight.stan`: `diameter_ref` in the data block, `log_diameter_ref = log(diameter_ref)`, parameter `bWeight`). Threads through `assemble_stan_data` (new `weight_diameter_ref()` helper), `kb_fit_weight`/`new_kb_fit_weight` (meta, param vars), `.weight_linpred`, tidy term list, the `summary` formula (now symbolic `log(diameter/d0)` with a reported `d0`), and the plot axis labels (unit-free). Refit `fit_weight`/`weight_fit` (MCMC, re-parameterized). Update `openspec/specs/{data,predictions,stan-engine,fitting,summaries,plotting}` + deltas, tests, demos, and the snapshots.
 
-## 8. Predictions (on fixture)
+## 8. Prediction engine + generics (on fixture)
 
-- [ ] 8.1 `R/kb_predictions.R` — `kb_predictions` subclass constructor + metadata attributes + `print` method
-- [ ] 8.2 `R/kb_predict_weight.R` — R-side typical/marginal reconstruction, `by`/`uncertainty` axes (arg_match), auto-sequence when `new_data = NULL`, the marginal-requires-omitted-RE guard; `kb_predict_weight_samples()` returns the draws container; the summary is the summariser over the samples (one codepath)
-- [ ] 8.3 Tests (invariants): lower ≤ estimate ≤ upper; weight > 0; marginal width ≥ typical; wider `conf_level` → wider interval; `new_data = NULL` spans observed range; `kb_predictions` metadata present
+- [x] 8.1 `R/weight_linpred.R` — internal `.weight_linpred(fit, newdata, by, uncertainty)` returning an `rvar` (log scale): observed-level for factors in `by`, `rvar_rng` hyperprior draw (`marginal`) / zero (`typical`) for omitted factors; valid `by` set `NULL`/`"site"`/`c("site","year")`; reject `by = "year"`; marginal-requires-omitted-RE guard; `newdata::xnew_data` when `new_data = NULL` (fixed `log(diameter/30)`, no rescale).
+- [x] 8.2 `R/posterior_linpred.R`/`R/posterior_epred.R`/`R/posterior_predict.R`/`R/log_lik.R`/`R/prior_summary.R` — thin faces over `.weight_linpred` (matrix `D x N`); `posterior_predict` adds Student-t noise and returns stored `yrep` when `newdata = NULL`; `log_lik` returns the stored pointwise matrix.
+- [x] 8.3 `R/kb_predictions.R` (subclass + metadata attrs + print) and `R/kb_predict_weight.R` (summariser over `posterior_epred`; `kb_predictions` with `estimate`/`lower`/`upper`). Remove `kb_predict_weight_samples()`. `R/predict.R` — `predict.kb_fit_weight` wraps `kb_predict_weight`.
+- [x] 8.4 Tests (invariants): lower ≤ estimate ≤ upper; weight > 0; marginal width ≥ typical; wider `conf_level` → wider interval; `by = "site"` one curve per site, `c("site","year")` one per site-year; marginal + `c("site","year")` errors; `by = "year"` errors; `new_data = NULL` spans observed range; `posterior_epred`/`posterior_predict` return `D x N`; `log_lik` feeds `loo::loo`.
 
 ## 9. Plotting (on fixture)
 
-- [ ] 9.1 `R/kb_plot_predictions.R` — ggplot from `kb_predictions`; ribbon for continuous predictor; metadata-driven `x`/`style`/`facet` with overrides + graceful fallback; optional `observed` overlay
-- [ ] 9.2 Tests: structure assertions (ggplot class, layers, mappings) + a sparse `vdiffr` doppelganger
+- [x] 9.1 `R/kb_plot_predictions.R` (unchanged contract) + `R/autoplot.R` — `autoplot.kb_predictions` wraps it (dispatch on the data frame, never a fit).
+- [x] 9.2 Tests: structure assertions + sparse `vdiffr`; `autoplot` equals `kb_plot_predictions`.
 
 ## 10. Documentation and check
 
-- [ ] 10.1 roxygen for all exports (plain-language `marginal`/`typical`); a prior-predictive example (`prior_only = TRUE` → predict → plot)
-- [ ] 10.2 `devtools::document()`; `R CMD check` clean; confirm 1:1 test mirroring
+- [x] 10.1 roxygen for all exports (plain-language `marginal`/`typical`); a prior-predictive example; a `pp_check`/`loo` demonstration in a vignette; ensure `decisions/prediction-engine.md` matches the implemented surface.
+- [x] 10.2 `devtools::document()`; `R CMD check` clean; confirm 1:1 test mirroring.
+- [x] 10.3 Package-review follow-ups (`poissonconsulting/kelpbio#1`, `#5`): the Get started vignette becomes a worked example that runs live against the bundled `fit_weight_sim_nereo` (only the `kb_fit_weight_nereo()` call left `eval = FALSE`), and `_pkgdown.yml` lists the reference topics explicitly instead of `matches("\\.")`. Update the `openspec/specs/website` requirements + this change's delta.

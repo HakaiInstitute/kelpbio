@@ -18,11 +18,15 @@
 
 ### Requirement: Default weight priors
 
-`kb_priors_weight(species)` SHALL return a named list of prior objects for the weight model with entries `intercept`, `diameter`, `sd_site`, and `sd_residual`.
+`kb_priors_weight(species)` SHALL return a named list of prior objects for the full weight model with entries `intercept`, `diameter`, `diameter2`, `sd_site`, `sd_site_diameter`, `sd_site_year`, and `sd_residual`.
 
 #### Scenario: Returns the default named prior list
 - **WHEN** `kb_priors_weight()` is called
-- **THEN** it returns a named list with `intercept` and `diameter` as `normal` priors and `sd_site` and `sd_residual` as `exponential` priors
+- **THEN** it returns a named list with `intercept`, `diameter`, and `diameter2` as `normal` priors and `sd_site`, `sd_site_diameter`, `sd_site_year`, and `sd_residual` as `exponential` priors
+
+#### Scenario: Defaults match the validated analysis model
+- **WHEN** `kb_priors_weight()` is called with the default species
+- **THEN** the entries are `intercept = normal(0, 2)`, `diameter = normal(2, 1)`, `diameter2 = normal(0, 0.5)`, and `sd_site`, `sd_site_diameter`, `sd_site_year`, `sd_residual` each `exponential(1)`
 
 #### Scenario: List is editable and round-trips into a fit
 - **WHEN** a user modifies one entry (e.g. `p$sd_site <- kb_prior_exponential(2)`) and passes `p` to `kb_fit_weight(priors = p)`

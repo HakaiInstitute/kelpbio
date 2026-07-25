@@ -1,0 +1,25 @@
+test_that("accessors return expected shapes", {
+  expect_type(rhat(weight_fit), "double")
+  expect_type(esr(weight_fit), "double")
+  expect_true(all(esr(weight_fit) > 0))
+  expect_type(estimates(weight_fit), "double")
+  expect_equal(nobs(weight_fit), nrow(weight_fit$data))
+  expect_equal(nchains(weight_fit), 2L)
+  expect_equal(npars(weight_fit), length(pars(weight_fit)))
+  expect_true(nterms(weight_fit) > npars(weight_fit))
+  expect_setequal(
+    pars(weight_fit),
+    c(
+      "bWeight",
+      "bDiameter",
+      "bDiameter2",
+      "sSite",
+      "sSiteDiameter",
+      "sSiteYear",
+      "sWeight",
+      "bSite",
+      "bSiteDiameter",
+      "bSiteYear"
+    )
+  )
+})

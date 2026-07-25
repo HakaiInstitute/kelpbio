@@ -12,7 +12,7 @@ The package SHALL include a `_pkgdown.yml` that builds a Bootstrap 5 site using 
 #### Scenario: The navbar carries the shared Hakai branding
 
 - **WHEN** the `pkgdown/` directory is inspected
-- **THEN** it contains `templates/navbar.html` and `assets/hakai.png`, and the navbar template renders the Hakai logo as a link to `https://www.hakai.org`
+- **THEN** it contains `templates/navbar.html`, `assets/hakai.png`, and a placeholder `favicon/` set, and the navbar template renders the Hakai logo as a link to `https://www.hakai.org`
 
 ### Requirement: The site builds without error
 
@@ -23,10 +23,24 @@ Running pkgdown over the installed package SHALL produce a complete static site,
 - **WHEN** `pkgdown::build_site()` (or `build_site_github_pages()`) is run against the installed package
 - **THEN** it completes without error and writes a site whose navbar includes a "Get started" entry sourced from `vignettes/kelpbio.Rmd`
 
-#### Scenario: The Get started vignette is a valid, minimal article
+#### Scenario: The Get started vignette demonstrates the kb_ API
 
 - **WHEN** `vignettes/kelpbio.Rmd` is inspected
-- **THEN** it is a valid `rmarkdown::html_vignette` with a `\VignetteIndexEntry` and contains only placeholder overview prose (no evaluated `kb_*()` code), so it renders cleanly while the API is unbuilt
+- **THEN** it is a valid `rmarkdown::html_vignette` with a `\VignetteIndexEntry`, a package overview, and illustrative `kb_*()` usage in non-evaluated chunks (`eval = FALSE`), so it renders without a compiled package or a live Stan fit
+
+### Requirement: The reference index is organized into thematic sections
+
+`_pkgdown.yml` SHALL organize the function reference into titled thematic sections so every exported function appears under a section rather than in a single flat list, and exported functions SHALL carry `@family` tags so related functions cross-reference each other in their See Also. Any new exported function must be added to a section (or matched by an existing pattern) so the reference index stays complete.
+
+#### Scenario: The reference config declares thematic sections
+
+- **WHEN** `_pkgdown.yml` is inspected
+- **THEN** it declares a `reference:` block with titled sections (fitting, priors, data, predictions and plotting, and model summaries and diagnostics) and a `matches("\\.")` entry that captures the S3 method topics
+
+#### Scenario: Every export maps to a section
+
+- **WHEN** the pkgdown reference index is built
+- **THEN** every exported function maps to exactly one section and pkgdown reports no topics missing from the index
 
 ### Requirement: CI builds and deploys the site
 
