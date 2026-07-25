@@ -6,6 +6,11 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>Get started with kelpbio • kelpbio</title>
+<!-- favicons --><link rel="icon" type="image/png" sizes="96x96" href="../favicon-96x96.png">
+<link rel="icon" type="”image/svg+xml”" href="../favicon.svg">
+<link rel="apple-touch-icon" sizes="180x180" href="../apple-touch-icon.png">
+<link rel="icon" sizes="any" href="../favicon.ico">
+<link rel="manifest" href="../site.webmanifest">
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet">
 <script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
@@ -62,13 +67,182 @@
 
     
     
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/HakaiInstitute/kelpbio" class="external-link">kelpbio</a></span><span class="op">)</span></span></code></pre></div>
 <p>kelpbio fits Bayesian hierarchical Stan models to estimate kelp
-biomass and carbon from field measurements, combining allometric weight,
-plant size distribution, density, and wet-to-dry and carbon tissue
-conversions. This article will walk through a complete worked example
-once the modelling functions are available; for now it serves as a
-placeholder while the package API is under development.</p>
-  </main>
+biomass from field measurements. This article walks through the
+allometric weight model for <em>Nereocystis luetkeana</em>, which
+relates wet weight to sub-bulb diameter with random effects for site and
+site-by-year. Further biomass components (plant size distribution,
+density, and wet-to-dry and carbon tissue conversions) are in
+development.</p>
+<p>Under the hood, models are fitted with <a href="https://mc-stan.org/rstan/" class="external-link">rstan</a>. The Stan code is
+pre-compiled when the package is installed, so no separate Stan
+installation is required.</p>
+<div class="section level2">
+<h2 id="providing-data">Providing data<a class="anchor" aria-label="anchor" href="#providing-data"></a>
+</h2>
+<p>The weight model is fitted to a data frame with a numeric
+<code>diameter</code>, a numeric <code>weight</code>, and
+<code>site</code> and <code>year</code> grouping factors. A small
+simulated dataset is included with the package:</p>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">data_weight_sim_nereo</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 234 × 4</span></span></span>
+<span><span class="co">#&gt;    diameter weight site  year </span></span>
+<span><span class="co">#&gt;       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span> <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span>     53.8  0.412 site1 2019 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span>     38.2  0.183 site1 2019 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span>     25.2  0.059 site1 2019 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span>     54.5  0.523 site1 2019 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span>     25.6  0.06  site1 2019 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span>     49.5  0.411 site1 2019 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span>     63.7  0.693 site2 2019 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span>     32.6  0.144 site2 2019 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span>     44.5  0.166 site2 2019 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span>     58    0.457 site2 2019 </span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 224 more rows</span></span></span></code></pre></div>
+<p><code><a href="../reference/kb_check_data_weight_nereo.html">kb_check_data_weight_nereo()</a></code> confirms the data are in
+the expected format, returning the data invisibly if the checks pass and
+raising an informative error otherwise:</p>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/kb_check_data_weight_nereo.html">kb_check_data_weight_nereo</a></span><span class="op">(</span><span class="va">data_weight_sim_nereo</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div class="section level2">
+<h2 id="fitting-the-model">Fitting the model<a class="anchor" aria-label="anchor" href="#fitting-the-model"></a>
+</h2>
+<p><code><a href="../reference/kb_fit_weight_nereo.html">kb_fit_weight_nereo()</a></code> fits the model. Set
+<code>progress = "none"</code> to silence the sampler’s console output,
+and <code>seed</code> for a reproducible fit.</p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/kb_fit_weight_nereo.html">kb_fit_weight_nereo</a></span><span class="op">(</span></span>
+<span>  <span class="va">data_weight_sim_nereo</span>,</span>
+<span>  chains <span class="op">=</span> <span class="fl">2</span>,</span>
+<span>  niters <span class="op">=</span> <span class="fl">400</span>,</span>
+<span>  seed <span class="op">=</span> <span class="fl">42</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<p>The short run above keeps the example quick; for a real analysis use
+the defaults (<code>chains = 4</code>, <code>niters = 1000</code>) or
+more.</p>
+</div>
+<div class="section level2">
+<h2 id="checking-convergence">Checking convergence<a class="anchor" aria-label="anchor" href="#checking-convergence"></a>
+</h2>
+<p><code><a href="https://generics.r-lib.org/reference/glance.html" class="external-link">glance()</a></code> returns a one-row summary of the fit, including
+the sampler settings and the convergence diagnostics.
+<code>converged</code> is <code>TRUE</code> when the split R-hat is
+below its threshold (1.05 by default) and the effective sample size is
+adequate.</p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://generics.r-lib.org/reference/glance.html" class="external-link">glance</a></span><span class="op">(</span><span class="va">fit</span><span class="op">)</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 1 × 8</span></span></span>
+<span><span class="co">#&gt;       n     K nchains niters nthin   ess  rhat converged</span></span>
+<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>    </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span>   234    10       2    400     1  201.  1.03 TRUE</span></span></code></pre></div>
+</div>
+<div class="section level2">
+<h2 id="summarising-the-fit">Summarising the fit<a class="anchor" aria-label="anchor" href="#summarising-the-fit"></a>
+</h2>
+<p><code><a href="https://generics.r-lib.org/reference/tidy.html" class="external-link">tidy()</a></code> returns the model terms with a point estimate and
+compatibility limits. The intercept and slopes describe the allometric
+relationship on the log scale; the <code>s</code>-prefixed terms are the
+random-effect standard deviations.</p>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://generics.r-lib.org/reference/tidy.html" class="external-link">tidy</a></span><span class="op">(</span><span class="va">fit</span><span class="op">)</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 7 × 4</span></span></span>
+<span><span class="co">#&gt;   term          estimate   lower  upper</span></span>
+<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>            <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> bWeight        -<span style="color: #BB0000;">1.47</span>   -<span style="color: #BB0000;">1.66</span>   -<span style="color: #BB0000;">1.24</span> </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> bDiameter       2.5     2.28    2.74 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> bDiameter2      0.074<span style="text-decoration: underline;">9</span> -<span style="color: #BB0000;">0.156</span>   0.313</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span> sSite           0.27    0.176   0.459</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span> sSiteDiameter   0.313   0.169   0.62 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">6</span> sSiteYear       0.096<span style="text-decoration: underline;">2</span>  0.052<span style="text-decoration: underline;">1</span>  0.149</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">7</span> sWeight         0.161   0.141   0.185</span></span></code></pre></div>
+</div>
+<div class="section level2">
+<h2 id="priors">Priors<a class="anchor" aria-label="anchor" href="#priors"></a>
+</h2>
+<p><code><a href="../reference/kb_priors_weight_nereo.html">kb_priors_weight_nereo()</a></code> returns the default priors,
+which are weakly informative on the model’s centered log scale.</p>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/kb_priors_weight_nereo.html">kb_priors_weight_nereo</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co">#&gt; $intercept</span></span>
+<span><span class="co">#&gt; normal(mean = 0, sd = 2)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $diameter</span></span>
+<span><span class="co">#&gt; normal(mean = 2, sd = 1)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $diameter2</span></span>
+<span><span class="co">#&gt; normal(mean = 0, sd = 0.5)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $sd_site</span></span>
+<span><span class="co">#&gt; exponential(rate = 1)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $sd_site_diameter</span></span>
+<span><span class="co">#&gt; exponential(rate = 1)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $sd_site_year</span></span>
+<span><span class="co">#&gt; exponential(rate = 1)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $sd_residual</span></span>
+<span><span class="co">#&gt; exponential(rate = 1)</span></span></code></pre></div>
+<p>Adjust a prior by replacing an element with
+<code><a href="../reference/kb_prior_normal.html">kb_prior_normal()</a></code> or <code><a href="../reference/kb_prior_exponential.html">kb_prior_exponential()</a></code>
+and passing the result to the <code>priors</code> argument of
+<code><a href="../reference/kb_fit_weight_nereo.html">kb_fit_weight_nereo()</a></code>:</p>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">priors</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/kb_priors_weight_nereo.html">kb_priors_weight_nereo</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">priors</span><span class="op">$</span><span class="va">sd_site</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/kb_prior_exponential.html">kb_prior_exponential</a></span><span class="op">(</span><span class="fl">2</span><span class="op">)</span></span>
+<span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/kb_fit_weight_nereo.html">kb_fit_weight_nereo</a></span><span class="op">(</span><span class="va">data_weight_sim_nereo</span>, priors <span class="op">=</span> <span class="va">priors</span>, seed <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div class="section level2">
+<h2 id="predictions">Predictions<a class="anchor" aria-label="anchor" href="#predictions"></a>
+</h2>
+<p><code><a href="../reference/kb_predict_weight_by.html">kb_predict_weight_by()</a></code> summarises the fitted
+weight-diameter curve over a generated diameter sequence, one curve per
+group named in <code>by</code>. Pass the result to
+<code><a href="../reference/kb_plot_predictions.html">kb_plot_predictions()</a></code> to plot the curve with its
+compatibility band:</p>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/kb_predict_weight_by.html">kb_predict_weight_by</a></span><span class="op">(</span><span class="va">fit</span>, by <span class="op">=</span> <span class="st">"site"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="../reference/kb_plot_predictions.html">kb_plot_predictions</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<p><img src="kelpbio_files/figure-html/unnamed-chunk-10-1.png" class="r-plt" alt="" width="672"></p>
+<p><code><a href="../reference/kb_predict_weight.html">kb_predict_weight()</a></code> instead predicts at the rows of a
+supplied data frame, returning a point estimate and compatibility limits
+for each row:</p>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">new_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>diameter <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">20</span>, <span class="fl">35</span>, <span class="fl">50</span>, <span class="fl">65</span>, <span class="fl">80</span><span class="op">)</span>, site <span class="op">=</span> <span class="st">"site1"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="../reference/kb_predict_weight.html">kb_predict_weight</a></span><span class="op">(</span><span class="va">fit</span>, <span class="va">new_data</span><span class="op">)</span></span>
+<span><span class="co">#&gt; <span style="color: #0000BB;">&lt;kb_predictions&gt;</span> predictor: diameter | response: weight | by: site</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 5 × 5</span></span></span>
+<span><span class="co">#&gt;   diameter site  estimate  lower  upper</span></span>
+<span><span class="co">#&gt;      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span>       20 site1   0.030<span style="text-decoration: underline;">2</span> 0.023<span style="text-decoration: underline;">3</span> 0.039<span style="text-decoration: underline;">6</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span>       35 site1   0.125  0.099<span style="text-decoration: underline;">2</span> 0.155 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span>       50 site1   0.321  0.25   0.405 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span>       65 site1   0.647  0.501  0.857 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span>       80 site1   1.12   0.86   1.51</span></span></code></pre></div>
+</div>
+<div class="section level2">
+<h2 id="standard-bayesian-tooling">Standard Bayesian tooling<a class="anchor" aria-label="anchor" href="#standard-bayesian-tooling"></a>
+</h2>
+<p>The fitted object exposes the <code>rstantools</code> generics, so it
+composes directly with <code>bayesplot</code> and <code>loo</code>. A
+posterior-predictive check uses the stored <code>yrep</code> via
+<code><a href="https://mc-stan.org/rstantools/reference/posterior_predict.html" class="external-link">posterior_predict()</a></code>:</p>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">bayesplot</span><span class="fu">::</span><span class="fu"><a href="https://mc-stan.org/bayesplot/reference/PPC-distributions.html" class="external-link">ppc_dens_overlay</a></span><span class="op">(</span></span>
+<span>  y <span class="op">=</span> <span class="va">fit</span><span class="op">$</span><span class="va">data</span><span class="op">$</span><span class="va">weight</span>,</span>
+<span>  yrep <span class="op">=</span> <span class="fu"><a href="https://mc-stan.org/rstantools/reference/posterior_predict.html" class="external-link">posterior_predict</a></span><span class="op">(</span><span class="va">fit</span><span class="op">)</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<p>Leave-one-out cross-validation uses the pointwise
+<code><a href="https://mc-stan.org/rstantools/reference/log_lik.html" class="external-link">log_lik()</a></code>:</p>
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">loo</span><span class="fu">::</span><span class="fu"><a href="https://mc-stan.org/loo/reference/loo.html" class="external-link">loo</a></span><span class="op">(</span><span class="fu"><a href="https://mc-stan.org/rstantools/reference/log_lik.html" class="external-link">log_lik</a></span><span class="op">(</span><span class="va">fit</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+</div>
+  </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
+    </nav></aside>
 </div>
 
 
@@ -78,7 +252,7 @@ placeholder while the package API is under development.</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
     </footer>

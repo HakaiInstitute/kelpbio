@@ -1,14 +1,28 @@
 # kelpbio: Bayesian Kelp Biomass Estimation
 
-Fits Bayesian hierarchical models via 'rstan' to estimate kelp biomass
-and carbon from field measurements, including allometric weight, plant
-size distribution, transect density, and wet-to-dry and carbon tissue
-conversions.
+Fit a Bayesian hierarchical Stan model via 'rstan' to estimate the
+allometric relationship between kelp weight and size from in-situ
+observations.
+
+## See also
+
+Useful links:
+
+- <https://github.com/HakaiInstitute/kelpbio>
+
+- <https://hakaiinstitute.github.io/kelpbio/>
+
+- Report bugs at <https://github.com/HakaiInstitute/kelpbio/issues>
 
 ## Author
 
 **Maintainer**: Seb Dalgarno <seb@poissonconsulting.ca>
 ([ORCID](https://orcid.org/0000-0002-3658-4517))
+
+Authors:
+
+- Seb Dalgarno <seb@poissonconsulting.ca>
+  ([ORCID](https://orcid.org/0000-0002-3658-4517))
 
 Other contributors:
 

@@ -3,21 +3,52 @@
 R package for Bayesian kelp biomass estimation. All exported functions
 use the `kb_` prefix.
 
+## Common Commands
+
+| Task | Command |
+|----|----|
+| Routine build + QC | `Rscript scripts/build.R` (runs `rstan_config()` → `roxygen2md()` → `styler` → `document()` → `test()`) |
+| Full check (slow) | `KELPBIO_FULL_CHECK=true Rscript scripts/build.R` (adds `R CMD check` + pkgdown, recompiles Stan) |
+| Run all tests | `devtools::test()` |
+| Run one test file | `testthat::test_file("tests/testthat/test-<name>.R")` or `devtools::test_active_file()` |
+| Document | `devtools::document()` |
+| Regenerate architecture HTML | `quarto render decisions/architecture.md --to html --embed-resources` (needs Quarto; RStudio bundles it) |
+
+- **After editing any `inst/stan/*.stan` file**: run
+  [`rstantools::rstan_config()`](https://mc-stan.org/rstantools/reference/rstan_config.html)
+  (regenerates `src/stanExports_*` and `R/stanmodels.R`), then
+  `devtools::install()`. `devtools::load_all()`/`test()` compile from
+  the generated C++ but do NOT re-transpile the Stan source, so `.stan`
+  edits are silently missed without `rstan_config()` first.
+- Generated files (`R/stanmodels.R`, `src/stanExports_*`,
+  `src/RcppExports.cpp`) are never hand-edited and are excluded from
+  styling and linting.
+- **Linting** runs in CI via jarl
+  (`.github/workflows/lint-with-jarl.yaml`, config `jarl.toml`); the
+  build script does not lint, so local and CI checks stay in sync.
+- `decisions/architecture.html` is a gitignored local render of
+  `architecture.md` (self-contained, via the command above); regenerate
+  it after editing the doc. It is a local preview only, not a committed
+  artifact.
+
 ## Key Reference Locations
 
 | Resource | Path |
 |----|----|
 | Analysis project (final models + Stan code) | `~/Analyses/poissonconsulting/hakai-kelp-biomass-25/` |
 | Reference package architecture | `~/Code/poissonconsulting/bboutools/` |
-| Package API design | `docs/package-design.md` |
-| Bayesian engine (rstan/rstantools) | `docs/bayesian-engine.md` |
-| API design rationale + bboutools divergences | `docs/bboutools-api-review.md` |
-| Testing strategy | `docs/testing-strategy.md` |
-| Initial implementation scope | `docs/vertical-slice.md` |
+| Observable behaviour (the package contract) | `openspec/specs/` |
+| Cross-cutting rules / conventions | `openspec/config.yaml` (`context:`) |
+| Decision records (engine, prediction engine, S3, API review, webapp) | `decisions/` |
+| OpenSpec workflow for this repo | `openspec/tutorial.md` |
 
-When implementing any feature, read the corresponding analysis project
-script and Stan file first. The analysis project contains the final,
-validated model code that kelpbio adapts.
+Knowledge lives in OpenSpec, not a `docs/` design-doc tree (one fact,
+one home): behaviour in `openspec/specs/`, cross-cutting rules in
+`openspec/config.yaml`, cross-cutting rationale in `decisions/`,
+per-change rationale in that change’s `design.md`. When implementing any
+feature, read the corresponding analysis project script and Stan file
+first; the analysis project contains the final, validated model code
+that kelpbio adapts.
 
 ## Analysis Project Structure
 
@@ -38,8 +69,8 @@ kelpbio works at **site-year resolution — no month dimension** (the
 analysis models’ month effects are dropped). Biomass combines all six
 models via **size-integration**
 (`density × E_size[weight(diameter)] × ratios`), not `density × weight`;
-see `docs/package-design.md` §Derived Predictions. wetdry/carbon become
-intercept-only Beta (no REs) once month is dropped.
+see the `predictions` spec and `decisions/prediction-engine.md`.
+wetdry/carbon become intercept-only Beta (no REs) once month is dropped.
 
 ## Bayesian Engine
 
@@ -51,8 +82,9 @@ intercept-only Beta (no REs) once month is dropped.
   `rstan::sampling(stanmodels$<name>, data = stan_data, chains = 4, adapt_delta = 0.95, thin = nthin, ...)`
 - **`devtools::load_all()` does not work** for Stan changes — always use
   `devtools::install()`.
-- See `docs/bayesian-engine.md` for full details including Stan file
-  conventions, priors-as-data pattern, and structural flags.
+- See `openspec/config.yaml` for the engine rules (Stan conventions,
+  priors-as-data, structural flags) and `decisions/engine-choice.md` for
+  why rstan/rstantools.
 
 ## Stan Model Adaptations (analysis project → kelpbio)
 
@@ -75,32 +107,118 @@ fit <- list(draws = <posterior draws>, diagnostics = <sampler diag>, data = data
 class(fit) <- c("kb_fit_weight", "kb_fit")
 
 # S3 methods dispatch to parent by default
-augment.kb_fit    # all subclasses
-tidy.kb_fit_weight  # subclass-specific
+augment.kb_fit         # parent: model-agnostic (coef/glance/converged/log_lik/samples/summary too)
+tidy.kb_fit_weight     # subclass-specific: names its own terms (also fitted/residuals/predict/posterior_*)
 ```
 
-Access via `$`: `x$draws`, `x$data`, `x$meta`. `samples(x)` returns the
-draws container. The live `stanfit` is discarded after fitting — see
-`docs/package-design.md` §Data & model storage. Single package
-(R-universe, not CRAN): demo + coastwide data + slim pre-fit models in
-`data/`; no companion data package.
+Access via `$`: `x$draws`, `x$data`, `x$meta`. `samples(x)` returns a
+`posterior` `draws_rvars` object. The live `stanfit` is discarded after
+fitting — see the `fitting` spec. kelpbio ships via R-universe (not
+CRAN); its `data/` holds only simulated demo data and slim pre-fit
+models. The real publicly shared coastwide data and model fits live in a
+companion data package (`kelpbiodata`).
+
+**Prediction / derived-quantity engine.** Predictions, summaries, and
+the biomass composition are computed from the stored draws with the
+`posterior` `rvar` datatype (per-model prediction is plain `rvar`
+arithmetic); grids built with `newdata::xnew_data` (no `rescale`);
+`coef`/`tidy`/`glance`/`augment`/`samples`/diagnostics reconstructed
+from the draws via `posterior`. The `predictions`/`summaries` specs are
+the behavioural contract and `decisions/prediction-engine.md` the
+rationale — read them before touching any `kb_predict_*`, summary, or
+biomass code.
 
 ## Package Conventions
 
 - **Prefix**: all exported functions use `kb_`
+
 - **Validation**: all exported function arguments validated with `chk`;
-  user-facing messages via `cli`
+  user-facing messages via `cli`. Bespoke internal validators follow the
+  bboutools `.vld_`/`.chk_` split: a `.vld_<name>()` in `R/vld.R` is a
+  pure predicate returning a logical scalar (minimal args, no
+  messaging); its `.chk_<name>()` partner in `R/chk.R` calls it and
+  either returns the input invisibly or aborts via `cli`. Every bespoke
+  `.chk_` has a matching `.vld_` (multi-arg `chk::` bundles like
+  `.chk_sampler_args()` are exempt: no single predicate to pair). The
+  `.chk_` may layer `chk::` primitives or re-derive granular messages
+  where one boolean would be too coarse. Both are internal (leading dot,
+  unexported). Example:
+
+  ``` r
+
+  # R/vld.R
+  .vld_new_data_weight_nereo <- function(x) {
+    is.data.frame(x) && "diameter" %in% names(x)
+  }
+  # R/chk.R
+  .chk_new_data_weight_nereo <- function(x, x_name = deparse(substitute(x))) {
+    if (.vld_new_data_weight_nereo(x)) {
+      return(invisible(x))
+    }
+    if (!is.data.frame(x)) {
+      cli::cli_abort("{.arg {x_name}} must be a data frame or {.code NULL}.")
+    }
+    cli::cli_abort("{.arg {x_name}} must have a {.field diameter} column.")
+  }
+  ```
+
 - **Documentation**: roxygen2 with markdown; `@inheritParams` for shared
-  parameters
+  parameters. Write every exported topic for a first-time reader (see
+  `~/.claude/CLAUDE.md`): no development/decision/debate context, rare
+  edge cases, or testing/developer jargon (e.g. `snapshot-safe`,
+  `load_all()` gotchas) in reader-facing docs; route rationale to code
+  comments, `decisions/`, or a change’s `design.md`. One job per
+  section: **description** (first paragraph) is one short statement of
+  what the function does or produces, not the return mechanics or a
+  re-listing of arguments; **@details** covers only non-obvious
+  behaviour a caller could get wrong (edge cases, argument interactions,
+  a default’s user-visible tradeoff rather than the mechanism behind
+  it); **@return** is the sole home for the returned type/structure and
+  any invisibly/side-effect note (validators return the input invisibly
+  and are called for their side effect). Description voice:
+  extractor/accessor topics use a noun phrase naming what they yield
+  (`fitted`, `tidy`, `glance`, `log_lik`, `posterior_*`, `samples`);
+  action functions use the imperative (`fit`, `predict`, `plot`,
+  `check`, `construct`).
+
+- **Arguments**: name by type, not by dispatch: `data` for input data,
+  `fit` for a fit object (including the package’s own generics
+  `kb_stancode`/`samples`), `predictions` for a `kb_predictions` frame.
+  S3 methods must keep the generic’s first-arg name (`object` for
+  base/stats/rstantools/ggplot2, `x` for generics/universals), which
+  `R CMD check` enforces, so `object`/`x`/`fit` all naming the same fit
+  is expected, not an inconsistency to fix. Multi-word names are
+  snake_case (`new_data`, `new_levels`, `conf_level`); take the
+  ecosystem spelling only where a generic fixes it (e.g. `transform` in
+  `posterior_linpred`). Order follows the tidyverse
+  data-descriptors-details shape: primary object, then descriptor
+  arguments meant to be passed positionally (`new_data`, `by`,
+  `diameter`, `priors`), then `...`, then every optional detail knob as
+  a name-only argument after `...` (`new_levels`, `representative_site`,
+  `conf_level`, `estimate`, `sig_fig`, `include_random_effects`, `rhat`,
+  `esr`, sampler config) so details cannot be set positionally; guard an
+  empty `...` with
+  [`rlang::check_dots_empty()`](https://rlang.r-lib.org/reference/check_dots_empty.html).
+  The summary trio `conf_level, estimate, sig_fig` keeps that order
+  everywhere. `@param` prose uses the chk vocabulary
+  (`A flag specifying whether to ...`, `A whole number of ...`,
+  `A number between 0 and 1 ...`, `A string, one of ...`,
+  `A data frame of ...`), and names a fit argument by its dispatch class
+  (`kb_fit` for parent-class methods, `kb_fit_weight` for
+  weight-specific ones).
+
 - **Writing** (docs, README, vignettes, roxygen, PR/commit text): follow
   the writing style in `~/.claude/CLAUDE.md`; in particular no em-dashes
   or en-dashes (use hyphens, commas, or colons) and no mid-sentence bold
   for emphasis; concise technical register
+
 - **File layout**: one function per file, file named after the function
-  (`kb_fit_weight()` → `R/kb_fit_weight.R`). S3 methods grouped one file
-  per generic, named after the generic (`R/print.R` holds all `print.*`
-  methods, `R/tidy.R` all `tidy.*`, etc.). Internal helpers in
-  clearly-named files, never a catch-all `utils.R`.
+  ([`kb_fit_weight_nereo()`](https://hakaiinstitute.github.io/kelpbio/reference/kb_fit_weight_nereo.md)
+  → `R/kb_fit_weight_nereo.R`). S3 methods grouped one file per generic,
+  named after the generic (`R/print.R` holds all `print.*` methods,
+  `R/tidy.R` all `tidy.*`, etc.). Internal helpers in clearly-named
+  files, never a catch-all `utils.R`.
+
 - **Testing**: testthat 3e; strict 1:1 test mirroring (`R/<name>.R` ↔︎
   `tests/testthat/test-<name>.R`). Test the wrapper, not the model’s
   numbers. Snapshot print methods + messages; NEVER snapshot MCMC
@@ -108,9 +226,13 @@ draws container. The live `stanfit` is discarded after fitting — see
   in `tests/testthat/fixtures/` (built with `rstan::sampling(seed=)`,
   not `set.seed`); slow end-to-end fits `skip_on_cran()`. Factor pure
   logic (data/prior assembly) out of fit functions for MCMC-free
-  testing. See `docs/testing-strategy.md`.
+  testing. See `decisions/bboutools-api-review.md` for the testing
+  rationale.
+
 - **Code style**: tidyverse; no lubridate, reshape2, plyr, or data.table
+
 - **No [`library()`](https://rdrr.io/r/base/library.html) calls** in
   package code; use `@importFrom` or `pkg::fun()`
+
 - **Do not run Stan MCMC** during a session without confirming first;
   fitting is slow

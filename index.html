@@ -6,13 +6,18 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>Bayesian Kelp Biomass Estimation • kelpbio</title>
+<!-- favicons --><link rel="icon" type="image/png" sizes="96x96" href="favicon-96x96.png">
+<link rel="icon" type="”image/svg+xml”" href="favicon.svg">
+<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+<link rel="icon" sizes="any" href="favicon.ico">
+<link rel="manifest" href="site.webmanifest">
 <script src="deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet">
 <script src="deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="Bayesian Kelp Biomass Estimation">
-<meta name="description" content="Fit Bayesian hierarchical Stan models via rstan to estimate kelp biomass and carbon from in-situ observations, including allometric weight, plant size distribution, density, and wet-to-dry and carbon tissue conversions.">
-<meta property="og:description" content="Fit Bayesian hierarchical Stan models via rstan to estimate kelp biomass and carbon from in-situ observations, including allometric weight, plant size distribution, density, and wet-to-dry and carbon tissue conversions.">
+<meta name="description" content="Fit a Bayesian hierarchical Stan model via rstan to estimate the allometric relationship between kelp weight and size from in-situ observations.">
+<meta property="og:description" content="Fit a Bayesian hierarchical Stan model via rstan to estimate the allometric relationship between kelp weight and size from in-situ observations.">
 <meta property="og:image" content="https://hakaiinstitute.github.io/kelpbio/logo.png">
 </head>
 <body>
@@ -85,12 +90,89 @@
 <div class="section level2">
 <h2 id="usage">Usage<a class="anchor" aria-label="anchor" href="#usage"></a>
 </h2>
-<!-- Worked example to follow once the `kb_` API is available. -->
+<p>kelpbio fits each biomass component with its own <code>kb_fit_*()</code> function. The allometric weight model relates wet weight to sub-bulb diameter, with random effects for site and site-by-year.</p>
+<p>The model is fitted to a data frame of <code>diameter</code>, <code>weight</code>, <code>site</code>, and <code>year</code>. A small simulated dataset is included with the package:</p>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/HakaiInstitute/kelpbio" class="external-link">kelpbio</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">data_weight_sim_nereo</span><span class="op">)</span></span>
+<span><span class="co">#&gt; # A tibble: 6 × 4</span></span>
+<span><span class="co">#&gt;   diameter weight site  year </span></span>
+<span><span class="co">#&gt;      &lt;dbl&gt;  &lt;dbl&gt; &lt;fct&gt; &lt;fct&gt;</span></span>
+<span><span class="co">#&gt; 1     53.8  0.412 site1 2019 </span></span>
+<span><span class="co">#&gt; 2     38.2  0.183 site1 2019 </span></span>
+<span><span class="co">#&gt; 3     25.2  0.059 site1 2019 </span></span>
+<span><span class="co">#&gt; 4     54.5  0.523 site1 2019 </span></span>
+<span><span class="co">#&gt; 5     25.6  0.06  site1 2019 </span></span>
+<span><span class="co">#&gt; 6     49.5  0.411 site1 2019</span></span></code></pre></div>
+<p>Fit the model with <code><a href="reference/kb_fit_weight_nereo.html">kb_fit_weight_nereo()</a></code>:</p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/kb_fit_weight_nereo.html">kb_fit_weight_nereo</a></span><span class="op">(</span><span class="va">data_weight_sim_nereo</span>, seed <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></code></pre></div>
+<p>Fitting compiles and samples the Stan model, so a pre-fit model on this dataset is included with the package for quick exploration:</p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="va">fit_weight_sim_nereo</span></span></code></pre></div>
+<p>Check convergence with <code><a href="https://generics.r-lib.org/reference/glance.html" class="external-link">glance()</a></code> and summarise the model terms with <code><a href="https://generics.r-lib.org/reference/tidy.html" class="external-link">tidy()</a></code>:</p>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://generics.r-lib.org/reference/glance.html" class="external-link">glance</a></span><span class="op">(</span><span class="va">fit</span><span class="op">)</span></span>
+<span><span class="co">#&gt; # A tibble: 1 × 8</span></span>
+<span><span class="co">#&gt;       n     K nchains niters nthin   ess  rhat converged</span></span>
+<span><span class="co">#&gt;   &lt;int&gt; &lt;int&gt;   &lt;int&gt;  &lt;dbl&gt; &lt;int&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;lgl&gt;    </span></span>
+<span><span class="co">#&gt; 1   234    10       2    400     1  201.  1.03 TRUE</span></span>
+<span></span>
+<span><span class="fu"><a href="https://generics.r-lib.org/reference/tidy.html" class="external-link">tidy</a></span><span class="op">(</span><span class="va">fit</span><span class="op">)</span></span>
+<span><span class="co">#&gt; # A tibble: 7 × 4</span></span>
+<span><span class="co">#&gt;   term          estimate   lower  upper</span></span>
+<span><span class="co">#&gt;   &lt;chr&gt;            &lt;dbl&gt;   &lt;dbl&gt;  &lt;dbl&gt;</span></span>
+<span><span class="co">#&gt; 1 bWeight        -1.47   -1.66   -1.24 </span></span>
+<span><span class="co">#&gt; 2 bDiameter       2.5     2.28    2.74 </span></span>
+<span><span class="co">#&gt; 3 bDiameter2      0.0749 -0.156   0.313</span></span>
+<span><span class="co">#&gt; 4 sSite           0.27    0.176   0.459</span></span>
+<span><span class="co">#&gt; 5 sSiteDiameter   0.313   0.169   0.62 </span></span>
+<span><span class="co">#&gt; 6 sSiteYear       0.0962  0.0521  0.149</span></span>
+<span><span class="co">#&gt; 7 sWeight         0.161   0.141   0.185</span></span></code></pre></div>
+<p>Predict the weight-diameter curve for each site with <code><a href="reference/kb_predict_weight_by.html">kb_predict_weight_by()</a></code> and plot it with <code><a href="reference/kb_plot_predictions.html">kb_plot_predictions()</a></code>:</p>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="reference/kb_predict_weight_by.html">kb_predict_weight_by</a></span><span class="op">(</span><span class="va">fit</span>, by <span class="op">=</span> <span class="st">"site"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="reference/kb_plot_predictions.html">kb_plot_predictions</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<p><img src="reference/figures/README-weight-curve-1.png"><!-- --></p>
+<p>Predict weight at new diameters with <code><a href="reference/kb_predict_weight.html">kb_predict_weight()</a></code>. It returns a table with a point estimate and <code>conf_level</code> compatibility limits for each row:</p>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">new_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>diameter <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">20</span>, <span class="fl">35</span>, <span class="fl">50</span>, <span class="fl">65</span>, <span class="fl">80</span><span class="op">)</span>, site <span class="op">=</span> <span class="st">"site1"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span></span>
+<span><span class="fu"><a href="reference/kb_predict_weight.html">kb_predict_weight</a></span><span class="op">(</span><span class="va">fit</span>, <span class="va">new_data</span><span class="op">)</span></span>
+<span><span class="co">#&gt; &lt;kb_predictions&gt; predictor: diameter | response: weight | by: site</span></span>
+<span><span class="co">#&gt; # A tibble: 5 × 5</span></span>
+<span><span class="co">#&gt;   diameter site  estimate  lower  upper</span></span>
+<span><span class="co">#&gt;      &lt;dbl&gt; &lt;chr&gt;    &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;</span></span>
+<span><span class="co">#&gt; 1       20 site1   0.0302 0.0229 0.0393</span></span>
+<span><span class="co">#&gt; 2       35 site1   0.126  0.0975 0.162 </span></span>
+<span><span class="co">#&gt; 3       50 site1   0.319  0.242  0.421 </span></span>
+<span><span class="co">#&gt; 4       65 site1   0.647  0.49   0.85  </span></span>
+<span><span class="co">#&gt; 5       80 site1   1.12   0.842  1.52</span></span></code></pre></div>
+<p>The fitted object exposes the standard <code>rstantools</code> generics (<code><a href="https://mc-stan.org/rstantools/reference/posterior_predict.html" class="external-link">posterior_predict()</a></code>, <code><a href="https://mc-stan.org/rstantools/reference/log_lik.html" class="external-link">log_lik()</a></code>, and others), so it composes directly with <code>bayesplot</code> and <code>loo</code>.</p>
 </div>
 <div class="section level2">
 <h2 id="citation">Citation<a class="anchor" aria-label="anchor" href="#citation"></a>
 </h2>
-<!-- Citation guidance to follow once the `kb_` API is available. -->
+<p>If you use kelpbio in your work, please cite it. Use <code><a href="https://rdrr.io/r/utils/citation.html" class="external-link">citation()</a></code> to get a formatted citation and BibTeX entry:</p>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/citation.html" class="external-link">citation</a></span><span class="op">(</span><span class="st">"kelpbio"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; To cite kelpbio in publications use:</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;   Dalgarno S (2026). _kelpbio: Bayesian Kelp Biomass Estimation_. R</span></span>
+<span><span class="co">#&gt;   package version 0.0.0.9000,</span></span>
+<span><span class="co">#&gt;   &lt;https://github.com/HakaiInstitute/kelpbio&gt;.</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; A BibTeX entry for LaTeX users is</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;   @Manual{,</span></span>
+<span><span class="co">#&gt;     title = {kelpbio: Bayesian Kelp Biomass Estimation},</span></span>
+<span><span class="co">#&gt;     author = {Seb Dalgarno},</span></span>
+<span><span class="co">#&gt;     year = {2026},</span></span>
+<span><span class="co">#&gt;     note = {R package version 0.0.0.9000},</span></span>
+<span><span class="co">#&gt;     url = {https://github.com/HakaiInstitute/kelpbio},</span></span>
+<span><span class="co">#&gt;   }</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="licensing">Licensing<a class="anchor" aria-label="anchor" href="#licensing"></a>
@@ -157,7 +239,7 @@
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
     </footer>
