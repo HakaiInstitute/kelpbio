@@ -30,7 +30,7 @@ Model summaries and diagnostics over a kb_fit: tidy / coef / glance / converged 
 
 ### Requirement: Glance and convergence
 
-`glance(x, rhat, esr, ...)` and `converged(x, rhat, esr, ...)` SHALL report model-level summaries and a convergence verdict using exposed thresholds. The thresholds default to the `report` analysis-mode values `rhat = 1.05` and `esr = 0.1`, where `esr` is the effective sample **rate** (`ess_bulk / ndraws`); both are arguments so they can be tightened. `esr` is preferred over an absolute ESS because the rate is stable under changes to the number of saved iterations.
+`glance(x, ..., rhat, esr)` and `converged(x, ..., rhat, esr)` SHALL report model-level summaries and a convergence verdict using exposed thresholds. The thresholds default to the `report` analysis-mode values `rhat = 1.05` and `esr = 0.1`, where `esr` is the effective sample **rate** (`ess_bulk / ndraws`); both are arguments so they can be tightened. `esr` is preferred over an absolute ESS because the rate is stable under changes to the number of saved iterations.
 
 #### Scenario: glance one-row summary
 - **WHEN** `glance(fit)` is called
@@ -66,7 +66,7 @@ Model summaries and diagnostics over a kb_fit: tidy / coef / glance / converged 
 
 ### Requirement: Draws accessor and diagnostics surface
 
-`samples(x)` SHALL return the raw parameter draws as a `posterior` draws object, and the accessors `rhat`, `esr`, `nobs`, `nchains`, `niters`, `npars`, `nterms`, `pars`, `estimates` and `kb_stancode(x)` SHALL operate on the fit object. All summaries and diagnostics are computed from the stored draws via `posterior` (see `decisions/prediction-engine.md`).
+`samples(fit)` SHALL return the raw parameter draws as a `posterior` draws object, and the accessors `rhat`, `esr`, `nobs`, `nchains`, `niters`, `npars`, `nterms`, `pars`, `estimates` and `kb_stancode(fit)` SHALL operate on the fit object. All summaries and diagnostics are computed from the stored draws via `posterior` (see `decisions/prediction-engine.md`).
 
 #### Scenario: samples returns a draws container
 - **WHEN** `samples(fit)` is called

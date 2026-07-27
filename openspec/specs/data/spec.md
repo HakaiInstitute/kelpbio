@@ -50,8 +50,8 @@ The package SHALL NOT bundle the real Hakai Institute survey data or an inferenc
 return it invisibly. The required columns are `fronds`, `weight`, `site`, and
 `year`. `fronds` SHALL be a positive whole number (a frond count), `weight` SHALL
 be numeric and positive, and `site` / `year` SHALL be character or factor. No
-required column may contain `NA`. Failures SHALL abort with a column-qualified
-`cli` message.
+required column may contain `NA`. It SHALL use `chk` validators, which abort with
+column-qualified messages on failure.
 
 #### Scenario: Accepts valid macro data
 - **WHEN** `kb_check_data_weight_macro()` is given a data frame with positive
@@ -60,8 +60,8 @@ required column may contain `NA`. Failures SHALL abort with a column-qualified
 
 #### Scenario: Rejects a missing or malformed column
 - **WHEN** the `fronds` column is absent, non-positive, or not whole-numbered
-- **THEN** it aborts with a `cli` message naming the `fronds` column and the
-  requirement it failed
+- **THEN** it errors via `chk` with a column-qualified message naming the
+  `fronds` column and the requirement it failed
 
 ### Requirement: Bundled Macrocystis weight objects
 

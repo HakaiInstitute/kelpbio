@@ -40,7 +40,7 @@ Prediction is split into two verbs with independent arguments. `kb_predict_weigh
 
 ### Requirement: Grouping and uncertainty axes
 
-`kb_predict_weight_by(fit, by, new_levels, predictor, conf_level, estimate, sig_fig)` SHALL summarise the weight-at-predictor relationship over a predictor sequence (auto-generated over the observed range, or supplied via `predictor`) as a `kb_predictions` object, with a `by` grouping axis and a `new_levels = c("average", "sample")` axis (`"average"` default), validated with `rlang::arg_match()`. It SHALL NOT take a `new_data` argument. The predictor sequence and grid variable are the fit's `meta$predictor` (`diameter` for *Nereocystis*, `fronds` for *Macrocystis*). `by` names the grouping factors that each get their own curve, conditioned on their estimated random effects; its available values depend on the fitted random-effect structure: `NULL`, `"site"`, and `c("site", "year")` for both species, and additionally `"year"` for *Macrocystis* (which has a year main effect). `new_levels` governs the factors not conditioned on: `"sample"` draws a new random effect from `Normal(0, s)`, `"average"` holds it at zero.
+`kb_predict_weight_by(fit, by, predictor, ..., new_levels, conf_level, estimate, sig_fig)` SHALL summarise the weight-at-predictor relationship over a predictor sequence (auto-generated over the observed range, or supplied via `predictor`) as a `kb_predictions` object, with a `by` grouping axis and a `new_levels = c("average", "sample")` axis (`"average"` default), validated with `rlang::arg_match()`. It SHALL NOT take a `new_data` argument. The predictor sequence and grid variable are the fit's `meta$predictor` (`diameter` for *Nereocystis*, `fronds` for *Macrocystis*). `by` names the grouping factors that each get their own curve, conditioned on their estimated random effects; its available values depend on the fitted random-effect structure: `NULL`, `"site"`, and `c("site", "year")` for both species, and additionally `"year"` for *Macrocystis* (which has a year main effect). `new_levels` governs the factors not conditioned on: `"sample"` draws a new random effect from `Normal(0, s)`, `"average"` holds it at zero.
 
 #### Scenario: Population curve, new group vs typical group
 - **WHEN** `kb_predict_weight_by(fit, new_levels = "sample")` vs `new_levels = "average"` with `by = NULL`
@@ -60,31 +60,31 @@ Prediction is split into two verbs with independent arguments. `kb_predict_weigh
 
 ### Requirement: Raw prediction draws via rstantools generics
 
-Raw posterior prediction draws SHALL be provided through the `rstantools` generics rather than a bespoke `_samples()` function. `posterior_epred()`, `posterior_linpred()`, and `posterior_predict()` SHALL return a draws-by-observations (`D x N`) matrix for a `kb_fit_weight`, accepting `newdata`, a `new_levels = c("sample", "average")` axis, and a `representative_site = NULL` axis, with no `by` argument. `posterior_linpred()` returns the log-scale mean and `posterior_epred()` returns its exponential for both species. Conditioning SHALL be resolved per row, per factor by level membership, dispatching the linear predictor on `meta$species`: a row whose `site`/`year` is a known level is conditioned on its estimated random effect; a new level, or an absent grouping column, is handled by `new_levels` (`"sample"` draws, `"average"` zeroes), except that when `representative_site` is non-`NULL` a new/absent site takes its site main effects from the named reference site(s) (per-draw average across several). A new (unseen) level SHALL NOT error. With `newdata = NULL` the generics use the observed data and condition on its site and year, so `posterior_epred()`, `posterior_predict()`, and `augment()` agree at the observed data. `posterior_predict()` SHALL add species-appropriate observation noise: Student-t (scale `sWeight`) for *Nereocystis*, Gamma (shape `alpha * fronds`) for *Macrocystis*.
+Raw posterior prediction draws SHALL be provided through the `rstantools` generics rather than a bespoke `_samples()` function. `posterior_epred()`, `posterior_linpred()`, and `posterior_predict()` SHALL return a draws-by-observations (`D x N`) matrix for a `kb_fit_weight`, accepting `new_data`, a `new_levels = c("sample", "average")` axis, and a `representative_site = NULL` axis, with no `by` argument. `posterior_linpred()` returns the log-scale mean and `posterior_epred()` returns its exponential for both species. Conditioning SHALL be resolved per row, per factor by level membership, dispatching the linear predictor on `meta$species`: a row whose `site`/`year` is a known level is conditioned on its estimated random effect; a new level, or an absent grouping column, is handled by `new_levels` (`"sample"` draws, `"average"` zeroes), except that when `representative_site` is non-`NULL` a new/absent site takes its site main effects from the named reference site(s) (per-draw average across several). A new (unseen) level SHALL NOT error. With `new_data = NULL` the generics use the observed data and condition on its site and year, so `posterior_epred()`, `posterior_predict()`, and `augment()` agree at the observed data. `posterior_predict()` SHALL add species-appropriate observation noise: Student-t (scale `sWeight`) for *Nereocystis*, Gamma (shape `alpha * fronds`) for *Macrocystis*.
 
 #### Scenario: posterior_epred returns the prediction draws
-- **WHEN** `posterior_epred(fit, newdata = grid)` is called
+- **WHEN** `posterior_epred(fit, new_data = grid)` is called
 - **THEN** it returns a `D x N` matrix of response-scale expected weight (`exp` of the linear predictor), draws as rows and grid rows as columns
 
 #### Scenario: A new level is sampled, not errored
-- **WHEN** `newdata` contains a `site` (or `year`) level the fit never saw
+- **WHEN** `new_data` contains a `site` (or `year`) level the fit never saw
 - **THEN** that row's affected random effects are drawn per `new_levels` (no error); a mix of known and new levels resolves per row in one call
 
 #### Scenario: Representative site borrows a known site's main effects
-- **WHEN** `posterior_epred(fit, newdata = grid, representative_site = s)` is called with `grid` containing a new site and `s` a fit site
+- **WHEN** `posterior_epred(fit, new_data = grid, representative_site = s)` is called with `grid` containing a new site and `s` a fit site
 - **THEN** the new site's site main effects are taken from `s` (per-draw average if `s` names several), with the `site:year` term still resolved per `new_levels`
 
-#### Scenario: newdata = NULL conditions on the observed groups
-- **WHEN** any of `posterior_epred()`, `posterior_linpred()`, or `posterior_predict()` is called with `newdata = NULL`
-- **THEN** it evaluates at the observed data conditioning on each row's observed site and year, so its central estimate matches `augment()`'s fitted values (`posterior_predict()` additionally adds observation noise, and with `newdata = NULL` returns the stored `yrep`)
+#### Scenario: new_data = NULL conditions on the observed groups
+- **WHEN** any of `posterior_epred()`, `posterior_linpred()`, or `posterior_predict()` is called with `new_data = NULL`
+- **THEN** it evaluates at the observed data conditioning on each row's observed site and year, so its central estimate matches `augment()`'s fitted values (`posterior_predict()` additionally adds observation noise, and with `new_data = NULL` returns the stored `yrep`)
 
 #### Scenario: posterior_predict adds observation noise
-- **WHEN** `posterior_predict(fit, newdata = grid)` is called
-- **THEN** it returns a `D x N` matrix that adds the species-appropriate observation noise to the expected weight (Student-t scale `sWeight` for *Nereocystis*); with `newdata = NULL` it returns the stored `yrep`
+- **WHEN** `posterior_predict(fit, new_data = grid)` is called
+- **THEN** it returns a `D x N` matrix that adds the species-appropriate observation noise to the expected weight (Student-t scale `sWeight` for *Nereocystis*); with `new_data = NULL` it returns the stored `yrep`
 
 #### Scenario: Macro posterior_predict adds Gamma noise
-- **WHEN** `posterior_predict(macro_fit, newdata = grid)` is called
-- **THEN** it returns a `D x N` matrix of strictly positive weights drawn from `gamma(alpha * fronds, alpha * fronds / eWeight)`; with `newdata = NULL` it returns the stored `yrep`
+- **WHEN** `posterior_predict(macro_fit, new_data = grid)` is called
+- **THEN** it returns a `D x N` matrix of strictly positive weights drawn from `gamma(alpha * fronds, alpha * fronds / eWeight)`; with `new_data = NULL` it returns the stored `yrep`
 
 ### Requirement: Pointwise log-likelihood and prior summary
 

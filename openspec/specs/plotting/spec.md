@@ -8,7 +8,7 @@ Plotting predictions from a kb_predictions data frame: kb_plot_predictions() and
 
 ### Requirement: Plot predictions
 
-`kb_plot_predictions(predictions, x, observed, ...)` SHALL render a `ggplot` from a `kb_predictions` object, taking a prediction data frame in a pipe-based workflow and never a fit object. It SHALL NOT take `style` or `facet` arguments; the plot style is derived from the prediction's shape and faceting follows from `x` (the remaining grouping variables).
+`kb_plot_predictions(predictions, ..., x, observed, max_facets)` SHALL render a `ggplot` from a `kb_predictions` object, taking a prediction data frame in a pipe-based workflow and never a fit object. It SHALL NOT take `style` or `facet` arguments; the plot style is derived from the prediction's shape and faceting follows from `x` (the remaining grouping variables).
 
 #### Scenario: Returns a composable ggplot
 - **WHEN** `kb_plot_predictions()` is called on a `kb_predictions` object
@@ -32,7 +32,7 @@ Plotting predictions from a kb_predictions data frame: kb_plot_predictions() and
 
 #### Scenario: Publication-ready axis titles
 - **WHEN** `kb_plot_predictions()` labels the axes
-- **THEN** it uses descriptive titles for the known model variables (e.g. `Sub-bulb diameter`, `Wet weight`, `Site`) rather than the raw column names; units are not asserted in the labels (the weight model is unit-flexible), though a unit is appended in parentheses if one is supplied on the prediction's metadata
+- **THEN** it uses descriptive titles for the known model variables (e.g. `Sub-bulb diameter` or `Fronds` for the predictor, `Wet weight`, `Site`) rather than the raw column names; units are not asserted in the labels (the weight model is unit-flexible), though a unit is appended in parentheses if one is supplied on the prediction's metadata
 
 ### Requirement: Metadata-driven, overridable defaults
 
