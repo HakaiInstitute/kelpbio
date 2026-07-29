@@ -86,14 +86,33 @@ summary.kb_fit <- function(
   sub("^kb_fit_", "", cls[[match("kb_fit", cls) - 1L]])
 }
 
+# Upper-case the first letter, for display labels.
+.capitalize <- function(x) {
+  paste0(toupper(substr(x, 1L, 1L)), substring(x, 2L))
+}
+
+# Proper scientific name for display; meta$species stores the lowercase genus.
+# Falls back to the capitalized genus for any species without a mapping.
+.species_label <- function(species) {
+  binomial <- c(
+    nereocystis = "Nereocystis luetkeana",
+    macrocystis = "Macrocystis pyrifera"
+  )
+  out <- unname(binomial[species])
+  if (is.na(out)) {
+    out <- .capitalize(species)
+  }
+  out
+}
+
 # Fit-level metadata header, shared by the summary_kb_fit object and
 # print.kb_fit() so both render the same block (a single source for the fields;
 # .print_kb_fit_header() in print.R is the single source for the rendering).
 .kb_fit_header <- function(fit) {
   descr <- .fit_descriptor(fit)
   list(
-    model = .kb_model(fit),
-    species = fit$meta$species,
+    model = .capitalize(.kb_model(fit)),
+    species = .species_label(fit$meta$species),
     family = descr$family,
     fixed = descr$fixed,
     random = descr$random,
@@ -127,7 +146,7 @@ summary.kb_fit <- function(
 
 .fit_descriptor.kb_fit_weight_macro <- function(x) {
   list(
-    family = "Gamma; response weight",
+    family = "Gamma on weight",
     fixed = "intercept + linear log(fronds/f0)",
     random = "site (intercept); year (intercept); site:year (intercept)",
     centered = paste0(
@@ -141,7 +160,7 @@ summary.kb_fit <- function(
 
 .fit_descriptor.kb_fit_weight_nereo <- function(x) {
   list(
-    family = "Student-t (df = 4); response log(weight)",
+    family = "Student-t (df = 4) on log(weight)",
     fixed = "intercept + linear + quadratic log(diameter/d0)",
     random = "site (intercept, slope); site:year (intercept)",
     centered = paste0(
