@@ -88,7 +88,7 @@ kb_predict_weight_by(fit, by = c("site", "year")) |>
 
 # Pointrange estimates at a reference diameter. Holding diameter at one value
 # turns the curve into grouped points: sites land on the x-axis, no facet.
-kb_predict_weight_by(fit, by = "site", predictor = 30, new_levels = "average") |>
+kb_predict_weight_by(fit, by = "site", diameter = 30, new_levels = "average") |>
   kb_plot_predictions() +
   ggtitle("Weight at 30 mm diameter by site")
 

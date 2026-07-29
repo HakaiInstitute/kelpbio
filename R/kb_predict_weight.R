@@ -1,7 +1,7 @@
 #' Predict Weight for New Data
 #'
 #' Predict weight for the supplied rows, or for the observed data when
-#' `new_data = NULL`. For an allometric curve over a diameter sequence, use
+#' `new_data = NULL`. For an allometric curve over a predictor sequence, use
 #' [kb_predict_weight_by()] instead.
 #'
 #' @details
@@ -21,17 +21,15 @@
 #' slope of one or more named reference sites (the per-draw average across
 #' several). The `site:year` interaction still follows `new_levels`.
 #'
-#' @inheritParams params
 #' @param fit A `kb_fit_weight` object.
-#' @param new_data A data frame with a `diameter` column (and optional `site` /
-#'   `year` columns), or `NULL` to predict at the observed data.
+#' @param ... Passed to the species method (currently only the shared arguments).
 #'
 #' @return A `kb_predictions` object: the input rows with added `estimate`,
 #'   `lower`, and `upper` columns.
 #' @family prediction
-#' @seealso [kb_predict_weight_by()] to generate new_data by grouping factors
-#' and diameter sequence, and [augment()] for fitted/residual values at
-#' the observed data.
+#' @seealso [kb_predict_weight_by()] to generate new_data by grouping factors and
+#' a predictor sequence, and [augment()] for fitted/residual values at the
+#' observed data.
 #' @export
 #'
 #' @examples
@@ -44,7 +42,18 @@
 #'   fit_weight_sim_nereo, new_site,
 #'   representative_site = fit_weight_sim_nereo$meta$site_levels[1]
 #' )
-kb_predict_weight <- function(
+kb_predict_weight <- function(fit, ...) {
+  UseMethod("kb_predict_weight")
+}
+
+#' @describeIn kb_predict_weight *Nereocystis* method; `new_data` needs a
+#'   `diameter` column.
+#' @inheritParams params
+#' @param new_data A data frame with the fit's predictor column (`diameter` for
+#'   *Nereocystis*, `fronds` for *Macrocystis*) and optional `site` / `year`
+#'   columns, or `NULL` to predict at the observed data.
+#' @export
+kb_predict_weight.kb_fit_weight_nereo <- function(
   fit,
   new_data = NULL,
   ...,
@@ -55,6 +64,40 @@ kb_predict_weight <- function(
   sig_fig = 3
 ) {
   rlang::check_dots_empty()
+  .kb_predict_weight(
+    fit, new_data, new_levels, representative_site, conf_level, estimate, sig_fig
+  )
+}
+
+#' @describeIn kb_predict_weight *Macrocystis* method; `new_data` needs a
+#'   `fronds` column.
+#' @export
+kb_predict_weight.kb_fit_weight_macro <- function(
+  fit,
+  new_data = NULL,
+  ...,
+  new_levels = c("sample", "average"),
+  representative_site = NULL,
+  conf_level = 0.95,
+  estimate = stats::median,
+  sig_fig = 3
+) {
+  rlang::check_dots_empty()
+  .kb_predict_weight(
+    fit, new_data, new_levels, representative_site, conf_level, estimate, sig_fig
+  )
+}
+
+# Shared implementation for the species methods (the former single-function body).
+.kb_predict_weight <- function(
+  fit,
+  new_data,
+  new_levels,
+  representative_site,
+  conf_level,
+  estimate,
+  sig_fig
+) {
   .chk_kb_fit_weight(fit)
   .chk_representative_site(fit, representative_site)
   .chk_summary_args(conf_level, estimate, sig_fig)

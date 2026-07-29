@@ -115,11 +115,11 @@ predict(fit)
 kb_predict_weight_by(fit)
 # by default generate sequence of diameters across range
 kb_predict_weight_by(fit, by = "site")
-# set the predictor sequence (diameter for nereo; the arg is named `predictor`)
-kb_predict_weight_by(fit, by = "site", predictor = 5)
+# set the diameter sequence (the predictor argument for a nereo fit)
+kb_predict_weight_by(fit, by = "site", diameter = 5)
 kb_predict_weight_by(fit, by = c("site", "year"))
 # typical site and year
-kb_predict_weight_by(fit, predictor = c(5, 15, 25))
+kb_predict_weight_by(fit, diameter = c(5, 15, 25))
 try(kb_predict_weight_by(fit, by = "year")) # no year main effect (nereo)
 
 # sample from RE dist for wider uncertainty, i.e. for new, unobserved site/year
@@ -161,7 +161,7 @@ kb_predict_weight_by(fit) |>
   kb_plot_predictions()
 
 # when only one predictor value per group, plot function knows to plot pointrange instead of line/ribbon
-kb_predict_weight_by(fit, by = "site", predictor = 30) |>
+kb_predict_weight_by(fit, by = "site", diameter = 30) |>
   kb_plot_predictions() +
   coord_flip()
 
@@ -380,7 +380,7 @@ summary(fit_m)
 kb_predict_weight(fit_m, new_data = tibble(fronds = c(2, 5, 10, 15)))
 
 # macro HAS a year main effect, so by = "year" is available (it errors for nereo)
-kb_predict_weight_by(fit_m, by = "year", predictor = 10) |>
+kb_predict_weight_by(fit_m, by = "year", fronds = 10) |>
   kb_plot_predictions() +
   coord_flip()
 

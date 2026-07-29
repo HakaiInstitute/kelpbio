@@ -36,7 +36,7 @@ test_that("reference-diameter by site is pointrange with sites on x, no facet", 
   p <- kb_predict_weight_by(
     weight_fit,
     by = "site",
-    predictor = 30,
+    diameter = 30,
     new_levels = "average"
   )
   gg <- kb_plot_predictions(p)
@@ -48,7 +48,7 @@ test_that("reference-diameter by site is pointrange with sites on x, no facet", 
 })
 
 test_that("reference-diameter by site:year puts year on x, facets by site", {
-  p <- kb_predict_weight_by(weight_fit, by = c("site", "year"), predictor = 30)
+  p <- kb_predict_weight_by(weight_fit, by = c("site", "year"), diameter = 30)
   gg <- kb_plot_predictions(p)
   expect_identical(gg$labels$x, "Year")
   expect_false(inherits(gg$facet, "FacetNull"))

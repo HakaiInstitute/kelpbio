@@ -36,7 +36,7 @@
 #' # Weight at a reference diameter by site (pointrange, sites on the y-axis):
 #' kb_predict_weight_by(
 #'   fit_weight_sim_nereo,
-#'   by = "site", predictor = 30, new_levels = "average"
+#'   by = "site", diameter = 30, new_levels = "average"
 #' ) |>
 #'   kb_plot_predictions() +
 #'   ggplot2::coord_flip()

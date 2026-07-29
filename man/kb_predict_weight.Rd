@@ -2,9 +2,24 @@
 % Please edit documentation in R/kb_predict_weight.R
 \name{kb_predict_weight}
 \alias{kb_predict_weight}
+\alias{kb_predict_weight.kb_fit_weight_nereo}
+\alias{kb_predict_weight.kb_fit_weight_macro}
 \title{Predict Weight for New Data}
 \usage{
-kb_predict_weight(
+kb_predict_weight(fit, ...)
+
+\method{kb_predict_weight}{kb_fit_weight_nereo}(
+  fit,
+  new_data = NULL,
+  ...,
+  new_levels = c("sample", "average"),
+  representative_site = NULL,
+  conf_level = 0.95,
+  estimate = stats::median,
+  sig_fig = 3
+)
+
+\method{kb_predict_weight}{kb_fit_weight_macro}(
   fit,
   new_data = NULL,
   ...,
@@ -18,10 +33,11 @@ kb_predict_weight(
 \arguments{
 \item{fit}{A \code{kb_fit_weight} object.}
 
-\item{new_data}{A data frame with a \code{diameter} column (and optional \code{site} /
-\code{year} columns), or \code{NULL} to predict at the observed data.}
+\item{...}{Passed to the species method (currently only the shared arguments).}
 
-\item{...}{These dots are for future extensions and must be empty.}
+\item{new_data}{A data frame with the fit's predictor column (\code{diameter} for
+\emph{Nereocystis}, \code{fronds} for \emph{Macrocystis}) and optional \code{site} / \code{year}
+columns, or \code{NULL} to predict at the observed data.}
 
 \item{new_levels}{A string, one of \code{"sample"} or \code{"average"}, controlling how
 random effects that are not conditioned on are treated (factors absent from
@@ -52,7 +68,7 @@ A \code{kb_predictions} object: the input rows with added \code{estimate},
 }
 \description{
 Predict weight for the supplied rows, or for the observed data when
-\code{new_data = NULL}. For an allometric curve over a diameter sequence, use
+\code{new_data = NULL}. For an allometric curve over a predictor sequence, use
 \code{\link[=kb_predict_weight_by]{kb_predict_weight_by()}} instead.
 }
 \details{
@@ -72,6 +88,15 @@ For a new site, \code{representative_site} offers a third approach: instead of
 slope of one or more named reference sites (the per-draw average across
 several). The \code{site:year} interaction still follows \code{new_levels}.
 }
+\section{Methods (by class)}{
+\itemize{
+\item \code{kb_predict_weight(kb_fit_weight_nereo)}: \emph{Nereocystis} method; \code{new_data} needs a
+\code{diameter} column.
+
+\item \code{kb_predict_weight(kb_fit_weight_macro)}: \emph{Macrocystis} method; \code{new_data} needs a
+\code{fronds} column.
+
+}}
 \examples{
 new_data <- data.frame(diameter = c(20, 40, 60))
 kb_predict_weight(fit_weight_sim_nereo, new_data, new_levels = "average")
@@ -84,9 +109,9 @@ kb_predict_weight(
 )
 }
 \seealso{
-\code{\link[=kb_predict_weight_by]{kb_predict_weight_by()}} to generate new_data by grouping factors
-and diameter sequence, and \code{\link[=augment]{augment()}} for fitted/residual values at
-the observed data.
+\code{\link[=kb_predict_weight_by]{kb_predict_weight_by()}} to generate new_data by grouping factors and
+a predictor sequence, and \code{\link[=augment]{augment()}} for fitted/residual values at the
+observed data.
 
 Other prediction:
 \code{\link[=autoplot.kb_predictions]{autoplot.kb_predictions()}},
