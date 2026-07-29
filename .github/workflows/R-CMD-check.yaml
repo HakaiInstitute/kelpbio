@@ -41,16 +41,17 @@ jobs:
 
       # Caches the package library (keyed on dependency state), so the slow
       # rstan/StanHeaders compile is paid once per dependency change.
-      # TEMP: the CRAN rstan 2.32 Windows binary is built against RcppParallel
-      # < 6; RcppParallel 6.0.0 changed its bundled TBB, so rstan.dll fails to
-      # load ("specified module could not be found") at install. Pin RcppParallel
-      # to the last 5.x on Windows until a RcppParallel-6-compatible rstan ships.
-      # See stan-dev/rstan#979 and #1041. Remove this pin once upstream is fixed.
+      # A previous RcppParallel@5.1.11 pin on Windows worked around the CRAN
+      # rstan 2.32 binary being built against RcppParallel < 6 ("specified
+      # module could not be found" at install). With rstan 2.32.7 the pin now
+      # produces the opposite failure ("specified procedure could not be found",
+      # i.e. tbb.dll loads but lacks the expected exports), so the pin is
+      # removed and RcppParallel resolves to current. See stan-dev/rstan#979,
+      # #1041; restore a pin only if the "module" error returns.
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
           extra-packages: >-
             any::rcmdcheck
-            ${{ matrix.config.os == 'windows-latest' && 'RcppParallel@5.1.11' || '' }}
           needs: check
 
       - uses: r-lib/actions/check-r-package@v2
