@@ -8,6 +8,7 @@ R package for Bayesian kelp biomass estimation. All exported functions use the `
 |------|---------|
 | Routine build + QC | `Rscript scripts/build.R` (runs `rstan_config()` → `roxygen2md()` → `styler` → `document()` → `test()`) |
 | Full check (slow) | `KELPBIO_FULL_CHECK=true Rscript scripts/build.R` (adds `R CMD check` + pkgdown, recompiles Stan) |
+| Rebuild pre-fit objects + fixtures (slow, MCMC) | `KELPBIO_REBUILD_FITS=true Rscript scripts/build.R` (re-fits `data/fit_weight_sim_*` and `tests/testthat/fixtures/*.rds`; run after changing the fit object structure or a model) |
 | Run all tests | `devtools::test()` |
 | Run one test file | `testthat::test_file("tests/testthat/test-<name>.R")` or `devtools::test_active_file()` |
 | Document | `devtools::document()` |

@@ -1,6 +1,7 @@
 # Decision: species is a model variant (per-function + per-.stan), not a data argument
 
-Status: accepted (2026-06)
+Status: accepted (2026-06); class structure revised (2026-07) from a model-level
+class to a per-species subclass (see the Decision and the note below).
 
 ## Context
 
@@ -45,10 +46,18 @@ Species is a variant axis, handled uniformly across all six models:
   convergence diagnostics) live in one shared internal engine, `fit_stan()`. Each
   species wrapper supplies only what differs: validated data, resolved priors,
   assembled Stan data, the compiled model, and the parameter vector.
-- The S3 class stays model-level (`c("kb_fit_<model>", "kb_fit")`), NOT
-  per-species, so the method/accessor surface is shared. The species is recorded
-  in `meta$species`; prediction, tidy, and residual code branch on `meta$species`
-  only where the linear predictor genuinely differs.
+- Each species is a subclass of the model class:
+  `c("kb_fit_<model>_<species>", "kb_fit_<model>", "kb_fit")`. Species-agnostic
+  methods live on the `kb_fit_<model>` parent and are inherited (one shared
+  accessor/summary surface); the species-varying kernels (mean, new-data check,
+  observation noise, deviance residual, term list) are subclass methods of small
+  internal generics, so no method branches on `meta$species` (kept for
+  display/reference). Adding a species is then a new subclass with its kernel
+  methods, not an edit to shared `switch` sites. This uniform rule is applied to
+  every model even where a variant-plus-field scheme would suffice (weight), so
+  the design is consistent, and it is required anyway for models whose species
+  differ in response type (size is continuous for *Nereocystis*, a count for
+  *Macrocystis*), which are genuinely different types, not one type with a family.
 - Uniformity wins over local optimisation: even where a model is structurally
   identical across species (wetdry, carbon), the species-suffixed function is
   kept so users learn one rule and `meta$species` is always available for the
@@ -59,9 +68,10 @@ This reverses the prior "species enters as data, not a variant" rule in
 
 ## Consequences
 
-- Adding a species is additive: a new `.stan`, a new wrapper, and (where the
-  mean differs) a new `.<model>_<species>_linpred()` builder, with no change to
-  existing species functions or the shared engine.
+- Adding a species is additive: a new `.stan`, a new wrapper (which classes the
+  fit `kb_fit_<model>_<species>`), and subclass methods for the kernels that differ
+  (e.g. `.weight_linpred.kb_fit_<model>_<species>`), with no change to existing
+  species functions, the shared engine, or the parent's shared methods.
 - API surface grows from six fit functions to six per species. The cost is
   accepted: the functions have honest, fixed data contracts and match how Hakai
   biologists think ("I have nereo data" / "I have macro data").

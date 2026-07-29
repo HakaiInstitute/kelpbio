@@ -38,7 +38,7 @@ The package SHALL NOT bundle the real Hakai Institute survey data or an inferenc
 
 #### Scenario: Example fit is available
 - **WHEN** `fit_weight_sim_nereo` is loaded
-- **THEN** it is an object of class `c("kb_fit_weight", "kb_fit")` that the `kb_fit` accessors, S3 methods, and `kb_predict_weight*()` functions operate on
+- **THEN** it is an object of class `c("kb_fit_weight_nereo", "kb_fit_weight", "kb_fit")` that the `kb_fit` accessors, S3 methods, and `kb_predict_weight*()` functions operate on
 
 #### Scenario: Real Hakai data is not bundled
 - **WHEN** the package's bundled data is enumerated
@@ -75,6 +75,6 @@ weight fit ships in the companion `kelpbiodata` package.
 #### Scenario: Bundled objects load with the documented structure
 - **WHEN** `data_weight_sim_macro` and `fit_weight_sim_macro` are loaded
 - **THEN** the dataset has columns `fronds`, `weight`, `site`, `year`, and the
-  fit is a `c("kb_fit_weight", "kb_fit")` object with `meta$species` equal to
+  fit is a `c("kb_fit_weight_macro", "kb_fit_weight", "kb_fit")` object with `meta$species` equal to
   `"macrocystis"`
 

@@ -26,7 +26,7 @@ flowchart TD
     end
 
     subgraph read["Read path (pure, on stored draws)"]
-        FITOBJ --> LP[".weight_nereo_linpred()<br/>(single mean, log scale)"]
+        FITOBJ --> LP[".weight_linpred()<br/>(single mean, log scale)"]
         LP --> GEN["posterior_epred / linpred / predict<br/>log_lik · prior_summary"]
         LP --> PV["kb_predict_weight()<br/>kb_predict_weight_by()"]
         PV --> PRED[("kb_predictions")]
@@ -83,7 +83,7 @@ The fit function is deliberately a thin orchestrator over pure helpers plus one 
 - `quiet = FALSE` shows sampling progress and rstan's full HMC diagnostics; `quiet = TRUE` muffles the post-sampling diagnostic warnings locally via `with_quiet_sampler()` (a `withCallingHandlers`), never a global option.
 - `resolve_cores()` respects `getOption("mc.cores")`, falling back to `chains`, capped at available cores so the default never oversubscribes.
 
-**The fit object**. `new_kb_fit_weight()` returns `class = c("kb_fit_weight", "kb_fit")` with:
+**The fit object**. `new_kb_fit_weight()` returns `class = c("kb_fit_weight_<species>", "kb_fit_weight", "kb_fit")` with:
 
 | Slot | Contents |
 |---------------------------|---------------------------------------------|
@@ -93,13 +93,13 @@ The fit function is deliberately a thin orchestrator over pure helpers plus one 
 | `data` | the validated input data frame. |
 | `meta` | `species`, `prior_only`, `priors`, `stancode`, `site_levels`, `year_levels`, `nthin`, `diameter_ref`, `site_year_on` (auto-derived from the data), `nu`. |
 
-The S3 class is model-level (`kb_fit_weight`), not species-level; the species lives in `meta$species` and species-specific values enter through `meta_extra`. This keeps a single set of S3 methods across species variants (see `decisions/species-as-variant.md`).
+Each species is a subclass of the model class (`c("kb_fit_weight_<species>", "kb_fit_weight", "kb_fit")`); species-agnostic methods live on the `kb_fit_weight` parent and are inherited, while species-varying kernels are subclass methods of small internal generics, so no method branches on `meta$species` (kept for display, with species-specific values entering through `meta_extra`). See `decisions/species-as-variant.md`.
 
 ## The Prediction Engine
 
 **Purpose**: compute every predicted / derived quantity from stored draws, with the mean defined in exactly one R location.
 
-**Single source of the mean**: `.weight_nereo_linpred(fit, grid, new_levels, representative_site)` in `R/weight_nereo_linpred.R`, returning a `posterior` `rvar` on the log scale over grid rows. Every prediction path routes through it, so the mean formula lives in exactly two places total: the Stan `transformed parameters` and this helper.
+**Single source of the mean**: the `.weight_linpred()` internal generic (methods `.weight_linpred.kb_fit_weight_nereo` in `R/weight_nereo_linpred.R`, `.weight_linpred.kb_fit_weight_macro` in `R/weight_macro_linpred.R`), returning a `posterior` `rvar` on the log scale over grid rows. Every prediction path routes through it, dispatching on the fit subclass, so each species' mean formula lives in exactly two places: the Stan `transformed parameters` and its `.weight_linpred` method.
 
 **Per-row level resolution** is the heart of the engine. For each grid row the helper resolves the site intercept, site slope, and site:year effects independently:
 
@@ -160,7 +160,7 @@ Tests mirror sources 1:1 (`R/<name>.R` \<-\> `tests/testthat/test-<name>.R`).
 | Prior resolution | `R/resolve_priors.R` | `resolve_priors()` |
 | Stan-data assembly | `R/assemble_weight_nereo_data.R` | `assemble_weight_nereo_data()`, `weight_diameter_ref()` |
 | Prior objects | `R/kb_prior_normal.R`, `R/kb_prior_exponential.R`, `R/kb_priors_weight_nereo.R` | `kb_prior_normal()`, `kb_prior_exponential()`, `kb_priors_weight_nereo()` |
-| Mean helper | `R/weight_nereo_linpred.R` | `.weight_nereo_linpred()`, `resolve_re1()`, `resolve_re2()`, `re_draw()`, `validate_by_weight()`, `build_by_grid()` |
+| Mean helper | `R/weight_nereo_linpred.R` | `.weight_linpred()`, `resolve_re1()`, `resolve_re2()`, `re_draw()`, `validate_by_weight()`, `build_by_grid()` |
 | Prediction verbs | `R/kb_predict_weight.R`, `R/kb_predict_weight_by.R` | `kb_predict_weight()`, `kb_predict_weight_by()`, `summarise_weight_predictions()` |
 | rstantools generics | `R/posterior_epred.R`, `R/posterior_linpred.R`, `R/posterior_predict.R`, `R/log_lik.R`, `R/predict.R`, `R/prior_summary.R` | `posterior_epred.kb_fit_weight()`, `log_lik.kb_fit()`, etc. |
 | Predictions object | `R/kb_predictions.R` | `new_kb_predictions()`, `print.kb_predictions()` |
@@ -176,7 +176,7 @@ Tests mirror sources 1:1 (`R/<name>.R` \<-\> `tests/testthat/test-<name>.R`).
 | Term | Definition |
 |------------------------|-----------------------------------------------|
 | draws-not-stanfit | The fit object stores extracted posterior draws, not the live `stanfit`; the `stanfit` is discarded after fitting. |
-| linpred | Linear predictor: the model mean on the log scale, returned as a `posterior` `rvar` by `.weight_nereo_linpred()`. |
+| linpred | Linear predictor: the model mean on the log scale, returned as a `posterior` `rvar` by `.weight_linpred()`. |
 | `new_levels` | How predictions treat a grouping level not conditioned on: `"sample"` draws a random effect from its estimated SD; `"average"` holds it at zero. |
 | `representative_site` | Predict a new site by borrowing the intercept/slope of named reference sites (per-draw average), instead of `new_levels`. |
 | `by` | The grouping factors that each get their own predicted curve in `kb_predict_weight_by()`; valid values `NULL`, `"site"`, `c("site","year")`. |
