@@ -27,8 +27,8 @@ print.kb_prior_exponential <- function(x, ...) {
 # summary_kb_fit object carries the same fields.
 .print_kb_fit_header <- function(h) {
   cli::cat_line("Model:     ", h$model, " (", h$species, ")")
-  if (!is.na(h$centered)) {
-    cli::cat_line("Centered:  ", h$centered)
+  if (!is.na(h$predictor)) {
+    cli::cat_line("Predictor: ", h$predictor)
   }
   groups <- if (length(h$groups)) {
     paste0(

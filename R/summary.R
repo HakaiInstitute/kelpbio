@@ -113,7 +113,7 @@ summary.kb_fit <- function(
   list(
     model = .capitalize(.kb_model(fit)),
     species = .species_label(fit$meta$species),
-    centered = descr$centered,
+    predictor = descr$predictor,
     groups = descr$groups,
     nobs = nobs(fit),
     nchains = nchains(fit),
@@ -134,13 +134,13 @@ summary.kb_fit <- function(
 }
 
 .fit_descriptor.default <- function(x) {
-  list(centered = NA_character_, groups = integer(0))
+  list(predictor = NA_character_, groups = integer(0))
 }
 
 .fit_descriptor.kb_fit_weight_macro <- function(x) {
   list(
-    centered = paste0(
-      "fronds at its geometric mean, ",
+    predictor = paste0(
+      "fronds, centered at its geometric mean, ",
       signif(x$meta$fronds_ref, 3)
     ),
     groups = weight_groups(x, year = TRUE)
@@ -149,8 +149,8 @@ summary.kb_fit <- function(
 
 .fit_descriptor.kb_fit_weight_nereo <- function(x) {
   list(
-    centered = paste0(
-      "diameter at its geometric mean, ",
+    predictor = paste0(
+      "diameter, centered at its geometric mean, ",
       signif(x$meta$diameter_ref, 3)
     ),
     groups = weight_groups(x)
