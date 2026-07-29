@@ -27,15 +27,6 @@ print.kb_prior_exponential <- function(x, ...) {
 # summary_kb_fit object carries the same fields.
 .print_kb_fit_header <- function(h) {
   cli::cat_line("Model:     ", h$model, " (", h$species, ")")
-  if (!is.na(h$family)) {
-    cli::cat_line("Family:    ", h$family)
-  }
-  if (!is.na(h$fixed)) {
-    cli::cat_line("Fixed:     ", h$fixed)
-  }
-  if (!is.na(h$random)) {
-    cli::cat_line("Random:    ", h$random)
-  }
   if (!is.na(h$centered)) {
     cli::cat_line("Centered:  ", h$centered)
   }
@@ -69,6 +60,9 @@ print.kb_prior_exponential <- function(x, ...) {
 print.kb_fit <- function(x, ...) {
   cli::cat_line(cli::format_inline("{.cls {class(x)[1]}}"))
   .print_kb_fit_header(.kb_fit_header(x))
+  cli::cat_line(cli::col_grey(
+    "See kb_model_describe(fit) for the model equation and priors."
+  ))
   invisible(x)
 }
 

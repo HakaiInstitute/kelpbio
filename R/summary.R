@@ -113,9 +113,6 @@ summary.kb_fit <- function(
   list(
     model = .capitalize(.kb_model(fit)),
     species = .species_label(fit$meta$species),
-    family = descr$family,
-    fixed = descr$fixed,
-    random = descr$random,
     centered = descr$centered,
     groups = descr$groups,
     nobs = nobs(fit),
@@ -128,27 +125,20 @@ summary.kb_fit <- function(
   )
 }
 
-# Summary-header descriptor (family, effect structure, group counts); dispatches
-# on the fit subclass, with the default returning NA fields for models without one.
+# Per-fit header descriptor (predictor centering and group counts); dispatches on
+# the fit subclass, with the default returning NA/empty for models without one.
+# The model's likelihood/effect structure is not here (it is fixed by species and
+# rendered by kb_model_describe()).
 .fit_descriptor <- function(x) {
   UseMethod(".fit_descriptor")
 }
 
 .fit_descriptor.default <- function(x) {
-  list(
-    family = NA_character_,
-    fixed = NA_character_,
-    random = NA_character_,
-    centered = NA_character_,
-    groups = integer(0)
-  )
+  list(centered = NA_character_, groups = integer(0))
 }
 
 .fit_descriptor.kb_fit_weight_macro <- function(x) {
   list(
-    family = "Gamma on weight",
-    fixed = "intercept + linear log(fronds/f0)",
-    random = "site (intercept); year (intercept); site:year (intercept)",
     centered = paste0(
       "log-fronds at f0 = ",
       signif(x$meta$fronds_ref, 3),
@@ -160,9 +150,6 @@ summary.kb_fit <- function(
 
 .fit_descriptor.kb_fit_weight_nereo <- function(x) {
   list(
-    family = "Student-t (df = 4) on log(weight)",
-    fixed = "intercept + linear + quadratic log(diameter/d0)",
-    random = "site (intercept, slope); site:year (intercept)",
     centered = paste0(
       "log-diameter at d0 = ",
       signif(x$meta$diameter_ref, 3),
