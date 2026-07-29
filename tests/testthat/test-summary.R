@@ -27,7 +27,7 @@ test_that("summary diagnostic columns agree with the stored diagnostics", {
 
 test_that("summary carries the fit metadata", {
   s <- summary(weight_fit)
-  expect_equal(s$model, "weight")
+  expect_equal(s$model, "Weight")
   expect_match(s$family, "Student-t")
   expect_match(s$fixed, "log\\(diameter/d0\\)")
   expect_match(s$random, "site:year")
@@ -37,7 +37,7 @@ test_that("summary carries the fit metadata", {
 
 test_that("macro summary carries the Gamma family, term list, and year group", {
   s <- summary(weight_macro_fit)
-  expect_equal(s$model, "weight")
+  expect_equal(s$model, "Weight")
   expect_match(s$family, "Gamma")
   expect_match(s$fixed, "log\\(fronds/f0\\)")
   expect_match(s$random, "year")
