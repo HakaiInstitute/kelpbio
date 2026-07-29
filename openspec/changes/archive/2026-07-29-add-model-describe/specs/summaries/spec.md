@@ -6,7 +6,7 @@
 
 The `summary_kb_fit` coefficient table SHALL carry columns `term`, `estimate`, `lower`, `upper`, `rhat`, `ess_bulk`, `ess_tail`, with the diagnostic columns taken from the stored fit diagnostics (the same source as `converged()`/`glance()`). It SHALL show population-level terms and random-effect SDs, including the per-level group deviations only when `include_random_effects = TRUE` (default `FALSE`, matching `tidy()`). Its `print` method SHALL render the shared header, the coefficient table, and a diagnostics footer defining the columns and reporting the divergent-transition count.
 
-#### Scenario: print shows a slim per-fit header
+#### Scenario: print shows stable metadata
 - **WHEN** `print(fit)` is called
 - **THEN** it shows the shared per-fit header (model, species, centering reference, observation and group counts, sampler configuration, convergence, and a pointer to `kb_model_describe()`), with no likelihood-family or fixed/random-structure lines, no coefficient table, and no raw MCMC numerics, identical to the header shown by `print(summary(fit))`
 
@@ -18,6 +18,6 @@ The `summary_kb_fit` coefficient table SHALL carry columns `term`, `estimate`, `
 - **WHEN** `summary(fit)` is called
 - **THEN** the per-level deviations (`bSite[.]`, `bSiteDiameter[.]`, `bSiteYear[.,.]`) are omitted and the random-effect SDs are retained; `summary(fit, include_random_effects = TRUE)` adds the per-level rows
 
-#### Scenario: grouping stays visible without structure lines
-- **WHEN** `print(macro_fit)` is called
-- **THEN** the data line reports groups `site`, `year`, and `site:year` with their level counts (so the grouping structure remains visible), and the header shows no Gamma-family line and no fixed/random-structure line
+#### Scenario: Macro header reports the Gamma family and macro structure
+- **WHEN** the *Macrocystis* Gamma family and effect structure are needed
+- **THEN** they are reported by `kb_model_describe(macro_fit)`, not the `print()` header; the header shows the slim per-fit metadata, with the grouping still visible through the data-line group counts (`site`, `year`, `site:year`)
