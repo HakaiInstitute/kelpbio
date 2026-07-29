@@ -49,7 +49,6 @@ fit <- kb_fit_weight_nereo(
 # print key model info (see other generics including summary() below)
 fit
 
-
 # --- fit accessors: broom + universals + diagnostics --------------------------
 print(fit)
 tidy(fit)
