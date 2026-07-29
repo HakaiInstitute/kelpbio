@@ -140,9 +140,8 @@ summary.kb_fit <- function(
 .fit_descriptor.kb_fit_weight_macro <- function(x) {
   list(
     centered = paste0(
-      "log-fronds at f0 = ",
-      signif(x$meta$fronds_ref, 3),
-      " (geometric mean of fronds)"
+      "fronds at its geometric mean, ",
+      signif(x$meta$fronds_ref, 3)
     ),
     groups = weight_groups(x, year = TRUE)
   )
@@ -151,9 +150,8 @@ summary.kb_fit <- function(
 .fit_descriptor.kb_fit_weight_nereo <- function(x) {
   list(
     centered = paste0(
-      "log-diameter at d0 = ",
-      signif(x$meta$diameter_ref, 3),
-      " (geometric mean of diameter)"
+      "diameter at its geometric mean, ",
+      signif(x$meta$diameter_ref, 3)
     ),
     groups = weight_groups(x)
   )

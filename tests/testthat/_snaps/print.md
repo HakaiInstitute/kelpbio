@@ -19,7 +19,7 @@
     Output
       <kb_fit_weight_nereo>
       Model:     Weight (Nereocystis luetkeana)
-      Centered:  log-diameter at d0 = 38.8 (geometric mean of diameter)
+      Centered:  diameter at its geometric mean, 38.8
       Data:      72 observations; groups: site (4), site:year (12)
       Draws:     2 chains, 300 post-warmup draws each (thin = 1), 600 total
       Converged: TRUE
@@ -32,7 +32,7 @@
     Output
       <kb_fit_weight_macro>
       Model:     Weight (Macrocystis pyrifera)
-      Centered:  log-fronds at f0 = 5.36 (geometric mean of fronds)
+      Centered:  fronds at its geometric mean, 5.36
       Data:      72 observations; groups: site (4), year (3), site:year (12)
       Draws:     2 chains, 300 post-warmup draws each (thin = 1), 600 total
       Converged: TRUE
