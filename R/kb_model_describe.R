@@ -105,7 +105,7 @@ kb_model_describe.kb_fit_weight_macro <- function(fit, prose = FALSE) {
       paste0(
         "Wet weight was modelled on the log scale with a Student-t likelihood ",
         "(4 degrees of freedom) as an allometric function of sub-bulb diameter. ",
-        "Expected log weight was a quadratic function of log diameter, centred ",
+        "Expected log weight was a quadratic function of log diameter, centered ",
         "at the geometric mean diameter (%s), with the intercept and the ",
         "log-diameter slope varying by site%s. Regularizing priors were placed ",
         "on all parameters (see the notation form for the hyperparameters)."
@@ -161,7 +161,7 @@ kb_model_describe.kb_fit_weight_macro <- function(fit, prose = FALSE) {
       paste0(
         "Wet weight was modelled with a Gamma likelihood as an allometric ",
         "function of frond count. Expected weight was log-linear in log frond ",
-        "count, centred at the geometric mean (%s), with the intercept varying ",
+        "count, centered at the geometric mean (%s), with the intercept varying ",
         "by site, year%s. Regularizing priors were placed on all parameters ",
         "(see the notation form for the hyperparameters)."
       ),
@@ -172,6 +172,11 @@ kb_model_describe.kb_fit_weight_macro <- function(fit, prose = FALSE) {
 }
 
 # ---- rendering ---------------------------------------------------------------
+
+# Left-justify to the widest element, so adjacent columns line up.
+.pad_right <- function(x) {
+  formatC(x, width = max(nchar(x)), flag = "-")
+}
 
 # Format a stored prior object as scientific notation for the description.
 .describe_prior <- function(p) {
@@ -193,16 +198,22 @@ kb_model_describe.kb_fit_weight_macro <- function(fit, prose = FALSE) {
     return(invisible(lines))
   }
 
+  # Continuation lines put the "+" under the "=" of the first line, so the
+  # operands stay in one column for either mean_lhs ("mu" or "log(mu)").
   mean_lines <- c(
     paste0("  ", spec$mean_lhs, " = ", spec$mean_terms[1]),
-    paste0("     + ", spec$mean_terms[-1])
+    paste0(strrep(" ", nchar(spec$mean_lhs) + 3), "+ ", spec$mean_terms[-1])
   )
-  re_lines <- vapply(
-    spec$random,
-    function(r) {
-      sprintf("  %s ~ Normal(0, %s)    %s", r$term, r$sd, r$gloss)
-    },
-    character(1)
+  # Pad the term and distribution columns so the glosses line up.
+  re_lines <- sprintf(
+    "  %s ~ %s  %s",
+    .pad_right(vapply(spec$random, function(r) r$term, character(1))),
+    .pad_right(vapply(
+      spec$random,
+      function(r) sprintf("Normal(0, %s)", r$sd),
+      character(1)
+    )),
+    vapply(spec$random, function(r) r$gloss, character(1))
   )
   prior_lines <- vapply(
     names(spec$priors),
