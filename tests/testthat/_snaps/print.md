@@ -17,7 +17,7 @@
     Code
       print(weight_fit)
     Output
-      <kb_fit_weight>
+      <kb_fit_weight_nereo>
       Model:     weight (nereocystis)
       Family:    Student-t (df = 4); response log(weight)
       Fixed:     intercept + linear + quadratic log(diameter/d0)
@@ -32,9 +32,9 @@
     Code
       print(weight_macro_fit)
     Output
-      <kb_fit_weight>
+      <kb_fit_weight_macro>
       Model:     weight (macrocystis)
-      Family:    Gamma (shape proportional to fronds); response weight
+      Family:    Gamma; response weight
       Fixed:     intercept + linear log(fronds/f0)
       Random:    site (intercept); year (intercept); site:year (intercept)
       Centered:  log-fronds at f0 = 5.36 (geometric mean of fronds)

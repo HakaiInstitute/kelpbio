@@ -43,7 +43,7 @@ test_that("macro summary carries the Gamma family, term list, and year group", {
   expect_match(s$random, "year")
   expect_named(s$groups, c("site", "year", "site:year"))
   expect_true(all(
-    c("bWeight", "bFronds", "alpha", "sSite", "sYear", "sSiteYear") %in%
+    c("bWeight", "bFronds", "shape", "sSite", "sYear", "sSiteYear") %in%
       s$coefficients$term
   ))
   expect_false(any(grepl("^bYear\\[", s$coefficients$term)))

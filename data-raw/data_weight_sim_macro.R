@@ -1,6 +1,6 @@
 # Build data_weight_sim_macro, a small simulated weight dataset for fast tests
 # and runnable examples. Simulated from the Macrocystis weight-model structure
-# (Gamma response with shape proportional to frond count, log-linear mean in
+# (Gamma response with constant shape, log-linear mean in
 # log-fronds, and site + year + site:year random intercepts) so it passes
 # kb_check_data_weight_macro() and kb_fit_weight_macro() converges on it. The
 # site random effects carry genuine signal over a wide frond-count range, so the
@@ -25,7 +25,7 @@ grid <- grid[!(grid$site == "site10" & grid$year == "2022"), ] # missing cell
 fronds_ref <- 5 # log-fronds centering reference (median frond count)
 b_weight5 <- log(0.6) # log wet weight (kg) at 5 fronds
 b_fronds <- 1.05 # allometric slope on log(fronds / 5) (near proportional)
-alpha <- 6 # per-frond Gamma shape (dispersion)
+shape <- 10 # Gamma shape (dispersion)
 sd_site <- 0.4 # between-site intercept SD
 sd_year <- 0.15 # between-year intercept SD
 sd_site_year <- 0.1 # small: keep the between-site signal on the site effect
@@ -43,7 +43,6 @@ rows <- lapply(seq_len(nrow(grid)), function(i) {
     a_site[[s]] +
     a_year[[y]] +
     a_sy
-  shape <- alpha * fronds
   weight <- stats::rgamma(n_per, shape = shape, rate = shape / exp(log_ew))
   data.frame(
     fronds = as.integer(fronds),

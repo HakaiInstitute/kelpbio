@@ -1,4 +1,5 @@
 test_that("fit_weight_sim_macro is a kb_fit_weight the accessors operate on", {
+  expect_s3_class(fit_weight_sim_macro, "kb_fit_weight_macro")
   expect_s3_class(fit_weight_sim_macro, "kb_fit_weight")
   expect_s3_class(fit_weight_sim_macro, "kb_fit")
   expect_identical(fit_weight_sim_macro$meta$species, "macrocystis")

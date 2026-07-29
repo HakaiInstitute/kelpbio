@@ -21,27 +21,34 @@ residuals.kb_fit_weight <- function(object, ...) {
   rlang::check_dots_empty()
   .chk_kb_fit_weight(object)
   mu <- posterior::draws_of(.weight_linpred_obs(object)) # log scale, D x N
-  if (identical(object$meta$species, "macrocystis")) {
-    ewt <- exp(mu)
-    y <- object$data$weight
-    fronds <- object$data$fronds
-    alpha <- as.vector(posterior::draws_of(object$draws$alpha))
-    res <- vapply(
-      seq_len(nrow(mu)),
-      function(d) {
-        shape <- alpha[d] * fronds
-        extras::res_gamma(y, shape = shape, rate = shape / ewt[d, ])
-      },
-      numeric(length(y))
-    )
-    return(as.numeric(apply(res, 1L, stats::median)))
-  }
+  .weight_deviance(object, mu)
+}
+
+# Per-draw deviance residuals from the species' likelihood (mu = log-scale mean,
+# D x N), median-summarised; dispatches on the fit subclass.
+.weight_deviance <- function(object, mu) {
+  UseMethod(".weight_deviance")
+}
+
+.weight_deviance.kb_fit_weight_nereo <- function(object, mu) {
   sw <- as.vector(posterior::draws_of(object$draws$sWeight))
   y <- log(object$data$weight)
   theta <- 1 / object$meta$nu
   res <- vapply(
     seq_len(nrow(mu)),
     function(d) extras::res_student(y, mu[d, ], sd = sw[d], theta = theta),
+    numeric(length(y))
+  )
+  as.numeric(apply(res, 1L, stats::median))
+}
+
+.weight_deviance.kb_fit_weight_macro <- function(object, mu) {
+  ewt <- exp(mu)
+  y <- object$data$weight
+  shape <- as.vector(posterior::draws_of(object$draws$shape))
+  res <- vapply(
+    seq_len(nrow(mu)),
+    function(d) extras::res_gamma(y, shape = shape[d], rate = shape[d] / ewt[d, ]),
     numeric(length(y))
   )
   as.numeric(apply(res, 1L, stats::median))

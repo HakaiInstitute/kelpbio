@@ -160,7 +160,7 @@ fit_macro <- fit_weight_sim_macro
 The fit object is the same class as the *Nereocystis* fit, so `glance()`,
 `tidy()`, and the prediction functions work identically. The term table reflects
 the *Macrocystis* structure: a single frond slope (`bFronds`), the Gamma shape
-(`alpha`), and a year standard deviation (`sYear`).
+(`shape`), and a year standard deviation (`sYear`).
 
 ```{r}
 tidy(fit_macro)

@@ -43,7 +43,7 @@ The structured prior objects (kb_prior_*) and the weight model's default prior l
 `sd_site`, `sd_year`, and `sd_site_year`. It takes no `species` argument. The
 defaults are `intercept = normal(0, 2)`, `fronds = normal(1, 0.5)` (centred on 1,
 encoding near-proportionality of weight to frond count), `shape =
-exponential(0.1)` (the per-frond Gamma shape `alpha`), and `sd_site`,
+exponential(0.1)` (the Gamma shape `shape`), and `sd_site`,
 `sd_year`, `sd_site_year` each `exponential(1)`.
 
 #### Scenario: Returns the default named prior list

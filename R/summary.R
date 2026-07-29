@@ -80,13 +80,19 @@ summary.kb_fit <- function(
   )
 }
 
+# Model name ("weight") from the class vector: the class before the "kb_fit" root.
+.kb_model <- function(fit) {
+  cls <- class(fit)
+  sub("^kb_fit_", "", cls[[match("kb_fit", cls) - 1L]])
+}
+
 # Fit-level metadata header, shared by the summary_kb_fit object and
 # print.kb_fit() so both render the same block (a single source for the fields;
 # .print_kb_fit_header() in print.R is the single source for the rendering).
 .kb_fit_header <- function(fit) {
-  descr <- fit_descriptor(fit)
+  descr <- .fit_descriptor(fit)
   list(
-    model = sub("^kb_fit_", "", class(fit)[1]),
+    model = .kb_model(fit),
     species = fit$meta$species,
     family = descr$family,
     fixed = descr$fixed,
@@ -103,49 +109,48 @@ summary.kb_fit <- function(
   )
 }
 
-# Model-specific descriptor (likelihood family, effect structure, group counts)
-# for the summary header. Switches on the fit subclass; unknown models fall back
-# to NA so the print method omits those lines. The fixed/random lines describe the
-# structure in prose rather than a mixed-model formula, so the output does not
-# imply a formula interface or a particular fitting engine.
-fit_descriptor <- function(x) {
-  model <- sub("^kb_fit_", "", class(x)[1])
-  if (model != "weight") {
-    return(list(
-      family = NA_character_,
-      fixed = NA_character_,
-      random = NA_character_,
-      centered = NA_character_,
-      groups = integer(0)
-    ))
-  }
-  # Both species are class kb_fit_weight; the descriptor branches on meta$species
-  # because the two weight models differ in likelihood and effect structure.
-  if (identical(x$meta$species, "macrocystis")) {
-    list(
-      family = "Gamma (shape proportional to fronds); response weight",
-      fixed = "intercept + linear log(fronds/f0)",
-      random = "site (intercept); year (intercept); site:year (intercept)",
-      centered = paste0(
-        "log-fronds at f0 = ",
-        signif(x$meta$fronds_ref, 3),
-        " (geometric mean of fronds)"
-      ),
-      groups = weight_groups(x, year = TRUE)
-    )
-  } else {
-    list(
-      family = "Student-t (df = 4); response log(weight)",
-      fixed = "intercept + linear + quadratic log(diameter/d0)",
-      random = "site (intercept, slope); site:year (intercept)",
-      centered = paste0(
-        "log-diameter at d0 = ",
-        signif(x$meta$diameter_ref, 3),
-        " (geometric mean of diameter)"
-      ),
-      groups = weight_groups(x)
-    )
-  }
+# Summary-header descriptor (family, effect structure, group counts); dispatches
+# on the fit subclass, with the default returning NA fields for models without one.
+.fit_descriptor <- function(x) {
+  UseMethod(".fit_descriptor")
+}
+
+.fit_descriptor.default <- function(x) {
+  list(
+    family = NA_character_,
+    fixed = NA_character_,
+    random = NA_character_,
+    centered = NA_character_,
+    groups = integer(0)
+  )
+}
+
+.fit_descriptor.kb_fit_weight_macro <- function(x) {
+  list(
+    family = "Gamma; response weight",
+    fixed = "intercept + linear log(fronds/f0)",
+    random = "site (intercept); year (intercept); site:year (intercept)",
+    centered = paste0(
+      "log-fronds at f0 = ",
+      signif(x$meta$fronds_ref, 3),
+      " (geometric mean of fronds)"
+    ),
+    groups = weight_groups(x, year = TRUE)
+  )
+}
+
+.fit_descriptor.kb_fit_weight_nereo <- function(x) {
+  list(
+    family = "Student-t (df = 4); response log(weight)",
+    fixed = "intercept + linear + quadratic log(diameter/d0)",
+    random = "site (intercept, slope); site:year (intercept)",
+    centered = paste0(
+      "log-diameter at d0 = ",
+      signif(x$meta$diameter_ref, 3),
+      " (geometric mean of diameter)"
+    ),
+    groups = weight_groups(x)
+  )
 }
 
 # Number of levels of each grouping factor in the weight model. `year` adds the

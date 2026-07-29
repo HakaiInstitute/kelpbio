@@ -1,13 +1,11 @@
 // Macrocystis plant-level allometric weight model (site-year resolution).
-// weight ~ gamma(alpha * fronds, alpha * fronds / eWeight) where
+// weight ~ gamma(shape, shape / eWeight) where
 //   eWeight = exp(bWeight + bSite[site]
 //                 + bFronds * log(fronds / fronds_ref)
 //                 + bYear[year]
 //                 + bSiteYear[site, year])
-// Shape proportional to frond count encodes the compound-sum mechanism: plant
-// biomass is the sum of N independent frond contributions, so the Gamma shape
-// grows linearly with N and CV scales as 1/sqrt(alpha * N), reproducing the
-// size-dependent heteroscedasticity. There is no residual SD parameter.
+// Constant Gamma shape (CV = 1/sqrt(shape), the same for every plant);
+// there is no residual SD parameter.
 // log-fronds is centered at fronds_ref (passed as data: the geometric mean of
 // the observed frond count). Random effects: site intercept, year intercept, and
 // site:year. Priors are passed as data; the prior family is fixed at compile
@@ -42,7 +40,7 @@ transformed data {
 parameters {
   real bWeight;                           // intercept: expected log(weight) at fronds_ref
   real bFronds;                           // log-fronds slope
-  real<lower=0> alpha;                    // per-frond Gamma shape (dispersion)
+  real<lower=0> shape;                    // Gamma shape (dispersion)
   real<lower=0> sSite;                    // site intercept SD
   real<lower=0> sYear;                    // year intercept SD
   real<lower=0> sSiteYear;                // site:year SD
@@ -65,7 +63,7 @@ transformed parameters {
 model {
   bWeight ~ normal(prior_intercept_mu, prior_intercept_sd);
   bFronds ~ normal(prior_fronds_mu, prior_fronds_sd);
-  alpha ~ exponential(prior_shape_rate);
+  shape ~ exponential(prior_shape_rate);
   sSite ~ exponential(prior_sd_site_rate);
   sYear ~ exponential(prior_sd_year_rate);
   sSiteYear ~ exponential(prior_sd_site_year_rate);
@@ -74,9 +72,8 @@ model {
   to_vector(z_bSiteYear) ~ std_normal();
   if (prior_only == 0) {
     for (i in 1:nObs) {
-      real shape_i = alpha * fronds[i];
-      real rate_i = shape_i / exp(log_eWeight[i]);
-      weight[i] ~ gamma(shape_i, rate_i);
+      real rate_i = shape / exp(log_eWeight[i]);
+      weight[i] ~ gamma(shape, rate_i);
     }
   }
 }
@@ -89,9 +86,8 @@ generated quantities {
   vector[nObs] log_lik;
   vector[nObs] yrep;
   for (i in 1:nObs) {
-    real shape_i = alpha * fronds[i];
-    real rate_i = shape_i / exp(log_eWeight[i]);
-    log_lik[i] = gamma_lpdf(weight[i] | shape_i, rate_i);
-    yrep[i] = gamma_rng(shape_i, rate_i);
+    real rate_i = shape / exp(log_eWeight[i]);
+    log_lik[i] = gamma_lpdf(weight[i] | shape, rate_i);
+    yrep[i] = gamma_rng(shape, rate_i);
   }
 }

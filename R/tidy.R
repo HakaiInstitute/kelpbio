@@ -28,41 +28,41 @@ tidy.kb_fit_weight <- function(
   .chk_summary_args(conf_level, estimate, sig_fig)
   chk::chk_flag(include_random_effects)
 
-  # Terms are named explicitly rather than inferred from parameter shape: a
-  # scalar can be a population effect, an SD, or a single-level random effect,
-  # and a fixed effect can be vector-valued, so shape does not identify the role.
-  # The term set is species-specific (the two weight models differ structurally).
-  if (identical(x$meta$species, "macrocystis")) {
-    variables <- c(
-      "bWeight",
-      "bFronds",
-      "alpha",
-      "sSite",
-      "sYear",
-      "sSiteYear"
-    )
-    if (include_random_effects) {
-      variables <- c(variables, "bSite", "bYear", "bSiteYear")
-    }
-  } else {
-    variables <- c(
-      "bWeight",
-      "bDiameter",
-      "bDiameter2",
-      "sSite",
-      "sSiteDiameter",
-      "sSiteYear",
-      "sWeight"
-    )
-    if (include_random_effects) {
-      variables <- c(variables, "bSite", "bSiteDiameter", "bSiteYear")
-    }
-  }
   summarise_draws_terms(
     x$draws,
-    variables = variables,
+    variables = .weight_terms(x, include_random_effects),
     conf_level = conf_level,
     estimate = estimate,
     sig_fig = sig_fig
   )
+}
+
+# The model terms to summarise, named explicitly because parameter shape doesn't
+# identify a term's role; species-specific, so it dispatches on the fit subclass.
+.weight_terms <- function(x, include_random_effects) {
+  UseMethod(".weight_terms")
+}
+
+.weight_terms.kb_fit_weight_nereo <- function(x, include_random_effects) {
+  variables <- c(
+    "bWeight",
+    "bDiameter",
+    "bDiameter2",
+    "sSite",
+    "sSiteDiameter",
+    "sSiteYear",
+    "sWeight"
+  )
+  if (include_random_effects) {
+    variables <- c(variables, "bSite", "bSiteDiameter", "bSiteYear")
+  }
+  variables
+}
+
+.weight_terms.kb_fit_weight_macro <- function(x, include_random_effects) {
+  variables <- c("bWeight", "bFronds", "shape", "sSite", "sYear", "sSiteYear")
+  if (include_random_effects) {
+    variables <- c(variables, "bSite", "bYear", "bSiteYear")
+  }
+  variables
 }

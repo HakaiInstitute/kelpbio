@@ -19,6 +19,7 @@ test_that("kb_fit_weight_macro returns a correctly-structured object", {
     seed = 1
   )
 
+  expect_s3_class(fit, "kb_fit_weight_macro")
   expect_s3_class(fit, "kb_fit_weight")
   expect_s3_class(fit, "kb_fit")
   expect_identical(fit$meta$species, "macrocystis")
@@ -30,7 +31,7 @@ test_that("kb_fit_weight_macro returns a correctly-structured object", {
     c(
       "bWeight",
       "bFronds",
-      "alpha",
+      "shape",
       "sSite",
       "sYear",
       "sSiteYear",

@@ -19,7 +19,7 @@ fit_weight_sim_macro <- kb_fit_weight_macro(
   niters = 400L,
   nthin = 1L,
   cores = 2L,
-  progress = "none",
+  progress = "bar",
   seed = 42L
 )
 

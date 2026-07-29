@@ -6,13 +6,13 @@ Fitting the Nereocystis and Macrocystis weight models and the kb_fit object cont
 ## Requirements
 ### Requirement: Fit the Nereocystis weight model
 
-`kb_fit_weight_nereo(data, priors, ..., prior_only, chains, niters, nthin, cores, seed, progress, progress_dir)` SHALL fit the *Nereocystis luetkeana* allometric weight model (quadratic log-diameter mean with site intercept, site slope, and a data-determined site:year random effect) via `stanmodels$weight_nereo` and return an object of class `c("kb_fit_weight", "kb_fit")`. The species is fixed by the function (there is no `species` argument); it is recorded as `"nereocystis"` in `meta$species`. There SHALL be no `site_year_on` argument: the site:year effect is determined from the data (see below) and the determination is recorded in `meta$site_year_on`.
+`kb_fit_weight_nereo(data, priors, ..., prior_only, chains, niters, nthin, cores, seed, progress, progress_dir)` SHALL fit the *Nereocystis luetkeana* allometric weight model (quadratic log-diameter mean with site intercept, site slope, and a data-determined site:year random effect) via `stanmodels$weight_nereo` and return an object of class `c("kb_fit_weight_nereo", "kb_fit_weight", "kb_fit")`. The species is fixed by the function (there is no `species` argument); it is recorded as `"nereocystis"` in `meta$species`. There SHALL be no `site_year_on` argument: the site:year effect is determined from the data (see below) and the determination is recorded in `meta$site_year_on`.
 
 The site:year effect SHALL be included when the data span more than one distinct year and omitted otherwise. When years are present but no site was sampled in more than one year (an aliased design in which the site and site:year contributions are not separately identifiable) the effect SHALL be retained and a `cli` warning issued; predictions conditioned on the observed site-years are unaffected, but the individual site and site:year terms and their standard deviations (`sSite`, `sSiteYear`) are prior-driven and SHALL NOT be interpreted separately. When the effect is omitted an informational message SHALL be issued unless `progress = "none"`.
 
 #### Scenario: Returns a kb_fit_weight object
 - **WHEN** `kb_fit_weight_nereo()` is called on valid weight data
-- **THEN** it returns an object of class `c("kb_fit_weight", "kb_fit")` with `meta$species` equal to `"nereocystis"`
+- **THEN** it returns an object of class `c("kb_fit_weight_nereo", "kb_fit_weight", "kb_fit")` with `meta$species` equal to `"nereocystis"`
 
 #### Scenario: Arguments are validated at entry
 - **WHEN** `kb_fit_weight_nereo()` is called with an invalid argument (e.g. bad `data`, a `priors` entry of the wrong family)
@@ -135,11 +135,11 @@ A structured convergence summary SHALL be available regardless of `progress` thr
 `kb_fit_weight_macro(data, priors, ..., prior_only, chains, niters, nthin,
 cores, seed, progress, progress_dir)` SHALL fit the *Macrocystis pyrifera*
 allometric weight model via `stanmodels$weight_macro` and return an object of
-class `c("kb_fit_weight", "kb_fit")`. The model is a Gamma GLM: the expected
+class `c("kb_fit_weight_macro", "kb_fit_weight", "kb_fit")`. The model is a Gamma GLM: the expected
 weight is `exp(bWeight + bSite[site] + bFronds * (log(fronds) -
 log(fronds_ref)) + bYear[year] + site:year)`, and the response is
-`weight ~ Gamma(shape = alpha * fronds, rate = shape / eWeight)`, so the Gamma
-shape grows linearly with frond count (a compound-sum dispersion). The species is
+`weight ~ Gamma(shape, shape / eWeight)`, a constant Gamma shape
+`shape`. The species is
 fixed by the function (there is no `species` argument); it is recorded as
 `"macrocystis"` in `meta$species`. The site:year effect is data-determined by the
 same rule as the *Nereocystis* model (included when the data span more than one
@@ -150,13 +150,13 @@ extraction, and diagnostics are delegated to the shared internal engine
 
 #### Scenario: Returns a kb_fit_weight object
 - **WHEN** `kb_fit_weight_macro()` is called on valid macro weight data
-- **THEN** it returns an object of class `c("kb_fit_weight", "kb_fit")` with
+- **THEN** it returns an object of class `c("kb_fit_weight_macro", "kb_fit_weight", "kb_fit")` with
   `meta$species` equal to `"macrocystis"`
 
 #### Scenario: Stores the macro parameters
 - **WHEN** the fit object is inspected
 - **THEN** it exposes draws for the fixed effects `bWeight`, `bFronds`; the Gamma
-  shape `alpha`; the SDs `sSite`, `sYear`, `sSiteYear`; the per-level `bSite`,
+  shape `shape`; the SDs `sSite`, `sYear`, `sSiteYear`; the per-level `bSite`,
   `bYear`, `bSiteYear`; and the `log_lik` and `yrep` generated quantities, and
   retains no live `stanfit`
 

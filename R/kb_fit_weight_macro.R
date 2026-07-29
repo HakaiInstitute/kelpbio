@@ -6,10 +6,8 @@
 #' The response is wet weight, modelled on the natural scale with a Gamma
 #' likelihood. Expected weight is a log-linear (allometric) function of log frond
 #' count, centered at its geometric mean so the intercept is the expected weight
-#' at a typical frond count. The Gamma shape is proportional to the frond count
-#' (`alpha * fronds`): plant biomass is the compound sum of the individual frond
-#' contributions, so its variability scales with size. The intercept varies by
-#' site, by year, and by `site:year`.
+#' at a typical frond count. The Gamma shape (`shape`) is constant across plants.
+#' The intercept varies by site, by year, and by `site:year`.
 #'
 #' `niters` is the number of saved post-warmup draws per chain; warmup defaults
 #' to match `niters` and the post-warmup phase is thinned by `nthin`. The returned
@@ -51,7 +49,7 @@
 #'   `control` list (merged over the `adapt_delta = 0.95` default); see the
 #'   `control` argument of [rstan::stan()] for the available entries.
 #'
-#' @return An object of class `c("kb_fit_weight", "kb_fit")`.
+#' @return An object of class `c("kb_fit_weight_macro", "kb_fit_weight", "kb_fit")`.
 #' @family model
 #' @export
 #'
@@ -106,7 +104,7 @@ kb_fit_weight_macro <- function(
     param_vars = c(
       "bWeight",
       "bFronds",
-      "alpha",
+      "shape",
       "sSite",
       "sYear",
       "sSiteYear",

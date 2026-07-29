@@ -45,9 +45,9 @@ defaults to match).}
 cores.}
 
 \item{seed}{A whole number passed to \code{\link[rstan:sampling]{rstan::sampling()}} to make the fit
-reproducible, or \code{NULL} (the default). When \code{NULL}, rstan draws its own seed
-from R's RNG, so a preceding \code{set.seed()} also makes the fit reproducible; an
-explicit \code{seed} takes precedence over the RNG state.}
+reproducible, or \code{NULL} (the default). When \code{NULL}, a seed is drawn from R's
+RNG, so a preceding \code{set.seed()} also makes the fit reproducible; an explicit
+\code{seed} takes precedence over the RNG state.}
 
 \item{progress}{A string, one of \code{"bar"} (the default, a console progress
 bar), \code{"verbose"} (rstan's per-iteration output and diagnostic warnings), or
@@ -58,7 +58,7 @@ pollable progress artifact (read by \code{\link[=kb_fit_progress]{kb_fit_progres
 default) to write none.}
 }
 \value{
-An object of class \code{c("kb_fit_weight", "kb_fit")}.
+An object of class \code{c("kb_fit_weight_macro", "kb_fit_weight", "kb_fit")}.
 }
 \description{
 Fit an allometric weight model for \emph{Macrocystis pyrifera} via Stan.
@@ -67,10 +67,8 @@ Fit an allometric weight model for \emph{Macrocystis pyrifera} via Stan.
 The response is wet weight, modelled on the natural scale with a Gamma
 likelihood. Expected weight is a log-linear (allometric) function of log frond
 count, centered at its geometric mean so the intercept is the expected weight
-at a typical frond count. The Gamma shape is proportional to the frond count
-(\code{alpha * fronds}): plant biomass is the compound sum of the individual frond
-contributions, so its variability scales with size. The intercept varies by
-site, by year, and by \code{site:year}.
+at a typical frond count. The Gamma shape (\code{shape}) is constant across plants.
+The intercept varies by site, by year, and by \code{site:year}.
 
 \code{niters} is the number of saved post-warmup draws per chain; warmup defaults
 to match \code{niters} and the post-warmup phase is thinned by \code{nthin}. The returned

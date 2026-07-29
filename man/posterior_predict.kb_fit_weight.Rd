@@ -42,7 +42,7 @@ A draws-by-observations (\verb{D x N}) matrix.
 \description{
 Draws from the posterior predictive distribution: the expected weight plus
 species-appropriate observation noise (Student-t on log-weight with scale
-\code{sWeight} for \emph{Nereocystis}; Gamma with shape \code{alpha * fronds} for
+\code{sWeight} for \emph{Nereocystis}; Gamma with shape \code{shape} for
 \emph{Macrocystis}, matching the Stan likelihood). With \code{new_data = NULL} the stored
 \code{yrep} at the observed data is returned, for use with \code{bayesplot::pp_check()}.
 }

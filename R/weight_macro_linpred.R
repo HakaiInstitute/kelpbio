@@ -5,7 +5,7 @@
 # weight_nereo_linpred.R (resolve_re1/resolve_re2). Macro differs from nereo: a
 # linear (not quadratic) log-predictor, no site slope, and a standalone year main
 # effect (bYear) in addition to site and site:year.
-.weight_macro_linpred <- function(
+.weight_linpred.kb_fit_weight_macro <- function(
   fit,
   grid,
   new_levels,
@@ -49,4 +49,8 @@
     re_site +
     re_year +
     re_sy
+}
+
+.chk_new_data.kb_fit_weight_macro <- function(fit, new_data) {
+  .chk_new_data_weight_macro(new_data)
 }

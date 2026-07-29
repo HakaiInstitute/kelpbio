@@ -86,17 +86,17 @@ block, the prior family fixed at compile time), a `prior_only` flag and `nObs >=
 no-ops when `nObs == 0`. It is exposed as `stanmodels$weight_macro`.
 
 The macro model SHALL differ from nereo in its likelihood and structure: the
-response `weight` is modelled on the natural scale by `weight ~ gamma(alpha .*
-fronds, alpha .* fronds ./ eWeight)`, where `eWeight = exp(bWeight + bSite[site]
+response `weight` is modelled on the natural scale by `weight ~ gamma(shape,
+shape ./ eWeight)`, where `eWeight = exp(bWeight + bSite[site]
 + bFronds * log_fronds + bYear[year] + site_year_on * bSiteYear[site, year])` and
 `log_fronds = log(fronds) - log(fronds_ref)`. There is no quadratic term, no site
-slope, and no residual SD; dispersion comes from the per-frond Gamma shape
-`alpha`. A standalone year main effect `bYear` is present in addition to `bSite`
+slope, and no residual SD; dispersion comes from the constant Gamma shape
+`shape`. A standalone year main effect `bYear` is present in addition to `bSite`
 and `bSiteYear`.
 
 #### Scenario: Samples and exposes the expected quantities
 - **WHEN** `stanmodels$weight_macro` is sampled on assembled macro data
-- **THEN** it returns a stanfit exposing `bWeight`, `bFronds`, `alpha`, `sSite`,
+- **THEN** it returns a stanfit exposing `bWeight`, `bFronds`, `shape`, `sSite`,
   `sYear`, `sSiteYear`, the per-level `bSite` / `bYear` / `bSiteYear`, and the
   `log_lik` / `yrep` generated quantities
 

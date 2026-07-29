@@ -104,7 +104,7 @@ test_that("the macro weight model samples and returns the declared parameters", 
     c(
       "bWeight",
       "bFronds",
-      "alpha",
+      "shape",
       "sSite",
       "sYear",
       "sSiteYear",

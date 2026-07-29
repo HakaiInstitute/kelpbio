@@ -28,7 +28,7 @@ test_that("tidy uses the macro term list for a macro fit", {
   expect_named(t, c("term", "estimate", "lower", "upper"))
   expect_setequal(
     t$term,
-    c("bWeight", "bFronds", "alpha", "sSite", "sYear", "sSiteYear")
+    c("bWeight", "bFronds", "shape", "sSite", "sYear", "sSiteYear")
   )
   # the year main effect appears among the per-level deviations
   tr <- tidy(weight_macro_fit, include_random_effects = TRUE)

@@ -1,8 +1,8 @@
-# Tests for the internal .weight_macro_linpred() engine and macro by-axis rules.
+# Tests for the internal .weight_linpred() engine and macro by-axis rules.
 
-test_that(".weight_macro_linpred returns a log-scale rvar aligned to the grid", {
+test_that(".weight_linpred returns a log-scale rvar aligned to the grid", {
   grid <- data.frame(fronds = c(2, 5, 10))
-  lp <- .weight_macro_linpred(weight_macro_fit, grid, new_levels = "average")
+  lp <- .weight_linpred(weight_macro_fit, grid, new_levels = "average")
   expect_s3_class(lp, "rvar")
   expect_length(lp, 3L)
   expect_equal(
@@ -17,7 +17,7 @@ test_that("the dispatcher routes a macro fit to the macro builder", {
     .weight_linpred(weight_macro_fit, grid, "average")
   )
   lp_direct <- posterior::draws_of(
-    .weight_macro_linpred(weight_macro_fit, grid, "average")
+    .weight_linpred(weight_macro_fit, grid, "average")
   )
   expect_equal(lp_dispatch, lp_direct)
 })
@@ -28,10 +28,10 @@ test_that("conditioning follows the grid columns (site and year)", {
   bare <- data.frame(fronds = c(5, 5))
   with_group <- data.frame(fronds = c(5, 5), site = s, year = y)
   lp_avg <- posterior::draws_of(
-    .weight_macro_linpred(weight_macro_fit, bare, "average")
+    .weight_linpred(weight_macro_fit, bare, "average")
   )
   lp_grp <- posterior::draws_of(
-    .weight_macro_linpred(weight_macro_fit, with_group, "average")
+    .weight_linpred(weight_macro_fit, with_group, "average")
   )
   expect_false(isTRUE(all.equal(as.numeric(lp_avg), as.numeric(lp_grp))))
 })
@@ -43,10 +43,10 @@ test_that("a known year contributes its estimated bYear main effect", {
   grid_year <- data.frame(fronds = 5, year = y)
   grid_bare <- data.frame(fronds = 5)
   diff <- posterior::draws_of(
-    .weight_macro_linpred(weight_macro_fit, grid_year, "average")
+    .weight_linpred(weight_macro_fit, grid_year, "average")
   ) -
     posterior::draws_of(
-      .weight_macro_linpred(weight_macro_fit, grid_bare, "average")
+      .weight_linpred(weight_macro_fit, grid_bare, "average")
     )
   yi <- match(y, weight_macro_fit$meta$year_levels)
   byear <- posterior::draws_of(weight_macro_fit$draws$bYear)[, yi]
@@ -58,13 +58,13 @@ test_that("sample widens vs average when a factor is omitted", {
   grid <- data.frame(fronds = c(2, 5, 10))
   sd_avg <- apply(
     posterior::draws_of(
-      .weight_macro_linpred(weight_macro_fit, grid, "average")
+      .weight_linpred(weight_macro_fit, grid, "average")
     ),
     2,
     stats::sd
   )
   sd_smp <- apply(
-    posterior::draws_of(.weight_macro_linpred(weight_macro_fit, grid, "sample")),
+    posterior::draws_of(.weight_linpred(weight_macro_fit, grid, "sample")),
     2,
     stats::sd
   )
