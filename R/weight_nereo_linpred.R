@@ -1,6 +1,5 @@
-# Single R-side source of the Nereocystis weight-model mean (log scale), as a
-# posterior rvar over grid rows. All predict paths route through here.
-.weight_nereo_linpred <- function(
+# Nereocystis weight-model mean (log scale), a posterior rvar over grid rows.
+.weight_linpred.kb_fit_weight_nereo <- function(
   fit,
   grid,
   new_levels,
@@ -53,25 +52,10 @@
     re_sy
 }
 
-# Species dispatch: the model-level entry points route to the per-species mean
-# builder on meta$species, so the ~25 kb_fit_weight methods stay shared.
+# Weight-model mean (log scale); dispatches on the fit subclass. All predict
+# paths route here.
 .weight_linpred <- function(fit, grid, new_levels, representative_site = NULL) {
-  switch(
-    fit$meta$species,
-    nereocystis = .weight_nereo_linpred(
-      fit,
-      grid,
-      new_levels,
-      representative_site
-    ),
-    macrocystis = .weight_macro_linpred(
-      fit,
-      grid,
-      new_levels,
-      representative_site
-    ),
-    cli::cli_abort("Unsupported weight-model species {.val {fit$meta$species}}.")
-  )
+  UseMethod(".weight_linpred")
 }
 
 # new_levels is immaterial: every observed row is a known level.
@@ -79,15 +63,13 @@
   .weight_linpred(fit, tibble::as_tibble(fit$data), new_levels = "average")
 }
 
-# The predictor column ("diameter" for nereo, "fronds" for macro) and its
-# new-data validator are looked up from the fit so the routing stays shared.
-.chk_new_data_weight <- function(fit, new_data) {
-  switch(
-    fit$meta$species,
-    nereocystis = .chk_new_data_weight_nereo(new_data),
-    macrocystis = .chk_new_data_weight_macro(new_data),
-    cli::cli_abort("Unsupported weight-model species {.val {fit$meta$species}}.")
-  )
+# Validate new_data's predictor column; dispatches on the fit subclass.
+.chk_new_data <- function(fit, new_data) {
+  UseMethod(".chk_new_data")
+}
+
+.chk_new_data.kb_fit_weight_nereo <- function(fit, new_data) {
+  .chk_new_data_weight_nereo(new_data)
 }
 
 weight_data_linpred <- function(
@@ -102,7 +84,7 @@ weight_data_linpred <- function(
     # fit$data already passed its species data check at fit time.
     grid <- tibble::as_tibble(fit$data)
   } else {
-    .chk_new_data_weight(fit, new_data)
+    .chk_new_data(fit, new_data)
     grid <- tibble::as_tibble(new_data)
   }
   list(
