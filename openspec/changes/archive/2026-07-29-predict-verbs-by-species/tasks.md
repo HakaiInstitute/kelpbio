@@ -15,7 +15,7 @@
 
 - [x] 3.1 Document each verb as a generic topic covering shared conceptual details; `@describeIn` per-species method sections.
 - [x] 3.2 Document the per-species methods with `@inheritParams params` for shared args plus `@param diameter` / `@param fronds`; removed all `predictor`-argument references.
-- [ ] 3.3 `devtools::document()` to regenerate `man/` and `NAMESPACE` (new S3 method exports).
+- [x] 3.3 `devtools::document()` to regenerate `man/` and `NAMESPACE` (new S3 method exports).
 
 ## 4. Reader docs and demo
 
@@ -26,10 +26,10 @@
 
 - [x] 5.1 Updated `tests/testthat/test-kb_predict_weight_by.R` and `test-kb_plot_predictions.R` to `diameter` / `fronds`; added a macro `fronds`-sequence test.
 - [x] 5.2 Added a test that the wrong-species predictor argument errors for each species.
-- [ ] 5.3 Run `devtools::test()` green (no snapshot referenced `predictor`).
+- [x] 5.3 Run `devtools::test()` green (no snapshot referenced `predictor`).
 
 ## 6. Spec sync and archive
 
-- [ ] 6.1 Sync the `predictions` delta into `openspec/specs/predictions/spec.md`.
+- [x] 6.1 Sync the `predictions` delta into `openspec/specs/predictions/spec.md`.
 - [x] 6.2 Updated the `CLAUDE.md` argument-order note (`diameter`/`fronds`).
-- [ ] 6.3 Archive the change.
+- [x] 6.3 Archive the change.
