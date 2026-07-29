@@ -44,13 +44,11 @@ try(kb_check_data_weight_nereo(bad)) # missing value
 
 # --- kb_fit_weight_nereo() ----------------------------------------------------
 fit <- kb_fit_weight_nereo(
-  data_weight_sim_nereo,
-  chains = 4,
-  niters = 500,
-  nthin = 2
+  data_weight_sim_nereo
 )
 # print key model info (see other generics including summary() below)
 fit
+
 
 # --- fit accessors: broom + universals + diagnostics --------------------------
 print(fit)
@@ -91,7 +89,7 @@ head(residuals(fit))
 augment(fit)
 
 augment(fit) |>
-  ggplot(aes(fitted, residual)) +
+  ggplot(aes(log(fitted), residual)) +
   geom_hline(yintercept = 0, linetype = 2) +
   geom_point(alpha = 0.3)
 
@@ -104,7 +102,7 @@ sites <- levels(fit$data$site)
 kb_predict_weight(fit)
 # supply new data
 kb_predict_weight(fit, new_data = nd)
-kb_predict_weight(fit, new_data = tibble(diameter = 40, site = sites[1]))
+kb_predict_weight(fit, new_data = tibble(diameter = 40))
 
 # use generic (wrapper of kb_predict_weight)
 predict(fit)
@@ -159,7 +157,7 @@ kb_plot_predictions(pop)
 # plot allometric curves for 'typical' year by site
 # grouping from kb_predict function is stored and retrieved by plot function so is aware of how to facet
 # note the default is to cap facets - user can set max_facets or pre-filter (see warning)
-kb_predict_weight_by(fit, by = "site") |>
+kb_predict_weight_by(fit) |>
   kb_plot_predictions()
 
 # when only one predictor value per group, plot function knows to plot pointrange instead of line/ribbon
@@ -388,6 +386,11 @@ kb_predict_weight_by(fit_m, by = "year", predictor = 10) |>
 
 kb_predict_weight_by(fit_m, by = "site") |>
   kb_plot_predictions(observed = data_weight_sim_macro)
+
+augment(fit_m) |>
+  ggplot(aes(log(fitted), residual)) +
+  geom_hline(yintercept = 0, linetype = 2) +
+  geom_point(alpha = 0.3)
 
 # posterior_predict draws strictly positive Gamma replicates
 pp_m <- posterior_predict(fit_m, new_data = tibble(fronds = c(2, 5, 10)))
