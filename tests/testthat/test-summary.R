@@ -27,12 +27,26 @@ test_that("summary diagnostic columns agree with the stored diagnostics", {
 
 test_that("summary carries the fit metadata", {
   s <- summary(weight_fit)
-  expect_equal(s$model, "weight")
+  expect_equal(s$model, "Weight")
   expect_match(s$family, "Student-t")
   expect_match(s$fixed, "log\\(diameter/d0\\)")
   expect_match(s$random, "site:year")
   expect_named(s$groups, c("site", "site:year"))
   expect_equal(s$ndraws, posterior::ndraws(weight_fit$draws))
+})
+
+test_that("macro summary carries the Gamma family, term list, and year group", {
+  s <- summary(weight_macro_fit)
+  expect_equal(s$model, "Weight")
+  expect_match(s$family, "Gamma")
+  expect_match(s$fixed, "log\\(fronds/f0\\)")
+  expect_match(s$random, "year")
+  expect_named(s$groups, c("site", "year", "site:year"))
+  expect_true(all(
+    c("bWeight", "bFronds", "shape", "sSite", "sYear", "sSiteYear") %in%
+      s$coefficients$term
+  ))
+  expect_false(any(grepl("^bYear\\[", s$coefficients$term)))
 })
 
 test_that("print.summary_kb_fit shows the header, table, and footer", {

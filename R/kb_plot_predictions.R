@@ -185,6 +185,7 @@ kb_axis_label <- function(name, units = NA_character_) {
   base <- switch(
     name,
     diameter = "Sub-bulb diameter",
+    fronds = "Fronds",
     weight = "Wet weight",
     site = "Site",
     year = "Year",

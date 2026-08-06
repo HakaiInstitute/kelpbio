@@ -30,9 +30,41 @@ test_that("by = c(site, year) uses only observed site-year combinations", {
   expect_setequal(got, observed)
 })
 
-test_that("custom diameter sequence is honoured", {
+test_that("custom diameter sequence is honoured (nereo)", {
   p <- kb_predict_weight_by(weight_fit, diameter = c(25, 50, 75))
   expect_equal(p$diameter, c(25, 50, 75))
+})
+
+test_that("custom fronds sequence is honoured (macro)", {
+  p <- kb_predict_weight_by(weight_macro_fit, fronds = c(2, 5, 10))
+  expect_equal(p$fronds, c(2, 5, 10))
+})
+
+test_that("the wrong-species predictor argument errors", {
+  # `fronds` is the Macrocystis predictor; a Nereocystis fit rejects it
+  expect_error(
+    kb_predict_weight_by(weight_fit, fronds = c(2, 5)),
+    "diameter"
+  )
+  # `diameter` is the Nereocystis predictor; a Macrocystis fit rejects it
+  expect_error(
+    kb_predict_weight_by(weight_macro_fit, diameter = c(20, 40)),
+    "fronds"
+  )
+})
+
+test_that("by = \"year\" errors for nereo but works for macro", {
+  # nereo has no year main effect: year alone is rejected
+  expect_error(kb_predict_weight_by(weight_fit, by = "year"), "not available")
+  # macro has a year main effect: one curve per year over a fronds sequence
+  p <- kb_predict_weight_by(weight_macro_fit, by = "year")
+  expect_s3_class(p, "kb_predictions")
+  expect_true("year" %in% names(p))
+  expect_true("fronds" %in% names(p))
+  expect_setequal(
+    unique(as.character(p$year)),
+    weight_macro_fit$meta$year_levels
+  )
 })
 
 test_that("wider conf_level gives a wider interval", {

@@ -15,10 +15,10 @@ devtools::load_all(quiet = TRUE)
 fit_weight_sim_nereo <- kb_fit_weight_nereo(
   data_weight_sim_nereo,
   chains = 2L,
-  niters = 400L,
+  niters = 500L,
   nthin = 1L,
   cores = 2L,
-  progress = "none",
+  progress = "bar",
   seed = 42L
 )
 

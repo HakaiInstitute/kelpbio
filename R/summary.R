@@ -80,14 +80,39 @@ summary.kb_fit <- function(
   )
 }
 
+# Model name ("weight") from the class vector: the class before the "kb_fit" root.
+.kb_model <- function(fit) {
+  cls <- class(fit)
+  sub("^kb_fit_", "", cls[[match("kb_fit", cls) - 1L]])
+}
+
+# Upper-case the first letter, for display labels.
+.capitalize <- function(x) {
+  paste0(toupper(substr(x, 1L, 1L)), substring(x, 2L))
+}
+
+# Proper scientific name for display; meta$species stores the lowercase genus.
+# Falls back to the capitalized genus for any species without a mapping.
+.species_label <- function(species) {
+  binomial <- c(
+    nereocystis = "Nereocystis luetkeana",
+    macrocystis = "Macrocystis pyrifera"
+  )
+  out <- unname(binomial[species])
+  if (is.na(out)) {
+    out <- .capitalize(species)
+  }
+  out
+}
+
 # Fit-level metadata header, shared by the summary_kb_fit object and
 # print.kb_fit() so both render the same block (a single source for the fields;
 # .print_kb_fit_header() in print.R is the single source for the rendering).
 .kb_fit_header <- function(fit) {
-  descr <- fit_descriptor(fit)
+  descr <- .fit_descriptor(fit)
   list(
-    model = sub("^kb_fit_", "", class(fit)[1]),
-    species = fit$meta$species,
+    model = .capitalize(.kb_model(fit)),
+    species = .species_label(fit$meta$species),
     family = descr$family,
     fixed = descr$fixed,
     random = descr$random,
@@ -103,46 +128,64 @@ summary.kb_fit <- function(
   )
 }
 
-# Model-specific descriptor (likelihood family, effect structure, group counts)
-# for the summary header. Switches on the fit subclass; unknown models fall back
-# to NA so the print method omits those lines. The fixed/random lines describe the
-# structure in prose rather than a mixed-model formula, so the output does not
-# imply a formula interface or a particular fitting engine.
-fit_descriptor <- function(x) {
-  model <- sub("^kb_fit_", "", class(x)[1])
-  switch(
-    model,
-    weight = {
-      list(
-        family = "Student-t (df = 4); response log(weight)",
-        fixed = "intercept + linear + quadratic log(diameter/d0)",
-        random = "site (intercept, slope); site:year (intercept)",
-        centered = paste0(
-          "log-diameter at d0 = ",
-          signif(x$meta$diameter_ref, 3),
-          " (geometric mean of diameter)"
-        ),
-        groups = weight_groups(x)
-      )
-    },
-    list(
-      family = NA_character_,
-      fixed = NA_character_,
-      random = NA_character_,
-      centered = NA_character_,
-      groups = integer(0)
-    )
+# Summary-header descriptor (family, effect structure, group counts); dispatches
+# on the fit subclass, with the default returning NA fields for models without one.
+.fit_descriptor <- function(x) {
+  UseMethod(".fit_descriptor")
+}
+
+.fit_descriptor.default <- function(x) {
+  list(
+    family = NA_character_,
+    fixed = NA_character_,
+    random = NA_character_,
+    centered = NA_character_,
+    groups = integer(0)
   )
 }
 
-# Number of levels of each grouping factor in the weight model.
-weight_groups <- function(x) {
+.fit_descriptor.kb_fit_weight_macro <- function(x) {
+  list(
+    family = "Gamma on weight",
+    fixed = "intercept + linear log(fronds/f0)",
+    random = "site (intercept); year (intercept); site:year (intercept)",
+    centered = paste0(
+      "log-fronds at f0 = ",
+      signif(x$meta$fronds_ref, 3),
+      " (geometric mean of fronds)"
+    ),
+    groups = weight_groups(x, year = TRUE)
+  )
+}
+
+.fit_descriptor.kb_fit_weight_nereo <- function(x) {
+  list(
+    family = "Student-t (df = 4) on log(weight)",
+    fixed = "intercept + linear + quadratic log(diameter/d0)",
+    random = "site (intercept, slope); site:year (intercept)",
+    centered = paste0(
+      "log-diameter at d0 = ",
+      signif(x$meta$diameter_ref, 3),
+      " (geometric mean of diameter)"
+    ),
+    groups = weight_groups(x)
+  )
+}
+
+# Number of levels of each grouping factor in the weight model. `year` adds the
+# standalone year group count (the Macrocystis model has a year main effect).
+weight_groups <- function(x, year = FALSE) {
   d <- as.data.frame(x$data)
   n_site <- length(x$meta$site_levels)
+  n_year <- length(x$meta$year_levels)
   n_site_year <- if (nrow(d) && all(c("site", "year") %in% names(d))) {
     nrow(unique(d[c("site", "year")]))
   } else {
     0L
   }
-  c(site = n_site, "site:year" = n_site_year)
+  if (year) {
+    c(site = n_site, year = n_year, "site:year" = n_site_year)
+  } else {
+    c(site = n_site, "site:year" = n_site_year)
+  }
 }

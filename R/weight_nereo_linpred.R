@@ -1,6 +1,5 @@
-# Single R-side source of the Nereocystis weight-model mean (log scale), as a
-# posterior rvar over grid rows. All predict paths route through here.
-.weight_nereo_linpred <- function(
+# Nereocystis weight-model mean (log scale), a posterior rvar over grid rows.
+.weight_linpred.kb_fit_weight_nereo <- function(
   fit,
   grid,
   new_levels,
@@ -53,13 +52,24 @@
     re_sy
 }
 
+# Weight-model mean (log scale); dispatches on the fit subclass. All predict
+# paths route here.
+.weight_linpred <- function(fit, grid, new_levels, representative_site = NULL) {
+  UseMethod(".weight_linpred")
+}
+
 # new_levels is immaterial: every observed row is a known level.
-.weight_nereo_linpred_obs <- function(fit) {
-  .weight_nereo_linpred(
-    fit,
-    tibble::as_tibble(fit$data),
-    new_levels = "average"
-  )
+.weight_linpred_obs <- function(fit) {
+  .weight_linpred(fit, tibble::as_tibble(fit$data), new_levels = "average")
+}
+
+# Validate new_data's predictor column; dispatches on the fit subclass.
+.chk_new_data <- function(fit, new_data) {
+  UseMethod(".chk_new_data")
+}
+
+.chk_new_data.kb_fit_weight_nereo <- function(fit, new_data) {
+  .chk_new_data_weight_nereo(new_data)
 }
 
 weight_data_linpred <- function(
@@ -71,32 +81,35 @@ weight_data_linpred <- function(
   .chk_kb_fit_weight(fit)
   new_levels <- rlang::arg_match(new_levels, c("sample", "average"))
   if (is.null(new_data)) {
-    # fit$data already passed kb_check_data_weight_nereo() at fit time.
+    # fit$data already passed its species data check at fit time.
     grid <- tibble::as_tibble(fit$data)
   } else {
-    .chk_new_data_weight_nereo(new_data)
+    .chk_new_data(fit, new_data)
     grid <- tibble::as_tibble(new_data)
   }
   list(
     grid = grid,
     group_vars = intersect(c("site", "year"), names(grid)),
-    linpred = .weight_nereo_linpred(fit, grid, new_levels, representative_site)
+    linpred = .weight_linpred(fit, grid, new_levels, representative_site)
   )
 }
 
-weight_by_linpred <- function(fit, by, new_levels, diameter = NULL) {
+weight_by_linpred <- function(fit, by, new_levels, predictor = NULL) {
   .chk_kb_fit_weight(fit)
   new_levels <- rlang::arg_match(new_levels, c("sample", "average"))
-  by <- validate_by_weight(by)
-  grid <- build_by_grid(fit, by, diameter)
+  by <- validate_by_weight(by, fit$meta$species)
+  grid <- build_by_grid(fit, by, predictor)
   list(
     grid = grid,
     by = by,
-    linpred = .weight_nereo_linpred(fit, grid, new_levels)
+    linpred = .weight_linpred(fit, grid, new_levels)
   )
 }
 
-validate_by_weight <- function(by) {
+# Valid `by` groupings depend on the fitted random-effect structure. Both species
+# allow NULL, "site", and c("site", "year"). Nereo has no year main effect, so
+# "year" alone is rejected; macro has one, so "year" is allowed.
+validate_by_weight <- function(by, species = "nereocystis") {
   if (is.null(by)) {
     by <- character(0)
   }
@@ -109,10 +122,11 @@ validate_by_weight <- function(by) {
       i = "Available grouping factors: {.val {valid}}."
     ))
   }
-  # Year has no main effect, only the site:year interaction.
-  if ("year" %in% by && !"site" %in% by) {
+  if (
+    species == "nereocystis" && "year" %in% by && !"site" %in% by
+  ) {
     cli::cli_abort(c(
-      "{.code by = \"year\"} is not available for the weight model.",
+      "{.code by = \"year\"} is not available for the Nereocystis weight model.",
       i = "Year enters only through the site:year interaction (no year main effect).",
       i = "Use {.code by = NULL}, {.val site}, or {.code c(\"site\", \"year\")}."
     ))
@@ -120,34 +134,43 @@ validate_by_weight <- function(by) {
   by
 }
 
-build_by_grid <- function(fit, by, diameter = NULL) {
-  if (is.null(diameter)) {
-    rng <- range(fit$data$diameter, na.rm = TRUE)
-    diameter <- seq(rng[1], rng[2], length.out = 30L)
+build_by_grid <- function(fit, by, values = NULL) {
+  # Legacy fits (built before meta$predictor was recorded) default to diameter,
+  # matching the site_year_on legacy handling.
+  predictor <- fit$meta$predictor %||% "diameter"
+  if (is.null(values)) {
+    rng <- range(fit$data[[predictor]], na.rm = TRUE)
+    values <- seq(rng[1], rng[2], length.out = 30L)
   } else {
-    chk::chk_numeric(diameter)
+    chk::chk_numeric(values)
   }
+  preds <- tibble::tibble(x = values)
+  names(preds) <- predictor
   if (length(by) == 0) {
-    return(tibble::tibble(diameter = diameter))
+    return(preds)
   }
   site_levels <- fit$meta$site_levels
-  diameters <- tibble::tibble(diameter = diameter)
+  year_levels <- fit$meta$year_levels
   if (setequal(by, "site")) {
     sites <- tibble::tibble(site = factor(site_levels, levels = site_levels))
-    dplyr::cross_join(sites, diameters) |>
-      dplyr::arrange(.data$site, .data$diameter)
+    dplyr::cross_join(sites, preds) |>
+      dplyr::arrange(.data$site, .data[[predictor]])
+  } else if (setequal(by, "year")) {
+    years <- tibble::tibble(year = factor(year_levels, levels = year_levels))
+    dplyr::cross_join(years, preds) |>
+      dplyr::arrange(.data$year, .data[[predictor]])
   } else {
-    # Cross diameter only with the observed site:year combinations, as ordered
-    # factors sorted by level, so the returned row order follows the fit's level
-    # order rather than the (arbitrary) row order of fit$data.
+    # Cross the predictor only with the observed site:year combinations, as
+    # ordered factors sorted by level, so the returned row order follows the
+    # fit's level order rather than the (arbitrary) row order of fit$data.
     obs <- fit$data |>
       dplyr::distinct(.data$site, .data$year) |>
       dplyr::mutate(
         site = factor(as.character(.data$site), levels = site_levels),
-        year = factor(as.character(.data$year), levels = fit$meta$year_levels)
+        year = factor(as.character(.data$year), levels = year_levels)
       )
-    dplyr::cross_join(obs, diameters) |>
-      dplyr::arrange(.data$site, .data$year, .data$diameter)
+    dplyr::cross_join(obs, preds) |>
+      dplyr::arrange(.data$site, .data$year, .data[[predictor]])
   }
 }
 

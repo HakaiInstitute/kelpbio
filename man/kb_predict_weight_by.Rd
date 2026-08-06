@@ -2,12 +2,27 @@
 % Please edit documentation in R/kb_predict_weight_by.R
 \name{kb_predict_weight_by}
 \alias{kb_predict_weight_by}
-\title{Predict Weight Over a Diameter Sequence by Grouping Factor}
+\alias{kb_predict_weight_by.kb_fit_weight_nereo}
+\alias{kb_predict_weight_by.kb_fit_weight_macro}
+\title{Predict Weight Over a Predictor Sequence by Grouping Factor}
 \usage{
-kb_predict_weight_by(
+kb_predict_weight_by(fit, ...)
+
+\method{kb_predict_weight_by}{kb_fit_weight_nereo}(
   fit,
   by = NULL,
   diameter = NULL,
+  ...,
+  new_levels = c("average", "sample"),
+  conf_level = 0.95,
+  estimate = stats::median,
+  sig_fig = 3
+)
+
+\method{kb_predict_weight_by}{kb_fit_weight_macro}(
+  fit,
+  by = NULL,
+  fronds = NULL,
   ...,
   new_levels = c("average", "sample"),
   conf_level = 0.95,
@@ -18,16 +33,17 @@ kb_predict_weight_by(
 \arguments{
 \item{fit}{A \code{kb_fit_weight} object.}
 
+\item{...}{Passed to the species method: the predictor sequence (\code{diameter} for
+\emph{Nereocystis}, \code{fronds} for \emph{Macrocystis}) and the shared summary arguments.}
+
 \item{by}{A character vector of grouping factors, each drawn as a separate
 curve, or \code{NULL} for a single population-level curve. Each named factor is
 expanded over its observed levels and conditioned on its estimated random
 effects.}
 
-\item{diameter}{A numeric vector of sub-bulb diameters to predict over (in the
-same units as the fitted data), or \code{NULL} for an automatic sequence spanning
-the observed range.}
-
-\item{...}{These dots are for future extensions and must be empty.}
+\item{diameter}{A numeric vector of sub-bulb diameter values to predict over
+(in the units of the fitted data), or \code{NULL} for an automatic sequence
+spanning the observed range.}
 
 \item{new_levels}{A string, one of \code{"sample"} or \code{"average"}, controlling how
 random effects that are not conditioned on are treated (factors absent from
@@ -45,25 +61,43 @@ level.}
 a scalar point estimate (e.g. \code{median} or \code{mean}).}
 
 \item{sig_fig}{A whole number of significant figures for summary output.}
+
+\item{fronds}{A numeric vector of frond-count values to predict over, or \code{NULL}
+for an automatic sequence spanning the observed range.}
 }
 \value{
 A \code{kb_predictions} object: a summary tibble with \code{estimate}, \code{lower},
-\code{upper}, the \code{diameter} predictor, and the \code{by} grouping columns.
+\code{upper}, the predictor column, and the \code{by} grouping columns.
 }
 \description{
-Summarise the fitted relationship between weight and diameter over a generated
-prediction grid: a sequence of diameter values crossed with the grouping factors
-named in \code{by} (one curve per group).
+Summarise the fitted allometric relationship over a generated prediction grid:
+a sequence of predictor values crossed with the grouping factors named in \code{by}
+(one curve per group). The predictor sequence is supplied through the fit's
+species predictor argument: \code{diameter} for a \emph{Nereocystis} fit, \code{fronds} for a
+\emph{Macrocystis} fit (see the methods linked below).
 }
 \details{
 \code{by} selects the grouping factors that each get their own curve, conditioned on
 their estimated random effects. \code{new_levels} controls the factors not named in
-\code{by}. The default \code{"average"} holds those random effects at zero, giving the
-typical-group curve. \code{"sample"} instead draws a new random effect from its
+\code{by}: the default \code{"average"} holds those random effects at zero (the
+typical-group curve), while \code{"sample"} draws a new random effect from its
 estimated distribution, widening the uncertainty to include between-group
-variation. Set a seed with \code{set.seed()} for reproducible CIs. The available \code{by} values
-are \code{NULL} (a single population curve), \code{"site"}, and \code{c("site", "year")}.
+variation. Set a seed with \code{set.seed()} for reproducible \code{"sample"} intervals.
+
+The available \code{by} values are \code{NULL} (a single population curve), \code{"site"}, and
+\code{c("site", "year")} for both species; the \emph{Macrocystis} model additionally
+allows \code{"year"}, since it has a year main effect (the \emph{Nereocystis} model does
+not, so \code{by = "year"} errors there).
 }
+\section{Methods (by class)}{
+\itemize{
+\item \code{kb_predict_weight_by(kb_fit_weight_nereo)}: \emph{Nereocystis} method; predicts over a sub-bulb
+\code{diameter} sequence.
+
+\item \code{kb_predict_weight_by(kb_fit_weight_macro)}: \emph{Macrocystis} method; predicts over a
+\code{fronds} sequence.
+
+}}
 \examples{
 kb_predict_weight_by(fit_weight_sim_nereo, by = "site")
 }

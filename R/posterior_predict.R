@@ -1,9 +1,10 @@
 #' Posterior-Predictive Weight Draws
 #'
 #' Draws from the posterior predictive distribution: the expected weight plus
-#' Student-t observation noise (scale `sWeight`, 4 degrees of freedom, matching
-#' the Stan likelihood). With `new_data = NULL` the stored `yrep` at the observed
-#' data is returned, for use with `bayesplot::pp_check()`.
+#' species-appropriate observation noise (Student-t on log-weight with scale
+#' `sWeight` for *Nereocystis*; Gamma with shape `shape` for
+#' *Macrocystis*, matching the Stan likelihood). With `new_data = NULL` the stored
+#' `yrep` at the observed data is returned, for use with `bayesplot::pp_check()`.
 #'
 #' @details
 #' For supplied `new_data`, conditioning is inferred from the grouping columns
@@ -11,8 +12,9 @@
 #'
 #' @inheritParams params
 #' @param object A `kb_fit_weight` object.
-#' @param new_data A data frame with a `diameter` column (and optional `site` /
-#'   `year` columns), or `NULL` for the stored `yrep` at the observed data.
+#' @param new_data A data frame with the fit's predictor column (and optional
+#'   `site` / `year` columns), or `NULL` for the stored `yrep` at the observed
+#'   data.
 #' @param ... Unused.
 #'
 #' @return A draws-by-observations (`D x N`) matrix.
@@ -40,10 +42,35 @@ posterior_predict.kb_fit_weight <- function(
     return(posterior::draws_of(object$gq$yrep))
   }
   res <- weight_data_linpred(object, new_data, new_levels, representative_site)
-  lp <- posterior::draws_of(res$linpred) # D x N
+  lp <- posterior::draws_of(res$linpred) # D x N, log scale
+  .weight_add_noise(object, lp, res$grid)
+}
+
+# Add the species' observation noise to the log-scale mean (D x N); dispatches on
+# the fit subclass.
+.weight_add_noise <- function(object, lp, grid) {
+  UseMethod(".weight_add_noise")
+}
+
+.weight_add_noise.kb_fit_weight_nereo <- function(object, lp, grid) {
   sweight <- as.vector(posterior::draws_of(object$draws$sWeight)) # length D
   # student_t(nu, mu, sigma) = mu + sigma * t_nu; nu is fixed in weight_nereo.stan
   # and stored in meta so this path cannot drift from the model.
   noise <- matrix(stats::rt(length(lp), df = object$meta$nu), nrow = nrow(lp))
   exp(lp + sweight * noise)
+}
+
+.weight_add_noise.kb_fit_weight_macro <- function(object, lp, grid) {
+  # weight ~ gamma(shape, shape / eWeight); constant Gamma shape matches
+  # weight_macro.stan.
+  ewt <- exp(lp)
+  shape <- as.vector(posterior::draws_of(object$draws$shape)) # length D
+  shape_mat <- matrix(shape, nrow = nrow(ewt), ncol = ncol(ewt)) # D x N, constant per draw
+  rate <- shape_mat / ewt
+  draws <- stats::rgamma(
+    length(shape_mat),
+    shape = as.vector(shape_mat),
+    rate = as.vector(rate)
+  )
+  matrix(draws, nrow = nrow(shape_mat))
 }

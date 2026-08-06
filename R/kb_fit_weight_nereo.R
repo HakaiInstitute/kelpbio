@@ -48,7 +48,7 @@
 #'   `control` list (merged over the `adapt_delta = 0.95` default); see the
 #'   `control` argument of [rstan::stan()] for the available entries.
 #'
-#' @return An object of class `c("kb_fit_weight", "kb_fit")`.
+#' @return An object of class `c("kb_fit_weight_nereo", "kb_fit_weight", "kb_fit")`.
 #' @family model
 #' @export
 #'
@@ -137,13 +137,18 @@ kb_fit_weight_nereo <- function(
     meta_extra = list(
       diameter_ref = diameter_ref,
       site_year_on = site_year$on,
-      nu = 4
+      nu = 4,
+      # Predictor/response column names let the model-level prediction and plot
+      # code stay species-agnostic (macro uses "fronds").
+      predictor = "diameter",
+      response = "weight"
     )
   )
 }
 
-# The S3 class is model-level (kb_fit_weight); species lives in meta$species and
-# species-specific metadata enters via meta_extra.
+# Each species is a subclass (c("kb_fit_weight_<species>", "kb_fit_weight",
+# "kb_fit")) so species-varying kernels dispatch on it, not on meta$species.
+# See decisions/species-as-variant.md.
 new_kb_fit_weight <- function(
   core,
   data,
@@ -153,6 +158,8 @@ new_kb_fit_weight <- function(
   nthin,
   meta_extra = list()
 ) {
+  species_tag <- c(nereocystis = "nereo", macrocystis = "macro")[[species]]
+
   meta <- c(
     list(
       species = species,
@@ -174,6 +181,6 @@ new_kb_fit_weight <- function(
       data = data,
       meta = meta
     ),
-    class = c("kb_fit_weight", "kb_fit")
+    class = c(paste0("kb_fit_weight_", species_tag), "kb_fit_weight", "kb_fit")
   )
 }

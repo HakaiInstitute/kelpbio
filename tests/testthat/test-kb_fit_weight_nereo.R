@@ -19,6 +19,7 @@ test_that("kb_fit_weight returns a correctly-structured object", {
     seed = 1
   )
 
+  expect_s3_class(fit, "kb_fit_weight_nereo")
   expect_s3_class(fit, "kb_fit_weight")
   expect_s3_class(fit, "kb_fit")
   expect_named(fit, c("draws", "gq", "diagnostics", "data", "meta"))

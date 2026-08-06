@@ -73,6 +73,19 @@ test_that("new_data must have a diameter column", {
   )
 })
 
+test_that("macro predicts on the fronds predictor and rejects a diameter column", {
+  nd <- data.frame(fronds = c(2, 5, 10))
+  p <- kb_predict_weight(weight_macro_fit, new_data = nd)
+  expect_s3_class(p, "kb_predictions")
+  expect_equal(p$fronds, c(2, 5, 10))
+  expect_equal(attr(p, "kb_predictor"), "fronds")
+  expect_true(all(p$estimate > 0))
+  expect_error(
+    kb_predict_weight(weight_macro_fit, new_data = data.frame(diameter = 30)),
+    "fronds"
+  )
+})
+
 test_that("representative_site borrows a known site's main effects for a new site", {
   site1 <- weight_fit$meta$site_levels[1]
   diameter <- c(20, 40, 60)

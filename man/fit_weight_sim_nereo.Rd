@@ -21,7 +21,10 @@ inference. Built by \code{data-raw/fit_weight_sim_nereo.R}.
 \code{\link[=kb_fit_weight_nereo]{kb_fit_weight_nereo()}} and \link{data_weight_sim_nereo}.
 
 Other data:
+\code{\link{data_weight_sim_macro}},
 \code{\link{data_weight_sim_nereo}},
+\code{\link{fit_weight_sim_macro}},
+\code{\link[=kb_check_data_weight_macro]{kb_check_data_weight_macro()}},
 \code{\link[=kb_check_data_weight_nereo]{kb_check_data_weight_nereo()}}
 }
 \concept{data}

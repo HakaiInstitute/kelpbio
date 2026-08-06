@@ -58,7 +58,7 @@ pollable progress artifact (read by \code{\link[=kb_fit_progress]{kb_fit_progres
 default) to write none.}
 }
 \value{
-An object of class \code{c("kb_fit_weight", "kb_fit")}.
+An object of class \code{c("kb_fit_weight_nereo", "kb_fit_weight", "kb_fit")}.
 }
 \description{
 Fit an allometric weight model for \emph{Nereocystis luetkeana} via Stan.
@@ -111,5 +111,9 @@ if (interactive()) {
 }
 # A pre-fit example model is included with the package:
 tidy(fit_weight_sim_nereo)
+}
+\seealso{
+Other model:
+\code{\link[=kb_fit_weight_macro]{kb_fit_weight_macro()}}
 }
 \concept{model}

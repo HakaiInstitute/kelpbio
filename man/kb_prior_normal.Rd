@@ -24,6 +24,7 @@ kb_prior_normal(mean = 0, sd = 2)
 \seealso{
 Other priors:
 \code{\link[=kb_prior_exponential]{kb_prior_exponential()}},
+\code{\link[=kb_priors_weight_macro]{kb_priors_weight_macro()}},
 \code{\link[=kb_priors_weight_nereo]{kb_priors_weight_nereo()}}
 }
 \concept{priors}

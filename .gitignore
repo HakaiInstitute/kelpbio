@@ -32,3 +32,4 @@ scripts/sim-output/
 
 # script run logs
 scripts/*.log
+figure/

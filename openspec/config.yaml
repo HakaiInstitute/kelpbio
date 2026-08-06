@@ -31,8 +31,10 @@ context: |
     variant: the models differ structurally across species (e.g. Nereocystis weight is
     Student-t on a log-diameter quadratic, Macrocystis weight is Gamma on log-fronds),
     so each species gets its own .stan and its own kb_fit_<model>_<species>() wrapper
-    over a shared internal engine (fit_stan()); the S3 class stays model-level
-    (kb_fit_<model>) with the species recorded in meta$species. Rationale:
+    over a shared internal engine (fit_stan()); each species is a subclass
+    (c("kb_fit_<model>_<species>", "kb_fit_<model>", "kb_fit")) so species-agnostic
+    methods live on the parent and species-varying kernels are subclass methods of
+    small internal generics (no method branches on meta$species). Rationale:
     decisions/species-as-variant.md, decisions/engine-choice.md.
   - Fit objects (kb_fit / kb_fit_<type>) store EXTRACTED posterior draws (the posterior
     package) + diagnostics + data + meta, NOT the live stanfit. niters = saved
