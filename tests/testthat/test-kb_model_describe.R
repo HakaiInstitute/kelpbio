@@ -44,5 +44,5 @@ test_that("prose = TRUE returns the lines invisibly", {
 
 test_that("a non-weight fit errors", {
   fake <- structure(list(), class = c("kb_fit_other", "kb_fit"))
-  expect_error(kb_model_describe(fake), "not defined")
+  expect_error(kb_model_describe(fake), "no applicable method")
 })
