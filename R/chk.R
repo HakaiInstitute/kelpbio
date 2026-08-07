@@ -2,24 +2,38 @@
 # input invisibly. A fit is checked at the head of every function that takes one,
 # since S3 dispatch alone does not catch a non-fit passed in directly.
 
-.chk_kb_fit <- function(x, x_name = deparse(substitute(x))) {
+.chk_kb_fit <- function(
+  x,
+  x_name = deparse(substitute(x)),
+  call = rlang::caller_env()
+) {
   if (.vld_kb_fit(x)) {
     return(invisible(x))
   }
-  cli::cli_abort(c(
-    "{.arg {x_name}} must be a {.cls kb_fit} object.",
-    i = "See {.fun kb_fit_weight_nereo} or {.fun kb_fit_weight_macro}."
-  ))
+  cli::cli_abort(
+    c(
+      "{.arg {x_name}} must be a {.cls kb_fit} object.",
+      i = "Create one with a {.code kb_fit_*()} fitting function."
+    ),
+    call = call
+  )
 }
 
-.chk_kb_fit_weight <- function(x, x_name = deparse(substitute(x))) {
+.chk_kb_fit_weight <- function(
+  x,
+  x_name = deparse(substitute(x)),
+  call = rlang::caller_env()
+) {
   if (.vld_kb_fit_weight(x)) {
     return(invisible(x))
   }
-  cli::cli_abort(c(
-    "{.arg {x_name}} must be a {.cls kb_fit_weight} object.",
-    i = "See {.fun kb_fit_weight_nereo} or {.fun kb_fit_weight_macro}."
-  ))
+  cli::cli_abort(
+    c(
+      "{.arg {x_name}} must be a {.cls kb_fit_weight} object.",
+      i = "Create one with a {.code kb_fit_weight_*()} fitting function."
+    ),
+    call = call
+  )
 }
 
 .chk_new_data_weight_nereo <- function(x, x_name = deparse(substitute(x))) {

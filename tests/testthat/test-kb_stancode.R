@@ -13,3 +13,8 @@ test_that("kb_stancode is a kb_stancode object that prints readably", {
   # prints the source with real line breaks, not an escaped one-liner
   expect_output(print(code), "data \\{")
 })
+
+test_that("kb_stancode errors on an object that is not a fit", {
+  expect_snapshot(error = TRUE, kb_stancode(1))
+  expect_equal(rlang::catch_cnd(kb_stancode(1))$call, quote(kb_stancode(1)))
+})

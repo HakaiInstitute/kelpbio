@@ -46,6 +46,12 @@ kb_predict_weight <- function(fit, ...) {
   UseMethod("kb_predict_weight")
 }
 
+#' @export
+kb_predict_weight.default <- function(fit, ...) {
+  .chk_kb_fit_weight(fit, call = rlang::current_env())
+  .abort_no_method("kb_predict_weight", fit, call = rlang::current_env())
+}
+
 #' @describeIn kb_predict_weight *Nereocystis* method; `new_data` needs a
 #'   `diameter` column.
 #' @inheritParams params

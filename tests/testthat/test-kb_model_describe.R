@@ -44,5 +44,20 @@ test_that("prose = TRUE returns the lines invisibly", {
 
 test_that("a non-weight fit errors", {
   fake <- structure(list(), class = c("kb_fit_other", "kb_fit"))
-  expect_error(kb_model_describe(fake), "no applicable method")
+  expect_snapshot(error = TRUE, kb_model_describe(fake))
+})
+
+test_that("a weight fit with no species method errors rather than returning", {
+  fake <- structure(
+    list(),
+    class = c("kb_fit_weight_other", "kb_fit_weight", "kb_fit")
+  )
+  expect_snapshot(error = TRUE, kb_model_describe(fake))
+})
+
+test_that("the error is attributed to the generic, not the default method", {
+  expect_equal(
+    rlang::catch_cnd(kb_model_describe(1))$call,
+    quote(kb_model_describe(1))
+  )
 })

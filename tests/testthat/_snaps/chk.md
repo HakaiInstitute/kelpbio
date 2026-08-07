@@ -3,9 +3,9 @@
     Code
       .chk_kb_fit_weight(1)
     Condition
-      Error in `.chk_kb_fit_weight()`:
+      Error:
       ! `1` must be a <kb_fit_weight> object.
-      i See `kb_fit_weight_nereo()` or `kb_fit_weight_macro()`.
+      i Create one with a `kb_fit_weight_*()` fitting function.
 
 # .chk_new_data_weight_nereo errors on a non-data-frame or missing diameter
 

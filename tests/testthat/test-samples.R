@@ -7,3 +7,8 @@ test_that("samples returns a draws_rvars object carrying the fit's variables", {
   )
   expect_equal(posterior::ndraws(s), posterior::ndraws(weight_fit$draws))
 })
+
+test_that("samples errors on an object that is not a fit", {
+  expect_snapshot(error = TRUE, samples(1))
+  expect_equal(rlang::catch_cnd(samples(1))$call, quote(samples(1)))
+})

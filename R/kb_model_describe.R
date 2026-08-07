@@ -30,6 +30,12 @@ kb_model_describe <- function(fit, prose = FALSE) {
 }
 
 #' @export
+kb_model_describe.default <- function(fit, prose = FALSE) {
+  .chk_kb_fit_weight(fit, call = rlang::current_env())
+  .abort_no_method("kb_model_describe", fit, call = rlang::current_env())
+}
+
+#' @export
 kb_model_describe.kb_fit_weight_nereo <- function(fit, prose = FALSE) {
   chk::chk_flag(prose)
   .render_model(.model_spec_nereo(fit), prose)
