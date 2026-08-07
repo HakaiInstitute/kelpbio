@@ -42,6 +42,7 @@ reference:
   contents:
     - samples
     - kb_stancode
+    - kb_model_describe
     - tidy.kb_fit_weight
     - coef.kb_fit
     - glance.kb_fit
