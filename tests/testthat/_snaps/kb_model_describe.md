@@ -72,14 +72,14 @@
       Regularizing priors were placed on all parameters (see the notation form
       for the hyperparameters).
 
-# a non-weight fit errors
+# a fit of another model with no method errors
 
     Code
       kb_model_describe(fake)
     Condition
       Error in `kb_model_describe()`:
-      ! `fit` must be a <kb_fit_weight> object.
-      i Create one with a `kb_fit_weight_*()` fitting function.
+      ! `kb_model_describe()` has no method for `fit`, a <kb_fit_other> object.
+      i Supported fits are created by `kb_fit_weight_macro()` and `kb_fit_weight_nereo()`.
 
 # a weight fit with no species method errors rather than returning
 
@@ -89,4 +89,13 @@
       Error in `kb_model_describe()`:
       ! `kb_model_describe()` has no method for `fit`, a <kb_fit_weight_other> object.
       i Supported fits are created by `kb_fit_weight_macro()` and `kb_fit_weight_nereo()`.
+
+# an object that is not a fit errors
+
+    Code
+      kb_model_describe(1)
+    Condition
+      Error in `kb_model_describe()`:
+      ! `fit` must be a <kb_fit> object.
+      i Create one with a `kb_fit_*()` fitting function.
 

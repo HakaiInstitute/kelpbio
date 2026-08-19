@@ -42,7 +42,7 @@ test_that("prose = TRUE returns the lines invisibly", {
   )
 })
 
-test_that("a non-weight fit errors", {
+test_that("a fit of another model with no method errors", {
   fake <- structure(list(), class = c("kb_fit_other", "kb_fit"))
   expect_snapshot(error = TRUE, kb_model_describe(fake))
 })
@@ -53,6 +53,10 @@ test_that("a weight fit with no species method errors rather than returning", {
     class = c("kb_fit_weight_other", "kb_fit_weight", "kb_fit")
   )
   expect_snapshot(error = TRUE, kb_model_describe(fake))
+})
+
+test_that("an object that is not a fit errors", {
+  expect_snapshot(error = TRUE, kb_model_describe(1))
 })
 
 test_that("the error is attributed to the generic, not the default method", {

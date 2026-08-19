@@ -23,8 +23,9 @@ fits, the supported constructors SHALL be derived from the methods registered fo
 that generic. Where it accepts any fit, the message SHALL refer to the fitting
 functions by name pattern rather than enumerating them.
 
-`kb_stancode()` and `samples()` accept any `kb_fit`. `kb_model_describe()`,
-`kb_predict_weight()`, and `kb_predict_weight_by()` accept a `kb_fit_weight`.
+`kb_stancode()`, `samples()`, and `kb_model_describe()` accept any `kb_fit`, since
+every sub-model registers a method for them. `kb_predict_weight()` and
+`kb_predict_weight_by()` accept a `kb_fit_weight`.
 
 Generics owned by other packages are out of scope: `tidy()`, `glance()`,
 `augment()`, `summary()`, `autoplot()`, `fitted()`, `residuals()`, `predict()`,
@@ -34,13 +35,18 @@ would capture dispatch for every other package's objects.
 
 #### Scenario: Non-fit object passed to a fit-level generic
 
-- **WHEN** `kb_stancode(1)` or `samples(1)` is called
+- **WHEN** `kb_stancode(1)`, `samples(1)`, or `kb_model_describe(1)` is called
 - **THEN** it errors via `cli` with a message stating the argument must be a `kb_fit` object and referring to the `kb_fit_*()` fitting functions by pattern
 
 #### Scenario: Object that is not a weight fit passed to a weight generic
 
-- **WHEN** `kb_model_describe(x)`, `kb_predict_weight(x)`, or `kb_predict_weight_by(x)` is called on an `x` that does not inherit from `kb_fit_weight`
+- **WHEN** `kb_predict_weight(x)` or `kb_predict_weight_by(x)` is called on an `x` that does not inherit from `kb_fit_weight`
 - **THEN** it errors via `cli` with a message stating the argument must be a `kb_fit_weight` object and referring to the `kb_fit_weight_*()` fitting functions by pattern
+
+#### Scenario: Fit of a model with no registered method
+
+- **WHEN** `kb_model_describe(x)` is called on a `kb_fit` whose sub-model has registered no method
+- **THEN** it errors via `cli` naming the generic and the object's class, and naming the constructors of the fits it does support
 
 #### Scenario: Supported constructors track the registered methods
 
