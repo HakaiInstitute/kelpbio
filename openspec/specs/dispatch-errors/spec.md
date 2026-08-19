@@ -1,7 +1,12 @@
 # dispatch-errors Specification
 
 ## Purpose
-TBD - created by archiving change add-generic-default-errors. Update Purpose after archive.
+
+The error raised when a generic kelpbio owns is called on an object it has no
+method for: the branded `cli` message, its wording shared with the `.chk_`
+validators, and the derivation of the supported constructors from the generic's
+registered methods.
+
 ## Requirements
 ### Requirement: Branded error when a kelpbio generic has no method for an object
 

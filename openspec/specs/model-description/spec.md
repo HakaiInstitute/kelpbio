@@ -1,7 +1,10 @@
 # model-description Specification
 
 ## Purpose
-TBD - created by archiving change add-model-describe. Update Purpose after archive.
+
+Rendering a fitted model as a description: kb_model_describe() over any kb_fit,
+in scientific notation or as a report-ready methods paragraph.
+
 ## Requirements
 ### Requirement: Model description in scientific notation
 
