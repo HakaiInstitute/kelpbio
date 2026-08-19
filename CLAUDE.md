@@ -40,6 +40,7 @@ Knowledge lives in OpenSpec, not a `docs/` design-doc tree (one fact, one home):
 - **Sub-model changes are thin.** The weight model settled the shared fit/predict/summarise/plot patterns; the remaining sub-models (size, density, blade fraction, wet/dry, carbon) reference the weight contract and spell out only their differences (distribution, columns, random-effect structure, month handling). Do not re-derive the shared contract for each.
 - **Trust the test suite + green CI as the "done" signal, not `tasks.md` checkboxes** (checkboxes drift out of date).
 - **Before requesting review or archiving, run a quick drift check** (specs vs code, reader docs vs code).
+- **Stacked PRs.** Changes are developed as a stack: each change gets its own branch and PR, based on the previous branch in the stack (the first PR bases on `dev`). Review is requested on the whole stack at once, not per-PR, but every PR in the stack must independently pass CI checks and tests before review is requested. Merge in stack order, retargeting each PR to `dev` as its base merges.
 
 ## Analysis Project Structure
 

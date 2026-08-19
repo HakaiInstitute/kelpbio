@@ -49,7 +49,6 @@ fit <- kb_fit_weight_nereo(
 # print key model info (see other generics including summary() below)
 fit
 
-
 # --- fit accessors: broom + universals + diagnostics --------------------------
 print(fit)
 tidy(fit)
@@ -59,6 +58,10 @@ coef(fit)
 glance(fit)
 converged(fit)
 summary(fit)
+
+# full model in scientific notation, or as a methods paragraph (prose = TRUE)
+kb_model_describe(fit)
+kb_model_describe(fit, prose = TRUE)
 
 nobs(fit)
 niters(fit)
@@ -367,7 +370,7 @@ fit_m <- kb_fit_weight_macro(
   niters = 500,
   nthin = 2
 )
-fit_m # header shows the Gamma family and the site/year/site:year structure
+fit_m # slim header; kb_model_describe(fit_m) shows the Gamma model + structure
 
 # same accessors as nereo; the term list is macro's (bFronds, alpha, sYear)
 
