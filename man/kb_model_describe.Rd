@@ -7,7 +7,7 @@
 kb_model_describe(fit, prose = FALSE)
 }
 \arguments{
-\item{fit}{A \code{kb_fit_weight} object.}
+\item{fit}{A \code{kb_fit} object.}
 
 \item{prose}{A flag specifying whether to render a methods-section paragraph
 instead of the notation block.}
@@ -19,16 +19,16 @@ printed description.
 \description{
 Render the complete fitted model in scientific notation (the default) or as a
 report-ready methods paragraph (\code{prose = TRUE}). The notation uses the
-package's own parameter names (\code{bWeight}, \code{bDiameter}, \code{sSite}, ...), so every
-symbol matches a row of \code{\link[=tidy]{tidy()}}, \code{\link[=summary]{summary()}}, and \code{\link[=coef]{coef()}}.
+package's own parameter names (\code{bWeight}, \code{sSite}, ...), so every symbol
+matches a row of \code{\link[=tidy]{tidy()}}, \code{\link[=summary]{summary()}}, and \code{\link[=coef]{coef()}}.
 }
 \details{
 The description reflects the fitted object: the priors shown are the fit's
-stored priors, the centering reference is the fit's stored geometric-mean
-reference, and a \code{site:year} effect dropped at fit time (single-year data) is
-omitted from both the linear predictor and the random-effect list. The
-response and predictor are named without units, since the data columns are
-unitless and the model is scale-invariant (centered in log space).
+stored priors, any predictor centering uses the reference value stored on the
+fit, and a random effect dropped at fit time (such as \code{site:year} for
+single-year data) is omitted from both the linear predictor and the
+random-effect list. The response and predictors are named without units, since
+the data columns are unitless.
 }
 \examples{
 kb_model_describe(fit_weight_sim_nereo)

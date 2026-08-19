@@ -10,6 +10,21 @@ test_that(".chk_kb_fit_weight passes a fit through invisibly and errors on a non
   expect_snapshot(error = TRUE, .chk_kb_fit_weight(1))
 })
 
+test_that("the fit checkers attribute the error to the supplied call", {
+  caller <- function(x) .chk_kb_fit(x, call = rlang::current_env())
+  expect_equal(
+    rlang::catch_cnd(caller(1))$call,
+    quote(caller(1))
+  )
+  caller_weight <- function(x) {
+    .chk_kb_fit_weight(x, call = rlang::current_env())
+  }
+  expect_equal(
+    rlang::catch_cnd(caller_weight(1))$call,
+    quote(caller_weight(1))
+  )
+})
+
 test_that(".chk_new_data_weight_nereo passes valid new_data through invisibly", {
   d <- data.frame(diameter = c(20, 40))
   expect_invisible(.chk_new_data_weight_nereo(d))

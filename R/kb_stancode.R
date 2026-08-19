@@ -18,6 +18,12 @@ kb_stancode <- function(fit, ...) {
   UseMethod("kb_stancode")
 }
 
+#' @export
+kb_stancode.default <- function(fit, ...) {
+  .chk_kb_fit(fit, call = rlang::current_env())
+  .abort_no_method("kb_stancode", fit, call = rlang::current_env())
+}
+
 #' @rdname kb_stancode
 #' @export
 kb_stancode.kb_fit <- function(fit, ...) {

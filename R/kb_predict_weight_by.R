@@ -36,6 +36,12 @@ kb_predict_weight_by <- function(fit, ...) {
   UseMethod("kb_predict_weight_by")
 }
 
+#' @export
+kb_predict_weight_by.default <- function(fit, ...) {
+  .chk_kb_fit_weight(fit, call = rlang::current_env())
+  .abort_no_method("kb_predict_weight_by", fit, call = rlang::current_env())
+}
+
 #' @describeIn kb_predict_weight_by *Nereocystis* method; predicts over a sub-bulb
 #'   `diameter` sequence.
 #' @inheritParams params

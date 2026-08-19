@@ -1,11 +1,14 @@
 # model-description Specification
 
 ## Purpose
-TBD - created by archiving change add-model-describe. Update Purpose after archive.
+
+Rendering a fitted model as a description: kb_model_describe() over any kb_fit,
+in scientific notation or as a report-ready methods paragraph.
+
 ## Requirements
 ### Requirement: Model description in scientific notation
 
-`kb_model_describe(fit, prose = FALSE)` SHALL render the complete fitted model and return the rendered character vector invisibly. It is an S3 generic dispatching on the fit's species subclass. With `prose = FALSE` (default) it prints a multilevel scientific-notation block: the likelihood, the linear predictor for the (log) mean, the random-effect distributions, and the priors. With `prose = TRUE` it prints the same content as a report-ready methods paragraph. Both forms are derived from a single model descriptor, so they cannot disagree.
+`kb_model_describe(fit, prose = FALSE)` SHALL render the complete fitted model and return the rendered character vector invisibly. It is an S3 generic dispatching on the fit's sub-model and species subclass, accepting any `kb_fit`; each sub-model registers its own method. With `prose = FALSE` (default) it prints a multilevel scientific-notation block: the likelihood, the linear predictor for the (log) mean, the random-effect distributions, and the priors. With `prose = TRUE` it prints the same content as a report-ready methods paragraph. Both forms are derived from a single model descriptor, so they cannot disagree.
 
 The notation SHALL use the package's own parameter names (`bWeight`, `bDiameter`, `bDiameter2`, `sSite`, `sSiteDiameter`, `sSiteYear`, `sWeight` for *Nereocystis*; `bWeight`, `bFronds`, `shape`, `sSite`, `sYear`, `sSiteYear` for *Macrocystis*), so every symbol in the equation matches a row of `tidy()` / `summary()` / `coef()`. It SHALL NOT introduce Greek symbols or an R-formula (`~ (1|group)`) syntax.
 

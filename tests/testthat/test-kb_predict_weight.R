@@ -130,3 +130,19 @@ test_that("representative_site rejects sites not in the fit", {
     error = TRUE
   )
 })
+
+test_that("kb_predict_weight errors on an object that is not a weight fit", {
+  expect_snapshot(error = TRUE, kb_predict_weight(1))
+  expect_equal(
+    rlang::catch_cnd(kb_predict_weight(1))$call,
+    quote(kb_predict_weight(1))
+  )
+})
+
+test_that("kb_predict_weight errors on a weight fit with no species method", {
+  fake <- structure(
+    list(),
+    class = c("kb_fit_weight_other", "kb_fit_weight", "kb_fit")
+  )
+  expect_snapshot(error = TRUE, kb_predict_weight(fake))
+})

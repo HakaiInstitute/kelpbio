@@ -2,18 +2,18 @@
 #'
 #' Render the complete fitted model in scientific notation (the default) or as a
 #' report-ready methods paragraph (`prose = TRUE`). The notation uses the
-#' package's own parameter names (`bWeight`, `bDiameter`, `sSite`, ...), so every
-#' symbol matches a row of [tidy()], [summary()], and [coef()].
+#' package's own parameter names (`bWeight`, `sSite`, ...), so every symbol
+#' matches a row of [tidy()], [summary()], and [coef()].
 #'
 #' @details
 #' The description reflects the fitted object: the priors shown are the fit's
-#' stored priors, the centering reference is the fit's stored geometric-mean
-#' reference, and a `site:year` effect dropped at fit time (single-year data) is
-#' omitted from both the linear predictor and the random-effect list. The
-#' response and predictor are named without units, since the data columns are
-#' unitless and the model is scale-invariant (centered in log space).
+#' stored priors, any predictor centering uses the reference value stored on the
+#' fit, and a random effect dropped at fit time (such as `site:year` for
+#' single-year data) is omitted from both the linear predictor and the
+#' random-effect list. The response and predictors are named without units, since
+#' the data columns are unitless.
 #'
-#' @param fit A `kb_fit_weight` object.
+#' @param fit A `kb_fit` object.
 #' @param prose A flag specifying whether to render a methods-section paragraph
 #'   instead of the notation block.
 #'
@@ -27,6 +27,12 @@
 #' kb_model_describe(fit_weight_sim_macro, prose = TRUE)
 kb_model_describe <- function(fit, prose = FALSE) {
   UseMethod("kb_model_describe")
+}
+
+#' @export
+kb_model_describe.default <- function(fit, prose = FALSE) {
+  .chk_kb_fit(fit, call = rlang::current_env())
+  .abort_no_method("kb_model_describe", fit, call = rlang::current_env())
 }
 
 #' @export
