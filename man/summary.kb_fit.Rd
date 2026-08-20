@@ -50,8 +50,7 @@ maximum treedepth, and the minimum E-BFMI across chains. Divergences indicate
 the sampler failed to explore part of the posterior and so enter the
 \code{\link[=converged]{converged()}} verdict; treedepth saturation affects efficiency rather than
 validity, and E-BFMI below 0.2 suggests the model would benefit from
-reparameterization. Neither of the latter two enters the verdict, and both are
-reported here rather than by \code{\link[=glance]{glance()}}.
+reparameterization.
 
 The coefficient table reports, per term:
 \describe{
