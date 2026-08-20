@@ -34,6 +34,12 @@ The site:year effect SHALL be included when the data span more than one distinct
 
 The returned `kb_fit` SHALL store extracted posterior draws (a `posterior` draws object) plus sampler diagnostics, the input data, and resolved metadata — and SHALL NOT retain the live `stanfit`.
 
+The fit SHALL NOT store any per-observation quantity. Neither the pointwise
+log-likelihood nor posterior-predictive replicates are retained: both scale as
+`nObs x ndraws` and would dominate the object, so both are recomputed in R from
+the stored draws on demand. Object size is therefore a function of the draw count
+alone, not of the number of observations.
+
 The stored sampler diagnostics SHALL comprise the per-parameter Rhat and bulk/tail
 effective sample sizes, and the run-level divergent-transition count, divergence
 rate, treedepth-saturation rate, and minimum E-BFMI across chains. Every one of
@@ -48,7 +54,7 @@ sampler parameters per saved iteration, a rate is over retained draws: with
 
 #### Scenario: Draws and diagnostics are retained, stanfit discarded
 - **WHEN** the fit object is inspected
-- **THEN** it exposes posterior draws (the fixed effects `bWeight`, `bDiameter`, `bDiameter2`; the SDs `sSite`, `sSiteDiameter`, `sSiteYear`, `sWeight`; the per-site `bSite` and `bSiteDiameter`; the site-by-year `bSiteYear`; and the `log_lik` and `yrep` generated quantities) and diagnostics, and contains no live `stanfit`
+- **THEN** it exposes posterior draws (the fixed effects `bWeight`, `bDiameter`, `bDiameter2`; the SDs `sSite`, `sSiteDiameter`, `sSiteYear`, `sWeight`; the per-site `bSite` and `bSiteDiameter`; the site-by-year `bSiteYear`) and diagnostics, and contains no live `stanfit`
 
 #### Scenario: Sampler diagnostics survive the stanfit
 - **WHEN** the fit object is inspected
@@ -57,10 +63,6 @@ sampler parameters per saved iteration, a rate is over retained draws: with
 #### Scenario: A rate with no draws is unknown, not zero
 - **WHEN** a rate would be computed against an empty denominator
 - **THEN** it is `NA`, so the verdict surfaces the missing evidence rather than passing
-
-#### Scenario: log_lik and yrep are stored for downstream tools
-- **WHEN** the fit object is inspected
-- **THEN** it retains the pointwise `log_lik` draws (for `loo`) and the `yrep` posterior-predictive draws (for `bayesplot::pp_check`)
 
 ### Requirement: Prior-only and zero-observation fits
 
@@ -177,8 +179,7 @@ extraction, and diagnostics are delegated to the shared internal engine
 - **WHEN** the fit object is inspected
 - **THEN** it exposes draws for the fixed effects `bWeight`, `bFronds`; the Gamma
   shape `shape`; the SDs `sSite`, `sYear`, `sSiteYear`; the per-level `bSite`,
-  `bYear`, `bSiteYear`; and the `log_lik` and `yrep` generated quantities, and
-  retains no live `stanfit`
+  `bYear`, `bSiteYear`; and retains no live `stanfit`
 
 #### Scenario: Arguments are validated at entry
 - **WHEN** `kb_fit_weight_macro()` is called with an invalid argument (bad

@@ -1,17 +1,46 @@
-test_that("posterior_predict returns stored yrep at observed data", {
+test_that("posterior_predict recomputes replicates at the observed data", {
+  withr::local_seed(1)
   yrep <- posterior_predict(weight_fit)
   expect_true(is.matrix(yrep))
   expect_equal(ncol(yrep), nrow(weight_fit$data))
   expect_equal(nrow(yrep), posterior::ndraws(weight_fit$draws))
   expect_true(all(yrep > 0))
-  # it is exactly the stored yrep generated quantity, not a recomputation
-  expect_equal(yrep, posterior::draws_of(weight_fit$gq$yrep))
+  # Replicates are drawn, so never assert exact values: check they sit around the
+  # expected weight. A robust statistic, because nereo yrep is exp(Student-t(4)),
+  # whose mean and variance are infinite.
+  ep <- posterior_epred(weight_fit)
+  expect_equal(
+    stats::median(apply(yrep, 2, stats::median)),
+    stats::median(apply(ep, 2, stats::median)),
+    tolerance = 0.1
+  )
+})
+
+test_that("posterior_predict is reproducible under a seed and not otherwise", {
+  # The observation noise is drawn in R, so the documented contract is that
+  # set.seed() makes it reproducible.
+  a <- withr::with_seed(7, posterior_predict(weight_fit))
+  b <- withr::with_seed(7, posterior_predict(weight_fit))
+  expect_identical(a, b)
+  expect_false(identical(a, withr::with_seed(8, posterior_predict(weight_fit))))
 })
 
 test_that("posterior_predict aborts at observed data for a zero-observation fit", {
   fit0 <- weight_fit
-  fit0$gq <- NULL
+  fit0$data <- fit0$data[0, ]
   expect_error(posterior_predict(fit0), "zero-observation fit")
+})
+
+test_that("a zero-observation fit still predicts at supplied new_data", {
+  # The zero-observation guard applies only to new_data = NULL.
+  fit0 <- weight_fit
+  fit0$data <- fit0$data[0, ]
+  pp <- posterior_predict(
+    fit0,
+    new_data = data.frame(diameter = c(20, 40)),
+    new_levels = "average"
+  )
+  expect_equal(dim(pp), c(posterior::ndraws(fit0$draws), 2L))
 })
 
 test_that("posterior_predict at new data is wider than posterior_epred", {

@@ -16,8 +16,7 @@
 \item{object}{A \code{kb_fit_weight} object.}
 
 \item{new_data}{A data frame with the fit's predictor column (and optional
-\code{site} / \code{year} columns), or \code{NULL} for the stored \code{yrep} at the observed
-data.}
+\code{site} / \code{year} columns), or \code{NULL} to predict at the observed data.}
 
 \item{...}{Unused.}
 
@@ -42,15 +41,20 @@ A draws-by-observations (\verb{D x N}) matrix.
 \description{
 Draws from the posterior predictive distribution: the expected weight plus
 species-appropriate observation noise (Student-t on log-weight with scale
-\code{sWeight} for \emph{Nereocystis}; Gamma with shape \code{shape} for
-\emph{Macrocystis}, matching the Stan likelihood). With \code{new_data = NULL} the stored
-\code{yrep} at the observed data is returned, for use with \code{bayesplot::pp_check()}.
+\code{sWeight} for \emph{Nereocystis}; Gamma with shape \code{shape} for \emph{Macrocystis},
+matching the Stan likelihood). With \code{new_data = NULL} the replicates are at the
+observed data, for use with \code{bayesplot::pp_check()}.
 }
 \details{
 For supplied \code{new_data}, conditioning is inferred from the grouping columns
 present (see \code{\link[=posterior_epred]{posterior_epred()}}).
+
+The observation noise is drawn in R, for every \code{new_data} including \code{NULL}, so
+repeated calls return different replicates. Set a seed with \code{set.seed()} for
+reproducible draws.
 }
 \examples{
+set.seed(1)
 pp <- posterior_predict(fit_weight_sim_nereo)
 dim(pp)
 }
@@ -62,7 +66,7 @@ Other generics:
 \code{\link[=fitted.kb_fit_weight]{fitted.kb_fit_weight()}},
 \code{\link[=glance.kb_fit]{glance.kb_fit()}},
 \code{\link[=kb_stancode]{kb_stancode()}},
-\code{\link[=log_lik.kb_fit]{log_lik.kb_fit()}},
+\code{\link[=log_lik.kb_fit_weight]{log_lik.kb_fit_weight()}},
 \code{\link[=posterior_epred.kb_fit_weight]{posterior_epred.kb_fit_weight()}},
 \code{\link[=posterior_linpred.kb_fit_weight]{posterior_linpred.kb_fit_weight()}},
 \code{\link[=predict.kb_fit_weight]{predict.kb_fit_weight()}},

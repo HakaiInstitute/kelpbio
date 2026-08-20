@@ -11,8 +11,7 @@
 #'
 #' `niters` is the number of saved post-warmup draws per chain; warmup defaults
 #' to match `niters` and the post-warmup phase is thinned by `nthin`. The returned
-#' object stores the extracted posterior draws (including the `log_lik` and `yrep`
-#' generated quantities), diagnostics, data, and metadata.
+#' object stores the extracted posterior draws, diagnostics, data, and metadata.
 #'
 #' `progress` controls fit-time console output. The default `"bar"` shows a
 #' progress bar; `"verbose"` streams rstan's per-iteration output and its
@@ -112,7 +111,6 @@ kb_fit_weight_macro <- function(
       "bYear",
       "bSiteYear"
     ),
-    gq_vars = if (nrow(data) > 0L) c("log_lik", "yrep") else NULL,
     chains = chains,
     niters = niters,
     nthin = nthin,

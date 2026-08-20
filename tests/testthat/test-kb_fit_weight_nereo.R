@@ -22,7 +22,7 @@ test_that("kb_fit_weight returns a correctly-structured object", {
   expect_s3_class(fit, "kb_fit_weight_nereo")
   expect_s3_class(fit, "kb_fit_weight")
   expect_s3_class(fit, "kb_fit")
-  expect_named(fit, c("draws", "gq", "diagnostics", "data", "meta"))
+  expect_named(fit, c("draws", "diagnostics", "data", "meta"))
   expect_true(posterior::is_draws_rvars(fit$draws))
   expect_setequal(
     posterior::variables(fit$draws),
@@ -41,8 +41,9 @@ test_that("kb_fit_weight returns a correctly-structured object", {
   )
   # niters = saved post-warmup draws per chain
   expect_equal(niters(fit), 100L)
-  # log_lik / yrep generated quantities are stored for loo / pp_check
-  expect_setequal(posterior::variables(fit$gq), c("log_lik", "yrep"))
+  # No per-observation quantities are stored; log_lik / yrep are recomputed in R
+  expect_false("gq" %in% names(fit))
+  expect_false("log_eWeight" %in% posterior::variables(fit$draws))
   # the live stanfit is discarded
   expect_false(any(vapply(fit, function(x) inherits(x, "stanfit"), logical(1))))
 })
@@ -118,8 +119,8 @@ test_that("zero-row data is accepted under prior_only", {
     seed = 1
   )
   expect_s3_class(fit, "kb_fit_weight")
-  # no observations -> no generated quantities stored
-  expect_null(fit$gq)
+  expect_false("gq" %in% names(fit))
+  expect_error(log_lik(fit), "zero-observation")
 })
 
 test_that("progress accepts only the three modes", {

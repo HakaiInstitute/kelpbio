@@ -24,7 +24,7 @@ test_that("kb_fit_weight_macro returns a correctly-structured object", {
   expect_s3_class(fit, "kb_fit")
   expect_identical(fit$meta$species, "macrocystis")
   expect_identical(fit$meta$predictor, "fronds")
-  expect_named(fit, c("draws", "gq", "diagnostics", "data", "meta"))
+  expect_named(fit, c("draws", "diagnostics", "data", "meta"))
   expect_true(posterior::is_draws_rvars(fit$draws))
   expect_setequal(
     posterior::variables(fit$draws),
@@ -41,7 +41,8 @@ test_that("kb_fit_weight_macro returns a correctly-structured object", {
     )
   )
   expect_equal(niters(fit), 100L)
-  expect_setequal(posterior::variables(fit$gq), c("log_lik", "yrep"))
+  expect_false("gq" %in% names(fit))
+  expect_false("log_eWeight" %in% posterior::variables(fit$draws))
   expect_false(any(vapply(fit, function(x) inherits(x, "stanfit"), logical(1))))
 })
 
@@ -92,5 +93,6 @@ test_that("zero-row data is accepted under prior_only", {
     seed = 1
   )
   expect_s3_class(fit, "kb_fit_weight")
-  expect_null(fit$gq)
+  expect_false("gq" %in% names(fit))
+  expect_error(log_lik(fit), "zero-observation")
 })

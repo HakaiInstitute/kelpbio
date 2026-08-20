@@ -110,11 +110,14 @@ test_that("the macro weight model samples and returns the declared parameters", 
       "sSiteYear",
       "bSite",
       "bYear",
-      "bSiteYear",
-      "log_lik",
-      "yrep"
+      "bSiteYear"
     ) %in%
       fit@model_pars
+  ))
+  # No generated quantities, and the mean is a model-block local, so neither is
+  # saved with the draws.
+  expect_false(any(
+    c("log_lik", "yrep", "log_eWeight") %in% fit@model_pars
   ))
 })
 
@@ -141,10 +144,13 @@ test_that("the weight model samples and returns the declared parameters", {
       "sWeight",
       "bSite",
       "bSiteDiameter",
-      "bSiteYear",
-      "log_lik",
-      "yrep"
+      "bSiteYear"
     ) %in%
       fit@model_pars
+  ))
+  # No generated quantities, and the mean is a model-block local, so neither is
+  # saved with the draws.
+  expect_false(any(
+    c("log_lik", "yrep", "log_eWeight") %in% fit@model_pars
   ))
 })

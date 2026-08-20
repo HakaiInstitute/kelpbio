@@ -9,7 +9,9 @@
 // Random effects: site intercept, site slope (on log diameter), and site:year.
 // Priors are passed as data; the prior family is fixed at compile time.
 // The mean is computed with vectorised indexing (no per-observation loop) for a
-// smaller autodiff graph.
+// smaller autodiff graph, as a local in the model block so it is not saved with
+// the draws. The pointwise log-likelihood and posterior-predictive replicates are
+// computed in R from the stored draws, so there are no generated quantities.
 data {
   int<lower=0> nObs;                      // 0 allowed: supports prior-only / empty fits
   int<lower=1> nSite;
@@ -64,11 +66,6 @@ transformed parameters {
   vector[nSite] bSite = z_bSite * sSite;
   vector[nSite] bSiteDiameter = z_bSiteDiameter * sSiteDiameter;
   matrix[nSite, nYear] bSiteYear = z_bSiteYear * sSiteYear;
-  // Vectorised mean: gather random effects by observation, combine elementwise.
-  vector[nObs] log_eWeight = bWeight + bSite[site]
-    + (bDiameter + bSiteDiameter[site]) .* log_diameter
-    + bDiameter2 * log_diameter_sq
-    + site_year_on * to_vector(bSiteYear)[sy_idx];
 }
 model {
   bWeight ~ normal(prior_intercept_mu, prior_intercept_sd);
@@ -82,19 +79,14 @@ model {
   z_bSiteDiameter ~ std_normal();
   to_vector(z_bSiteYear) ~ std_normal();
   if (prior_only == 0) {
+    // Vectorised mean: gather random effects by observation, combine elementwise.
+    // A local, not a transformed parameter: rstan saves transformed parameters,
+    // and nObs columns per draw is the largest thing in a stored fit. Predictions
+    // and the pointwise log-likelihood are computed in R from the stored draws.
+    vector[nObs] log_eWeight = bWeight + bSite[site]
+      + (bDiameter + bSiteDiameter[site]) .* log_diameter
+      + bDiameter2 * log_diameter_sq
+      + site_year_on * to_vector(bSiteYear)[sy_idx];
     log_weight ~ student_t(nu, log_eWeight, sWeight);
-  }
-}
-generated quantities {
-  // Reuse the single mean definition (log_eWeight, transformed parameters).
-  // log_lik: pointwise log-likelihood, for loo.
-  // yrep:    response-scale posterior-predictive replicate, for pp_check.
-  // Both loops are no-ops when nObs == 0. Predictions at new data are computed
-  // in R from the stored draws, not here.
-  vector[nObs] log_lik;
-  vector[nObs] yrep;
-  for (i in 1:nObs) {
-    log_lik[i] = student_t_lpdf(log_weight[i] | nu, log_eWeight[i], sWeight);
-    yrep[i] = exp(student_t_rng(nu, log_eWeight[i], sWeight));
   }
 }

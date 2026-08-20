@@ -72,8 +72,7 @@ The intercept varies by site, by year, and by \code{site:year}.
 
 \code{niters} is the number of saved post-warmup draws per chain; warmup defaults
 to match \code{niters} and the post-warmup phase is thinned by \code{nthin}. The returned
-object stores the extracted posterior draws (including the \code{log_lik} and \code{yrep}
-generated quantities), diagnostics, data, and metadata.
+object stores the extracted posterior draws, diagnostics, data, and metadata.
 
 \code{progress} controls fit-time console output. The default \code{"bar"} shows a
 progress bar; \code{"verbose"} streams rstan's per-iteration output and its
