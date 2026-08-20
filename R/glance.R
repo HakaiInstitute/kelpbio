@@ -4,15 +4,25 @@
 #'
 #' @inheritParams converged.kb_fit
 #'
-#' @details
-#' The columns are the reportable core: Rhat, effective sample size, and the
-#' divergence rate. Treedepth saturation and E-BFMI are reported by
-#' `print(summary(x))` instead, keeping this row narrow enough for a report table.
+#' @section Output:
 #'
-#' @return A one-row tibble with `n`, `K`, `nchains`, `niters`, `nthin`, `ess`
-#'   (the minimum bulk effective sample size), `rhat` (the maximum Rhat),
-#'   `perc_divergent` (the percentage of saved draws that ended in a divergent
-#'   transition), and `converged`.
+#' There are three indicators of convergence in the output:
+#'
+#' - `rhat` is the potential scale reduction factor for the worst-performing
+#'   parameter: a comparison of between- and within-chain variance, with values
+#'   near 1 indicating convergence.
+#' - `ess` is the bulk effective sample size for the worst-performing parameter:
+#'   the number of independent draws after accounting for autocorrelation.
+#' - `perc_divergent` is the divergent transition rate: the divergent
+#'   transitions divided by the number of saved draws (i.e., post-thinning),
+#'   expressed as a percentage.
+#'
+#' @inheritSection converged.kb_fit Assessing convergence
+#' @inheritSection converged.kb_fit Resolving convergence failure
+#' @seealso [converged()], which produces the `converged` column.
+#'
+#' @return A one-row tibble with `n`, `K`, `nchains`, `niters`, `nthin`, `ess`,
+#'   `rhat`, `perc_divergent`, and `converged`.
 #' @family generics
 #' @exportS3Method generics::glance
 #' @examples

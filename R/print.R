@@ -94,7 +94,8 @@ print.summary_kb_fit <- function(x, ...) {
   cli::cat_line(cli::col_grey(
     "ess_bulk, ess_tail: bulk and tail effective sample sizes."
   ))
-  # Rates are rounded here, at the display boundary; the fit stores them unrounded.
+  # Rates are rounded here, at the display boundary; the fit stores them
+  # unrounded.
   cli::cat_line(cli::col_grey(
     .fmt_perc(x$perc_divergent),
     " divergent transitions; ",

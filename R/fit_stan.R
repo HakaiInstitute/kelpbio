@@ -104,13 +104,9 @@ fit_stan <- function(
   )
 }
 
-# Run-level HMC diagnostics, taken from rstan's own per-iteration vectors so the
-# reported rates reproduce the warnings rstan would emit. Computed here because
-# the stanfit is discarded and none of this is recoverable from the stored draws.
-# rstan records sampler params per *saved* iteration, so a rate is over retained
-# draws: with nthin > 1, divergences on thinned-away iterations are invisible.
-# E-BFMI is per chain and reduced to its minimum, since the diagnostic fires on
-# the worst chain (a mean would let one pathological chain hide behind the rest).
+# Run-level HMC diagnostics, from rstan's own per-iteration vectors so the rates
+# match rstan's warnings. Computed here because the stanfit is discarded. E-BFMI
+# is per chain, reduced to its minimum: the chain the diagnostic fires on.
 sampler_diagnostics <- function(stanfit) {
   divergent <- rstan::get_divergent_iterations(stanfit)
   treedepth <- rstan::get_max_treedepth_iterations(stanfit)
@@ -123,8 +119,7 @@ sampler_diagnostics <- function(stanfit) {
   )
 }
 
-# NA rather than 0 for an empty denominator: no draws means the rate is unknown,
-# not zero, and NA propagates into the convergence verdict rather than passing it.
+# NA, not 0, for an empty denominator: an unknown rate must not pass the verdict.
 perc_of <- function(n, total) {
   if (total <= 0L) {
     return(NA_real_)

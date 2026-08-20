@@ -1,36 +1,46 @@
 #' Convergence of a Model Fit
 #'
 #' Whether a model fit has converged, from the Rhat, bulk effective sample rate,
-#' and divergent-transition rate of its parameters.
+#' and rate of divergent transitions.
 #'
 #' @inheritParams params
 #' @param x A `kb_fit` object.
 #' @param ... Unused.
 #'
-#' @details
-#' All three conditions must hold: every Rhat below `rhat`, every bulk effective
-#' sample rate above `esr`, and the divergence rate at or below
-#' `max_perc_divergent`.
-#' The defaults are `rhat = 1.01`, `esr = 0.1`, and `max_perc_divergent = 0.2`.
-#' Set `max_perc_divergent = 0` to require a fit with no divergent transitions.
+#' @section Assessing convergence:
 #'
-#' `esr` is the effective sample rate: the bulk effective sample size divided by
-#' the number of draws. Convergence is assessed on the bulk effective sample size
-#' only, not the tail.
+#' Three conditions must be met:
 #'
-#' Divergent transitions enter the verdict because they mean the sampler failed to
-#' explore part of the posterior, so the draws may be biased whatever Rhat and the
-#' effective sample size report. Treedepth saturation and E-BFMI do not: the first
-#' affects efficiency rather than validity, and the second is a per-chain signal
-#' that in practice accompanies divergences. Both are reported by
-#' `print(summary(x))`. Raising `adapt_delta` through the `control` argument of the
-#' `kb_fit_*()` functions often clears divergences.
+#' - every parameter's Rhat below `rhat` (default 1.01)
+#' - every parameter's effective sample rate (bulk effective sample size divided by the number of
+#'   saved draws) above `esr` (default 0.1)
+#' - the divergence rate at or below `max_perc_divergent` (default 0.2)
 #'
-#' The divergence rate is a percentage of the saved draws, so with `nthin > 1` it
-#' covers the retained draws only.
+#' Divergent transitions indicate that the sampler failed to explore part of
+#' the posterior, and the draws may be biased regardless of whether other
+#' convergence metrics pass.
 #'
-#' @return A flag: `TRUE` if all Rhat are below `rhat`, all bulk effective sample
-#'   rates above `esr`, and the divergence rate at or below `max_perc_divergent`.
+#' Treedepth saturation and E-BFMI are additionally reported in
+#' `print(summary(x))`, although these do not affect convergence. The former
+#' indicates issues with efficiency and the latter is a per-chain signal that in
+#' practice accompanies divergences.
+#'
+#' @section Resolving convergence failure:
+#'
+#' In order, try the following:
+#' 1. Increase `adapt_delta` through the `control` argument of the `kb_fit_*()`
+#'    functions (e.g., `kb_fit_*(df, control = list(adapt_delta = 0.99))`). The
+#'    default `adapt_delta` value is 0.95. Higher `adapt_delta` values will
+#'    increase model runtime. This should reduce divergent transitions and can
+#'    also resolve rhat/ess issues.
+#' 2. Increase the thinning rate (e.g., `kb_fit_*(df, nthin = 5)`). This
+#'    increases the total number of iterations, while saving only 1/`nthin`,
+#'    which increases the total information.
+#' 3. Tighten the SD priors.
+#'
+#' @return A flag: `TRUE` if all Rhat are below `rhat`, all bulk effective
+#'   sample rates above `esr`, and the divergence rate at or below
+#'   `max_perc_divergent`.
 #' @family generics
 #' @exportS3Method universals::converged
 #' @examples

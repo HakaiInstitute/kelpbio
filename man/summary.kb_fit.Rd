@@ -44,14 +44,14 @@ verdict), the coefficient table, and a diagnostics footer. For a compact
 overview without the numeric table, call \code{print()} on the fit itself. For the
 model equation and priors, call \code{\link[=kb_model_describe]{kb_model_describe()}}.
 
-The footer reports the sampler diagnostics: the percentage of saved draws that
-ended in a divergent transition, the percentage that saturated the maximum
-treedepth, and the minimum E-BFMI across chains. Divergences indicate the
-sampler failed to explore part of the posterior and so enter the \code{\link[=converged]{converged()}}
-verdict; treedepth saturation affects efficiency rather than validity, and
-E-BFMI below 0.2 suggests the model would benefit from reparameterization.
-Neither of the latter two enters the verdict, and both are reported here rather
-than by \code{\link[=glance]{glance()}}.
+The footer reports the sampler diagnostics: the percentage of saved draws
+that ended in a divergent transition, the percentage that saturated the
+maximum treedepth, and the minimum E-BFMI across chains. Divergences indicate
+the sampler failed to explore part of the posterior and so enter the
+\code{\link[=converged]{converged()}} verdict; treedepth saturation affects efficiency rather than
+validity, and E-BFMI below 0.2 suggests the model would benefit from
+reparameterization. Neither of the latter two enters the verdict, and both are
+reported here rather than by \code{\link[=glance]{glance()}}.
 
 The coefficient table reports, per term:
 \describe{

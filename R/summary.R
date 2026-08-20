@@ -9,14 +9,13 @@
 #' overview without the numeric table, call `print()` on the fit itself. For the
 #' model equation and priors, call [kb_model_describe()].
 #'
-#' The footer reports the sampler diagnostics: the percentage of saved draws that
-#' ended in a divergent transition, the percentage that saturated the maximum
-#' treedepth, and the minimum E-BFMI across chains. Divergences indicate the
-#' sampler failed to explore part of the posterior and so enter the [converged()]
-#' verdict; treedepth saturation affects efficiency rather than validity, and
-#' E-BFMI below 0.2 suggests the model would benefit from reparameterization.
-#' Neither of the latter two enters the verdict, and both are reported here rather
-#' than by [glance()].
+#' The footer reports the sampler diagnostics: the percentage of saved draws
+#' that ended in a divergent transition, the percentage that saturated the
+#' maximum treedepth, and the minimum E-BFMI across chains. Divergences indicate
+#' the sampler failed to explore part of the posterior and so enter the
+#' [converged()] verdict; treedepth saturation affects efficiency rather than
+#' validity, and E-BFMI below 0.2 suggests the model would benefit from
+#' reparameterization.
 #'
 #' The coefficient table reports, per term:
 #' \describe{
