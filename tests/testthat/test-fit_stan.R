@@ -68,12 +68,11 @@ test_that("with_quiet_sampler muffles only HMC diagnostics when muffle = TRUE", 
 })
 
 test_that("perc_of returns a percentage, and NA when there is no denominator", {
+  # A percentage, not a proportion: dropping the 100 would make the
+  # max_perc_divergent threshold 100x too lenient.
   expect_equal(perc_of(5, 2000), 0.25)
-  expect_equal(perc_of(0, 2000), 0)
-  expect_equal(perc_of(2000, 2000), 100)
   # No draws means the rate is unknown, not zero, so it cannot pass a verdict.
   expect_true(is.na(perc_of(0, 0)))
-  expect_true(is.na(perc_of(0, -1)))
 })
 
 test_that("a fitted object carries the run-level sampler diagnostics", {

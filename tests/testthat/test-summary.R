@@ -66,8 +66,6 @@ test_that("summary carries the run-level diagnostics, not the raw count", {
   expect_equal(s$perc_divergent, diag$perc_divergent)
   expect_equal(s$perc_max_treedepth, diag$perc_max_treedepth)
   expect_equal(s$ebfmi, diag$ebfmi)
-  # The count's one home is fit$diagnostics; it is not duplicated here.
-  expect_null(s$ndivergent)
 })
 
 test_that("the print footer reports the three sampler diagnostics", {

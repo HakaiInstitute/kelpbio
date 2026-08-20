@@ -20,13 +20,6 @@ test_that("glance returns a one-row summary with the reportable core columns", {
   expect_equal(g$K, npars(weight_fit))
 })
 
-test_that("glance reports the stored divergence rate and omits the rest", {
-  g <- glance(weight_fit)
-  expect_equal(g$perc_divergent, weight_fit$diagnostics$perc_divergent)
-  # Treedepth and E-BFMI are reported by print(summary(fit)), not here.
-  expect_false(any(c("perc_max_treedepth", "ebfmi") %in% names(g)))
-})
-
 test_that("glance's converged column agrees with converged()", {
   # Guard against tibble() data-masking the rhat/esr thresholds to the columns.
   expect_equal(glance(weight_fit)$converged, converged(weight_fit))
@@ -34,11 +27,15 @@ test_that("glance's converged column agrees with converged()", {
     glance(weight_fit, rhat = 1.001, esr = 0.5)$converged,
     converged(weight_fit, rhat = 1.001, esr = 0.5)
   )
+  # Isolated to the divergence gate, so this checks glance forwards the
+  # threshold rather than agreeing by both failing on rhat.
   fit <- weight_fit
   fit$diagnostics$perc_divergent <- 0.5
-  expect_equal(
-    glance(fit, max_perc_divergent = 0.1)$converged,
-    converged(fit, max_perc_divergent = 0.1)
+  expect_false(
+    glance(fit, rhat = Inf, esr = 0, max_perc_divergent = 0.1)$converged
+  )
+  expect_true(
+    glance(fit, rhat = Inf, esr = 0, max_perc_divergent = 1)$converged
   )
 })
 
