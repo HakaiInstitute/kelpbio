@@ -27,10 +27,14 @@ weight_fit <- kb_fit_weight_nereo(
   d,
   chains = 2L,
   niters = 300L,
-  nthin = 1L,
+  nthin = 5L,
   cores = 2L,
   progress = "none",
-  seed = 42L
+  seed = 42L,
+  # Raised above the 0.95 default so these deliberately small fits still clear
+  # the convergence thresholds without lengthening the chains (and so growing
+  # the stored objects).
+  control = list(adapt_delta = 0.999)
 )
 
 saveRDS(weight_fit, "tests/testthat/fixtures/weight_fit.rds")
@@ -51,10 +55,14 @@ weight_macro_fit <- kb_fit_weight_macro(
   dm,
   chains = 2L,
   niters = 300L,
-  nthin = 1L,
+  nthin = 5L,
   cores = 2L,
   progress = "none",
-  seed = 42L
+  seed = 42L,
+  # Raised above the 0.95 default so these deliberately small fits still clear
+  # the convergence thresholds without lengthening the chains (and so growing
+  # the stored objects).
+  control = list(adapt_delta = 0.999)
 )
 
 saveRDS(weight_macro_fit, "tests/testthat/fixtures/weight_macro_fit.rds")

@@ -4,7 +4,7 @@
 \alias{converged.kb_fit}
 \title{Convergence of a Model Fit}
 \usage{
-\method{converged}{kb_fit}(x, ..., rhat = 1.05, esr = 0.1)
+\method{converged}{kb_fit}(x, ..., rhat = 1.01, esr = 0.1, max_perc_divergent = 0.2)
 }
 \arguments{
 \item{x}{A \code{kb_fit} object.}
@@ -15,22 +15,63 @@
 
 \item{esr}{A number giving the minimum acceptable effective sample rate
 (effective sample size divided by the number of draws).}
+
+\item{max_perc_divergent}{A number giving the maximum acceptable percentage of
+saved draws that ended in a divergent transition. \code{0} requires a fit with no
+divergent transitions.}
 }
 \value{
-A flag: \code{TRUE} if all Rhat are below \code{rhat} and all bulk effective
-sample rates above \code{esr}.
+A flag: \code{TRUE} if all Rhat are below \code{rhat}, all bulk effective
+sample rates above \code{esr}, and the divergence rate at or below
+\code{max_perc_divergent}.
 }
 \description{
-Whether a model fit has converged, from the Rhat and bulk effective sample
-rate of its parameters.
+Whether a model fit has converged, from the Rhat, bulk effective sample rate,
+and rate of divergent transitions.
 }
-\details{
-\code{esr} is the effective sample rate: the bulk effective sample size divided by
-the number of draws. Convergence is assessed on the bulk effective sample size
-only, not the tail. The defaults are \code{rhat = 1.05} and \code{esr = 0.1}.
+\section{Assessing convergence}{
+
+
+Three conditions must be met:
+\itemize{
+\item every parameter's Rhat below \code{rhat} (default 1.01)
+\item every parameter's effective sample rate (bulk effective sample size divided by the number of
+saved draws) above \code{esr} (default 0.1)
+\item the divergence rate at or below \code{max_perc_divergent} (default 0.2)
 }
+
+Divergent transitions indicate that the sampler failed to explore part of
+the posterior, and the draws may be biased regardless of whether other
+convergence metrics pass.
+
+Treedepth saturation and E-BFMI are additionally reported in
+\code{print(summary(x))}, although these do not affect convergence. The former
+indicates issues with efficiency and the latter is a per-chain signal that in
+practice accompanies divergences.
+}
+
+\section{Resolving convergence failure}{
+
+
+In order, try the following:
+\enumerate{
+\item Increase \code{adapt_delta} through the \code{control} argument of the \verb{kb_fit_*()}
+functions (e.g., \verb{kb_fit_*(df, control = list(adapt_delta = 0.99))}). The
+default \code{adapt_delta} value is 0.95. Higher \code{adapt_delta} values will
+increase model runtime. This should reduce divergent transitions and can
+also resolve rhat/ess issues.
+\item Increase the thinning rate (e.g., \verb{kb_fit_*(df, nthin = 5)}). This
+increases the total number of iterations, while saving only 1/\code{nthin},
+which increases the total information.
+\item Tighten the SD priors.
+}
+}
+
 \examples{
 converged(fit_weight_sim_nereo)
+
+# Require no divergent transitions at all:
+converged(fit_weight_sim_nereo, max_perc_divergent = 0)
 }
 \seealso{
 Other generics:

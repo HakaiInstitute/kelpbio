@@ -15,12 +15,17 @@ devtools::load_all(quiet = TRUE)
 
 fit_weight_sim_macro <- kb_fit_weight_macro(
   data_weight_sim_macro,
-  chains = 2L,
-  niters = 400L,
-  nthin = 1L,
-  cores = 2L,
+  chains = 3L,
+  niters = 500L,
+  # nthin multiplies the sampling iterations while holding the saved draw count
+  # fixed, so these deliberately small objects clear the convergence thresholds
+  # without growing. adapt_delta is raised above the 0.95 default for the same
+  # reason.
+  nthin = 2L,
+  cores = 4L,
   progress = "bar",
-  seed = 42L
+  seed = 42L,
+  control = list(adapt_delta = 0.999)
 )
 
 usethis::use_data(fit_weight_sim_macro, overwrite = TRUE)

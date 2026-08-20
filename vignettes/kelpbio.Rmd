@@ -76,8 +76,10 @@ defaults (`chains = 4`, `niters = 1000`) or more.
 ## Checking convergence
 
 `glance()` returns a one-row summary of the fit, including the sampler settings
-and the convergence diagnostics. `converged` is `TRUE` when the split R-hat is
-below its threshold (1.05 by default) and the effective sample size is adequate.
+and the convergence diagnostics. `converged` is `TRUE` when every parameter's
+R-hat is below its threshold (1.01 by default), the effective sample rate is
+adequate, and the divergent transition rate is at or below its threshold (0.2%).
+See [`converged()`] for what to try when a fit does not converge.
 
 ```{r}
 glance(fit)

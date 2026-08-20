@@ -3,11 +3,19 @@
 #' A model fit's metadata paired with a per-term posterior summary table.
 #'
 #' @details
-#' The `print` method renders a header (likelihood family, fixed- and
-#' random-effect structure, observation and group counts, sampler configuration,
-#' and the convergence verdict), the coefficient table, and a diagnostics footer.
-#' For a compact overview without the numeric table, call `print()` on the fit
-#' itself.
+#' The `print` method renders a header (the model and species, the predictor,
+#' observation and group counts, sampler configuration, and the convergence
+#' verdict), the coefficient table, and a diagnostics footer. For a compact
+#' overview without the numeric table, call `print()` on the fit itself. For the
+#' model equation and priors, call [kb_model_describe()].
+#'
+#' The footer reports the sampler diagnostics: the percentage of saved draws
+#' that ended in a divergent transition, the percentage that saturated the
+#' maximum treedepth, and the minimum E-BFMI across chains. Divergences indicate
+#' the sampler failed to explore part of the posterior and so enter the
+#' [converged()] verdict; treedepth saturation affects efficiency rather than
+#' validity, and E-BFMI below 0.2 suggests the model would benefit from
+#' reparameterization.
 #'
 #' The coefficient table reports, per term:
 #' \describe{
@@ -71,7 +79,9 @@ summary.kb_fit <- function(
     c(
       .kb_fit_header(object),
       list(
-        ndivergent = object$diagnostics$ndivergent,
+        perc_divergent = object$diagnostics$perc_divergent,
+        perc_max_treedepth = object$diagnostics$perc_max_treedepth,
+        ebfmi = object$diagnostics$ebfmi,
         conf_level = conf_level,
         coefficients = coefficients
       )

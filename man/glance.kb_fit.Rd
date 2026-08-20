@@ -4,7 +4,7 @@
 \alias{glance.kb_fit}
 \title{Model Fit Diagnostic Summary}
 \usage{
-\method{glance}{kb_fit}(x, ..., rhat = 1.05, esr = 0.1)
+\method{glance}{kb_fit}(x, ..., rhat = 1.01, esr = 0.1, max_perc_divergent = 0.2)
 }
 \arguments{
 \item{x}{A \code{kb_fit} object.}
@@ -15,19 +15,78 @@
 
 \item{esr}{A number giving the minimum acceptable effective sample rate
 (effective sample size divided by the number of draws).}
+
+\item{max_perc_divergent}{A number giving the maximum acceptable percentage of
+saved draws that ended in a divergent transition. \code{0} requires a fit with no
+divergent transitions.}
 }
 \value{
-A one-row tibble with \code{n}, \code{K}, \code{nchains}, \code{niters}, \code{nthin}, \code{ess}
-(the minimum bulk effective sample size), \code{rhat} (the maximum Rhat), and
-\code{converged}.
+A one-row tibble with \code{n}, \code{K}, \code{nchains}, \code{niters}, \code{nthin}, \code{ess},
+\code{rhat}, \code{perc_divergent}, and \code{converged}.
 }
 \description{
 One-row summary of a model fit with convergence diagnostics.
 }
+\section{Output}{
+
+
+There are three indicators of convergence in the output:
+\itemize{
+\item \code{rhat} is the potential scale reduction factor for the worst-performing
+parameter: a comparison of between- and within-chain variance, with values
+near 1 indicating convergence.
+\item \code{ess} is the bulk effective sample size for the worst-performing parameter:
+the number of independent draws after accounting for autocorrelation.
+\item \code{perc_divergent} is the divergent transition rate: the divergent
+transitions divided by the number of saved draws (i.e., post-thinning),
+expressed as a percentage.
+}
+}
+
+\section{Assessing convergence}{
+
+
+Three conditions must be met:
+\itemize{
+\item every parameter's Rhat below \code{rhat} (default 1.01)
+\item every parameter's effective sample rate (bulk effective sample size divided by the number of
+saved draws) above \code{esr} (default 0.1)
+\item the divergence rate at or below \code{max_perc_divergent} (default 0.2)
+}
+
+Divergent transitions indicate that the sampler failed to explore part of
+the posterior, and the draws may be biased regardless of whether other
+convergence metrics pass.
+
+Treedepth saturation and E-BFMI are additionally reported in
+\code{print(summary(x))}, although these do not affect convergence. The former
+indicates issues with efficiency and the latter is a per-chain signal that in
+practice accompanies divergences.
+}
+
+\section{Resolving convergence failure}{
+
+
+In order, try the following:
+\enumerate{
+\item Increase \code{adapt_delta} through the \code{control} argument of the \verb{kb_fit_*()}
+functions (e.g., \verb{kb_fit_*(df, control = list(adapt_delta = 0.99))}). The
+default \code{adapt_delta} value is 0.95. Higher \code{adapt_delta} values will
+increase model runtime. This should reduce divergent transitions and can
+also resolve rhat/ess issues.
+\item Increase the thinning rate (e.g., \verb{kb_fit_*(df, nthin = 5)}). This
+increases the total number of iterations, while saving only 1/\code{nthin},
+which increases the total information.
+\item Tighten the SD priors.
+}
+}
+
 \examples{
 glance(fit_weight_sim_nereo)
 }
 \seealso{
+\code{\link[=converged]{converged()}}, which produces the \code{converged} column.
+
 Other generics:
 \code{\link[=augment.kb_fit]{augment.kb_fit()}},
 \code{\link[=coef.kb_fit]{coef.kb_fit()}},

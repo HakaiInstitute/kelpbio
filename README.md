@@ -84,22 +84,22 @@ Check convergence with `glance()` and summarise the model terms with
 
 ``` r
 glance(fit)
-#> # A tibble: 1 × 8
-#>       n     K nchains niters nthin   ess  rhat converged
-#>   <int> <int>   <int>  <dbl> <int> <dbl> <dbl> <lgl>    
-#> 1   234    10       2    400     1  201.  1.03 TRUE
+#> # A tibble: 1 × 9
+#>       n     K nchains niters nthin   ess  rhat perc_divergent converged
+#>   <int> <int>   <int>  <dbl> <int> <dbl> <dbl>          <dbl> <lgl>    
+#> 1   234    10       2    500    10  591.  1.01              0 TRUE
 
 tidy(fit)
 #> # A tibble: 7 × 4
-#>   term          estimate   lower  upper
-#>   <chr>            <dbl>   <dbl>  <dbl>
-#> 1 bWeight        -1.47   -1.66   -1.24 
-#> 2 bDiameter       2.5     2.28    2.74 
-#> 3 bDiameter2      0.0749 -0.156   0.313
-#> 4 sSite           0.27    0.176   0.459
-#> 5 sSiteDiameter   0.313   0.169   0.62 
-#> 6 sSiteYear       0.0962  0.0521  0.149
-#> 7 sWeight         0.161   0.141   0.185
+#>   term          estimate  lower  upper
+#>   <chr>            <dbl>  <dbl>  <dbl>
+#> 1 bWeight        -1.46   -1.65  -1.25 
+#> 2 bDiameter       2.51    2.25   2.75 
+#> 3 bDiameter2      0.0702 -0.161  0.318
+#> 4 sSite           0.28    0.172  0.504
+#> 5 sSiteDiameter   0.317   0.169  0.62 
+#> 6 sSiteYear       0.0957  0.054  0.147
+#> 7 sWeight         0.161   0.141  0.184
 ```
 
 Predict the weight-diameter curve for each site with
@@ -125,11 +125,11 @@ kb_predict_weight(fit, new_data)
 #> # A tibble: 5 × 5
 #>   diameter site  estimate  lower  upper
 #>      <dbl> <chr>    <dbl>  <dbl>  <dbl>
-#> 1       20 site1   0.0302 0.0229 0.0393
-#> 2       35 site1   0.126  0.0975 0.162 
-#> 3       50 site1   0.319  0.242  0.421 
-#> 4       65 site1   0.647  0.49   0.85  
-#> 5       80 site1   1.12   0.842  1.52
+#> 1       20 site1   0.0301 0.0226 0.0393
+#> 2       35 site1   0.126  0.0988 0.161 
+#> 3       50 site1   0.32   0.251  0.41  
+#> 4       65 site1   0.643  0.498  0.854 
+#> 5       80 site1   1.12   0.853  1.5
 ```
 
 The fitted object exposes the standard `rstantools` generics

@@ -10,3 +10,8 @@ test_that("print.kb_fit shows stable metadata", {
 test_that("print.kb_fit shows the macro slim header", {
   expect_snapshot(print(weight_macro_fit))
 })
+
+test_that(".fmt_perc rounds for display and names an unknown rate", {
+  expect_equal(.fmt_perc(1 / 3), "0.333%")
+  expect_equal(.fmt_perc(NA_real_), "unknown")
+})

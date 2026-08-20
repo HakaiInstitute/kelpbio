@@ -66,3 +66,32 @@ test_that("with_quiet_sampler muffles only HMC diagnostics when muffle = TRUE", 
     "unrelated"
   )
 })
+
+test_that("perc_of returns a percentage, and NA when there is no denominator", {
+  # A percentage, not a proportion: dropping the 100 would make the
+  # max_perc_divergent threshold 100x too lenient.
+  expect_equal(perc_of(5, 2000), 0.25)
+  # No draws means the rate is unknown, not zero, so it cannot pass a verdict.
+  expect_true(is.na(perc_of(0, 0)))
+})
+
+test_that("a fitted object carries the run-level sampler diagnostics", {
+  diag <- weight_fit$diagnostics
+  expect_named(
+    diag,
+    c(
+      "summary",
+      "ndivergent",
+      "perc_divergent",
+      "perc_max_treedepth",
+      "ebfmi"
+    )
+  )
+  # The rate is the stored count over the retained draws.
+  expect_equal(
+    diag$perc_divergent,
+    perc_of(diag$ndivergent, posterior::ndraws(weight_fit$draws))
+  )
+  expect_gte(diag$perc_max_treedepth, 0)
+  expect_gt(diag$ebfmi, 0)
+})
