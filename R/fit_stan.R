@@ -96,17 +96,40 @@ fit_stan <- function(
     ess_bulk = posterior::ess_bulk,
     ess_tail = posterior::ess_tail
   ))
-  sampler <- rstan::get_sampler_params(stanfit, inc_warmup = FALSE)
-  ndivergent <- sum(purrr::map_dbl(sampler, function(x) {
-    sum(x[, "divergent__"])
-  }))
-
   list(
     draws = draws,
     gq = gq,
-    diagnostics = list(summary = summary, ndivergent = ndivergent),
+    diagnostics = c(list(summary = summary), sampler_diagnostics(stanfit)),
     stancode = rstan::get_stancode(stanfit)
   )
+}
+
+# Run-level HMC diagnostics, taken from rstan's own per-iteration vectors so the
+# reported rates reproduce the warnings rstan would emit. Computed here because
+# the stanfit is discarded and none of this is recoverable from the stored draws.
+# rstan records sampler params per *saved* iteration, so a rate is over retained
+# draws: with nthin > 1, divergences on thinned-away iterations are invisible.
+# E-BFMI is per chain and reduced to its minimum, since the diagnostic fires on
+# the worst chain (a mean would let one pathological chain hide behind the rest).
+sampler_diagnostics <- function(stanfit) {
+  divergent <- rstan::get_divergent_iterations(stanfit)
+  treedepth <- rstan::get_max_treedepth_iterations(stanfit)
+  ndraws <- length(divergent)
+  list(
+    ndivergent = sum(divergent),
+    perc_divergent = perc_of(sum(divergent), ndraws),
+    perc_max_treedepth = perc_of(sum(treedepth), ndraws),
+    ebfmi = min(rstan::get_bfmi(stanfit))
+  )
+}
+
+# NA rather than 0 for an empty denominator: no draws means the rate is unknown,
+# not zero, and NA propagates into the convergence verdict rather than passing it.
+perc_of <- function(n, total) {
+  if (total <= 0L) {
+    return(NA_real_)
+  }
+  100 * n / total
 }
 
 # Sample in a callr background process, polling the progress artifact to drive a

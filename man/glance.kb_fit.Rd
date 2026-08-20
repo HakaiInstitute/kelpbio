@@ -4,7 +4,7 @@
 \alias{glance.kb_fit}
 \title{Model Fit Diagnostic Summary}
 \usage{
-\method{glance}{kb_fit}(x, ..., rhat = 1.05, esr = 0.1)
+\method{glance}{kb_fit}(x, ..., rhat = 1.01, esr = 0.1, max_perc_divergent = 0.2)
 }
 \arguments{
 \item{x}{A \code{kb_fit} object.}
@@ -15,14 +15,24 @@
 
 \item{esr}{A number giving the minimum acceptable effective sample rate
 (effective sample size divided by the number of draws).}
+
+\item{max_perc_divergent}{A number giving the maximum acceptable percentage of
+saved draws that ended in a divergent transition. \code{0} requires a fit with no
+divergent transitions.}
 }
 \value{
 A one-row tibble with \code{n}, \code{K}, \code{nchains}, \code{niters}, \code{nthin}, \code{ess}
-(the minimum bulk effective sample size), \code{rhat} (the maximum Rhat), and
-\code{converged}.
+(the minimum bulk effective sample size), \code{rhat} (the maximum Rhat),
+\code{perc_divergent} (the percentage of saved draws that ended in a divergent
+transition), and \code{converged}.
 }
 \description{
 One-row summary of a model fit with convergence diagnostics.
+}
+\details{
+The columns are the reportable core: Rhat, effective sample size, and the
+divergence rate. Treedepth saturation and E-BFMI are reported by
+\code{print(summary(x))} instead, keeping this row narrow enough for a report table.
 }
 \examples{
 glance(fit_weight_sim_nereo)

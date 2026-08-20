@@ -4,7 +4,7 @@
 \alias{converged.kb_fit}
 \title{Convergence of a Model Fit}
 \usage{
-\method{converged}{kb_fit}(x, ..., rhat = 1.05, esr = 0.1)
+\method{converged}{kb_fit}(x, ..., rhat = 1.01, esr = 0.1, max_perc_divergent = 0.2)
 }
 \arguments{
 \item{x}{A \code{kb_fit} object.}
@@ -15,22 +15,45 @@
 
 \item{esr}{A number giving the minimum acceptable effective sample rate
 (effective sample size divided by the number of draws).}
+
+\item{max_perc_divergent}{A number giving the maximum acceptable percentage of
+saved draws that ended in a divergent transition. \code{0} requires a fit with no
+divergent transitions.}
 }
 \value{
-A flag: \code{TRUE} if all Rhat are below \code{rhat} and all bulk effective
-sample rates above \code{esr}.
+A flag: \code{TRUE} if all Rhat are below \code{rhat}, all bulk effective sample
+rates above \code{esr}, and the divergence rate below \code{max_perc_divergent}.
 }
 \description{
-Whether a model fit has converged, from the Rhat and bulk effective sample
-rate of its parameters.
+Whether a model fit has converged, from the Rhat, bulk effective sample rate,
+and divergent-transition rate of its parameters.
 }
 \details{
+All three conditions must hold: every Rhat below \code{rhat}, every bulk effective
+sample rate above \code{esr}, and the divergence rate below \code{max_perc_divergent}.
+The defaults are \code{rhat = 1.01}, \code{esr = 0.1}, and \code{max_perc_divergent = 0.2}.
+Set \code{max_perc_divergent = 0} to require a fit with no divergent transitions.
+
 \code{esr} is the effective sample rate: the bulk effective sample size divided by
 the number of draws. Convergence is assessed on the bulk effective sample size
-only, not the tail. The defaults are \code{rhat = 1.05} and \code{esr = 0.1}.
+only, not the tail.
+
+Divergent transitions enter the verdict because they mean the sampler failed to
+explore part of the posterior, so the draws may be biased whatever Rhat and the
+effective sample size report. Treedepth saturation and E-BFMI do not: the first
+affects efficiency rather than validity, and the second is a per-chain signal
+that in practice accompanies divergences. Both are reported by
+\code{print(summary(x))}. Raising \code{adapt_delta} through the \code{control} argument of the
+\verb{kb_fit_*()} functions often clears divergences.
+
+The divergence rate is a percentage of the saved draws, so with \code{nthin > 1} it
+covers the retained draws only.
 }
 \examples{
 converged(fit_weight_sim_nereo)
+
+# Require no divergent transitions at all:
+converged(fit_weight_sim_nereo, max_perc_divergent = 0)
 }
 \seealso{
 Other generics:

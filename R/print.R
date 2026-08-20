@@ -22,6 +22,15 @@ print.kb_prior_exponential <- function(x, ...) {
   invisible(x)
 }
 
+# A diagnostic rate for display: 3 significant figures with a "%" suffix, or
+# "unknown" when the rate has no denominator (a fit with no draws).
+.fmt_perc <- function(x) {
+  if (is.na(x)) {
+    return("unknown")
+  }
+  paste0(format(signif(x, 3)), "%")
+}
+
 # Render the shared fit metadata header (used by print.kb_fit and
 # print.summary_kb_fit). `h` is the field list from .kb_fit_header(); the
 # summary_kb_fit object carries the same fields.
@@ -85,10 +94,13 @@ print.summary_kb_fit <- function(x, ...) {
   cli::cat_line(cli::col_grey(
     "ess_bulk, ess_tail: bulk and tail effective sample sizes."
   ))
+  # Rates are rounded here, at the display boundary; the fit stores them unrounded.
   cli::cat_line(cli::col_grey(
-    x$ndivergent,
-    " divergent transition",
-    if (x$ndivergent == 1) "" else "s",
+    .fmt_perc(x$perc_divergent),
+    " divergent transitions; ",
+    .fmt_perc(x$perc_max_treedepth),
+    " max-treedepth; min E-BFMI ",
+    format(signif(x$ebfmi, 3)),
     "."
   ))
   invisible(x)

@@ -42,6 +42,9 @@
 #' @param rhat A number giving the maximum acceptable Rhat.
 #' @param esr A number giving the minimum acceptable effective sample rate
 #'   (effective sample size divided by the number of draws).
+#' @param max_perc_divergent A number giving the maximum acceptable percentage of
+#'   saved draws that ended in a divergent transition. `0` requires a fit with no
+#'   divergent transitions.
 #' @param by A character vector of grouping factors, each drawn as a separate
 #'   curve, or `NULL` for a single population-level curve. Each named factor is
 #'   expanded over its observed levels and conditioned on its estimated random

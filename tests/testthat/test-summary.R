@@ -59,3 +59,20 @@ test_that("print.summary_kb_fit shows the slim header, table, and footer", {
   expect_true(any(grepl("compatibility limits", out)))
   expect_true(any(grepl("effective sample sizes", out)))
 })
+
+test_that("summary carries the run-level diagnostics, not the raw count", {
+  s <- summary(weight_fit)
+  diag <- weight_fit$diagnostics
+  expect_equal(s$perc_divergent, diag$perc_divergent)
+  expect_equal(s$perc_max_treedepth, diag$perc_max_treedepth)
+  expect_equal(s$ebfmi, diag$ebfmi)
+  # The count's one home is fit$diagnostics; it is not duplicated here.
+  expect_null(s$ndivergent)
+})
+
+test_that("the print footer reports the three sampler diagnostics", {
+  out <- capture.output(print(summary(weight_fit)))
+  expect_true(any(grepl("divergent transitions", out)))
+  expect_true(any(grepl("max-treedepth", out)))
+  expect_true(any(grepl("min E-BFMI", out)))
+})
