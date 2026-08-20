@@ -19,11 +19,7 @@ The pointwise log-likelihood of the observed data, suitable for \code{loo::loo()
 }
 \details{
 Computed from the stored draws by evaluating the model's likelihood at the
-observed data, so it is deterministic: repeated calls return identical values.
-The density is of the response on the scale the model fits it (log weight for
-\emph{Nereocystis}, weight for \emph{Macrocystis}), with no Jacobian adjustment, matching
-the Stan likelihood. Values are therefore comparable across models that share
-the response scale, but not across models that do not.
+observed data.
 }
 \examples{
 ll <- log_lik(fit_weight_sim_nereo)

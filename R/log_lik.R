@@ -4,11 +4,7 @@
 #'
 #' @details
 #' Computed from the stored draws by evaluating the model's likelihood at the
-#' observed data, so it is deterministic: repeated calls return identical values.
-#' The density is of the response on the scale the model fits it (log weight for
-#' *Nereocystis*, weight for *Macrocystis*), with no Jacobian adjustment, matching
-#' the Stan likelihood. Values are therefore comparable across models that share
-#' the response scale, but not across models that do not.
+#' observed data.
 #'
 #' @param object A `kb_fit_weight` object.
 #' @param ... Unused.
