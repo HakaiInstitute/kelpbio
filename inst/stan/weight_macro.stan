@@ -9,7 +9,9 @@
 // log-fronds is centered at fronds_ref (passed as data: the geometric mean of
 // the observed frond count). Random effects: site intercept, year intercept, and
 // site:year. Priors are passed as data; the prior family is fixed at compile
-// time.
+// time. The mean is a local in the model block so it is not saved with the draws.
+// The pointwise log-likelihood and posterior-predictive replicates are computed
+// in R from the stored draws, so there are no generated quantities.
 data {
   int<lower=0> nObs;                      // 0 allowed: supports prior-only / empty fits
   int<lower=1> nSite;
@@ -52,13 +54,6 @@ transformed parameters {
   vector[nSite] bSite = z_bSite * sSite;
   vector[nYear] bYear = z_bYear * sYear;
   matrix[nSite, nYear] bSiteYear = z_bSiteYear * sSiteYear;
-  vector[nObs] log_eWeight;
-  for (i in 1:nObs) {
-    log_eWeight[i] = bWeight + bSite[site[i]]
-      + bFronds * log_fronds[i]
-      + bYear[year[i]]
-      + site_year_on * bSiteYear[site[i], year[i]];
-  }
 }
 model {
   bWeight ~ normal(prior_intercept_mu, prior_intercept_sd);
@@ -71,23 +66,19 @@ model {
   z_bYear ~ std_normal();
   to_vector(z_bSiteYear) ~ std_normal();
   if (prior_only == 0) {
+    // A local, not a transformed parameter: rstan saves transformed parameters,
+    // and nObs columns per draw is the largest thing in a stored fit. Predictions
+    // and the pointwise log-likelihood are computed in R from the stored draws.
+    vector[nObs] log_eWeight;
+    for (i in 1:nObs) {
+      log_eWeight[i] = bWeight + bSite[site[i]]
+        + bFronds * log_fronds[i]
+        + bYear[year[i]]
+        + site_year_on * bSiteYear[site[i], year[i]];
+    }
     for (i in 1:nObs) {
       real rate_i = shape / exp(log_eWeight[i]);
       weight[i] ~ gamma(shape, rate_i);
     }
-  }
-}
-generated quantities {
-  // Reuse the single mean definition (log_eWeight, transformed parameters).
-  // log_lik: pointwise log-likelihood, for loo.
-  // yrep:    response-scale posterior-predictive replicate, for pp_check.
-  // Both loops are no-ops when nObs == 0. Predictions at new data are computed
-  // in R from the stored draws, not here.
-  vector[nObs] log_lik;
-  vector[nObs] yrep;
-  for (i in 1:nObs) {
-    real rate_i = shape / exp(log_eWeight[i]);
-    log_lik[i] = gamma_lpdf(weight[i] | shape, rate_i);
-    yrep[i] = gamma_rng(shape, rate_i);
   }
 }

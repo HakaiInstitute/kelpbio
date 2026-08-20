@@ -32,7 +32,7 @@ Other generics:
 \code{\link[=converged.kb_fit]{converged.kb_fit()}},
 \code{\link[=glance.kb_fit]{glance.kb_fit()}},
 \code{\link[=kb_stancode]{kb_stancode()}},
-\code{\link[=log_lik.kb_fit]{log_lik.kb_fit()}},
+\code{\link[=log_lik.kb_fit_weight]{log_lik.kb_fit_weight()}},
 \code{\link[=posterior_epred.kb_fit_weight]{posterior_epred.kb_fit_weight()}},
 \code{\link[=posterior_linpred.kb_fit_weight]{posterior_linpred.kb_fit_weight()}},
 \code{\link[=posterior_predict.kb_fit_weight]{posterior_predict.kb_fit_weight()}},

@@ -22,7 +22,7 @@ flowchart TD
         ASM --> FS["fit_stan()"]
         SM[["stanmodels$weight_nereo<br/>(compiled at install)"]] --> FS
         FS -->|"rstan::sampling → draws"| CTOR["new_kb_fit_weight()"]
-        CTOR --> FITOBJ[("kb_fit_weight object<br/>draws · gq · diagnostics · data · meta")]
+        CTOR --> FITOBJ[("kb_fit_weight object<br/>draws · diagnostics · data · meta")]
     end
 
     subgraph read["Read path (pure, on stored draws)"]
@@ -58,7 +58,7 @@ Engine conventions visible in the source (see `openspec/config.yaml` `context:` 
 - **Structural flags as data.** `prior_only` skips the likelihood (sample from priors); `site_year_on` zeroes the site:year term. Both let one compiled model serve several structural variants. `site_year_on` is not a user argument: the fitting layer derives it from the data (dropped only when fewer than two years are present, kept otherwise, with a warning when the design is aliased); see the fitting layer and `openspec/specs/fitting`.
 - **`nObs == 0` supported** for prior-only / empty fits; likelihood and generated- quantity loops are no-ops.
 - **Log-diameter centered at `diameter_ref`** (a data input; the geometric mean of observed diameter). Centering in log space makes the diameter unit immaterial, so the fit and predictions are scale-invariant and the data columns keep plain names.
-- **Mean defined once** in `transformed parameters` (`log_eWeight`) and reused by the `generated quantities`: `log_lik` (pointwise, for `loo`) and `yrep` (response-scale replicate, for `pp_check`). Predictions at new data are computed in R, not here.
+- **Mean is a model-block local** (`log_eWeight`), computed only when the likelihood is evaluated, so rstan does not save it with the draws. There are no `generated quantities`: the pointwise `log_lik` (for `loo`) and the `yrep` replicates (for `pp_check`) are recomputed in R from the stored draws, as are predictions at new data. Storing them scaled as `2 x nObs x ndraws` and dominated every fit object.
 
 Because `devtools::load_all()` does not re-transpile Stan, any `.stan` edit requires `rstantools::rstan_config()` then `devtools::install()`. See `CLAUDE.md`.
 
@@ -73,7 +73,7 @@ The fit function is deliberately a thin orchestrator over pure helpers plus one 
 1.  `.chk_sampler_args()` / `kb_check_data_weight_nereo()` validate arguments and data.
 2.  `resolve_priors(priors, kb_priors_weight_nereo())` merges user priors over defaults (`R/resolve_priors.R`): `NULL` returns defaults; supplied names must be a subset of the defaults; each entry must match the default's family (family is fixed).
 3.  `assemble_weight_nereo_data()` maps validated data plus the resolved prior list to the Stan `data` block (`R/assemble_weight_nereo_data.R`): factor-codes `site`/`year` to integers, passes raw `diameter`/`weight` (Stan applies the log transforms), computes `diameter_ref` via `weight_diameter_ref()`.
-4.  `fit_stan()` (`R/fit_stan.R`) is the model- and species-agnostic sampling engine shared by every future `kb_fit_*`: it calls `rstan::sampling()` once, extracts draws with `posterior::as_draws_rvars()`, splits the requested parameters from the generated quantities (`gq_vars`), summarises convergence (Rhat, bulk/tail ESS, divergences), captures the Stan source, and lets the `stanfit` go out of scope.
+4.  `fit_stan()` (`R/fit_stan.R`) is the model- and species-agnostic sampling engine shared by every future `kb_fit_*`: it calls `rstan::sampling()` once, extracts draws with `posterior::as_draws_rvars()`, subsets the requested parameters (dropping `lp__` and the `z_*` non-centered parameters), summarises convergence (Rhat, bulk/tail ESS, divergences), captures the Stan source, and lets the `stanfit` go out of scope.
 5.  `new_kb_fit_weight()` assembles the fit object and its metadata.
 
 **Sampler conventions** (all in `kb_fit_weight_nereo()` / `fit_stan()`):
@@ -88,7 +88,6 @@ The fit function is deliberately a thin orchestrator over pure helpers plus one 
 | Slot | Contents |
 |---------------------------|---------------------------------------------|
 | `draws` | `posterior` `draws_rvars` of the model parameters (fixed effects, SDs, and the per-level `bSite`/`bSiteDiameter`/`bSiteYear`, kept so predictions and `augment` can condition on observed levels). |
-| `gq` | `log_lik` and `yrep` generated-quantity draws (`NULL` for zero-row fits). |
 | `diagnostics` | `summary` (per-variable Rhat/ESS) plus the run-level `ndivergent`, `perc_divergent`, `perc_max_treedepth` and `ebfmi`, as plain numerics. Computed while the `stanfit` is in scope, since none can be recovered from the stored draws. |
 | `data` | the validated input data frame. |
 | `meta` | `species`, `prior_only`, `priors`, `stancode`, `site_levels`, `year_levels`, `nthin`, `diameter_ref`, `site_year_on` (auto-derived from the data), `nu`. |
@@ -116,7 +115,7 @@ Each species is a subclass of the model class (`c("kb_fit_weight_<species>", "kb
 
 `by = "year"` is rejected (`validate_by_weight()`): year has no main effect, only the site:year interaction. `build_by_grid()` crosses diameter only with *observed* site:year combinations. Both verbs share `summarise_weight_predictions()`, which exponentiates the log-scale rvar, reduces each row to `estimate`/`lower`/`upper` (the `estimate` function plus equal-tailed `conf_level` limits, `signif`-rounded), and wraps the result as a `kb_predictions` object.
 
-**`rstantools` generics** (`R/posterior_epred.R`, `posterior_linpred.R`, `posterior_predict.R`, `log_lik.R`, `predict.R`, `prior_summary.R`) are thin faces over the same helper, returning a draws-by-observations (`D x N`) matrix rather than a summary: `posterior_linpred` is the raw linpred, `posterior_epred` exponentiates, `posterior_predict` adds Student-t noise (and returns stored `yrep` when `new_data = NULL`), `log_lik` returns the stored pointwise matrix (feeds `loo::loo`). `predict.kb_fit_weight` wraps `kb_predict_weight`.
+**`rstantools` generics** (`R/posterior_epred.R`, `posterior_linpred.R`, `posterior_predict.R`, `log_lik.R`, `predict.R`, `prior_summary.R`) are thin faces over the same helper, returning a draws-by-observations (`D x N`) matrix rather than a summary: `posterior_linpred` is the raw linpred, `posterior_epred` exponentiates, `posterior_predict` adds species-appropriate noise for every `new_data` including `NULL`, so it is RNG-dependent (`set.seed()` for reproducible draws), `log_lik` recomputes the pointwise matrix from the stored draws (feeds `loo::loo`) and is deterministic. `predict.kb_fit_weight` wraps `kb_predict_weight`.
 
 ## Summary and Diagnostic Surface
 
@@ -152,7 +151,7 @@ Tests mirror sources 1:1 (`R/<name>.R` \<-\> `tests/testthat/test-<name>.R`).
 
 | Component | File | Key symbols |
 |-------------------------|-----------------|------------------------------|
-| Stan model | `inst/stan/weight_nereo.stan` | `log_eWeight`, `log_lik`, `yrep`, `prior_only`, `site_year_on`, `diameter_ref` |
+| Stan model | `inst/stan/weight_nereo.stan` | `log_eWeight`, `prior_only`, `site_year_on`, `diameter_ref` |
 | Compiled model object | `R/stanmodels.R` (generated) | `stanmodels$weight_nereo` |
 | Fit entry point | `R/kb_fit_weight_nereo.R` | `kb_fit_weight_nereo()`, `new_kb_fit_weight()` |
 | Sampling engine | `R/fit_stan.R` | `fit_stan()`, `with_quiet_sampler()`, `resolve_cores()` |
@@ -162,7 +161,7 @@ Tests mirror sources 1:1 (`R/<name>.R` \<-\> `tests/testthat/test-<name>.R`).
 | Prior objects | `R/kb_prior_normal.R`, `R/kb_prior_exponential.R`, `R/kb_priors_weight_nereo.R` | `kb_prior_normal()`, `kb_prior_exponential()`, `kb_priors_weight_nereo()` |
 | Mean helper | `R/weight_nereo_linpred.R` | `.weight_linpred()`, `resolve_re1()`, `resolve_re2()`, `re_draw()`, `validate_by_weight()`, `build_by_grid()` |
 | Prediction verbs | `R/kb_predict_weight.R`, `R/kb_predict_weight_by.R` | `kb_predict_weight()`, `kb_predict_weight_by()`, `summarise_weight_predictions()` |
-| rstantools generics | `R/posterior_epred.R`, `R/posterior_linpred.R`, `R/posterior_predict.R`, `R/log_lik.R`, `R/predict.R`, `R/prior_summary.R` | `posterior_epred.kb_fit_weight()`, `log_lik.kb_fit()`, etc. |
+| rstantools generics | `R/posterior_epred.R`, `R/posterior_linpred.R`, `R/posterior_predict.R`, `R/log_lik.R`, `R/predict.R`, `R/prior_summary.R` | `posterior_epred.kb_fit_weight()`, `log_lik.kb_fit_weight()`, etc. |
 | Predictions object | `R/kb_predictions.R` | `new_kb_predictions()`, `print.kb_predictions()` |
 | Plotting | `R/kb_plot_predictions.R`, `R/autoplot.R` | `kb_plot_predictions()`, `autoplot.kb_predictions()` |
 | Parameter summaries | `R/tidy.R`, `R/coef.R`, `R/glance.R`, `R/summary.R`, `R/summarise.R` | `tidy.kb_fit_weight()`, `summary.kb_fit()`, `fit_descriptor()`, `summarise_draws_terms()` |
@@ -184,5 +183,4 @@ Tests mirror sources 1:1 (`R/<name>.R` \<-\> `tests/testthat/test-<name>.R`).
 | `esr` | Effective sample rate: bulk ESS divided by number of draws; used with Rhat for the convergence verdict. |
 | `prior_only` | Structural flag that skips the likelihood so the model samples from the priors. |
 | `site_year_on` | Structural flag gating the site:year random effect, derived from the data (not user-set): off when fewer than two years are present, on otherwise; on with a warning when the design is aliased (no site sampled in more than one year). |
-| gq | Generated quantities (`log_lik`, `yrep`) stored separately from the model parameter draws. |
 | site-year resolution | The kelpbio models drop the analysis project's month dimension, working at site-year granularity. |

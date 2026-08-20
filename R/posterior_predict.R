@@ -2,25 +2,29 @@
 #'
 #' Draws from the posterior predictive distribution: the expected weight plus
 #' species-appropriate observation noise (Student-t on log-weight with scale
-#' `sWeight` for *Nereocystis*; Gamma with shape `shape` for
-#' *Macrocystis*, matching the Stan likelihood). With `new_data = NULL` the stored
-#' `yrep` at the observed data is returned, for use with `bayesplot::pp_check()`.
+#' `sWeight` for *Nereocystis*; Gamma with shape `shape` for *Macrocystis*,
+#' matching the Stan likelihood). With `new_data = NULL` the replicates are at the
+#' observed data, for use with `bayesplot::pp_check()`.
 #'
 #' @details
 #' For supplied `new_data`, conditioning is inferred from the grouping columns
 #' present (see [posterior_epred()]).
 #'
+#' The observation noise is drawn in R, for every `new_data` including `NULL`, so
+#' repeated calls return different replicates. Set a seed with `set.seed()` for
+#' reproducible draws.
+#'
 #' @inheritParams params
 #' @param object A `kb_fit_weight` object.
 #' @param new_data A data frame with the fit's predictor column (and optional
-#'   `site` / `year` columns), or `NULL` for the stored `yrep` at the observed
-#'   data.
+#'   `site` / `year` columns), or `NULL` to predict at the observed data.
 #' @param ... Unused.
 #'
 #' @return A draws-by-observations (`D x N`) matrix.
 #' @family generics
 #' @exportS3Method rstantools::posterior_predict
 #' @examples
+#' set.seed(1)
 #' pp <- posterior_predict(fit_weight_sim_nereo)
 #' dim(pp)
 posterior_predict.kb_fit_weight <- function(
@@ -33,13 +37,10 @@ posterior_predict.kb_fit_weight <- function(
   rlang::check_dots_empty()
   .chk_kb_fit_weight(object)
   .chk_representative_site(object, representative_site)
-  if (is.null(new_data)) {
-    if (is.null(object$gq)) {
-      cli::cli_abort(
-        "No posterior-predictive draws are stored (zero-observation fit)."
-      )
-    }
-    return(posterior::draws_of(object$gq$yrep))
+  if (is.null(new_data) && nrow(object$data) == 0L) {
+    cli::cli_abort(
+      "A zero-observation fit has no posterior-predictive draws at the observed data."
+    )
   }
   res <- weight_data_linpred(object, new_data, new_levels, representative_site)
   lp <- posterior::draws_of(res$linpred) # D x N, log scale

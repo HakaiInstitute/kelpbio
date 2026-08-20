@@ -58,12 +58,12 @@ head(data_weight_sim_nereo)
 #> # A tibble: 6 × 4
 #>   diameter weight site  year 
 #>      <dbl>  <dbl> <fct> <fct>
-#> 1     53.8  0.412 site1 2019 
-#> 2     38.2  0.183 site1 2019 
-#> 3     25.2  0.059 site1 2019 
-#> 4     54.5  0.523 site1 2019 
-#> 5     25.6  0.06  site1 2019 
-#> 6     49.5  0.411 site1 2019
+#> 1     53.8  0.491 site1 2019 
+#> 2     38.2  0.105 site1 2019 
+#> 3     25.2  0.049 site1 2019 
+#> 4     54.5  0.35  site1 2019 
+#> 5     25.6  0.061 site1 2019 
+#> 6     49.5  0.376 site1 2019
 ```
 
 Fit the model with `kb_fit_weight_nereo()`:
@@ -87,19 +87,19 @@ glance(fit)
 #> # A tibble: 1 × 9
 #>       n     K nchains niters nthin   ess  rhat perc_divergent converged
 #>   <int> <int>   <int>  <dbl> <int> <dbl> <dbl>          <dbl> <lgl>    
-#> 1   234    10       2    500    10  591.  1.01              0 TRUE
+#> 1   780    10       3    500     2  670.  1.01              0 TRUE
 
 tidy(fit)
 #> # A tibble: 7 × 4
-#>   term          estimate  lower  upper
-#>   <chr>            <dbl>  <dbl>  <dbl>
-#> 1 bWeight        -1.46   -1.65  -1.25 
-#> 2 bDiameter       2.51    2.25   2.75 
-#> 3 bDiameter2      0.0702 -0.161  0.318
-#> 4 sSite           0.28    0.172  0.504
-#> 5 sSiteDiameter   0.317   0.169  0.62 
-#> 6 sSiteYear       0.0957  0.054  0.147
-#> 7 sWeight         0.161   0.141  0.184
+#>   term          estimate   lower   upper
+#>   <chr>            <dbl>   <dbl>   <dbl>
+#> 1 bWeight        -1.38   -1.56   -1.21  
+#> 2 bDiameter       2.47    2.27    2.66  
+#> 3 bDiameter2     -0.0143 -0.113   0.0708
+#> 4 sSite           0.25    0.15    0.463 
+#> 5 sSiteDiameter   0.27    0.174   0.514 
+#> 6 sSiteYear       0.1     0.0737  0.139 
+#> 7 sWeight         0.163   0.153   0.174
 ```
 
 Predict the weight-diameter curve for each site with
@@ -125,11 +125,11 @@ kb_predict_weight(fit, new_data)
 #> # A tibble: 5 × 5
 #>   diameter site  estimate  lower  upper
 #>      <dbl> <chr>    <dbl>  <dbl>  <dbl>
-#> 1       20 site1   0.0301 0.0226 0.0393
-#> 2       35 site1   0.126  0.0988 0.161 
-#> 3       50 site1   0.32   0.251  0.41  
-#> 4       65 site1   0.643  0.498  0.854 
-#> 5       80 site1   1.12   0.853  1.5
+#> 1       20 site1   0.0268 0.0206 0.0345
+#> 2       35 site1   0.128  0.102  0.163 
+#> 3       50 site1   0.348  0.273  0.437 
+#> 4       65 site1   0.718  0.556  0.92  
+#> 5       80 site1   1.28   0.978  1.63
 ```
 
 The fitted object exposes the standard `rstantools` generics

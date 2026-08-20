@@ -2,9 +2,9 @@
 POLL_INTERVAL <- 0.2
 
 # Model- and species-agnostic sampling engine shared by every kb_fit_* function:
-# sample, extract draws as rvars, split off generated quantities, summarise
-# convergence, discard the live stanfit. warmup = niters, then the post-warmup
-# phase is thinned by nthin to land exactly niters draws/chain.
+# sample, extract draws as rvars, summarise convergence, discard the live
+# stanfit. warmup = niters, then the post-warmup phase is thinned by nthin to
+# land exactly niters draws/chain.
 #
 # progress: "bar" samples in a callr background process, polling a progress
 # artifact to drive a cli bar; "verbose"/"none" sample in-process.
@@ -12,7 +12,6 @@ fit_stan <- function(
   stanmodel,
   stan_data,
   param_vars,
-  gq_vars = NULL,
   chains,
   niters,
   nthin,
@@ -83,12 +82,11 @@ fit_stan <- function(
     )
   }
 
-  all_draws <- posterior::as_draws_rvars(stanfit)
-  draws <- posterior::subset_draws(all_draws, variable = param_vars)
-  gq <- NULL
-  if (!is.null(gq_vars)) {
-    gq <- posterior::subset_draws(all_draws, variable = gq_vars)
-  }
+  # subset_draws also drops lp__ and the z_* non-centered parameters.
+  draws <- posterior::subset_draws(
+    posterior::as_draws_rvars(stanfit),
+    variable = param_vars
+  )
 
   summary <- suppressWarnings(posterior::summarise_draws(
     draws,
@@ -98,7 +96,6 @@ fit_stan <- function(
   ))
   list(
     draws = draws,
-    gq = gq,
     diagnostics = c(list(summary = summary), sampler_diagnostics(stanfit)),
     stancode = rstan::get_stancode(stanfit)
   )

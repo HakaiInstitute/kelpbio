@@ -1,22 +1,4 @@
-# stan-engine
-
-## Purpose
-
-How kelpbio compiles, exposes, and runs its Stan models: pre-compilation into the package binary at `R CMD INSTALL` via rstan/rstantools, exposure as the `stanmodels` list, sampling through `rstan::sampling()`, and the model and dependency conventions that keep the build reproducible. See `decisions/engine-choice.md`.
-## Requirements
-### Requirement: Stan models compile at install and are exposed as `stanmodels`
-
-The package SHALL pre-compile every Stan source file under `inst/stan/` at `R CMD INSTALL` and expose each as an entry of the `stanmodels` list keyed by the file's base name.
-
-#### Scenario: Installed package exposes the compiled weight model
-
-- **WHEN** the package is installed with `devtools::install()` and loaded
-- **THEN** `kelpbio::stanmodels$weight_nereo` exists and is a compiled Stan model object (S4 `stanmodel`)
-
-#### Scenario: Stan source filename maps to the model name
-
-- **WHEN** `inst/stan/weight_nereo.stan` is present at install time
-- **THEN** the compiled model is reachable as `stanmodels$weight_nereo` (snake_case filename, no spaces/dashes/leading digits)
+## MODIFIED Requirements
 
 ### Requirement: Compiled models are samplable via `rstan::sampling()`
 
@@ -56,20 +38,6 @@ The bundled `inst/stan/weight_nereo.stan` SHALL implement the full allometric we
 - **WHEN** the data list sets `nObs = 0` (no observed rows, `nSite`/`nYear >= 1`)
 - **THEN** the model samples without error (the likelihood loop is a no-op)
 
-### Requirement: The package declares the Stan runtime stack
-
-`DESCRIPTION` and `NAMESPACE` SHALL declare the dependencies and dynamic-library directives required to load and run the compiled Stan binary.
-
-#### Scenario: Stan-stack dependencies are present
-
-- **WHEN** `DESCRIPTION` is inspected
-- **THEN** it lists the rstan stack in Imports (Rcpp, RcppParallel, rstan, rstantools) and LinkingTo (BH, Rcpp, RcppEigen, RcppParallel, StanHeaders, rstan), with `rstan` and `StanHeaders` pinned to `>= 2.32.0`
-
-#### Scenario: The compiled library is registered
-
-- **WHEN** `NAMESPACE` is inspected
-- **THEN** it contains a `useDynLib(kelpbio, .registration = TRUE)` directive and the rstan imports required by `R/stanmodels.R`
-
 ### Requirement: The Macrocystis weight model follows the engine conventions
 
 `inst/stan/weight_macro.stan` SHALL follow the same engine conventions as
@@ -97,4 +65,3 @@ and `bSiteYear`.
 #### Scenario: Prior-only guard and empty data
 - **WHEN** the model is sampled with `prior_only = 1` or `nObs = 0`
 - **THEN** the likelihood is skipped, and the mean is not computed at all since it is a local inside the likelihood guard
-

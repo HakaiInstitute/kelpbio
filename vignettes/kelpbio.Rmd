@@ -179,10 +179,12 @@ kb_predict_weight_by(fit_macro, by = "year") |>
 ## Standard Bayesian tooling
 
 The fitted object exposes the `rstantools` generics, so it composes directly
-with `bayesplot` and `loo`. A posterior-predictive check uses the stored `yrep`
-via `posterior_predict()`:
+with `bayesplot` and `loo`. A posterior-predictive check uses the replicates
+from `posterior_predict()`:
 
 ```{r, eval = FALSE}
+# The replicates are drawn, so set a seed to reproduce a check.
+set.seed(1)
 bayesplot::ppc_dens_overlay(
   y = fit$data$weight,
   yrep = posterior_predict(fit)

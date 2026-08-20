@@ -1,9 +1,8 @@
 # Build fit_weight_sim_macro, a slim pre-fit weight model for runnable examples
-# and tests. Fitted to the whole data_weight_sim_macro (which is itself kept
-# small, ~6 obs per site-year cell) with reduced chains and draws so the object
-# stays small (the stored log_lik / yrep generated quantities scale with the
-# number of observations). Not for inference. Reproducibility comes from the
-# sampler `seed`.
+# and tests. Fitted to the whole data_weight_sim_macro with reduced chains and draws
+# so the object stays small; its size is set by the draw count alone, since no
+# per-observation quantities are stored. Not for inference. Reproducibility comes
+# from the sampler `seed`.
 #
 # Requires the compiled package (run `devtools::install()` first; a Stan change
 # is only picked up after install). Re-run whenever the Stan model, the

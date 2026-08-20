@@ -13,7 +13,7 @@
            + (bDiameter + bSiteDiameter[site]) * x
            + bDiameter2 * x^2
            + bSiteYear[site, year]
-        x = log(diameter) - log(d0),  d0 = 38.8  (geometric mean diameter)
+        x = log(diameter) - log(d0),  d0 = 43.1  (geometric mean diameter)
       
       Random effects
         bSite[site]           ~ Normal(0, sSite)          site intercept
@@ -44,7 +44,7 @@
                 + bSite[site]
                 + bYear[year]
                 + bSiteYear[site, year]
-        x = log(fronds) - log(f0),  f0 = 5.36  (geometric mean frond count)
+        x = log(fronds) - log(f0),  f0 = 4.95  (geometric mean frond count)
       
       Random effects
         bSite[site]           ~ Normal(0, sSite)      site intercept
@@ -67,7 +67,7 @@
       Wet weight was modelled on the log scale with a Student-t likelihood (4
       degrees of freedom) as an allometric function of sub-bulb diameter.
       Expected log weight was a quadratic function of log diameter, centered at
-      the geometric mean diameter (38.8), with the intercept and the log-diameter
+      the geometric mean diameter (43.1), with the intercept and the log-diameter
       slope varying by site and the intercept additionally varying by site-year.
       Regularizing priors were placed on all parameters (see the notation form
       for the hyperparameters).

@@ -50,7 +50,7 @@ reference:
     - augment.kb_fit
     - converged.kb_fit
     - prior_summary.kb_fit
-    - log_lik.kb_fit
+    - log_lik.kb_fit_weight
     - fitted.kb_fit_weight
     - residuals.kb_fit_weight
     - predict.kb_fit_weight
