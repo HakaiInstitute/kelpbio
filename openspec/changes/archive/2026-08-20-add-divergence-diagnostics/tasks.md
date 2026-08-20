@@ -24,35 +24,36 @@ code work. The refit in section 5 does need the installed package.
 - [x] 4.1 `converged.kb_fit` roxygen: state the three thresholds and their defaults, note that divergences enter the verdict but treedepth and E-BFMI do not, and note that a rate is over retained draws when `nthin > 1`
 - [x] 4.2 `glance.kb_fit` `@return`: document `perc_divergent`
 - [x] 4.3 `summary.kb_fit` `@details`: describe the new footer. Also correct the stale claim that the `print` header renders the likelihood family and the fixed/random-effect structure, which it has not since the header was slimmed
-- [ ] 4.4 Re-knit `README.Rmd` after the refit (the `glance()` output gains a column and every number changes) and check `vignettes/kelpbio.Rmd` for the same
+- [x] 4.4 Re-knit `README.Rmd` after the refit (the `glance()` output gains a column and every number changes) and check `vignettes/kelpbio.Rmd` for the same
 
 ## 5. Refit the shipped objects
 
-Blocked on the `gq` removal change: 4 chains x 500 draws was tried and leaves the
-demo nereo fit marginal against `rhat < 1.01` on two of three seeds even at
-`adapt_delta = 0.999`. Full-length fits are the robust answer and are only
-affordable once `gq` is off the stored object. Measurements in the design.
+Resolved without the `gq` removal. Raising `nthin` multiplies the sampling
+iterations while holding the saved draw count fixed, so all four objects clear
+the thresholds at their existing sizes. 4 chains x 500 with longer chains was
+tried first and left the demo nereo fit marginal on two of three seeds even at
+`adapt_delta = 0.999`; measurements in the design.
 
 - [x] 5.1 Try 4 chains x 500 draws and measure; record the result in the design
 - [x] 5.2 Establish that the package default `adapt_delta = 0.95` is not implicated (full-length defaults give rhat 1.0042, ESS 1171)
-- [ ] 5.3 Rebase on the `gq` removal change
-- [ ] 5.4 `data-raw/fit_weight_sim_*.R` and `tests/testthat/fixtures/make-fixtures.R`: package defaults (4 chains x 1000 draws). Left untouched by the first commit so it carries no refit
-- [ ] 5.5 Run `KELPBIO_REBUILD_FITS=true Rscript scripts/build.R` (Stan MCMC; confirm before starting)
-- [ ] 5.6 Confirm all four objects clear `rhat < 1.01` with a margin, and that `data/` is no larger than before
+- [x] 5.3 ~~Rebase on the `gq` removal change~~ - not needed, `nthin` removed the dependency
+- [x] 5.4 `data-raw/fit_weight_sim_*.R` at 3 chains x 500, `nthin = 2`, `adapt_delta = 0.999`; `make-fixtures.R` at 2 x 300, `nthin = 5`, `adapt_delta = 0.999`
+- [x] 5.5 Run `KELPBIO_REBUILD_FITS=true Rscript scripts/build.R`
+- [x] 5.6 All four objects clear the thresholds: demo Rhat 1.0052 / 1.0072, fixtures 1.0062 / 1.0068, no divergences except the macro fixture at 0.167% (gate 0.2%). Fixtures unchanged at 1.5 MB; `data/` grew 6.9 -> 11.4 MB with the larger demo draw counts, which the `gq` removal will recover
 
 ## 6. Tests
 
-- [ ] 6.1 `test-fit_stan.R`: cover `perc_of()` including the empty-denominator `NA`, and assert a fixture's diagnostics carry all five fields
-- [ ] 6.2 `test-converged.R`: the divergence gate at, below, and above the threshold; `max_perc_divergent = 0`; the all-`NA` Rhat guard
-- [ ] 6.3 `test-glance.R`: the new column name and position, and that `perc_divergent` agrees with the stored diagnostics
-- [ ] 6.4 `test-summary.R` / `test-print.R`: re-record the affected snapshots, including the new footer
-- [ ] 6.5 Re-record the `kb_plot_predictions` vdiffr snapshot (the plotted predictions change with the refit)
-- [ ] 6.6 `test-accessors.R`: the hardcoded `nchains == 2L` follows the refit's chain count
+- [x] 6.1 `test-fit_stan.R`: cover `perc_of()` including the empty-denominator `NA`, and assert a fixture's diagnostics carry all five fields
+- [x] 6.2 `test-converged.R`: the divergence gate at, below, and above the threshold; `max_perc_divergent = 0`; the all-`NA` Rhat guard
+- [x] 6.3 `test-glance.R`: the new column name and position, and that `perc_divergent` agrees with the stored diagnostics
+- [x] 6.4 `test-summary.R` / `test-print.R`: re-record the affected snapshots, including the new footer
+- [x] 6.5 Re-record the `kb_plot_predictions` vdiffr snapshot (the plotted predictions change with the refit)
+- [x] 6.6 `test-accessors.R`: the hardcoded `nchains == 2L` follows the refit's chain count
 
 ## 7. Verification and completion
 
-- [ ] 7.1 `devtools::test()` green with no orphaned snapshots
-- [ ] 7.2 `Rscript scripts/build.R` for the routine document / style / test pass
-- [ ] 7.3 Drift check: specs against code, reader docs against code
-- [ ] 7.4 Archive the change, syncing the `summaries` and `fitting` deltas
-- [ ] 7.5 Open the PR stacked on the `gq` removal change and confirm CI is green
+- [x] 7.1 `devtools::test()` green with no orphaned snapshots
+- [x] 7.2 `Rscript scripts/build.R` for the routine document / style / test pass
+- [x] 7.3 Drift check: specs against code, reader docs against code
+- [x] 7.4 Archive the change, syncing the `summaries` and `fitting` deltas
+- [x] 7.5 Opened as #9, stacked on `add-generic-default-errors` (the `gq` change is no longer a prerequisite)

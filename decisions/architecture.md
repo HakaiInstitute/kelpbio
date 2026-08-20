@@ -89,7 +89,7 @@ The fit function is deliberately a thin orchestrator over pure helpers plus one 
 |---------------------------|---------------------------------------------|
 | `draws` | `posterior` `draws_rvars` of the model parameters (fixed effects, SDs, and the per-level `bSite`/`bSiteDiameter`/`bSiteYear`, kept so predictions and `augment` can condition on observed levels). |
 | `gq` | `log_lik` and `yrep` generated-quantity draws (`NULL` for zero-row fits). |
-| `diagnostics` | `summary` (per-variable Rhat/ESS) and `ndivergent`, as plain numerics. |
+| `diagnostics` | `summary` (per-variable Rhat/ESS) plus the run-level `ndivergent`, `perc_divergent`, `perc_max_treedepth` and `ebfmi`, as plain numerics. Computed while the `stanfit` is in scope, since none can be recovered from the stored draws. |
 | `data` | the validated input data frame. |
 | `meta` | `species`, `prior_only`, `priors`, `stancode`, `site_levels`, `year_levels`, `nthin`, `diameter_ref`, `site_year_on` (auto-derived from the data), `nu`. |
 
@@ -128,7 +128,7 @@ The `generics` contract is shape-only, so output uses Poisson house vocabulary r
 
 `summary.kb_fit` (`R/summary.R`) returns a classed `summary_kb_fit` combining a metadata header and the coefficient table augmented with `rhat`/`ess_bulk`/`ess_tail` from the stored diagnostics (same source as `converged()`/`glance()`, so numbers agree). `fit_descriptor()` supplies the model-specific header (likelihood family, effect structure in prose, group counts, centering reference); it switches on the fit subclass and returns `NA` fields for unknown models, so new models slot in by adding a `switch` branch. The header prose deliberately avoids a mixed-model formula so the output implies no formula interface.
 
-`converged()` (`R/converged.R`) and `glance()` assess convergence on Rhat and the bulk effective sample *rate* (`esr` = `ess_bulk / ndraws`), with report-mode defaults `rhat = 1.05`, `esr = 0.1`. Structural accessors (`R/accessors.R`) all read from `x$draws` / `x$diagnostics` via `posterior`. `augment()` (`R/augment.R`) returns the data with `fitted`/`residual` computed through the same linpred helper, so its central estimate agrees with `posterior_epred(new_data = NULL)`.
+`converged()` (`R/converged.R`) and `glance()` assess convergence on three conditions: Rhat, the bulk effective sample *rate* (`esr` = `ess_bulk / ndraws`), and the divergent-transition rate, with defaults `rhat = 1.01` (the Vehtari et al. 2021 recommendation for the rank-normalized statistic `posterior::rhat()` computes), `esr = 0.1`, and `max_perc_divergent = 0.2`. Divergences gate the verdict because they signal the sampler failed to explore part of the posterior; treedepth saturation and E-BFMI are reported by `print(summary())` but do not gate it. `glance()` carries `perc_divergent` only, keeping the one-row summary narrow enough for a report table. Structural accessors (`R/accessors.R`) all read from `x$draws` / `x$diagnostics` via `posterior`. `augment()` (`R/augment.R`) returns the data with `fitted`/`residual` computed through the same linpred helper, so its central estimate agrees with `posterior_epred(new_data = NULL)`.
 
 ## Objects and Metadata
 
