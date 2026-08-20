@@ -27,7 +27,7 @@ weight_fit <- kb_fit_weight_nereo(
   d,
   chains = 2L,
   niters = 300L,
-  nthin = 1L,
+  nthin = 5L,
   cores = 2L,
   progress = "none",
   seed = 42L,
