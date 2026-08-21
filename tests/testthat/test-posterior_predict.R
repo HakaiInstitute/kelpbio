@@ -67,5 +67,8 @@ test_that("macro posterior_predict draws positive Gamma noise, wider than epred"
 
 test_that("the internal generic's default aborts for a fit with no method", {
   # The only guard once the public method accepts any kb_fit.
-  expect_error(.add_noise(structure(list(), class = c("kb_fit_other", "kb_fit")), 1), "no method for a <kb_fit_other>")
+  expect_error(
+    .add_noise(structure(list(), class = c("kb_fit_other", "kb_fit")), 1),
+    "no method for a <kb_fit_other>"
+  )
 })

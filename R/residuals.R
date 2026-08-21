@@ -53,7 +53,11 @@ residuals.kb_fit <- function(object, ...) {
   shape <- as.vector(posterior::draws_of(fit$draws$shape))
   out <- matrix(NA_real_, nrow = nrow(mu), ncol = length(y))
   for (d in seq_len(nrow(mu))) {
-    out[d, ] <- extras::res_gamma(y, shape = shape[d], rate = shape[d] / ewt[d, ])
+    out[d, ] <- extras::res_gamma(
+      y,
+      shape = shape[d],
+      rate = shape[d] / ewt[d, ]
+    )
   }
   out
 }

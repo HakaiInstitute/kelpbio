@@ -31,5 +31,8 @@ test_that("residuals rejects a non-fit and extra args", {
 
 test_that("the internal generic's default aborts for a fit with no method", {
   # The only guard once the public method accepts any kb_fit.
-  expect_error(.deviance(structure(list(), class = c("kb_fit_other", "kb_fit")), 1), "no method for a <kb_fit_other>")
+  expect_error(
+    .deviance(structure(list(), class = c("kb_fit_other", "kb_fit")), 1),
+    "no method for a <kb_fit_other>"
+  )
 })

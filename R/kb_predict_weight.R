@@ -71,7 +71,13 @@ kb_predict_weight.kb_fit_weight_nereo <- function(
 ) {
   rlang::check_dots_empty()
   .kb_predict_weight(
-    fit, new_data, new_levels, representative_site, conf_level, estimate, sig_fig
+    fit,
+    new_data,
+    new_levels,
+    representative_site,
+    conf_level,
+    estimate,
+    sig_fig
   )
 }
 
@@ -90,7 +96,13 @@ kb_predict_weight.kb_fit_weight_macro <- function(
 ) {
   rlang::check_dots_empty()
   .kb_predict_weight(
-    fit, new_data, new_levels, representative_site, conf_level, estimate, sig_fig
+    fit,
+    new_data,
+    new_levels,
+    representative_site,
+    conf_level,
+    estimate,
+    sig_fig
   )
 }
 

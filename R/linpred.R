@@ -5,7 +5,12 @@
 }
 
 #' @export
-.linpred.default <- function(fit, grid, new_levels, representative_site = NULL) {
+.linpred.default <- function(
+  fit,
+  grid,
+  new_levels,
+  representative_site = NULL
+) {
   .abort_no_method(x = fit, call = NULL)
 }
 

@@ -41,7 +41,8 @@
     function(nm) {
       levels <- fit$meta[[paste0(nm, "_levels")]]
       !length(levels) ||
-        (nm %in% names(grid) &&
+        (nm %in%
+          names(grid) &&
           !length(setdiff(as.character(grid[[nm]]), levels)))
     },
     logical(1)

@@ -29,7 +29,13 @@ test_that("resolve_re1 conditions known levels and honours new_levels", {
 test_that("resolve_re1 borrows the per-draw mean of the representative levels", {
   param <- posterior::rvar(matrix(rnorm(100 * 3), ncol = 3))
   sd_rvar <- posterior::rvar(matrix(rep(1, 100), ncol = 1))
-  out <- resolve_re1(param, NA_integer_, "average", sd_rvar, rep_idx = c(1L, 2L))
+  out <- resolve_re1(
+    param,
+    NA_integer_,
+    "average",
+    sd_rvar,
+    rep_idx = c(1L, 2L)
+  )
   expect_equal(
     as.vector(posterior::draws_of(out)),
     rowMeans(posterior::draws_of(param)[, 1:2, drop = FALSE]),

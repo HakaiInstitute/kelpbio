@@ -139,7 +139,9 @@
 # Contextual bundle like .chk_sampler_args(): no single-boolean .vld_ partner.
 # Extra dots beyond the predictor are left to the method's rlang::check_dots_empty().
 .chk_wrong_predictor <- function(fit, ..., call = rlang::caller_env()) {
-  right <- c(nereocystis = "diameter", macrocystis = "fronds")[[fit$meta$species]]
+  right <- c(nereocystis = "diameter", macrocystis = "fronds")[[
+    fit$meta$species
+  ]]
   wrong <- setdiff(c("diameter", "fronds"), right)
   if (wrong %in% rlang::names2(rlang::list2(...))) {
     cli::cli_abort(

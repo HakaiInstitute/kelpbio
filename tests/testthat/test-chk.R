@@ -101,7 +101,10 @@ test_that(".chk_representative_site passes NULL/known sites and errors on unknow
 
 test_that("the .chk_new_data default aborts for a fit with no method", {
   expect_error(
-    .chk_new_data(structure(list(), class = c("kb_fit_other", "kb_fit")), data.frame()),
+    .chk_new_data(
+      structure(list(), class = c("kb_fit_other", "kb_fit")),
+      data.frame()
+    ),
     "no method for a <kb_fit_other>"
   )
 })

@@ -33,7 +33,9 @@ test_that("nereo log_lik matches the Student-t density computed directly", {
   nu <- weight_fit$meta$nu
   expected <- t(vapply(
     seq_along(sw),
-    function(d) stats::dt((y - mu[d, ]) / sw[d], df = nu, log = TRUE) - log(sw[d]),
+    function(d) {
+      stats::dt((y - mu[d, ]) / sw[d], df = nu, log = TRUE) - log(sw[d])
+    },
     numeric(length(y))
   ))
   expect_equal(log_lik(weight_fit), expected, tolerance = 1e-10)
@@ -46,7 +48,12 @@ test_that("macro log_lik matches the Gamma density computed directly", {
   expected <- t(vapply(
     seq_along(shape),
     function(d) {
-      stats::dgamma(y, shape = shape[d], rate = shape[d] / exp(mu[d, ]), log = TRUE)
+      stats::dgamma(
+        y,
+        shape = shape[d],
+        rate = shape[d] / exp(mu[d, ]),
+        log = TRUE
+      )
     },
     numeric(length(y))
   ))
@@ -70,5 +77,8 @@ test_that("log_lik on a kb_fit with no methods aborts, not falls through", {
 
 test_that("the internal generic's default aborts for a fit with no method", {
   # The only guard once the public method accepts any kb_fit.
-  expect_error(.log_lik(structure(list(), class = c("kb_fit_other", "kb_fit")), 1), "no method for a <kb_fit_other>")
+  expect_error(
+    .log_lik(structure(list(), class = c("kb_fit_other", "kb_fit")), 1),
+    "no method for a <kb_fit_other>"
+  )
 })

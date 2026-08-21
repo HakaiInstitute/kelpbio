@@ -51,7 +51,10 @@ test_that("tidy forwards conf_level/estimate/sig_fig to the summariser", {
 
 test_that("the internal generic's default aborts for a fit with no method", {
   # The only guard once the public method accepts any kb_fit.
-  expect_error(.terms(structure(list(), class = c("kb_fit_other", "kb_fit")), FALSE), "no method for a <kb_fit_other>")
+  expect_error(
+    .terms(structure(list(), class = c("kb_fit_other", "kb_fit")), FALSE),
+    "no method for a <kb_fit_other>"
+  )
 })
 
 test_that("a dropped site:year effect is not reported as an estimate", {

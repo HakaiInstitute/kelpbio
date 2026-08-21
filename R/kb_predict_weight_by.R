@@ -62,7 +62,13 @@ kb_predict_weight_by.kb_fit_weight_nereo <- function(
   .chk_wrong_predictor(fit, ...)
   rlang::check_dots_empty()
   .kb_predict_weight_by(
-    fit, by, diameter, new_levels, conf_level, estimate, sig_fig
+    fit,
+    by,
+    diameter,
+    new_levels,
+    conf_level,
+    estimate,
+    sig_fig
   )
 }
 
@@ -84,7 +90,13 @@ kb_predict_weight_by.kb_fit_weight_macro <- function(
   .chk_wrong_predictor(fit, ...)
   rlang::check_dots_empty()
   .kb_predict_weight_by(
-    fit, by, fronds, new_levels, conf_level, estimate, sig_fig
+    fit,
+    by,
+    fronds,
+    new_levels,
+    conf_level,
+    estimate,
+    sig_fig
   )
 }
 
@@ -144,9 +156,7 @@ validate_by_weight <- function(by, species = "nereocystis") {
       i = "Available grouping factors: {.val {valid}}."
     ))
   }
-  if (
-    species == "nereocystis" && "year" %in% by && !"site" %in% by
-  ) {
+  if (species == "nereocystis" && "year" %in% by && !"site" %in% by) {
     cli::cli_abort(c(
       "{.code by = \"year\"} is not available for the Nereocystis weight model.",
       i = "Year enters only through the site:year interaction (no year main effect).",

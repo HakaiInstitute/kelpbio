@@ -228,7 +228,11 @@ test_that(".linpred_obs passes for a well-formed fit", {
 
 test_that("the .linpred default aborts for a fit with no method", {
   expect_error(
-    .linpred(structure(list(), class = c("kb_fit_other", "kb_fit")), NULL, "average"),
+    .linpred(
+      structure(list(), class = c("kb_fit_other", "kb_fit")),
+      NULL,
+      "average"
+    ),
     "no method for a <kb_fit_other>"
   )
 })
