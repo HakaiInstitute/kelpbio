@@ -1,4 +1,4 @@
-#' Posterior-Predictive Weight Draws
+#' Posterior-Predictive Draws
 #'
 #' Draws from the posterior predictive distribution: replicate weights carrying
 #' both parameter uncertainty and species-appropriate observation noise

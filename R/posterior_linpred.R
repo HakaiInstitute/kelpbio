@@ -1,6 +1,6 @@
 #' Linear-Predictor Posterior Draws
 #'
-#' Draws of the weight-model linear predictor on the log scale (or, with
+#' Draws of the linear predictor on the link scale (or, with
 #' `transform = TRUE`, on the response scale).
 #'
 #' @details

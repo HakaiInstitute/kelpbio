@@ -2,7 +2,7 @@
 % Please edit documentation in R/tidy.R
 \name{tidy.kb_fit}
 \alias{tidy.kb_fit}
-\title{Tidy a Weight Model Fit}
+\title{Tidy a Model Fit}
 \usage{
 \method{tidy}{kb_fit}(
   x,

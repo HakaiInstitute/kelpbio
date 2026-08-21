@@ -1,4 +1,4 @@
-#' Tidy a Weight Model Fit
+#' Tidy a Model Fit
 #'
 #' Posterior summaries of the model terms: the population-level effects and the
 #' random-effect standard deviations, plus (when `include_random_effects = TRUE`)

@@ -87,8 +87,8 @@ augment.kb_fit         # kb_fit: model-agnostic (also coef/glance/converged/samp
 predict.kb_fit_weight  # model tier: wraps the model-named kb_predict_weight()
 
 # Whatever varies goes into an internal generic, defined in the file of the public
-# generic it serves. None has a total default: each aborts via .abort_no_method()'s
-# `what` form, so a sub-model added without its methods fails loudly.
+# generic it serves. None has a total default: each aborts via .abort_no_method()
+# with generic = NULL, so a sub-model added without its methods fails loudly.
 .epred.kb_fit_weight              # model tier: both species use a log link
 .linpred.kb_fit_weight_nereo      # leaf: also .log_lik/.deviance/.add_noise/
                                   #   .terms/.chk_new_data

@@ -12,7 +12,8 @@
 \item{...}{Unused.}
 }
 \value{
-A numeric vector of fitted weights, length \code{nobs(object)}.
+A numeric vector of fitted values on the response scale, length
+\code{nobs(object)}.
 }
 \description{
 Posterior point estimates (median) of the response-scale value at each observed

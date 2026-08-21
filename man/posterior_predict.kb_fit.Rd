@@ -2,7 +2,7 @@
 % Please edit documentation in R/posterior_predict.R
 \name{posterior_predict.kb_fit}
 \alias{posterior_predict.kb_fit}
-\title{Posterior-Predictive Weight Draws}
+\title{Posterior-Predictive Draws}
 \usage{
 \method{posterior_predict}{kb_fit}(
   object,

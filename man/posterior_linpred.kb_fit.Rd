@@ -46,7 +46,7 @@ is its only site-level effect. Any \code{site:year} interaction still follows
 A draws-by-observations (\verb{D x N}) matrix.
 }
 \description{
-Draws of the weight-model linear predictor on the log scale (or, with
+Draws of the linear predictor on the link scale (or, with
 \code{transform = TRUE}, on the response scale).
 }
 \details{

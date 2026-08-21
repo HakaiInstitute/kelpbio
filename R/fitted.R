@@ -7,7 +7,8 @@
 #' @param object A `kb_fit` object.
 #' @param ... Unused.
 #'
-#' @return A numeric vector of fitted weights, length `nobs(object)`.
+#' @return A numeric vector of fitted values on the response scale, length
+#'   `nobs(object)`.
 #' @family generics
 #' @seealso [residuals()] for deviance residuals, [augment()], and
 #'   [posterior_epred()] for the full posterior.
