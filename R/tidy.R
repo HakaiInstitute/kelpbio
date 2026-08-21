@@ -38,7 +38,9 @@ tidy.kb_fit <- function(
 }
 
 # The parameter names to summarise, named explicitly because a parameter's shape
-# does not identify its role.
+# does not identify its role. A random effect the fit dropped is omitted: its
+# draws never met the likelihood, so reporting them would present the prior as an
+# estimate.
 .terms <- function(fit, include_random_effects) {
   UseMethod(".terms")
 }
@@ -50,26 +52,40 @@ tidy.kb_fit <- function(
 
 #' @export
 .terms.kb_fit_weight_nereo <- function(fit, include_random_effects) {
+  site_year <- .site_year_on(fit)
   variables <- c(
     "bWeight",
     "bDiameter",
     "bDiameter2",
     "sSite",
     "sSiteDiameter",
-    "sSiteYear",
+    if (site_year) "sSiteYear",
     "sWeight"
   )
   if (include_random_effects) {
-    variables <- c(variables, "bSite", "bSiteDiameter", "bSiteYear")
+    variables <- c(
+      variables,
+      "bSite",
+      "bSiteDiameter",
+      if (site_year) "bSiteYear"
+    )
   }
   variables
 }
 
 #' @export
 .terms.kb_fit_weight_macro <- function(fit, include_random_effects) {
-  variables <- c("bWeight", "bFronds", "shape", "sSite", "sYear", "sSiteYear")
+  site_year <- .site_year_on(fit)
+  variables <- c(
+    "bWeight",
+    "bFronds",
+    "shape",
+    "sSite",
+    "sYear",
+    if (site_year) "sSiteYear"
+  )
   if (include_random_effects) {
-    variables <- c(variables, "bSite", "bYear", "bSiteYear")
+    variables <- c(variables, "bSite", "bYear", if (site_year) "bSiteYear")
   }
   variables
 }

@@ -53,3 +53,18 @@ test_that("the internal generic's default aborts for a fit with no method", {
   # The only guard once the public method accepts any kb_fit.
   expect_error(.terms(structure(list(), class = c("kb_fit_other", "kb_fit")), FALSE), "no method for a <kb_fit_other>")
 })
+
+test_that("a dropped site:year effect is not reported as an estimate", {
+  # Its draws never met the likelihood, so they are the prior, not a posterior.
+  for (fit in list(weight_fit, weight_macro_fit)) {
+    off <- fit
+    off$meta$site_year_on <- FALSE
+    expect_false("sSiteYear" %in% tidy(off)$term)
+    expect_false(any(startsWith(
+      tidy(off, include_random_effects = TRUE)$term,
+      "bSiteYear"
+    )))
+    # and it is still reported when the fit kept the effect
+    expect_true("sSiteYear" %in% tidy(fit)$term)
+  }
+})
