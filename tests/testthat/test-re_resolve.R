@@ -77,3 +77,17 @@ test_that(".grid_indices resolves representative_site against the fit's levels",
   ix <- .grid_indices(weight_fit, data.frame(diameter = 30), sites)
   expect_identical(ix$rep, c(1L, 2L))
 })
+
+test_that("resolve_re2 draws unknown cells under sample", {
+  param <- posterior::rvar(array(rnorm(100 * 2 * 2), dim = c(100, 2, 2)))
+  sd_rvar <- posterior::rvar(matrix(rep(1, 100), ncol = 1))
+  set.seed(1)
+  out <- resolve_re2(param, c(1L, NA), c(1L, 1L), "sample", sd_rvar)
+  # the known cell is still conditioned, the unknown one is drawn not zeroed
+  expect_equal(
+    posterior::draws_of(out)[, 1L],
+    posterior::draws_of(param)[, 1L, 1L],
+    ignore_attr = TRUE
+  )
+  expect_false(all(posterior::draws_of(out)[, 2L] == 0))
+})
