@@ -87,6 +87,7 @@
 # is immaterial. The check is not redundant: an unmatched level is silently zeroed,
 # so a lost grouping column would make fitted()/residuals()/log_lik() wrong.
 .linpred_obs <- function(fit) {
+  .chk_observed_data(fit)
   grid <- tibble::as_tibble(fit$data)
   .chk_observed_levels(fit, grid)
   .linpred(fit, grid, new_levels = "average")
@@ -103,6 +104,7 @@ data_linpred <- function(
   new_levels <- rlang::arg_match(new_levels, c("sample", "average"))
   if (is.null(new_data)) {
     # fit$data already passed its model's data check at fit time.
+    .chk_observed_data(fit)
     grid <- tibble::as_tibble(fit$data)
     .chk_observed_levels(fit, grid)
   } else {

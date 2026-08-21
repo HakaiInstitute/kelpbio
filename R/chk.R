@@ -155,6 +155,21 @@
   invisible(fit)
 }
 
+# Every path that predicts at the stored data needs rows to predict at. Without
+# this the failure surfaces as a posterior broadcast error from inside .linpred().
+.chk_observed_data <- function(fit, call = rlang::caller_env()) {
+  if (.vld_observed_data(fit)) {
+    return(invisible(fit))
+  }
+  cli::cli_abort(
+    c(
+      "A zero-observation fit has no observed data to predict at.",
+      i = "Supply {.arg new_data}, or fit the model to data."
+    ),
+    call = call
+  )
+}
+
 # An unmatched level is silently zeroed under "average", so a lost grouping column
 # would give fitted()/residuals()/log_lik() with no random effects, and a plausible
 # loo().

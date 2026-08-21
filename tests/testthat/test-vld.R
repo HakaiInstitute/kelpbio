@@ -49,3 +49,10 @@ test_that(".vld_progress_dir accepts NULL or an existing directory", {
   expect_false(.vld_progress_dir(NA_character_))
   expect_false(.vld_progress_dir(1))
 })
+
+test_that(".vld_observed_data is TRUE only for a fit with rows", {
+  fit0 <- weight_fit
+  fit0$data <- fit0$data[0, ]
+  expect_true(.vld_observed_data(weight_fit))
+  expect_false(.vld_observed_data(fit0))
+})

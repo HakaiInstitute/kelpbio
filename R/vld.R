@@ -35,6 +35,10 @@
     (is.character(x) && length(x) == 1L && !is.na(x) && dir.exists(x))
 }
 
+.vld_observed_data <- function(fit) {
+  nrow(fit$data) > 0L
+}
+
 .vld_observed_levels <- function(fit, grid) {
   all(vapply(
     .group_vars(),

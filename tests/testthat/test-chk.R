@@ -108,3 +108,11 @@ test_that("the .chk_new_data default aborts for a fit with no method", {
     "no method for a <kb_fit_other>"
   )
 })
+
+test_that(".chk_observed_data rejects a fit with no rows to predict at", {
+  # Without it the failure surfaces as a posterior broadcast error from .linpred().
+  fit0 <- weight_fit
+  fit0$data <- fit0$data[0, ]
+  expect_error(.chk_observed_data(fit0), "no observed data")
+  expect_invisible(.chk_observed_data(weight_fit))
+})

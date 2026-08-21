@@ -251,3 +251,21 @@ test_that("the .linpred default aborts for a fit with no method", {
     "no method for a <kb_fit_other>"
   )
 })
+
+test_that("the observed-data paths reject a zero-observation fit", {
+  # one guard at the shared entry, so every verb that predicts at the stored
+  # data reports it the same way instead of failing inside the rvar arithmetic
+  fit0 <- weight_fit
+  fit0$data <- fit0$data[0, ]
+  expect_error(.linpred_obs(fit0), "no observed data")
+  expect_error(data_linpred(fit0, NULL, "average"), "no observed data")
+  expect_error(fitted(fit0), "no observed data")
+  expect_error(residuals(fit0), "no observed data")
+  expect_error(augment(fit0), "no observed data")
+  expect_error(posterior_epred(fit0), "no observed data")
+  # supplied new_data still works: the fit's parameters are estimable
+  expect_s3_class(
+    data_linpred(fit0, data.frame(diameter = 30), "average")$linpred,
+    "rvar"
+  )
+})
