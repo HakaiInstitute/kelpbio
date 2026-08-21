@@ -32,7 +32,9 @@
 - [x] 5.4 `test-abort.R`: a public verb on a fit with no methods aborts, and the internal-generic message form
 - [x] 5.5 Correct `test-fitted.R`, `test-residuals.R` and `test-log_lik.R`, which had begun passing for the wrong reason
 - [x] 5.6 Assert `posterior_epred()` and `posterior_linpred(transform = TRUE)` agree, documenting that they coincide by model property
-- [ ] 5.7 One new snapshot entry in `_snaps/abort.md`, awaiting review
+- [x] 5.7 One new snapshot entry in `_snaps/abort.md`, reviewed and accepted. The existing `kb_stancode` entry also changed (`.abort_no_method()`'s fallback hint was reworded); that is a user-visible message change, not covered by the bit-identical claim
+- [x] 5.8 `test-site_year_on.R`: the flag reader, and that `.linpred()` and `kb_model_describe()` agree for `TRUE` / `FALSE` / missing
+- [x] 5.9 `test-tidy.R`: a dropped site:year effect is not reported as an estimate
 
 ## 6. Docs, specs, records
 
@@ -41,7 +43,8 @@
 - [x] 6.3 `CLAUDE.md`: the OOP sketch, and that `decisions/` are live documents. The one-file-per-generic rule needs no amendment
 - [x] 6.4 `openspec/config.yaml`: the mean now lives in `.linpred()`
 - [x] 6.5 `predictions`, `summaries`, `website` deltas; new `dispatch-errors` requirement
-- [x] 6.6 Fix two pre-existing doc errors: `representative_site` claimed both species borrow intercept *and* slope (macro has no slope), and `fitted`/`posterior_epred` claimed an "expected weight" the Student-t on log weight does not have
+- [x] 6.9 `summaries`: `.terms()` omits a dropped random effect, so `tidy`/`coef`/`summary` no longer report prior-only `sSiteYear` / `bSiteYear` as estimates, and agree with `kb_model_describe()`
+- [x] 6.6 Fix three pre-existing errors: `representative_site` claimed both species borrow intercept *and* slope (macro has no slope); `fitted`, `posterior_epred`, `posterior_predict` and the `predictions` spec claimed an "expected weight" the Student-t on log weight does not have; and `kb_model_describe()` read `meta$site_year_on` with `isTRUE()` while `.linpred()` read it with `isFALSE()`, so a legacy fit with no flag was described as having no site:year term while its predictions included one. Both now read `.site_year_on()` (`R/site_year_on.R`), the single reader
 - [x] 6.7 Retire "kernel" as vocabulary, including from the pre-existing prose in `decisions/`, `openspec/config.yaml` and a code comment. These are methods, in the file named for their generic, so no replacement noun is needed
 - [ ] 6.8 Regenerate `decisions/architecture.html` (needs Quarto, not on PATH)
 

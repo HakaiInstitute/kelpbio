@@ -98,4 +98,9 @@ sub-model whose verb takes a different knob would force it to bare `...`, losing
 - Docs: `decisions/species-as-variant.md`, `decisions/architecture.md`,
   `CLAUDE.md`, `openspec/config.yaml`. CLAUDE.md's one-file-per-generic rule needs
   no amendment: this change brings the layout back into line with it.
-- No behaviour change: verified bit-identical output.
+- Behaviour changes, all narrow: `tidy()`/`coef()`/`summary()` no longer list
+  `sSiteYear` / `bSiteYear` for a fit with `meta$site_year_on = FALSE`, those draws
+  being prior-only; `kb_model_describe()` now treats a missing flag as on, matching
+  `.linpred()`; and `.abort_no_method()`'s fallback hint is reworded, which moves one
+  existing snapshot.
+- Otherwise no behaviour change: verified bit-identical output.
