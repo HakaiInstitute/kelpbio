@@ -42,11 +42,12 @@ is its only site-level effect. Any \code{site:year} interaction still follows
 A draws-by-observations (\verb{D x N}) matrix.
 }
 \description{
-Draws from the posterior predictive distribution: the expected weight plus
-species-appropriate observation noise (Student-t on log-weight with scale
-\code{sWeight} for \emph{Nereocystis}; Gamma with shape \code{shape} for \emph{Macrocystis},
-matching the Stan likelihood). With \code{new_data = NULL} the replicates are at the
-observed data, for use with \code{bayesplot::pp_check()}.
+Draws from the posterior predictive distribution: replicate weights carrying
+both parameter uncertainty and species-appropriate observation noise
+(Student-t on log weight with scale \code{sWeight} for \emph{Nereocystis}; Gamma with
+shape \code{shape} for \emph{Macrocystis}, matching the Stan likelihood). With
+\code{new_data = NULL} the replicates are at the observed data, for use with
+\code{bayesplot::pp_check()}.
 }
 \details{
 For supplied \code{new_data}, conditioning is inferred from the grouping columns

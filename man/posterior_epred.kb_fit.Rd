@@ -42,10 +42,16 @@ is its only site-level effect. Any \code{site:year} interaction still follows
 A draws-by-observations (\verb{D x N}) matrix.
 }
 \description{
-Draws of the response-scale value of the linear predictor, the expectation of
-the posterior predictive distribution.
+Draws of the response-scale value of the linear predictor.
 }
 \details{
+The value is an expectation only where the likelihood has one. The
+\emph{Nereocystis} likelihood is a Student-t on log weight, which has no
+response-scale mean, so the value there is the conditional median; the
+\emph{Macrocystis} Gamma mean is \code{exp()} of the linear predictor exactly. Either
+way it is the central estimate of weight, not a draw of weight: for the
+posterior predictive distribution use \code{\link[=posterior_predict]{posterior_predict()}}.
+
 Conditioning is inferred from the grouping columns present in \code{new_data}: a
 \code{site} (and optionally \code{year}) column with known levels is conditioned on;
 factors with no column are handled by \code{new_levels}. With \code{new_data = NULL} the
