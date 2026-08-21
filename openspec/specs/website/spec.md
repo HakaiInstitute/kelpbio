@@ -41,7 +41,7 @@ Running pkgdown over the installed package SHALL produce a complete static site,
 #### Scenario: The reference config declares thematic sections
 
 - **WHEN** `_pkgdown.yml` is inspected
-- **THEN** it declares a `reference:` block with titled sections (fitting, priors, data, predictions and plotting, and model summaries and diagnostics) that enumerate the S3 method topics (e.g. `tidy.kb_fit_weight`, `coef.kb_fit`, `autoplot.kb_predictions`) so every method appears under a section
+- **THEN** it declares a `reference:` block with titled sections (fitting, priors, data, predictions and plotting, and model summaries and diagnostics) that enumerate the S3 method topics (e.g. `tidy.kb_fit`, `predict.kb_fit_weight`, `autoplot.kb_predictions`) so every method appears under a section
 
 #### Scenario: Every export maps to a section
 

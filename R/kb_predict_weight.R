@@ -108,7 +108,7 @@ kb_predict_weight.kb_fit_weight_macro <- function(
   .chk_representative_site(fit, representative_site)
   .chk_summary_args(conf_level, estimate, sig_fig)
 
-  res <- weight_data_linpred(fit, new_data, new_levels, representative_site)
+  res <- data_linpred(fit, new_data, new_levels, representative_site)
   summarise_weight_predictions(
     res$grid,
     res$linpred,

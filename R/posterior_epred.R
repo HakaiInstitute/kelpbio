@@ -1,7 +1,7 @@
-#' Expected Weight Posterior Draws
+#' Response-Scale Posterior Draws
 #'
-#' Draws from the expectation of the posterior predictive distribution
-#' (response-scale expected weight, `exp` of the linear predictor).
+#' Draws of the response-scale value of the linear predictor, the expectation of
+#' the posterior predictive distribution.
 #'
 #' @details
 #' Conditioning is inferred from the grouping columns present in `new_data`: a
@@ -11,7 +11,7 @@
 #' estimate agrees with [augment()].
 #'
 #' @inheritParams params
-#' @param object A `kb_fit_weight` object.
+#' @param object A `kb_fit` object.
 #' @param new_data A data frame with a `diameter` column (and optional `site` /
 #'   `year` columns), or `NULL` for the observed data.
 #' @param ... Unused.
@@ -23,7 +23,7 @@
 #' @examples
 #' ep <- posterior_epred(fit_weight_sim_nereo)
 #' dim(ep)
-posterior_epred.kb_fit_weight <- function(
+posterior_epred.kb_fit <- function(
   object,
   new_data = NULL,
   ...,
@@ -31,8 +31,8 @@ posterior_epred.kb_fit_weight <- function(
   representative_site = NULL
 ) {
   rlang::check_dots_empty()
-  .chk_kb_fit_weight(object)
+  .chk_kb_fit(object)
   .chk_representative_site(object, representative_site)
-  res <- weight_data_linpred(object, new_data, new_levels, representative_site)
-  exp(posterior::draws_of(res$linpred))
+  res <- data_linpred(object, new_data, new_levels, representative_site)
+  .epred(object, posterior::draws_of(res$linpred))
 }

@@ -47,13 +47,25 @@ Species is a variant axis, handled uniformly across all six models:
   species wrapper supplies only what differs: validated data, resolved priors,
   assembled Stan data, the compiled model, and the parameter vector.
 - Each species is a subclass of the model class:
-  `c("kb_fit_<model>_<species>", "kb_fit_<model>", "kb_fit")`. Species-agnostic
-  methods live on the `kb_fit_<model>` parent and are inherited (one shared
-  accessor/summary surface); the species-varying kernels (mean, new-data check,
-  observation noise, deviance residual, term list) are subclass methods of small
-  internal generics, so no method branches on `meta$species` (kept for
-  display/reference). Adding a species is then a new subclass with its kernel
-  methods, not an edit to shared `switch` sites. This uniform rule is applied to
+  `c("kb_fit_<model>_<species>", "kb_fit_<model>", "kb_fit")`, and a method lives
+  at the **highest tier of that vector at which its body is invariant**:
+  - **`kb_fit`** for the public method bodies, which carry only the shared shape
+    (entry check, guards, the `D x N` orientation contract) and delegate whatever
+    varies: `log_lik`, `residuals`, `tidy`, `fitted`, and the `posterior_*`
+    generics. `predict` is the exception: its argument list cannot be fixed across
+    models, since the first sub-model with a different knob would force it to bare
+    `...` and lose `rlang::check_dots_empty()`.
+  - **`kb_fit_<model>`** for methods that do not vary by species, e.g.
+    `.epred.kb_fit_weight` (both weight species use a log link). wetdry and carbon,
+    being structurally identical across species, will register at this tier
+    throughout.
+  - **`kb_fit_<model>_<species>`** for methods that do vary: `.linpred`,
+    `.log_lik`, `.deviance`, `.add_noise`, `.terms`, `.chk_new_data`.
+
+  So no method branches on `meta$species` (kept for display/reference), and
+  **adding a sub-model registers methods, not public methods**. Each internal generic
+  aborts through its `.default` rather than returning a plausible value, so a
+  sub-model added without its methods fails loudly instead of silently. This uniform rule is applied to
   every model even where a variant-plus-field scheme would suffice (weight), so
   the design is consistent, and it is required anyway for models whose species
   differ in response type (size is continuous for *Nereocystis*, a count for
@@ -69,9 +81,11 @@ This reverses the prior "species enters as data, not a variant" rule in
 ## Consequences
 
 - Adding a species is additive: a new `.stan`, a new wrapper (which classes the
-  fit `kb_fit_<model>_<species>`), and subclass methods for the kernels that differ
-  (e.g. `.weight_linpred.kb_fit_<model>_<species>`), with no change to existing
-  species functions, the shared engine, or the parent's shared methods.
+  fit `kb_fit_<model>_<species>`), and methods for what differs (e.g.
+  `.linpred.kb_fit_<model>_<species>`), with no change to existing species
+  functions, the shared engine, or the public methods. In file terms it is two new
+  methods, each added to the file of the generic it implements, with no new public
+  file.
 - API surface grows from six fit functions to six per species. The cost is
   accepted: the functions have honest, fixed data contracts and match how Hakai
   biologists think ("I have nereo data" / "I have macro data").

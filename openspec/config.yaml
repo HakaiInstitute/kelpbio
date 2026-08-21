@@ -33,7 +33,7 @@ context: |
     so each species gets its own .stan and its own kb_fit_<model>_<species>() wrapper
     over a shared internal engine (fit_stan()); each species is a subclass
     (c("kb_fit_<model>_<species>", "kb_fit_<model>", "kb_fit")) so species-agnostic
-    methods live on the parent and species-varying kernels are subclass methods of
+    methods live on the parent and species-varying methods are subclass methods of
     small internal generics (no method branches on meta$species). Rationale:
     decisions/species-as-variant.md, decisions/engine-choice.md.
   - Fit objects (kb_fit / kb_fit_<type>) store EXTRACTED posterior draws (the posterior
@@ -51,7 +51,7 @@ context: |
     R/chk.R calls it and aborts via cli; every bespoke .chk_ has a matching .vld_
     (multi-arg chk:: bundles like .chk_sampler_args() are exempt). See CLAUDE.md.
   - Prediction / derived-quantity engine: posterior rvar over the stored draws; the
-    per-model mean lives in one .<model>_linpred() helper, surfaced through the
+    per-model mean lives in one .linpred() internal generic helper, surfaced through the
     rstantools generics (posterior_epred / posterior_linpred / posterior_predict /
     log_lik). Grids built over the observed predictor range/levels; predictors enter on a fixed-reference
     transform (no rescale step). Two axes: by (character vector of grouping factors)

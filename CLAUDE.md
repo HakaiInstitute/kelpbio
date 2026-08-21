@@ -81,10 +81,21 @@ The analysis project Stan models require these adaptations for kelpbio:
 fit <- list(draws = <posterior draws>, diagnostics = <sampler diag>, data = data, meta = meta)
 class(fit) <- c("kb_fit_weight", "kb_fit")
 
-# S3 methods dispatch to parent by default
-augment.kb_fit         # parent: model-agnostic (coef/glance/converged/samples/summary too)
-tidy.kb_fit_weight     # subclass-specific: names its own terms (also fitted/residuals/log_lik/predict/posterior_*)
+# Public method bodies live at the highest class tier at which they are invariant:
+augment.kb_fit         # kb_fit: model-agnostic (also coef/glance/converged/samples/
+                       #   summary/tidy/fitted/residuals/log_lik/posterior_*)
+predict.kb_fit_weight  # model tier: wraps the model-named kb_predict_weight()
+
+# Whatever varies goes into an internal generic, defined in the file of the public
+# generic it serves. None has a total default: each aborts via .abort_no_method()'s
+# `what` form, so a sub-model added without its methods fails loudly.
+.epred.kb_fit_weight              # model tier: both species use a log link
+.linpred.kb_fit_weight_nereo      # leaf: also .log_lik/.deviance/.add_noise/
+                                  #   .terms/.chk_new_data
 ```
+
+- **`decisions/` are live documents**: overwrite them to describe the current
+  design rather than appending dated revisions. Git keeps the history.
 
 Access via `$`: `x$draws`, `x$data`, `x$meta`. `samples(x)` returns a `posterior` `draws_rvars` object. The live `stanfit` is discarded after fitting — see the `fitting` spec. kelpbio ships via R-universe (not CRAN); its `data/` holds only simulated demo data and slim pre-fit models. The real publicly shared coastwide data and model fits live in a companion data package (`kelpbiodata`).
 

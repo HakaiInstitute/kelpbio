@@ -6,7 +6,7 @@
 #' following the `broom.mixed` convention.
 #'
 #' @inheritParams params
-#' @param x A `kb_fit_weight` object.
+#' @param x A `kb_fit` object.
 #' @param ... Unused.
 #'
 #' @return A tibble with one row per term and columns `term`, `estimate`,
@@ -15,7 +15,7 @@
 #' @exportS3Method generics::tidy
 #' @examples
 #' tidy(fit_weight_sim_nereo)
-tidy.kb_fit_weight <- function(
+tidy.kb_fit <- function(
   x,
   ...,
   conf_level = 0.95,
@@ -24,26 +24,32 @@ tidy.kb_fit_weight <- function(
   include_random_effects = FALSE
 ) {
   rlang::check_dots_empty()
-  .chk_kb_fit_weight(x)
+  .chk_kb_fit(x)
   .chk_summary_args(conf_level, estimate, sig_fig)
   chk::chk_flag(include_random_effects)
 
   summarise_draws_terms(
     x$draws,
-    variables = .weight_terms(x, include_random_effects),
+    variables = .terms(x, include_random_effects),
     conf_level = conf_level,
     estimate = estimate,
     sig_fig = sig_fig
   )
 }
 
-# The model terms to summarise, named explicitly because parameter shape doesn't
-# identify a term's role; species-specific, so it dispatches on the fit subclass.
-.weight_terms <- function(x, include_random_effects) {
-  UseMethod(".weight_terms")
+# The parameter names to summarise, named explicitly because a parameter's shape
+# does not identify its role.
+.terms <- function(fit, include_random_effects) {
+  UseMethod(".terms")
 }
 
-.weight_terms.kb_fit_weight_nereo <- function(x, include_random_effects) {
+#' @export
+.terms.default <- function(fit, include_random_effects) {
+  .abort_no_method(x = fit, call = NULL)
+}
+
+#' @export
+.terms.kb_fit_weight_nereo <- function(fit, include_random_effects) {
   variables <- c(
     "bWeight",
     "bDiameter",
@@ -59,7 +65,8 @@ tidy.kb_fit_weight <- function(
   variables
 }
 
-.weight_terms.kb_fit_weight_macro <- function(x, include_random_effects) {
+#' @export
+.terms.kb_fit_weight_macro <- function(fit, include_random_effects) {
   variables <- c("bWeight", "bFronds", "shape", "sSite", "sYear", "sSiteYear")
   if (include_random_effects) {
     variables <- c(variables, "bSite", "bYear", "bSiteYear")

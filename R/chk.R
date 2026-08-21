@@ -152,3 +152,58 @@
   }
   invisible(fit)
 }
+
+# An unmatched level is silently zeroed under "average", so a lost grouping column
+# would give fitted()/residuals()/log_lik() with no random effects, and a plausible
+# loo().
+.chk_observed_levels <- function(fit, grid, call = rlang::caller_env()) {
+  if (.vld_observed_levels(fit, grid)) {
+    return(invisible(grid))
+  }
+  for (nm in c("site", "year")) {
+    levels <- fit$meta[[paste0(nm, "_levels")]]
+    if (!length(levels)) {
+      next
+    }
+    if (!nm %in% names(grid)) {
+      cli::cli_abort(
+        c(
+          "The fit was built with {.field {nm}} levels but its stored data has no {.field {nm}} column.",
+          i = "Random effects cannot be resolved for the observed rows."
+        ),
+        call = call
+      )
+    }
+    unknown <- setdiff(as.character(grid[[nm]]), levels)
+    if (length(unknown)) {
+      cli::cli_abort(
+        c(
+          "The fit's stored data has {.field {nm}} value{?s} that are not fitted levels: {.val {unknown}}.",
+          i = "Random effects would be silently set to zero for those rows."
+        ),
+        call = call
+      )
+    }
+  }
+  invisible(grid)
+}
+
+# Validate new_data's predictor column.
+.chk_new_data <- function(fit, new_data) {
+  UseMethod(".chk_new_data")
+}
+
+#' @export
+.chk_new_data.default <- function(fit, new_data) {
+  .abort_no_method(x = fit, call = NULL)
+}
+
+#' @export
+.chk_new_data.kb_fit_weight_nereo <- function(fit, new_data) {
+  .chk_new_data_weight_nereo(new_data)
+}
+
+#' @export
+.chk_new_data.kb_fit_weight_macro <- function(fit, new_data) {
+  .chk_new_data_weight_macro(new_data)
+}

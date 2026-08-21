@@ -15,7 +15,7 @@
 #' reproducible draws.
 #'
 #' @inheritParams params
-#' @param object A `kb_fit_weight` object.
+#' @param object A `kb_fit` object.
 #' @param new_data A data frame with the fit's predictor column (and optional
 #'   `site` / `year` columns), or `NULL` to predict at the observed data.
 #' @param ... Unused.
@@ -27,7 +27,7 @@
 #' set.seed(1)
 #' pp <- posterior_predict(fit_weight_sim_nereo)
 #' dim(pp)
-posterior_predict.kb_fit_weight <- function(
+posterior_predict.kb_fit <- function(
   object,
   new_data = NULL,
   ...,
@@ -35,37 +35,43 @@ posterior_predict.kb_fit_weight <- function(
   representative_site = NULL
 ) {
   rlang::check_dots_empty()
-  .chk_kb_fit_weight(object)
+  .chk_kb_fit(object)
   .chk_representative_site(object, representative_site)
   if (is.null(new_data) && nrow(object$data) == 0L) {
     cli::cli_abort(
       "A zero-observation fit has no posterior-predictive draws at the observed data."
     )
   }
-  res <- weight_data_linpred(object, new_data, new_levels, representative_site)
+  res <- data_linpred(object, new_data, new_levels, representative_site)
   lp <- posterior::draws_of(res$linpred) # D x N, log scale
-  .weight_add_noise(object, lp, res$grid)
+  .add_noise(object, lp)
 }
 
-# Add the species' observation noise to the log-scale mean (D x N); dispatches on
-# the fit subclass.
-.weight_add_noise <- function(object, lp, grid) {
-  UseMethod(".weight_add_noise")
+# Add observation noise to the link-scale mean (D x N), returning response scale.
+.add_noise <- function(fit, lp) {
+  UseMethod(".add_noise")
 }
 
-.weight_add_noise.kb_fit_weight_nereo <- function(object, lp, grid) {
-  sweight <- as.vector(posterior::draws_of(object$draws$sWeight)) # length D
+#' @export
+.add_noise.default <- function(fit, lp) {
+  .abort_no_method(x = fit, call = NULL)
+}
+
+#' @export
+.add_noise.kb_fit_weight_nereo <- function(fit, lp) {
+  sweight <- as.vector(posterior::draws_of(fit$draws$sWeight)) # length D
   # student_t(nu, mu, sigma) = mu + sigma * t_nu; nu is fixed in weight_nereo.stan
   # and stored in meta so this path cannot drift from the model.
-  noise <- matrix(stats::rt(length(lp), df = object$meta$nu), nrow = nrow(lp))
+  noise <- matrix(stats::rt(length(lp), df = fit$meta$nu), nrow = nrow(lp))
   exp(lp + sweight * noise)
 }
 
-.weight_add_noise.kb_fit_weight_macro <- function(object, lp, grid) {
+#' @export
+.add_noise.kb_fit_weight_macro <- function(fit, lp) {
   # weight ~ gamma(shape, shape / eWeight); constant Gamma shape matches
   # weight_macro.stan.
   ewt <- exp(lp)
-  shape <- as.vector(posterior::draws_of(object$draws$shape)) # length D
+  shape <- as.vector(posterior::draws_of(fit$draws$shape)) # length D
   shape_mat <- matrix(shape, nrow = nrow(ewt), ncol = ncol(ewt)) # D x N, constant per draw
   rate <- shape_mat / ewt
   draws <- stats::rgamma(

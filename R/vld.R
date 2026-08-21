@@ -34,3 +34,16 @@
   is.null(x) ||
     (is.character(x) && length(x) == 1L && !is.na(x) && dir.exists(x))
 }
+
+.vld_observed_levels <- function(fit, grid) {
+  all(vapply(
+    c("site", "year"),
+    function(nm) {
+      levels <- fit$meta[[paste0(nm, "_levels")]]
+      !length(levels) ||
+        (nm %in% names(grid) &&
+          !length(setdiff(as.character(grid[[nm]]), levels)))
+    },
+    logical(1)
+  ))
+}

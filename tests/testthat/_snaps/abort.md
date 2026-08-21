@@ -14,5 +14,14 @@
     Condition
       Error:
       ! `kb_stancode()` has no method for `structure(list(), class = "kb_fit_other")`, a <kb_fit_other> object.
-      i Create one with a `kb_fit_*()` fitting function.
+      i Supported fits are created by the `kb_fit_*()` functions.
+
+# the internal-generic form names no generic, argument or constructor
+
+    Code
+      .log_lik(structure(list(), class = c("kb_fit_other", "kb_fit")), 1)
+    Condition
+      Error:
+      ! kelpbio has no method for a <kb_fit_other> object.
+      i Supported fits are created by the `kb_fit_*()` functions.
 

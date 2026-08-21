@@ -114,3 +114,84 @@ kb_predict_weight_by.kb_fit_weight_macro <- function(
     curve = TRUE
   )
 }
+
+
+weight_by_linpred <- function(fit, by, new_levels, predictor = NULL) {
+  .chk_kb_fit_weight(fit)
+  new_levels <- rlang::arg_match(new_levels, c("sample", "average"))
+  by <- validate_by_weight(by, fit$meta$species)
+  grid <- build_by_grid(fit, by, predictor)
+  list(
+    grid = grid,
+    by = by,
+    linpred = .linpred(fit, grid, new_levels)
+  )
+}
+
+# Valid `by` groupings depend on the fitted random-effect structure. Both species
+# allow NULL, "site", and c("site", "year"). Nereo has no year main effect, so
+# "year" alone is rejected; macro has one, so "year" is allowed.
+validate_by_weight <- function(by, species = "nereocystis") {
+  if (is.null(by)) {
+    by <- character(0)
+  }
+  chk::chk_character(by)
+  valid <- c("site", "year")
+  bad <- setdiff(by, valid)
+  if (length(bad)) {
+    cli::cli_abort(c(
+      "Invalid {.arg by} value{?s}: {.val {bad}}.",
+      i = "Available grouping factors: {.val {valid}}."
+    ))
+  }
+  if (
+    species == "nereocystis" && "year" %in% by && !"site" %in% by
+  ) {
+    cli::cli_abort(c(
+      "{.code by = \"year\"} is not available for the Nereocystis weight model.",
+      i = "Year enters only through the site:year interaction (no year main effect).",
+      i = "Use {.code by = NULL}, {.val site}, or {.code c(\"site\", \"year\")}."
+    ))
+  }
+  by
+}
+
+build_by_grid <- function(fit, by, values = NULL) {
+  # Legacy fits (built before meta$predictor was recorded) default to diameter,
+  # matching the site_year_on legacy handling.
+  predictor <- fit$meta$predictor %||% "diameter"
+  if (is.null(values)) {
+    rng <- range(fit$data[[predictor]], na.rm = TRUE)
+    values <- seq(rng[1], rng[2], length.out = 30L)
+  } else {
+    chk::chk_numeric(values)
+  }
+  preds <- tibble::tibble(x = values)
+  names(preds) <- predictor
+  if (length(by) == 0) {
+    return(preds)
+  }
+  site_levels <- fit$meta$site_levels
+  year_levels <- fit$meta$year_levels
+  if (setequal(by, "site")) {
+    sites <- tibble::tibble(site = factor(site_levels, levels = site_levels))
+    dplyr::cross_join(sites, preds) |>
+      dplyr::arrange(.data$site, .data[[predictor]])
+  } else if (setequal(by, "year")) {
+    years <- tibble::tibble(year = factor(year_levels, levels = year_levels))
+    dplyr::cross_join(years, preds) |>
+      dplyr::arrange(.data$year, .data[[predictor]])
+  } else {
+    # Cross the predictor only with the observed site:year combinations, as
+    # ordered factors sorted by level, so the returned row order follows the
+    # fit's level order rather than the (arbitrary) row order of fit$data.
+    obs <- fit$data |>
+      dplyr::distinct(.data$site, .data$year) |>
+      dplyr::mutate(
+        site = factor(as.character(.data$site), levels = site_levels),
+        year = factor(as.character(.data$year), levels = year_levels)
+      )
+    dplyr::cross_join(obs, preds) |>
+      dplyr::arrange(.data$site, .data$year, .data[[predictor]])
+  }
+}

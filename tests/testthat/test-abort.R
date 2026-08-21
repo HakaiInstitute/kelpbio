@@ -38,3 +38,21 @@ test_that(".abort_no_method falls back to the name pattern when no constructor a
 test_that(".abort_no_method always aborts", {
   expect_error(.abort_no_method("kb_stancode", weight_fit))
 })
+
+test_that("a public verb on a fit with no methods aborts rather than returning", {
+  fake <- structure(
+    list(data = data.frame(weight = 1), meta = list()),
+    class = c("kb_fit_other", "kb_fit")
+  )
+  expect_error(log_lik(fake), "no method for a <kb_fit_other>")
+  expect_error(residuals(fake), "no method for a <kb_fit_other>")
+  expect_error(fitted(fake), "no method for a <kb_fit_other>")
+  expect_error(augment(fake), "no method for a <kb_fit_other>")
+})
+
+test_that("the internal-generic form names no generic, argument or constructor", {
+  expect_snapshot(
+    error = TRUE,
+    .log_lik(structure(list(), class = c("kb_fit_other", "kb_fit")), 1)
+  )
+})

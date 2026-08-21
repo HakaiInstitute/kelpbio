@@ -9,7 +9,7 @@
 #' conditioned on its site and year.
 #'
 #' @inheritParams params
-#' @param object A `kb_fit_weight` object.
+#' @param object A `kb_fit` object.
 #' @param transform A flag specifying whether to return the response-scale
 #'   value (`exp`).
 #' @param new_data A data frame with a `diameter` column (and optional `site` /
@@ -22,7 +22,7 @@
 #' @examples
 #' lp <- posterior_linpred(fit_weight_sim_nereo)
 #' dim(lp)
-posterior_linpred.kb_fit_weight <- function(
+posterior_linpred.kb_fit <- function(
   object,
   transform = FALSE,
   new_data = NULL,
@@ -32,9 +32,10 @@ posterior_linpred.kb_fit_weight <- function(
 ) {
   rlang::check_dots_empty()
   chk::chk_flag(transform)
-  .chk_kb_fit_weight(object)
+  .chk_kb_fit(object)
   .chk_representative_site(object, representative_site)
-  res <- weight_data_linpred(object, new_data, new_levels, representative_site)
+  res <- data_linpred(object, new_data, new_levels, representative_site)
   m <- posterior::draws_of(res$linpred)
-  if (transform) exp(m) else m
+  # transform is contractually the inverse link, not the response mean.
+  if (transform) .epred(object, m, expectation = FALSE) else m
 }

@@ -59,7 +59,16 @@ test_that("log_lik aborts for a zero-observation fit", {
   expect_error(log_lik(fit0), "zero-observation fit")
 })
 
-test_that("log_lik has no method for a non-weight fit", {
-  fake <- structure(list(), class = c("kb_fit_other", "kb_fit"))
-  expect_error(log_lik(fake))
+test_that("log_lik on a kb_fit with no methods aborts, not falls through", {
+  # Registered on kb_fit now, so this dispatches; the default is the guard.
+  fake <- structure(
+    list(data = data.frame(weight = 1), meta = list()),
+    class = c("kb_fit_other", "kb_fit")
+  )
+  expect_error(log_lik(fake), "no method for a <kb_fit_other>")
+})
+
+test_that("the internal generic's default aborts for a fit with no method", {
+  # The only guard once the public method accepts any kb_fit.
+  expect_error(.log_lik(structure(list(), class = c("kb_fit_other", "kb_fit")), 1), "no method for a <kb_fit_other>")
 })

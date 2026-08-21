@@ -48,3 +48,8 @@ test_that("tidy forwards conf_level/estimate/sig_fig to the summariser", {
   t2 <- tidy(weight_fit, sig_fig = 2)
   expect_equal(t2$estimate, signif(t2$estimate, 2))
 })
+
+test_that("the internal generic's default aborts for a fit with no method", {
+  # The only guard once the public method accepts any kb_fit.
+  expect_error(.terms(structure(list(), class = c("kb_fit_other", "kb_fit")), FALSE), "no method for a <kb_fit_other>")
+})

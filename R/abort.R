@@ -7,9 +7,12 @@
 # any fit.
 .fit_constructors <- function(generic) {
   ns <- asNamespace("kelpbio")
-  prefix <- paste0("^", generic, "[.]")
+  prefix <- paste0(generic, ".")
   classes <- setdiff(
-    sub(prefix, "", grep(prefix, ls(ns), value = TRUE)),
+    substring(
+      ls(ns)[startsWith(ls(ns), prefix)],
+      nchar(prefix) + 1L
+    ),
     "default"
   )
   sort(intersect(classes, getNamespaceExports(ns)))
@@ -20,12 +23,23 @@
 # a validity property of the object, so there is no .vld_ partner to pair with.
 # Reached only after the class check has passed, so the object is a supported
 # parent class carrying an unsupported subclass.
+# `generic = NULL` is the internal-generic form: one internal generic serves
+# several public verbs, so naming it would name something the user never called.
 .abort_no_method <- function(
-  generic,
+  generic = NULL,
   x,
   x_name = deparse(substitute(x)),
   call = rlang::caller_env()
 ) {
+  if (is.null(generic)) {
+    cli::cli_abort(
+      c(
+        "kelpbio has no method for a {.cls {class(x)[1]}} object.",
+        i = "Supported fits are created by the {.code kb_fit_*()} functions."
+      ),
+      call = call
+    )
+  }
   constructors <- .fit_constructors(generic)
   cli::cli_abort(
     c(
@@ -33,7 +47,7 @@
       i = if (length(constructors)) {
         "Supported fits are created by {.fun {constructors}}."
       } else {
-        "Create one with a {.code kb_fit_*()} fitting function."
+        "Supported fits are created by the {.code kb_fit_*()} functions."
       }
     ),
     call = call

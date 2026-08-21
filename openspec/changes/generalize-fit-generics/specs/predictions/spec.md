@@ -1,9 +1,5 @@
-# predictions
+## MODIFIED Requirements
 
-## Purpose
-
-Predicting from a fitted model: the two prediction verbs (kb_predict_weight() for new data, kb_predict_weight_by() for curves), the rstantools generics (posterior_epred / posterior_linpred / posterior_predict / log_lik), per-row level resolution, the new_levels axis, prior_summary(), and the kb_predictions object.
-## Requirements
 ### Requirement: Predict allometric curves
 
 Prediction is split into two verbs, each an S3 generic dispatching on the fit's species subclass (`kb_fit_weight_nereo`, `kb_fit_weight_macro`). `kb_predict_weight(fit, new_data, ..., new_levels, representative_site, conf_level, estimate, sig_fig)` SHALL predict weight at the rows supplied in `new_data` (a data frame with the fit's predictor column -- `diameter` for *Nereocystis*, `fronds` for *Macrocystis* -- and optional `site` / `year` columns), or at the observed data when `new_data = NULL` (matching base R `predict()`), returning a `kb_predictions` object. It SHALL NOT take a `by` argument. Each species method delegates to a shared internal implementation, so the methods differ only in their species-specific argument and documentation, not in behaviour. Both verbs are computed from the fit's stored draws via the `.linpred()` internal internal generic, which dispatches on the fit subclass to the model's mean, per `decisions/prediction-engine.md`.
@@ -41,34 +37,6 @@ Prediction is split into two verbs, each an S3 generic dispatching on the fit's 
 #### Scenario: Wrong predictor column errors
 - **WHEN** `new_data` lacks the fit's predictor column (e.g. a `diameter` column passed to a *Macrocystis* fit)
 - **THEN** it errors with a `cli` message naming the required column (`fronds` for *Macrocystis*)
-
-### Requirement: Grouping and uncertainty axes
-
-`kb_predict_weight_by()` is an S3 generic dispatching on the fit's species subclass. The *Nereocystis* method is `kb_predict_weight_by(fit, by = NULL, diameter = NULL, ..., new_levels, conf_level, estimate, sig_fig)`; the *Macrocystis* method takes `fronds = NULL` in place of `diameter`. Each SHALL summarise the weight-at-predictor relationship over a predictor sequence (auto-generated over the observed range, or supplied via the species argument `diameter` / `fronds`) as a `kb_predictions` object, with a `by` grouping axis and a `new_levels = c("average", "sample")` axis (`"average"` default), validated with `rlang::arg_match()`. It SHALL NOT take a `new_data` argument, and SHALL NOT expose a generic `predictor` argument. The grid variable is the fit's `meta$predictor` (`diameter` for *Nereocystis*, `fronds` for *Macrocystis*). Passing the other species' predictor argument (for example `fronds` to a *Nereocystis* fit) SHALL error with a `cli` message naming the correct argument. `by` names the grouping factors that each get their own curve, conditioned on their estimated random effects; its available values depend on the fitted random-effect structure: `NULL`, `"site"`, and `c("site", "year")` for both species, and additionally `"year"` for *Macrocystis* (which has a year main effect). `new_levels` governs the factors not conditioned on: `"sample"` draws a new random effect from `Normal(0, s)`, `"average"` holds it at zero.
-
-#### Scenario: Predictor sequence supplied via the species argument
-- **WHEN** `kb_predict_weight_by(nereo_fit, diameter = c(20, 40))` or `kb_predict_weight_by(macro_fit, fronds = c(2, 5))`
-- **THEN** the curve grid uses the supplied values instead of the auto-generated observed-range sequence, and the predictor column of the result is named `diameter` or `fronds` accordingly
-
-#### Scenario: Wrong-species predictor argument errors
-- **WHEN** the other species' predictor argument is supplied (`fronds =` to a *Nereocystis* fit, or `diameter =` to a *Macrocystis* fit)
-- **THEN** it errors with a `cli` message naming the correct argument for that species (`diameter` for *Nereocystis*, `fronds` for *Macrocystis*)
-
-#### Scenario: Population curve, new group vs typical group
-- **WHEN** `kb_predict_weight_by(fit, new_levels = "sample")` vs `new_levels = "average"` with `by = NULL`
-- **THEN** both return a single population curve over a predictor-only grid; `"sample"` draws fresh random effects (band includes between-group variation) and `"average"` holds them at zero (the typical-group curve), giving a `"sample"` interval at least as wide as `"average"`
-
-#### Scenario: Per-site and per-site-year curves
-- **WHEN** `by = "site"` or `by = c("site", "year")`
-- **THEN** one curve per group is returned, conditioned on the group's estimated random effects; under `by = "site"` the omitted site:year effect follows `new_levels`
-
-#### Scenario: year alone is not a valid grouping for the weight model
-- **WHEN** `by = "year"` is supplied to a *Nereocystis* fit
-- **THEN** it errors with a `cli` message explaining that year enters the *Nereocystis* weight model only through the `site:year` interaction (there is no year main effect), so the available groupings are `NULL`, `"site"`, and `c("site", "year")`
-
-#### Scenario: year is a valid grouping for the Macrocystis model
-- **WHEN** `by = "year"` is supplied to a *Macrocystis* fit
-- **THEN** it returns one curve per year, each conditioned on that year's estimated `bYear` main effect, with the site and site:year effects following `new_levels`
 
 ### Requirement: Raw prediction draws via rstantools generics
 
@@ -114,18 +82,6 @@ Raw posterior prediction draws SHALL be provided through the `rstantools` generi
 - **WHEN** `prior_summary(fit)` is called
 - **THEN** it returns the resolved prior objects used in the fit
 
-### Requirement: kb_predictions carries plotting metadata
-
-The `kb_predictions` object SHALL be a tibble subclass carrying column-role metadata (predictor, grouping variables, response and units) as attributes. It SHALL also carry a `kb_curve` flag recording whether the rows form an ordered, generated grid over the predictor (ribbon-eligible) rather than scattered supplied rows. The grid-generating verb (`kb_predict_weight_by()`) SHALL set it true; the row-wise verb (`kb_predict_weight()` / `predict()`) SHALL set it false. Plotting consumes the flag to choose a ribbon (only for a generated curve over a varying predictor) versus grouped points.
-
-#### Scenario: Metadata attributes present
-- **WHEN** a `kb_predictions` object is produced
-- **THEN** it records the predictor column, the grouping variables (from `by`), the response name/units, and the `kb_curve` flag, while still behaving as a tibble
-
-#### Scenario: Curve flag distinguishes the prediction verbs
-- **WHEN** the prediction comes from `kb_predict_weight_by()` versus `kb_predict_weight()`
-- **THEN** `kb_curve` is true for the former (a generated curve) and false for the latter (supplied rows)
-
 ### Requirement: Predictions respect the fitted site:year structure
 
 Predictions SHALL reflect whether the fit retained the site:year effect. When the fit omitted the effect (`meta$site_year_on` is `FALSE`), the prediction engine (the `.linpred()` internal generic and its per-species methods) and all verbs and generics built on it SHALL add no site:year contribution or variation, for any `new_levels` value; the prior-only `bSiteYear` / `sSiteYear` draws SHALL NOT be reintroduced.
@@ -137,4 +93,3 @@ Predictions SHALL reflect whether the fit retained the site:year effect. When th
 #### Scenario: Retained site:year behaves as specified
 - **WHEN** predictions are formed from a fit whose `meta$site_year_on` is `TRUE`
 - **THEN** the site:year term is resolved per row and per `new_levels` as specified by the other prediction requirements
-
