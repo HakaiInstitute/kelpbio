@@ -1,6 +1,9 @@
-# Tests for the internal .linpred() engine and its by-axis validation.
+# .linpred(): the model mean on the link scale, plus the two shared entry points
+# (.linpred_obs, data_linpred) and the terminal default.
 
-test_that(".linpred returns a log-scale rvar aligned to the grid", {
+# ---- Nereocystis -------------------------------------------------------------
+
+test_that(".linpred returns a log-scale rvar aligned to the grid (nereo)", {
   grid <- data.frame(diameter = c(20, 40, 60))
   lp <- .linpred(weight_fit, grid, new_levels = "average")
   expect_s3_class(lp, "rvar")
@@ -8,7 +11,7 @@ test_that(".linpred returns a log-scale rvar aligned to the grid", {
   expect_equal(posterior::ndraws(lp), posterior::ndraws(weight_fit$draws))
 })
 
-test_that("conditioning follows the grid columns", {
+test_that("conditioning follows the grid columns (nereo)", {
   site1 <- weight_fit$meta$site_levels[1]
   bare <- data.frame(diameter = c(30, 30))
   with_site <- data.frame(diameter = c(30, 30), site = site1)
@@ -28,7 +31,7 @@ test_that("conditioning follows the grid columns", {
   expect_false(isTRUE(all.equal(as.numeric(lp_avg), as.numeric(lp_site))))
 })
 
-test_that("per-row resolution: known rows conditioned, new rows drawn", {
+test_that("per-row resolution: known rows conditioned, new rows drawn (nereo)", {
   site1 <- weight_fit$meta$site_levels[1]
   grid <- data.frame(diameter = c(30, 30), site = c(site1, "brand_new_site"))
   # Must not error on the unknown level.
@@ -59,7 +62,7 @@ test_that("per-row resolution: known rows conditioned, new rows drawn", {
   expect_equal(lp_avg[, 2], lp_typical[, 1])
 })
 
-test_that("sample widens vs average when a factor is omitted", {
+test_that("sample widens vs average when a factor is omitted (nereo)", {
   withr::local_seed(1) # the "sample" path draws random effects; pin them
   grid <- data.frame(diameter = c(20, 40, 60))
   sd_avg <- apply(
@@ -118,18 +121,9 @@ test_that("a fit without the site_year_on flag defaults to keeping site:year", {
   expect_equal(as.numeric(lp_legacy), as.numeric(lp_on))
 })
 
-test_that("validate_by_weight enforces the valid by set", {
-  # two distinct rejections: year-alone (no main effect) vs an unknown factor
-  expect_error(validate_by_weight("year"), "not available")
-  expect_error(validate_by_weight("bogus"), "Invalid")
-  expect_identical(validate_by_weight(NULL), character(0))
-  expect_identical(validate_by_weight("site"), "site")
-  expect_identical(validate_by_weight(c("site", "year")), c("site", "year"))
-})
+# ---- Macrocystis -------------------------------------------------------------
 
-# Tests for the internal .linpred() engine and macro by-axis rules.
-
-test_that(".linpred returns a log-scale rvar aligned to the grid", {
+test_that(".linpred returns a log-scale rvar aligned to the grid (macro)", {
   grid <- data.frame(fronds = c(2, 5, 10))
   lp <- .linpred(weight_macro_fit, grid, new_levels = "average")
   expect_s3_class(lp, "rvar")
@@ -140,18 +134,21 @@ test_that(".linpred returns a log-scale rvar aligned to the grid", {
   )
 })
 
-test_that("the dispatcher routes a macro fit to the macro builder", {
+test_that("a macro fit gets the Macrocystis mean, not the Nereocystis one", {
+  # With every random effect zeroed the mean reduces to its population terms, so
+  # this pins the dispatched formula: linear in log-fronds, no quadratic and no
+  # site slope. A missing registration would reach .linpred.default and abort.
   grid <- data.frame(fronds = c(2, 5, 10))
-  lp_dispatch <- posterior::draws_of(
-    .linpred(weight_macro_fit, grid, "average")
+  draws <- weight_macro_fit$draws
+  log_fc <- log(grid$fronds) - log(weight_macro_fit$meta$fronds_ref)
+  expect_equal(
+    posterior::draws_of(.linpred(weight_macro_fit, grid, "average")),
+    posterior::draws_of(draws$bWeight + draws$bFronds * log_fc),
+    ignore_attr = TRUE
   )
-  lp_direct <- posterior::draws_of(
-    .linpred(weight_macro_fit, grid, "average")
-  )
-  expect_equal(lp_dispatch, lp_direct)
 })
 
-test_that("conditioning follows the grid columns (site and year)", {
+test_that("conditioning follows the grid columns (macro)", {
   s <- weight_macro_fit$meta$site_levels[1]
   y <- weight_macro_fit$meta$year_levels[1]
   bare <- data.frame(fronds = c(5, 5))
@@ -165,7 +162,7 @@ test_that("conditioning follows the grid columns (site and year)", {
   expect_false(isTRUE(all.equal(as.numeric(lp_avg), as.numeric(lp_grp))))
 })
 
-test_that("a known year contributes its estimated bYear main effect", {
+test_that("a known year contributes its estimated bYear main effect (macro)", {
   # macro has a standalone year main effect: conditioning on a known year shifts
   # the mean by exactly that year's bYear draws (site and site:year absent).
   y <- weight_macro_fit$meta$year_levels[1]
@@ -182,7 +179,7 @@ test_that("a known year contributes its estimated bYear main effect", {
   expect_equal(as.numeric(diff), as.numeric(byear))
 })
 
-test_that("sample widens vs average when a factor is omitted", {
+test_that("sample widens vs average when a factor is omitted (macro)", {
   withr::local_seed(1)
   grid <- data.frame(fronds = c(2, 5, 10))
   sd_avg <- apply(
@@ -200,15 +197,7 @@ test_that("sample widens vs average when a factor is omitted", {
   expect_true(all(sd_smp >= sd_avg))
 })
 
-test_that("validate_by_weight allows year alone for macro but not nereo", {
-  expect_error(validate_by_weight("year", "nereocystis"), "not available")
-  expect_identical(validate_by_weight("year", "macrocystis"), "year")
-  expect_identical(
-    validate_by_weight(c("site", "year"), "macrocystis"),
-    c("site", "year")
-  )
-  expect_error(validate_by_weight("bogus", "macrocystis"), "Invalid")
-})
+# ---- shared entry points -----------------------------------------------------
 
 test_that(".linpred_obs asserts every observed row is a fitted level", {
   # An unmatched level is silently zeroed, so this must abort rather than compute.
@@ -224,6 +213,32 @@ test_that(".linpred_obs asserts every observed row is a fitted level", {
 test_that(".linpred_obs passes for a well-formed fit", {
   expect_s3_class(.linpred_obs(weight_fit), "rvar")
   expect_s3_class(.linpred_obs(weight_macro_fit), "rvar")
+})
+
+test_that("data_linpred resolves NULL new_data to the observed rows", {
+  res <- data_linpred(weight_fit, NULL, "average")
+  expect_named(res, c("grid", "group_vars", "linpred"))
+  expect_equal(nrow(res$grid), nrow(weight_fit$data))
+  expect_equal(res$group_vars, c("site", "year"))
+  expect_equal(
+    posterior::draws_of(res$linpred),
+    posterior::draws_of(.linpred_obs(weight_fit))
+  )
+})
+
+test_that("data_linpred checks new_data and new_levels before computing", {
+  # the predictor column is checked by the fit's own .chk_new_data method
+  expect_error(
+    data_linpred(weight_fit, data.frame(fronds = 5), "average"),
+    "diameter"
+  )
+  expect_error(
+    data_linpred(weight_fit, data.frame(diameter = 30), "bogus"),
+    class = "rlang_error"
+  )
+  # no grouping column supplied, so there is nothing to condition on
+  res <- data_linpred(weight_fit, data.frame(diameter = 30), "average")
+  expect_equal(res$group_vars, character(0))
 })
 
 test_that("the .linpred default aborts for a fit with no method", {
