@@ -50,7 +50,7 @@ kb_model_describe.kb_fit_weight_macro <- function(fit, prose = FALSE) {
 # ---- species model specs (single source for notation and prose) -------------
 
 .model_spec_nereo <- function(fit) {
-  sy <- isTRUE(fit$meta$site_year_on)
+  sy <- .site_year_on(fit)
   d0 <- signif(fit$meta$diameter_ref, 3)
   pri <- fit$meta$priors
 
@@ -116,7 +116,7 @@ kb_model_describe.kb_fit_weight_macro <- function(fit, prose = FALSE) {
 }
 
 .model_spec_macro <- function(fit) {
-  sy <- isTRUE(fit$meta$site_year_on)
+  sy <- .site_year_on(fit)
   f0 <- signif(fit$meta$fronds_ref, 3)
   pri <- fit$meta$priors
 

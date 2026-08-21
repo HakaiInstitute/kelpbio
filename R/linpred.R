@@ -47,13 +47,11 @@
     rep_idx
   )
   # When the fit omitted the site:year effect its draws are prior-only noise, so
-  # predictions must add nothing rather than reintroduce spurious variation. A
-  # missing flag (fits built before it was recorded) defaults to on, since those
-  # fits always included the effect; only an explicit FALSE disables it.
-  re_sy <- if (isFALSE(fit$meta$site_year_on)) {
-    0
-  } else {
+  # predictions must add nothing rather than reintroduce spurious variation.
+  re_sy <- if (.site_year_on(fit)) {
     resolve_re2(draws$bSiteYear, si, yi, new_levels, draws$sSiteYear)
+  } else {
+    0
   }
 
   draws$bWeight +
@@ -101,10 +99,10 @@
   re_year <- resolve_re1(draws$bYear, yi, new_levels, draws$sYear)
   # When the fit omitted the site:year effect its draws are prior-only noise, so
   # predictions must add nothing rather than reintroduce spurious variation.
-  re_sy <- if (isFALSE(fit$meta$site_year_on)) {
-    0
-  } else {
+  re_sy <- if (.site_year_on(fit)) {
     resolve_re2(draws$bSiteYear, si, yi, new_levels, draws$sSiteYear)
+  } else {
+    0
   }
 
   draws$bWeight +
