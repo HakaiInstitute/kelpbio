@@ -8,11 +8,11 @@
 .fit_constructors <- function(generic) {
   ns <- asNamespace("kelpbio")
   prefix <- paste0(generic, ".")
+  # all.names so a dot-prefixed generic's methods are visible at all, and
+  # startsWith rather than a regex so its leading dot stays literal.
+  nms <- ls(ns, all.names = TRUE)
   classes <- setdiff(
-    substring(
-      ls(ns)[startsWith(ls(ns), prefix)],
-      nchar(prefix) + 1L
-    ),
+    substring(nms[startsWith(nms, prefix)], nchar(prefix) + 1L),
     "default"
   )
   sort(intersect(classes, getNamespaceExports(ns)))
