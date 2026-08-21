@@ -16,8 +16,16 @@
 augment.kb_fit <- function(x, ...) {
   rlang::check_dots_empty()
   .chk_kb_fit(x)
+  # fitted() and residuals() would each resolve the observed linear predictor
+  # again, so build both from one pass over the draws.
+  .chk_observed_data(x)
+  mu <- .linpred_obs(x)
   out <- tibble::as_tibble(x$data)
-  out$fitted <- stats::fitted(x)
-  out$residual <- stats::residuals(x)
+  out$fitted <- as.numeric(stats::median(.epred(x, mu)))
+  out$residual <- as.numeric(apply(
+    .deviance(x, posterior::draws_of(mu)),
+    2L,
+    stats::median
+  ))
   out
 }
