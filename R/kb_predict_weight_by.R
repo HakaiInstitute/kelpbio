@@ -116,10 +116,10 @@ kb_predict_weight_by.kb_fit_weight_macro <- function(
 
   res <- weight_by_linpred(fit, by, new_levels, predictor_values)
   summarise_weight_predictions(
+    fit,
     res$grid,
     res$linpred,
     res$by,
-    predictor = fit$meta$predictor %||% "diameter",
     conf_level = conf_level,
     estimate = estimate,
     sig_fig = sig_fig,
@@ -143,7 +143,7 @@ weight_by_linpred <- function(fit, by, new_levels, predictor = NULL) {
 # Valid `by` groupings depend on the fitted random-effect structure. Both species
 # allow NULL, "site", and c("site", "year"). Nereo has no year main effect, so
 # "year" alone is rejected; macro has one, so "year" is allowed.
-validate_by_weight <- function(by, species = "nereocystis") {
+validate_by_weight <- function(by, species) {
   if (is.null(by)) {
     by <- character(0)
   }

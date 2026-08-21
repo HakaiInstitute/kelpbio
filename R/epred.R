@@ -1,6 +1,11 @@
 # Response scale: `expectation = TRUE` the mean, `FALSE` the inverse link. These
-# differ only for a mixture likelihood, so most methods ignore the flag. Write
-# bodies with arithmetic: `1 / (1 + exp(-lp))`, since plogis() errors on an rvar.
+# differ only for a mixture likelihood, so most methods ignore the flag.
+#
+# `lp` arrives either as a posterior rvar (from fitted() and the prediction
+# verbs) or as a D x N draws matrix (from the posterior_* generics), and a method
+# must return the same type it was given. Write bodies with arithmetic:
+# `1 / (1 + exp(-lp))`, not plogis(), since `/`, `+`, `-` and `exp` are Ops/Math
+# group generics that work on both, while plogis() errors on an rvar.
 .epred <- function(fit, lp, expectation = TRUE) {
   UseMethod(".epred")
 }
