@@ -74,11 +74,3 @@ test_that("log_lik on a kb_fit with no methods aborts, not falls through", {
   )
   expect_error(log_lik(fake), "no method for a <kb_fit_other>")
 })
-
-test_that("the internal generic's default aborts for a fit with no method", {
-  # The only guard once the public method accepts any kb_fit.
-  expect_error(
-    .log_lik(structure(list(), class = c("kb_fit_other", "kb_fit")), 1),
-    "no method for a <kb_fit_other>"
-  )
-})

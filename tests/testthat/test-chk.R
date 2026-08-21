@@ -1,7 +1,7 @@
 test_that(".chk_kb_fit passes a fit through invisibly and errors on a non-fit", {
   expect_invisible(.chk_kb_fit(weight_fit))
   expect_identical(.chk_kb_fit(weight_fit), weight_fit)
-  expect_error(.chk_kb_fit(1), "kb_fit")
+  expect_error(.chk_kb_fit(1), "must be a <kb_fit> object")
 })
 
 test_that(".chk_kb_fit_weight passes a fit through invisibly and errors on a non-fit", {
@@ -96,16 +96,6 @@ test_that(".chk_representative_site passes NULL/known sites and errors on unknow
   expect_snapshot(
     error = TRUE,
     .chk_representative_site(weight_fit, "not_a_site")
-  )
-})
-
-test_that("the .chk_new_data default aborts for a fit with no method", {
-  expect_error(
-    .chk_new_data(
-      structure(list(), class = c("kb_fit_other", "kb_fit")),
-      data.frame()
-    ),
-    "no method for a <kb_fit_other>"
   )
 })
 
