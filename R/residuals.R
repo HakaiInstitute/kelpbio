@@ -24,7 +24,7 @@ residuals.kb_fit <- function(object, ...) {
   as.numeric(apply(.deviance(object, mu), 2L, stats::median))
 }
 
-# Deviance residuals, D x N and unreduced like .log_lik.
+# Deviance residuals, D x N and unreduced like .log_lik; shape from .per_draw().
 .deviance <- function(fit, mu) {
   UseMethod(".deviance")
 }
@@ -37,27 +37,16 @@ residuals.kb_fit <- function(object, ...) {
 #' @export
 .deviance.kb_fit_weight_nereo <- function(fit, mu) {
   sw <- as.vector(posterior::draws_of(fit$draws$sWeight))
-  y <- log(fit$data$weight)
   theta <- 1 / fit$meta$nu
-  out <- matrix(NA_real_, nrow = nrow(mu), ncol = length(y))
-  for (d in seq_len(nrow(mu))) {
-    out[d, ] <- extras::res_student(y, mu[d, ], sd = sw[d], theta = theta)
-  }
-  out
+  .per_draw(mu, log(fit$data$weight), function(y, mu_d, d) {
+    extras::res_student(y, mu_d, sd = sw[d], theta = theta)
+  })
 }
 
 #' @export
 .deviance.kb_fit_weight_macro <- function(fit, mu) {
-  ewt <- exp(mu)
-  y <- fit$data$weight
   shape <- as.vector(posterior::draws_of(fit$draws$shape))
-  out <- matrix(NA_real_, nrow = nrow(mu), ncol = length(y))
-  for (d in seq_len(nrow(mu))) {
-    out[d, ] <- extras::res_gamma(
-      y,
-      shape = shape[d],
-      rate = shape[d] / ewt[d, ]
-    )
-  }
-  out
+  .per_draw(mu, fit$data$weight, function(y, mu_d, d) {
+    extras::res_gamma(y, shape = shape[d], rate = shape[d] / exp(mu_d))
+  })
 }

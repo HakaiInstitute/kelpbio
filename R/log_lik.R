@@ -27,8 +27,7 @@ log_lik.kb_fit <- function(object, ...) {
   .log_lik(object, mu)
 }
 
-# Pointwise log-likelihood, D x N and unreduced. Preallocate at that orientation:
-# loo() accepts a transposed matrix and silently reports elpd over draws.
+# Pointwise log-likelihood, D x N and unreduced; see .per_draw() for the shape.
 .log_lik <- function(fit, mu) {
   UseMethod(".log_lik")
 }
@@ -41,27 +40,16 @@ log_lik.kb_fit <- function(object, ...) {
 #' @export
 .log_lik.kb_fit_weight_nereo <- function(fit, mu) {
   sw <- as.vector(posterior::draws_of(fit$draws$sWeight))
-  y <- log(fit$data$weight)
   theta <- 1 / fit$meta$nu
-  out <- matrix(NA_real_, nrow = nrow(mu), ncol = length(y))
-  for (d in seq_len(nrow(mu))) {
-    out[d, ] <- extras::log_lik_student(y, mu[d, ], sd = sw[d], theta = theta)
-  }
-  out
+  .per_draw(mu, log(fit$data$weight), function(y, mu_d, d) {
+    extras::log_lik_student(y, mu_d, sd = sw[d], theta = theta)
+  })
 }
 
 #' @export
 .log_lik.kb_fit_weight_macro <- function(fit, mu) {
-  ewt <- exp(mu)
-  y <- fit$data$weight
   shape <- as.vector(posterior::draws_of(fit$draws$shape))
-  out <- matrix(NA_real_, nrow = nrow(mu), ncol = length(y))
-  for (d in seq_len(nrow(mu))) {
-    out[d, ] <- extras::log_lik_gamma(
-      y,
-      shape = shape[d],
-      rate = shape[d] / ewt[d, ]
-    )
-  }
-  out
+  .per_draw(mu, fit$data$weight, function(y, mu_d, d) {
+    extras::log_lik_gamma(y, shape = shape[d], rate = shape[d] / exp(mu_d))
+  })
 }
