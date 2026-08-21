@@ -13,7 +13,7 @@
   cli::cli_abort(
     c(
       "{.arg {x_name}} must be a {.cls kb_fit} object.",
-      i = "Create one with a {.code kb_fit_*()} fitting function."
+      i = "Supported fits are created by the {.code kb_fit_*()} functions."
     ),
     call = call
   )
@@ -30,7 +30,7 @@
   cli::cli_abort(
     c(
       "{.arg {x_name}} must be a {.cls kb_fit_weight} object.",
-      i = "Create one with a {.code kb_fit_weight_*()} fitting function."
+      i = "Supported fits are created by the {.code kb_fit_weight_*()} functions."
     ),
     call = call
   )

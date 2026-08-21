@@ -97,5 +97,5 @@
     Condition
       Error in `kb_model_describe()`:
       ! `fit` must be a <kb_fit> object.
-      i Create one with a `kb_fit_*()` fitting function.
+      i Supported fits are created by the `kb_fit_*()` functions.
 

@@ -5,7 +5,7 @@
     Condition
       Error:
       ! `1` must be a <kb_fit_weight> object.
-      i Create one with a `kb_fit_weight_*()` fitting function.
+      i Supported fits are created by the `kb_fit_weight_*()` functions.
 
 # .chk_new_data_weight_nereo errors on a non-data-frame or missing diameter
 
