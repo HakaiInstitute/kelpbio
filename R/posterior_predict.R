@@ -1,10 +1,11 @@
 #' Posterior-Predictive Weight Draws
 #'
-#' Draws from the posterior predictive distribution: the expected weight plus
-#' species-appropriate observation noise (Student-t on log-weight with scale
-#' `sWeight` for *Nereocystis*; Gamma with shape `shape` for *Macrocystis*,
-#' matching the Stan likelihood). With `new_data = NULL` the replicates are at the
-#' observed data, for use with `bayesplot::pp_check()`.
+#' Draws from the posterior predictive distribution: replicate weights carrying
+#' both parameter uncertainty and species-appropriate observation noise
+#' (Student-t on log weight with scale `sWeight` for *Nereocystis*; Gamma with
+#' shape `shape` for *Macrocystis*, matching the Stan likelihood). With
+#' `new_data = NULL` the replicates are at the observed data, for use with
+#' `bayesplot::pp_check()`.
 #'
 #' @details
 #' For supplied `new_data`, conditioning is inferred from the grouping columns

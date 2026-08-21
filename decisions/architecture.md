@@ -92,7 +92,7 @@ The fit function is deliberately a thin orchestrator over pure helpers plus one 
 | `data` | the validated input data frame. |
 | `meta` | `species`, `prior_only`, `priors`, `stancode`, `site_levels`, `year_levels`, `nthin`, `diameter_ref`, `site_year_on` (auto-derived from the data), `nu`. |
 
-Each species is a subclass of the model class (`c("kb_fit_weight_<species>", "kb_fit_weight", "kb_fit")`); each public method body lives at the highest class tier at which it is invariant -- `kb_fit` for all of them but `predict` -- while whatever varies is an internal internal generic registered at the model tier (`.epred.kb_fit_weight`) or the leaf (`.linpred.kb_fit_weight_nereo`), so no method branches on `meta$species` (kept for display, with species-specific values entering through `meta_extra`). See `decisions/species-as-variant.md`.
+Each species is a subclass of the model class (`c("kb_fit_weight_<species>", "kb_fit_weight", "kb_fit")`); each public method body lives at the highest class tier at which it is invariant -- `kb_fit` for all of them but `predict` -- while whatever varies is an internal generic registered at the model tier (`.epred.kb_fit_weight`) or the leaf (`.linpred.kb_fit_weight_nereo`), so no method branches on `meta$species` (kept for display, with species-specific values entering through `meta_extra`). See `decisions/species-as-variant.md`.
 
 ## The Prediction Engine
 
