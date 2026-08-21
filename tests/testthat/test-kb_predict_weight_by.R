@@ -101,11 +101,14 @@ test_that("kb_predict_weight_by errors on a weight fit with no species method", 
 
 test_that("validate_by_weight enforces the valid by set", {
   # two distinct rejections: year-alone (no main effect) vs an unknown factor
-  expect_error(validate_by_weight("year"), "not available")
-  expect_error(validate_by_weight("bogus"), "Invalid")
-  expect_identical(validate_by_weight(NULL), character(0))
-  expect_identical(validate_by_weight("site"), "site")
-  expect_identical(validate_by_weight(c("site", "year")), c("site", "year"))
+  expect_error(validate_by_weight("year", "nereocystis"), "not available")
+  expect_error(validate_by_weight("bogus", "nereocystis"), "Invalid")
+  expect_identical(validate_by_weight(NULL, "nereocystis"), character(0))
+  expect_identical(validate_by_weight("site", "nereocystis"), "site")
+  expect_identical(
+    validate_by_weight(c("site", "year"), "nereocystis"),
+    c("site", "year")
+  )
 })
 
 test_that("validate_by_weight allows year alone for macro but not nereo", {
