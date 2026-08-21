@@ -54,3 +54,26 @@ test_that("resolve_re2 conditions only where both indices are known", {
   )
   expect_true(all(posterior::draws_of(out)[, 2L] == 0))
 })
+
+test_that(".grid_indices matches known levels and NAs the rest", {
+  s <- weight_fit$meta$site_levels[1]
+  y <- weight_fit$meta$year_levels[1]
+  grid <- data.frame(diameter = c(30, 30), site = c(s, "new_site"), year = y)
+  ix <- .grid_indices(weight_fit, grid)
+  expect_named(ix, c("site", "year", "rep"))
+  expect_identical(ix$site, c(1L, NA_integer_))
+  expect_identical(ix$year, c(1L, 1L))
+  expect_null(ix$rep)
+})
+
+test_that(".grid_indices NAs a factor the grid omits entirely", {
+  ix <- .grid_indices(weight_fit, data.frame(diameter = c(30, 40)))
+  expect_identical(ix$site, rep(NA_integer_, 2L))
+  expect_identical(ix$year, rep(NA_integer_, 2L))
+})
+
+test_that(".grid_indices resolves representative_site against the fit's levels", {
+  sites <- weight_fit$meta$site_levels[1:2]
+  ix <- .grid_indices(weight_fit, data.frame(diameter = 30), sites)
+  expect_identical(ix$rep, c(1L, 2L))
+})

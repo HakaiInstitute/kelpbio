@@ -162,8 +162,8 @@
   if (.vld_observed_levels(fit, grid)) {
     return(invisible(grid))
   }
-  for (nm in c("site", "year")) {
-    levels <- fit$meta[[paste0(nm, "_levels")]]
+  for (nm in .group_vars()) {
+    levels <- .fit_levels(fit, nm)
     if (!length(levels)) {
       next
     }

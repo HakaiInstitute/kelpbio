@@ -60,3 +60,27 @@ resolve_re2 <- function(param, i, j, new_levels, sd_rvar) {
 rvar_index1 <- function(rv, idx) {
   posterior::rvar(posterior::draws_of(rv)[, idx, drop = FALSE])
 }
+
+# Row indices into the fit's factor levels, one integer vector per grouping
+# factor plus the representative-site index. NA marks a row the fit cannot
+# condition on, either a level it never saw or a factor the grid omits entirely,
+# which is exactly what resolve_re1()/resolve_re2() key on. Every .linpred method
+# opens with this, so the level matching is defined once rather than per model.
+.grid_indices <- function(fit, grid, representative_site = NULL) {
+  n <- nrow(grid)
+  idx <- lapply(.group_vars(), function(nm) {
+    if (nm %in% names(grid)) {
+      match(as.character(grid[[nm]]), .fit_levels(fit, nm))
+    } else {
+      rep(NA_integer_, n)
+    }
+  })
+  names(idx) <- .group_vars()
+  rep_idx <- if (is.null(representative_site)) {
+    NULL
+  } else {
+    match(representative_site, fit$meta$site_levels)
+  }
+  # c(), not idx$rep <-, which would drop the name when rep_idx is NULL.
+  c(idx, list(rep = rep_idx))
+}

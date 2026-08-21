@@ -23,38 +23,21 @@
   representative_site = NULL
 ) {
   draws <- fit$draws
-  n <- nrow(grid)
+  ix <- .grid_indices(fit, grid, representative_site)
   log_dc <- log(grid$diameter) - log(fit$meta$diameter_ref)
 
-  si <- if ("site" %in% names(grid)) {
-    match(as.character(grid$site), fit$meta$site_levels)
-  } else {
-    rep(NA_integer_, n)
-  }
-  yi <- if ("year" %in% names(grid)) {
-    match(as.character(grid$year), fit$meta$year_levels)
-  } else {
-    rep(NA_integer_, n)
-  }
-
-  rep_idx <- if (!is.null(representative_site)) {
-    match(representative_site, fit$meta$site_levels)
-  } else {
-    NULL
-  }
-
-  re_site <- resolve_re1(draws$bSite, si, new_levels, draws$sSite, rep_idx)
+  re_site <- resolve_re1(draws$bSite, ix$site, new_levels, draws$sSite, ix$rep)
   re_slope <- resolve_re1(
     draws$bSiteDiameter,
-    si,
+    ix$site,
     new_levels,
     draws$sSiteDiameter,
-    rep_idx
+    ix$rep
   )
   # When the fit omitted the site:year effect its draws are prior-only noise, so
   # predictions must add nothing rather than reintroduce spurious variation.
   re_sy <- if (.site_year_on(fit)) {
-    resolve_re2(draws$bSiteYear, si, yi, new_levels, draws$sSiteYear)
+    resolve_re2(draws$bSiteYear, ix$site, ix$year, new_levels, draws$sSiteYear)
   } else {
     0
   }
@@ -78,34 +61,17 @@
   representative_site = NULL
 ) {
   draws <- fit$draws
-  n <- nrow(grid)
+  ix <- .grid_indices(fit, grid, representative_site)
   log_fc <- log(grid$fronds) - log(fit$meta$fronds_ref)
 
-  si <- if ("site" %in% names(grid)) {
-    match(as.character(grid$site), fit$meta$site_levels)
-  } else {
-    rep(NA_integer_, n)
-  }
-  yi <- if ("year" %in% names(grid)) {
-    match(as.character(grid$year), fit$meta$year_levels)
-  } else {
-    rep(NA_integer_, n)
-  }
-
-  rep_idx <- if (!is.null(representative_site)) {
-    match(representative_site, fit$meta$site_levels)
-  } else {
-    NULL
-  }
-
-  re_site <- resolve_re1(draws$bSite, si, new_levels, draws$sSite, rep_idx)
+  re_site <- resolve_re1(draws$bSite, ix$site, new_levels, draws$sSite, ix$rep)
   # Year enters as a standalone main effect (unlike nereo). representative_site
   # borrows only the site intercept, so year follows new_levels regardless.
-  re_year <- resolve_re1(draws$bYear, yi, new_levels, draws$sYear)
+  re_year <- resolve_re1(draws$bYear, ix$year, new_levels, draws$sYear)
   # When the fit omitted the site:year effect its draws are prior-only noise, so
   # predictions must add nothing rather than reintroduce spurious variation.
   re_sy <- if (.site_year_on(fit)) {
-    resolve_re2(draws$bSiteYear, si, yi, new_levels, draws$sSiteYear)
+    resolve_re2(draws$bSiteYear, ix$site, ix$year, new_levels, draws$sSiteYear)
   } else {
     0
   }
@@ -145,7 +111,7 @@ data_linpred <- function(
   }
   list(
     grid = grid,
-    group_vars = intersect(c("site", "year"), names(grid)),
+    group_vars = intersect(.group_vars(), names(grid)),
     linpred = .linpred(fit, grid, new_levels, representative_site)
   )
 }

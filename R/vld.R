@@ -37,9 +37,9 @@
 
 .vld_observed_levels <- function(fit, grid) {
   all(vapply(
-    c("site", "year"),
+    .group_vars(),
     function(nm) {
-      levels <- fit$meta[[paste0(nm, "_levels")]]
+      levels <- .fit_levels(fit, nm)
       !length(levels) ||
         (nm %in%
           names(grid) &&
