@@ -49,15 +49,22 @@ test_that("macro summary carries the term list and year group", {
 })
 
 test_that("print.summary_kb_fit shows the slim header, table, and footer", {
-  out <- capture.output(print(summary(weight_fit)))
-  expect_true(any(grepl("summary_kb_fit", out)))
-  expect_true(any(grepl("^Model:", out)))
-  expect_false(any(grepl("^Family:", out)))
-  expect_false(any(grepl("^Fixed:", out)))
-  expect_false(any(grepl("^Random:", out)))
-  expect_true(any(grepl("^Draws:", out)))
-  expect_true(any(grepl("compatibility limits", out)))
-  expect_true(any(grepl("effective sample sizes", out)))
+  # Snapshotting the print method, with the MCMC numerics redacted: the layout,
+  # the term list, the header lines the slim change kept (and the ones it
+  # dropped) and the footer prose are all stable, while the estimates, the
+  # diagnostics and the data-derived centering value are not and must not be
+  # pinned. Redacting them also keeps the snapshot still when a fixture is
+  # rebuilt.
+  redact <- function(lines) {
+    lines <- sub("^(\\s*\\d+ \\S+)\\s+[-0-9.].*$", "\\1 <numerics>", lines)
+    lines <- sub("^(Predictor:.*geometric mean,) .*$", "\\1 <value>", lines)
+    sub(
+      "^[0-9.]+% divergent.*min E-BFMI [0-9.]+\\.$",
+      "<n>% divergent transitions; <n>% max-treedepth; min E-BFMI <n>.",
+      lines
+    )
+  }
+  expect_snapshot(print(summary(weight_fit)), transform = redact)
 })
 
 test_that("summary carries the run-level diagnostics, not the raw count", {
@@ -68,9 +75,3 @@ test_that("summary carries the run-level diagnostics, not the raw count", {
   expect_equal(s$ebfmi, diag$ebfmi)
 })
 
-test_that("the print footer reports the three sampler diagnostics", {
-  out <- capture.output(print(summary(weight_fit)))
-  expect_true(any(grepl("divergent transitions", out)))
-  expect_true(any(grepl("max-treedepth", out)))
-  expect_true(any(grepl("min E-BFMI", out)))
-})
