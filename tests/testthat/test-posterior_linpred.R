@@ -19,9 +19,6 @@ test_that("transform = TRUE is exp of the log-scale linear predictor", {
   expect_equal(lpt, exp(lp))
   # untransformed is genuinely the log scale, not the response scale
   expect_false(isTRUE(all.equal(lp, lpt)))
-  # response scale equals posterior_epred (both exp of the same predictor)
-  expect_equal(
-    lpt,
-    posterior_epred(weight_fit, new_data = nd, new_levels = "average")
-  )
+  # agreement with posterior_epred() is asserted in test-posterior_epred.R,
+  # which covers both species and says why they coincide
 })

@@ -1,6 +1,8 @@
 test_that("coef is a pure wrapper on tidy", {
-  cf <- coef(weight_fit)
-  expect_s3_class(cf, "tbl_df")
-  expect_named(cf, c("term", "estimate", "lower", "upper"))
-  expect_identical(cf, tidy(weight_fit))
+  # identity to tidy() implies the class and the column names
+  expect_identical(coef(weight_fit), tidy(weight_fit))
+  expect_identical(
+    coef(weight_fit, conf_level = 0.9),
+    tidy(weight_fit, conf_level = 0.9)
+  )
 })
