@@ -9,6 +9,6 @@ test_that("samples returns a draws_rvars object carrying the fit's variables", {
 })
 
 test_that("samples errors on an object that is not a fit", {
-  expect_snapshot(error = TRUE, samples(1))
+  expect_error(samples(1), "must be a <kb_fit> object")
   expect_equal(rlang::catch_cnd(samples(1))$call, quote(samples(1)))
 })

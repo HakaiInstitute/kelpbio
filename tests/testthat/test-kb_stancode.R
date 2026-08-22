@@ -15,6 +15,8 @@ test_that("kb_stancode is a kb_stancode object that prints readably", {
 })
 
 test_that("kb_stancode errors on an object that is not a fit", {
-  expect_snapshot(error = TRUE, kb_stancode(1))
+  # the message wording is pinned once in test-chk.R; what matters here is that
+  # the verb rejects a non-fit and the condition names the verb, not the default
+  expect_error(kb_stancode(1), "must be a <kb_fit> object")
   expect_equal(rlang::catch_cnd(kb_stancode(1))$call, quote(kb_stancode(1)))
 })

@@ -82,7 +82,9 @@ test_that("wider conf_level gives a wider interval", {
 })
 
 test_that("kb_predict_weight_by errors on an object that is not a weight fit", {
-  expect_snapshot(error = TRUE, kb_predict_weight_by(1))
+  # the message wording is pinned once in test-chk.R; what matters here is that
+  # the verb rejects a non-fit and the condition names the verb, not the default
+  expect_error(kb_predict_weight_by(1), "must be a <kb_fit_weight> object")
   expect_equal(
     rlang::catch_cnd(kb_predict_weight_by(1))$call,
     quote(kb_predict_weight_by(1))
@@ -94,7 +96,12 @@ test_that("kb_predict_weight_by errors on a weight fit with no species method", 
     list(),
     class = c("kb_fit_weight_other", "kb_fit_weight", "kb_fit")
   )
-  expect_snapshot(error = TRUE, kb_predict_weight_by(fake))
+  # the enumerated-constructor wording is pinned once in test-abort.R
+  err <- expect_error(
+    kb_predict_weight_by(fake),
+    "no method for.*<kb_fit_weight_other>"
+  )
+  expect_match(conditionMessage(err), "kb_fit_weight_nereo")
 })
 
 # ---- curve helpers -----------------------------------------------------------
