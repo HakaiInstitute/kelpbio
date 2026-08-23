@@ -87,11 +87,16 @@ augment.kb_fit         # kb_fit: model-agnostic (also coef/glance/converged/samp
 predict.kb_fit_weight  # model tier: wraps the model-named kb_predict_weight()
 
 # Whatever varies goes into an internal generic, defined in the file of the public
-# generic it serves. None has a total default: each aborts via .abort_no_method()
-# with generic = NULL, so a sub-model added without its methods fails loudly.
-.epred.kb_fit_weight              # model tier: both species use a log link
+# generic it serves. None that feeds a number has a total default: each aborts via
+# .abort_no_method() with generic = NULL, so a sub-model added without its methods
+# fails loudly. .fit_descriptor is the one exception, supplying print()'s header
+# fields, where a missing method degrades a display rather than a number.
+.epred.kb_fit_weight              # model tier: also .fit_descriptor
 .linpred.kb_fit_weight_nereo      # leaf: also .log_lik/.deviance/.add_noise/
-                                  #   .terms/.chk_new_data
+                                  #   .chk_new_data/.chk_by
+# Per-model facts that are values, not behaviour, live in meta instead (offset,
+# terms, predictor, predictor_ref). See "Meta Versus Dispatch" in
+# decisions/architecture.md for the rule that decides which.
 ```
 
 - **`decisions/` are live documents**: overwrite them to describe the current
@@ -99,7 +104,7 @@ predict.kb_fit_weight  # model tier: wraps the model-named kb_predict_weight()
 
 Access via `$`: `x$draws`, `x$data`, `x$meta`. `samples(x)` returns a `posterior` `draws_rvars` object. The live `stanfit` is discarded after fitting — see the `fitting` spec. kelpbio ships via R-universe (not CRAN); its `data/` holds only simulated demo data and slim pre-fit models. The real publicly shared coastwide data and model fits live in a companion data package (`kelpbiodata`).
 
-**Prediction / derived-quantity engine.** Predictions, summaries, and the biomass composition are computed from the stored draws with the `posterior` `rvar` datatype (per-model prediction is plain `rvar` arithmetic); grids built with `newdata::xnew_data` (no `rescale`); `coef`/`tidy`/`glance`/`augment`/`samples`/diagnostics reconstructed from the draws via `posterior`. The `predictions`/`summaries` specs are the behavioural contract and `decisions/prediction-engine.md` the rationale — read them before touching any `kb_predict_*`, summary, or biomass code.
+**Prediction / derived-quantity engine.** Predictions, summaries, and the biomass composition are computed from the stored draws with the `posterior` `rvar` datatype (per-model prediction is plain `rvar` arithmetic); grids built by `build_by_grid()` (`tibble` + `dplyr::cross_join`, no `rescale`); `coef`/`tidy`/`glance`/`augment`/`samples`/diagnostics reconstructed from the draws via `posterior`. The `predictions`/`summaries` specs are the behavioural contract and `decisions/prediction-engine.md` the rationale — read them before touching any `kb_predict_*`, summary, or biomass code.
 
 ## Package Conventions
 
