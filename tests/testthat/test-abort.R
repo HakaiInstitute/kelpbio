@@ -56,3 +56,56 @@ test_that("the internal-generic form names no generic, argument or constructor",
     .log_lik(structure(list(), class = c("kb_fit_other", "kb_fit")), 1)
   )
 })
+
+test_that("every internal generic has a default, and only display ones are total", {
+  # Discovered from the registrations rather than listed by hand, so a generic
+  # added without a default is caught on the day it is added. Both sets are
+  # pinned, so a new generic cannot join either silently: it has to be classed
+  # as one that aborts or one that is allowed a value.
+  ns <- asNamespace("kelpbio")
+  nms <- ls(ns, all.names = TRUE)
+  generics <- sort(unique(sub(
+    "\\.default$",
+    "",
+    grep("^\\..*\\.default$", nms, value = TRUE)
+  )))
+
+  # .fit_descriptor is the one deliberate total default: it supplies print()'s
+  # header fields, so a missing method degrades a display rather than producing a
+  # wrong number. Every generic that feeds a number aborts instead.
+  total <- ".fit_descriptor"
+  expect_setequal(intersect(generics, total), total)
+
+  aborting <- setdiff(generics, total)
+  expect_setequal(
+    aborting,
+    c(
+      ".add_noise",
+      ".chk_by",
+      ".chk_new_data",
+      ".deviance",
+      ".epred",
+      ".linpred",
+      ".log_lik"
+    )
+  )
+
+  fake <- structure(list(), class = c("kb_fit_other", "kb_fit"))
+  for (generic in aborting) {
+    fun <- get(generic, envir = ns)
+    args <- formals(fun)
+    required <- names(args)[vapply(
+      args,
+      function(a) identical(a, quote(expr = )),
+      logical(1)
+    )]
+    # dispatch through the generic, so this proves the default is what a fit with
+    # no method actually reaches, not merely that it aborts when called directly
+    call_args <- c(list(fake), rep(list(1), length(required) - 1L))
+    expect_error(
+      do.call(fun, call_args),
+      "no method for a <kb_fit_other>",
+      info = generic
+    )
+  }
+})

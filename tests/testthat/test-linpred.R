@@ -140,7 +140,7 @@ test_that("a macro fit gets the Macrocystis mean, not the Nereocystis one", {
   # site slope. A missing registration would reach .linpred.default and abort.
   grid <- data.frame(fronds = c(2, 5, 10))
   draws <- weight_macro_fit$draws
-  log_fc <- log(grid$fronds) - log(weight_macro_fit$meta$fronds_ref)
+  log_fc <- log(grid$fronds) - log(weight_macro_fit$meta$predictor_ref)
   expect_equal(
     posterior::draws_of(.linpred(weight_macro_fit, grid, "average")),
     posterior::draws_of(draws$bWeight + draws$bFronds * log_fc),

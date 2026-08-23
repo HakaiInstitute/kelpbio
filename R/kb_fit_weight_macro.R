@@ -122,16 +122,34 @@ kb_fit_weight_macro <- function(
     ...
   )
 
-  new_kb_fit_weight(
+  new_kb_fit(
     core,
     data = data,
     priors = priors,
+    model = "weight",
     species = "macrocystis",
+    # Weight is measured per plant, not per unit of survey effort.
+    offset = NULL,
+    terms = list(
+      fixed = c(
+        "bWeight",
+        "bFronds",
+        "shape",
+        "sSite",
+        "sYear",
+        if (site_year$on) "sSiteYear"
+      ),
+      random = c(
+        "bSite",
+        "bYear",
+        if (site_year$on) "bSiteYear"
+      )
+    ),
     prior_only = prior_only,
     nthin = as.integer(nthin),
     meta_extra = list(
       # Shared by the Stan fit and R-side predictions so both center identically.
-      fronds_ref = weight_fronds_ref(data$fronds),
+      predictor_ref = weight_fronds_ref(data$fronds),
       site_year_on = site_year$on,
       predictor = "fronds",
       response = "weight"

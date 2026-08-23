@@ -49,13 +49,18 @@ test_that("tidy forwards conf_level/estimate/sig_fig to the summariser", {
   expect_equal(t2$estimate, signif(t2$estimate, 2))
 })
 
-test_that("a dropped site:year effect is not reported as an estimate", {
-  # Its draws never met the likelihood, so they are the prior, not a posterior.
+test_that("tidy reports exactly the recorded terms, at both levels", {
+  # Which effects a fit has is decided at fit time and recorded in meta$terms, so
+  # an "off" fit is faked the way the constructor builds one: a dropped site:year
+  # effect leaves the flag and the term list agreeing. That the constructor
+  # actually drops it is covered in test-kb_fit_weight_nereo.R.
   fits <- list(nereo = weight_fit, macro = weight_macro_fit)
   for (species in names(fits)) {
     fit <- fits[[species]]
     off <- fit
     off$meta$site_year_on <- FALSE
+    off$meta$terms$fixed <- setdiff(off$meta$terms$fixed, "sSiteYear")
+    off$meta$terms$random <- setdiff(off$meta$terms$random, "bSiteYear")
     expect_false("sSiteYear" %in% tidy(off)$term, info = species)
     expect_false(
       any(startsWith(
@@ -66,5 +71,16 @@ test_that("a dropped site:year effect is not reported as an estimate", {
     )
     # and it is still reported when the fit kept the effect
     expect_true("sSiteYear" %in% tidy(fit)$term, info = species)
+  }
+})
+
+test_that("every declared term has draws behind it", {
+  # meta$terms is written alongside the model rather than derived from it, so the
+  # two could drift. Asserting the invariant once here is what earns the right not
+  # to re-check it on every fit: a name with no draws would silently drop a row.
+  for (fit in list(weight_fit, weight_macro_fit)) {
+    declared <- c(fit$meta$terms$fixed, fit$meta$terms$random)
+    expect_length(setdiff(declared, names(fit$draws)), 0L)
+    expect_gt(length(declared), 0L)
   }
 })
