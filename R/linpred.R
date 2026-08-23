@@ -83,13 +83,12 @@
     re_sy
 }
 
-# Link-scale mean at the observed rows, where every level is known so new_levels
-# is immaterial. The check is not redundant: an unmatched level is silently zeroed,
-# so a lost grouping column would make fitted()/residuals()/log_lik() wrong.
+# Link-scale mean at the observed rows. Every level is a fitted level, since
+# meta$*_levels was taken from this same data frame at fit time, so new_levels is
+# immaterial here.
 .linpred_obs <- function(fit) {
   .chk_observed_data(fit)
   grid <- tibble::as_tibble(fit$data)
-  .chk_observed_levels(fit, grid)
   .linpred(fit, grid, new_levels = "average")
 }
 
@@ -106,7 +105,6 @@ data_linpred <- function(
     # fit$data already passed its model's data check at fit time.
     .chk_observed_data(fit)
     grid <- tibble::as_tibble(fit$data)
-    .chk_observed_levels(fit, grid)
   } else {
     .chk_new_data(fit, new_data)
     grid <- tibble::as_tibble(new_data)

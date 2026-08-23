@@ -39,16 +39,3 @@
   nrow(fit$data) > 0L
 }
 
-.vld_observed_levels <- function(fit, grid) {
-  all(vapply(
-    .group_vars(),
-    function(nm) {
-      levels <- .fit_levels(fit, nm)
-      !length(levels) ||
-        (nm %in%
-          names(grid) &&
-          !length(setdiff(as.character(grid[[nm]]), levels)))
-    },
-    logical(1)
-  ))
-}

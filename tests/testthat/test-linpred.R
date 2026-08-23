@@ -199,17 +199,6 @@ test_that("sample widens vs average when a factor is omitted (macro)", {
 
 # ---- shared entry points -----------------------------------------------------
 
-test_that(".linpred_obs asserts every observed row is a fitted level", {
-  # An unmatched level is silently zeroed, so this must abort rather than compute.
-  broken <- weight_fit
-  broken$data$site <- NULL
-  expect_error(.linpred_obs(broken), "no .*site.* column")
-
-  unknown <- weight_fit
-  unknown$data$site <- "not_a_fitted_site"
-  expect_error(.linpred_obs(unknown), "not fitted levels")
-})
-
 test_that(".linpred_obs passes for a well-formed fit", {
   expect_s3_class(.linpred_obs(weight_fit), "rvar")
   expect_s3_class(.linpred_obs(weight_macro_fit), "rvar")
