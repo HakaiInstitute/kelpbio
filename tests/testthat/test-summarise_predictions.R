@@ -90,8 +90,10 @@ test_that("summarise_predictions applies estimate per row, not to the rvar", {
     mean,
     6
   )
+  # colMeans() rather than repeating the apply() the function itself runs: an
+  # independent route to the same number, so the check is not a tautology
   expected <- signif(
-    apply(posterior::draws_of(.epred(weight_fit, lp)), 2L, mean),
+    colMeans(posterior::draws_of(.epred(weight_fit, lp))),
     6
   )
   expect_equal(out$estimate, expected)
