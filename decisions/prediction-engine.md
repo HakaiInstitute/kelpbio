@@ -28,11 +28,33 @@ Build the engine on the **`posterior` `rvar` datatype**:
 - The `rstantools` generics (`posterior_linpred`/`posterior_epred`/
   `posterior_predict`/`log_lik`) are thin faces over that helper, returning
   `D x N` matrices for ecosystem interop (`bayesplot`, `loo`).
-- Prediction grids are built with `newdata::xnew_data`; the predictor enters on a
-  stored-reference transform (`log(diameter) - log(diameter_ref)`, where
-  `diameter_ref` is the geometric mean of the observed diameter, computed at fit
-  time and stored in `meta$diameter_ref`) with no per-newdata rescaling step.
-  Centering log-diameter at its mean makes the diameter unit immaterial.
+- Prediction grids are built by `build_by_grid()` (`tibble::tibble()` plus
+  `dplyr::cross_join()`), which crosses the grouping levels named in `by` with the
+  fit's predictor sequence. Either side may be absent, so one builder covers a
+  curve model, a grouped-points model with no continuous predictor, and an
+  intercept-only model. An earlier draft of this record specified
+  `newdata::xnew_data`; the dependency was never taken, because the grids kelpbio
+  needs are a cross join over the fit's own stored levels and `xnew_data` is built
+  for deriving a grid from a data frame of covariates.
+- The predictor enters on a stored-reference transform (`log(diameter) -
+  log(diameter_ref)`, where `diameter_ref` is the geometric mean of the observed
+  diameter, computed at fit time and stored in `meta$predictor_ref`) with no
+  per-new_data rescaling step. Centering log-diameter at its mean makes the
+  diameter unit immaterial.
+- A rate model carries a log-scale offset (density is counts over a surveyed
+  area). The offset column is named by `meta$offset`, set at fit time, and the
+  offset is `log()` of that column read from the grid. It is added while the
+  linear predictor is still an `rvar` over grid rows, so it broadcasts
+  elementwise; adding it to a `D x N` draws matrix would recycle down columns.
+  `.linpred()` itself stays offset-free, so the mean still has one definition.
+- There is no argument selecting whether to apply it. Every path adds it, and
+  what a function returns is fixed by the grid it was given rather than by how it
+  was called: supplied rows carry the survey effort actually recorded, so the
+  row-wise verb and the generics report the response as modelled, while
+  `build_by_grid()` gives a generated grid one unit of the offset column, so a
+  `_by` verb reports the rate. Each function therefore has one contract, and no
+  caller has to learn an extra argument to know what scale it returns. The
+  neutral value is always `1` because the offset always enters as `log()`.
 - Summaries, `augment()`, and the biomass composition all reuse the same engine;
   there is no bespoke `_samples()` function.
 
@@ -70,8 +92,9 @@ Only the production `rvar` paths are used (native operators, `rvar_rng`, the
 
 ## Consequences
 
-- Dependencies: `posterior` (rvar + draws + diagnostics), `newdata` (grids),
-  `rstantools` (the prediction generics). No `mcmcr`/`mcmcderive` engine.
+- Dependencies: `posterior` (rvar + draws + diagnostics), `dplyr`/`tibble`
+  (grids), `rstantools` (the prediction generics). No `mcmcr`/`mcmcderive`
+  engine, and no `newdata`.
 - The mean is defined once per model in its `.linpred()` method; every consumer
   (generics, `augment`, `kb_predict_*`, biomass) calls it, so it is never
   re-implemented.
@@ -107,7 +130,7 @@ conditioned on its estimated random effect; a new level, or an absent grouping
 column, is handled by `new_levels` (`"sample"` draws `Normal(0, sd)`, `"average"`
 zeroes it). Known levels condition regardless of `new_levels`. This makes a mix
 of observed and new groups resolve in a single call (no bind), and lets the
-`rstantools` generics infer conditioning from `newdata` columns with no `by`
+`rstantools` generics infer conditioning from the `new_data` columns with no `by`
 argument. `new_levels` defaults to `"sample"` so an unseen group carries honest
 between-group uncertainty; `"average"` is opt-in and reports the typical group,
 not a calibrated interval for the specific new group. Later sub-models follow

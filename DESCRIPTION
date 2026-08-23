@@ -31,7 +31,7 @@ Imports:
     callr,
     chk,
     cli,
-    dplyr,
+    dplyr (>= 1.1.0),
     extras,
     generics,
     ggplot2,

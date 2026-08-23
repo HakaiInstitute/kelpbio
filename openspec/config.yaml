@@ -64,7 +64,7 @@ context: |
     Summary functions (kb_predict_*, tidy, coef) carry conf_level + sig_fig;
     fitted()/residuals() are plain accessors (numeric vectors, no interval args),
     with the full posterior available from posterior_epred(). converged()/glance()
-    default to report-mode thresholds rhat = 1.05, esr = 0.1 (esr = effective sample
+    default to report-mode thresholds rhat = 1.01, esr = 0.1 (esr = effective sample
     rate = ess_bulk / ndraws).
   - Documentation: roxygen2 with markdown; @inheritParams donor (params.R) for shared args.
   - Writing (all generated prose: proposals, design, specs): concise technical,

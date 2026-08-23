@@ -38,4 +38,3 @@
 .vld_observed_data <- function(fit) {
   nrow(fit$data) > 0L
 }
-

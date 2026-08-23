@@ -75,3 +75,34 @@ test_that("summary carries the run-level diagnostics, not the raw count", {
   expect_equal(s$ebfmi, diag$ebfmi)
 })
 
+
+test_that("fit_groups reports only the effects the fit carries", {
+  expect_named(fit_groups(weight_fit), c("site", "site:year"))
+  # macro has a year main effect (bYear), nereo does not
+  expect_named(fit_groups(weight_macro_fit), c("site", "year", "site:year"))
+})
+
+test_that("fit_groups omits site:year when the design forced it off", {
+  # tidy() and kb_model_describe() both drop the effect, so the header must too:
+  # reporting a group count for an effect the fit does not have contradicts them.
+  fit <- weight_fit
+  fit$meta$site_year_on <- FALSE
+  expect_named(fit_groups(fit), "site")
+})
+
+test_that("fit_groups is empty for a model with no grouping", {
+  # the intercept-only shape (wet/dry, carbon) once month is dropped
+  fit <- weight_fit
+  fit$meta$site_levels <- character(0)
+  fit$meta$site_year_on <- FALSE
+  fit$meta$terms$random <- character(0)
+  expect_identical(fit_groups(fit), integer(0))
+})
+
+test_that("fit_groups is not weight-specific", {
+  # nothing it reads is particular to the weight models: site and year are
+  # .group_vars(), and the effect structure comes from stored meta.
+  fit <- weight_fit
+  class(fit) <- c("kb_fit_density_nereo", "kb_fit_density", "kb_fit")
+  expect_named(fit_groups(fit), c("site", "site:year"))
+})

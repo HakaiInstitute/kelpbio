@@ -1,7 +1,7 @@
 # Seconds between progress polls in the console "bar" path.
 POLL_INTERVAL <- 0.2
 
-# Model- and species-agnostic sampling engine shared by every kb_fit_* function:
+# Model-agnostic sampling engine shared by every kb_fit_* function:
 # sample, extract draws as rvars, summarise convergence, discard the live
 # stanfit. warmup = niters, then the post-warmup phase is thinned by nthin to
 # land exactly niters draws/chain.
@@ -97,7 +97,9 @@ fit_stan <- function(
   list(
     draws = draws,
     diagnostics = c(list(summary = summary), sampler_diagnostics(stanfit)),
-    stancode = rstan::get_stancode(stanfit)
+    # as.character() drops the model_name2 attribute, which rstan sets to the
+    # temporary file name the model was compiled from.
+    stancode = as.character(rstan::get_stancode(stanfit))
   )
 }
 

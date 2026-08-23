@@ -24,7 +24,7 @@
 ) {
   draws <- fit$draws
   ix <- .grid_indices(fit, grid, representative_site)
-  log_dc <- log(grid$diameter) - log(fit$meta$diameter_ref)
+  log_dc <- log(grid$diameter) - log(fit$meta$predictor_ref)
 
   re_site <- resolve_re1(draws$bSite, ix$site, new_levels, draws$sSite, ix$rep)
   re_slope <- resolve_re1(
@@ -62,7 +62,7 @@
 ) {
   draws <- fit$draws
   ix <- .grid_indices(fit, grid, representative_site)
-  log_fc <- log(grid$fronds) - log(fit$meta$fronds_ref)
+  log_fc <- log(grid$fronds) - log(fit$meta$predictor_ref)
 
   re_site <- resolve_re1(draws$bSite, ix$site, new_levels, draws$sSite, ix$rep)
   # Year enters as a standalone main effect (unlike nereo). representative_site
@@ -86,13 +86,18 @@
 # Link-scale mean at the observed rows. Every level is a fitted level, since
 # meta$*_levels was taken from this same data frame at fit time, so new_levels is
 # immaterial here.
+#
+# The offset is always added: these rows are observations, so they carry the
+# survey effort the model was fitted against. It is 0 for a model with none.
 .linpred_obs <- function(fit) {
   .chk_observed_data(fit)
   grid <- tibble::as_tibble(fit$data)
-  .linpred(fit, grid, new_levels = "average")
+  .linpred(fit, grid, new_levels = "average") + grid_offset(fit, grid)
 }
 
 # Resolve new_data (or the observed data) into a grid plus its link-scale linpred.
+# The offset comes from the grid, so what this returns is fixed by the rows it was
+# given rather than by an argument: supplied rows carry their own survey effort.
 data_linpred <- function(
   fit,
   new_data,
@@ -112,6 +117,7 @@ data_linpred <- function(
   list(
     grid = grid,
     group_vars = intersect(.group_vars(), names(grid)),
-    linpred = .linpred(fit, grid, new_levels, representative_site)
+    linpred = .linpred(fit, grid, new_levels, representative_site) +
+      grid_offset(fit, grid)
   )
 }

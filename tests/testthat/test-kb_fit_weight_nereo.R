@@ -157,3 +157,26 @@ test_that("progress_dir writes an artifact that kb_fit_progress reads as complet
   expect_true(length(list.files(dir, pattern = "^samples.*\\.csv$")) >= 1L)
   expect_identical(kb_fit_progress(dir), 1)
 })
+
+test_that("a single-year fit records no site:year terms", {
+  skip_on_cran()
+  # site_year_structure() turns the effect off below two years, and the recorded
+  # term list must agree, since tidy()/summary() read it rather than re-deriving:
+  # sSiteYear draws that never met the likelihood are the prior, not an estimate.
+  d <- droplevels(subset(
+    data_weight_sim_nereo,
+    site %in% c("site1", "site2") & year == "2019"
+  ))
+  fit <- kb_fit_weight_nereo(
+    d,
+    chains = 1,
+    niters = 50,
+    cores = 1,
+    progress = "none",
+    seed = 7
+  )
+  expect_false(fit$meta$site_year_on)
+  expect_false("sSiteYear" %in% fit$meta$terms$fixed)
+  expect_false("bSiteYear" %in% fit$meta$terms$random)
+  expect_false("sSiteYear" %in% tidy(fit)$term)
+})

@@ -147,40 +147,36 @@ summary.kb_fit <- function(
   list(predictor = NA_character_, groups = integer(0))
 }
 
-.fit_descriptor.kb_fit_weight_macro <- function(x) {
+# One method for both species: the predictor name and its centering reference are
+# stored generically.
+.fit_descriptor.kb_fit_weight <- function(x) {
   list(
     predictor = paste0(
-      "fronds, centered at its geometric mean, ",
-      signif(x$meta$fronds_ref, 3)
+      x$meta[["predictor"]],
+      ", centered at its geometric mean, ",
+      signif(x$meta$predictor_ref, 3)
     ),
-    groups = weight_groups(x, year = TRUE)
+    groups = fit_groups(x)
   )
 }
 
-.fit_descriptor.kb_fit_weight_nereo <- function(x) {
-  list(
-    predictor = paste0(
-      "diameter, centered at its geometric mean, ",
-      signif(x$meta$diameter_ref, 3)
-    ),
-    groups = weight_groups(x)
-  )
-}
+# Level counts for the grouping factors a fit actually has.
+#
+# An effect the fit does not carry is absent rather than reported as zero, so the
+# header agrees with tidy() and kb_model_describe() about which effects exist.
+fit_groups <- function(fit) {
+  d <- as.data.frame(fit$data)
+  out <- integer(0)
 
-# Number of levels of each grouping factor in the weight model. `year` adds the
-# standalone year group count (the Macrocystis model has a year main effect).
-weight_groups <- function(x, year = FALSE) {
-  d <- as.data.frame(x$data)
-  n_site <- length(x$meta$site_levels)
-  n_year <- length(x$meta$year_levels)
-  n_site_year <- if (nrow(d) && all(c("site", "year") %in% names(d))) {
-    nrow(unique(d[c("site", "year")]))
-  } else {
-    0L
+  n_site <- length(fit$meta$site_levels)
+  if (n_site) {
+    out <- c(out, site = n_site)
   }
-  if (year) {
-    c(site = n_site, year = n_year, "site:year" = n_site_year)
-  } else {
-    c(site = n_site, "site:year" = n_site_year)
+  if ("bYear" %in% fit$meta$terms$random) {
+    out <- c(out, year = length(fit$meta$year_levels))
   }
+  if (isTRUE(fit$meta$site_year_on) && all(c("site", "year") %in% names(d))) {
+    out <- c(out, "site:year" = nrow(unique(d[c("site", "year")])))
+  }
+  out
 }

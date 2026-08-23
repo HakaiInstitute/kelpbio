@@ -121,7 +121,7 @@ kb_predict_weight.kb_fit_weight_macro <- function(
   .chk_summary_args(conf_level, estimate, sig_fig)
 
   res <- data_linpred(fit, new_data, new_levels, representative_site)
-  summarise_weight_predictions(
+  summarise_predictions(
     fit,
     res$grid,
     res$linpred,
@@ -130,43 +130,5 @@ kb_predict_weight.kb_fit_weight_macro <- function(
     estimate = estimate,
     sig_fig = sig_fig,
     curve = FALSE
-  )
-}
-
-# Shared summariser over a link-scale linpred rvar: put it on the response scale,
-# reduce to estimate/lower/upper, attach kb_predictions metadata. Used by both
-# prediction verbs so the summary is defined once. `curve` is TRUE for the
-# grid-generating `_by` verb (ribbon-eligible) and FALSE for predictions at
-# supplied rows. Takes `fit` so the response-scale transform is .epred(), the
-# same one the rstantools generics use, rather than a second hard-coded exp().
-summarise_weight_predictions <- function(
-  fit,
-  grid,
-  linpred,
-  group_vars,
-  conf_level,
-  estimate,
-  sig_fig,
-  curve = FALSE
-) {
-  epred <- .epred(fit, linpred)
-  a <- (1 - conf_level) / 2
-
-  out <- grid
-  # estimate reduces each row's posterior draws to a scalar, the same contract as
-  # in tidy()/summary(): apply it per row over the draws matrix, not to the rvar.
-  out$estimate <- signif(
-    apply(posterior::draws_of(epred), 2L, estimate),
-    sig_fig
-  )
-  out$lower <- signif(unname(posterior::quantile2(epred, a)), sig_fig)
-  out$upper <- signif(unname(posterior::quantile2(epred, 1 - a)), sig_fig)
-
-  new_kb_predictions(
-    out,
-    predictor = fit$meta$predictor %||% "diameter",
-    group_vars = group_vars,
-    response = "weight",
-    curve = curve
   )
 }

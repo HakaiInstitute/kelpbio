@@ -198,7 +198,7 @@ A `kb_fit_weight` object SHALL record `meta$predictor` and `meta$response` so th
 model-level prediction, grid, and plotting code is species-agnostic:
 `meta$predictor` is `"diameter"` for nereo and `"fronds"` for macro, and
 `meta$response` is `"weight"` for both. Macro additionally stores
-`meta$fronds_ref` (the geometric mean of the observed `fronds`, or 5 when there
+`meta$predictor_ref` (the geometric mean of the observed `fronds`, or 5 when there
 are none).
 
 #### Scenario: Predictor name is available for downstream code

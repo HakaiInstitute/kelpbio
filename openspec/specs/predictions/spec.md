@@ -24,7 +24,7 @@ Prediction is split into two verbs, each an S3 generic dispatching on the fit's 
 
 #### Scenario: Predictor enters on a stored-reference scale
 - **WHEN** predictions are formed at any predictor value
-- **THEN** the predictor enters through the transform `log(x) - log(x_ref)`, where `x_ref` is the geometric mean of the observed predictor computed at fit time and stored in `meta` (`diameter_ref` for *Nereocystis*, `fronds_ref` for *Macrocystis*); new data uses that same stored reference (no re-derivation from the new data), and centering in log space makes the predictor unit immaterial and predictions scale-invariant
+- **THEN** the predictor enters through the transform `log(x) - log(x_ref)`, where `x_ref` is the geometric mean of the observed predictor computed at fit time and stored in `meta` as `meta$predictor_ref`; new data uses that same stored reference (no re-derivation from the new data), and centering in log space makes the predictor unit immaterial and predictions scale-invariant
 
 #### Scenario: Representative site borrows a known site's main effects
 - **WHEN** `new_data` contains a site the fit never saw and `representative_site` names one or more fit sites
@@ -36,7 +36,7 @@ Prediction is split into two verbs, each an S3 generic dispatching on the fit's 
 
 #### Scenario: Macro predicts from a fronds column
 - **WHEN** `kb_predict_weight(macro_fit, new_data)` is called with `new_data` carrying a `fronds` column
-- **THEN** predictions are returned at those rows, with `fronds` entering through `log(fronds) - log(fronds_ref)` using the stored `meta$fronds_ref`
+- **THEN** predictions are returned at those rows, with `fronds` entering through `log(fronds) - log(fronds_ref)` using the stored `meta$predictor_ref`
 
 #### Scenario: Wrong predictor column errors
 - **WHEN** `new_data` lacks the fit's predictor column (e.g. a `diameter` column passed to a *Macrocystis* fit)

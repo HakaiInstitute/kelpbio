@@ -126,15 +126,34 @@ kb_fit_weight_nereo <- function(
     ...
   )
 
-  new_kb_fit_weight(
+  new_kb_fit(
     core,
     data = data,
     priors = priors,
+    model = "weight",
     species = "nereocystis",
+    # Weight is measured per plant, not per unit of survey effort.
+    offset = NULL,
+    terms = list(
+      fixed = c(
+        "bWeight",
+        "bDiameter",
+        "bDiameter2",
+        "sSite",
+        "sSiteDiameter",
+        if (site_year$on) "sSiteYear",
+        "sWeight"
+      ),
+      random = c(
+        "bSite",
+        "bSiteDiameter",
+        if (site_year$on) "bSiteYear"
+      )
+    ),
     prior_only = prior_only,
     nthin = as.integer(nthin),
     meta_extra = list(
-      diameter_ref = diameter_ref,
+      predictor_ref = diameter_ref,
       site_year_on = site_year$on,
       nu = 4,
       # Predictor/response column names let the model-level prediction and plot
@@ -142,43 +161,5 @@ kb_fit_weight_nereo <- function(
       predictor = "diameter",
       response = "weight"
     )
-  )
-}
-
-# Each species is a subclass (c("kb_fit_weight_<species>", "kb_fit_weight",
-# "kb_fit")) so species-varying methods dispatch on it, not on meta$species.
-# See decisions/species-as-variant.md.
-new_kb_fit_weight <- function(
-  core,
-  data,
-  priors,
-  species,
-  prior_only,
-  nthin,
-  meta_extra = list()
-) {
-  species_tag <- c(nereocystis = "nereo", macrocystis = "macro")[[species]]
-
-  meta <- c(
-    list(
-      species = species,
-      prior_only = prior_only,
-      priors = priors,
-      stancode = core$stancode,
-      site_levels = levels(factor(data$site)),
-      year_levels = levels(factor(data$year)),
-      nthin = nthin
-    ),
-    meta_extra
-  )
-
-  structure(
-    list(
-      draws = core$draws,
-      diagnostics = core$diagnostics,
-      data = data,
-      meta = meta
-    ),
-    class = c(paste0("kb_fit_weight_", species_tag), "kb_fit_weight", "kb_fit")
   )
 }
