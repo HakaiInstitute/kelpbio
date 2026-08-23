@@ -81,7 +81,6 @@ test_that("every internal generic has a default, and only display ones are total
     aborting,
     c(
       ".add_noise",
-      ".chk_by",
       ".chk_new_data",
       ".deviance",
       ".epred",

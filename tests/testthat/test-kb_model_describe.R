@@ -13,7 +13,7 @@ test_that("kb_model_describe renders a methods paragraph with prose = TRUE", {
 test_that("the notation uses package parameter names and the stored priors", {
   out <- capture.output(kb_model_describe(weight_fit))
   # equation symbols match the coefficient-table terms
-  expect_true(any(grepl("bDiameter", out)))
+  expect_true(any(grepl("bLogPower", out)))
   expect_true(any(grepl("sSite", out)))
   # priors rendered from the fit's stored priors
   expect_true(any(grepl("Normal\\(", out)))

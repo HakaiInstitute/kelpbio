@@ -27,7 +27,9 @@ priors$sd_site <- kb_prior_exponential(2)
 }
 \seealso{
 Other priors:
+\code{\link[=kb_prior_beta]{kb_prior_beta()}},
 \code{\link[=kb_prior_exponential]{kb_prior_exponential()}},
+\code{\link[=kb_prior_gamma]{kb_prior_gamma()}},
 \code{\link[=kb_prior_normal]{kb_prior_normal()}},
 \code{\link[=kb_priors_weight_nereo]{kb_priors_weight_nereo()}}
 }

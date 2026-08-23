@@ -15,6 +15,9 @@
 }
 
 # Nereocystis weight-model mean (log scale), a posterior rvar over grid rows.
+# Packard's three-parameter power form on the centered diameter ratio, mirroring
+# inst/stan/weight_nereo.stan: the exponent varies by site on the log scale, so it
+# is positive and the curve is monotone within every site.
 #' @export
 .linpred.kb_fit_weight_nereo <- function(
   fit,
@@ -27,13 +30,16 @@
   log_dc <- log(grid$diameter) - log(fit$meta$predictor_ref)
 
   re_site <- resolve_re1(draws$bSite, ix$site, new_levels, draws$sSite, ix$rep)
-  re_slope <- resolve_re1(
-    draws$bSiteDiameter,
+  # representative_site borrows the site intercept and exponent, so both take
+  # ix$rep; year is a standalone effect and follows new_levels regardless.
+  re_power <- resolve_re1(
+    draws$bSitePower,
     ix$site,
     new_levels,
-    draws$sSiteDiameter,
+    draws$sSitePower,
     ix$rep
   )
+  re_year <- resolve_re1(draws$bYear, ix$year, new_levels, draws$sYear)
   # When the fit omitted the site:year effect its draws are prior-only noise, so
   # predictions must add nothing rather than reintroduce spurious variation.
   re_sy <- if (.site_year_on(fit)) {
@@ -42,11 +48,13 @@
     0
   }
 
+  power <- exp(draws$bLogPower + re_power)
+  floor <- draws$bFloor
+
   draws$bWeight +
-    draws$bDiameter * log_dc +
-    draws$bDiameter2 * log_dc^2 +
     re_site +
-    re_slope * log_dc +
+    re_year +
+    log(floor + (1 - floor) * exp(power * log_dc)) +
     re_sy
 }
 

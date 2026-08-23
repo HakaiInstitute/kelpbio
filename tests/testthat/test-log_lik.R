@@ -30,11 +30,12 @@ test_that("nereo log_lik matches the Student-t density computed directly", {
   mu <- posterior_linpred(weight_fit)
   sw <- as.vector(posterior::draws_of(weight_fit$draws$sWeight))
   y <- log(weight_fit$data$weight)
-  nu <- weight_fit$meta$nu
+  # nu is estimated, so the degrees of freedom vary by draw alongside sWeight
+  nu <- as.vector(posterior::draws_of(weight_fit$draws$bNu))
   expected <- t(vapply(
     seq_along(sw),
     function(d) {
-      stats::dt((y - mu[d, ]) / sw[d], df = nu, log = TRUE) - log(sw[d])
+      stats::dt((y - mu[d, ]) / sw[d], df = nu[d], log = TRUE) - log(sw[d])
     },
     numeric(length(y))
   ))

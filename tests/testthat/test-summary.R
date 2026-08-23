@@ -13,7 +13,7 @@ test_that("summary excludes group-level deviations by default", {
   expect_false(any(grepl("^bSite\\[", s$coefficients$term)))
   # the random-effect SD hyperparameters are always shown
   expect_true(all(
-    c("sSite", "sSiteDiameter", "sSiteYear", "sWeight") %in% s$coefficients$term
+    c("sSite", "sYear", "sSitePower", "sSiteYear", "sWeight") %in% s$coefficients$term
   ))
 })
 
@@ -29,7 +29,7 @@ test_that("summary carries the slim fit metadata (no structure lines)", {
   s <- summary(weight_fit)
   expect_equal(s$model, "Weight")
   expect_equal(s$species, "Nereocystis luetkeana")
-  expect_named(s$groups, c("site", "site:year"))
+  expect_named(s$groups, c("site", "year", "site:year"))
   expect_equal(s$ndraws, posterior::ndraws(weight_fit$draws))
   # likelihood family and fixed/random structure moved to kb_model_describe()
   expect_null(s$family)
@@ -76,33 +76,35 @@ test_that("summary carries the run-level diagnostics, not the raw count", {
 })
 
 
-test_that("fit_groups reports only the effects the fit carries", {
-  expect_named(fit_groups(weight_fit), c("site", "site:year"))
-  # macro has a year main effect (bYear), nereo does not
+test_that("fit_groups counts every grouping factor the data carry", {
+  expect_named(fit_groups(weight_fit), c("site", "year", "site:year"))
   expect_named(fit_groups(weight_macro_fit), c("site", "year", "site:year"))
 })
 
-test_that("fit_groups omits site:year when the design forced it off", {
-  # tidy() and kb_model_describe() both drop the effect, so the header must too:
-  # reporting a group count for an effect the fit does not have contradicts them.
+test_that("fit_groups describes the data, not the fitted effects", {
+  # print()/summary() label the line "Data:", so a site:year count is correct even
+  # for a fit whose site:year effect the design forced off. Which effects the model
+  # carries is kb_model_describe()'s job.
   fit <- weight_fit
   fit$meta$site_year_on <- FALSE
-  expect_named(fit_groups(fit), "site")
+  expect_named(fit_groups(fit), c("site", "year", "site:year"))
 })
 
-test_that("fit_groups is empty for a model with no grouping", {
+test_that("fit_groups is empty for data with no grouping", {
   # the intercept-only shape (wet/dry, carbon) once month is dropped
   fit <- weight_fit
-  fit$meta$site_levels <- character(0)
-  fit$meta$site_year_on <- FALSE
-  fit$meta$terms$random <- character(0)
+  fit$meta[c("site_levels", "year_levels", "site_year_levels")] <- list(
+    character(0),
+    character(0),
+    character(0)
+  )
   expect_identical(fit_groups(fit), integer(0))
 })
 
 test_that("fit_groups is not weight-specific", {
   # nothing it reads is particular to the weight models: site and year are
-  # .group_vars(), and the effect structure comes from stored meta.
+  # .group_vars(), and all three level vectors are recorded on any fit.
   fit <- weight_fit
   class(fit) <- c("kb_fit_density_nereo", "kb_fit_density", "kb_fit")
-  expect_named(fit_groups(fit), c("site", "site:year"))
+  expect_named(fit_groups(fit), c("site", "year", "site:year"))
 })

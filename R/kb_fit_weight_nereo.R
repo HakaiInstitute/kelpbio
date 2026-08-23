@@ -105,14 +105,17 @@ kb_fit_weight_nereo <- function(
     stan_data,
     param_vars = c(
       "bWeight",
-      "bDiameter",
-      "bDiameter2",
+      "bLogPower",
+      "bFloor",
+      "bNu",
       "sSite",
-      "sSiteDiameter",
+      "sYear",
+      "sSitePower",
       "sSiteYear",
       "sWeight",
       "bSite",
-      "bSiteDiameter",
+      "bYear",
+      "bSitePower",
       "bSiteYear"
     ),
     chains = chains,
@@ -137,16 +140,19 @@ kb_fit_weight_nereo <- function(
     terms = list(
       fixed = c(
         "bWeight",
-        "bDiameter",
-        "bDiameter2",
+        "bLogPower",
+        "bFloor",
+        "bNu",
         "sSite",
-        "sSiteDiameter",
+        "sYear",
+        "sSitePower",
         if (site_year$on) "sSiteYear",
         "sWeight"
       ),
       random = c(
         "bSite",
-        "bSiteDiameter",
+        "bYear",
+        "bSitePower",
         if (site_year$on) "bSiteYear"
       )
     ),
@@ -155,7 +161,6 @@ kb_fit_weight_nereo <- function(
     meta_extra = list(
       predictor_ref = diameter_ref,
       site_year_on = site_year$on,
-      nu = 4,
       # Predictor/response column names let the model-level prediction and plot
       # code stay species-agnostic (macro uses "fronds").
       predictor = "diameter",

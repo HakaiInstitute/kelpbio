@@ -85,10 +85,8 @@ typical-group curve), while \code{"sample"} draws a new random effect from its
 estimated distribution, widening the uncertainty to include between-group
 variation. Set a seed with \code{set.seed()} for reproducible \code{"sample"} intervals.
 
-The available \code{by} values are \code{NULL} (a single population curve), \code{"site"}, and
-\code{c("site", "year")} for both species; the \emph{Macrocystis} model additionally
-allows \code{"year"}, since it has a year main effect (the \emph{Nereocystis} model does
-not, so \code{by = "year"} errors there).
+The available \code{by} values are \code{NULL} (a single population curve), \code{"site"},
+\code{"year"}, and \code{c("site", "year")}.
 }
 \section{Methods (by class)}{
 \itemize{

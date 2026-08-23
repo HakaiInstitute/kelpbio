@@ -13,18 +13,9 @@ test_that("validate_by rejects a factor no model groups by", {
   expect_error(validate_by(weight_fit, 1), "character")
 })
 
-test_that("the available combinations follow the fit, not a species string", {
-  # Nereo has no year main effect, so year alone is unavailable; macro has one.
-  expect_error(validate_by(weight_fit, "year"), "not available")
+test_that("year alone is available for both species", {
+  # Both weight models carry a year main effect, so the grouping axis no longer
+  # varies by species and needs no per-model rule.
+  expect_identical(validate_by(weight_fit, "year"), "year")
   expect_identical(validate_by(weight_macro_fit, "year"), "year")
-  # Nereo still allows year alongside site, where it enters as the interaction.
-  expect_identical(
-    validate_by(weight_fit, c("site", "year")),
-    c("site", "year")
-  )
-})
-
-test_that(".chk_by returns the grouping invisibly when it is available", {
-  expect_invisible(.chk_by(weight_macro_fit, "year"))
-  expect_identical(.chk_by(weight_fit, "site"), "site")
 })
