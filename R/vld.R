@@ -34,3 +34,8 @@
   is.null(x) ||
     (is.character(x) && length(x) == 1L && !is.na(x) && dir.exists(x))
 }
+
+.vld_observed_data <- function(fit) {
+  nrow(fit$data) > 0L
+}
+

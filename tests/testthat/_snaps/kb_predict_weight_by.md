@@ -5,7 +5,7 @@
     Condition
       Error in `kb_predict_weight_by()`:
       ! `fit` must be a <kb_fit_weight> object.
-      i Create one with a `kb_fit_weight_*()` fitting function.
+      i Supported fits are created by the `kb_fit_weight_*()` functions.
 
 # kb_predict_weight_by errors on a weight fit with no species method
 

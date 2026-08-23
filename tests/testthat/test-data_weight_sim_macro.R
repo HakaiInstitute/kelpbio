@@ -9,6 +9,8 @@ test_that("data_weight_sim_macro matches its documented format", {
   expect_equal(nlevels(data_weight_sim_macro$site), 10L)
   expect_equal(nlevels(data_weight_sim_macro$year), 4L)
   expect_true(all(data_weight_sim_macro$fronds > 0))
-  expect_true(all(data_weight_sim_macro$fronds == round(data_weight_sim_macro$fronds)))
+  expect_true(all(
+    data_weight_sim_macro$fronds == round(data_weight_sim_macro$fronds)
+  ))
   expect_true(all(data_weight_sim_macro$weight > 0))
 })

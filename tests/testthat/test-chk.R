@@ -98,3 +98,21 @@ test_that(".chk_representative_site passes NULL/known sites and errors on unknow
     .chk_representative_site(weight_fit, "not_a_site")
   )
 })
+
+test_that("the .chk_new_data default aborts for a fit with no method", {
+  expect_error(
+    .chk_new_data(
+      structure(list(), class = c("kb_fit_other", "kb_fit")),
+      data.frame()
+    ),
+    "no method for a <kb_fit_other>"
+  )
+})
+
+test_that(".chk_observed_data rejects a fit with no rows to predict at", {
+  # Without it the failure surfaces as a posterior broadcast error from .linpred().
+  fit0 <- weight_fit
+  fit0$data <- fit0$data[0, ]
+  expect_error(.chk_observed_data(fit0), "no observed data")
+  expect_invisible(.chk_observed_data(weight_fit))
+})

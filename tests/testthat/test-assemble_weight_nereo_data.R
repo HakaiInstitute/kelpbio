@@ -43,7 +43,12 @@ test_that("assemble_weight_nereo_data maps every prior hyperparameter to its own
     sd_site_year = kb_prior_exponential(2.3),
     sd_residual = kb_prior_exponential(2.4)
   )
-  sd <- assemble_weight_nereo_data(data, priors, diameter_ref = 30, prior_only = FALSE)
+  sd <- assemble_weight_nereo_data(
+    data,
+    priors,
+    diameter_ref = 30,
+    prior_only = FALSE
+  )
   expect_equal(sd$prior_intercept_mu, 0.1)
   expect_equal(sd$prior_intercept_sd, 1.1)
   expect_equal(sd$prior_diameter_mu, 0.2)

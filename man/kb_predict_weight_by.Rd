@@ -50,7 +50,8 @@ random effects that are not conditioned on are treated (factors absent from
 the prediction, and any new level not seen in the fit). \code{"sample"} draws a
 new random effect from \code{Normal(0, sd)}, widening the interval to include
 between-group variation; \code{"average"} holds the random effects at zero,
-giving the typical group. Known levels are always conditioned on. \code{"sample"}
+giving the typical (median) group rather than the average over the
+random-effect distribution. Known levels are always conditioned on. \code{"sample"}
 draws fresh randomness on each call, so set a seed with \code{set.seed()} for a
 reproducible interval.}
 

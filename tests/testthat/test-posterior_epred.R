@@ -17,3 +17,22 @@ test_that("new_data = NULL conditions on observed groups, agreeing with augment"
   med <- apply(m, 2, stats::median)
   expect_equal(med, augment(weight_fit)$fitted, tolerance = 1e-8)
 })
+
+test_that("posterior_epred agrees with posterior_linpred(transform = TRUE)", {
+  # They coincide by model property, not construction: the two differ only for a
+  # mixture likelihood, so a zero-inflated model must make this fail deliberately.
+  fits <- list(nereo = weight_fit, macro = weight_macro_fit)
+  for (species in names(fits)) {
+    fit <- fits[[species]]
+    expect_equal(
+      posterior_epred(fit, new_data = NULL, new_levels = "average"),
+      posterior_linpred(
+        fit,
+        transform = TRUE,
+        new_data = NULL,
+        new_levels = "average"
+      ),
+      info = species
+    )
+  }
+})

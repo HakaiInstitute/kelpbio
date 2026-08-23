@@ -29,15 +29,18 @@ random effects that are not conditioned on are treated (factors absent from
 the prediction, and any new level not seen in the fit). \code{"sample"} draws a
 new random effect from \code{Normal(0, sd)}, widening the interval to include
 between-group variation; \code{"average"} holds the random effects at zero,
-giving the typical group. Known levels are always conditioned on. \code{"sample"}
+giving the typical (median) group rather than the average over the
+random-effect distribution. Known levels are always conditioned on. \code{"sample"}
 draws fresh randomness on each call, so set a seed with \code{set.seed()} for a
 reproducible interval.}
 
 \item{representative_site}{A character vector of site levels present in the
-fit, or \code{NULL} (the default). When supplied, a new or absent site takes its
-site main effects (intercept and slope) from the named reference site (the
-per-draw average when several are named), instead of the \code{new_levels}
-treatment; the \code{site:year} interaction still follows \code{new_levels}.}
+fit, or \code{NULL} (the default). When supplied, a new or absent site takes the
+named reference site's site-level effects (the per-draw average when several
+are named) instead of the \code{new_levels} treatment: for \emph{Nereocystis} both the
+site intercept and the site slope, for \emph{Macrocystis} the site intercept, which
+is its only site-level effect. Any \code{site:year} interaction still follows
+\code{new_levels}.}
 
 \item{conf_level}{A number between 0 and 1 giving the compatibility-interval
 level.}
@@ -63,17 +66,17 @@ Other generics:
 \code{\link[=augment.kb_fit]{augment.kb_fit()}},
 \code{\link[=coef.kb_fit]{coef.kb_fit()}},
 \code{\link[=converged.kb_fit]{converged.kb_fit()}},
-\code{\link[=fitted.kb_fit_weight]{fitted.kb_fit_weight()}},
+\code{\link[=fitted.kb_fit]{fitted.kb_fit()}},
 \code{\link[=glance.kb_fit]{glance.kb_fit()}},
 \code{\link[=kb_stancode]{kb_stancode()}},
-\code{\link[=log_lik.kb_fit_weight]{log_lik.kb_fit_weight()}},
-\code{\link[=posterior_epred.kb_fit_weight]{posterior_epred.kb_fit_weight()}},
-\code{\link[=posterior_linpred.kb_fit_weight]{posterior_linpred.kb_fit_weight()}},
-\code{\link[=posterior_predict.kb_fit_weight]{posterior_predict.kb_fit_weight()}},
+\code{\link[=log_lik.kb_fit]{log_lik.kb_fit()}},
+\code{\link[=posterior_epred.kb_fit]{posterior_epred.kb_fit()}},
+\code{\link[=posterior_linpred.kb_fit]{posterior_linpred.kb_fit()}},
+\code{\link[=posterior_predict.kb_fit]{posterior_predict.kb_fit()}},
 \code{\link[=prior_summary.kb_fit]{prior_summary.kb_fit()}},
-\code{\link[=residuals.kb_fit_weight]{residuals.kb_fit_weight()}},
+\code{\link[=residuals.kb_fit]{residuals.kb_fit()}},
 \code{\link[=samples]{samples()}},
 \code{\link[=summary.kb_fit]{summary.kb_fit()}},
-\code{\link[=tidy.kb_fit_weight]{tidy.kb_fit_weight()}}
+\code{\link[=tidy.kb_fit]{tidy.kb_fit()}}
 }
 \concept{generics}

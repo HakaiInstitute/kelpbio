@@ -21,9 +21,10 @@ vectorised R over `posterior` draws matrices; (B) Stan `generated quantities` vi
 
 Build the engine on the **`posterior` `rvar` datatype**:
 
-- Per-model prediction is `rvar` arithmetic in one helper, `.weight_linpred()`
+- Per-model prediction is `rvar` arithmetic in one internal generic, `.linpred()`
   (the single R source of truth for the mean; the Stan `transformed parameters`
-  block is the only other place the mean is defined).
+  block is the only other place the mean is defined), with one method per fit
+  subclass in `R/linpred.R`.
 - The `rstantools` generics (`posterior_linpred`/`posterior_epred`/
   `posterior_predict`/`log_lik`) are thin faces over that helper, returning
   `D x N` matrices for ecosystem interop (`bayesplot`, `loo`).
@@ -52,7 +53,7 @@ were speed, dependencies, and code clarity:
 - **Stan GQ (B)** is fastest on the heavy biomass integral (compiled), but
   composing independently-fit models forces bespoke `gqs` plumbing, and the
   `by`/`uncertainty`/arbitrary-`new_data` combinatorics are rigid and require
-  recompilation. Held in reserve only for the biomass kernel if it ever becomes a
+  recompilation. Held in reserve only for the biomass composition if it ever becomes a
   measured bottleneck.
 - **raw matrices (A)** are fastest and lightest but require manual draw-vs-data
   broadcasting (`outer`/`sweep`), whose row/column asymmetry is a silent-wrong-
@@ -71,10 +72,10 @@ Only the production `rvar` paths are used (native operators, `rvar_rng`, the
 
 - Dependencies: `posterior` (rvar + draws + diagnostics), `newdata` (grids),
   `rstantools` (the prediction generics). No `mcmcr`/`mcmcderive` engine.
-- The mean is defined once per model in `.weight_linpred()`; every consumer
+- The mean is defined once per model in its `.linpred()` method; every consumer
   (generics, `augment`, `kb_predict_*`, biomass) calls it, so it is never
   re-implemented.
-- The biomass kernel may drop to `posterior::draws_of()` matrices for speed where
+- The biomass composition may drop to `posterior::draws_of()` matrices for speed where
   needed; the result is identical and re-wrapped as an `rvar`.
 ## Cross-model prediction contract
 
@@ -101,7 +102,7 @@ the `fct_lump_n`/`fct_lump_prop` precedent):
 a prediction entry point.
 
 Conditioning is resolved **per row, per factor** by level membership, in the
-shared `.weight_linpred()` engine: a row whose grouping level is known is
+shared `.linpred()` engine: a row whose grouping level is known is
 conditioned on its estimated random effect; a new level, or an absent grouping
 column, is handled by `new_levels` (`"sample"` draws `Normal(0, sd)`, `"average"`
 zeroes it). Known levels condition regardless of `new_levels`. This makes a mix

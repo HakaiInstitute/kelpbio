@@ -73,15 +73,18 @@ random effects that are not conditioned on are treated (factors absent from
 the prediction, and any new level not seen in the fit). \code{"sample"} draws a
 new random effect from \code{Normal(0, sd)}, widening the interval to include
 between-group variation; \code{"average"} holds the random effects at zero,
-giving the typical group. Known levels are always conditioned on. \code{"sample"}
+giving the typical (median) group rather than the average over the
+random-effect distribution. Known levels are always conditioned on. \code{"sample"}
 draws fresh randomness on each call, so set a seed with \code{set.seed()} for a
 reproducible interval.}
 
 \item{representative_site}{A character vector of site levels present in the
-fit, or \code{NULL} (the default). When supplied, a new or absent site takes its
-site main effects (intercept and slope) from the named reference site (the
-per-draw average when several are named), instead of the \code{new_levels}
-treatment; the \code{site:year} interaction still follows \code{new_levels}.}
+fit, or \code{NULL} (the default). When supplied, a new or absent site takes the
+named reference site's site-level effects (the per-draw average when several
+are named) instead of the \code{new_levels} treatment: for \emph{Nereocystis} both the
+site intercept and the site slope, for \emph{Macrocystis} the site intercept, which
+is its only site-level effect. Any \code{site:year} interaction still follows
+\code{new_levels}.}
 }
 \description{
 Default parameter descriptions which may be overridden in individual

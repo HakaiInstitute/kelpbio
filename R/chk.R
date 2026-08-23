@@ -13,7 +13,7 @@
   cli::cli_abort(
     c(
       "{.arg {x_name}} must be a {.cls kb_fit} object.",
-      i = "Create one with a {.code kb_fit_*()} fitting function."
+      i = "Supported fits are created by the {.code kb_fit_*()} functions."
     ),
     call = call
   )
@@ -30,7 +30,7 @@
   cli::cli_abort(
     c(
       "{.arg {x_name}} must be a {.cls kb_fit_weight} object.",
-      i = "Create one with a {.code kb_fit_weight_*()} fitting function."
+      i = "Supported fits are created by the {.code kb_fit_weight_*()} functions."
     ),
     call = call
   )
@@ -139,7 +139,9 @@
 # Contextual bundle like .chk_sampler_args(): no single-boolean .vld_ partner.
 # Extra dots beyond the predictor are left to the method's rlang::check_dots_empty().
 .chk_wrong_predictor <- function(fit, ..., call = rlang::caller_env()) {
-  right <- c(nereocystis = "diameter", macrocystis = "fronds")[[fit$meta$species]]
+  right <- c(nereocystis = "diameter", macrocystis = "fronds")[[
+    fit$meta$species
+  ]]
   wrong <- setdiff(c("diameter", "fronds"), right)
   if (wrong %in% rlang::names2(rlang::list2(...))) {
     cli::cli_abort(
@@ -151,4 +153,40 @@
     )
   }
   invisible(fit)
+}
+
+# Every path that predicts at the stored data needs rows to predict at. Without
+# this the failure surfaces as a posterior broadcast error from inside .linpred().
+.chk_observed_data <- function(fit, call = rlang::caller_env()) {
+  if (.vld_observed_data(fit)) {
+    return(invisible(fit))
+  }
+  cli::cli_abort(
+    c(
+      "A zero-observation fit has no observed data to predict at.",
+      i = "Supply {.arg new_data}, or fit the model to data."
+    ),
+    call = call
+  )
+}
+
+
+# Validate new_data's predictor column.
+.chk_new_data <- function(fit, new_data) {
+  UseMethod(".chk_new_data")
+}
+
+#' @export
+.chk_new_data.default <- function(fit, new_data) {
+  .abort_no_method(x = fit, call = NULL)
+}
+
+#' @export
+.chk_new_data.kb_fit_weight_nereo <- function(fit, new_data) {
+  .chk_new_data_weight_nereo(new_data)
+}
+
+#' @export
+.chk_new_data.kb_fit_weight_macro <- function(fit, new_data) {
+  .chk_new_data_weight_macro(new_data)
 }

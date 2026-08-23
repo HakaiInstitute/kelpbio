@@ -48,3 +48,31 @@ test_that("tidy forwards conf_level/estimate/sig_fig to the summariser", {
   t2 <- tidy(weight_fit, sig_fig = 2)
   expect_equal(t2$estimate, signif(t2$estimate, 2))
 })
+
+test_that("the internal generic's default aborts for a fit with no method", {
+  # The only guard once the public method accepts any kb_fit.
+  expect_error(
+    .terms(structure(list(), class = c("kb_fit_other", "kb_fit")), FALSE),
+    "no method for a <kb_fit_other>"
+  )
+})
+
+test_that("a dropped site:year effect is not reported as an estimate", {
+  # Its draws never met the likelihood, so they are the prior, not a posterior.
+  fits <- list(nereo = weight_fit, macro = weight_macro_fit)
+  for (species in names(fits)) {
+    fit <- fits[[species]]
+    off <- fit
+    off$meta$site_year_on <- FALSE
+    expect_false("sSiteYear" %in% tidy(off)$term, info = species)
+    expect_false(
+      any(startsWith(
+        tidy(off, include_random_effects = TRUE)$term,
+        "bSiteYear"
+      )),
+      info = species
+    )
+    # and it is still reported when the fit kept the effect
+    expect_true("sSiteYear" %in% tidy(fit)$term, info = species)
+  }
+})

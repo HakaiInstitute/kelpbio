@@ -71,7 +71,13 @@ kb_predict_weight.kb_fit_weight_nereo <- function(
 ) {
   rlang::check_dots_empty()
   .kb_predict_weight(
-    fit, new_data, new_levels, representative_site, conf_level, estimate, sig_fig
+    fit,
+    new_data,
+    new_levels,
+    representative_site,
+    conf_level,
+    estimate,
+    sig_fig
   )
 }
 
@@ -90,7 +96,13 @@ kb_predict_weight.kb_fit_weight_macro <- function(
 ) {
   rlang::check_dots_empty()
   .kb_predict_weight(
-    fit, new_data, new_levels, representative_site, conf_level, estimate, sig_fig
+    fit,
+    new_data,
+    new_levels,
+    representative_site,
+    conf_level,
+    estimate,
+    sig_fig
   )
 }
 
@@ -108,12 +120,12 @@ kb_predict_weight.kb_fit_weight_macro <- function(
   .chk_representative_site(fit, representative_site)
   .chk_summary_args(conf_level, estimate, sig_fig)
 
-  res <- weight_data_linpred(fit, new_data, new_levels, representative_site)
+  res <- data_linpred(fit, new_data, new_levels, representative_site)
   summarise_weight_predictions(
+    fit,
     res$grid,
     res$linpred,
     res$group_vars,
-    predictor = fit$meta$predictor %||% "diameter",
     conf_level = conf_level,
     estimate = estimate,
     sig_fig = sig_fig,
@@ -121,21 +133,23 @@ kb_predict_weight.kb_fit_weight_macro <- function(
   )
 }
 
-# Shared summariser over a log-scale linpred rvar: exponentiate, reduce to
-# estimate/lower/upper, attach kb_predictions metadata. Used by both prediction
-# verbs so the summary is defined once. `curve` is TRUE for the grid-generating
-# `_by` verb (ribbon-eligible) and FALSE for predictions at supplied rows.
+# Shared summariser over a link-scale linpred rvar: put it on the response scale,
+# reduce to estimate/lower/upper, attach kb_predictions metadata. Used by both
+# prediction verbs so the summary is defined once. `curve` is TRUE for the
+# grid-generating `_by` verb (ribbon-eligible) and FALSE for predictions at
+# supplied rows. Takes `fit` so the response-scale transform is .epred(), the
+# same one the rstantools generics use, rather than a second hard-coded exp().
 summarise_weight_predictions <- function(
+  fit,
   grid,
   linpred,
   group_vars,
-  predictor,
   conf_level,
   estimate,
   sig_fig,
   curve = FALSE
 ) {
-  epred <- exp(linpred)
+  epred <- .epred(fit, linpred)
   a <- (1 - conf_level) / 2
 
   out <- grid
@@ -150,7 +164,7 @@ summarise_weight_predictions <- function(
 
   new_kb_predictions(
     out,
-    predictor = predictor,
+    predictor = fit$meta$predictor %||% "diameter",
     group_vars = group_vars,
     response = "weight",
     curve = curve

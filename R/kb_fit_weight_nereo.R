@@ -146,7 +146,7 @@ kb_fit_weight_nereo <- function(
 }
 
 # Each species is a subclass (c("kb_fit_weight_<species>", "kb_fit_weight",
-# "kb_fit")) so species-varying kernels dispatch on it, not on meta$species.
+# "kb_fit")) so species-varying methods dispatch on it, not on meta$species.
 # See decisions/species-as-variant.md.
 new_kb_fit_weight <- function(
   core,

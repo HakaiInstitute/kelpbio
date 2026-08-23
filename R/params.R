@@ -54,14 +54,17 @@
 #'   the prediction, and any new level not seen in the fit). `"sample"` draws a
 #'   new random effect from `Normal(0, sd)`, widening the interval to include
 #'   between-group variation; `"average"` holds the random effects at zero,
-#'   giving the typical group. Known levels are always conditioned on. `"sample"`
+#'   giving the typical (median) group rather than the average over the
+#'   random-effect distribution. Known levels are always conditioned on. `"sample"`
 #'   draws fresh randomness on each call, so set a seed with `set.seed()` for a
 #'   reproducible interval.
 #' @param representative_site A character vector of site levels present in the
-#'   fit, or `NULL` (the default). When supplied, a new or absent site takes its
-#'   site main effects (intercept and slope) from the named reference site (the
-#'   per-draw average when several are named), instead of the `new_levels`
-#'   treatment; the `site:year` interaction still follows `new_levels`.
+#'   fit, or `NULL` (the default). When supplied, a new or absent site takes the
+#'   named reference site's site-level effects (the per-draw average when several
+#'   are named) instead of the `new_levels` treatment: for *Nereocystis* both the
+#'   site intercept and the site slope, for *Macrocystis* the site intercept, which
+#'   is its only site-level effect. Any `site:year` interaction still follows
+#'   `new_levels`.
 #' @keywords internal
 #' @aliases parameters arguments args
 #' @usage NULL

@@ -124,7 +124,10 @@ test_that("zero-row data is accepted under prior_only", {
 })
 
 test_that("progress accepts only the three modes", {
-  d <- droplevels(subset(data_weight_sim_nereo, site == "site1" & year == "2019"))
+  d <- droplevels(subset(
+    data_weight_sim_nereo,
+    site == "site1" & year == "2019"
+  ))
   expect_error(kb_fit_weight_nereo(d, progress = "loud"), "must be one of")
 })
 
