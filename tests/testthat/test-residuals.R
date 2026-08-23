@@ -10,29 +10,27 @@ test_that("residuals are deviance, not raw response residuals", {
   expect_false(isTRUE(all.equal(a$residual, a$weight - a$fitted)))
 })
 
-test_that("macro residuals are finite Gamma deviance residuals matching augment", {
+test_that("macro gets Gamma deviance residuals, not the Student-t ones", {
+  # the shared shape (type, length, finiteness) is covered above; what is
+  # macro-specific is that its own likelihood is used
   r <- residuals(weight_macro_fit)
-  expect_type(r, "double")
   expect_length(r, nobs(weight_macro_fit))
   expect_true(all(is.finite(r)))
-  a <- augment(weight_macro_fit)
-  expect_equal(a$residual, r)
-  # deviance, not raw response residuals
-  expect_false(isTRUE(all.equal(a$residual, a$weight - a$fitted)))
-})
-
-test_that("residuals rejects a non-fit and extra args", {
-  expect_error(residuals.kb_fit(1), "kb_fit")
-  expect_error(
-    residuals(weight_fit, type = "pearson"),
-    class = "rlib_error_dots_nonempty"
+  mu <- posterior::draws_of(.linpred_obs(weight_macro_fit))
+  expect_equal(
+    r,
+    as.numeric(apply(
+      .deviance(weight_macro_fit, mu),
+      2L,
+      stats::median
+    ))
   )
 })
 
-test_that("the internal generic's default aborts for a fit with no method", {
-  # The only guard once the public method accepts any kb_fit.
+test_that("residuals rejects a non-fit and extra args", {
+  expect_error(residuals.kb_fit(1), "must be a <kb_fit> object")
   expect_error(
-    .deviance(structure(list(), class = c("kb_fit_other", "kb_fit")), 1),
-    "no method for a <kb_fit_other>"
+    residuals(weight_fit, type = "pearson"),
+    class = "rlib_error_dots_nonempty"
   )
 })

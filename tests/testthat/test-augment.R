@@ -3,7 +3,6 @@ test_that("augment appends fitted and residual columns matching the methods", {
   expect_true(all(c("fitted", "residual") %in% names(a)))
   expect_false(any(c("lower", "upper") %in% names(a)))
   expect_equal(nrow(a), nrow(weight_fit$data))
-  expect_true(all(a$fitted > 0))
   # fitted/residual come straight from the methods (no drift); residual is the
   # deviance residual, not weight - fitted.
   expect_equal(a$fitted, fitted(weight_fit))

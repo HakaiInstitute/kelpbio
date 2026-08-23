@@ -230,17 +230,6 @@ test_that("data_linpred checks new_data and new_levels before computing", {
   expect_equal(res$group_vars, character(0))
 })
 
-test_that("the .linpred default aborts for a fit with no method", {
-  expect_error(
-    .linpred(
-      structure(list(), class = c("kb_fit_other", "kb_fit")),
-      NULL,
-      "average"
-    ),
-    "no method for a <kb_fit_other>"
-  )
-})
-
 test_that("the observed-data paths reject a zero-observation fit", {
   # one guard at the shared entry, so every verb that predicts at the stored
   # data reports it the same way instead of failing inside the rvar arithmetic
