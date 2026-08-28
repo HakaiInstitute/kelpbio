@@ -4,7 +4,7 @@ test_that("prior_summary returns the resolved priors", {
   expect_true(all(
     c(
       "intercept",
-      "log_power",
+      "power",
       "floor",
       "nu",
       "sd_site",

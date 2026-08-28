@@ -58,7 +58,7 @@ kb_model_describe.kb_fit_weight_macro <- function(fit, prose = FALSE) {
     "bWeight",
     "bYear[year]",
     "bSite[site]",
-    "log(bFloor + (1 - bFloor) * x^bPower[site])"
+    "log(bFloor + (1 - bFloor) * x^power[site])"
   )
   random <- list(
     list(term = "bYear[year]", sd = "sYear", gloss = "year intercept"),
@@ -66,12 +66,12 @@ kb_model_describe.kb_fit_weight_macro <- function(fit, prose = FALSE) {
     list(
       term = "bSitePower[site]",
       sd = "sSitePower",
-      gloss = "site allometric exponent (log scale)"
+      gloss = "site exponent multiplier (log scale)"
     )
   )
   priors <- list(
     bWeight = pri$intercept,
-    bLogPower = pri$log_power,
+    bPower = pri$power,
     bFloor = pri$floor,
     bNu = pri$nu,
     sWeight = pri$sd_residual,
@@ -105,7 +105,7 @@ kb_model_describe.kb_fit_weight_macro <- function(fit, prose = FALSE) {
         "x = diameter / d0,  d0 = %s  (geometric mean diameter)",
         format(d0)
       ),
-      "\n  bPower[site] = exp(bLogPower + bSitePower[site])"
+      "\n  power[site] = bPower * exp(bSitePower[site])"
     ),
     random = random,
     priors = priors,

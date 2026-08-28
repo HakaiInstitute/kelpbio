@@ -25,7 +25,7 @@ A compiled model SHALL be samplable through `rstan::sampling(stanmodels$<name>, 
 #### Scenario: Sampling the weight model returns a stanfit
 
 - **WHEN** `rstan::sampling()` is called on `stanmodels$weight_nereo` with a valid data list (observation vectors, `site`/`year` factor indices, and prior hyperparameters)
-- **THEN** it returns a `stanfit` object containing the fixed effects `bWeight`, `bLogPower`, `bFloor`, `bNu`, the random-effect SDs `sSite`, `sYear`, `sSitePower`, `sSiteYear`, the residual scale `sWeight`, the per-site vectors `bSite` and `bSitePower`, the per-year vector `bYear`, the site-by-year matrix `bSiteYear`
+- **THEN** it returns a `stanfit` object containing the fixed effects `bWeight`, `bPower`, `bFloor`, `bNu`, the random-effect SDs `sSite`, `sYear`, `sSitePower`, `sSiteYear`, the residual scale `sWeight`, the per-site vectors `bSite` and `bSitePower`, the per-year vector `bYear`, the site-by-year matrix `bSiteYear`
 
 ### Requirement: The weight model follows the engine conventions
 
@@ -34,7 +34,7 @@ The bundled `inst/stan/weight_nereo.stan` SHALL implement the full allometric we
 #### Scenario: The mean follows the full allometric structure
 
 - **WHEN** the linear predictor for an observation is formed in the `model` block with `site_year_on = 1`
-- **THEN** it is `bWeight + bYear[year] + bSite[site] + log(bFloor + (1 - bFloor) * (diameter / diameter_ref)^bPower[site]) + bSiteYear[site, year]`, where `bPower[site] = exp(bLogPower + bSitePower[site])` so the exponent is positive and expected weight is monotone in diameter within every site, and `diameter_ref` is passed as data (the geometric mean of the observed diameter, so the diameter unit is immaterial and the exponent term stays bounded), with `bSite`, `bYear`, `bSitePower`, and `bSiteYear` non-centered (`z_* * s_*`)
+- **THEN** it is `bWeight + bYear[year] + bSite[site] + log(bFloor + (1 - bFloor) * (diameter / diameter_ref)^power[site]) + bSiteYear[site, year]`, where `power[site] = bPower * exp(bSitePower[site])` so the exponent is positive and expected weight is monotone in diameter within every site, and `diameter_ref` is passed as data (the geometric mean of the observed diameter, so the diameter unit is immaterial and the exponent term stays bounded), with `bSite`, `bYear`, `bSitePower`, and `bSiteYear` non-centered (`z_* * s_*`)
 
 #### Scenario: The site:year term is gated by a data flag
 

@@ -7,7 +7,7 @@
 kb_priors_weight_nereo()
 }
 \value{
-A named list of prior objects with entries \code{intercept}, \code{log_power},
+A named list of prior objects with entries \code{intercept}, \code{power},
 \code{floor}, \code{nu}, \code{sd_site}, \code{sd_year}, \code{sd_site_power}, \code{sd_site_year}, and
 \code{sd_residual}.
 }
@@ -19,7 +19,7 @@ defaults.
 }
 \details{
 The prior family of each entry is fixed; only the hyperparameters can be
-changed. \code{log_power} is on the log of the allometric exponent, \code{floor} is the
+changed. \code{power} is the allometric exponent, \code{floor} is the
 size-independent share of the expected weight at the reference diameter, and
 \code{nu} is the Student-t degrees of freedom.
 }

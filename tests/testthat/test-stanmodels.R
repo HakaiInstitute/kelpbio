@@ -28,8 +28,8 @@ weight_stan_data <- function(nObs = 6L, prior_only = 0L) {
     diameter_ref = if (length(diameter)) exp(mean(log(diameter))) else 30,
     prior_intercept_mu = 0,
     prior_intercept_sd = 2,
-    prior_log_power_mu = 0.693,
-    prior_log_power_sd = 0.5,
+    prior_power_mu = 2,
+    prior_power_sd = 1,
     prior_floor_shape1 = 1,
     prior_floor_shape2 = 5,
     prior_nu_shape = 2,
@@ -139,7 +139,7 @@ test_that("the weight model samples and returns the declared parameters", {
   expect_true(all(
     c(
       "bWeight",
-      "bLogPower",
+      "bPower",
       "bFloor",
       "bNu",
       "sSite",

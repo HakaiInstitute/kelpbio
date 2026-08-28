@@ -15,90 +15,90 @@ using namespace stan::math;
 stan::math::profile_map profiles__;
 static constexpr std::array<const char*, 85> locations_array__ =
   {" (found before start of program)",
-  " (in 'weight_nereo', line 69, column 2 to column 15)",
-  " (in 'weight_nereo', line 70, column 2 to column 17)",
-  " (in 'weight_nereo', line 71, column 2 to column 32)",
-  " (in 'weight_nereo', line 72, column 2 to column 20)",
-  " (in 'weight_nereo', line 73, column 2 to column 22)",
-  " (in 'weight_nereo', line 74, column 2 to column 22)",
-  " (in 'weight_nereo', line 75, column 2 to column 27)",
-  " (in 'weight_nereo', line 76, column 2 to column 26)",
-  " (in 'weight_nereo', line 77, column 2 to column 24)",
-  " (in 'weight_nereo', line 78, column 2 to column 24)",
-  " (in 'weight_nereo', line 79, column 2 to column 24)",
-  " (in 'weight_nereo', line 80, column 2 to column 29)",
-  " (in 'weight_nereo', line 81, column 2 to column 35)",
-  " (in 'weight_nereo', line 84, column 2 to column 40)",
-  " (in 'weight_nereo', line 85, column 2 to column 40)",
-  " (in 'weight_nereo', line 86, column 2 to column 55)",
-  " (in 'weight_nereo', line 87, column 2 to column 59)",
+  " (in 'weight_nereo', line 72, column 2 to column 15)",
+  " (in 'weight_nereo', line 73, column 2 to column 23)",
+  " (in 'weight_nereo', line 74, column 2 to column 32)",
+  " (in 'weight_nereo', line 75, column 2 to column 20)",
+  " (in 'weight_nereo', line 76, column 2 to column 22)",
+  " (in 'weight_nereo', line 77, column 2 to column 22)",
+  " (in 'weight_nereo', line 78, column 2 to column 27)",
+  " (in 'weight_nereo', line 79, column 2 to column 26)",
+  " (in 'weight_nereo', line 80, column 2 to column 24)",
+  " (in 'weight_nereo', line 81, column 2 to column 24)",
+  " (in 'weight_nereo', line 82, column 2 to column 24)",
+  " (in 'weight_nereo', line 83, column 2 to column 29)",
+  " (in 'weight_nereo', line 84, column 2 to column 35)",
+  " (in 'weight_nereo', line 87, column 2 to column 40)",
+  " (in 'weight_nereo', line 88, column 2 to column 40)",
+  " (in 'weight_nereo', line 89, column 2 to column 55)",
   " (in 'weight_nereo', line 90, column 2 to column 59)",
-  " (in 'weight_nereo', line 91, column 2 to column 61)",
-  " (in 'weight_nereo', line 92, column 2 to column 56)",
-  " (in 'weight_nereo', line 93, column 2 to column 45)",
-  " (in 'weight_nereo', line 94, column 2 to column 42)",
-  " (in 'weight_nereo', line 95, column 2 to column 42)",
-  " (in 'weight_nereo', line 96, column 2 to column 53)",
-  " (in 'weight_nereo', line 97, column 2 to column 51)",
-  " (in 'weight_nereo', line 98, column 2 to column 48)",
-  " (in 'weight_nereo', line 99, column 2 to column 25)",
-  " (in 'weight_nereo', line 100, column 2 to column 25)",
-  " (in 'weight_nereo', line 101, column 2 to column 30)",
-  " (in 'weight_nereo', line 102, column 2 to column 40)",
-  " (in 'weight_nereo', line 108, column 11 to column 15)",
-  " (in 'weight_nereo', line 108, column 4 to column 63)",
-  " (in 'weight_nereo', line 109, column 11 to column 15)",
-  " (in 'weight_nereo', line 109, column 4 to line 111, column 52)",
-  " (in 'weight_nereo', line 112, column 4 to column 54)",
-  " (in 'weight_nereo', line 103, column 23 to line 113, column 3)",
-  " (in 'weight_nereo', line 103, column 2 to line 113, column 3)",
-  " (in 'weight_nereo', line 32, column 2 to column 20)",
-  " (in 'weight_nereo', line 33, column 2 to column 21)",
-  " (in 'weight_nereo', line 34, column 2 to column 21)",
-  " (in 'weight_nereo', line 35, column 8 to column 12)",
-  " (in 'weight_nereo', line 35, column 2 to column 45)",
-  " (in 'weight_nereo', line 36, column 8 to column 12)",
-  " (in 'weight_nereo', line 36, column 2 to column 45)",
-  " (in 'weight_nereo', line 37, column 18 to column 22)",
-  " (in 'weight_nereo', line 37, column 2 to column 33)",
-  " (in 'weight_nereo', line 38, column 18 to column 22)",
-  " (in 'weight_nereo', line 38, column 2 to column 31)",
-  " (in 'weight_nereo', line 39, column 2 to column 29)",
-  " (in 'weight_nereo', line 41, column 2 to column 26)",
-  " (in 'weight_nereo', line 42, column 2 to column 35)",
-  " (in 'weight_nereo', line 43, column 2 to column 26)",
-  " (in 'weight_nereo', line 44, column 2 to column 35)",
+  " (in 'weight_nereo', line 93, column 2 to column 59)",
+  " (in 'weight_nereo', line 96, column 2 to column 50)",
+  " (in 'weight_nereo', line 97, column 2 to column 56)",
+  " (in 'weight_nereo', line 98, column 2 to column 45)",
+  " (in 'weight_nereo', line 99, column 2 to column 42)",
+  " (in 'weight_nereo', line 100, column 2 to column 42)",
+  " (in 'weight_nereo', line 101, column 2 to column 53)",
+  " (in 'weight_nereo', line 102, column 2 to column 51)",
+  " (in 'weight_nereo', line 103, column 2 to column 48)",
+  " (in 'weight_nereo', line 104, column 2 to column 25)",
+  " (in 'weight_nereo', line 105, column 2 to column 25)",
+  " (in 'weight_nereo', line 106, column 2 to column 30)",
+  " (in 'weight_nereo', line 107, column 2 to column 40)",
+  " (in 'weight_nereo', line 113, column 11 to column 15)",
+  " (in 'weight_nereo', line 113, column 4 to column 60)",
+  " (in 'weight_nereo', line 114, column 11 to column 15)",
+  " (in 'weight_nereo', line 114, column 4 to line 116, column 52)",
+  " (in 'weight_nereo', line 117, column 4 to column 54)",
+  " (in 'weight_nereo', line 108, column 23 to line 118, column 3)",
+  " (in 'weight_nereo', line 108, column 2 to line 118, column 3)",
+  " (in 'weight_nereo', line 35, column 2 to column 20)",
+  " (in 'weight_nereo', line 36, column 2 to column 21)",
+  " (in 'weight_nereo', line 37, column 2 to column 21)",
+  " (in 'weight_nereo', line 38, column 8 to column 12)",
+  " (in 'weight_nereo', line 38, column 2 to column 45)",
+  " (in 'weight_nereo', line 39, column 8 to column 12)",
+  " (in 'weight_nereo', line 39, column 2 to column 45)",
+  " (in 'weight_nereo', line 40, column 18 to column 22)",
+  " (in 'weight_nereo', line 40, column 2 to column 33)",
+  " (in 'weight_nereo', line 41, column 18 to column 22)",
+  " (in 'weight_nereo', line 41, column 2 to column 31)",
+  " (in 'weight_nereo', line 42, column 2 to column 29)",
+  " (in 'weight_nereo', line 44, column 2 to column 26)",
   " (in 'weight_nereo', line 45, column 2 to column 35)",
-  " (in 'weight_nereo', line 46, column 2 to column 35)",
+  " (in 'weight_nereo', line 46, column 2 to column 22)",
   " (in 'weight_nereo', line 47, column 2 to column 31)",
-  " (in 'weight_nereo', line 48, column 2 to column 30)",
+  " (in 'weight_nereo', line 48, column 2 to column 35)",
   " (in 'weight_nereo', line 49, column 2 to column 35)",
-  " (in 'weight_nereo', line 50, column 2 to column 35)",
-  " (in 'weight_nereo', line 51, column 2 to column 41)",
-  " (in 'weight_nereo', line 52, column 2 to column 40)",
-  " (in 'weight_nereo', line 53, column 2 to column 39)",
-  " (in 'weight_nereo', line 54, column 2 to column 35)",
-  " (in 'weight_nereo', line 55, column 2 to column 37)",
-  " (in 'weight_nereo', line 58, column 2 to column 44)",
-  " (in 'weight_nereo', line 59, column 9 to column 13)",
-  " (in 'weight_nereo', line 59, column 2 to column 63)",
-  " (in 'weight_nereo', line 60, column 9 to column 13)",
-  " (in 'weight_nereo', line 60, column 2 to column 40)",
-  " (in 'weight_nereo', line 63, column 8 to column 12)",
-  " (in 'weight_nereo', line 63, column 2 to column 25)",
-  " (in 'weight_nereo', line 65, column 4 to column 48)",
-  " (in 'weight_nereo', line 64, column 20 to line 66, column 3)",
-  " (in 'weight_nereo', line 64, column 2 to line 66, column 3)",
-  " (in 'weight_nereo', line 78, column 9 to column 14)",
-  " (in 'weight_nereo', line 79, column 9 to column 14)",
-  " (in 'weight_nereo', line 80, column 9 to column 14)",
+  " (in 'weight_nereo', line 50, column 2 to column 31)",
+  " (in 'weight_nereo', line 51, column 2 to column 30)",
+  " (in 'weight_nereo', line 52, column 2 to column 35)",
+  " (in 'weight_nereo', line 53, column 2 to column 35)",
+  " (in 'weight_nereo', line 54, column 2 to column 41)",
+  " (in 'weight_nereo', line 55, column 2 to column 40)",
+  " (in 'weight_nereo', line 56, column 2 to column 39)",
+  " (in 'weight_nereo', line 57, column 2 to column 35)",
+  " (in 'weight_nereo', line 58, column 2 to column 37)",
+  " (in 'weight_nereo', line 61, column 2 to column 44)",
+  " (in 'weight_nereo', line 62, column 9 to column 13)",
+  " (in 'weight_nereo', line 62, column 2 to column 63)",
+  " (in 'weight_nereo', line 63, column 9 to column 13)",
+  " (in 'weight_nereo', line 63, column 2 to column 40)",
+  " (in 'weight_nereo', line 66, column 8 to column 12)",
+  " (in 'weight_nereo', line 66, column 2 to column 25)",
+  " (in 'weight_nereo', line 68, column 4 to column 48)",
+  " (in 'weight_nereo', line 67, column 20 to line 69, column 3)",
+  " (in 'weight_nereo', line 67, column 2 to line 69, column 3)",
   " (in 'weight_nereo', line 81, column 9 to column 14)",
-  " (in 'weight_nereo', line 81, column 16 to column 21)",
+  " (in 'weight_nereo', line 82, column 9 to column 14)",
+  " (in 'weight_nereo', line 83, column 9 to column 14)",
   " (in 'weight_nereo', line 84, column 9 to column 14)",
-  " (in 'weight_nereo', line 85, column 9 to column 14)",
-  " (in 'weight_nereo', line 86, column 9 to column 14)",
+  " (in 'weight_nereo', line 84, column 16 to column 21)",
   " (in 'weight_nereo', line 87, column 9 to column 14)",
-  " (in 'weight_nereo', line 87, column 16 to column 21)"};
+  " (in 'weight_nereo', line 88, column 9 to column 14)",
+  " (in 'weight_nereo', line 89, column 9 to column 14)",
+  " (in 'weight_nereo', line 90, column 9 to column 14)",
+  " (in 'weight_nereo', line 90, column 16 to column 21)"};
 #include <stan_meta_header.hpp>
 class model_weight_nereo final : public model_base_crtp<model_weight_nereo> {
 private:
@@ -112,8 +112,8 @@ private:
   double diameter_ref;
   double prior_intercept_mu;
   double prior_intercept_sd;
-  double prior_log_power_mu;
-  double prior_log_power_sd;
+  double prior_power_mu;
+  double prior_power_sd;
   double prior_floor_shape1;
   double prior_floor_shape2;
   double prior_nu_shape;
@@ -279,20 +279,20 @@ public:
       stan::math::check_greater_or_equal(function__, "prior_intercept_sd",
         prior_intercept_sd, 0);
       current_statement__ = 52;
-      context__.validate_dims("data initialization", "prior_log_power_mu",
+      context__.validate_dims("data initialization", "prior_power_mu",
         "double", std::vector<size_t>{});
-      prior_log_power_mu = std::numeric_limits<double>::quiet_NaN();
+      prior_power_mu = std::numeric_limits<double>::quiet_NaN();
       current_statement__ = 52;
-      prior_log_power_mu = context__.vals_r("prior_log_power_mu")[(1 - 1)];
+      prior_power_mu = context__.vals_r("prior_power_mu")[(1 - 1)];
       current_statement__ = 53;
-      context__.validate_dims("data initialization", "prior_log_power_sd",
+      context__.validate_dims("data initialization", "prior_power_sd",
         "double", std::vector<size_t>{});
-      prior_log_power_sd = std::numeric_limits<double>::quiet_NaN();
+      prior_power_sd = std::numeric_limits<double>::quiet_NaN();
       current_statement__ = 53;
-      prior_log_power_sd = context__.vals_r("prior_log_power_sd")[(1 - 1)];
+      prior_power_sd = context__.vals_r("prior_power_sd")[(1 - 1)];
       current_statement__ = 53;
-      stan::math::check_greater_or_equal(function__, "prior_log_power_sd",
-        prior_log_power_sd, 0);
+      stan::math::check_greater_or_equal(function__, "prior_power_sd",
+        prior_power_sd, 0);
       current_statement__ = 54;
       context__.validate_dims("data initialization", "prior_floor_shape1",
         "double", std::vector<size_t>{});
@@ -495,9 +495,10 @@ public:
       local_scalar_t__ bWeight = DUMMY_VAR__;
       current_statement__ = 1;
       bWeight = in__.template read<local_scalar_t__>();
-      local_scalar_t__ bLogPower = DUMMY_VAR__;
+      local_scalar_t__ bPower = DUMMY_VAR__;
       current_statement__ = 2;
-      bLogPower = in__.template read<local_scalar_t__>();
+      bPower = in__.template read_constrain_lb<local_scalar_t__,
+                 jacobian__>(0, lp__);
       local_scalar_t__ bFloor = DUMMY_VAR__;
       current_statement__ = 3;
       bFloor = in__.template read_constrain_lub<local_scalar_t__,
@@ -575,8 +576,8 @@ public:
         lp_accum__.add(stan::math::normal_lpdf<propto__>(bWeight,
                          prior_intercept_mu, prior_intercept_sd));
         current_statement__ = 19;
-        lp_accum__.add(stan::math::normal_lpdf<propto__>(bLogPower,
-                         prior_log_power_mu, prior_log_power_sd));
+        lp_accum__.add(stan::math::normal_lpdf<propto__>(bPower,
+                         prior_power_mu, prior_power_sd));
         current_statement__ = 20;
         lp_accum__.add(stan::math::beta_lpdf<propto__>(bFloor,
                          prior_floor_shape1, prior_floor_shape2));
@@ -615,8 +616,8 @@ public:
             Eigen::Matrix<local_scalar_t__,-1,1>::Constant(nObs, DUMMY_VAR__);
           current_statement__ = 32;
           stan::model::assign(power_obs,
-            stan::math::exp(
-              stan::math::add(bLogPower,
+            stan::math::multiply(bPower,
+              stan::math::exp(
                 stan::model::rvalue(bSitePower, "bSitePower",
                   stan::model::index_multi(site)))),
             "assigning variable power_obs");
@@ -688,9 +689,10 @@ public:
       double bWeight = std::numeric_limits<double>::quiet_NaN();
       current_statement__ = 1;
       bWeight = in__.template read<local_scalar_t__>();
-      double bLogPower = std::numeric_limits<double>::quiet_NaN();
+      double bPower = std::numeric_limits<double>::quiet_NaN();
       current_statement__ = 2;
-      bLogPower = in__.template read<local_scalar_t__>();
+      bPower = in__.template read_constrain_lb<local_scalar_t__,
+                 jacobian__>(0, lp__);
       double bFloor = std::numeric_limits<double>::quiet_NaN();
       current_statement__ = 3;
       bFloor = in__.template read_constrain_lub<local_scalar_t__,
@@ -756,7 +758,7 @@ public:
         Eigen::Matrix<double,-1,-1>::Constant(nSite, nYear,
           std::numeric_limits<double>::quiet_NaN());
       out__.write(bWeight);
-      out__.write(bLogPower);
+      out__.write(bPower);
       out__.write(bFloor);
       out__.write(bNu);
       out__.write(sSite);
@@ -820,10 +822,10 @@ public:
       current_statement__ = 1;
       bWeight = in__.read<local_scalar_t__>();
       out__.write(bWeight);
-      local_scalar_t__ bLogPower = DUMMY_VAR__;
+      local_scalar_t__ bPower = DUMMY_VAR__;
       current_statement__ = 2;
-      bLogPower = in__.read<local_scalar_t__>();
-      out__.write(bLogPower);
+      bPower = in__.read<local_scalar_t__>();
+      out__.write_free_lb(0, bPower);
       local_scalar_t__ bFloor = DUMMY_VAR__;
       current_statement__ = 3;
       bFloor = in__.read<local_scalar_t__>();
@@ -900,8 +902,8 @@ public:
       context__.validate_dims("parameter initialization", "bWeight",
         "double", std::vector<size_t>{});
       current_statement__ = 2;
-      context__.validate_dims("parameter initialization", "bLogPower",
-        "double", std::vector<size_t>{});
+      context__.validate_dims("parameter initialization", "bPower", "double",
+        std::vector<size_t>{});
       current_statement__ = 3;
       context__.validate_dims("parameter initialization", "bFloor", "double",
         std::vector<size_t>{});
@@ -943,10 +945,10 @@ public:
       current_statement__ = 1;
       bWeight = context__.vals_r("bWeight")[(1 - 1)];
       out__.write(bWeight);
-      local_scalar_t__ bLogPower = DUMMY_VAR__;
+      local_scalar_t__ bPower = DUMMY_VAR__;
       current_statement__ = 2;
-      bLogPower = context__.vals_r("bLogPower")[(1 - 1)];
-      out__.write(bLogPower);
+      bPower = context__.vals_r("bPower")[(1 - 1)];
+      out__.write_free_lb(0, bPower);
       local_scalar_t__ bFloor = DUMMY_VAR__;
       current_statement__ = 3;
       bFloor = context__.vals_r("bFloor")[(1 - 1)];
@@ -1060,10 +1062,9 @@ public:
   get_param_names(std::vector<std::string>& names__, const bool
                   emit_transformed_parameters__ = true, const bool
                   emit_generated_quantities__ = true) const {
-    names__ = std::vector<std::string>{"bWeight", "bLogPower", "bFloor",
-                "bNu", "sSite", "sYear", "sSitePower", "sSiteYear",
-                "sWeight", "z_bSite", "z_bYear", "z_bSitePower",
-                "z_bSiteYear"};
+    names__ = std::vector<std::string>{"bWeight", "bPower", "bFloor", "bNu",
+                "sSite", "sYear", "sSitePower", "sSiteYear", "sWeight",
+                "z_bSite", "z_bYear", "z_bSitePower", "z_bSiteYear"};
     if (emit_transformed_parameters__) {
       std::vector<std::string>
         temp{"bSite", "bYear", "bSitePower", "bSiteYear"};
@@ -1103,7 +1104,7 @@ public:
                           emit_transformed_parameters__ = true, bool
                           emit_generated_quantities__ = true) const final {
     param_names__.emplace_back(std::string() + "bWeight");
-    param_names__.emplace_back(std::string() + "bLogPower");
+    param_names__.emplace_back(std::string() + "bPower");
     param_names__.emplace_back(std::string() + "bFloor");
     param_names__.emplace_back(std::string() + "bNu");
     param_names__.emplace_back(std::string() + "sSite");
@@ -1156,7 +1157,7 @@ public:
                             emit_transformed_parameters__ = true, bool
                             emit_generated_quantities__ = true) const final {
     param_names__.emplace_back(std::string() + "bWeight");
-    param_names__.emplace_back(std::string() + "bLogPower");
+    param_names__.emplace_back(std::string() + "bPower");
     param_names__.emplace_back(std::string() + "bFloor");
     param_names__.emplace_back(std::string() + "bNu");
     param_names__.emplace_back(std::string() + "sSite");
@@ -1205,10 +1206,10 @@ public:
     if (emit_generated_quantities__) {}
   }
   inline std::string get_constrained_sizedtypes() const {
-    return std::string("[{\"name\":\"bWeight\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"bLogPower\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"bFloor\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"bNu\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"sSite\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"sYear\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"sSitePower\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"sSiteYear\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"sWeight\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"z_bSite\",\"type\":{\"name\":\"vector\",\"length\":" + std::to_string(nSite) + "},\"block\":\"parameters\"},{\"name\":\"z_bYear\",\"type\":{\"name\":\"vector\",\"length\":" + std::to_string(nYear) + "},\"block\":\"parameters\"},{\"name\":\"z_bSitePower\",\"type\":{\"name\":\"vector\",\"length\":" + std::to_string(nSite) + "},\"block\":\"parameters\"},{\"name\":\"z_bSiteYear\",\"type\":{\"name\":\"matrix\",\"rows\":" + std::to_string(nSite) + ",\"cols\":" + std::to_string(nYear) + "},\"block\":\"parameters\"},{\"name\":\"bSite\",\"type\":{\"name\":\"vector\",\"length\":" + std::to_string(nSite) + "},\"block\":\"transformed_parameters\"},{\"name\":\"bYear\",\"type\":{\"name\":\"vector\",\"length\":" + std::to_string(nYear) + "},\"block\":\"transformed_parameters\"},{\"name\":\"bSitePower\",\"type\":{\"name\":\"vector\",\"length\":" + std::to_string(nSite) + "},\"block\":\"transformed_parameters\"},{\"name\":\"bSiteYear\",\"type\":{\"name\":\"matrix\",\"rows\":" + std::to_string(nSite) + ",\"cols\":" + std::to_string(nYear) + "},\"block\":\"transformed_parameters\"}]");
+    return std::string("[{\"name\":\"bWeight\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"bPower\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"bFloor\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"bNu\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"sSite\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"sYear\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"sSitePower\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"sSiteYear\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"sWeight\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"z_bSite\",\"type\":{\"name\":\"vector\",\"length\":" + std::to_string(nSite) + "},\"block\":\"parameters\"},{\"name\":\"z_bYear\",\"type\":{\"name\":\"vector\",\"length\":" + std::to_string(nYear) + "},\"block\":\"parameters\"},{\"name\":\"z_bSitePower\",\"type\":{\"name\":\"vector\",\"length\":" + std::to_string(nSite) + "},\"block\":\"parameters\"},{\"name\":\"z_bSiteYear\",\"type\":{\"name\":\"matrix\",\"rows\":" + std::to_string(nSite) + ",\"cols\":" + std::to_string(nYear) + "},\"block\":\"parameters\"},{\"name\":\"bSite\",\"type\":{\"name\":\"vector\",\"length\":" + std::to_string(nSite) + "},\"block\":\"transformed_parameters\"},{\"name\":\"bYear\",\"type\":{\"name\":\"vector\",\"length\":" + std::to_string(nYear) + "},\"block\":\"transformed_parameters\"},{\"name\":\"bSitePower\",\"type\":{\"name\":\"vector\",\"length\":" + std::to_string(nSite) + "},\"block\":\"transformed_parameters\"},{\"name\":\"bSiteYear\",\"type\":{\"name\":\"matrix\",\"rows\":" + std::to_string(nSite) + ",\"cols\":" + std::to_string(nYear) + "},\"block\":\"transformed_parameters\"}]");
   }
   inline std::string get_unconstrained_sizedtypes() const {
-    return std::string("[{\"name\":\"bWeight\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"bLogPower\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"bFloor\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"bNu\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"sSite\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"sYear\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"sSitePower\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"sSiteYear\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"sWeight\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"z_bSite\",\"type\":{\"name\":\"vector\",\"length\":" + std::to_string(nSite) + "},\"block\":\"parameters\"},{\"name\":\"z_bYear\",\"type\":{\"name\":\"vector\",\"length\":" + std::to_string(nYear) + "},\"block\":\"parameters\"},{\"name\":\"z_bSitePower\",\"type\":{\"name\":\"vector\",\"length\":" + std::to_string(nSite) + "},\"block\":\"parameters\"},{\"name\":\"z_bSiteYear\",\"type\":{\"name\":\"matrix\",\"rows\":" + std::to_string(nSite) + ",\"cols\":" + std::to_string(nYear) + "},\"block\":\"parameters\"},{\"name\":\"bSite\",\"type\":{\"name\":\"vector\",\"length\":" + std::to_string(nSite) + "},\"block\":\"transformed_parameters\"},{\"name\":\"bYear\",\"type\":{\"name\":\"vector\",\"length\":" + std::to_string(nYear) + "},\"block\":\"transformed_parameters\"},{\"name\":\"bSitePower\",\"type\":{\"name\":\"vector\",\"length\":" + std::to_string(nSite) + "},\"block\":\"transformed_parameters\"},{\"name\":\"bSiteYear\",\"type\":{\"name\":\"matrix\",\"rows\":" + std::to_string(nSite) + ",\"cols\":" + std::to_string(nYear) + "},\"block\":\"transformed_parameters\"}]");
+    return std::string("[{\"name\":\"bWeight\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"bPower\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"bFloor\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"bNu\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"sSite\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"sYear\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"sSitePower\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"sSiteYear\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"sWeight\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"z_bSite\",\"type\":{\"name\":\"vector\",\"length\":" + std::to_string(nSite) + "},\"block\":\"parameters\"},{\"name\":\"z_bYear\",\"type\":{\"name\":\"vector\",\"length\":" + std::to_string(nYear) + "},\"block\":\"parameters\"},{\"name\":\"z_bSitePower\",\"type\":{\"name\":\"vector\",\"length\":" + std::to_string(nSite) + "},\"block\":\"parameters\"},{\"name\":\"z_bSiteYear\",\"type\":{\"name\":\"matrix\",\"rows\":" + std::to_string(nSite) + ",\"cols\":" + std::to_string(nYear) + "},\"block\":\"parameters\"},{\"name\":\"bSite\",\"type\":{\"name\":\"vector\",\"length\":" + std::to_string(nSite) + "},\"block\":\"transformed_parameters\"},{\"name\":\"bYear\",\"type\":{\"name\":\"vector\",\"length\":" + std::to_string(nYear) + "},\"block\":\"transformed_parameters\"},{\"name\":\"bSitePower\",\"type\":{\"name\":\"vector\",\"length\":" + std::to_string(nSite) + "},\"block\":\"transformed_parameters\"},{\"name\":\"bSiteYear\",\"type\":{\"name\":\"matrix\",\"rows\":" + std::to_string(nSite) + ",\"cols\":" + std::to_string(nYear) + "},\"block\":\"transformed_parameters\"}]");
   }
   // Begin method overload boilerplate
   template <typename RNG> inline void

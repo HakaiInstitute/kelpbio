@@ -36,7 +36,7 @@ test_that("assemble_weight_nereo_data maps every prior hyperparameter to its own
   # Every hyperparameter distinct, so a transposed or dropped wiring cannot pass.
   priors <- list(
     intercept = kb_prior_normal(0.1, 1.1),
-    log_power = kb_prior_normal(0.2, 1.2),
+    power = kb_prior_normal(0.2, 1.2),
     floor = kb_prior_beta(0.3, 1.3),
     nu = kb_prior_gamma(0.4, 1.4),
     sd_site = kb_prior_exponential(2.1),
@@ -53,8 +53,8 @@ test_that("assemble_weight_nereo_data maps every prior hyperparameter to its own
   )
   expect_equal(sd$prior_intercept_mu, 0.1)
   expect_equal(sd$prior_intercept_sd, 1.1)
-  expect_equal(sd$prior_log_power_mu, 0.2)
-  expect_equal(sd$prior_log_power_sd, 1.2)
+  expect_equal(sd$prior_power_mu, 0.2)
+  expect_equal(sd$prior_power_sd, 1.2)
   expect_equal(sd$prior_floor_shape1, 0.3)
   expect_equal(sd$prior_floor_shape2, 1.3)
   expect_equal(sd$prior_nu_shape, 0.4)

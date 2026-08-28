@@ -7,26 +7,30 @@
       Response: wet weight; predictor: sub-bulb diameter
       
       Likelihood
-        log(weight) ~ Student-t(4, mu, sWeight)
+        log(weight) ~ Student-t(bNu, mu, sWeight)
         mu = bWeight
+           + bYear[year]
            + bSite[site]
-           + (bDiameter + bSiteDiameter[site]) * x
-           + bDiameter2 * x^2
+           + log(bFloor + (1 - bFloor) * x^power[site])
            + bSiteYear[site, year]
-        x = log(diameter) - log(d0),  d0 = 43.1  (geometric mean diameter)
+        x = diameter / d0,  d0 = 43.1  (geometric mean diameter)
+        power[site] = bPower * exp(bSitePower[site])
       
       Random effects
-        bSite[site]           ~ Normal(0, sSite)          site intercept
-        bSiteDiameter[site]   ~ Normal(0, sSiteDiameter)  site slope on log-diameter
-        bSiteYear[site, year] ~ Normal(0, sSiteYear)      site:year intercept
+        bYear[year]           ~ Normal(0, sYear)       year intercept
+        bSite[site]           ~ Normal(0, sSite)       site intercept
+        bSitePower[site]      ~ Normal(0, sSitePower)  site exponent multiplier (log scale)
+        bSiteYear[site, year] ~ Normal(0, sSiteYear)   site:year intercept
       
       Priors
         bWeight        ~ Normal(0, 2)
-        bDiameter      ~ Normal(2, 1)
-        bDiameter2     ~ Normal(0, 0.5)
+        bPower         ~ Normal(2, 1)
+        bFloor         ~ Beta(1, 5)
+        bNu            ~ Gamma(2, 0.1)
         sWeight        ~ Exponential(1)
+        sYear          ~ Exponential(1)
         sSite          ~ Exponential(1)
-        sSiteDiameter  ~ Exponential(1)
+        sSitePower     ~ Exponential(1)
         sSiteYear      ~ Exponential(1)
 
 # kb_model_describe renders the macro notation block
@@ -64,11 +68,14 @@
     Code
       kb_model_describe(weight_fit, prose = TRUE)
     Output
-      Wet weight was modelled on the log scale with a Student-t likelihood (4
-      degrees of freedom) as an allometric function of sub-bulb diameter.
-      Expected log weight was a quadratic function of log diameter, centered at
-      the geometric mean diameter (43.1), with the intercept and the log-diameter
-      slope varying by site and the intercept additionally varying by site-year.
-      Regularizing priors were placed on all parameters (see the notation form
-      for the hyperparameters).
+      Wet weight was modelled on the log scale with a Student-t likelihood, with
+      the degrees of freedom estimated, as an allometric function of sub-bulb
+      diameter. Expected weight followed a three-parameter power function
+      (Packard 2012) of diameter relative to the geometric mean diameter (43.1),
+      in which bFloor is the share of expected weight at that reference diameter
+      that does not vary with size. The allometric exponent varied by site on the
+      log scale, so it remained positive and expected weight increased
+      monotonically with diameter within every site. The intercept varied by
+      year, by site, and by site-year. Regularizing priors were placed on all
+      parameters (see the notation form for the hyperparameters).
 

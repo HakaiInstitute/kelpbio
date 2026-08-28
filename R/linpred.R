@@ -16,8 +16,9 @@
 
 # Nereocystis weight-model mean (log scale), a posterior rvar over grid rows.
 # Packard's three-parameter power form on the centered diameter ratio, mirroring
-# inst/stan/weight_nereo.stan: the exponent varies by site on the log scale, so it
-# is positive and the curve is monotone within every site.
+# inst/stan/weight_nereo.stan: the site effect is a log-scale multiplier on a
+# positive population exponent, so the exponent stays positive and the curve is
+# monotone within every site.
 #' @export
 .linpred.kb_fit_weight_nereo <- function(
   fit,
@@ -48,7 +49,7 @@
     0
   }
 
-  power <- exp(draws$bLogPower + re_power)
+  power <- draws$bPower * exp(re_power)
   floor <- draws$bFloor
 
   draws$bWeight +

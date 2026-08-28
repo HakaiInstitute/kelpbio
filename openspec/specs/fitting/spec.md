@@ -54,7 +54,7 @@ sampler parameters per saved iteration, a rate is over retained draws: with
 
 #### Scenario: Draws and diagnostics are retained, stanfit discarded
 - **WHEN** the fit object is inspected
-- **THEN** it exposes posterior draws (the fixed effects `bWeight`, `bLogPower`, `bFloor`, `bNu`; the SDs `sSite`, `sYear`, `sSitePower`, `sSiteYear`, `sWeight`; the per-site `bSite` and `bSitePower`; the per-year `bYear`; the site-by-year `bSiteYear`) and diagnostics, and contains no live `stanfit`
+- **THEN** it exposes posterior draws (the fixed effects `bWeight`, `bPower`, `bFloor`, `bNu`; the SDs `sSite`, `sYear`, `sSitePower`, `sSiteYear`, `sWeight`; the per-site `bSite` and `bSitePower`; the per-year `bYear`; the site-by-year `bSiteYear`) and diagnostics, and contains no live `stanfit`
 
 #### Scenario: Sampler diagnostics survive the stanfit
 - **WHEN** the fit object is inspected

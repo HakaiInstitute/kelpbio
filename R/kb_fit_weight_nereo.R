@@ -105,7 +105,7 @@ kb_fit_weight_nereo <- function(
     stan_data,
     param_vars = c(
       "bWeight",
-      "bLogPower",
+      "bPower",
       "bFloor",
       "bNu",
       "sSite",
@@ -140,7 +140,7 @@ kb_fit_weight_nereo <- function(
     terms = list(
       fixed = c(
         "bWeight",
-        "bLogPower",
+        "bPower",
         "bFloor",
         "bNu",
         "sSite",

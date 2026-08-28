@@ -8,7 +8,7 @@ test_that("tidy returns house columns and omits group-level terms by default", {
     t$term,
     c(
       "bWeight",
-      "bLogPower",
+      "bPower",
       "bFloor",
       "bNu",
       "sSite",

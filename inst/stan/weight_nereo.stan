@@ -1,10 +1,10 @@
 // Full allometric weight model (site-year resolution).
 // log(weight) ~ student_t(bNu, mu, sWeight) where
 //   mu = bWeight + bYear[year] + bSite[site]
-//      + log(bFloor + (1 - bFloor) * x^bPower[site])
+//      + log(bFloor + (1 - bFloor) * x^power[site])
 //      + bSiteYear[site, year]
-//   x        = diameter / diameter_ref
-//   bPower[site] = exp(bLogPower + bSitePower[site])
+//   x           = diameter / diameter_ref
+//   power[site] = bPower * exp(bSitePower[site])
 //
 // The mean function is Packard's (2012) three-parameter power form, W = Y0 + a*D^b,
 // reparameterised on the diameter ratio so the reference weight stays comparable.
@@ -15,12 +15,15 @@
 // harvested range, so predicted weight rose as diameter fell past the turning point.
 // Packard's floor is monotone by construction.
 //
-// The exponent varies by site on the log scale, so bPower[site] > 0 always and
-// monotonicity holds within every site. log-diameter is centered at diameter_ref
-// (passed as data: the geometric mean of the observed diameter), so the diameter
-// unit does not affect the fit, and the centering also bounds bPower * log_diameter,
-// which is what lets the mean be written as a plain log(...) without a log_sum_exp
-// pivot for numerical safety.
+// The population exponent bPower is positive and the site effect is a log-scale
+// multiplier, so power[site] > 0 always and monotonicity holds within every site.
+// Keeping bPower on the natural scale means its prior and its tidy() row are the
+// allometric exponent itself, with no back-transform for a reader to remember.
+//
+// log-diameter is centered at diameter_ref (passed as data: the geometric mean of
+// the observed diameter), so the diameter unit does not affect the fit, and the
+// centering also bounds power * log_diameter, which is what lets the mean be
+// written as a plain log(...) without a log_sum_exp pivot for numerical safety.
 //
 // Random effects: year, site intercept, site exponent, and site:year.
 // Priors are passed as data; the prior family is fixed at compile time.
@@ -41,8 +44,8 @@ data {
   // priors (hyperparameters passed as data)
   real prior_intercept_mu;
   real<lower=0> prior_intercept_sd;
-  real prior_log_power_mu;                // on log(bPower), so the site RE is additive
-  real<lower=0> prior_log_power_sd;
+  real prior_power_mu;                    // on bPower itself (truncated at 0 below)
+  real<lower=0> prior_power_sd;
   real<lower=0> prior_floor_shape1;       // beta
   real<lower=0> prior_floor_shape2;
   real<lower=0> prior_nu_shape;           // gamma
@@ -69,12 +72,12 @@ transformed data {
 }
 parameters {
   real bWeight;                           // intercept: expected log(weight) at diameter_ref
-  real bLogPower;                         // log of the population allometric exponent
+  real<lower=0> bPower;                   // population allometric exponent
   real<lower=0, upper=1> bFloor;          // size-independent share of the reference weight
   real<lower=2> bNu;                      // Student-t degrees of freedom (estimated)
   real<lower=0> sSite;                    // site intercept SD
   real<lower=0> sYear;                    // year SD
-  real<lower=0> sSitePower;               // site exponent SD (log scale)
+  real<lower=0> sSitePower;               // SD of the log-scale site exponent multiplier
   real<lower=0> sSiteYear;                // site:year SD
   real<lower=0> sWeight;                  // residual scale
   vector[nSite] z_bSite;                  // non-centered site intercepts
@@ -90,7 +93,9 @@ transformed parameters {
 }
 model {
   bWeight ~ normal(prior_intercept_mu, prior_intercept_sd);
-  bLogPower ~ normal(prior_log_power_mu, prior_log_power_sd);
+  // <lower=0> plus fixed hyperparameters makes this a truncated normal whose
+  // normalising constant does not depend on any parameter, so no T[0,] is needed.
+  bPower ~ normal(prior_power_mu, prior_power_sd);
   bFloor ~ beta(prior_floor_shape1, prior_floor_shape2);
   bNu ~ gamma(prior_nu_shape, prior_nu_rate);
   sSite ~ exponential(prior_sd_site_rate);
@@ -107,7 +112,7 @@ model {
     // A local, not a transformed parameter: rstan saves transformed parameters,
     // and nObs columns per draw is the largest thing in a stored fit. Predictions
     // and the pointwise log-likelihood are computed in R from the stored draws.
-    vector[nObs] power_obs = exp(bLogPower + bSitePower[site]);
+    vector[nObs] power_obs = bPower * exp(bSitePower[site]);
     vector[nObs] log_eWeight = bWeight + bYear[year] + bSite[site]
       + log(bFloor + (1 - bFloor) * exp(power_obs .* log_diameter))
       + site_year_on * to_vector(bSiteYear)[sy_idx];

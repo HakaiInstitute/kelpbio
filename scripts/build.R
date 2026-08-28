@@ -25,7 +25,8 @@
 
 full_check <- isTRUE(as.logical(Sys.getenv("KELPBIO_FULL_CHECK", "false")))
 rebuild_fits <- isTRUE(as.logical(Sys.getenv("KELPBIO_REBUILD_FITS", "false")))
-
+full_check <- TRUE
+rebuild_fits <- TRUE
 # devtools::load_all()/test() and the fit-rebuild scripts compile the Stan models
 # in DEBUG mode (-O0 -g), leaving oversized unoptimized objects in src/. The
 # install below reuses any objects newer than their sources, so a debug object

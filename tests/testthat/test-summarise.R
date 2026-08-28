@@ -2,10 +2,10 @@
 # coef(). Pure logic over a draws_rvars object; uses the cached fixture's draws.
 
 test_that("summarise_draws_terms returns house columns bracketing the estimate", {
-  out <- summarise_draws_terms(weight_fit$draws, c("bWeight", "bLogPower"))
+  out <- summarise_draws_terms(weight_fit$draws, c("bWeight", "bPower"))
   expect_s3_class(out, "tbl_df")
   expect_named(out, c("term", "estimate", "lower", "upper"))
-  expect_setequal(out$term, c("bWeight", "bLogPower"))
+  expect_setequal(out$term, c("bWeight", "bPower"))
   expect_true(all(out$lower <= out$estimate & out$estimate <= out$upper))
 })
 

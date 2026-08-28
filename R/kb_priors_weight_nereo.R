@@ -6,11 +6,11 @@
 #' defaults.
 #'
 #' The prior family of each entry is fixed; only the hyperparameters can be
-#' changed. `log_power` is on the log of the allometric exponent, `floor` is the
+#' changed. `power` is the allometric exponent, `floor` is the
 #' size-independent share of the expected weight at the reference diameter, and
 #' `nu` is the Student-t degrees of freedom.
 #'
-#' @return A named list of prior objects with entries `intercept`, `log_power`,
+#' @return A named list of prior objects with entries `intercept`, `power`,
 #'   `floor`, `nu`, `sd_site`, `sd_year`, `sd_site_power`, `sd_site_year`, and
 #'   `sd_residual`.
 #' @family priors
@@ -22,9 +22,9 @@
 kb_priors_weight_nereo <- function() {
   list(
     intercept = kb_prior_normal(mean = 0, sd = 2),
-    # On log(bPower): the site effect is additive there, so the exponent stays
-    # positive. Centred on log(2), an allometric exponent of 2.
-    log_power = kb_prior_normal(mean = 0.693, sd = 0.5),
+    # Truncated at 0 by the Stan declaration, so this is the paper's allometry
+    # prior without the mass it put on a negative (non-monotone) exponent.
+    power = kb_prior_normal(mean = 2, sd = 1),
     floor = kb_prior_beta(shape1 = 1, shape2 = 5),
     nu = kb_prior_gamma(shape = 2, rate = 0.1),
     sd_site = kb_prior_exponential(rate = 1),

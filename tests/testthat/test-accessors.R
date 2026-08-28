@@ -11,7 +11,7 @@ test_that("accessors return expected shapes", {
     pars(weight_fit),
     c(
       "bWeight",
-      "bLogPower",
+      "bPower",
       "bFloor",
       "bNu",
       "sSite",

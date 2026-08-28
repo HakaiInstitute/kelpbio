@@ -20,7 +20,7 @@
       <kb_fit_weight_nereo>
       Model:     Weight (Nereocystis luetkeana)
       Predictor: diameter, centered at its geometric mean, 43.1
-      Data:      240 observations; groups: site (4), site:year (12)
+      Data:      240 observations; groups: site (4), year (3), site:year (12)
       Draws:     2 chains, 300 post-warmup draws each (thin = 5), 600 total
       Converged: TRUE
       See kb_model_describe(fit) for the model equation and priors.
