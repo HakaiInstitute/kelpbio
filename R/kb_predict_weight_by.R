@@ -14,10 +14,8 @@
 #' estimated distribution, widening the uncertainty to include between-group
 #' variation. Set a seed with `set.seed()` for reproducible `"sample"` intervals.
 #'
-#' The available `by` values are `NULL` (a single population curve), `"site"`, and
-#' `c("site", "year")` for both species; the *Macrocystis* model additionally
-#' allows `"year"`, since it has a year main effect (the *Nereocystis* model does
-#' not, so `by = "year"` errors there).
+#' The available `by` values are `NULL` (a single population curve), `"site"`,
+#' `"year"`, and `c("site", "year")`.
 #'
 #' @param fit A `kb_fit_weight` object.
 #' @param ... Passed to the species method: the predictor sequence (`diameter` for

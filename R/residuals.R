@@ -37,9 +37,10 @@ residuals.kb_fit <- function(object, ...) {
 #' @export
 .deviance.kb_fit_weight_nereo <- function(fit, mu) {
   sw <- as.vector(posterior::draws_of(fit$draws$sWeight))
-  theta <- 1 / fit$meta$nu
+  # nu is estimated, so theta is per-draw like the residual scale beside it.
+  nu <- as.vector(posterior::draws_of(fit$draws$bNu))
   .per_draw(mu, log(fit$data$weight), function(y, mu_d, d) {
-    extras::res_student(y, mu_d, sd = sw[d], theta = theta)
+    extras::res_student(y, mu_d, sd = sw[d], theta = 1 / nu[d])
   })
 }
 

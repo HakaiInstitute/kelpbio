@@ -22,6 +22,22 @@ print.kb_prior_exponential <- function(x, ...) {
   invisible(x)
 }
 
+#' @export
+print.kb_prior_gamma <- function(x, ...) {
+  cli::cat_line(cli::format_inline(
+    "gamma(shape = {format(x$shape)}, rate = {format(x$rate)})"
+  ))
+  invisible(x)
+}
+
+#' @export
+print.kb_prior_beta <- function(x, ...) {
+  cli::cat_line(cli::format_inline(
+    "beta(shape1 = {format(x$shape1)}, shape2 = {format(x$shape2)})"
+  ))
+  invisible(x)
+}
+
 # A diagnostic rate for display: 3 significant figures with a "%" suffix, or
 # "unknown" when the rate has no denominator (a fit with no draws).
 .fmt_perc <- function(x) {

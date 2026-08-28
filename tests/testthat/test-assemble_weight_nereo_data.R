@@ -36,12 +36,14 @@ test_that("assemble_weight_nereo_data maps every prior hyperparameter to its own
   # Every hyperparameter distinct, so a transposed or dropped wiring cannot pass.
   priors <- list(
     intercept = kb_prior_normal(0.1, 1.1),
-    diameter = kb_prior_normal(0.2, 1.2),
-    diameter2 = kb_prior_normal(0.3, 1.3),
+    power = kb_prior_normal(0.2, 1.2),
+    floor = kb_prior_beta(0.3, 1.3),
+    nu = kb_prior_gamma(0.4, 1.4),
     sd_site = kb_prior_exponential(2.1),
-    sd_site_diameter = kb_prior_exponential(2.2),
-    sd_site_year = kb_prior_exponential(2.3),
-    sd_residual = kb_prior_exponential(2.4)
+    sd_year = kb_prior_exponential(2.2),
+    sd_site_power = kb_prior_exponential(2.3),
+    sd_site_year = kb_prior_exponential(2.4),
+    sd_residual = kb_prior_exponential(2.5)
   )
   sd <- assemble_weight_nereo_data(
     data,
@@ -51,14 +53,17 @@ test_that("assemble_weight_nereo_data maps every prior hyperparameter to its own
   )
   expect_equal(sd$prior_intercept_mu, 0.1)
   expect_equal(sd$prior_intercept_sd, 1.1)
-  expect_equal(sd$prior_diameter_mu, 0.2)
-  expect_equal(sd$prior_diameter_sd, 1.2)
-  expect_equal(sd$prior_diameter2_mu, 0.3)
-  expect_equal(sd$prior_diameter2_sd, 1.3)
+  expect_equal(sd$prior_power_mu, 0.2)
+  expect_equal(sd$prior_power_sd, 1.2)
+  expect_equal(sd$prior_floor_shape1, 0.3)
+  expect_equal(sd$prior_floor_shape2, 1.3)
+  expect_equal(sd$prior_nu_shape, 0.4)
+  expect_equal(sd$prior_nu_rate, 1.4)
   expect_equal(sd$prior_sd_site_rate, 2.1)
-  expect_equal(sd$prior_sd_site_diameter_rate, 2.2)
-  expect_equal(sd$prior_sd_site_year_rate, 2.3)
-  expect_equal(sd$prior_sd_residual_rate, 2.4)
+  expect_equal(sd$prior_sd_year_rate, 2.2)
+  expect_equal(sd$prior_sd_site_power_rate, 2.3)
+  expect_equal(sd$prior_sd_site_year_rate, 2.4)
+  expect_equal(sd$prior_sd_residual_rate, 2.5)
 })
 
 test_that("assemble_weight_nereo_data encodes site_year_on as 0/1", {

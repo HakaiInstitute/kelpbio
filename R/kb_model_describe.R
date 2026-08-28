@@ -56,25 +56,28 @@ kb_model_describe.kb_fit_weight_macro <- function(fit, prose = FALSE) {
 
   mean_terms <- c(
     "bWeight",
+    "bYear[year]",
     "bSite[site]",
-    "(bDiameter + bSiteDiameter[site]) * x",
-    "bDiameter2 * x^2"
+    "log(bFloor + (1 - bFloor) * x^power[site])"
   )
   random <- list(
+    list(term = "bYear[year]", sd = "sYear", gloss = "year intercept"),
     list(term = "bSite[site]", sd = "sSite", gloss = "site intercept"),
     list(
-      term = "bSiteDiameter[site]",
-      sd = "sSiteDiameter",
-      gloss = "site slope on log-diameter"
+      term = "bSitePower[site]",
+      sd = "sSitePower",
+      gloss = "site exponent multiplier (log scale)"
     )
   )
   priors <- list(
     bWeight = pri$intercept,
-    bDiameter = pri$diameter,
-    bDiameter2 = pri$diameter2,
+    bPower = pri$power,
+    bFloor = pri$floor,
+    bNu = pri$nu,
     sWeight = pri$sd_residual,
+    sYear = pri$sd_year,
     sSite = pri$sd_site,
-    sSiteDiameter = pri$sd_site_diameter
+    sSitePower = pri$sd_site_power
   )
   if (sy) {
     mean_terms <- c(mean_terms, "bSiteYear[site, year]")
@@ -94,26 +97,37 @@ kb_model_describe.kb_fit_weight_macro <- function(fit, prose = FALSE) {
     species = .species_label(fit$meta$species),
     response_desc = "wet weight",
     predictor_desc = "sub-bulb diameter",
-    likelihood = "log(weight) ~ Student-t(4, mu, sWeight)",
+    likelihood = "log(weight) ~ Student-t(bNu, mu, sWeight)",
     mean_lhs = "mu",
     mean_terms = mean_terms,
-    centering = sprintf(
-      "x = log(diameter) - log(d0),  d0 = %s  (geometric mean diameter)",
-      format(d0)
+    centering = paste0(
+      sprintf(
+        "x = diameter / d0,  d0 = %s  (geometric mean diameter)",
+        format(d0)
+      ),
+      "\n  power[site] = bPower * exp(bSitePower[site])"
     ),
     random = random,
     priors = priors,
     prose = sprintf(
       paste0(
-        "Wet weight was modelled on the log scale with a Student-t likelihood ",
-        "(4 degrees of freedom) as an allometric function of sub-bulb diameter. ",
-        "Expected log weight was a quadratic function of log diameter, centered ",
-        "at the geometric mean diameter (%s), with the intercept and the ",
-        "log-diameter slope varying by site%s. Regularizing priors were placed ",
-        "on all parameters (see the notation form for the hyperparameters)."
+        "Wet weight was modelled on the log scale with a Student-t likelihood, ",
+        "with the degrees of freedom estimated, as an allometric function of ",
+        "sub-bulb diameter. Expected weight followed a three-parameter power ",
+        "function (Packard 2012) of diameter relative to the geometric mean ",
+        "diameter (%s), in which bFloor is the share of expected weight at that ",
+        "reference diameter that does not vary with size. The allometric ",
+        "exponent varied by site on the log scale, so it remained positive and ",
+        "expected weight increased monotonically with diameter within every ",
+        "site. %s Regularizing priors were placed on all parameters (see the ",
+        "notation form for the hyperparameters)."
       ),
       format(d0),
-      if (sy) " and the intercept additionally varying by site-year" else ""
+      if (sy) {
+        "The intercept varied by year, by site, and by site-year."
+      } else {
+        "The intercept varied by year and by site."
+      }
     )
   )
 }
@@ -189,6 +203,10 @@ kb_model_describe.kb_fit_weight_macro <- function(fit, prose = FALSE) {
     sprintf("Normal(%s, %s)", format(p$mean), format(p$sd))
   } else if (inherits(p, "kb_prior_exponential")) {
     sprintf("Exponential(%s)", format(p$rate))
+  } else if (inherits(p, "kb_prior_gamma")) {
+    sprintf("Gamma(%s, %s)", format(p$shape), format(p$rate))
+  } else if (inherits(p, "kb_prior_beta")) {
+    sprintf("Beta(%s, %s)", format(p$shape1), format(p$shape2))
   } else {
     format(p)
   }

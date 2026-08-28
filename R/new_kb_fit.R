@@ -40,6 +40,10 @@ new_kb_fit <- function(
       stancode = core$stancode,
       site_levels = levels(factor(data$site)),
       year_levels = levels(factor(data$year)),
+      # Recorded rather than recomputed from fit$data, so the group counts a fit
+      # reports are a pure metadata read. Describes the data's grouping structure,
+      # which is what print()/summary() label as "Data:", not the model's effects.
+      site_year_levels = site_year_levels(data),
       nthin = nthin,
       offset = offset,
       terms = terms
@@ -60,4 +64,19 @@ new_kb_fit <- function(
       "kb_fit"
     )
   )
+}
+
+# Observed site-year combinations, as "site:year" labels. Empty for a model whose
+# data carry no site or year column.
+site_year_levels <- function(data) {
+  d <- as.data.frame(data)
+  if (!all(c("site", "year") %in% names(d)) || !nrow(d)) {
+    return(character(0))
+  }
+  combos <- unique(paste(
+    as.character(d$site),
+    as.character(d$year),
+    sep = ":"
+  ))
+  sort(combos)
 }

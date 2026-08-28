@@ -61,9 +61,11 @@ posterior_predict.kb_fit <- function(
 #' @export
 .add_noise.kb_fit_weight_nereo <- function(fit, lp) {
   sweight <- as.vector(posterior::draws_of(fit$draws$sWeight)) # length D
-  # student_t(nu, mu, sigma) = mu + sigma * t_nu; nu is fixed in weight_nereo.stan
-  # and stored in meta so this path cannot drift from the model.
-  noise <- matrix(stats::rt(length(lp), df = fit$meta$nu), nrow = nrow(lp))
+  nu <- as.vector(posterior::draws_of(fit$draws$bNu)) # length D
+  # student_t(nu, mu, sigma) = mu + sigma * t_nu, with nu estimated so it varies by
+  # draw. rt() recycles df over the length-D*N draw, and the matrix fills
+  # column-major with D rows, so element (d, n) gets nu[d]: the right draw's df.
+  noise <- matrix(stats::rt(length(lp), df = nu), nrow = nrow(lp))
   exp(lp + sweight * noise)
 }
 

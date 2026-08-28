@@ -7,8 +7,8 @@
 kb_priors_weight_nereo()
 }
 \value{
-A named list of prior objects with entries \code{intercept}, \code{diameter},
-\code{diameter2}, \code{sd_site}, \code{sd_site_diameter}, \code{sd_site_year}, and
+A named list of prior objects with entries \code{intercept}, \code{power},
+\code{floor}, \code{nu}, \code{sd_site}, \code{sd_year}, \code{sd_site_power}, \code{sd_site_year}, and
 \code{sd_residual}.
 }
 \description{
@@ -18,9 +18,10 @@ model. Edit individual entries and pass the list to the \code{priors} argument o
 defaults.
 }
 \details{
-The prior family of each entry is fixed (the population-level terms are
-Normal, the standard deviations are Exponential); only the hyperparameters
-can be changed.
+The prior family of each entry is fixed; only the hyperparameters can be
+changed. \code{power} is the allometric exponent, \code{floor} is the
+size-independent share of the expected weight at the reference diameter, and
+\code{nu} is the Student-t degrees of freedom.
 }
 \examples{
 priors <- kb_priors_weight_nereo()
@@ -28,7 +29,9 @@ priors$sd_site <- kb_prior_exponential(2)
 }
 \seealso{
 Other priors:
+\code{\link[=kb_prior_beta]{kb_prior_beta()}},
 \code{\link[=kb_prior_exponential]{kb_prior_exponential()}},
+\code{\link[=kb_prior_gamma]{kb_prior_gamma()}},
 \code{\link[=kb_prior_normal]{kb_prior_normal()}},
 \code{\link[=kb_priors_weight_macro]{kb_priors_weight_macro()}}
 }

@@ -6,7 +6,7 @@ Fitting the Nereocystis and Macrocystis weight models and the kb_fit object cont
 ## Requirements
 ### Requirement: Fit the Nereocystis weight model
 
-`kb_fit_weight_nereo(data, priors, ..., prior_only, chains, niters, nthin, cores, seed, progress, progress_dir)` SHALL fit the *Nereocystis luetkeana* allometric weight model (quadratic log-diameter mean with site intercept, site slope, and a data-determined site:year random effect) via `stanmodels$weight_nereo` and return an object of class `c("kb_fit_weight_nereo", "kb_fit_weight", "kb_fit")`. The species is fixed by the function (there is no `species` argument); it is recorded as `"nereocystis"` in `meta$species`. There SHALL be no `site_year_on` argument: the site:year effect is determined from the data (see below) and the determination is recorded in `meta$site_year_on`.
+`kb_fit_weight_nereo(data, priors, ..., prior_only, chains, niters, nthin, cores, seed, progress, progress_dir)` SHALL fit the *Nereocystis luetkeana* allometric weight model (Packard three-parameter power mean with year, site intercept, site exponent, and a data-determined site:year random effect) via `stanmodels$weight_nereo` and return an object of class `c("kb_fit_weight_nereo", "kb_fit_weight", "kb_fit")`. The species is fixed by the function (there is no `species` argument); it is recorded as `"nereocystis"` in `meta$species`. There SHALL be no `site_year_on` argument: the site:year effect is determined from the data (see below) and the determination is recorded in `meta$site_year_on`.
 
 The site:year effect SHALL be included when the data span more than one distinct year and omitted otherwise. When years are present but no site was sampled in more than one year (an aliased design in which the site and site:year contributions are not separately identifiable) the effect SHALL be retained and a `cli` warning issued; predictions conditioned on the observed site-years are unaffected, but the individual site and site:year terms and their standard deviations (`sSite`, `sSiteYear`) are prior-driven and SHALL NOT be interpreted separately. When the effect is omitted an informational message SHALL be issued unless `progress = "none"`.
 
@@ -54,7 +54,7 @@ sampler parameters per saved iteration, a rate is over retained draws: with
 
 #### Scenario: Draws and diagnostics are retained, stanfit discarded
 - **WHEN** the fit object is inspected
-- **THEN** it exposes posterior draws (the fixed effects `bWeight`, `bDiameter`, `bDiameter2`; the SDs `sSite`, `sSiteDiameter`, `sSiteYear`, `sWeight`; the per-site `bSite` and `bSiteDiameter`; the site-by-year `bSiteYear`) and diagnostics, and contains no live `stanfit`
+- **THEN** it exposes posterior draws (the fixed effects `bWeight`, `bPower`, `bFloor`, `bNu`; the SDs `sSite`, `sYear`, `sSitePower`, `sSiteYear`, `sWeight`; the per-site `bSite` and `bSitePower`; the per-year `bYear`; the site-by-year `bSiteYear`) and diagnostics, and contains no live `stanfit`
 
 #### Scenario: Sampler diagnostics survive the stanfit
 - **WHEN** the fit object is inspected

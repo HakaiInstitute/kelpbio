@@ -10,7 +10,7 @@ Model summaries and diagnostics over a kb_fit: tidy / coef / glance / converged 
 
 #### Scenario: tidy returns term summaries with house columns
 - **WHEN** `tidy(fit)` is called
-- **THEN** it returns a tibble with columns `term`, `estimate`, `lower`, `upper`, one row per population-level term (`bWeight`, `bDiameter`, `bDiameter2`) and per random-effect SD (`sSite`, `sSiteDiameter`, `sSiteYear`, `sWeight`), with the per-level group deviations (`bSite[.]`, `bSiteDiameter[.]`, `bSiteYear[.,.]`) omitted because `include_random_effects` defaults to `FALSE`
+- **THEN** it returns a tibble with columns `term`, `estimate`, `lower`, `upper`, one row per population-level term (`bWeight`, `bPower`, `bFloor`, `bNu`) and per random-effect SD (`sSite`, `sYear`, `sSitePower`, `sSiteYear`, `sWeight`), with the per-level group deviations (`bSite[.]`, `bYear[.]`, `bSitePower[.]`, `bSiteYear[.,.]`) omitted because `include_random_effects` defaults to `FALSE`
 
 #### Scenario: A dropped random effect is not reported
 

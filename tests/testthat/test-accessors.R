@@ -11,14 +11,17 @@ test_that("accessors return expected shapes", {
     pars(weight_fit),
     c(
       "bWeight",
-      "bDiameter",
-      "bDiameter2",
+      "bPower",
+      "bFloor",
+      "bNu",
       "sSite",
-      "sSiteDiameter",
+      "sYear",
+      "sSitePower",
       "sSiteYear",
       "sWeight",
       "bSite",
-      "bSiteDiameter",
+      "bYear",
+      "bSitePower",
       "bSiteYear"
     )
   )
