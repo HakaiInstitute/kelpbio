@@ -35,6 +35,6 @@
       Predictor: fronds, reference 4.95 (geometric mean)
       Data:      240 observations; groups: site (4), year (3), site:year (12)
       Draws:     2 chains, 300 post-warmup draws each (thin = 5), 600 total
-      Converged: TRUE
+      Converged: FALSE
       See kb_model_describe(fit) for the model equation and priors.
 
