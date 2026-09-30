@@ -18,21 +18,20 @@ test_that("new_data = NULL conditions on observed groups, agreeing with augment"
   expect_equal(med, augment(weight_fit)$fitted, tolerance = 1e-8)
 })
 
-test_that("posterior_epred agrees with posterior_linpred(transform = TRUE)", {
-  # They coincide by model property, not construction: the two differ only for a
-  # mixture likelihood, so a zero-inflated model must make this fail deliberately.
-  fits <- list(nereo = weight_fit, macro = weight_macro_fit)
-  for (species in names(fits)) {
-    fit <- fits[[species]]
-    expect_equal(
-      posterior_epred(fit, new_data = NULL, new_levels = "average"),
-      posterior_linpred(
-        fit,
-        transform = TRUE,
-        new_data = NULL,
-        new_levels = "average"
-      ),
-      info = species
-    )
-  }
+test_that("macro posterior_epred agrees with posterior_linpred(transform = TRUE)", {
+  # They coincide by model property, not construction: the Gamma mean is exp()
+  # of the linear predictor.
+  expect_equal(
+    posterior_epred(weight_macro_fit, new_levels = "average"),
+    posterior_linpred(weight_macro_fit, transform = TRUE, new_levels = "average")
+  )
+})
+
+test_that("nereo posterior_epred is the lognormal mean, above the median", {
+  # Normal on log weight: the mean is the median times exp(sWeight^2 / 2).
+  ep <- posterior_epred(weight_fit, new_levels = "average")
+  med <- posterior_linpred(weight_fit, transform = TRUE, new_levels = "average")
+  sw <- as.vector(posterior::draws_of(weight_fit$draws$sWeight))
+  expect_equal(ep, med * exp(sw^2 / 2))
+  expect_true(all(ep > med))
 })

@@ -16,7 +16,7 @@ A numeric vector of deviance residuals, length \code{nobs(object)}.
 }
 \description{
 Posterior point estimates of the deviance residual at each observed row, from
-the fitted likelihood (Student-t on log-weight for \emph{Nereocystis}, Gamma on
+the fitted likelihood (Normal on log weight for \emph{Nereocystis}, Gamma on
 weight for \emph{Macrocystis}), matching \code{\link[=augment]{augment()}}'s \code{residual} column.
 }
 \details{

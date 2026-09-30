@@ -19,9 +19,9 @@ data_weight_sim_nereo
 \description{
 A small simulated dataset of sub-bulb diameter and wet weight (columns
 \code{diameter}, \code{weight}, \code{site}, \code{year}), for fast tests and runnable examples. It
-is simulated from the weight-model structure (site intercept, site slope, and
-site:year random effects over a wide diameter range), not real survey data,
-and is not intended for inference. Built by \code{data-raw/data_weight_sim_nereo.R}.
+is simulated from the weight-model structure (a three-parameter power function
+with year, site, and site:year random effects over a wide diameter range), not
+real survey data, and is not intended for inference. Built by \code{data-raw/data_weight_sim_nereo.R}.
 }
 \seealso{
 \link{fit_weight_sim_nereo} for a fit to this dataset.

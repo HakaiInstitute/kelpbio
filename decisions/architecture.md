@@ -51,11 +51,13 @@ mostly about what happens on its right-hand side.
 
 **Why rstan / rstantools, pre-compiled.** kelpbio uses the `rstan` + `rstantools` backend so the Stan models are transpiled to C++ and compiled once when the package is installed, not when a user fits. Fitting is then an ordinary function call against the ready binary: no cmdstan toolchain, no C++ compiler invoked at runtime, and no minutes-long per-model compile. Users get a package that installs like any other and runs immediately. Because the model is fixed at compile time, everything a user might want to vary (the prior hyperparameters and the structural flags below) is passed in through the Stan `data` block rather than by editing and recompiling source, so the single compiled binary serves every prior choice and structural variant. See `decisions/engine-choice.md`.
 
-The model is the validated analysis-project allometry adapted to site-year resolution (no month dimension). `log(weight)` follows a Student-t (df fixed at 4) with mean
+The model is the validated analysis-project allometry adapted to site-year resolution (no month dimension). `log(weight)` is Normal with mean `log(bFloor + alpha * x^bPower)`, Packard's three-parameter power function of the diameter ratio `x = diameter / d0` (`d0` the geometric mean diameter), where
 
-- intercept + linear + quadratic terms in centered log-diameter,
-- a site random intercept and a site random slope on log-diameter,
-- a site:year random intercept.
+- `bFloor` is a weight floor common to every site and year,
+- `log(alpha)` carries the intercept and the year, site, and site:year random effects,
+- `bPower` is a single allometric exponent.
+
+The likelihood is Normal rather than Student-t because biomass averages expected weight over the size distribution, and `E[weight]` does not exist under a Student-t on log weight.
 
 Engine conventions visible in the source (see `openspec/config.yaml` `context:` for the cross-cutting rules):
 

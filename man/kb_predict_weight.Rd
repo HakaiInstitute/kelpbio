@@ -51,11 +51,9 @@ reproducible interval.}
 
 \item{representative_site}{A character vector of site levels present in the
 fit, or \code{NULL} (the default). When supplied, a new or absent site takes the
-named reference site's site-level effects (the per-draw average when several
-are named) instead of the \code{new_levels} treatment: for \emph{Nereocystis} both the
-site intercept and the site slope, for \emph{Macrocystis} the site intercept, which
-is its only site-level effect. Any \code{site:year} interaction still follows
-\code{new_levels}.}
+named reference site's site effect (the per-draw average when several are
+named) instead of the \code{new_levels} treatment. Any \code{site:year} interaction
+still follows \code{new_levels}.}
 
 \item{conf_level}{A number between 0 and 1 giving the compatibility-interval
 level.}
@@ -67,7 +65,8 @@ a scalar point estimate (e.g. \code{median} or \code{mean}).}
 }
 \value{
 A \code{kb_predictions} object: the input rows with added \code{estimate},
-\code{lower}, and \code{upper} columns.
+\code{lower}, and \code{upper} columns summarising the posterior distribution of
+expected weight.
 }
 \description{
 Predict weight for the supplied rows, or for the observed data when
@@ -87,9 +86,9 @@ reproducible interval. \code{"sample"} is the default because it produces honest
 uncertainty for a new, unobserved site/year.
 
 For a new site, \code{representative_site} offers a third approach: instead of
-\code{new_levels} (\code{"sample"} or \code{"average"}) it borrows the site intercept and
-slope of one or more named reference sites (the per-draw average across
-several). The \code{site:year} interaction still follows \code{new_levels}.
+\code{new_levels} (\code{"sample"} or \code{"average"}) it borrows the site effect of one or
+more named reference sites (the per-draw average across several). The
+\code{site:year} interaction still follows \code{new_levels}.
 }
 \section{Methods (by class)}{
 \itemize{

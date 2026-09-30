@@ -64,12 +64,13 @@ An object of class \code{c("kb_fit_weight_nereo", "kb_fit_weight", "kb_fit")}.
 Fit an allometric weight model for \emph{Nereocystis luetkeana} via Stan.
 }
 \details{
-The response is log wet weight, modelled with a Student-t likelihood (4
-degrees of freedom, for robustness to outliers). Expected log weight is a
-quadratic (allometric) function of log sub-bulb diameter, centered at its
-geometric mean so the intercept is the expected log weight at a typical
-diameter. The intercept and the allometric slope vary by site, and the
-intercept also varies by \code{site:year}.
+Log wet weight (kg) is modelled with a Normal likelihood. Expected weight is a
+three-parameter power function of sub-bulb diameter (mm),
+\code{bFloor + alpha * (diameter / d0)^bPower}, where \code{bFloor} is the weight floor,
+\code{bPower} the allometric exponent, and \code{d0} the geometric mean diameter of the
+data. The year, site, and \code{site:year} effects act on \code{alpha}, so they scale
+the size-dependent part of the weight while the floor is common to all
+groups.
 
 \code{niters} is the number of saved post-warmup draws per chain; warmup defaults
 to match \code{niters} and the post-warmup phase is thinned by \code{nthin}.

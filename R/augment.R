@@ -1,7 +1,8 @@
 #' Augment Model Data
 #'
-#' Append the [fitted()] and deviance [residuals()] values
-#' to the input data. Values are the point estimate (median) of the posterior distributions.
+#' Append the [fitted()] and deviance [residuals()] values to the input data.
+#' Values are posterior point estimates (median): `fitted` of the expected weight,
+#' `residual` of the deviance residual.
 #'
 #' @param x A `kb_fit` object.
 #' @param ... Unused.

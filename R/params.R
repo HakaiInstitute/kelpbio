@@ -60,11 +60,9 @@
 #'   reproducible interval.
 #' @param representative_site A character vector of site levels present in the
 #'   fit, or `NULL` (the default). When supplied, a new or absent site takes the
-#'   named reference site's site-level effects (the per-draw average when several
-#'   are named) instead of the `new_levels` treatment: for *Nereocystis* both the
-#'   site intercept and the site slope, for *Macrocystis* the site intercept, which
-#'   is its only site-level effect. Any `site:year` interaction still follows
-#'   `new_levels`.
+#'   named reference site's site effect (the per-draw average when several are
+#'   named) instead of the `new_levels` treatment. Any `site:year` interaction
+#'   still follows `new_levels`.
 #' @keywords internal
 #' @aliases parameters arguments args
 #' @usage NULL

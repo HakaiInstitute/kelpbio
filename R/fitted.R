@@ -1,7 +1,7 @@
 #' Fitted Values
 #'
-#' Posterior point estimates (median) of the response-scale value at each observed
-#' row, matching [augment()]'s `fitted` column. For the full posterior, use
+#' Posterior point estimates (median) of the expected weight at each observed row,
+#' matching [augment()]'s `fitted` column. For the full posterior, use
 #' [posterior_epred()].
 #'
 #' @param object A `kb_fit` object.

@@ -1,7 +1,7 @@
 #' Deviance Residuals
 #'
 #' Posterior point estimates of the deviance residual at each observed row, from
-#' the fitted likelihood (Student-t on log-weight for *Nereocystis*, Gamma on
+#' the fitted likelihood (Normal on log weight for *Nereocystis*, Gamma on
 #' weight for *Macrocystis*), matching [augment()]'s `residual` column.
 #'
 #' @details
@@ -37,10 +37,8 @@ residuals.kb_fit <- function(object, ...) {
 #' @export
 .deviance.kb_fit_weight_nereo <- function(fit, mu) {
   sw <- as.vector(posterior::draws_of(fit$draws$sWeight))
-  # nu is estimated, so theta is per-draw like the residual scale beside it.
-  nu <- as.vector(posterior::draws_of(fit$draws$bNu))
   .per_draw(mu, log(fit$data$weight), function(y, mu_d, d) {
-    extras::res_student(y, mu_d, sd = sw[d], theta = 1 / nu[d])
+    extras::res_norm(y, mu_d, sd = sw[d])
   })
 }
 

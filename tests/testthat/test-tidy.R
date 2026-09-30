@@ -10,10 +10,8 @@ test_that("tidy returns house columns and omits group-level terms by default", {
       "bWeight",
       "bPower",
       "bFloor",
-      "bNu",
       "sSite",
       "sYear",
-      "sSitePower",
       "sSiteYear",
       "sWeight"
     )

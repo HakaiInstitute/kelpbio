@@ -24,19 +24,15 @@ test_that("log_lik is deterministic", {
   expect_identical(log_lik(weight_macro_fit), log_lik(weight_macro_fit))
 })
 
-test_that("nereo log_lik matches the Student-t density computed directly", {
-  # Independent of extras, so this pins the parameterisation (theta = 1/nu, and
-  # the density is of log(weight), not weight) as well as the orientation.
+test_that("nereo log_lik matches the Normal density computed directly", {
+  # Independent of extras, so this pins the parameterisation (the density is of
+  # log(weight), not weight) as well as the orientation.
   mu <- posterior_linpred(weight_fit)
   sw <- as.vector(posterior::draws_of(weight_fit$draws$sWeight))
   y <- log(weight_fit$data$weight)
-  # nu is estimated, so the degrees of freedom vary by draw alongside sWeight
-  nu <- as.vector(posterior::draws_of(weight_fit$draws$bNu))
   expected <- t(vapply(
     seq_along(sw),
-    function(d) {
-      stats::dt((y - mu[d, ]) / sw[d], df = nu[d], log = TRUE) - log(sw[d])
-    },
+    function(d) stats::dnorm(y, mu[d, ], sw[d], log = TRUE),
     numeric(length(y))
   ))
   expect_equal(log_lik(weight_fit), expected, tolerance = 1e-10)

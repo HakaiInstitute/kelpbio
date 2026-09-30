@@ -23,11 +23,8 @@ Check that \code{data} contains the columns required to fit the \emph{Nereocysti
 luetkeana} weight model, with appropriate types and values.
 }
 \details{
-Required columns: numeric \code{diameter} (> 0), numeric \code{weight} (> 0), and factor
-or character \code{site} and \code{year}, with no missing values.
-
-Diameter and weight may be in any units, provided prediction data use the same
-units as the fitted data.
+Required columns: numeric \code{diameter} (mm, > 0), numeric \code{weight} (kg, > 0),
+and factor or character \code{site} and \code{year}, with no missing values.
 }
 \examples{
 data <- data.frame(

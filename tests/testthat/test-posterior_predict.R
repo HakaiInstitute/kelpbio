@@ -6,12 +6,12 @@ test_that("posterior_predict recomputes replicates at the observed data", {
   expect_equal(nrow(yrep), posterior::ndraws(weight_fit$draws))
   expect_true(all(yrep > 0))
   # Replicates are drawn, so never assert exact values: check they sit around the
-  # expected weight. A robust statistic, because nereo yrep is exp(Student-t(4)),
-  # whose mean and variance are infinite.
-  ep <- posterior_epred(weight_fit)
+  # median weight, which for a lognormal replicate is exp() of the linear
+  # predictor.
+  med <- posterior_linpred(weight_fit, transform = TRUE)
   expect_equal(
     stats::median(apply(yrep, 2, stats::median)),
-    stats::median(apply(ep, 2, stats::median)),
+    stats::median(apply(med, 2, stats::median)),
     tolerance = 0.1
   )
 })

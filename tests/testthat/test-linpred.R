@@ -87,17 +87,18 @@ test_that("a dropped site:year effect contributes nothing to the linear predicto
   y <- weight_fit$meta$year_levels[1]
   grid <- data.frame(diameter = 40, site = s, year = y)
 
-  lp_on <- .linpred(on, grid, "average")
-  lp_off <- .linpred(off, grid, "average")
-  diff <- posterior::draws_of(lp_on) - posterior::draws_of(lp_off)
+  e_on <- exp(as.numeric(posterior::draws_of(.linpred(on, grid, "average"))))
+  e_off <- exp(as.numeric(posterior::draws_of(.linpred(off, grid, "average"))))
 
   # removing the term shifts the mean, so the two are not identical
-  expect_false(isTRUE(all.equal(as.numeric(diff), rep(0, length(diff)))))
-  # and the removed contribution is exactly the conditioned bSiteYear[s, y] draws
+  expect_false(isTRUE(all.equal(e_on, e_off)))
+  # site:year acts on log(alpha), so the removed contribution is exactly the
+  # conditioned bSiteYear[s, y] draws on the log of the weight above the floor
+  floor <- as.numeric(posterior::draws_of(weight_fit$draws$bFloor))
   si <- match(s, weight_fit$meta$site_levels)
   yi <- match(y, weight_fit$meta$year_levels)
   bsy <- posterior::draws_of(weight_fit$draws$bSiteYear)[, si, yi]
-  expect_equal(as.numeric(diff), as.numeric(bsy))
+  expect_equal(log(e_on - floor) - log(e_off - floor), as.numeric(bsy))
 })
 
 test_that("a fit without the site_year_on flag defaults to keeping site:year", {

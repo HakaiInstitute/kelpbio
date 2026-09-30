@@ -10,7 +10,7 @@ Model summaries and diagnostics over a kb_fit: tidy / coef / glance / converged 
 
 #### Scenario: tidy returns term summaries with house columns
 - **WHEN** `tidy(fit)` is called
-- **THEN** it returns a tibble with columns `term`, `estimate`, `lower`, `upper`, one row per population-level term (`bWeight`, `bPower`, `bFloor`, `bNu`) and per random-effect SD (`sSite`, `sYear`, `sSitePower`, `sSiteYear`, `sWeight`), with the per-level group deviations (`bSite[.]`, `bYear[.]`, `bSitePower[.]`, `bSiteYear[.,.]`) omitted because `include_random_effects` defaults to `FALSE`
+- **THEN** it returns a tibble with columns `term`, `estimate`, `lower`, `upper`, one row per population-level term (`bWeight`, `bPower`, `bFloor`) and per random-effect or residual SD (`sSite`, `sYear`, `sSiteYear`, `sWeight`), with the per-level group deviations (`bSite[.]`, `bYear[.]`, `bSiteYear[.,.]`) omitted because `include_random_effects` defaults to `FALSE`
 
 #### Scenario: A dropped random effect is not reported
 
@@ -23,7 +23,7 @@ Model summaries and diagnostics over a kb_fit: tidy / coef / glance / converged 
 
 #### Scenario: include_random_effects toggles group-level rows
 - **WHEN** `tidy(fit, include_random_effects = TRUE)` is called
-- **THEN** the per-level random-effect rows (`bSite[.]`, `bSiteDiameter[.]`, `bSiteYear[.,.]`) are included alongside the population-level terms and SDs
+- **THEN** the per-level random-effect rows (`bSite[.]`, `bYear[.]`, `bSiteYear[.,.]`) are included alongside the population-level terms and SDs
 
 #### Scenario: coef wraps tidy
 - **WHEN** `coef(fit)` is called
@@ -96,7 +96,7 @@ fail a fit.
 
 ### Requirement: Fitted values and deviance residuals
 
-`fitted(object)` SHALL return a numeric vector of posterior point estimates at each observed row, on the response scale (the posterior median of `posterior_epred()` at the observed data; the full posterior is available from `posterior_epred()`). Note the *Nereocystis* likelihood is a Student-t on log weight, whose response-scale expectation does not exist, so the value there is the conditional median rather than a mean; the per-model likelihood is reported by `kb_model_describe()`. `residuals(object)` SHALL return a numeric vector of deviance residuals at each observed row, computed per draw from the fitted likelihood and summarised to the posterior median: the Student-t log-weight likelihood for *Nereocystis*, and the Gamma likelihood (shape `shape`, rate `shape / eWeight`) for *Macrocystis*. Both return a vector of length `nobs(object)`, suitable for appending to the data. Neither takes interval or `estimate` arguments, and `residuals()` SHALL NOT take a residual-type argument.
+`fitted(object)` SHALL return a numeric vector of posterior point estimates at each observed row, on the response scale (the posterior median of `posterior_epred()` at the observed data; the full posterior is available from `posterior_epred()`). For *Nereocystis* this is the expected weight, including the lognormal correction `exp(sWeight^2 / 2)`; the per-model likelihood is reported by `kb_model_describe()`. `residuals(object)` SHALL return a numeric vector of deviance residuals at each observed row, computed per draw from the fitted likelihood and summarised to the posterior median: the Normal log-weight likelihood for *Nereocystis*, and the Gamma likelihood (shape `shape`, rate `shape / eWeight`) for *Macrocystis*. Both return a vector of length `nobs(object)`, suitable for appending to the data. Neither takes interval or `estimate` arguments, and `residuals()` SHALL NOT take a residual-type argument.
 
 #### Scenario: fitted returns response-scale point estimates
 - **WHEN** `fitted(fit)` is called
@@ -142,7 +142,7 @@ The `summary_kb_fit` coefficient table SHALL carry columns `term`, `estimate`, `
 
 #### Scenario: summary omits group-level deviations by default
 - **WHEN** `summary(fit)` is called
-- **THEN** the per-level deviations (`bSite[.]`, `bSiteDiameter[.]`, `bSiteYear[.,.]`) are omitted and the random-effect SDs are retained; `summary(fit, include_random_effects = TRUE)` adds the per-level rows
+- **THEN** the per-level deviations (`bSite[.]`, `bYear[.]`, `bSiteYear[.,.]`) are omitted and the random-effect SDs are retained; `summary(fit, include_random_effects = TRUE)` adds the per-level rows
 
 #### Scenario: Macro header reports the Gamma family and macro structure
 - **WHEN** the *Macrocystis* Gamma family and effect structure are needed

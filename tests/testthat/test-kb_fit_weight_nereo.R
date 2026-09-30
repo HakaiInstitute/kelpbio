@@ -30,15 +30,12 @@ test_that("kb_fit_weight returns a correctly-structured object", {
       "bWeight",
       "bPower",
       "bFloor",
-      "bNu",
       "sSite",
       "sYear",
-      "sSitePower",
       "sSiteYear",
       "sWeight",
       "bSite",
       "bYear",
-      "bSitePower",
       "bSiteYear"
     )
   )

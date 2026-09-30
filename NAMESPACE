@@ -11,6 +11,7 @@ S3method(.deviance,kb_fit_weight_macro)
 S3method(.deviance,kb_fit_weight_nereo)
 S3method(.epred,default)
 S3method(.epred,kb_fit_weight)
+S3method(.epred,kb_fit_weight_nereo)
 S3method(.linpred,default)
 S3method(.linpred,kb_fit_weight_macro)
 S3method(.linpred,kb_fit_weight_nereo)
@@ -35,9 +36,7 @@ S3method(kb_stancode,default)
 S3method(kb_stancode,kb_fit)
 S3method(print,kb_fit)
 S3method(print,kb_predictions)
-S3method(print,kb_prior_beta)
 S3method(print,kb_prior_exponential)
-S3method(print,kb_prior_gamma)
 S3method(print,kb_prior_normal)
 S3method(print,kb_stancode)
 S3method(print,summary_kb_fit)
@@ -77,9 +76,7 @@ export(kb_model_describe)
 export(kb_plot_predictions)
 export(kb_predict_weight)
 export(kb_predict_weight_by)
-export(kb_prior_beta)
 export(kb_prior_exponential)
-export(kb_prior_gamma)
 export(kb_prior_normal)
 export(kb_priors_weight_macro)
 export(kb_priors_weight_nereo)
@@ -100,27 +97,35 @@ export(tidy)
 import(Rcpp)
 import(methods)
 importFrom(RcppParallel,RcppParallelLibs)
-importFrom(generics,augment)
-importFrom(generics,glance)
-importFrom(generics,tidy)
+importFrom(generics,
+  augment,
+  glance,
+  tidy
+)
 importFrom(ggplot2,autoplot)
-importFrom(rlang,"%||%")
-importFrom(rlang,.data)
+importFrom(rlang,
+  "%||%",
+  .data
+)
 importFrom(rstan,sampling)
-importFrom(rstantools,log_lik)
-importFrom(rstantools,posterior_epred)
-importFrom(rstantools,posterior_linpred)
-importFrom(rstantools,posterior_predict)
-importFrom(rstantools,prior_summary)
-importFrom(rstantools,rstan_config)
+importFrom(rstantools,
+  log_lik,
+  posterior_epred,
+  posterior_linpred,
+  posterior_predict,
+  prior_summary,
+  rstan_config
+)
 importFrom(stats,nobs)
-importFrom(universals,converged)
-importFrom(universals,esr)
-importFrom(universals,estimates)
-importFrom(universals,nchains)
-importFrom(universals,niters)
-importFrom(universals,npars)
-importFrom(universals,nterms)
-importFrom(universals,pars)
-importFrom(universals,rhat)
+importFrom(universals,
+  converged,
+  esr,
+  estimates,
+  nchains,
+  niters,
+  npars,
+  nterms,
+  pars,
+  rhat
+)
 useDynLib(kelpbio, .registration = TRUE)

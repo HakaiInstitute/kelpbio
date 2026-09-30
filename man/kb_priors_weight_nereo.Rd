@@ -8,8 +8,7 @@ kb_priors_weight_nereo()
 }
 \value{
 A named list of prior objects with entries \code{intercept}, \code{power},
-\code{floor}, \code{nu}, \code{sd_site}, \code{sd_year}, \code{sd_site_power}, \code{sd_site_year}, and
-\code{sd_residual}.
+\code{floor}, \code{sd_site}, \code{sd_year}, \code{sd_site_year}, and \code{sd_residual}.
 }
 \description{
 The default prior list for the \emph{Nereocystis luetkeana} allometric weight
@@ -19,9 +18,10 @@ defaults.
 }
 \details{
 The prior family of each entry is fixed; only the hyperparameters can be
-changed. \code{power} is the allometric exponent, \code{floor} is the
-size-independent share of the expected weight at the reference diameter, and
-\code{nu} is the Student-t degrees of freedom.
+changed. \code{intercept} is on the log of the weight above the floor at the
+reference diameter, \code{power} is the allometric exponent, and \code{floor} is the
+weight (kg) as diameter approaches zero. \code{power} and \code{floor} are truncated at
+zero.
 }
 \examples{
 priors <- kb_priors_weight_nereo()
@@ -29,9 +29,7 @@ priors$sd_site <- kb_prior_exponential(2)
 }
 \seealso{
 Other priors:
-\code{\link[=kb_prior_beta]{kb_prior_beta()}},
 \code{\link[=kb_prior_exponential]{kb_prior_exponential()}},
-\code{\link[=kb_prior_gamma]{kb_prior_gamma()}},
 \code{\link[=kb_prior_normal]{kb_prior_normal()}},
 \code{\link[=kb_priors_weight_macro]{kb_priors_weight_macro()}}
 }

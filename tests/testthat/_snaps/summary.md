@@ -10,18 +10,16 @@
       Draws:     2 chains, 300 post-warmup draws each (thin = 5), 600 total
       Converged: TRUE
       
-      # A tibble: 9 x 7
-        term       estimate     lower   upper  rhat ess_bulk ess_tail
-        <chr>         <dbl>     <dbl>   <dbl> <dbl>    <dbl>    <dbl>
+      # A tibble: 7 x 7
+        term      estimate   lower upper  rhat ess_bulk ess_tail
+        <chr>        <dbl>   <dbl> <dbl> <dbl>    <dbl>    <dbl>
       1 bWeight <numerics>
       2 bPower <numerics>
       3 bFloor <numerics>
-      4 bNu <numerics>
-      5 sSite <numerics>
-      6 sYear <numerics>
-      7 sSitePower <numerics>
-      8 sSiteYear <numerics>
-      9 sWeight <numerics>
+      4 sSite <numerics>
+      5 sYear <numerics>
+      6 sSiteYear <numerics>
+      7 sWeight <numerics>
       
       estimate: posterior point estimate; lower, upper: 95% compatibility limits.
       rhat: potential scale reduction factor (1 at convergence).

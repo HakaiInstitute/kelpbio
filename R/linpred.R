@@ -15,10 +15,9 @@
 }
 
 # Nereocystis weight-model mean (log scale), a posterior rvar over grid rows.
-# Packard's three-parameter power form on the centered diameter ratio, mirroring
-# inst/stan/weight_nereo.stan: the site effect is a log-scale multiplier on a
-# positive population exponent, so the exponent stays positive and the curve is
-# monotone within every site.
+# Packard's three-parameter power function on the diameter ratio, mirroring
+# inst/stan/weight_nereo.stan: the random effects act on log(alpha), so they scale
+# the size-dependent part of the weight and leave the floor common.
 #' @export
 .linpred.kb_fit_weight_nereo <- function(
   fit,
@@ -28,18 +27,10 @@
 ) {
   draws <- fit$draws
   ix <- .grid_indices(fit, grid, representative_site)
-  log_dc <- log(grid$diameter) - log(fit$meta$predictor_ref)
+  log_x <- log(grid$diameter) - log(fit$meta$predictor_ref)
 
   re_site <- resolve_re1(draws$bSite, ix$site, new_levels, draws$sSite, ix$rep)
-  # representative_site borrows the site intercept and exponent, so both take
-  # ix$rep; year is a standalone effect and follows new_levels regardless.
-  re_power <- resolve_re1(
-    draws$bSitePower,
-    ix$site,
-    new_levels,
-    draws$sSitePower,
-    ix$rep
-  )
+  # representative_site borrows only the site effect, so year follows new_levels.
   re_year <- resolve_re1(draws$bYear, ix$year, new_levels, draws$sYear)
   # When the fit omitted the site:year effect its draws are prior-only noise, so
   # predictions must add nothing rather than reintroduce spurious variation.
@@ -49,19 +40,13 @@
     0
   }
 
-  power <- draws$bPower * exp(re_power)
-  floor <- draws$bFloor
-
-  draws$bWeight +
-    re_site +
-    re_year +
-    log(floor + (1 - floor) * exp(power * log_dc)) +
-    re_sy
+  log_alpha <- draws$bWeight + re_site + re_year + re_sy
+  log(draws$bFloor + exp(log_alpha + draws$bPower * log_x))
 }
 
 # Macrocystis mean, returned on the log scale like nereo so the shared faces are
 # common; for the Gamma the exponential is the mean exactly. Differs from nereo: a
-# linear log-predictor, no site slope, and a standalone bYear.
+# log-linear predictor with no floor.
 #' @export
 .linpred.kb_fit_weight_macro <- function(
   fit,

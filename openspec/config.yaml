@@ -29,7 +29,7 @@ context: |
     changes. Toggle small RE terms with binary structural flags in one .stan; use a
     separate .stan only for a different likelihood / major variant. Species IS such a
     variant: the models differ structurally across species (e.g. Nereocystis weight is
-    Student-t on a log-diameter quadratic, Macrocystis weight is Gamma on log-fronds),
+    lognormal on a Packard power function of diameter, Macrocystis weight is Gamma on log-fronds),
     so each species gets its own .stan and its own kb_fit_<model>_<species>() wrapper
     over a shared internal engine (fit_stan()); each species is a subclass
     (c("kb_fit_<model>_<species>", "kb_fit_<model>", "kb_fit")) so species-agnostic

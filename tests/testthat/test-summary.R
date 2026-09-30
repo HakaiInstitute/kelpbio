@@ -13,7 +13,7 @@ test_that("summary excludes group-level deviations by default", {
   expect_false(any(grepl("^bSite\\[", s$coefficients$term)))
   # the random-effect SD hyperparameters are always shown
   expect_true(all(
-    c("sSite", "sYear", "sSitePower", "sSiteYear", "sWeight") %in% s$coefficients$term
+    c("sSite", "sYear", "sSiteYear", "sWeight") %in% s$coefficients$term
   ))
 })
 

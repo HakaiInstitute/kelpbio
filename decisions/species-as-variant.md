@@ -16,9 +16,9 @@ Inspecting the validated analysis project (`hakai-kelp-biomass-25`) overturns
 that assumption. The models differ structurally across species, not just in
 data:
 
-- Weight: nereo is Student-t on a quadratic in centred log-diameter with a
-  site-slope random effect; macro is Gamma (shape proportional to frond count)
-  on a linear function of log-fronds, with no site slope. Different response
+- Weight: nereo is lognormal on a Packard power function of diameter with a
+  weight floor; macro is Gamma (constant shape) on a linear function of
+  log-fronds. Different response
   column, predictor column, likelihood family, functional form, random-effect
   structure, and parameter set.
 - Size: different predictor (`sbulb_max` vs `fronds_1m`) and likelihood/params.

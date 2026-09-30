@@ -1,14 +1,12 @@
 #' Response-Scale Posterior Draws
 #'
-#' Draws of the response-scale value of the linear predictor.
+#' Draws of the expected weight.
 #'
 #' @details
-#' The value is an expectation only where the likelihood has one. The
-#' *Nereocystis* likelihood is a Student-t on log weight, which has no
-#' response-scale mean, so the value there is the conditional median; the
-#' *Macrocystis* Gamma mean is `exp()` of the linear predictor exactly. Either
-#' way it is the central estimate of weight, not a draw of weight: for the
-#' posterior predictive distribution use [posterior_predict()].
+#' Each draw is the expected weight given that draw's parameters:
+#' `exp(mu + sWeight^2 / 2)` for *Nereocystis*, where `mu` is the linear
+#' predictor, and `exp(mu)` for *Macrocystis*. For draws of weight that include
+#' observation noise, use [posterior_predict()].
 #'
 #' Conditioning is inferred from the grouping columns present in `new_data`: a
 #' `site` (and optionally `year`) column with known levels is conditioned on;

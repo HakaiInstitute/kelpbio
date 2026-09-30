@@ -2,7 +2,7 @@
 #'
 #' Draws from the posterior predictive distribution: replicate weights carrying
 #' both parameter uncertainty and species-appropriate observation noise
-#' (Student-t on log weight with scale `sWeight` for *Nereocystis*; Gamma with
+#' (Normal on log weight with SD `sWeight` for *Nereocystis*; Gamma with
 #' shape `shape` for *Macrocystis*, matching the Stan likelihood). With
 #' `new_data = NULL` the replicates are at the observed data, for use with
 #' `bayesplot::pp_check()`.
@@ -61,11 +61,9 @@ posterior_predict.kb_fit <- function(
 #' @export
 .add_noise.kb_fit_weight_nereo <- function(fit, lp) {
   sweight <- as.vector(posterior::draws_of(fit$draws$sWeight)) # length D
-  nu <- as.vector(posterior::draws_of(fit$draws$bNu)) # length D
-  # student_t(nu, mu, sigma) = mu + sigma * t_nu, with nu estimated so it varies by
-  # draw. rt() recycles df over the length-D*N draw, and the matrix fills
-  # column-major with D rows, so element (d, n) gets nu[d]: the right draw's df.
-  noise <- matrix(stats::rt(length(lp), df = nu), nrow = nrow(lp))
+  # sweight recycles down each column of the D x N matrix, so element (d, n)
+  # gets draw d's residual SD.
+  noise <- matrix(stats::rnorm(length(lp)), nrow = nrow(lp))
   exp(lp + sweight * noise)
 }
 

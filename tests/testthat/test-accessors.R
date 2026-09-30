@@ -13,15 +13,12 @@ test_that("accessors return expected shapes", {
       "bWeight",
       "bPower",
       "bFloor",
-      "bNu",
       "sSite",
       "sYear",
-      "sSitePower",
       "sSiteYear",
       "sWeight",
       "bSite",
       "bYear",
-      "bSitePower",
       "bSiteYear"
     )
   )

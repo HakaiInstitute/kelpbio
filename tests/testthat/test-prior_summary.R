@@ -6,10 +6,8 @@ test_that("prior_summary returns the resolved priors", {
       "intercept",
       "power",
       "floor",
-      "nu",
       "sd_site",
       "sd_year",
-      "sd_site_power",
       "sd_site_year",
       "sd_residual"
     ) %in%

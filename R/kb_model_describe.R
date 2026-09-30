@@ -10,8 +10,7 @@
 #' stored priors, any predictor centering uses the reference value stored on the
 #' fit, and a random effect dropped at fit time (such as `site:year` for
 #' single-year data) is omitted from both the linear predictor and the
-#' random-effect list. The response and predictors are named without units, since
-#' the data columns are unitless.
+#' random-effect list. Priors marked `T[0, ]` are truncated at zero.
 #'
 #' @param fit A `kb_fit` object.
 #' @param prose A flag specifying whether to render a methods-section paragraph
@@ -54,30 +53,18 @@ kb_model_describe.kb_fit_weight_macro <- function(fit, prose = FALSE) {
   d0 <- signif(fit$meta$predictor_ref, 3)
   pri <- fit$meta$priors
 
-  mean_terms <- c(
-    "bWeight",
-    "bYear[year]",
-    "bSite[site]",
-    "log(bFloor + (1 - bFloor) * x^power[site])"
-  )
+  mean_terms <- c("bWeight", "bYear[year]", "bSite[site]")
   random <- list(
-    list(term = "bYear[year]", sd = "sYear", gloss = "year intercept"),
-    list(term = "bSite[site]", sd = "sSite", gloss = "site intercept"),
-    list(
-      term = "bSitePower[site]",
-      sd = "sSitePower",
-      gloss = "site exponent multiplier (log scale)"
-    )
+    list(term = "bYear[year]", sd = "sYear", gloss = "year effect on log(alpha)"),
+    list(term = "bSite[site]", sd = "sSite", gloss = "site effect on log(alpha)")
   )
   priors <- list(
     bWeight = pri$intercept,
     bPower = pri$power,
     bFloor = pri$floor,
-    bNu = pri$nu,
     sWeight = pri$sd_residual,
     sYear = pri$sd_year,
-    sSite = pri$sd_site,
-    sSitePower = pri$sd_site_power
+    sSite = pri$sd_site
   )
   if (sy) {
     mean_terms <- c(mean_terms, "bSiteYear[site, year]")
@@ -86,7 +73,7 @@ kb_model_describe.kb_fit_weight_macro <- function(fit, prose = FALSE) {
       list(list(
         term = "bSiteYear[site, year]",
         sd = "sSiteYear",
-        gloss = "site:year intercept"
+        gloss = "site:year effect on log(alpha)"
       ))
     )
     priors$sSiteYear <- pri$sd_site_year
@@ -95,38 +82,37 @@ kb_model_describe.kb_fit_weight_macro <- function(fit, prose = FALSE) {
   list(
     title = "Weight allometry",
     species = .species_label(fit$meta$species),
-    response_desc = "wet weight",
-    predictor_desc = "sub-bulb diameter",
-    likelihood = "log(weight) ~ Student-t(bNu, mu, sWeight)",
-    mean_lhs = "mu",
+    response_desc = "wet weight (kg)",
+    predictor_desc = "sub-bulb diameter (mm)",
+    likelihood = paste0(
+      "log(weight) ~ Normal(log(mu), sWeight)",
+      "\n  mu = bFloor + alpha * x^bPower"
+    ),
+    mean_lhs = "log(alpha)",
     mean_terms = mean_terms,
-    centering = paste0(
-      sprintf(
-        "x = diameter / d0,  d0 = %s  (geometric mean diameter)",
-        format(d0)
-      ),
-      "\n  power[site] = bPower * exp(bSitePower[site])"
+    centering = sprintf(
+      "x = diameter / d0,  d0 = %s  (geometric mean diameter)",
+      format(d0)
     ),
     random = random,
     priors = priors,
+    truncated = c("bPower", "bFloor"),
     prose = sprintf(
       paste0(
-        "Wet weight was modelled on the log scale with a Student-t likelihood, ",
-        "with the degrees of freedom estimated, as an allometric function of ",
-        "sub-bulb diameter. Expected weight followed a three-parameter power ",
-        "function (Packard 2012) of diameter relative to the geometric mean ",
-        "diameter (%s), in which bFloor is the share of expected weight at that ",
-        "reference diameter that does not vary with size. The allometric ",
-        "exponent varied by site on the log scale, so it remained positive and ",
-        "expected weight increased monotonically with diameter within every ",
-        "site. %s Regularizing priors were placed on all parameters (see the ",
-        "notation form for the hyperparameters)."
+        "Wet weight was modelled on the log scale with a Normal likelihood as an ",
+        "allometric function of sub-bulb diameter. Expected weight followed a ",
+        "three-parameter power function (Packard 2008) of diameter relative to ",
+        "the geometric mean diameter (%s), in which bFloor is the weight as ",
+        "diameter approaches zero, alpha the weight above the floor at the ",
+        "reference diameter, and bPower the allometric exponent. %s ",
+        "Regularizing priors were placed on all parameters (see the notation ",
+        "form for the hyperparameters)."
       ),
       format(d0),
       if (sy) {
-        "The intercept varied by year, by site, and by site-year."
+        "The log of alpha varied by year, by site, and by site-year."
       } else {
-        "The intercept varied by year and by site."
+        "The log of alpha varied by year and by site."
       }
     )
   )
@@ -203,10 +189,6 @@ kb_model_describe.kb_fit_weight_macro <- function(fit, prose = FALSE) {
     sprintf("Normal(%s, %s)", format(p$mean), format(p$sd))
   } else if (inherits(p, "kb_prior_exponential")) {
     sprintf("Exponential(%s)", format(p$rate))
-  } else if (inherits(p, "kb_prior_gamma")) {
-    sprintf("Gamma(%s, %s)", format(p$shape), format(p$rate))
-  } else if (inherits(p, "kb_prior_beta")) {
-    sprintf("Beta(%s, %s)", format(p$shape1), format(p$shape2))
   } else {
     format(p)
   }
@@ -241,7 +223,8 @@ kb_model_describe.kb_fit_weight_macro <- function(fit, prose = FALSE) {
   prior_lines <- vapply(
     names(spec$priors),
     function(nm) {
-      sprintf("  %-14s ~ %s", nm, .describe_prior(spec$priors[[nm]]))
+      trunc <- if (nm %in% spec$truncated) " T[0, ]" else ""
+      sprintf("  %-14s ~ %s%s", nm, .describe_prior(spec$priors[[nm]]), trunc)
     },
     character(1)
   )

@@ -10,7 +10,7 @@ test_that("residuals are deviance, not raw response residuals", {
   expect_false(isTRUE(all.equal(a$residual, a$weight - a$fitted)))
 })
 
-test_that("macro gets Gamma deviance residuals, not the Student-t ones", {
+test_that("macro gets Gamma deviance residuals, not the nereo Normal ones", {
   # the shared shape (type, length, finiteness) is covered above; what is
   # macro-specific is that its own likelihood is used
   r <- residuals(weight_macro_fit)

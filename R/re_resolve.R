@@ -10,7 +10,7 @@ re_draw <- function(n, sd_rvar) {
   posterior::rvar_rng(stats::rnorm, n, mean = 0, sd = sd_rvar)
 }
 
-# Site intercept/slope per row: known rows take their estimated effect; unknown
+# One-factor random effect per row: known rows take their estimated effect; unknown
 # rows borrow the per-draw mean of the representative sites (rep_idx) if given,
 # else follow new_levels.
 resolve_re1 <- function(param, idx, new_levels, sd_rvar, rep_idx = NULL) {
