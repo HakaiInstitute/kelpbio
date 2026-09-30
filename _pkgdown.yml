@@ -22,6 +22,8 @@ reference:
     - kb_priors_weight_macro
     - kb_prior_normal
     - kb_prior_exponential
+    - kb_prior_gamma
+    - kb_prior_beta
 - title: "Data"
   desc: "Validate and explore input data."
   contents:

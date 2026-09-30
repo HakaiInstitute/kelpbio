@@ -28,21 +28,19 @@ data <- data_weight_sim_nereo
 # One seed-matched fit at the given adapt_delta; returns wall-clock seconds plus
 # the accuracy diagnostics that adapt_delta is meant to protect.
 one_fit <- function(adapt_delta) {
-  elapsed <- NA_real_
-  fit <- NULL
-  elapsed <- system.time(
-    fit <- kb_fit_weight_nereo(
-      data,
-      chains = CHAINS,
-      niters = NITERS,
-      cores = CORES,
-      seed = SEED,
-      progress = "none",
-      control = list(adapt_delta = adapt_delta)
-    )
-  )["elapsed"]
+  start <- proc.time()
+  fit <- kb_fit_weight_nereo(
+    data,
+    chains = CHAINS,
+    niters = NITERS,
+    cores = CORES,
+    seed = SEED,
+    progress = "none",
+    control = list(adapt_delta = adapt_delta)
+  )
+  elapsed <- (proc.time() - start)[["elapsed"]]
   list(
-    elapsed = unname(elapsed),
+    elapsed = elapsed,
     ndivergent = fit$diagnostics$ndivergent,
     max_rhat = max(fit$diagnostics$summary$rhat, na.rm = TRUE)
   )
