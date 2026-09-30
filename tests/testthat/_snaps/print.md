@@ -22,7 +22,7 @@
       Predictor: diameter, reference 35.8 (geometric mean)
       Data:      320 observations; groups: site (4), year (4), site:year (16)
       Draws:     2 chains, 300 post-warmup draws each (thin = 5), 600 total
-      Converged: FALSE
+      Converged: TRUE
       See kb_model_describe(fit) for the model equation and priors.
 
 # print.kb_fit shows the macro slim header

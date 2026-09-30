@@ -3,7 +3,7 @@
 #
 # Structure: basic functionality first (fit, accessors, predictions, plots),
 # then advanced functionality (priors, custom-prior/prior-only fits, control,
-# progress, site:year edge cases, density, unit checks, raw posterior draws)
+# progress, site:year edge cases, fits without density, raw posterior draws)
 # further down.
 #
 # Orientation: pair this with decisions/architecture.md (the design overview);
@@ -30,7 +30,7 @@ fit_weight_sim_nereo
 
 # --- kb_check_data_weight_nereo() ---------------------------------------------
 # diameter in mm, weight in kg; density (stipes per m^2) is an optional column,
-# NA for site-years without a density survey
+# one value per site-year (NA where a site-year has no density survey)
 kb_check_data_weight_nereo(data_weight_sim_nereo)
 
 bad <- data_weight_sim_nereo
@@ -45,12 +45,20 @@ bad <- data_weight_sim_nereo
 bad$diameter[1] <- NA_real_
 try(kb_check_data_weight_nereo(bad)) # missing value
 
+# unit checks: data in the wrong unit fit without error but give wrong results,
+# so the data checks warn when a median is implausible (diameter below 10 or
+# above 200 mm, weight above 100 kg, density above 100 stipes per m^2). The data
+# still pass.
+cm <- mutate(data_weight_sim_nereo, diameter = diameter / 10)
+kb_check_data_weight_nereo(cm)
+grams <- mutate(data_weight_sim_macro, weight = weight * 1000)
+kb_check_data_weight_macro(grams)
+
 # --- kb_fit_weight_nereo() ----------------------------------------------------
 # The model: log weight ~ Normal, expected weight = bFloor + alpha * x^bPower
 # (Packard power function of diameter relative to its geometric mean), with year,
 # site, site:year, and stipe density effects on log(alpha). The simulated data
-# have density for all but three site-years, so a message reports those take
-# the mean density.
+# have density recorded for every site-year.
 fit <- kb_fit_weight_nereo(
   data_weight_sim_nereo
 )
@@ -121,6 +129,34 @@ kb_predict_weight(fit, new_data = tibble(diameter = 40))
 # use generic (wrapper of kb_predict_weight)
 predict(fit)
 
+# stipe density: each row's density is resolved in order: a supplied value, the
+# recorded density of a fitted site-year, otherwise the fitted mean.
+kb_predict_weight(
+  fit,
+  new_data = tibble(
+    diameter = 40,
+    site = c(sites[1], sites[1], "new_reef"),
+    year = "2020",
+    density = c(8, NA, NA) # supplied, recorded site-year, new site (mean)
+  ),
+  new_levels = "average"
+)
+# density effect: expected weight at 40 mm across stand density
+kb_predict_weight(
+  fit,
+  new_data = tibble(diameter = 40, density = seq(1.5, 8, by = 0.5)),
+  new_levels = "average"
+) |>
+  kb_plot_predictions(x = "density")
+
+# unit checks at prediction (for example from a pre-fit model): values far
+# outside the fitted range warn, here diameters given in cm to a fit made in mm
+kb_predict_weight(fit, new_data = tibble(diameter = c(2.5, 4)))
+
+# new_data predictor values are validated
+try(kb_predict_weight(fit, new_data = tibble(diameter = -5)))
+try(kb_predict_weight(fit, new_data = tibble(diameter = NA_real_)))
+
 # --- kb_predict_weight_by()  --------------------------------------------------
 # builds a new_data grid based on 'by' grouping (for getting group-level effect
 # estimates and plotting curves by group)
@@ -137,6 +173,29 @@ kb_predict_weight_by(fit, by = c("site", "year"))
 kb_predict_weight_by(fit, diameter = c(15, 30, 45))
 # both species have a year main effect, so by = "year" works for nereo too
 kb_predict_weight_by(fit, by = "year", diameter = 30)
+
+# allometric curves at low, mean, and high stand density (stipes per m^2) for a
+# typical site and year: density scales the size-dependent part of the weight,
+# so the curves spread with plant size
+tidyr::expand_grid(
+  diameter = seq(15, 80, length.out = 40),
+  density = signif(c(1.5, fit$meta$density_mean, 8), 2)
+) |>
+  kb_predict_weight(fit, new_data = _, new_levels = "average") |>
+  ggplot(aes(
+    diameter,
+    estimate,
+    colour = factor(density),
+    fill = factor(density)
+  )) +
+  geom_ribbon(aes(ymin = lower, ymax = upper), alpha = 0.15, colour = NA) +
+  geom_line() +
+  labs(
+    x = "Sub-bulb diameter (mm)",
+    y = "Wet weight (kg)",
+    colour = "Stipes per m\u00b2",
+    fill = "Stipes per m\u00b2"
+  )
 
 # sample from RE dist for wider uncertainty, i.e. for new, unobserved site/year
 kb_predict_weight_by(fit, new_levels = "sample")
@@ -323,72 +382,13 @@ tidy(fit_one_year)
 pars(fit_one_year)
 "sSiteYear" %in% posterior::variables(samples(fit_one_year)) # FALSE
 
-# --- stipe density (optional) -------------------------------------------------
+# --- fits without density ----------------------------------------------------
 # Without a density column the density effect is omitted, silently: the model is
 # the same allometry without bDensity.
 no_density <- select(data_weight_sim_nereo, -density)
 fit_no_density <- kb_fit_weight_nereo(no_density, chains = 2, niters = 300)
 fit_no_density$meta$density_on # FALSE
 tidy(fit_no_density) # no bDensity
-
-# At prediction each row's density is resolved in order: a supplied value, the
-# recorded density of a fitted site-year, otherwise the fitted mean.
-kb_predict_weight(
-  fit,
-  new_data = tibble(
-    diameter = 40,
-    site = c(sites[1], sites[1], "new_reef"),
-    year = "2020",
-    density = c(8, NA, NA) # supplied, recorded site-year, new site (mean)
-  ),
-  new_levels = "average"
-)
-# density effect: expected weight at 40 mm across stand density
-kb_predict_weight(
-  fit,
-  new_data = tibble(diameter = 40, density = seq(1.5, 8, by = 0.5)),
-  new_levels = "average"
-) |>
-  kb_plot_predictions(x = "density")
-
-# allometric curves at low, mean, and high stand density: density scales the
-# size-dependent part of the weight, so the curves spread with plant size
-tidyr::expand_grid(
-  diameter = seq(15, 80, length.out = 40),
-  density = c(1.5, 4.3, 8)
-) |>
-  kb_predict_weight(fit, new_data = _, new_levels = "average") |>
-  ggplot(aes(
-    diameter,
-    estimate,
-    colour = factor(density),
-    fill = factor(density)
-  )) +
-  geom_ribbon(aes(ymin = lower, ymax = upper), alpha = 0.15, colour = NA) +
-  geom_line() +
-  labs(
-    x = "Sub-bulb diameter (mm)",
-    y = "Wet weight (kg)",
-    colour = "Stipes per m\u00b2",
-    fill = "Stipes per m\u00b2"
-  )
-
-# --- unit checks --------------------------------------------------------------
-# Data in the wrong unit fit without error but give wrong results, so the data
-# checks warn when a median is implausible (diameter below 10 or above 200 mm,
-# weight above 100 kg, density above 100 stipes per m^2). The data still pass.
-cm <- mutate(data_weight_sim_nereo, diameter = diameter / 10)
-kb_check_data_weight_nereo(cm)
-grams <- mutate(data_weight_sim_macro, weight = weight * 1000)
-kb_check_data_weight_macro(grams)
-
-# At prediction (for example from a pre-fit model), values far outside the fitted
-# range warn: here diameters given in cm to a fit made in mm
-kb_predict_weight(fit, new_data = tibble(diameter = c(2.5, 4)))
-
-# new_data predictor values are validated
-try(kb_predict_weight(fit, new_data = tibble(diameter = -5)))
-try(kb_predict_weight(fit, new_data = tibble(diameter = NA_real_)))
 
 # --- raw posterior draws (rstantools generics) --------------------------------
 # users may want more low-level access to the draws to do their own diagnostics/derived quants

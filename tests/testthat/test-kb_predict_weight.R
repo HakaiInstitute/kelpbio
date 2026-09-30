@@ -124,19 +124,23 @@ test_that("new_data far outside the fitted range warns but still predicts", {
 })
 
 test_that("a fitted site-year recorded without density uses the fitted mean", {
-  # site2:2020 is in the fixture with density NA
+  # site2:2020 is a fitted site-year; dropping its stored density makes it one
+  # recorded as NA
+  fit <- weight_fit
+  levels <- fit$meta$density_levels
+  fit$meta$density_levels <- levels[names(levels) != "site2:2020"]
   bare <- kb_predict_weight(
-    weight_fit,
+    fit,
     data.frame(diameter = 30, site = "site2", year = "2020"),
     new_levels = "average"
   )
   at_mean <- kb_predict_weight(
-    weight_fit,
+    fit,
     data.frame(
       diameter = 30,
       site = "site2",
       year = "2020",
-      density = weight_fit$meta$density_mean
+      density = fit$meta$density_mean
     ),
     new_levels = "average"
   )

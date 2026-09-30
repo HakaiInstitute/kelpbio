@@ -7,9 +7,7 @@ which effects are fitted, sampler control and progress, and what a fit object
 holds. The exact model each fit function estimates (likelihood, mean, effects,
 priors) is the one `kb_model_describe()` reports, pinned by
 `tests/testthat/_snaps/kb_model_describe.md`.
-
 ## Requirements
-
 ### Requirement: Fit a weight model
 
 `kb_fit_weight_nereo()` and `kb_fit_weight_macro()` SHALL fit the species' weight model and return a `kb_fit` object. Arguments SHALL be validated before sampling. Fitting SHALL need no Stan toolchain on the user's machine, and changing a prior's hyperparameters SHALL need no recompilation; a prior's family is fixed by the model.
@@ -114,7 +112,7 @@ A fit SHALL store posterior draws, sampler diagnostics, the input data, and the 
 
 ### Requirement: Bundled example objects
 
-The package SHALL ship simulated datasets `data_weight_sim_nereo` and `data_weight_sim_macro` and small pre-fits `fit_weight_sim_nereo` and `fit_weight_sim_macro`, for examples and tests, not inference. The simulated *Nereocystis* data SHALL include a `density` column with some site-years unrecorded. Real survey data and inference-grade fits SHALL NOT be bundled; they belong in the companion package `kelpbiodata`.
+The package SHALL ship simulated datasets `data_weight_sim_nereo` and `data_weight_sim_macro` and small pre-fits `fit_weight_sim_nereo` and `fit_weight_sim_macro`, for examples and tests, not inference. The simulated *Nereocystis* data SHALL include a `density` column recorded for every site-year. Real survey data and inference-grade fits SHALL NOT be bundled; they belong in the companion package `kelpbiodata`.
 
 #### Scenario: Bundled objects work with the package
 - **WHEN** a bundled dataset is checked and a bundled fit is summarised or predicted from

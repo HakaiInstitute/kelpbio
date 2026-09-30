@@ -14,7 +14,8 @@
 #' - every parameter's Rhat below `rhat` (default 1.01)
 #' - every parameter's effective sample rate (bulk effective sample size divided by the number of
 #'   saved draws) above `esr` (default 0.1)
-#' - the divergence rate at or below `max_perc_divergent` (default 0.2)
+#' - the percentage of divergent transitions at or below `max_perc_divergent`
+#'   (default 0.2, i.e. 0.2% of saved draws)
 #'
 #' Divergent transitions indicate that the sampler failed to explore part of
 #' the posterior, and the draws may be biased regardless of whether other

@@ -11,8 +11,7 @@ A data frame with columns:
 \item{weight}{Wet weight (kg), a positive number.}
 \item{site}{Survey site, a factor (10 levels).}
 \item{year}{Survey year, a factor (4 levels).}
-\item{density}{Stipe density of the site-year (stipes per m²), \code{NA} for
-three site-years without a recorded value.}
+\item{density}{Stipe density of the site-year (stipes per m²).}
 }
 }
 \usage{

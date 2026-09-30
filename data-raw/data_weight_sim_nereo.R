@@ -8,9 +8,8 @@
 # only a handful of groups), and the site:year SD is kept small so the
 # between-site signal loads onto the site effect rather than being absorbed by
 # the interaction. Parameter values are near the analysis-project estimates.
-# Density is recorded as NA for three site-years, so the data exercise the
-# unrecorded case (the weights still carry those site-years' true density).
-# Kept small (10 sites x 4 years, one missing cell) and seeded for
+# Density is recorded for every site-year, as in a survey programme that pairs
+# harvests with density surveys. Kept small (10 sites x 4 years, one missing cell) and seeded for
 # reproducibility. Not for inference. Run from the package root:
 #   Rscript data-raw/data_weight_sim_nereo.R
 
@@ -68,11 +67,6 @@ data_weight_sim_nereo <- do.call(rbind, rows)
 data_weight_sim_nereo$site <- factor(data_weight_sim_nereo$site, levels = sites)
 data_weight_sim_nereo$year <- factor(data_weight_sim_nereo$year, levels = years)
 rownames(data_weight_sim_nereo) <- NULL
-unrecorded <- c("site2:2020", "site5:2021", "site8:2019")
-data_weight_sim_nereo$density[
-  paste(data_weight_sim_nereo$site, data_weight_sim_nereo$year, sep = ":") %in%
-    unrecorded
-] <- NA
 data_weight_sim_nereo <- tibble::as_tibble(data_weight_sim_nereo)
 
 usethis::use_data(data_weight_sim_nereo, overwrite = TRUE)

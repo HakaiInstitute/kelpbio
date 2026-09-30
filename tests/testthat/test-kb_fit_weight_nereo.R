@@ -194,8 +194,6 @@ test_that("the fit records the density structure in meta and terms", {
   levels <- weight_fit$meta$density_levels
   expect_setequal(names(levels), names(per_site_year))
   expect_equal(unname(levels[names(per_site_year)]), as.vector(per_site_year))
-  # a site-year recorded as NA has no stored density
-  expect_false("site2:2020" %in% names(levels))
   expect_true("bDensity" %in% weight_fit$meta$terms$fixed)
 })
 
