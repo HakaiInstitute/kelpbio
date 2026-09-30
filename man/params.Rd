@@ -80,11 +80,9 @@ reproducible interval.}
 
 \item{representative_site}{A character vector of site levels present in the
 fit, or \code{NULL} (the default). When supplied, a new or absent site takes the
-named reference site's site-level effects (the per-draw average when several
-are named) instead of the \code{new_levels} treatment: for \emph{Nereocystis} both the
-site intercept and the site slope, for \emph{Macrocystis} the site intercept, which
-is its only site-level effect. Any \code{site:year} interaction still follows
-\code{new_levels}.}
+named reference site's site effect (the per-draw average when several are
+named) instead of the \code{new_levels} treatment. Any \code{site:year} interaction
+still follows \code{new_levels}.}
 }
 \description{
 Default parameter descriptions which may be overridden in individual

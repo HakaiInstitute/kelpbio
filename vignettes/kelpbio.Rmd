@@ -21,7 +21,7 @@ library(kelpbio)
 kelpbio fits Bayesian hierarchical Stan models to estimate kelp biomass from
 field measurements. This article walks through the allometric weight model for
 *Nereocystis luetkeana*, which relates wet weight to sub-bulb diameter with
-random effects for site and site-by-year, then shows the parallel model for
+random effects for year, site, and site-by-year, then shows the parallel model for
 *Macrocystis pyrifera*. Further biomass components (plant size distribution,
 density, and wet-to-dry and carbon tissue conversions) are in development.
 
@@ -36,9 +36,9 @@ installation is required.
 
 ## Providing data
 
-The weight model is fitted to a data frame with a numeric `diameter`, a numeric
-`weight`, and `site` and `year` grouping factors. A small simulated dataset
-is included with the package:
+The weight model is fitted to a data frame with a numeric `diameter` (sub-bulb
+diameter, mm), a numeric `weight` (wet weight, kg), and `site` and `year`
+grouping factors. A small simulated dataset is included with the package:
 
 ```{r}
 data_weight_sim_nereo
@@ -88,8 +88,8 @@ glance(fit)
 ## Summarising the fit
 
 `tidy()` returns the model terms with a point estimate and compatibility limits.
-The intercept and slopes describe the allometric relationship on the log scale;
-the `s`-prefixed terms are the random-effect standard deviations.
+`bWeight`, `bPower`, and `bFloor` describe the allometric curve; the
+`s`-prefixed terms are the random-effect and residual standard deviations.
 
 ```{r}
 tidy(fit)

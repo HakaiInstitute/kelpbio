@@ -17,15 +17,16 @@
 #' uncertainty for a new, unobserved site/year.
 #'
 #' For a new site, `representative_site` offers a third approach: instead of
-#' `new_levels` (`"sample"` or `"average"`) it borrows the site intercept and
-#' slope of one or more named reference sites (the per-draw average across
-#' several). The `site:year` interaction still follows `new_levels`.
+#' `new_levels` (`"sample"` or `"average"`) it borrows the site effect of one or
+#' more named reference sites (the per-draw average across several). The
+#' `site:year` interaction still follows `new_levels`.
 #'
 #' @param fit A `kb_fit_weight` object.
 #' @param ... Passed to the species method (currently only the shared arguments).
 #'
 #' @return A `kb_predictions` object: the input rows with added `estimate`,
-#'   `lower`, and `upper` columns.
+#'   `lower`, and `upper` columns summarising the posterior distribution of
+#'   expected weight.
 #' @family prediction
 #' @seealso [kb_predict_weight_by()] to generate new_data by grouping factors and
 #' a predictor sequence, and [augment()] for fitted/residual values at the

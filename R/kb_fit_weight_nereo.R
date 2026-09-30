@@ -3,12 +3,13 @@
 #' Fit an allometric weight model for *Nereocystis luetkeana* via Stan.
 #'
 #' @details
-#' The response is log wet weight, modelled with a Student-t likelihood (4
-#' degrees of freedom, for robustness to outliers). Expected log weight is a
-#' quadratic (allometric) function of log sub-bulb diameter, centered at its
-#' geometric mean so the intercept is the expected log weight at a typical
-#' diameter. The intercept and the allometric slope vary by site, and the
-#' intercept also varies by `site:year`.
+#' Log wet weight (kg) is modelled with a Normal likelihood. Expected weight is a
+#' three-parameter power function of sub-bulb diameter (mm),
+#' `bFloor + alpha * (diameter / d0)^bPower`, where `bFloor` is the weight floor,
+#' `bPower` the allometric exponent, and `d0` the geometric mean diameter of the
+#' data. The year, site, and `site:year` effects act on `alpha`, so they scale
+#' the size-dependent part of the weight while the floor is common to all
+#' groups.
 #'
 #' `niters` is the number of saved post-warmup draws per chain; warmup defaults
 #' to match `niters` and the post-warmup phase is thinned by `nthin`.
@@ -105,14 +106,14 @@ kb_fit_weight_nereo <- function(
     stan_data,
     param_vars = c(
       "bWeight",
-      "bDiameter",
-      "bDiameter2",
+      "bPower",
+      "bFloor",
       "sSite",
-      "sSiteDiameter",
+      "sYear",
       "sSiteYear",
       "sWeight",
       "bSite",
-      "bSiteDiameter",
+      "bYear",
       "bSiteYear"
     ),
     chains = chains,
@@ -137,16 +138,16 @@ kb_fit_weight_nereo <- function(
     terms = list(
       fixed = c(
         "bWeight",
-        "bDiameter",
-        "bDiameter2",
+        "bPower",
+        "bFloor",
         "sSite",
-        "sSiteDiameter",
+        "sYear",
         if (site_year$on) "sSiteYear",
         "sWeight"
       ),
       random = c(
         "bSite",
-        "bSiteDiameter",
+        "bYear",
         if (site_year$on) "bSiteYear"
       )
     ),
@@ -155,7 +156,6 @@ kb_fit_weight_nereo <- function(
     meta_extra = list(
       predictor_ref = diameter_ref,
       site_year_on = site_year$on,
-      nu = 4,
       # Predictor/response column names let the model-level prediction and plot
       # code stay species-agnostic (macro uses "fronds").
       predictor = "diameter",

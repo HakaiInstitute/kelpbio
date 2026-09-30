@@ -16,8 +16,8 @@ A numeric vector of fitted values on the response scale, length
 \code{nobs(object)}.
 }
 \description{
-Posterior point estimates (median) of the response-scale value at each observed
-row, matching \code{\link[=augment]{augment()}}'s \code{fitted} column. For the full posterior, use
+Posterior point estimates (median) of the expected weight at each observed row,
+matching \code{\link[=augment]{augment()}}'s \code{fitted} column. For the full posterior, use
 \code{\link[=posterior_epred]{posterior_epred()}}.
 }
 \examples{

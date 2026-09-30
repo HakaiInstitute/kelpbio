@@ -32,11 +32,9 @@ reproducible interval.}
 
 \item{representative_site}{A character vector of site levels present in the
 fit, or \code{NULL} (the default). When supplied, a new or absent site takes the
-named reference site's site-level effects (the per-draw average when several
-are named) instead of the \code{new_levels} treatment: for \emph{Nereocystis} both the
-site intercept and the site slope, for \emph{Macrocystis} the site intercept, which
-is its only site-level effect. Any \code{site:year} interaction still follows
-\code{new_levels}.}
+named reference site's site effect (the per-draw average when several are
+named) instead of the \code{new_levels} treatment. Any \code{site:year} interaction
+still follows \code{new_levels}.}
 }
 \value{
 A draws-by-observations (\verb{D x N}) matrix.
@@ -44,7 +42,7 @@ A draws-by-observations (\verb{D x N}) matrix.
 \description{
 Draws from the posterior predictive distribution: replicate weights carrying
 both parameter uncertainty and species-appropriate observation noise
-(Student-t on log weight with scale \code{sWeight} for \emph{Nereocystis}; Gamma with
+(Normal on log weight with SD \code{sWeight} for \emph{Nereocystis}; Gamma with
 shape \code{shape} for \emph{Macrocystis}, matching the Stan likelihood). With
 \code{new_data = NULL} the replicates are at the observed data, for use with
 \code{bayesplot::pp_check()}.

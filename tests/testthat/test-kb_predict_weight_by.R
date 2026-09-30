@@ -53,10 +53,12 @@ test_that("the wrong-species predictor argument errors", {
   )
 })
 
-test_that("by = \"year\" errors for nereo but works for macro", {
-  # nereo has no year main effect: year alone is rejected
-  expect_error(kb_predict_weight_by(weight_fit, by = "year"), "not available")
-  # macro has a year main effect: one curve per year over a fronds sequence
+test_that("by = \"year\" works for both species", {
+  # both weight models carry a year main effect, so the grouping axis no longer
+  # varies by species
+  pn <- kb_predict_weight_by(weight_fit, by = "year")
+  expect_s3_class(pn, "kb_predictions")
+  expect_true("year" %in% names(pn))
   p <- kb_predict_weight_by(weight_macro_fit, by = "year")
   expect_s3_class(p, "kb_predictions")
   expect_true("year" %in% names(p))

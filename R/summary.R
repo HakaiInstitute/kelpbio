@@ -160,23 +160,25 @@ summary.kb_fit <- function(
   )
 }
 
-# Level counts for the grouping factors a fit actually has.
+# Level counts for each grouping factor the fit's data carry. Not weight-specific:
+# site and year are .group_vars(), shared by every model, and all three level
+# vectors are recorded at fit time, so this is a pure metadata read.
 #
-# An effect the fit does not carry is absent rather than reported as zero, so the
-# header agrees with tidy() and kb_model_describe() about which effects exist.
+# These describe the data, not the model: print() and summary() label the line
+# "Data:", so a site:year count is correct even for a fit whose site:year effect
+# the design forced off. Which effects the model carries is kb_model_describe()'s
+# job. A model with no grouping at all has three empty vectors and reports nothing.
 fit_groups <- function(fit) {
-  d <- as.data.frame(fit$data)
-  out <- integer(0)
-
-  n_site <- length(fit$meta$site_levels)
-  if (n_site) {
-    out <- c(out, site = n_site)
-  }
-  if ("bYear" %in% fit$meta$terms$random) {
-    out <- c(out, year = length(fit$meta$year_levels))
-  }
-  if (isTRUE(fit$meta$site_year_on) && all(c("site", "year") %in% names(d))) {
-    out <- c(out, "site:year" = nrow(unique(d[c("site", "year")])))
-  }
-  out
+  counts <- vapply(
+    c("site", "year", "site:year"),
+    function(nm) {
+      key <- paste0(sub(":", "_", nm), "_levels")
+      length(fit$meta[[key]])
+    },
+    integer(1)
+  )
+  out <- counts[counts > 0L]
+  # unnamed when empty, matching .fit_descriptor.default()'s integer(0)
+  if (!length(out)) integer(0) else out
 }
+

@@ -15,6 +15,9 @@
 }
 
 # Nereocystis weight-model mean (log scale), a posterior rvar over grid rows.
+# Packard's three-parameter power function on the diameter ratio, mirroring
+# inst/stan/weight_nereo.stan: the random effects act on log(alpha), so they scale
+# the size-dependent part of the weight and leave the floor common.
 #' @export
 .linpred.kb_fit_weight_nereo <- function(
   fit,
@@ -24,16 +27,11 @@
 ) {
   draws <- fit$draws
   ix <- .grid_indices(fit, grid, representative_site)
-  log_dc <- log(grid$diameter) - log(fit$meta$predictor_ref)
+  log_x <- log(grid$diameter) - log(fit$meta$predictor_ref)
 
   re_site <- resolve_re1(draws$bSite, ix$site, new_levels, draws$sSite, ix$rep)
-  re_slope <- resolve_re1(
-    draws$bSiteDiameter,
-    ix$site,
-    new_levels,
-    draws$sSiteDiameter,
-    ix$rep
-  )
+  # representative_site borrows only the site effect, so year follows new_levels.
+  re_year <- resolve_re1(draws$bYear, ix$year, new_levels, draws$sYear)
   # When the fit omitted the site:year effect its draws are prior-only noise, so
   # predictions must add nothing rather than reintroduce spurious variation.
   re_sy <- if (.site_year_on(fit)) {
@@ -42,17 +40,13 @@
     0
   }
 
-  draws$bWeight +
-    draws$bDiameter * log_dc +
-    draws$bDiameter2 * log_dc^2 +
-    re_site +
-    re_slope * log_dc +
-    re_sy
+  log_alpha <- draws$bWeight + re_site + re_year + re_sy
+  log(draws$bFloor + exp(log_alpha + draws$bPower * log_x))
 }
 
 # Macrocystis mean, returned on the log scale like nereo so the shared faces are
 # common; for the Gamma the exponential is the mean exactly. Differs from nereo: a
-# linear log-predictor, no site slope, and a standalone bYear.
+# log-linear predictor with no floor.
 #' @export
 .linpred.kb_fit_weight_macro <- function(
   fit,

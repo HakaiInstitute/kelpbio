@@ -27,8 +27,7 @@ The description reflects the fitted object: the priors shown are the fit's
 stored priors, any predictor centering uses the reference value stored on the
 fit, and a random effect dropped at fit time (such as \code{site:year} for
 single-year data) is omitted from both the linear predictor and the
-random-effect list. The response and predictors are named without units, since
-the data columns are unitless.
+random-effect list. Priors marked \code{T[0, ]} are truncated at zero.
 }
 \examples{
 kb_model_describe(fit_weight_sim_nereo)

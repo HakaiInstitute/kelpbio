@@ -4,13 +4,12 @@
 #' `inst/stan/weight_nereo.stan`. `site` and `year` are encoded as integer factor
 #' codes; the raw `diameter` and `weight` vectors are passed through (the Stan
 #' model applies the `log(diameter) - log(diameter_ref)` and `log(weight)`
-#' transforms). Centering log-diameter on `diameter_ref` makes the diameter unit
-#' immaterial. Zero-row data is supported (for prior-only fits): `nObs` is `0`
+#' transforms). Zero-row data is supported (for prior-only fits): `nObs` is `0`
 #' and `nSite` / `nYear` fall back to `1`.
 #'
 #' @inheritParams params
 #' @param priors A list of the resolved named priors (see `resolve_priors()`).
-#' @param diameter_ref A number of the centering reference for log-diameter, from
+#' @param diameter_ref A number of the diameter reference, from
 #'   `weight_diameter_ref()`.
 #'
 #' @return A named list suitable for `rstan::sampling(stanmodels$weight_nereo, data = .)`.
@@ -37,12 +36,12 @@ assemble_weight_nereo_data <- function(
     diameter_ref = diameter_ref,
     prior_intercept_mu = priors$intercept$mean,
     prior_intercept_sd = priors$intercept$sd,
-    prior_diameter_mu = priors$diameter$mean,
-    prior_diameter_sd = priors$diameter$sd,
-    prior_diameter2_mu = priors$diameter2$mean,
-    prior_diameter2_sd = priors$diameter2$sd,
+    prior_power_mu = priors$power$mean,
+    prior_power_sd = priors$power$sd,
+    prior_floor_mu = priors$floor$mean,
+    prior_floor_sd = priors$floor$sd,
     prior_sd_site_rate = priors$sd_site$rate,
-    prior_sd_site_diameter_rate = priors$sd_site_diameter$rate,
+    prior_sd_year_rate = priors$sd_year$rate,
     prior_sd_site_year_rate = priors$sd_site_year$rate,
     prior_sd_residual_rate = priors$sd_residual$rate,
     prior_only = as.integer(prior_only),
@@ -50,10 +49,10 @@ assemble_weight_nereo_data <- function(
   )
 }
 
-# Geometric-mean centering reference for log-diameter (i.e. the value whose log
-# is mean(log(diameter)), so centered log-diameter has mean zero). Computed from
-# the data and stored in the fit meta, so the Stan fit and the R-side predictions
-# share one reference. Falls back to 30 for zero-row (prior-only) data.
+# Geometric-mean diameter reference (the value whose log is mean(log(diameter)),
+# so log(diameter / diameter_ref) has mean zero). Computed from the data and
+# stored in the fit meta, so the Stan fit and the R-side predictions share one
+# reference. Falls back to 30 for zero-row (prior-only) data.
 weight_diameter_ref <- function(diameter) {
   if (rlang::is_empty(diameter)) {
     return(30)

@@ -41,8 +41,8 @@ curve, or \code{NULL} for a single population-level curve. Each named factor is
 expanded over its observed levels and conditioned on its estimated random
 effects.}
 
-\item{diameter}{A numeric vector of sub-bulb diameter values to predict over
-(in the units of the fitted data), or \code{NULL} for an automatic sequence
+\item{diameter}{A numeric vector of sub-bulb diameter values (mm) to predict
+over, or \code{NULL} for an automatic sequence
 spanning the observed range.}
 
 \item{new_levels}{A string, one of \code{"sample"} or \code{"average"}, controlling how
@@ -68,7 +68,8 @@ for an automatic sequence spanning the observed range.}
 }
 \value{
 A \code{kb_predictions} object: a summary tibble with \code{estimate}, \code{lower},
-\code{upper}, the predictor column, and the \code{by} grouping columns.
+and \code{upper} columns summarising the posterior distribution of expected
+weight, the predictor column, and the \code{by} grouping columns.
 }
 \description{
 Summarise the fitted allometric relationship over a generated prediction grid:
@@ -85,10 +86,8 @@ typical-group curve), while \code{"sample"} draws a new random effect from its
 estimated distribution, widening the uncertainty to include between-group
 variation. Set a seed with \code{set.seed()} for reproducible \code{"sample"} intervals.
 
-The available \code{by} values are \code{NULL} (a single population curve), \code{"site"}, and
-\code{c("site", "year")} for both species; the \emph{Macrocystis} model additionally
-allows \code{"year"}, since it has a year main effect (the \emph{Nereocystis} model does
-not, so \code{by = "year"} errors there).
+The available \code{by} values are \code{NULL} (a single population curve), \code{"site"},
+\code{"year"}, and \code{c("site", "year")}.
 }
 \section{Methods (by class)}{
 \itemize{

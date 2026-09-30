@@ -16,8 +16,9 @@ The input data with added columns \code{fitted} (response-scale fitted
 value) and \code{residual} (deviance residual).
 }
 \description{
-Append the \code{\link[=fitted]{fitted()}} and deviance \code{\link[=residuals]{residuals()}} values
-to the input data. Values are the point estimate (median) of the posterior distributions.
+Append the \code{\link[=fitted]{fitted()}} and deviance \code{\link[=residuals]{residuals()}} values to the input data.
+Values are posterior point estimates (median): \code{fitted} of the expected weight,
+\code{residual} of the deviance residual.
 }
 \examples{
 augment(fit_weight_sim_nereo)

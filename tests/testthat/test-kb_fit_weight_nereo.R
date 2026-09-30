@@ -28,14 +28,14 @@ test_that("kb_fit_weight returns a correctly-structured object", {
     posterior::variables(fit$draws),
     c(
       "bWeight",
-      "bDiameter",
-      "bDiameter2",
+      "bPower",
+      "bFloor",
       "sSite",
-      "sSiteDiameter",
+      "sYear",
       "sSiteYear",
       "sWeight",
       "bSite",
-      "bSiteDiameter",
+      "bYear",
       "bSiteYear"
     )
   )

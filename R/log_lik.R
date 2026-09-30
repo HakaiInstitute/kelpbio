@@ -40,9 +40,8 @@ log_lik.kb_fit <- function(object, ...) {
 #' @export
 .log_lik.kb_fit_weight_nereo <- function(fit, mu) {
   sw <- as.vector(posterior::draws_of(fit$draws$sWeight))
-  theta <- 1 / fit$meta$nu
   .per_draw(mu, log(fit$data$weight), function(y, mu_d, d) {
-    extras::log_lik_student(y, mu_d, sd = sw[d], theta = theta)
+    extras::log_lik_norm(y, mu_d, sd = sw[d])
   })
 }
 

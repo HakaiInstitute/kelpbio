@@ -76,7 +76,7 @@ would capture dispatch for every other package's objects.
 
 The public method bodies live on `kb_fit` and delegate whatever varies to internal
 generics (`.linpred`, `.epred`, `.log_lik`, `.deviance`, `.add_noise`,
-`.chk_new_data`, `.chk_by`). Because those methods accept any
+`.chk_new_data`). Because those methods accept any
 `kb_fit`, dispatch no longer rejects a fit whose model has registered no methods,
 so each internal generic SHALL have a `.default` that aborts terminally. None of
 them SHALL have a total default returning a plausible value: a sub-model added

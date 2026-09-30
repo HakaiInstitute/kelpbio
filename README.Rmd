@@ -54,7 +54,7 @@ Source builds require a C++ toolchain:
 
 kelpbio fits each biomass component with its own `kb_fit_*()` function. The
 allometric weight model relates wet weight to sub-bulb diameter, with random
-effects for site and site-by-year.
+effects for year, site, and site-by-year.
 
 The model is fitted to a data frame of `diameter`, `weight`, `site`, and
 `year`. A small simulated dataset is included with the package:

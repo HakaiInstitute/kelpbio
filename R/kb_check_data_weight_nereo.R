@@ -3,12 +3,8 @@
 #' Check that `data` contains the columns required to fit the *Nereocystis
 #' luetkeana* weight model, with appropriate types and values.
 #'
-#' Required columns: numeric `diameter` (> 0), numeric `weight` (> 0), and factor
-#' or character `site` and `year`, with no missing values.
-#'
-#' @details
-#' Diameter and weight may be in any units, provided prediction data use the same
-#' units as the fitted data.
+#' Required columns: numeric `diameter` (mm, > 0), numeric `weight` (kg, > 0),
+#' and factor or character `site` and `year`, with no missing values.
 #'
 #' @inheritParams params
 #' @param x_name A string naming `data` in error messages.

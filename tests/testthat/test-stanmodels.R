@@ -28,12 +28,12 @@ weight_stan_data <- function(nObs = 6L, prior_only = 0L) {
     diameter_ref = if (length(diameter)) exp(mean(log(diameter))) else 30,
     prior_intercept_mu = 0,
     prior_intercept_sd = 2,
-    prior_diameter_mu = 2,
-    prior_diameter_sd = 1,
-    prior_diameter2_mu = 0,
-    prior_diameter2_sd = 0.5,
+    prior_power_mu = 2,
+    prior_power_sd = 1,
+    prior_floor_mu = 0,
+    prior_floor_sd = 0.5,
     prior_sd_site_rate = 1,
-    prior_sd_site_diameter_rate = 1,
+    prior_sd_year_rate = 1,
     prior_sd_site_year_rate = 1,
     prior_sd_residual_rate = 1,
     prior_only = prior_only,
@@ -136,14 +136,14 @@ test_that("the weight model samples and returns the declared parameters", {
   expect_true(all(
     c(
       "bWeight",
-      "bDiameter",
-      "bDiameter2",
+      "bPower",
+      "bFloor",
       "sSite",
-      "sSiteDiameter",
+      "sYear",
       "sSiteYear",
       "sWeight",
       "bSite",
-      "bSiteDiameter",
+      "bYear",
       "bSiteYear"
     ) %in%
       fit@model_pars

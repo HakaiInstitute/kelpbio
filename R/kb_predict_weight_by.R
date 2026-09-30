@@ -14,17 +14,16 @@
 #' estimated distribution, widening the uncertainty to include between-group
 #' variation. Set a seed with `set.seed()` for reproducible `"sample"` intervals.
 #'
-#' The available `by` values are `NULL` (a single population curve), `"site"`, and
-#' `c("site", "year")` for both species; the *Macrocystis* model additionally
-#' allows `"year"`, since it has a year main effect (the *Nereocystis* model does
-#' not, so `by = "year"` errors there).
+#' The available `by` values are `NULL` (a single population curve), `"site"`,
+#' `"year"`, and `c("site", "year")`.
 #'
 #' @param fit A `kb_fit_weight` object.
 #' @param ... Passed to the species method: the predictor sequence (`diameter` for
 #'   *Nereocystis*, `fronds` for *Macrocystis*) and the shared summary arguments.
 #'
 #' @return A `kb_predictions` object: a summary tibble with `estimate`, `lower`,
-#'   `upper`, the predictor column, and the `by` grouping columns.
+#'   and `upper` columns summarising the posterior distribution of expected
+#'   weight, the predictor column, and the `by` grouping columns.
 #' @family prediction
 #' @seealso [kb_predict_weight()] for predictions at the rows of a supplied data
 #'   frame.
@@ -45,8 +44,8 @@ kb_predict_weight_by.default <- function(fit, ...) {
 #' @describeIn kb_predict_weight_by *Nereocystis* method; predicts over a sub-bulb
 #'   `diameter` sequence.
 #' @inheritParams params
-#' @param diameter A numeric vector of sub-bulb diameter values to predict over
-#'   (in the units of the fitted data), or `NULL` for an automatic sequence
+#' @param diameter A numeric vector of sub-bulb diameter values (mm) to predict
+#'   over, or `NULL` for an automatic sequence
 #'   spanning the observed range.
 #' @export
 kb_predict_weight_by.kb_fit_weight_nereo <- function(

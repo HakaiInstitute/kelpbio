@@ -8,7 +8,7 @@ fixture <- function(name) {
   if (file.exists(path)) readRDS(path) else NULL
 }
 
-# Nereocystis (Student-t) and Macrocystis (Gamma) weight fits. Fit/check tests
+# Nereocystis (lognormal) and Macrocystis (Gamma) weight fits. Fit/check tests
 # use the bundled simulated datasets (data_weight_sim_*) directly, so there are
 # no separate simulated-data fixtures.
 weight_fit <- fixture("weight_fit.rds")
