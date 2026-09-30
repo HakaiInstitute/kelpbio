@@ -2,161 +2,84 @@
 
 ## Purpose
 
-Model summaries and diagnostics over a kb_fit: tidy / coef / glance / converged / fitted / residuals / augment / summary / print, the universals accessors, and samples().
+Summarising and inspecting a fit: parameter summaries, convergence, fitted values
+and residuals, print and summary output, the model description, accessors, and
+the errors raised for unsupported objects.
+
 ## Requirements
-### Requirement: Tidy and group-level summaries
 
-`tidy(x, conf_level, estimate, sig_fig, include_random_effects)` and `coef()` SHALL summarise a `kb_fit` from its stored draws. `tidy()` carries `conf_level` (default `0.95`), `estimate` (a point-estimate function, default `median`), `sig_fig` (default `3`), and `include_random_effects` (default `FALSE`, omitting the per-level group deviations and leaving the population-level terms and random-effect SDs, following the `broom.mixed` convention). `coef()` is a pure wrapper on `tidy()` forwarding all arguments, so it inherits the same default. Output columns are `term`, `estimate`, `lower`, `upper` (the house convention shared with `bboutools`/`ssdtools`), with `lower`/`upper` the `conf_level` compatibility limits from the posterior draws and all numeric columns rounded to `sig_fig`. The set of `term` rows is model- and species-specific, recorded in `meta$terms` at fit time, as `fixed` and `random` character vectors. A random effect the fit dropped (`meta$site_year_on` is `FALSE`) SHALL NOT appear: its draws never met the likelihood, so reporting `sSiteYear` or `bSiteYear[.,.]` would present the prior as an estimate. `tidy()`, `coef()` and `summary()` therefore agree with `kb_model_describe()` about which effects the fit has.
+### Requirement: Parameter summaries
 
-#### Scenario: tidy returns term summaries with house columns
+`tidy()` and `coef()` SHALL return a tibble with columns `term`, `estimate`, `lower`, and `upper`, one row per population-level term and standard deviation of the fitted model, with `conf_level` (default 0.95) compatibility limits, `estimate` (default `median`), and `sig_fig` (default 3). `include_random_effects = TRUE` (default `FALSE`) SHALL add the per-level group effects. `coef()` SHALL return what `tidy()` returns.
+
+#### Scenario: Default rows
 - **WHEN** `tidy(fit)` is called
-- **THEN** it returns a tibble with columns `term`, `estimate`, `lower`, `upper`, one row per population-level term (`bWeight`, `bPower`, `bFloor`) and per random-effect or residual SD (`sSite`, `sYear`, `sSiteYear`, `sWeight`), with the per-level group deviations (`bSite[.]`, `bYear[.]`, `bSiteYear[.,.]`) omitted because `include_random_effects` defaults to `FALSE`
+- **THEN** it returns the population-level terms and SDs, without per-level group effects
 
-#### Scenario: A dropped random effect is not reported
-
-- **WHEN** `tidy()`, `coef()` or `summary()` is called on a fit whose `meta$site_year_on` is `FALSE`
-- **THEN** no `sSiteYear` row appears, and no `bSiteYear[.,.]` row appears under `include_random_effects = TRUE`
-
-#### Scenario: tidy honours estimate, sig_fig, and conf_level
+#### Scenario: Summary options are honoured
 - **WHEN** `tidy(fit, conf_level = 0.9, estimate = mean, sig_fig = 4)` is called
-- **THEN** `estimate` is the posterior mean, `lower`/`upper` are the 90% compatibility limits, and the numeric columns are rounded to 4 significant figures
+- **THEN** it returns posterior means with 90% compatibility limits to 4 significant figures
 
-#### Scenario: include_random_effects toggles group-level rows
-- **WHEN** `tidy(fit, include_random_effects = TRUE)` is called
-- **THEN** the per-level random-effect rows (`bSite[.]`, `bYear[.]`, `bSiteYear[.,.]`) are included alongside the population-level terms and SDs
+### Requirement: Omitted effects are not reported
 
-#### Scenario: coef wraps tidy
-- **WHEN** `coef(fit)` is called
-- **THEN** it returns the same tibble as `tidy(fit)`, forwarding all arguments
+An effect the fit omitted (site:year for single-year data, or density when not fitted) SHALL NOT appear in `tidy()`, `coef()`, `summary()`, or `kb_model_describe()`, since its draws never met the data.
 
-#### Scenario: Macro tidy returns the macro term list
-- **WHEN** `tidy(macro_fit)` is called
-- **THEN** it returns one row per population-level term (`bWeight`, `bFronds`), the Gamma shape (`shape`), and each random-effect SD (`sSite`, `sYear`, `sSiteYear`), with the per-level deviations (`bSite[.]`, `bYear[.]`, `bSiteYear[.,.]`) omitted by default and added when `include_random_effects = TRUE`
+#### Scenario: An omitted effect is absent
+- **WHEN** a fit omitted the site:year or density effect
+- **THEN** its terms appear in none of `tidy()`, `summary()`, or `kb_model_describe()`, including under `include_random_effects = TRUE`
 
-### Requirement: Glance and convergence
+### Requirement: Convergence
 
-`glance(x, ..., rhat, esr, max_perc_divergent)` and
-`converged(x, ..., rhat, esr, max_perc_divergent)` SHALL report model-level
-summaries and a convergence verdict using exposed thresholds. The thresholds
-default to `rhat = 1.01`, `esr = 0.1`, and `max_perc_divergent = 0.2`, where `esr`
-is the effective sample **rate** (`ess_bulk / ndraws`) and `max_perc_divergent` is
-the percentage of saved post-warmup draws that ended in a divergent transition.
-All three are arguments so they can be tightened. The divergence comparison is
-inclusive (`<=`), so `max_perc_divergent = 0` enforces zero tolerance rather than
-being unsatisfiable. `esr` is preferred over an absolute ESS because the rate
-is stable under changes to the number of saved iterations. The `rhat` default
-follows the 1.01 recommendation of Vehtari et al. (2021), whose rank-normalized
-split/folded Rhat is the statistic `posterior::rhat()` computes.
+`glance()` SHALL return a one-row tibble with `n`, `K`, `nchains`, `niters`, `nthin`, `ess`, `rhat`, `perc_divergent`, and `converged`. `converged()` SHALL return `TRUE` only when every Rhat is below `rhat` (default 1.01), every effective sample rate (`ess_bulk / ndraws`) is above `esr` (default 0.1), and the divergence percentage is at or below `max_perc_divergent` (default 0.2), and SHALL return `FALSE` when no Rhat is available. Treedepth saturation and E-BFMI SHALL be reported by `print(summary(fit))`, not used in the verdict.
 
-The verdict SHALL require all three conditions: every Rhat below `rhat`, every
-effective sample rate above `esr`, and the divergence rate at or below
-`max_perc_divergent`. Divergent transitions are included because they indicate the
-sampler failed to explore part of the posterior, so the draws may be biased
-whatever Rhat and ESS report. Treedepth saturation SHALL NOT enter the verdict (it
-is an efficiency concern, not a validity one), and E-BFMI SHALL NOT enter it
-either (it is per-chain and in practice co-occurs with divergences); both are
-reported instead.
-
-The verdict SHALL require at least one finite Rhat, so a fit whose diagnostics are
-entirely missing reports `FALSE` rather than passing on no evidence. An individual
-`NA` Rhat SHALL still be skipped, since a legitimately constant parameter must not
-fail a fit.
-
-#### Scenario: glance one-row summary
-- **WHEN** `glance(fit)` is called
-- **THEN** it returns a one-row tibble with columns `n`, `K`, `nchains`, `niters`, `nthin`, `ess`, `rhat`, `perc_divergent`, and `converged`
-
-#### Scenario: glance reports the reportable core only
-- **WHEN** `glance(fit)` is called on a fit with treedepth saturation or low E-BFMI
-- **THEN** neither appears as a column; they are reported by `print(summary(fit))`, keeping the one-row summary narrow enough for a report table
-
-#### Scenario: converged honours thresholds
-- **WHEN** `converged(fit, rhat = 1.01, esr = 0.1, max_perc_divergent = 0.2)` is called
-- **THEN** it returns a single logical, `TRUE` only if all Rhat `<` `rhat`, all effective sample rates `>` `esr`, and the divergence rate `<=` `max_perc_divergent`
-
-#### Scenario: A well-mixed fit with divergences does not pass
-- **WHEN** `converged(fit)` is called on a fit with acceptable Rhat and ESS whose divergence rate exceeds `max_perc_divergent`
-- **THEN** it returns `FALSE`, and `glance(fit)` shows the rate in `perc_divergent` beside `converged = FALSE`
+#### Scenario: Divergences fail a well-mixed fit
+- **WHEN** a fit has acceptable Rhat and ESS but a divergence rate above `max_perc_divergent`
+- **THEN** `converged()` is `FALSE`
 
 #### Scenario: Zero tolerance is satisfiable
-- **WHEN** `converged(fit, max_perc_divergent = 0)` is called on a fit with no divergent transitions
-- **THEN** it returns `TRUE`, the comparison being inclusive so that a zero threshold admits a zero rate
+- **WHEN** `converged(fit, max_perc_divergent = 0)` is called on a fit with no divergences
+- **THEN** it returns `TRUE`
 
-#### Scenario: Missing diagnostics do not pass silently
-- **WHEN** `converged(fit)` is called on a fit with no finite Rhat
-- **THEN** it returns `FALSE`
+### Requirement: Fitted values, residuals, and augment
 
-### Requirement: Augmented fitted values
+`fitted()` SHALL return the posterior median of expected weight at each observed row, and `residuals()` the posterior median of the deviance residual under the model's likelihood. `augment()` SHALL return the input data with `fitted` and `residual` columns equal to those values, and no interval columns.
 
-`augment(x)` SHALL return the input data with two columns appended: `fitted` (response-scale fitted weight, from `fitted(x)`) and `residual` (deviance residual, from `residuals(x)`), evaluated at the observed rows. The columns SHALL be taken directly from the `fitted()` and `residuals()` methods so they cannot diverge from them. `augment()` SHALL NOT add interval (`lower`/`upper`) columns; prediction intervals are obtained from `kb_predict_weight()`.
-
-#### Scenario: augment adds fitted/residual columns
+#### Scenario: augment agrees with fitted and residuals
 - **WHEN** `augment(fit)` is called
-- **THEN** it returns the original data columns plus `fitted` and `residual` (and no `lower`/`upper`), with `fitted` matching `fitted(fit)` and `residual` matching `residuals(fit)`
+- **THEN** its `fitted` and `residual` columns equal `fitted(fit)` and `residuals(fit)`
 
-### Requirement: Fitted values and deviance residuals
+### Requirement: Print and summary
 
-`fitted(object)` SHALL return a numeric vector of posterior point estimates at each observed row, on the response scale (the posterior median of `posterior_epred()` at the observed data; the full posterior is available from `posterior_epred()`). For *Nereocystis* this is the expected weight, including the lognormal correction `exp(sWeight^2 / 2)`; the per-model likelihood is reported by `kb_model_describe()`. `residuals(object)` SHALL return a numeric vector of deviance residuals at each observed row, computed per draw from the fitted likelihood and summarised to the posterior median: the Normal log-weight likelihood for *Nereocystis*, and the Gamma likelihood (shape `shape`, rate `shape / eWeight`) for *Macrocystis*. Both return a vector of length `nobs(object)`, suitable for appending to the data. Neither takes interval or `estimate` arguments, and `residuals()` SHALL NOT take a residual-type argument.
+`print(fit)` SHALL show a header with the model and species, the predictor and its reference value, the observation and group counts, the sampler settings, the convergence verdict, and a prior-only note when applicable, followed by a pointer to `kb_model_describe()`, with no parameter estimates. `summary(fit)` SHALL return an object whose print shows the same header, a table of `term`, `estimate`, `lower`, `upper`, `rhat`, `ess_bulk`, and `ess_tail` (per-level effects only with `include_random_effects = TRUE`), and a footer with the divergence rate, treedepth-saturation rate, and minimum E-BFMI. The output is pinned by `tests/testthat/_snaps/print.md` and `tests/testthat/_snaps/summary.md`.
 
-#### Scenario: fitted returns response-scale point estimates
-- **WHEN** `fitted(fit)` is called
-- **THEN** it returns a numeric vector of length `nobs(fit)` of positive response-scale values whose values equal `augment(fit)$fitted`
-
-#### Scenario: residuals returns deviance residuals
-- **WHEN** `residuals(fit)` is called
-- **THEN** it returns a numeric vector of length `nobs(fit)` of deviance residuals whose values equal `augment(fit)$residual`
-
-#### Scenario: Macro residuals are Gamma deviance residuals
-- **WHEN** `residuals(macro_fit)` is called
-- **THEN** it returns a numeric vector of length `nobs(macro_fit)` of Gamma deviance residuals whose values equal `augment(macro_fit)$residual`
-
-### Requirement: Draws accessor and diagnostics surface
-
-`samples(fit)` SHALL return the raw parameter draws as a `posterior` draws object, and the accessors `rhat`, `esr`, `nobs`, `nchains`, `niters`, `npars`, `nterms`, `pars`, `estimates` and `kb_stancode(fit)` SHALL operate on the fit object. All summaries and diagnostics are computed from the stored draws via `posterior` (see `decisions/prediction-engine.md`).
-
-#### Scenario: samples returns a draws container
-- **WHEN** `samples(fit)` is called
-- **THEN** it returns a `posterior` draws object (`draws_rvars`), not a melted one-row-per-draw tibble, that interoperates with bayesplot/coda/posterior
-
-#### Scenario: accessors return scalar/structural values
-- **WHEN** `rhat(fit)`, `esr(fit)`, `nobs(fit)`, `nchains(fit)`, `niters(fit)`, `npars(fit)`, `pars(fit)` are called
-- **THEN** each returns the documented scalar or vector for the fit (`esr` being the effective sample rate `ess_bulk / ndraws`)
-
-#### Scenario: kb_stancode returns the model source
-- **WHEN** `kb_stancode(fit)` is called
-- **THEN** it returns the Stan source for the fitted model
-
-### Requirement: Summary and print methods
-
-`summary(x)` SHALL return a classed `summary_kb_fit` object collecting fit-level metadata and a per-term posterior summary table (with its own `print` method), laid out as a fit-metadata header, a coefficient table, and a diagnostics footer. `print(x)` and the summary object SHALL render the same fit-metadata header from a single shared renderer, so the two cannot diverge. The header SHALL be a per-fit glance and SHALL NOT include the model's likelihood family or its fixed- and random-effect structure; that structure is fixed by species and is rendered instead by `kb_model_describe()`. The header SHALL comprise the model and species, the predictor and how it enters the model (for the weight models, the geometric-mean value it is centered at), the observation and group counts, the sampler configuration, the convergence verdict, a prior-only note when applicable, and a footer pointing to `kb_model_describe(fit)`. The predictor line SHALL be self-describing (naming the transform in its text rather than relying on its label) and SHALL be omitted for a model with no predictor. The group counts in the data line convey the grouping factors and their level counts (and thereby whether the `site:year` effect was retained), so the grouping structure remains visible without a dedicated random-effects line. `print(x)` SHALL display only that header, without embedding raw MCMC numbers, so it is snapshot-testable.
-
-The `summary_kb_fit` coefficient table SHALL carry columns `term`, `estimate`, `lower`, `upper`, `rhat`, `ess_bulk`, `ess_tail`, with the diagnostic columns taken from the stored fit diagnostics (the same source as `converged()`/`glance()`). It SHALL show population-level terms and random-effect SDs, including the per-level group deviations only when `include_random_effects = TRUE` (default `FALSE`, matching `tidy()`). Its `print` method SHALL render the shared header, the coefficient table, and a diagnostics footer defining the columns and reporting the sampler diagnostics: the divergence rate, the treedepth-saturation rate, and the minimum E-BFMI across chains. That footer is the drill-down surface for the two diagnostics `glance()` omits.
-
-#### Scenario: print shows stable metadata
+#### Scenario: print shows no estimates
 - **WHEN** `print(fit)` is called
-- **THEN** it shows the shared per-fit header (model, species, the predictor and its transform, observation and group counts, sampler configuration, convergence, and a pointer to `kb_model_describe()`), with no likelihood-family or fixed/random-structure lines, no coefficient table, and no raw MCMC numerics, identical to the header shown by `print(summary(fit))`
+- **THEN** it shows the header and no parameter estimates
 
-#### Scenario: summary returns metadata and a diagnostic table
-- **WHEN** `summary(fit)` is called
-- **THEN** it returns a `summary_kb_fit` object carrying the per-fit header metadata (model, species, the predictor and its transform, observation and group counts, sampler draws, convergence) and a `coefficients` tibble with columns `term`, `estimate`, `lower`, `upper`, `rhat`, `ess_bulk`, `ess_tail`, whose `print` method renders the header, table, and diagnostics footer
+### Requirement: Model description
 
-#### Scenario: summary omits group-level deviations by default
-- **WHEN** `summary(fit)` is called
-- **THEN** the per-level deviations (`bSite[.]`, `bYear[.]`, `bSiteYear[.,.]`) are omitted and the random-effect SDs are retained; `summary(fit, include_random_effects = TRUE)` adds the per-level rows
+`kb_model_describe(fit)` SHALL print the fitted model in notation using the package's parameter names (the same terms as `tidy()`), with no Greek letters or R formula syntax, and `kb_model_describe(fit, prose = TRUE)` the same model as a methods paragraph; both SHALL return the lines invisibly. The description SHALL reflect the fit, not the defaults: its stored priors, its predictor reference and density standardisation, and only the effects it fitted. Priors truncated at zero SHALL be marked `T[0, ]`. The content for each model is pinned by `tests/testthat/_snaps/kb_model_describe.md`.
 
-#### Scenario: Macro header reports the Gamma family and macro structure
-- **WHEN** the *Macrocystis* Gamma family and effect structure are needed
-- **THEN** they are reported by `kb_model_describe(macro_fit)`, not the `print()` header; the header shows the slim per-fit metadata, with the grouping still visible through the data-line group counts (`site`, `year`, `site:year`)
+#### Scenario: The description follows the fit
+- **WHEN** a fit used custom priors or omitted an effect
+- **THEN** the description shows those priors and leaves the omitted effect out
 
-### Requirement: The density term is reported only when fitted
+### Requirement: Accessors
 
-`tidy()`, `coef()`, and `summary()` SHALL include a `bDensity` row for a *Nereocystis* weight fit whose `meta$density_on` is `TRUE`, and SHALL NOT include it otherwise, since the draws of an omitted term never met the likelihood.
+`samples(fit)` SHALL return the draws as a `posterior` `draws_rvars` object. `rhat()`, `esr()`, `nobs()`, `nchains()`, `niters()`, `npars()`, `nterms()`, `pars()`, and `estimates()` SHALL return the fit's values, and `kb_stancode(fit)` the Stan source of the fitted model.
 
-#### Scenario: Density fit reports bDensity
-- **WHEN** `tidy(fit)` is called on a fit with `meta$density_on` `TRUE`
-- **THEN** the result has a `bDensity` row
+#### Scenario: Draws interoperate with posterior
+- **WHEN** `samples(fit)` is called
+- **THEN** it returns a `draws_rvars` object usable with the `posterior` package
 
-#### Scenario: Fit without density omits bDensity
-- **WHEN** `tidy(fit)` is called on a fit with `meta$density_on` `FALSE`
-- **THEN** the result has no `bDensity` row
+### Requirement: Errors for unsupported objects
 
+A kelpbio generic (`kb_model_describe()`, `kb_stancode()`, `samples()`, `kb_predict_weight()`, `kb_predict_weight_by()`) called on an object it does not support SHALL error with a `cli` message naming the argument and the required class (`kb_fit`, or `kb_fit_weight` for the prediction verbs) and pointing to the `kb_fit_*()` functions, attributed to the generic the user called. Any method called on a fit whose model has no implementation for it SHALL error naming the object's class rather than return a value. kelpbio SHALL NOT add default methods to generics owned by other packages.
+
+#### Scenario: A non-fit errors helpfully
+- **WHEN** `kb_model_describe(1)` or `kb_predict_weight(1)` is called
+- **THEN** it errors stating the required class and pointing to the fitting functions
+
+#### Scenario: A fit without methods fails loudly
+- **WHEN** `log_lik()`, `residuals()`, `fitted()`, or `augment()` is called on a fit whose model has no methods
+- **THEN** it errors rather than returning a value
