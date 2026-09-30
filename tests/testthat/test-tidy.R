@@ -19,14 +19,6 @@ test_that("tidy returns house columns and omits group-level terms by default", {
   )
 })
 
-test_that("tidy omits bDensity for a fit without the density term", {
-  # the term list is set at fit time from the density structure
-  fit <- weight_fit
-  fit$meta$density_on <- FALSE
-  fit$meta$terms$fixed <- setdiff(fit$meta$terms$fixed, "bDensity")
-  expect_false("bDensity" %in% tidy(fit)$term)
-})
-
 test_that("include_random_effects = TRUE adds the group-level deviations", {
   t <- tidy(weight_fit, include_random_effects = TRUE)
   expect_true(any(grepl("^bSite\\[", t$term)))

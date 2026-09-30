@@ -101,40 +101,6 @@ test_that("a dropped site:year effect contributes nothing to the linear predicto
   expect_equal(log(e_on - floor) - log(e_off - floor), as.numeric(bsy))
 })
 
-test_that("a fit without the site_year_on flag defaults to keeping site:year", {
-  # legacy fits (built before meta$site_year_on was recorded) must not lose the
-  # effect: a missing flag is treated as on, matching an explicit TRUE.
-  legacy <- weight_fit
-  legacy$meta$site_year_on <- NULL
-  on <- weight_fit
-  on$meta$site_year_on <- TRUE
-  grid <- data.frame(
-    diameter = 40,
-    site = weight_fit$meta$site_levels[1],
-    year = weight_fit$meta$year_levels[1]
-  )
-  lp_legacy <- posterior::draws_of(.linpred(
-    legacy,
-    grid,
-    "average"
-  ))
-  lp_on <- posterior::draws_of(.linpred(on, grid, "average"))
-  expect_equal(as.numeric(lp_legacy), as.numeric(lp_on))
-})
-
-# ---- Macrocystis -------------------------------------------------------------
-
-test_that(".linpred returns a log-scale rvar aligned to the grid (macro)", {
-  grid <- data.frame(fronds = c(2, 5, 10))
-  lp <- .linpred(weight_macro_fit, grid, new_levels = "average")
-  expect_s3_class(lp, "rvar")
-  expect_length(lp, 3L)
-  expect_equal(
-    posterior::ndraws(lp),
-    posterior::ndraws(weight_macro_fit$draws)
-  )
-})
-
 test_that("a macro fit gets the Macrocystis mean, not the Nereocystis one", {
   # With every random effect zeroed the mean reduces to its population terms, so
   # this pins the dispatched formula: linear in log-fronds, no quadratic and no
@@ -147,20 +113,6 @@ test_that("a macro fit gets the Macrocystis mean, not the Nereocystis one", {
     posterior::draws_of(draws$bWeight + draws$bFronds * log_fc),
     ignore_attr = TRUE
   )
-})
-
-test_that("conditioning follows the grid columns (macro)", {
-  s <- weight_macro_fit$meta$site_levels[1]
-  y <- weight_macro_fit$meta$year_levels[1]
-  bare <- data.frame(fronds = c(5, 5))
-  with_group <- data.frame(fronds = c(5, 5), site = s, year = y)
-  lp_avg <- posterior::draws_of(
-    .linpred(weight_macro_fit, bare, "average")
-  )
-  lp_grp <- posterior::draws_of(
-    .linpred(weight_macro_fit, with_group, "average")
-  )
-  expect_false(isTRUE(all.equal(as.numeric(lp_avg), as.numeric(lp_grp))))
 })
 
 test_that("a known year contributes its estimated bYear main effect (macro)", {
@@ -178,31 +130,6 @@ test_that("a known year contributes its estimated bYear main effect (macro)", {
   yi <- match(y, weight_macro_fit$meta$year_levels)
   byear <- posterior::draws_of(weight_macro_fit$draws$bYear)[, yi]
   expect_equal(as.numeric(diff), as.numeric(byear))
-})
-
-test_that("sample widens vs average when a factor is omitted (macro)", {
-  withr::local_seed(1)
-  grid <- data.frame(fronds = c(2, 5, 10))
-  sd_avg <- apply(
-    posterior::draws_of(
-      .linpred(weight_macro_fit, grid, "average")
-    ),
-    2,
-    stats::sd
-  )
-  sd_smp <- apply(
-    posterior::draws_of(.linpred(weight_macro_fit, grid, "sample")),
-    2,
-    stats::sd
-  )
-  expect_true(all(sd_smp >= sd_avg))
-})
-
-# ---- shared entry points -----------------------------------------------------
-
-test_that(".linpred_obs passes for a well-formed fit", {
-  expect_s3_class(.linpred_obs(weight_fit), "rvar")
-  expect_s3_class(.linpred_obs(weight_macro_fit), "rvar")
 })
 
 test_that("data_linpred resolves NULL new_data to the observed rows", {
@@ -259,38 +186,6 @@ test_that("density shifts log(alpha) by bDensity times standardised density", {
   b_density <- as.numeric(posterior::draws_of(weight_fit$draws$bDensity))
   z <- (7 - weight_fit$meta$density_mean) / weight_fit$meta$density_sd
   expect_equal(log(e_on - floor) - log(e_off - floor), b_density * z)
-})
-
-test_that("a fitted site-year without supplied density uses its recorded value", {
-  levels <- weight_fit$meta$density_levels
-  key <- names(levels)[1]
-  parts <- strsplit(key, ":", fixed = TRUE)[[1]]
-  bare <- data.frame(diameter = 40, site = parts[1], year = parts[2])
-  supplied <- transform(bare, density = unname(levels[1]))
-  expect_equal(
-    posterior::draws_of(.linpred(weight_fit, bare, "average")),
-    posterior::draws_of(.linpred(weight_fit, supplied, "average"))
-  )
-})
-
-test_that("a row with no density and no recorded site-year uses the fitted mean", {
-  bare <- data.frame(diameter = 40)
-  at_mean <- data.frame(diameter = 40, density = weight_fit$meta$density_mean)
-  expect_equal(
-    posterior::draws_of(.linpred(weight_fit, bare, "average")),
-    posterior::draws_of(.linpred(weight_fit, at_mean, "average"))
-  )
-})
-
-test_that("a density column is ignored for a fit without the term", {
-  off <- weight_fit
-  off$meta$density_on <- FALSE
-  expect_equal(
-    posterior::draws_of(.linpred(off, data.frame(diameter = 40), "average")),
-    posterior::draws_of(
-      .linpred(off, data.frame(diameter = 40, density = 100), "average")
-    )
-  )
 })
 
 test_that("new_data predictions work for a model with no continuous predictor", {

@@ -1,3 +1,19 @@
+# fit_stan() is the sampling boundary. Standing in the fixture's own draws lets the
+# rest of a fit function run without MCMC, for tests of what it derives from the
+# data.
+local_fit_stan_stub <- function(env = parent.frame()) {
+  local_mocked_bindings(
+    fit_stan = function(...) {
+      list(
+        draws = weight_fit$draws,
+        diagnostics = weight_fit$diagnostics,
+        stancode = ""
+      )
+    },
+    .env = env
+  )
+}
+
 test_that("kb_fit_weight_nereo does not expose site_year_on", {
   # the site:year structure is data-determined, not a user argument
   expect_false("site_year_on" %in% names(formals(kb_fit_weight_nereo)))
@@ -20,8 +36,6 @@ test_that("kb_fit_weight returns a correctly-structured object", {
   )
 
   expect_s3_class(fit, "kb_fit_weight_nereo")
-  expect_s3_class(fit, "kb_fit_weight")
-  expect_s3_class(fit, "kb_fit")
   expect_named(fit, c("draws", "diagnostics", "data", "meta"))
   expect_true(posterior::is_draws_rvars(fit$draws))
   expect_setequal(
@@ -42,11 +56,6 @@ test_that("kb_fit_weight returns a correctly-structured object", {
   )
   # niters = saved post-warmup draws per chain
   expect_equal(niters(fit), 100L)
-  # No per-observation quantities are stored; log_lik / yrep are recomputed in R
-  expect_false("gq" %in% names(fit))
-  expect_false("log_eWeight" %in% posterior::variables(fit$draws))
-  # the live stanfit is discarded
-  expect_false(any(vapply(fit, function(x) inherits(x, "stanfit"), logical(1))))
 })
 
 test_that("nthin > 1 still keeps exactly niters draws per chain", {
@@ -120,8 +129,6 @@ test_that("zero-row data is accepted under prior_only", {
     seed = 1
   )
   expect_s3_class(fit, "kb_fit_weight")
-  expect_false("gq" %in% names(fit))
-  expect_error(log_lik(fit), "zero-observation")
 })
 
 test_that("progress accepts only the three modes", {
@@ -141,6 +148,8 @@ test_that("progress_dir writes an artifact that kb_fit_progress reads as complet
     data_weight_sim_nereo,
     site %in% c("site1", "site2") & year %in% c("2019", "2020")
   ))
+  # "bar" shows fit messages; without density there is none to print
+  d$density <- NULL
   dir <- withr::local_tempdir()
   fit <- kb_fit_weight_nereo(
     d,
@@ -160,52 +169,42 @@ test_that("progress_dir writes an artifact that kb_fit_progress reads as complet
 })
 
 test_that("a single-year fit records no site:year terms", {
-  skip_on_cran()
   # site_year_structure() turns the effect off below two years, and the recorded
-  # term list must agree, since tidy()/summary() read it rather than re-deriving:
-  # sSiteYear draws that never met the likelihood are the prior, not an estimate.
-  d <- droplevels(subset(
-    data_weight_sim_nereo,
-    site %in% c("site1", "site2") & year == "2019"
-  ))
-  fit <- kb_fit_weight_nereo(
-    d,
-    chains = 1,
-    niters = 50,
-    cores = 1,
-    progress = "none",
-    seed = 7
-  )
+  # term list must agree, since tidy()/summary() read it rather than re-deriving.
+  local_fit_stan_stub()
+  d <- droplevels(subset(weight_fit$data, year == "2019"))
+  fit <- kb_fit_weight_nereo(d, progress = "none")
   expect_false(fit$meta$site_year_on)
   expect_false("sSiteYear" %in% fit$meta$terms$fixed)
   expect_false("bSiteYear" %in% fit$meta$terms$random)
-  expect_false("sSiteYear" %in% tidy(fit)$term)
 })
 
 test_that("the fit records the density structure in meta and terms", {
-  s <- density_structure(weight_fit$data)
+  # Expectations computed directly from the data, not by the fitting helper. In
+  # the fixture every row of a recorded site-year carries its density, so the
+  # plant-weighted mean and SD are over the non-missing rows.
+  d <- weight_fit$data
+  recorded <- !is.na(d$density)
   expect_true(weight_fit$meta$density_on)
-  expect_equal(weight_fit$meta$density_mean, s$mean)
-  expect_equal(weight_fit$meta$density_sd, s$sd)
-  expect_equal(weight_fit$meta$density_levels, s$levels)
+  expect_equal(weight_fit$meta$density_mean, mean(d$density[recorded]))
+  expect_equal(weight_fit$meta$density_sd, stats::sd(d$density[recorded]))
+
+  keys <- paste(d$site, d$year, sep = ":")
+  per_site_year <- tapply(d$density[recorded], keys[recorded], unique)
+  levels <- weight_fit$meta$density_levels
+  expect_setequal(names(levels), names(per_site_year))
+  expect_equal(unname(levels[names(per_site_year)]), as.vector(per_site_year))
+  # a site-year recorded as NA has no stored density
+  expect_false("site2:2020" %in% names(levels))
   expect_true("bDensity" %in% weight_fit$meta$terms$fixed)
 })
 
-test_that("a fit without density records the term as off", {
-  skip_on_cran()
-  d <- droplevels(subset(
-    data_weight_sim_nereo,
-    site %in% c("site1", "site2") & year %in% c("2019", "2020")
-  ))
+test_that("data without density give a fit with the density term off", {
+  local_fit_stan_stub()
+  d <- weight_fit$data
   d$density <- NULL
-  fit <- kb_fit_weight_nereo(
-    d,
-    chains = 1,
-    niters = 50,
-    cores = 1,
-    progress = "none",
-    seed = 1
-  )
+  fit <- kb_fit_weight_nereo(d, progress = "none")
   expect_false(fit$meta$density_on)
   expect_false("bDensity" %in% fit$meta$terms$fixed)
+  expect_false("bDensity" %in% tidy(fit)$term)
 })

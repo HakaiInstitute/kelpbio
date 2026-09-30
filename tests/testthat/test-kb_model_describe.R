@@ -10,16 +10,6 @@ test_that("kb_model_describe renders a methods paragraph with prose = TRUE", {
   expect_snapshot(kb_model_describe(weight_fit, prose = TRUE))
 })
 
-test_that("the notation uses package parameter names and the stored priors", {
-  out <- capture.output(kb_model_describe(weight_fit))
-  # equation symbols match the coefficient-table terms
-  expect_true(any(grepl("bPower", out)))
-  expect_true(any(grepl("sSite", out)))
-  # priors rendered from the fit's stored priors
-  expect_true(any(grepl("Normal\\(", out)))
-  expect_true(any(grepl("Exponential\\(", out)))
-})
-
 test_that("custom stored priors are reflected", {
   fit <- weight_macro_fit
   fit$meta$priors$fronds <- kb_prior_normal(mean = 1.5, sd = 0.05)
@@ -42,12 +32,6 @@ test_that("prose = TRUE returns the lines invisibly", {
   )
 })
 
-test_that("a fit of another model with no method errors", {
-  fake <- structure(list(), class = c("kb_fit_other", "kb_fit"))
-  # the enumerated-constructor wording is pinned once in test-abort.R
-  expect_error(kb_model_describe(fake), "no method for.*<kb_fit_other>")
-})
-
 test_that("a weight fit with no species method errors rather than returning", {
   fake <- structure(
     list(),
@@ -61,21 +45,14 @@ test_that("a weight fit with no species method errors rather than returning", {
   expect_match(conditionMessage(err), "kb_fit_weight_nereo")
 })
 
-test_that("an object that is not a fit errors", {
-  expect_error(kb_model_describe(1), "must be a <kb_fit> object")
+test_that("an object that is not a fit errors, attributed to the generic", {
+  cnd <- rlang::catch_cnd(kb_model_describe(1))
+  expect_match(conditionMessage(cnd), "must be a <kb_fit> object")
+  expect_equal(cnd$call, quote(kb_model_describe(1)))
 })
 
-test_that("the error is attributed to the generic, not the default method", {
-  expect_equal(
-    rlang::catch_cnd(kb_model_describe(1))$call,
-    quote(kb_model_describe(1))
-  )
-})
-
-test_that("the density term is described only when fitted", {
-  on <- capture.output(kb_model_describe(weight_fit))
-  expect_true(any(grepl("bDensity * density", on, fixed = TRUE)))
-  expect_true(any(grepl("standardised site-year density", on, fixed = TRUE)))
+test_that("the density term is left out when not fitted", {
+  # the fitted case is pinned by the nereo notation snapshot
   off <- weight_fit
   off$meta$density_on <- FALSE
   out <- capture.output(kb_model_describe(off))

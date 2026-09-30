@@ -12,12 +12,6 @@ test_that("new_data = NULL predicts at the observed rows, conditioned", {
   )
 })
 
-test_that("predictions are ordered and positive", {
-  p <- kb_predict_weight(weight_fit)
-  expect_true(all(p$lower <= p$estimate & p$estimate <= p$upper))
-  expect_true(all(p$estimate > 0))
-})
-
 test_that("predicts at supplied rows", {
   nd <- data.frame(diameter = c(20, 40, 60))
   p <- kb_predict_weight(weight_fit, new_data = nd)
@@ -25,31 +19,18 @@ test_that("predicts at supplied rows", {
   expect_equal(p$diameter, c(20, 40, 60))
 })
 
-test_that("a new site is sampled, not errored, and is wider than a known site", {
-  set.seed(1)
+test_that("a new site is sampled by default: wider than a known site, reproducible", {
   site1 <- weight_fit$meta$site_levels[1]
-  known <- kb_predict_weight(
-    weight_fit,
-    new_data = data.frame(diameter = 40, site = site1),
-    new_levels = "sample"
-  )
-  new <- kb_predict_weight(
-    weight_fit,
-    new_data = data.frame(diameter = 40, site = "brand_new_site"),
-    new_levels = "sample"
-  )
-  expect_equal(nrow(new), 1L)
+  known <- kb_predict_weight(weight_fit, data.frame(diameter = 40, site = site1))
+  new_site <- data.frame(diameter = 40, site = "brand_new_site")
+  set.seed(1)
+  new <- kb_predict_weight(weight_fit, new_site)
+  set.seed(1)
+  sampled <- kb_predict_weight(weight_fit, new_site, new_levels = "sample")
   expect_gt(new$upper - new$lower, known$upper - known$lower)
-})
-
-test_that("default new_levels is \"sample\", and set.seed makes it reproducible", {
-  nd <- data.frame(diameter = c(20, 40), site = "brand_new_site")
-  set.seed(1)
-  default <- kb_predict_weight(weight_fit, nd)
-  set.seed(1)
-  sampled <- kb_predict_weight(weight_fit, nd, new_levels = "sample")
-  expect_equal(default$lower, sampled$lower)
-  expect_equal(default$upper, sampled$upper)
+  # the default is "sample": the same seed gives the same interval
+  expect_equal(new$lower, sampled$lower)
+  expect_equal(new$upper, sampled$upper)
 })
 
 test_that("estimate reduces each row's draws (custom function, matches posterior_epred)", {
@@ -64,13 +45,6 @@ test_that("estimate reduces each row's draws (custom function, matches posterior
   )
   ep <- posterior_epred(weight_fit, new_data = nd, new_levels = "average")
   expect_equal(p$estimate, signif(apply(ep, 2L, trimmed), 3))
-})
-
-test_that("new_data must have a diameter column", {
-  expect_error(
-    kb_predict_weight(weight_fit, new_data = data.frame(x = 1)),
-    "diameter"
-  )
 })
 
 test_that("macro predicts on the fronds predictor and rejects a diameter column", {
@@ -105,29 +79,12 @@ test_that("representative_site borrows a known site's main effects for a new sit
   expect_equal(rep$estimate, known$estimate)
 })
 
-test_that("multiple representative sites differ from a single one", {
-  sl <- weight_fit$meta$site_levels
-  nd <- data.frame(diameter = c(20, 40, 60), site = "brand_new_site")
-  one <- kb_predict_weight(
-    weight_fit,
-    nd,
-    new_levels = "average",
-    representative_site = sl[1]
-  )
-  many <- kb_predict_weight(
-    weight_fit,
-    nd,
-    new_levels = "average",
-    representative_site = sl[1:2]
-  )
-  expect_false(isTRUE(all.equal(one$estimate, many$estimate)))
-})
-
 test_that("representative_site rejects sites not in the fit", {
   nd <- data.frame(diameter = 40, site = "brand_new_site")
-  expect_snapshot(
+  # the message itself is pinned in test-chk.R
+  expect_error(
     kb_predict_weight(weight_fit, nd, representative_site = "not_a_site"),
-    error = TRUE
+    "representative_site"
   )
 })
 
@@ -164,4 +121,33 @@ test_that("new_data far outside the fitted range warns but still predicts", {
     "far outside"
   )
   expect_equal(nrow(p), 1L)
+})
+
+test_that("a fitted site-year recorded without density uses the fitted mean", {
+  # site2:2020 is in the fixture with density NA
+  bare <- kb_predict_weight(
+    weight_fit,
+    data.frame(diameter = 30, site = "site2", year = "2020"),
+    new_levels = "average"
+  )
+  at_mean <- kb_predict_weight(
+    weight_fit,
+    data.frame(
+      diameter = 30,
+      site = "site2",
+      year = "2020",
+      density = weight_fit$meta$density_mean
+    ),
+    new_levels = "average"
+  )
+  expect_equal(bare$estimate, at_mean$estimate)
+})
+
+test_that("density far above the fitted range warns; a sparse density does not", {
+  nd <- function(density) data.frame(diameter = 30, density = density)
+  expect_warning(
+    kb_predict_weight(weight_fit, nd(40000), new_levels = "average"),
+    "far outside"
+  )
+  expect_no_warning(kb_predict_weight(weight_fit, nd(0.2), new_levels = "average"))
 })

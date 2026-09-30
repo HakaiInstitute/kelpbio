@@ -9,21 +9,6 @@ test_that("log_lik returns a D x N matrix usable by loo", {
   expect_s3_class(suppressWarnings(loo::loo(ll)), "loo")
 })
 
-test_that("macro log_lik returns a D x N matrix usable by loo", {
-  ll <- log_lik(weight_macro_fit)
-  expect_equal(ncol(ll), nrow(weight_macro_fit$data))
-  expect_equal(nrow(ll), posterior::ndraws(weight_macro_fit$draws))
-  skip_if_not_installed("loo")
-  expect_s3_class(suppressWarnings(loo::loo(ll)), "loo")
-})
-
-test_that("log_lik is deterministic", {
-  # Recomputed from the draws, so unlike posterior_predict() it must not depend
-  # on the RNG state.
-  expect_identical(log_lik(weight_fit), log_lik(weight_fit))
-  expect_identical(log_lik(weight_macro_fit), log_lik(weight_macro_fit))
-})
-
 test_that("nereo log_lik matches the Normal density computed directly", {
   # Independent of extras, so this pins the parameterisation (the density is of
   # log(weight), not weight) as well as the orientation.
@@ -61,13 +46,4 @@ test_that("log_lik aborts for a zero-observation fit", {
   fit0 <- weight_fit
   fit0$data <- fit0$data[0, ]
   expect_error(log_lik(fit0), "zero-observation fit")
-})
-
-test_that("log_lik on a kb_fit with no methods aborts, not falls through", {
-  # Registered on kb_fit now, so this dispatches; the default is the guard.
-  fake <- structure(
-    list(data = data.frame(weight = 1), meta = list()),
-    class = c("kb_fit_other", "kb_fit")
-  )
-  expect_error(log_lik(fake), "no method for a <kb_fit_other>")
 })

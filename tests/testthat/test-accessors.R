@@ -24,3 +24,14 @@ test_that("accessors return expected shapes", {
     )
   )
 })
+
+test_that("accessors exclude an effect the fit omitted", {
+  off <- weight_fit
+  off$meta$density_on <- FALSE
+  off$meta$terms$fixed <- setdiff(off$meta$terms$fixed, "bDensity")
+  expect_false("bDensity" %in% names(rhat(off)))
+  expect_false("bDensity" %in% names(esr(off)))
+  expect_false("bDensity" %in% pars(off))
+  expect_equal(npars(off), npars(weight_fit) - 1L)
+  expect_equal(glance(off)$K, npars(off))
+})

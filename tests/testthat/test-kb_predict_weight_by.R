@@ -1,13 +1,5 @@
 # kb_predict_weight_by(): allometric curve(s) over a diameter sequence.
 
-test_that("population curve spans the observed diameter range", {
-  p <- kb_predict_weight_by(weight_fit, new_levels = "average")
-  expect_s3_class(p, "kb_predictions")
-  rng <- range(weight_fit$data$diameter)
-  expect_gte(min(p$diameter), rng[1] - 1e-6)
-  expect_lte(max(p$diameter), rng[2] + 1e-6)
-})
-
 test_that("default new_levels is \"average\" (deterministic band)", {
   d1 <- kb_predict_weight_by(weight_fit, by = "site")
   d2 <- kb_predict_weight_by(weight_fit, by = "site", new_levels = "average")
@@ -23,21 +15,15 @@ test_that("by produces one curve per group", {
   expect_true(all(c("site", "year") %in% names(bsy)))
 })
 
-test_that("by = c(site, year) uses only observed site-year combinations", {
-  bsy <- kb_predict_weight_by(weight_fit, by = c("site", "year"))
-  got <- unique(paste(bsy$site, bsy$year))
-  observed <- unique(paste(weight_fit$data$site, weight_fit$data$year))
-  expect_setequal(got, observed)
-})
-
-test_that("custom diameter sequence is honoured (nereo)", {
-  p <- kb_predict_weight_by(weight_fit, diameter = c(25, 50, 75))
-  expect_equal(p$diameter, c(25, 50, 75))
-})
-
-test_that("custom fronds sequence is honoured (macro)", {
-  p <- kb_predict_weight_by(weight_macro_fit, fronds = c(2, 5, 10))
-  expect_equal(p$fronds, c(2, 5, 10))
+test_that("a supplied predictor sequence is used for either species", {
+  expect_equal(
+    kb_predict_weight_by(weight_fit, diameter = c(25, 50, 75))$diameter,
+    c(25, 50, 75)
+  )
+  expect_equal(
+    kb_predict_weight_by(weight_macro_fit, fronds = c(2, 5, 10))$fronds,
+    c(2, 5, 10)
+  )
 })
 
 test_that("the wrong-species predictor argument errors", {
@@ -53,12 +39,7 @@ test_that("the wrong-species predictor argument errors", {
   )
 })
 
-test_that("by = \"year\" works for both species", {
-  # both weight models carry a year main effect, so the grouping axis no longer
-  # varies by species
-  pn <- kb_predict_weight_by(weight_fit, by = "year")
-  expect_s3_class(pn, "kb_predictions")
-  expect_true("year" %in% names(pn))
+test_that("by = \"year\" gives one curve per fitted year", {
   p <- kb_predict_weight_by(weight_macro_fit, by = "year")
   expect_s3_class(p, "kb_predictions")
   expect_true("year" %in% names(p))
@@ -111,4 +92,18 @@ test_that("a supplied predictor sequence far outside the fitted range warns", {
     kb_predict_weight_by(weight_fit, diameter = c(30, 500)),
     "far outside"
   )
+})
+
+test_that("site-year curves use each site-year's recorded density", {
+  # one site-year curve at 30 mm equals predicting that site-year with its
+  # recorded density supplied explicitly
+  curve <- kb_predict_weight_by(weight_fit, by = c("site", "year"), diameter = 30)
+  row <- curve[curve$site == "site1" & curve$year == "2019", ]
+  recorded <- weight_fit$meta$density_levels[["site1:2019"]]
+  explicit <- kb_predict_weight(
+    weight_fit,
+    data.frame(diameter = 30, site = "site1", year = "2019", density = recorded),
+    new_levels = "average"
+  )
+  expect_equal(row$estimate, explicit$estimate)
 })

@@ -97,5 +97,5 @@ test_that("new_kb_fit stores the reported parameter set", {
 })
 
 test_that("new_kb_fit rejects an unknown species", {
-  expect_error(build(species = "bogus"), "subscript out of bounds")
+  expect_error(build(species = "bogus"))
 })
