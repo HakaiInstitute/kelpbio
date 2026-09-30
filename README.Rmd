@@ -57,7 +57,7 @@ allometric weight model relates wet weight to sub-bulb diameter, with random
 effects for year, site, and site-by-year.
 
 The model is fitted to a data frame of `diameter`, `weight`, `site`, and
-`year`. A small simulated dataset is included with the package:
+`year`, with an optional site-year stipe `density`. A small simulated dataset is included with the package:
 
 ```{r data}
 library(kelpbio)

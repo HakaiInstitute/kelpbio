@@ -16,7 +16,24 @@
 }
 
 .vld_new_data_weight_nereo <- function(x) {
-  is.data.frame(x) && "diameter" %in% names(x)
+  is.data.frame(x) &&
+    "diameter" %in% names(x) &&
+    (!"density" %in% names(x) || .vld_density(x$density))
+}
+
+# Stipe density: numeric (or all NA) and non-negative where recorded.
+.vld_density <- function(x) {
+  all(is.na(x)) || (is.numeric(x) && all(x >= 0, na.rm = TRUE))
+}
+
+# Density is a site-year value: at most one distinct recorded value per site-year.
+.vld_density_site_year <- function(data) {
+  recorded <- !is.na(data$density)
+  key <- site_year_key(data$site, data$year)[recorded]
+  n_distinct <- tapply(data$density[recorded], key, function(x) {
+    length(unique(x))
+  })
+  all(n_distinct <= 1L)
 }
 
 .vld_new_data_weight_macro <- function(x) {

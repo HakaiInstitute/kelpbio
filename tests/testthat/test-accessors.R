@@ -13,6 +13,7 @@ test_that("accessors return expected shapes", {
       "bWeight",
       "bPower",
       "bFloor",
+      "bDensity",
       "sSite",
       "sYear",
       "sSiteYear",

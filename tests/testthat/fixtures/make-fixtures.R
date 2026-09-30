@@ -13,12 +13,12 @@ devtools::load_all(quiet = TRUE)
 # A small slice of the bundled simulated dataset spanning several sites and years
 # so that by = "site" and by = c("site", "year") predictions are exercised
 # downstream. Using a subset of data_weight_sim_nereo keeps a single simulation
-# source (there is no separate test-only simulator).
+# source (there is no separate test-only simulator). All four years are kept, so
+# the year SD is less weakly identified. These fixtures test structure, not
+# inference, and may not meet the strict converged() thresholds.
 d <- subset(
   data_weight_sim_nereo,
-  site %in%
-    c("site1", "site2", "site3", "site4") &
-    year %in% c("2019", "2020", "2021")
+  site %in% c("site1", "site2", "site3", "site4")
 )
 d$site <- droplevels(factor(d$site))
 d$year <- droplevels(factor(d$year))

@@ -20,7 +20,8 @@
 
 \item{new_data}{A data frame with the fit's predictor column (\code{diameter} for
 \emph{Nereocystis}, \code{fronds} for \emph{Macrocystis}) and optional \code{site} / \code{year}
-columns, or \code{NULL} to predict at the observed data.}
+columns (and, for \emph{Nereocystis}, an optional \code{density} column), or \code{NULL}
+to predict at the observed data.}
 
 \item{...}{Unused.}
 

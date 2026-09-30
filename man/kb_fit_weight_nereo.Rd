@@ -72,6 +72,12 @@ data. The year, site, and \code{site:year} effects act on \code{alpha}, so they 
 the size-dependent part of the weight while the floor is common to all
 groups.
 
+When \code{data} has a \code{density} column (stipes per m², a site-year value),
+\code{log(alpha)} also includes \code{bDensity} times density standardised by its mean
+and SD over the fitted plants. Site-years without a recorded density take the
+mean. The density term is omitted when fewer than two distinct site-year
+densities are recorded.
+
 \code{niters} is the number of saved post-warmup draws per chain; warmup defaults
 to match \code{niters} and the post-warmup phase is thinned by \code{nthin}.
 The returned object stores the extracted posterior draws, diagnostics, data,

@@ -43,7 +43,36 @@
   if (!is.data.frame(x)) {
     cli::cli_abort("{.arg {x_name}} must be a data frame.")
   }
-  cli::cli_abort("{.arg {x_name}} must have a {.field diameter} column.")
+  if (!"diameter" %in% names(x)) {
+    cli::cli_abort("{.arg {x_name}} must have a {.field diameter} column.")
+  }
+  .chk_density(x$density, x_name = kb_xname(x_name, "density"))
+}
+
+.chk_density <- function(x, x_name = deparse(substitute(x))) {
+  if (.vld_density(x)) {
+    return(invisible(x))
+  }
+  if (!is.numeric(x)) {
+    cli::cli_abort("{x_name} must be numeric.")
+  }
+  cli::cli_abort("{x_name} must be greater than or equal to 0.")
+}
+
+.chk_density_site_year <- function(data, x_name = deparse(substitute(data))) {
+  if (.vld_density_site_year(data)) {
+    return(invisible(data))
+  }
+  recorded <- !is.na(data$density)
+  key <- site_year_key(data$site, data$year)[recorded]
+  n_distinct <- tapply(data$density[recorded], key, function(x) {
+    length(unique(x))
+  })
+  bad <- names(n_distinct)[n_distinct > 1L]
+  cli::cli_abort(c(
+    "{kb_xname(x_name, 'density')} must have one value per site-year.",
+    x = "Conflicting values in site-year{?s} {.val {bad}}."
+  ))
 }
 
 .chk_new_data_weight_macro <- function(x, x_name = deparse(substitute(x))) {

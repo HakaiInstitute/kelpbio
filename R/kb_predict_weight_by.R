@@ -17,6 +17,10 @@
 #' The available `by` values are `NULL` (a single population curve), `"site"`,
 #' `"year"`, and `c("site", "year")`.
 #'
+#' For a *Nereocystis* fit that includes density, curves for
+#' `by = c("site", "year")` use each site-year's recorded density; other curves,
+#' and site-years without a recorded density, use the fitted mean density.
+#'
 #' @param fit A `kb_fit_weight` object.
 #' @param ... Passed to the species method: the predictor sequence (`diameter` for
 #'   *Nereocystis*, `fronds` for *Macrocystis*) and the shared summary arguments.

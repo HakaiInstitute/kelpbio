@@ -21,6 +21,10 @@
 #' more named reference sites (the per-draw average across several). The
 #' `site:year` interaction still follows `new_levels`.
 #'
+#' For a *Nereocystis* fit that includes density, each row uses its `density`
+#' value if present, otherwise the recorded density of its site-year in the
+#' fitted data, otherwise the fitted mean density.
+#'
 #' @param fit A `kb_fit_weight` object.
 #' @param ... Passed to the species method (currently only the shared arguments).
 #'
@@ -58,7 +62,8 @@ kb_predict_weight.default <- function(fit, ...) {
 #' @inheritParams params
 #' @param new_data A data frame with the fit's predictor column (`diameter` for
 #'   *Nereocystis*, `fronds` for *Macrocystis*) and optional `site` / `year`
-#'   columns, or `NULL` to predict at the observed data.
+#'   columns (and, for *Nereocystis*, an optional `density` column), or `NULL`
+#'   to predict at the observed data.
 #' @export
 kb_predict_weight.kb_fit_weight_nereo <- function(
   fit,

@@ -6,6 +6,10 @@
 #' Required columns: numeric `diameter` (mm, > 0), numeric `weight` (kg, > 0),
 #' and factor or character `site` and `year`, with no missing values.
 #'
+#' Optional column: numeric `density`, the stipe density (stipes per m²) of the
+#' plant's site-year, `>= 0` with `NA` where not recorded. Rows from the same
+#' site-year must not have different values.
+#'
 #' @inheritParams params
 #' @param x_name A string naming `data` in error messages.
 #'
@@ -41,6 +45,11 @@ kb_check_data_weight_nereo <- function(
     nm <- kb_xname(x_name, col)
     chk::chk_character_or_factor(data[[col]], x_name = nm)
     chk::chk_not_any_na(data[[col]], x_name = nm)
+  }
+
+  if ("density" %in% names(data)) {
+    .chk_density(data$density, x_name = kb_xname(x_name, "density"))
+    .chk_density_site_year(data, x_name = x_name)
   }
 
   invisible(data)

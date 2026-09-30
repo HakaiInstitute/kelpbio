@@ -8,7 +8,8 @@ kb_priors_weight_nereo()
 }
 \value{
 A named list of prior objects with entries \code{intercept}, \code{power},
-\code{floor}, \code{sd_site}, \code{sd_year}, \code{sd_site_year}, and \code{sd_residual}.
+\code{floor}, \code{density}, \code{sd_site}, \code{sd_year}, \code{sd_site_year}, and
+\code{sd_residual}.
 }
 \description{
 The default prior list for the \emph{Nereocystis luetkeana} allometric weight
@@ -21,7 +22,8 @@ The prior family of each entry is fixed; only the hyperparameters can be
 changed. \code{intercept} is on the log of the weight above the floor at the
 reference diameter, \code{power} is the allometric exponent, and \code{floor} is the
 weight (kg) as diameter approaches zero. \code{power} and \code{floor} are truncated at
-zero.
+zero. \code{density} is the effect of standardised stipe density on the log scale
+and is used only when the data include density.
 }
 \examples{
 priors <- kb_priors_weight_nereo()

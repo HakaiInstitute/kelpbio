@@ -38,7 +38,9 @@ installation is required.
 
 The weight model is fitted to a data frame with a numeric `diameter` (sub-bulb
 diameter, mm), a numeric `weight` (wet weight, kg), and `site` and `year`
-grouping factors. A small simulated dataset is included with the package:
+grouping factors. An optional `density` column gives the stipe density
+(stipes per m²) of each site-year; when present, the model includes its effect on
+plant weight. A small simulated dataset is included with the package:
 
 ```{r}
 data_weight_sim_nereo

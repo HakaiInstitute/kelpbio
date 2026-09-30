@@ -37,7 +37,8 @@ kb_predict_weight(fit, ...)
 
 \item{new_data}{A data frame with the fit's predictor column (\code{diameter} for
 \emph{Nereocystis}, \code{fronds} for \emph{Macrocystis}) and optional \code{site} / \code{year}
-columns, or \code{NULL} to predict at the observed data.}
+columns (and, for \emph{Nereocystis}, an optional \code{density} column), or \code{NULL}
+to predict at the observed data.}
 
 \item{new_levels}{A string, one of \code{"sample"} or \code{"average"}, controlling how
 random effects that are not conditioned on are treated (factors absent from
@@ -89,6 +90,10 @@ For a new site, \code{representative_site} offers a third approach: instead of
 \code{new_levels} (\code{"sample"} or \code{"average"}) it borrows the site effect of one or
 more named reference sites (the per-draw average across several). The
 \code{site:year} interaction still follows \code{new_levels}.
+
+For a \emph{Nereocystis} fit that includes density, each row uses its \code{density}
+value if present, otherwise the recorded density of its site-year in the
+fitted data, otherwise the fitted mean density.
 }
 \section{Methods (by class)}{
 \itemize{

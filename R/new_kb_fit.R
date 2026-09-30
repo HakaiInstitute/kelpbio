@@ -73,10 +73,6 @@ site_year_levels <- function(data) {
   if (!all(c("site", "year") %in% names(d)) || !nrow(d)) {
     return(character(0))
   }
-  combos <- unique(paste(
-    as.character(d$site),
-    as.character(d$year),
-    sep = ":"
-  ))
+  combos <- unique(site_year_key(d$site, d$year))
   sort(combos)
 }

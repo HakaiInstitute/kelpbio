@@ -1,7 +1,8 @@
 // Full allometric weight model (site-year resolution).
 // log(weight) ~ normal(log(eWeight), sWeight) where
 //   eWeight    = bFloor + alpha * x^bPower
-//   log(alpha) = bWeight + bYear[year] + bSite[site] + bSiteYear[site, year]
+//   log(alpha) = bWeight + bDensity * density + bYear[year] + bSite[site]
+//                + bSiteYear[site, year]
 //   x          = diameter / diameter_ref
 //
 // The mean function is Packard's (2008) three-parameter power function,
@@ -24,6 +25,9 @@
 // so alpha is the weight at a typical plant and bWeight and bPower are close to
 // uncorrelated in the posterior.
 //
+// density is the site-year stipe density, standardised in R (0 = the mean over
+// the fitted plants, also used where a site-year has no recorded density).
+//
 // Random effects: year, site, and site:year, all on log(alpha).
 // Priors are passed as data; the prior family is fixed at compile time.
 // The mean is computed with vectorised indexing (no per-observation loop) for a
@@ -39,6 +43,7 @@ data {
   vector<lower=0>[nObs] diameter;
   vector<lower=0>[nObs] weight;
   real<lower=0> diameter_ref;             // diameter reference for x
+  vector[nObs] density;                   // standardised site-year stipe density
 
   // priors (hyperparameters passed as data)
   real prior_intercept_mu;
@@ -47,6 +52,8 @@ data {
   real<lower=0> prior_power_sd;
   real prior_floor_mu;                    // on bFloor (truncated at 0 below)
   real<lower=0> prior_floor_sd;
+  real prior_density_mu;
+  real<lower=0> prior_density_sd;
   real<lower=0> prior_sd_site_rate;
   real<lower=0> prior_sd_year_rate;
   real<lower=0> prior_sd_site_year_rate;
@@ -54,6 +61,7 @@ data {
 
   int<lower=0, upper=1> prior_only;       // 1 = skip likelihood, sample from priors
   int<lower=0, upper=1> site_year_on;     // 0 = drop the site:year term (set to 0)
+  int<lower=0, upper=1> density_on;       // 0 = drop the density term
 }
 transformed data {
   vector[nObs] log_x = log(diameter) - log(diameter_ref);
@@ -69,6 +77,7 @@ parameters {
   real bWeight;                           // log(alpha) at a typical site and year
   real<lower=0> bPower;                   // allometric scaling exponent
   real<lower=0> bFloor;                   // weight floor as diameter approaches zero
+  real bDensity;                          // effect of standardised density on log(alpha)
   real<lower=0> sSite;                    // site SD
   real<lower=0> sYear;                    // year SD
   real<lower=0> sSiteYear;                // site:year SD
@@ -88,6 +97,7 @@ model {
   // normalising constants do not depend on any parameter, so no T[0,] is needed.
   bPower ~ normal(prior_power_mu, prior_power_sd);
   bFloor ~ normal(prior_floor_mu, prior_floor_sd);
+  bDensity ~ normal(prior_density_mu, prior_density_sd);
   sSite ~ exponential(prior_sd_site_rate);
   sYear ~ exponential(prior_sd_year_rate);
   sSiteYear ~ exponential(prior_sd_site_year_rate);
@@ -100,7 +110,8 @@ model {
     // A local, not a transformed parameter: rstan saves transformed parameters,
     // and nObs columns per draw is the largest thing in a stored fit. Predictions
     // and the pointwise log-likelihood are computed in R from the stored draws.
-    vector[nObs] log_alpha = bWeight + bYear[year] + bSite[site]
+    vector[nObs] log_alpha = bWeight + density_on * bDensity * density
+      + bYear[year] + bSite[site]
       + site_year_on * to_vector(bSiteYear)[sy_idx];
     vector[nObs] log_eWeight = log(bFloor + exp(log_alpha + bPower * log_x));
     log_weight ~ normal(log_eWeight, sWeight);

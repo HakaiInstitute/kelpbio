@@ -56,3 +56,22 @@ test_that(".vld_observed_data is TRUE only for a fit with rows", {
   expect_true(.vld_observed_data(weight_fit))
   expect_false(.vld_observed_data(fit0))
 })
+
+test_that(".vld_density accepts non-negative numbers and all-NA", {
+  expect_true(.vld_density(c(0, 2.5, NA)))
+  expect_true(.vld_density(NA))
+  expect_false(.vld_density(c(1, -1)))
+  expect_false(.vld_density("1"))
+})
+
+test_that(".vld_density_site_year allows one recorded value per site-year", {
+  d <- data.frame(site = c("a", "a", "b"), year = "2020", density = c(3, NA, 5))
+  expect_true(.vld_density_site_year(d))
+  d$density <- c(3, 4, 5)
+  expect_false(.vld_density_site_year(d))
+})
+
+test_that(".vld_new_data_weight_nereo checks an optional density column", {
+  expect_true(.vld_new_data_weight_nereo(data.frame(diameter = 30, density = 2)))
+  expect_false(.vld_new_data_weight_nereo(data.frame(diameter = 30, density = -2)))
+})
