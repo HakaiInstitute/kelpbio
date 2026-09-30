@@ -1,5 +1,8 @@
 # bboutools API Review
 
+> Historical record, kept for context. Its decisions are reflected in the code and
+> `CLAUDE.md`; API names and details below may be out of date.
+
 A critical design review of [bboutools](https://github.com/poissonconsulting/bboutools) against the [tidyverse design guidelines](https://design.tidyverse.org) and *R Packages* (2e), conducted to extract lessons for kelpbio.
 
 bboutools is a mature, well-engineered package (testthat 3e, snapshot tests, pkgdown, `@inheritParams`, automated NEWS). It is the reference for kelpbio's architecture, and most of what it does is worth copying. This document is deliberately adversarial: it isolates the places where bboutools diverges from tidyverse best practice so kelpbio can decide, consciously, whether to follow or improve. Each finding cites the relevant principle, gives a verdict, and states the kelpbio implication.

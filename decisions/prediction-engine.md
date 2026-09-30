@@ -5,7 +5,7 @@ Status: accepted (2026-06)
 ## Context
 
 kelpbio must (1) predict from a fitted model with `by` (grouping) and
-`uncertainty` (marginal/typical) axes, and (2) compose independently-fit
+`new_levels` (new group sampled or averaged) axes, and (2) compose independently-fit
 sub-models into a derived biomass-per-group estimate by Monte-Carlo integrating
 the weight allometry over the size distribution. The package fits via rstan and
 stores extracted draws (not the live `stanfit`); the companion Shiny app makes
@@ -22,8 +22,8 @@ vectorised R over `posterior` draws matrices; (B) Stan `generated quantities` vi
 Build the engine on the **`posterior` `rvar` datatype**:
 
 - Per-model prediction is `rvar` arithmetic in one internal generic, `.linpred()`
-  (the single R source of truth for the mean; the Stan `transformed parameters`
-  block is the only other place the mean is defined), with one method per fit
+  (the single R source of truth for the mean; the Stan `model` block is the only
+  other place the mean is defined), with one method per fit
   subclass in `R/linpred.R`.
 - The `rstantools` generics (`posterior_linpred`/`posterior_epred`/
   `posterior_predict`/`log_lik`) are thin faces over that helper, returning
@@ -36,11 +36,11 @@ Build the engine on the **`posterior` `rvar` datatype**:
   `newdata::xnew_data`; the dependency was never taken, because the grids kelpbio
   needs are a cross join over the fit's own stored levels and `xnew_data` is built
   for deriving a grid from a data frame of covariates.
-- The predictor enters on a stored-reference transform (`log(diameter) -
-  log(diameter_ref)`, where `diameter_ref` is the geometric mean of the observed
-  diameter, computed at fit time and stored in `meta$predictor_ref`) with no
-  per-new_data rescaling step. Centering log-diameter at its mean makes the
-  diameter unit immaterial.
+- The predictor enters relative to a reference stored at fit time (the geometric
+  mean of the observed predictor, `meta$predictor_ref`), with no per-new_data
+  rescaling step: *Nereocystis* uses `diameter / d0`, *Macrocystis*
+  `log(fronds) - log(f0)`. Expressing the predictor relative to its reference makes
+  its unit immaterial.
 - A rate model carries a log-scale offset (density is counts over a surveyed
   area). The offset column is named by `meta$offset`, set at fit time, and the
   offset is `log()` of that column read from the grid. It is added while the
@@ -74,7 +74,7 @@ were speed, dependencies, and code clarity:
   familiar house idiom.
 - **Stan GQ (B)** is fastest on the heavy biomass integral (compiled), but
   composing independently-fit models forces bespoke `gqs` plumbing, and the
-  `by`/`uncertainty`/arbitrary-`new_data` combinatorics are rigid and require
+  `by`/`new_levels`/arbitrary-`new_data` combinatorics are rigid and require
   recompilation. Held in reserve only for the biomass composition if it ever becomes a
   measured bottleneck.
 - **raw matrices (A)** are fastest and lightest but require manual draw-vs-data
@@ -131,7 +131,9 @@ column, is handled by `new_levels` (`"sample"` draws `Normal(0, sd)`, `"average"
 zeroes it). Known levels condition regardless of `new_levels`. This makes a mix
 of observed and new groups resolve in a single call (no bind), and lets the
 `rstantools` generics infer conditioning from the `new_data` columns with no `by`
-argument. `new_levels` defaults to `"sample"` so an unseen group carries honest
-between-group uncertainty; `"average"` is opt-in and reports the typical group,
-not a calibrated interval for the specific new group. Later sub-models follow
+argument. For the row-wise verb and the generics `new_levels` defaults to
+`"sample"`, so an unseen group carries honest between-group uncertainty;
+`"average"` reports the typical group, not a calibrated interval for the specific
+new group, and is the default for the curve verb, whose curves describe the
+typical group. Later sub-models follow
 this same contract.

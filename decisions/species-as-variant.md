@@ -1,7 +1,6 @@
 # Decision: species is a model variant (per-function + per-.stan), not a data argument
 
-Status: accepted (2026-06); class structure revised (2026-07) from a model-level
-class to a per-species subclass (see the Decision and the note below).
+Status: accepted (2026-06)
 
 ## Context
 
@@ -42,8 +41,7 @@ Species is a variant axis, handled uniformly across all six models:
   (e.g. `kb_fit_weight_nereo()`), its own `kb_priors_<model>_<species>()` and
   `kb_check_data_<model>_<species>()`, and its own `inst/stan/<model>_<species>.stan`.
 - The species-agnostic mechanics (sampler invocation, control merge, warmup/thin
-  math, core resolution, draws-to-rvars extraction, generated-quantity split,
-  convergence diagnostics) live in one shared internal engine, `fit_stan()`. Each
+  math, core resolution, draws-to-rvars extraction, convergence diagnostics) live in one shared internal engine, `fit_stan()`. Each
   species wrapper supplies only what differs: validated data, resolved priors,
   assembled Stan data, the compiled model, and the parameter vector.
 - Each species is a subclass of the model class:
@@ -56,11 +54,12 @@ Species is a variant axis, handled uniformly across all six models:
     models, since the first sub-model with a different knob would force it to bare
     `...` and lose `rlang::check_dots_empty()`.
   - **`kb_fit_<model>`** for methods that do not vary by species, e.g.
-    `.epred.kb_fit_weight` (both weight species use a log link). wetdry and carbon,
+    `.epred.kb_fit_weight` (both weight species use a log link; *Nereocystis*
+    overrides it for the lognormal mean). wetdry and carbon,
     being structurally identical across species, will register at this tier
     throughout.
   - **`kb_fit_<model>_<species>`** for methods that do vary: `.linpred`,
-    `.log_lik`, `.deviance`, `.add_noise`, `.chk_new_data`, `.chk_by`.
+    `.log_lik`, `.deviance`, `.add_noise`, `.chk_new_data`.
 
   So no method branches on `meta$species` (kept for display/reference), and
   **adding a sub-model registers methods, not public methods**. Each internal generic

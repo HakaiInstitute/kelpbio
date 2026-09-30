@@ -1,5 +1,8 @@
 # S3 vs S7 for kelpbio
 
+> Historical record, kept for context. Its decisions are reflected in the code and
+> `CLAUDE.md`; API names and details below may be out of date.
+
 **Question:** Which OOP system should `kelpbio` use for its `kb_fit` class hierarchy?\
 **Conclusion up front:** S3. Detailed reasoning follows.
 
