@@ -4,5 +4,5 @@
 column_units <- c(
   diameter = "millimetres",
   weight = "kilograms",
-  density = "stipes per m²"
+  density = "stipes per m\u00b2"
 )
