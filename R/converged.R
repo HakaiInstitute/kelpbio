@@ -60,7 +60,7 @@ converged.kb_fit <- function(
   chk::chk_number(esr)
   chk::chk_number(max_perc_divergent)
   chk::chk_gte(max_perc_divergent, value = 0)
-  s <- x$diagnostics$summary
+  s <- .fitted_diagnostics(x)
   ndraws <- posterior::ndraws(x$draws)
   # An all-NA Rhat would make all(na.rm = TRUE) pass on no evidence, so require
   # at least one finite value. Individual NAs are still skipped, since a

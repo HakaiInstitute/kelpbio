@@ -75,3 +75,18 @@ test_that(".vld_new_data_weight_nereo checks an optional density column", {
   expect_true(.vld_new_data_weight_nereo(data.frame(diameter = 30, density = 2)))
   expect_false(.vld_new_data_weight_nereo(data.frame(diameter = 30, density = -2)))
 })
+
+test_that(".vld_positive_measure and .vld_frond_count check measured values", {
+  expect_true(.vld_positive_measure(c(1.5, 30)))
+  expect_false(.vld_positive_measure(c(1, 0)))
+  expect_false(.vld_positive_measure(c(1, NA)))
+  expect_false(.vld_positive_measure("30"))
+  expect_true(.vld_frond_count(c(1, 5)))
+  expect_false(.vld_frond_count(2.5))
+})
+
+test_that("the new_data validators check the predictor values", {
+  expect_false(.vld_new_data_weight_nereo(data.frame(diameter = -1)))
+  expect_false(.vld_new_data_weight_macro(data.frame(fronds = 2.5)))
+  expect_true(.vld_new_data_weight_macro(data.frame(fronds = 3)))
+})

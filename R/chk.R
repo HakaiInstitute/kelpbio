@@ -46,7 +46,29 @@
   if (!"diameter" %in% names(x)) {
     cli::cli_abort("{.arg {x_name}} must have a {.field diameter} column.")
   }
+  .chk_positive_measure(x$diameter, x_name = kb_xname(x_name, "diameter"))
   .chk_density(x$density, x_name = kb_xname(x_name, "density"))
+}
+
+.chk_positive_measure <- function(x, x_name = deparse(substitute(x))) {
+  if (.vld_positive_measure(x)) {
+    return(invisible(x))
+  }
+  if (!is.numeric(x)) {
+    cli::cli_abort("{x_name} must be numeric.")
+  }
+  if (anyNA(x)) {
+    cli::cli_abort("{x_name} must not have missing values.")
+  }
+  cli::cli_abort("{x_name} must be greater than 0.")
+}
+
+.chk_frond_count <- function(x, x_name = deparse(substitute(x))) {
+  if (.vld_frond_count(x)) {
+    return(invisible(x))
+  }
+  .chk_positive_measure(x, x_name = x_name)
+  cli::cli_abort("{x_name} must be a whole number.")
 }
 
 .chk_density <- function(x, x_name = deparse(substitute(x))) {
@@ -82,7 +104,10 @@
   if (!is.data.frame(x)) {
     cli::cli_abort("{.arg {x_name}} must be a data frame.")
   }
-  cli::cli_abort("{.arg {x_name}} must have a {.field fronds} column.")
+  if (!"fronds" %in% names(x)) {
+    cli::cli_abort("{.arg {x_name}} must have a {.field fronds} column.")
+  }
+  .chk_frond_count(x$fronds, x_name = kb_xname(x_name, "fronds"))
 }
 
 .chk_representative_site <- function(fit, representative_site) {

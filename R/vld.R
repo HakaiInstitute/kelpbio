@@ -18,7 +18,18 @@
 .vld_new_data_weight_nereo <- function(x) {
   is.data.frame(x) &&
     "diameter" %in% names(x) &&
+    .vld_positive_measure(x$diameter) &&
     (!"density" %in% names(x) || .vld_density(x$density))
+}
+
+# A measured size: numeric, positive, no missing values.
+.vld_positive_measure <- function(x) {
+  is.numeric(x) && !anyNA(x) && all(x > 0)
+}
+
+# A frond count: a positive whole number with no missing values.
+.vld_frond_count <- function(x) {
+  .vld_positive_measure(x) && all(x == round(x))
 }
 
 # Stipe density: numeric (or all NA) and non-negative where recorded.
@@ -37,7 +48,7 @@
 }
 
 .vld_new_data_weight_macro <- function(x) {
-  is.data.frame(x) && "fronds" %in% names(x)
+  is.data.frame(x) && "fronds" %in% names(x) && .vld_frond_count(x$fronds)
 }
 
 .vld_progress <- function(x) {

@@ -292,3 +292,10 @@ test_that("a density column is ignored for a fit without the term", {
     )
   )
 })
+
+test_that("new_data predictions work for a model with no continuous predictor", {
+  # the range check must skip, not index the grid with NULL
+  fit <- weight_fit
+  fit$meta$predictor <- NULL
+  expect_no_error(data_linpred(fit, data.frame(diameter = 30), "average"))
+})
