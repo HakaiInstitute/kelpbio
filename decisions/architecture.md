@@ -54,7 +54,7 @@ mostly about what happens on its right-hand side.
 The model is the validated analysis-project allometry adapted to site-year resolution (no month dimension). `log(weight)` is Normal with mean `log(bFloor + alpha * x^bPower)`, Packard's three-parameter power function of the diameter ratio `x = diameter / d0` (`d0` the geometric mean diameter), where
 
 - `bFloor` is a weight floor common to every site and year,
-- `log(alpha)` carries the intercept and the year, site, and site:year random effects,
+- `log(alpha)` carries the intercept, the year, site, and site:year random effects, and (when the data include it) standardised stipe density,
 - `bPower` is a single allometric exponent.
 
 The likelihood is Normal rather than Student-t because biomass averages expected weight over the size distribution, and `E[weight]` does not exist under a Student-t on log weight.
@@ -63,7 +63,7 @@ Engine conventions visible in the source (see `openspec/config.yaml` `context:` 
 
 - **Priors as data.** Every prior hyperparameter is a `data`-block input (`prior_intercept_mu`, `prior_sd_site_rate`, and so on), so users adjust priors through R without recompiling. The prior *family* is fixed at compile time (Normal for location terms, Exponential for SDs).
 - **Non-centered parameterization.** `z_*` standard-normal parameters scaled by the group SD in `transformed parameters` (`z_bSite` -\> `bSite`, etc.).
-- **Structural flags as data.** `prior_only` skips the likelihood (sample from priors); `site_year_on` zeroes the site:year term. Both let one compiled model serve several structural variants. `site_year_on` is not a user argument: the fitting layer derives it from the data (dropped only when fewer than two years are present, kept otherwise, with a warning when the design is aliased); see the fitting layer and `openspec/specs/fitting`.
+- **Structural flags as data.** `prior_only` skips the likelihood (sample from priors); `site_year_on` zeroes the site:year term; `density_on` zeroes the density term. They let one compiled model serve several structural variants. `density_on` is likewise derived from the data (on when at least two distinct site-year densities are recorded). `site_year_on` is not a user argument: the fitting layer derives it from the data (dropped only when fewer than two years are present, kept otherwise, with a warning when the design is aliased); see the fitting layer and `openspec/specs/fitting`.
 - **`nObs == 0` supported** for prior-only / empty fits; likelihood and generated- quantity loops are no-ops.
 - **Log-diameter centered at `diameter_ref`** (a data input; the geometric mean of observed diameter). Centering in log space makes the diameter unit immaterial, so the fit and predictions are scale-invariant and the data columns keep plain names.
 - **Mean is a model-block local** (`log_eWeight`), computed only when the likelihood is evaluated, so rstan does not save it with the draws. There are no `generated quantities`: the pointwise `log_lik` (for `loo`) and the `yrep` replicates (for `pp_check`) are recomputed in R from the stored draws, as are predictions at new data. Storing them scaled as `2 x nObs x ndraws` and dominated every fit object.
@@ -98,7 +98,7 @@ The fit function is deliberately a thin orchestrator over pure helpers plus one 
 | `draws` | `posterior` `draws_rvars` of the model parameters (fixed effects, SDs, and the per-level `bSite`/`bSiteDiameter`/`bSiteYear`, kept so predictions and `augment` can condition on observed levels). |
 | `diagnostics` | `summary` (per-variable Rhat/ESS) plus the run-level `ndivergent`, `perc_divergent`, `perc_max_treedepth` and `ebfmi`, as plain numerics. Computed while the `stanfit` is in scope, since none can be recovered from the stored draws. |
 | `data` | the validated input data frame. |
-| `meta` | `species`, `prior_only`, `priors`, `stancode`, `site_levels`, `year_levels`, `nthin`, `offset`, `terms`, `predictor`, `response`, `predictor_ref`, `site_year_on` (auto-derived from the data), `nu`. |
+| `meta` | `species`, `prior_only`, `priors`, `stancode`, `site_levels`, `year_levels`, `nthin`, `offset`, `terms`, `predictor`, `response`, `predictor_ref`, `site_year_on` (auto-derived from the data), `density_on`, `density_mean`, `density_sd`, `density_levels` (*Nereocystis*). |
 
 Each species is a subclass of the model class (`c("kb_fit_weight_<species>", "kb_fit_weight", "kb_fit")`); each public method body lives at the highest class tier at which it is invariant -- `kb_fit` for all of them but `predict` -- while whatever varies is an internal generic registered at the model tier (`.epred.kb_fit_weight`) or the leaf (`.linpred.kb_fit_weight_nereo`), so no method branches on `meta$species` (kept for display, with species-specific values entering through `meta_extra`). See `decisions/species-as-variant.md`.
 
@@ -108,6 +108,9 @@ flowchart TD
     PRI[/"priors"/] --> RP["resolve_priors()"]
     DEF["kb_priors_weight_*()<br/>defaults"] --> RP
     CHKD --> SYS["site_year_structure()"]
+    CHKD --> DS["density_structure()"]
+    DS -->|"density_on · mean · sd · levels"| ASM
+    DS -->|"density_on · mean · sd · levels"| CTOR
     SYS -->|"aliased design"| NOTE["notify_site_year()<br/>warns"]
     CHKD --> ASM["assemble_weight_*_data()"]
     RP -->|"resolved priors"| ASM
@@ -181,7 +184,7 @@ is the first place to look if the package ever needs to lose weight.
 | `kb_predict_weight()` | `R/kb_predict_weight.R` | the supplied `new_data` rows, or the observed data when `new_data = NULL` (matching base `predict()`) | prediction at specific rows; per-row level resolution |
 | `kb_predict_weight_by()` | `R/kb_predict_weight_by.R` | a generated diameter sequence crossed with the `by` factors (`NULL`, `"site"`, or `c("site","year")`) | allometric curves, one per group, ready to plot |
 
-`validate_by()` checks the grouping axis: membership in `.group_vars()` is common to every model, while which *combinations* a fit offers is decided by the `.chk_by()` internal generic, so the rule is chosen by dispatch rather than by reading `meta$species`. `by = "year"` is rejected for *Nereocystis*, whose year enters only through the site:year interaction; *Macrocystis* has a year main effect, so it is allowed there. `build_by_grid()` crosses the grouping levels with the fit's predictor sequence, taking only the *observed* site:year combinations, and tolerates either side being absent so it also serves a model with no continuous predictor and an intercept-only model. Both verbs share `summarise_predictions()`, which puts the linear predictor on the response scale through `.epred()`, reduces each row to `estimate`/`lower`/`upper` (the `estimate` function plus equal-tailed `conf_level` limits, `signif`-rounded), and wraps the result as a `kb_predictions` object, taking the response and predictor names from `meta` so it carries no model-specific knowledge.
+`validate_by()` checks the grouping axis against `.group_vars()`: every model with random effects carries year, site, and site:year, so membership is the whole rule. `build_by_grid()` crosses the grouping levels with the fit's predictor sequence, taking only the *observed* site:year combinations, and tolerates either side being absent so it also serves a model with no continuous predictor and an intercept-only model. Both verbs share `summarise_predictions()`, which puts the linear predictor on the response scale through `.epred()`, reduces each row to `estimate`/`lower`/`upper` (the `estimate` function plus equal-tailed `conf_level` limits, `signif`-rounded), and wraps the result as a `kb_predictions` object, taking the response and predictor names from `meta` so it carries no model-specific knowledge.
 
 **`rstantools` generics** (`R/posterior_epred.R`, `posterior_linpred.R`, `posterior_predict.R`, `log_lik.R`, `predict.R`, `prior_summary.R`) are thin faces over the same helper, returning a draws-by-observations (`D x N`) matrix rather than a summary: `posterior_linpred` is the raw linpred, `posterior_epred` applies the response-scale transform via `.epred()`, `posterior_predict` adds species-appropriate noise for every `new_data` including `NULL`, so it is RNG-dependent (`set.seed()` for reproducible draws), `log_lik` recomputes the pointwise matrix from the stored draws (feeds `loo::loo`) and is deterministic. `predict.kb_fit_weight` wraps `kb_predict_weight`, and is the one public method that stays at the model tier: its argument list cannot be fixed across models whose verbs take different knobs.
 
@@ -194,8 +197,7 @@ flowchart TD
     end
     subgraph generated["Generated-grid path: kb_predict_*_by()"]
         BYA[/"by"/] --> VB["validate_by()"]
-        VB -->|"membership vs .group_vars()"| CB[".chk_by()<br/>which combinations this fit offers"]
-        CB --> BL["by_linpred()"]
+        VB -->|"membership vs .group_vars()"| BL["by_linpred()"]
         BL --> BBG["build_by_grid()"]
         SEQ[/"diameter / fronds<br/>NULL = 30 over observed range"/] --> BBG
         BBG --> PG["predictor_grid()"]
@@ -321,7 +323,7 @@ it and a second copy could disagree with the class.
 
 Within `meta`, a fact every sub-model must declare is a **required argument** of
 `new_kb_fit()` (`offset`, `terms`), so omitting it fails at fit time; a fact only
-some models have travels in `meta_extra` (`predictor`, `predictor_ref`, `nu`).
+some models have travels in `meta_extra` (`predictor`, `predictor_ref`, and the *Nereocystis* density fields).
 Requiring the argument is exactly as loud as an aborting `.default` was: neither
 catches a declaration that is present but wrong, which is a test's job. The
 declarations are not validated at runtime: `new_kb_fit()` is internal and every
@@ -338,10 +340,9 @@ Where this lands the current set:
 | `predictor`, `response`, `predictor_ref` | `meta` | Consumed by identical code in `build_by_grid()`, `.linpred()`, `summarise_predictions()`, `.fit_descriptor()` |
 | `offset` | `meta` | Only the column name varies; `grid_offset()` is one shared function |
 | `terms` | `meta` | A character vector, not a computation |
-| `site_levels`, `year_levels`, `site_year_on`, `nthin`, `prior_only`, `priors`, `stancode`, `nu` | `meta` | Values frozen at fit time |
+| `site_levels`, `year_levels`, `site_year_on`, `density_on`, `density_mean`, `density_sd`, `density_levels`, `nthin`, `prior_only`, `priors`, `stancode` | `meta` | Values frozen at fit time |
 | `.linpred`, `.epred`, `.log_lik`, `.deviance`, `.add_noise` | generic | Real arithmetic differs, and each needs `fit$draws` |
 | `.chk_new_data` | generic | Different required columns *and* different messages |
-| `.chk_by` | generic | Could be data, but the *explanation* differs: the *Nereocystis* message states that year enters only through the site:year interaction, which a shared "not available" message would lose |
 | `.fit_descriptor` | generic | Display assembly, and the one generic allowed a total default |
 
 ## Objects and Metadata
@@ -414,18 +415,19 @@ Tests mirror sources 1:1 (`R/<name>.R` \<-\> `tests/testthat/test-<name>.R`).
 
 | Component | File | Key symbols |
 |-------------------------|-----------------|------------------------------|
-| Stan model | `inst/stan/weight_nereo.stan` | `log_eWeight`, `prior_only`, `site_year_on`, `diameter_ref` |
+| Stan model | `inst/stan/weight_nereo.stan` | `log_eWeight`, `prior_only`, `site_year_on`, `density_on`, `diameter_ref` |
 | Compiled model object | `R/stanmodels.R` (generated) | `stanmodels$weight_nereo` |
 | Fit entry point | `R/kb_fit_weight_nereo.R`, `R/new_kb_fit.R` | `kb_fit_weight_nereo()`, `new_kb_fit()` |
 | Sampling engine | `R/fit_stan.R` | `fit_stan()`, `with_quiet_sampler()`, `resolve_cores()` |
 | Data validation | `R/kb_check_data_weight_nereo.R`, `R/vld.R`, `R/chk.R` | `kb_check_data_weight_nereo()`, `.vld_*`, `.chk_*` |
 | Prior resolution | `R/resolve_priors.R` | `resolve_priors()` |
 | Stan-data assembly | `R/assemble_weight_nereo_data.R` | `assemble_weight_nereo_data()`, `weight_diameter_ref()` |
+| Density covariate | `R/density_structure.R`, `R/standardised_density.R`, `R/density_on.R`, `R/site_year_key.R` | `density_structure()`, `notify_density()`, `standardised_density()`, `.density_on()`, `site_year_key()` |
 | Prior objects | `R/kb_prior_normal.R`, `R/kb_prior_exponential.R`, `R/kb_priors_weight_nereo.R` | `kb_prior_normal()`, `kb_prior_exponential()`, `kb_priors_weight_nereo()` |
 | Mean and response scale | `R/linpred.R`, `R/epred.R` | `.linpred()`, `.linpred_obs()`, `data_linpred()`, `.epred()` |
 | Random-effect resolution | `R/re_resolve.R`, `R/group_vars.R`, `R/site_year_on.R` | `resolve_re1()`, `resolve_re2()`, `re_draw()`, `.grid_indices()`, `.group_vars()`, `.site_year_on()` |
 | Prediction verbs | `R/kb_predict_weight.R`, `R/kb_predict_weight_by.R` | `kb_predict_weight()`, `kb_predict_weight_by()` |
-| Shared prediction helpers | `R/summarise_predictions.R`, `R/by_linpred.R`, `R/validate_by.R`, `R/build_by_grid.R`, `R/offset.R` | `summarise_predictions()`, `by_linpred()`, `validate_by()`, `.chk_by()`, `build_by_grid()`, `grid_offset()`, `add_offset_default()` |
+| Shared prediction helpers | `R/summarise_predictions.R`, `R/by_linpred.R`, `R/validate_by.R`, `R/build_by_grid.R`, `R/offset.R` | `summarise_predictions()`, `by_linpred()`, `validate_by()`, `build_by_grid()`, `grid_offset()`, `add_offset_default()` |
 | rstantools generics | `R/posterior_epred.R`, `R/posterior_linpred.R`, `R/posterior_predict.R`, `R/log_lik.R`, `R/predict.R`, `R/prior_summary.R` | `posterior_epred.kb_fit()`, `log_lik.kb_fit()`, etc. |
 | Predictions object | `R/kb_predictions.R` | `new_kb_predictions()`, `print.kb_predictions()` |
 | Plotting | `R/kb_plot_predictions.R`, `R/autoplot.R` | `kb_plot_predictions()`, `autoplot.kb_predictions()` |

@@ -148,3 +148,15 @@ The `summary_kb_fit` coefficient table SHALL carry columns `term`, `estimate`, `
 - **WHEN** the *Macrocystis* Gamma family and effect structure are needed
 - **THEN** they are reported by `kb_model_describe(macro_fit)`, not the `print()` header; the header shows the slim per-fit metadata, with the grouping still visible through the data-line group counts (`site`, `year`, `site:year`)
 
+### Requirement: The density term is reported only when fitted
+
+`tidy()`, `coef()`, and `summary()` SHALL include a `bDensity` row for a *Nereocystis* weight fit whose `meta$density_on` is `TRUE`, and SHALL NOT include it otherwise, since the draws of an omitted term never met the likelihood.
+
+#### Scenario: Density fit reports bDensity
+- **WHEN** `tidy(fit)` is called on a fit with `meta$density_on` `TRUE`
+- **THEN** the result has a `bDensity` row
+
+#### Scenario: Fit without density omits bDensity
+- **WHEN** `tidy(fit)` is called on a fit with `meta$density_on` `FALSE`
+- **THEN** the result has no `bDensity` row
+

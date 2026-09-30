@@ -13,79 +13,86 @@ namespace model_weight_nereo_namespace {
 using stan::model::model_base_crtp;
 using namespace stan::math;
 stan::math::profile_map profiles__;
-static constexpr std::array<const char*, 72> locations_array__ =
+static constexpr std::array<const char*, 79> locations_array__ =
   {" (found before start of program)",
-  " (in 'weight_nereo', line 67, column 2 to column 15)",
-  " (in 'weight_nereo', line 68, column 2 to column 23)",
-  " (in 'weight_nereo', line 69, column 2 to column 23)",
-  " (in 'weight_nereo', line 70, column 2 to column 22)",
-  " (in 'weight_nereo', line 71, column 2 to column 22)",
-  " (in 'weight_nereo', line 72, column 2 to column 26)",
-  " (in 'weight_nereo', line 73, column 2 to column 24)",
-  " (in 'weight_nereo', line 74, column 2 to column 24)",
-  " (in 'weight_nereo', line 75, column 2 to column 24)",
-  " (in 'weight_nereo', line 76, column 2 to column 35)",
-  " (in 'weight_nereo', line 79, column 2 to column 40)",
-  " (in 'weight_nereo', line 80, column 2 to column 40)",
-  " (in 'weight_nereo', line 81, column 2 to column 59)",
-  " (in 'weight_nereo', line 84, column 2 to column 59)",
-  " (in 'weight_nereo', line 87, column 2 to column 50)",
-  " (in 'weight_nereo', line 88, column 2 to column 50)",
-  " (in 'weight_nereo', line 89, column 2 to column 42)",
-  " (in 'weight_nereo', line 90, column 2 to column 42)",
-  " (in 'weight_nereo', line 91, column 2 to column 51)",
-  " (in 'weight_nereo', line 92, column 2 to column 48)",
-  " (in 'weight_nereo', line 93, column 2 to column 25)",
-  " (in 'weight_nereo', line 94, column 2 to column 25)",
-  " (in 'weight_nereo', line 95, column 2 to column 40)",
-  " (in 'weight_nereo', line 101, column 11 to column 15)",
-  " (in 'weight_nereo', line 101, column 4 to line 102, column 52)",
-  " (in 'weight_nereo', line 103, column 11 to column 15)",
-  " (in 'weight_nereo', line 103, column 4 to column 77)",
-  " (in 'weight_nereo', line 104, column 4 to column 46)",
-  " (in 'weight_nereo', line 96, column 23 to line 105, column 3)",
-  " (in 'weight_nereo', line 96, column 2 to line 105, column 3)",
-  " (in 'weight_nereo', line 34, column 2 to column 20)",
-  " (in 'weight_nereo', line 35, column 2 to column 21)",
-  " (in 'weight_nereo', line 36, column 2 to column 21)",
-  " (in 'weight_nereo', line 37, column 8 to column 12)",
-  " (in 'weight_nereo', line 37, column 2 to column 45)",
-  " (in 'weight_nereo', line 38, column 8 to column 12)",
-  " (in 'weight_nereo', line 38, column 2 to column 45)",
-  " (in 'weight_nereo', line 39, column 18 to column 22)",
-  " (in 'weight_nereo', line 39, column 2 to column 33)",
-  " (in 'weight_nereo', line 40, column 18 to column 22)",
-  " (in 'weight_nereo', line 40, column 2 to column 31)",
-  " (in 'weight_nereo', line 41, column 2 to column 29)",
-  " (in 'weight_nereo', line 43, column 2 to column 26)",
-  " (in 'weight_nereo', line 44, column 2 to column 35)",
-  " (in 'weight_nereo', line 45, column 2 to column 22)",
-  " (in 'weight_nereo', line 46, column 2 to column 31)",
-  " (in 'weight_nereo', line 47, column 2 to column 22)",
-  " (in 'weight_nereo', line 48, column 2 to column 31)",
+  " (in 'weight_nereo', line 75, column 2 to column 15)",
+  " (in 'weight_nereo', line 76, column 2 to column 23)",
+  " (in 'weight_nereo', line 77, column 2 to column 23)",
+  " (in 'weight_nereo', line 78, column 2 to column 16)",
+  " (in 'weight_nereo', line 79, column 2 to column 22)",
+  " (in 'weight_nereo', line 80, column 2 to column 22)",
+  " (in 'weight_nereo', line 81, column 2 to column 26)",
+  " (in 'weight_nereo', line 82, column 2 to column 24)",
+  " (in 'weight_nereo', line 83, column 2 to column 24)",
+  " (in 'weight_nereo', line 84, column 2 to column 24)",
+  " (in 'weight_nereo', line 85, column 2 to column 35)",
+  " (in 'weight_nereo', line 88, column 2 to column 40)",
+  " (in 'weight_nereo', line 89, column 2 to column 40)",
+  " (in 'weight_nereo', line 90, column 2 to column 59)",
+  " (in 'weight_nereo', line 93, column 2 to column 59)",
+  " (in 'weight_nereo', line 96, column 2 to column 50)",
+  " (in 'weight_nereo', line 97, column 2 to column 50)",
+  " (in 'weight_nereo', line 98, column 2 to column 56)",
+  " (in 'weight_nereo', line 99, column 2 to column 42)",
+  " (in 'weight_nereo', line 100, column 2 to column 42)",
+  " (in 'weight_nereo', line 101, column 2 to column 51)",
+  " (in 'weight_nereo', line 102, column 2 to column 48)",
+  " (in 'weight_nereo', line 103, column 2 to column 25)",
+  " (in 'weight_nereo', line 104, column 2 to column 25)",
+  " (in 'weight_nereo', line 105, column 2 to column 40)",
+  " (in 'weight_nereo', line 111, column 11 to column 15)",
+  " (in 'weight_nereo', line 111, column 4 to line 113, column 52)",
+  " (in 'weight_nereo', line 114, column 11 to column 15)",
+  " (in 'weight_nereo', line 114, column 4 to column 77)",
+  " (in 'weight_nereo', line 115, column 4 to column 46)",
+  " (in 'weight_nereo', line 106, column 23 to line 116, column 3)",
+  " (in 'weight_nereo', line 106, column 2 to line 116, column 3)",
+  " (in 'weight_nereo', line 38, column 2 to column 20)",
+  " (in 'weight_nereo', line 39, column 2 to column 21)",
+  " (in 'weight_nereo', line 40, column 2 to column 21)",
+  " (in 'weight_nereo', line 41, column 8 to column 12)",
+  " (in 'weight_nereo', line 41, column 2 to column 45)",
+  " (in 'weight_nereo', line 42, column 8 to column 12)",
+  " (in 'weight_nereo', line 42, column 2 to column 45)",
+  " (in 'weight_nereo', line 43, column 18 to column 22)",
+  " (in 'weight_nereo', line 43, column 2 to column 33)",
+  " (in 'weight_nereo', line 44, column 18 to column 22)",
+  " (in 'weight_nereo', line 44, column 2 to column 31)",
+  " (in 'weight_nereo', line 45, column 2 to column 29)",
+  " (in 'weight_nereo', line 46, column 9 to column 13)",
+  " (in 'weight_nereo', line 46, column 2 to column 23)",
+  " (in 'weight_nereo', line 48, column 2 to column 26)",
   " (in 'weight_nereo', line 49, column 2 to column 35)",
-  " (in 'weight_nereo', line 50, column 2 to column 35)",
-  " (in 'weight_nereo', line 51, column 2 to column 40)",
-  " (in 'weight_nereo', line 52, column 2 to column 39)",
-  " (in 'weight_nereo', line 53, column 2 to column 35)",
-  " (in 'weight_nereo', line 54, column 2 to column 37)",
-  " (in 'weight_nereo', line 57, column 9 to column 13)",
-  " (in 'weight_nereo', line 57, column 2 to column 57)",
-  " (in 'weight_nereo', line 58, column 9 to column 13)",
+  " (in 'weight_nereo', line 50, column 2 to column 22)",
+  " (in 'weight_nereo', line 51, column 2 to column 31)",
+  " (in 'weight_nereo', line 52, column 2 to column 22)",
+  " (in 'weight_nereo', line 53, column 2 to column 31)",
+  " (in 'weight_nereo', line 54, column 2 to column 24)",
+  " (in 'weight_nereo', line 55, column 2 to column 33)",
+  " (in 'weight_nereo', line 56, column 2 to column 35)",
+  " (in 'weight_nereo', line 57, column 2 to column 35)",
   " (in 'weight_nereo', line 58, column 2 to column 40)",
-  " (in 'weight_nereo', line 61, column 8 to column 12)",
-  " (in 'weight_nereo', line 61, column 2 to column 25)",
-  " (in 'weight_nereo', line 63, column 4 to column 48)",
-  " (in 'weight_nereo', line 62, column 20 to line 64, column 3)",
-  " (in 'weight_nereo', line 62, column 2 to line 64, column 3)",
-  " (in 'weight_nereo', line 74, column 9 to column 14)",
-  " (in 'weight_nereo', line 75, column 9 to column 14)",
-  " (in 'weight_nereo', line 76, column 9 to column 14)",
-  " (in 'weight_nereo', line 76, column 16 to column 21)",
-  " (in 'weight_nereo', line 79, column 9 to column 14)",
-  " (in 'weight_nereo', line 80, column 9 to column 14)",
-  " (in 'weight_nereo', line 81, column 9 to column 14)",
-  " (in 'weight_nereo', line 81, column 16 to column 21)"};
+  " (in 'weight_nereo', line 59, column 2 to column 39)",
+  " (in 'weight_nereo', line 60, column 2 to column 35)",
+  " (in 'weight_nereo', line 61, column 2 to column 37)",
+  " (in 'weight_nereo', line 62, column 2 to column 35)",
+  " (in 'weight_nereo', line 65, column 9 to column 13)",
+  " (in 'weight_nereo', line 65, column 2 to column 57)",
+  " (in 'weight_nereo', line 66, column 9 to column 13)",
+  " (in 'weight_nereo', line 66, column 2 to column 40)",
+  " (in 'weight_nereo', line 69, column 8 to column 12)",
+  " (in 'weight_nereo', line 69, column 2 to column 25)",
+  " (in 'weight_nereo', line 71, column 4 to column 48)",
+  " (in 'weight_nereo', line 70, column 20 to line 72, column 3)",
+  " (in 'weight_nereo', line 70, column 2 to line 72, column 3)",
+  " (in 'weight_nereo', line 83, column 9 to column 14)",
+  " (in 'weight_nereo', line 84, column 9 to column 14)",
+  " (in 'weight_nereo', line 85, column 9 to column 14)",
+  " (in 'weight_nereo', line 85, column 16 to column 21)",
+  " (in 'weight_nereo', line 88, column 9 to column 14)",
+  " (in 'weight_nereo', line 89, column 9 to column 14)",
+  " (in 'weight_nereo', line 90, column 9 to column 14)",
+  " (in 'weight_nereo', line 90, column 16 to column 21)"};
 #include <stan_meta_header.hpp>
 class model_weight_nereo final : public model_base_crtp<model_weight_nereo> {
 private:
@@ -97,23 +104,28 @@ private:
   Eigen::Matrix<double,-1,1> diameter_data__;
   Eigen::Matrix<double,-1,1> weight_data__;
   double diameter_ref;
+  Eigen::Matrix<double,-1,1> density_data__;
   double prior_intercept_mu;
   double prior_intercept_sd;
   double prior_power_mu;
   double prior_power_sd;
   double prior_floor_mu;
   double prior_floor_sd;
+  double prior_density_mu;
+  double prior_density_sd;
   double prior_sd_site_rate;
   double prior_sd_year_rate;
   double prior_sd_site_year_rate;
   double prior_sd_residual_rate;
   int prior_only;
   int site_year_on;
+  int density_on;
   Eigen::Matrix<double,-1,1> log_x_data__;
   Eigen::Matrix<double,-1,1> log_weight_data__;
   std::vector<int> sy_idx;
   Eigen::Map<Eigen::Matrix<double,-1,1>> diameter{nullptr, 0};
   Eigen::Map<Eigen::Matrix<double,-1,1>> weight{nullptr, 0};
+  Eigen::Map<Eigen::Matrix<double,-1,1>> density{nullptr, 0};
   Eigen::Map<Eigen::Matrix<double,-1,1>> log_x{nullptr, 0};
   Eigen::Map<Eigen::Matrix<double,-1,1>> log_weight{nullptr, 0};
 public:
@@ -138,57 +150,57 @@ public:
     try {
       int pos__ = std::numeric_limits<int>::min();
       pos__ = 1;
-      current_statement__ = 31;
+      current_statement__ = 33;
       context__.validate_dims("data initialization", "nObs", "int",
         std::vector<size_t>{});
       nObs = std::numeric_limits<int>::min();
-      current_statement__ = 31;
+      current_statement__ = 33;
       nObs = context__.vals_i("nObs")[(1 - 1)];
-      current_statement__ = 31;
+      current_statement__ = 33;
       stan::math::check_greater_or_equal(function__, "nObs", nObs, 0);
-      current_statement__ = 32;
+      current_statement__ = 34;
       context__.validate_dims("data initialization", "nSite", "int",
         std::vector<size_t>{});
       nSite = std::numeric_limits<int>::min();
-      current_statement__ = 32;
+      current_statement__ = 34;
       nSite = context__.vals_i("nSite")[(1 - 1)];
-      current_statement__ = 32;
+      current_statement__ = 34;
       stan::math::check_greater_or_equal(function__, "nSite", nSite, 1);
-      current_statement__ = 33;
+      current_statement__ = 35;
       context__.validate_dims("data initialization", "nYear", "int",
         std::vector<size_t>{});
       nYear = std::numeric_limits<int>::min();
-      current_statement__ = 33;
-      nYear = context__.vals_i("nYear")[(1 - 1)];
-      current_statement__ = 33;
-      stan::math::check_greater_or_equal(function__, "nYear", nYear, 1);
-      current_statement__ = 34;
-      stan::math::validate_non_negative_index("site", "nObs", nObs);
       current_statement__ = 35;
+      nYear = context__.vals_i("nYear")[(1 - 1)];
+      current_statement__ = 35;
+      stan::math::check_greater_or_equal(function__, "nYear", nYear, 1);
+      current_statement__ = 36;
+      stan::math::validate_non_negative_index("site", "nObs", nObs);
+      current_statement__ = 37;
       context__.validate_dims("data initialization", "site", "int",
         std::vector<size_t>{static_cast<size_t>(nObs)});
       site = std::vector<int>(nObs, std::numeric_limits<int>::min());
-      current_statement__ = 35;
-      site = context__.vals_i("site");
-      current_statement__ = 35;
-      stan::math::check_greater_or_equal(function__, "site", site, 1);
-      current_statement__ = 35;
-      stan::math::check_less_or_equal(function__, "site", site, nSite);
-      current_statement__ = 36;
-      stan::math::validate_non_negative_index("year", "nObs", nObs);
       current_statement__ = 37;
+      site = context__.vals_i("site");
+      current_statement__ = 37;
+      stan::math::check_greater_or_equal(function__, "site", site, 1);
+      current_statement__ = 37;
+      stan::math::check_less_or_equal(function__, "site", site, nSite);
+      current_statement__ = 38;
+      stan::math::validate_non_negative_index("year", "nObs", nObs);
+      current_statement__ = 39;
       context__.validate_dims("data initialization", "year", "int",
         std::vector<size_t>{static_cast<size_t>(nObs)});
       year = std::vector<int>(nObs, std::numeric_limits<int>::min());
-      current_statement__ = 37;
-      year = context__.vals_i("year");
-      current_statement__ = 37;
-      stan::math::check_greater_or_equal(function__, "year", year, 1);
-      current_statement__ = 37;
-      stan::math::check_less_or_equal(function__, "year", year, nYear);
-      current_statement__ = 38;
-      stan::math::validate_non_negative_index("diameter", "nObs", nObs);
       current_statement__ = 39;
+      year = context__.vals_i("year");
+      current_statement__ = 39;
+      stan::math::check_greater_or_equal(function__, "year", year, 1);
+      current_statement__ = 39;
+      stan::math::check_less_or_equal(function__, "year", year, nYear);
+      current_statement__ = 40;
+      stan::math::validate_non_negative_index("diameter", "nObs", nObs);
+      current_statement__ = 41;
       context__.validate_dims("data initialization", "diameter", "double",
         std::vector<size_t>{static_cast<size_t>(nObs)});
       diameter_data__ = Eigen::Matrix<double,-1,1>::Constant(nObs,
@@ -197,7 +209,7 @@ public:
         Eigen::Map<Eigen::Matrix<double,-1,1>>(diameter_data__.data(), nObs);
       {
         std::vector<local_scalar_t__> diameter_flat__;
-        current_statement__ = 39;
+        current_statement__ = 41;
         diameter_flat__ = context__.vals_r("diameter");
         pos__ = 1;
         for (int sym1__ = 1; sym1__ <= nObs; ++sym1__) {
@@ -206,11 +218,11 @@ public:
           pos__ = (pos__ + 1);
         }
       }
-      current_statement__ = 39;
-      stan::math::check_greater_or_equal(function__, "diameter", diameter, 0);
-      current_statement__ = 40;
-      stan::math::validate_non_negative_index("weight", "nObs", nObs);
       current_statement__ = 41;
+      stan::math::check_greater_or_equal(function__, "diameter", diameter, 0);
+      current_statement__ = 42;
+      stan::math::validate_non_negative_index("weight", "nObs", nObs);
+      current_statement__ = 43;
       context__.validate_dims("data initialization", "weight", "double",
         std::vector<size_t>{static_cast<size_t>(nObs)});
       weight_data__ = Eigen::Matrix<double,-1,1>::Constant(nObs,
@@ -219,7 +231,7 @@ public:
         Eigen::Map<Eigen::Matrix<double,-1,1>>(weight_data__.data(), nObs);
       {
         std::vector<local_scalar_t__> weight_flat__;
-        current_statement__ = 41;
+        current_statement__ = 43;
         weight_flat__ = context__.vals_r("weight");
         pos__ = 1;
         for (int sym1__ = 1; sym1__ <= nObs; ++sym1__) {
@@ -228,177 +240,223 @@ public:
           pos__ = (pos__ + 1);
         }
       }
-      current_statement__ = 41;
+      current_statement__ = 43;
       stan::math::check_greater_or_equal(function__, "weight", weight, 0);
-      current_statement__ = 42;
+      current_statement__ = 44;
       context__.validate_dims("data initialization", "diameter_ref",
         "double", std::vector<size_t>{});
       diameter_ref = std::numeric_limits<double>::quiet_NaN();
-      current_statement__ = 42;
+      current_statement__ = 44;
       diameter_ref = context__.vals_r("diameter_ref")[(1 - 1)];
-      current_statement__ = 42;
+      current_statement__ = 44;
       stan::math::check_greater_or_equal(function__, "diameter_ref",
         diameter_ref, 0);
-      current_statement__ = 43;
+      current_statement__ = 45;
+      stan::math::validate_non_negative_index("density", "nObs", nObs);
+      current_statement__ = 46;
+      context__.validate_dims("data initialization", "density", "double",
+        std::vector<size_t>{static_cast<size_t>(nObs)});
+      density_data__ = Eigen::Matrix<double,-1,1>::Constant(nObs,
+                         std::numeric_limits<double>::quiet_NaN());
+      new (&density)
+        Eigen::Map<Eigen::Matrix<double,-1,1>>(density_data__.data(), nObs);
+      {
+        std::vector<local_scalar_t__> density_flat__;
+        current_statement__ = 46;
+        density_flat__ = context__.vals_r("density");
+        pos__ = 1;
+        for (int sym1__ = 1; sym1__ <= nObs; ++sym1__) {
+          stan::model::assign(density, density_flat__[(pos__ - 1)],
+            "assigning variable density", stan::model::index_uni(sym1__));
+          pos__ = (pos__ + 1);
+        }
+      }
+      current_statement__ = 47;
       context__.validate_dims("data initialization", "prior_intercept_mu",
         "double", std::vector<size_t>{});
       prior_intercept_mu = std::numeric_limits<double>::quiet_NaN();
-      current_statement__ = 43;
+      current_statement__ = 47;
       prior_intercept_mu = context__.vals_r("prior_intercept_mu")[(1 - 1)];
-      current_statement__ = 44;
+      current_statement__ = 48;
       context__.validate_dims("data initialization", "prior_intercept_sd",
         "double", std::vector<size_t>{});
       prior_intercept_sd = std::numeric_limits<double>::quiet_NaN();
-      current_statement__ = 44;
+      current_statement__ = 48;
       prior_intercept_sd = context__.vals_r("prior_intercept_sd")[(1 - 1)];
-      current_statement__ = 44;
+      current_statement__ = 48;
       stan::math::check_greater_or_equal(function__, "prior_intercept_sd",
         prior_intercept_sd, 0);
-      current_statement__ = 45;
+      current_statement__ = 49;
       context__.validate_dims("data initialization", "prior_power_mu",
         "double", std::vector<size_t>{});
       prior_power_mu = std::numeric_limits<double>::quiet_NaN();
-      current_statement__ = 45;
+      current_statement__ = 49;
       prior_power_mu = context__.vals_r("prior_power_mu")[(1 - 1)];
-      current_statement__ = 46;
+      current_statement__ = 50;
       context__.validate_dims("data initialization", "prior_power_sd",
         "double", std::vector<size_t>{});
       prior_power_sd = std::numeric_limits<double>::quiet_NaN();
-      current_statement__ = 46;
+      current_statement__ = 50;
       prior_power_sd = context__.vals_r("prior_power_sd")[(1 - 1)];
-      current_statement__ = 46;
+      current_statement__ = 50;
       stan::math::check_greater_or_equal(function__, "prior_power_sd",
         prior_power_sd, 0);
-      current_statement__ = 47;
+      current_statement__ = 51;
       context__.validate_dims("data initialization", "prior_floor_mu",
         "double", std::vector<size_t>{});
       prior_floor_mu = std::numeric_limits<double>::quiet_NaN();
-      current_statement__ = 47;
+      current_statement__ = 51;
       prior_floor_mu = context__.vals_r("prior_floor_mu")[(1 - 1)];
-      current_statement__ = 48;
+      current_statement__ = 52;
       context__.validate_dims("data initialization", "prior_floor_sd",
         "double", std::vector<size_t>{});
       prior_floor_sd = std::numeric_limits<double>::quiet_NaN();
-      current_statement__ = 48;
+      current_statement__ = 52;
       prior_floor_sd = context__.vals_r("prior_floor_sd")[(1 - 1)];
-      current_statement__ = 48;
+      current_statement__ = 52;
       stan::math::check_greater_or_equal(function__, "prior_floor_sd",
         prior_floor_sd, 0);
-      current_statement__ = 49;
+      current_statement__ = 53;
+      context__.validate_dims("data initialization", "prior_density_mu",
+        "double", std::vector<size_t>{});
+      prior_density_mu = std::numeric_limits<double>::quiet_NaN();
+      current_statement__ = 53;
+      prior_density_mu = context__.vals_r("prior_density_mu")[(1 - 1)];
+      current_statement__ = 54;
+      context__.validate_dims("data initialization", "prior_density_sd",
+        "double", std::vector<size_t>{});
+      prior_density_sd = std::numeric_limits<double>::quiet_NaN();
+      current_statement__ = 54;
+      prior_density_sd = context__.vals_r("prior_density_sd")[(1 - 1)];
+      current_statement__ = 54;
+      stan::math::check_greater_or_equal(function__, "prior_density_sd",
+        prior_density_sd, 0);
+      current_statement__ = 55;
       context__.validate_dims("data initialization", "prior_sd_site_rate",
         "double", std::vector<size_t>{});
       prior_sd_site_rate = std::numeric_limits<double>::quiet_NaN();
-      current_statement__ = 49;
+      current_statement__ = 55;
       prior_sd_site_rate = context__.vals_r("prior_sd_site_rate")[(1 - 1)];
-      current_statement__ = 49;
+      current_statement__ = 55;
       stan::math::check_greater_or_equal(function__, "prior_sd_site_rate",
         prior_sd_site_rate, 0);
-      current_statement__ = 50;
+      current_statement__ = 56;
       context__.validate_dims("data initialization", "prior_sd_year_rate",
         "double", std::vector<size_t>{});
       prior_sd_year_rate = std::numeric_limits<double>::quiet_NaN();
-      current_statement__ = 50;
+      current_statement__ = 56;
       prior_sd_year_rate = context__.vals_r("prior_sd_year_rate")[(1 - 1)];
-      current_statement__ = 50;
+      current_statement__ = 56;
       stan::math::check_greater_or_equal(function__, "prior_sd_year_rate",
         prior_sd_year_rate, 0);
-      current_statement__ = 51;
+      current_statement__ = 57;
       context__.validate_dims("data initialization",
         "prior_sd_site_year_rate", "double", std::vector<size_t>{});
       prior_sd_site_year_rate = std::numeric_limits<double>::quiet_NaN();
-      current_statement__ = 51;
+      current_statement__ = 57;
       prior_sd_site_year_rate = context__.vals_r("prior_sd_site_year_rate")[(1
         - 1)];
-      current_statement__ = 51;
+      current_statement__ = 57;
       stan::math::check_greater_or_equal(function__,
         "prior_sd_site_year_rate", prior_sd_site_year_rate, 0);
-      current_statement__ = 52;
+      current_statement__ = 58;
       context__.validate_dims("data initialization",
         "prior_sd_residual_rate", "double", std::vector<size_t>{});
       prior_sd_residual_rate = std::numeric_limits<double>::quiet_NaN();
-      current_statement__ = 52;
+      current_statement__ = 58;
       prior_sd_residual_rate = context__.vals_r("prior_sd_residual_rate")[(1
         - 1)];
-      current_statement__ = 52;
+      current_statement__ = 58;
       stan::math::check_greater_or_equal(function__,
         "prior_sd_residual_rate", prior_sd_residual_rate, 0);
-      current_statement__ = 53;
+      current_statement__ = 59;
       context__.validate_dims("data initialization", "prior_only", "int",
         std::vector<size_t>{});
       prior_only = std::numeric_limits<int>::min();
-      current_statement__ = 53;
+      current_statement__ = 59;
       prior_only = context__.vals_i("prior_only")[(1 - 1)];
-      current_statement__ = 53;
+      current_statement__ = 59;
       stan::math::check_greater_or_equal(function__, "prior_only",
         prior_only, 0);
-      current_statement__ = 53;
+      current_statement__ = 59;
       stan::math::check_less_or_equal(function__, "prior_only", prior_only, 1);
-      current_statement__ = 54;
+      current_statement__ = 60;
       context__.validate_dims("data initialization", "site_year_on", "int",
         std::vector<size_t>{});
       site_year_on = std::numeric_limits<int>::min();
-      current_statement__ = 54;
+      current_statement__ = 60;
       site_year_on = context__.vals_i("site_year_on")[(1 - 1)];
-      current_statement__ = 54;
+      current_statement__ = 60;
       stan::math::check_greater_or_equal(function__, "site_year_on",
         site_year_on, 0);
-      current_statement__ = 54;
+      current_statement__ = 60;
       stan::math::check_less_or_equal(function__, "site_year_on",
         site_year_on, 1);
-      current_statement__ = 55;
+      current_statement__ = 61;
+      context__.validate_dims("data initialization", "density_on", "int",
+        std::vector<size_t>{});
+      density_on = std::numeric_limits<int>::min();
+      current_statement__ = 61;
+      density_on = context__.vals_i("density_on")[(1 - 1)];
+      current_statement__ = 61;
+      stan::math::check_greater_or_equal(function__, "density_on",
+        density_on, 0);
+      current_statement__ = 61;
+      stan::math::check_less_or_equal(function__, "density_on", density_on, 1);
+      current_statement__ = 62;
       stan::math::validate_non_negative_index("log_x", "nObs", nObs);
-      current_statement__ = 56;
+      current_statement__ = 63;
       log_x_data__ = Eigen::Matrix<double,-1,1>::Constant(nObs,
                        std::numeric_limits<double>::quiet_NaN());
       new (&log_x)
         Eigen::Map<Eigen::Matrix<double,-1,1>>(log_x_data__.data(), nObs);
-      current_statement__ = 56;
+      current_statement__ = 63;
       stan::model::assign(log_x,
         stan::math::subtract(stan::math::log(diameter),
           stan::math::log(diameter_ref)), "assigning variable log_x");
-      current_statement__ = 57;
+      current_statement__ = 64;
       stan::math::validate_non_negative_index("log_weight", "nObs", nObs);
-      current_statement__ = 58;
+      current_statement__ = 65;
       log_weight_data__ = Eigen::Matrix<double,-1,1>::Constant(nObs,
                             std::numeric_limits<double>::quiet_NaN());
       new (&log_weight)
         Eigen::Map<Eigen::Matrix<double,-1,1>>(log_weight_data__.data(),
         nObs);
-      current_statement__ = 58;
+      current_statement__ = 65;
       stan::model::assign(log_weight, stan::math::log(weight),
         "assigning variable log_weight");
-      current_statement__ = 59;
+      current_statement__ = 66;
       stan::math::validate_non_negative_index("sy_idx", "nObs", nObs);
-      current_statement__ = 60;
+      current_statement__ = 67;
       sy_idx = std::vector<int>(nObs, std::numeric_limits<int>::min());
-      current_statement__ = 63;
+      current_statement__ = 70;
       for (int i = 1; i <= nObs; ++i) {
-        current_statement__ = 61;
+        current_statement__ = 68;
         stan::model::assign(sy_idx,
           (stan::model::rvalue(site, "site", stan::model::index_uni(i)) +
           ((stan::model::rvalue(year, "year", stan::model::index_uni(i)) - 1)
           * nSite)), "assigning variable sy_idx", stan::model::index_uni(i));
       }
-      current_statement__ = 64;
-      stan::math::validate_non_negative_index("z_bSite", "nSite", nSite);
-      current_statement__ = 65;
-      stan::math::validate_non_negative_index("z_bYear", "nYear", nYear);
-      current_statement__ = 66;
-      stan::math::validate_non_negative_index("z_bSiteYear", "nSite", nSite);
-      current_statement__ = 67;
-      stan::math::validate_non_negative_index("z_bSiteYear", "nYear", nYear);
-      current_statement__ = 68;
-      stan::math::validate_non_negative_index("bSite", "nSite", nSite);
-      current_statement__ = 69;
-      stan::math::validate_non_negative_index("bYear", "nYear", nYear);
-      current_statement__ = 70;
-      stan::math::validate_non_negative_index("bSiteYear", "nSite", nSite);
       current_statement__ = 71;
+      stan::math::validate_non_negative_index("z_bSite", "nSite", nSite);
+      current_statement__ = 72;
+      stan::math::validate_non_negative_index("z_bYear", "nYear", nYear);
+      current_statement__ = 73;
+      stan::math::validate_non_negative_index("z_bSiteYear", "nSite", nSite);
+      current_statement__ = 74;
+      stan::math::validate_non_negative_index("z_bSiteYear", "nYear", nYear);
+      current_statement__ = 75;
+      stan::math::validate_non_negative_index("bSite", "nSite", nSite);
+      current_statement__ = 76;
+      stan::math::validate_non_negative_index("bYear", "nYear", nYear);
+      current_statement__ = 77;
+      stan::math::validate_non_negative_index("bSiteYear", "nSite", nSite);
+      current_statement__ = 78;
       stan::math::validate_non_negative_index("bSiteYear", "nYear", nYear);
     } catch (const std::exception& e) {
       stan::lang::rethrow_located(e, locations_array__[current_statement__]);
     }
-    num_params_r__ = 1 + 1 + 1 + 1 + 1 + 1 + 1 + nSite + nYear + (nSite *
+    num_params_r__ = 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + nSite + nYear + (nSite *
       nYear);
   }
   inline std::string model_name() const final {
@@ -443,88 +501,95 @@ public:
         in__.template read_constrain_lb<local_scalar_t__, jacobian__>(0,
           lp__);
       current_statement__ = 4;
+      auto bDensity = in__.template read<local_scalar_t__>();
+      current_statement__ = 5;
       auto sSite =
         in__.template read_constrain_lb<local_scalar_t__, jacobian__>(0,
           lp__);
-      current_statement__ = 5;
+      current_statement__ = 6;
       auto sYear =
         in__.template read_constrain_lb<local_scalar_t__, jacobian__>(0,
           lp__);
-      current_statement__ = 6;
+      current_statement__ = 7;
       auto sSiteYear =
         in__.template read_constrain_lb<local_scalar_t__, jacobian__>(0,
           lp__);
-      current_statement__ = 7;
+      current_statement__ = 8;
       auto sWeight =
         in__.template read_constrain_lb<local_scalar_t__, jacobian__>(0,
           lp__);
-      current_statement__ = 8;
+      current_statement__ = 9;
       auto z_bSite =
         in__.template read<Eigen::Matrix<local_scalar_t__,-1,1>>(nSite);
-      current_statement__ = 9;
+      current_statement__ = 10;
       auto z_bYear =
         in__.template read<Eigen::Matrix<local_scalar_t__,-1,1>>(nYear);
-      current_statement__ = 10;
+      current_statement__ = 11;
       auto z_bSiteYear =
         in__.template read<Eigen::Matrix<local_scalar_t__,-1,-1>>(nSite,
           nYear);
       Eigen::Matrix<local_scalar_t__,-1,1> bSite =
         Eigen::Matrix<local_scalar_t__,-1,1>::Constant(nSite, DUMMY_VAR__);
-      current_statement__ = 11;
+      current_statement__ = 12;
       stan::model::assign(bSite, stan::math::multiply(z_bSite, sSite),
         "assigning variable bSite");
       Eigen::Matrix<local_scalar_t__,-1,1> bYear =
         Eigen::Matrix<local_scalar_t__,-1,1>::Constant(nYear, DUMMY_VAR__);
-      current_statement__ = 12;
+      current_statement__ = 13;
       stan::model::assign(bYear, stan::math::multiply(z_bYear, sYear),
         "assigning variable bYear");
       Eigen::Matrix<local_scalar_t__,-1,-1> bSiteYear =
         Eigen::Matrix<local_scalar_t__,-1,-1>::Constant(nSite, nYear,
           DUMMY_VAR__);
-      current_statement__ = 13;
+      current_statement__ = 14;
       stan::model::assign(bSiteYear,
         stan::math::multiply(z_bSiteYear, sSiteYear),
         "assigning variable bSiteYear");
       {
-        current_statement__ = 14;
+        current_statement__ = 15;
         lp_accum__.add(stan::math::normal_lpdf<propto__>(bWeight,
                          prior_intercept_mu, prior_intercept_sd));
-        current_statement__ = 15;
+        current_statement__ = 16;
         lp_accum__.add(stan::math::normal_lpdf<propto__>(bPower,
                          prior_power_mu, prior_power_sd));
-        current_statement__ = 16;
+        current_statement__ = 17;
         lp_accum__.add(stan::math::normal_lpdf<propto__>(bFloor,
                          prior_floor_mu, prior_floor_sd));
-        current_statement__ = 17;
+        current_statement__ = 18;
+        lp_accum__.add(stan::math::normal_lpdf<propto__>(bDensity,
+                         prior_density_mu, prior_density_sd));
+        current_statement__ = 19;
         lp_accum__.add(stan::math::exponential_lpdf<propto__>(sSite,
                          prior_sd_site_rate));
-        current_statement__ = 18;
+        current_statement__ = 20;
         lp_accum__.add(stan::math::exponential_lpdf<propto__>(sYear,
                          prior_sd_year_rate));
-        current_statement__ = 19;
+        current_statement__ = 21;
         lp_accum__.add(stan::math::exponential_lpdf<propto__>(sSiteYear,
                          prior_sd_site_year_rate));
-        current_statement__ = 20;
+        current_statement__ = 22;
         lp_accum__.add(stan::math::exponential_lpdf<propto__>(sWeight,
                          prior_sd_residual_rate));
-        current_statement__ = 21;
-        lp_accum__.add(stan::math::std_normal_lpdf<propto__>(z_bSite));
-        current_statement__ = 22;
-        lp_accum__.add(stan::math::std_normal_lpdf<propto__>(z_bYear));
         current_statement__ = 23;
+        lp_accum__.add(stan::math::std_normal_lpdf<propto__>(z_bSite));
+        current_statement__ = 24;
+        lp_accum__.add(stan::math::std_normal_lpdf<propto__>(z_bYear));
+        current_statement__ = 25;
         lp_accum__.add(stan::math::std_normal_lpdf<propto__>(
                          stan::math::to_vector(z_bSiteYear)));
-        current_statement__ = 30;
+        current_statement__ = 32;
         if (stan::math::logical_eq(prior_only, 0)) {
-          current_statement__ = 24;
+          current_statement__ = 26;
           stan::math::validate_non_negative_index("log_alpha", "nObs", nObs);
           Eigen::Matrix<local_scalar_t__,-1,1> log_alpha =
             Eigen::Matrix<local_scalar_t__,-1,1>::Constant(nObs, DUMMY_VAR__);
-          current_statement__ = 25;
+          current_statement__ = 27;
           stan::model::assign(log_alpha,
             stan::math::add(
               stan::math::add(
-                stan::math::add(bWeight,
+                stan::math::add(
+                  stan::math::add(bWeight,
+                    stan::math::multiply((density_on * bDensity), density)),
                   stan::model::rvalue(bYear, "bYear",
                     stan::model::index_multi(year))),
                 stan::model::rvalue(bSite, "bSite",
@@ -533,11 +598,11 @@ public:
                 stan::model::rvalue(stan::math::to_vector(bSiteYear),
                   "to_vector(bSiteYear)", stan::model::index_multi(sy_idx)))),
             "assigning variable log_alpha");
-          current_statement__ = 26;
+          current_statement__ = 28;
           stan::math::validate_non_negative_index("log_eWeight", "nObs", nObs);
           Eigen::Matrix<local_scalar_t__,-1,1> log_eWeight =
             Eigen::Matrix<local_scalar_t__,-1,1>::Constant(nObs, DUMMY_VAR__);
-          current_statement__ = 27;
+          current_statement__ = 29;
           stan::model::assign(log_eWeight,
             stan::math::log(
               stan::math::add(bFloor,
@@ -545,7 +610,7 @@ public:
                   stan::math::add(log_alpha,
                     stan::math::multiply(bPower, log_x))))),
             "assigning variable log_eWeight");
-          current_statement__ = 28;
+          current_statement__ = 30;
           lp_accum__.add(stan::math::normal_lpdf<propto__>(log_weight,
                            log_eWeight, sWeight));
         }
@@ -591,88 +656,95 @@ public:
         in__.template read_constrain_lb<local_scalar_t__, jacobian__>(0,
           lp__);
       current_statement__ = 4;
+      auto bDensity = in__.template read<local_scalar_t__>();
+      current_statement__ = 5;
       auto sSite =
         in__.template read_constrain_lb<local_scalar_t__, jacobian__>(0,
           lp__);
-      current_statement__ = 5;
+      current_statement__ = 6;
       auto sYear =
         in__.template read_constrain_lb<local_scalar_t__, jacobian__>(0,
           lp__);
-      current_statement__ = 6;
+      current_statement__ = 7;
       auto sSiteYear =
         in__.template read_constrain_lb<local_scalar_t__, jacobian__>(0,
           lp__);
-      current_statement__ = 7;
+      current_statement__ = 8;
       auto sWeight =
         in__.template read_constrain_lb<local_scalar_t__, jacobian__>(0,
           lp__);
-      current_statement__ = 8;
+      current_statement__ = 9;
       auto z_bSite =
         in__.template read<Eigen::Matrix<local_scalar_t__,-1,1>>(nSite);
-      current_statement__ = 9;
+      current_statement__ = 10;
       auto z_bYear =
         in__.template read<Eigen::Matrix<local_scalar_t__,-1,1>>(nYear);
-      current_statement__ = 10;
+      current_statement__ = 11;
       auto z_bSiteYear =
         in__.template read<Eigen::Matrix<local_scalar_t__,-1,-1>>(nSite,
           nYear);
       Eigen::Matrix<local_scalar_t__,-1,1> bSite =
         Eigen::Matrix<local_scalar_t__,-1,1>::Constant(nSite, DUMMY_VAR__);
-      current_statement__ = 11;
+      current_statement__ = 12;
       stan::model::assign(bSite, stan::math::multiply(z_bSite, sSite),
         "assigning variable bSite");
       Eigen::Matrix<local_scalar_t__,-1,1> bYear =
         Eigen::Matrix<local_scalar_t__,-1,1>::Constant(nYear, DUMMY_VAR__);
-      current_statement__ = 12;
+      current_statement__ = 13;
       stan::model::assign(bYear, stan::math::multiply(z_bYear, sYear),
         "assigning variable bYear");
       Eigen::Matrix<local_scalar_t__,-1,-1> bSiteYear =
         Eigen::Matrix<local_scalar_t__,-1,-1>::Constant(nSite, nYear,
           DUMMY_VAR__);
-      current_statement__ = 13;
+      current_statement__ = 14;
       stan::model::assign(bSiteYear,
         stan::math::multiply(z_bSiteYear, sSiteYear),
         "assigning variable bSiteYear");
       {
-        current_statement__ = 14;
+        current_statement__ = 15;
         lp_accum__.add(stan::math::normal_lpdf<propto__>(bWeight,
                          prior_intercept_mu, prior_intercept_sd));
-        current_statement__ = 15;
+        current_statement__ = 16;
         lp_accum__.add(stan::math::normal_lpdf<propto__>(bPower,
                          prior_power_mu, prior_power_sd));
-        current_statement__ = 16;
+        current_statement__ = 17;
         lp_accum__.add(stan::math::normal_lpdf<propto__>(bFloor,
                          prior_floor_mu, prior_floor_sd));
-        current_statement__ = 17;
+        current_statement__ = 18;
+        lp_accum__.add(stan::math::normal_lpdf<propto__>(bDensity,
+                         prior_density_mu, prior_density_sd));
+        current_statement__ = 19;
         lp_accum__.add(stan::math::exponential_lpdf<propto__>(sSite,
                          prior_sd_site_rate));
-        current_statement__ = 18;
+        current_statement__ = 20;
         lp_accum__.add(stan::math::exponential_lpdf<propto__>(sYear,
                          prior_sd_year_rate));
-        current_statement__ = 19;
+        current_statement__ = 21;
         lp_accum__.add(stan::math::exponential_lpdf<propto__>(sSiteYear,
                          prior_sd_site_year_rate));
-        current_statement__ = 20;
+        current_statement__ = 22;
         lp_accum__.add(stan::math::exponential_lpdf<propto__>(sWeight,
                          prior_sd_residual_rate));
-        current_statement__ = 21;
-        lp_accum__.add(stan::math::std_normal_lpdf<propto__>(z_bSite));
-        current_statement__ = 22;
-        lp_accum__.add(stan::math::std_normal_lpdf<propto__>(z_bYear));
         current_statement__ = 23;
+        lp_accum__.add(stan::math::std_normal_lpdf<propto__>(z_bSite));
+        current_statement__ = 24;
+        lp_accum__.add(stan::math::std_normal_lpdf<propto__>(z_bYear));
+        current_statement__ = 25;
         lp_accum__.add(stan::math::std_normal_lpdf<propto__>(
                          stan::math::to_vector(z_bSiteYear)));
-        current_statement__ = 30;
+        current_statement__ = 32;
         if (stan::math::logical_eq(prior_only, 0)) {
-          current_statement__ = 24;
+          current_statement__ = 26;
           stan::math::validate_non_negative_index("log_alpha", "nObs", nObs);
           Eigen::Matrix<local_scalar_t__,-1,1> log_alpha =
             Eigen::Matrix<local_scalar_t__,-1,1>::Constant(nObs, DUMMY_VAR__);
-          current_statement__ = 25;
+          current_statement__ = 27;
           stan::model::assign(log_alpha,
             stan::math::add(
               stan::math::add(
-                stan::math::add(bWeight,
+                stan::math::add(
+                  stan::math::add(bWeight,
+                    stan::math::multiply((density_on * bDensity), density)),
                   stan::model::rvalue(bYear, "bYear",
                     stan::model::index_multi(year))),
                 stan::model::rvalue(bSite, "bSite",
@@ -681,11 +753,11 @@ public:
                 stan::model::rvalue(stan::math::to_vector(bSiteYear),
                   "to_vector(bSiteYear)", stan::model::index_multi(sy_idx)))),
             "assigning variable log_alpha");
-          current_statement__ = 26;
+          current_statement__ = 28;
           stan::math::validate_non_negative_index("log_eWeight", "nObs", nObs);
           Eigen::Matrix<local_scalar_t__,-1,1> log_eWeight =
             Eigen::Matrix<local_scalar_t__,-1,1>::Constant(nObs, DUMMY_VAR__);
-          current_statement__ = 27;
+          current_statement__ = 29;
           stan::model::assign(log_eWeight,
             stan::math::log(
               stan::math::add(bFloor,
@@ -693,7 +765,7 @@ public:
                   stan::math::add(log_alpha,
                     stan::math::multiply(bPower, log_x))))),
             "assigning variable log_eWeight");
-          current_statement__ = 28;
+          current_statement__ = 30;
           lp_accum__.add(stan::math::normal_lpdf<propto__>(log_weight,
                            log_eWeight, sWeight));
         }
@@ -750,28 +822,30 @@ public:
         in__.template read_constrain_lb<local_scalar_t__, jacobian__>(0,
           lp__);
       current_statement__ = 4;
+      auto bDensity = in__.template read<local_scalar_t__>();
+      current_statement__ = 5;
       auto sSite =
         in__.template read_constrain_lb<local_scalar_t__, jacobian__>(0,
           lp__);
-      current_statement__ = 5;
+      current_statement__ = 6;
       auto sYear =
         in__.template read_constrain_lb<local_scalar_t__, jacobian__>(0,
           lp__);
-      current_statement__ = 6;
+      current_statement__ = 7;
       auto sSiteYear =
         in__.template read_constrain_lb<local_scalar_t__, jacobian__>(0,
           lp__);
-      current_statement__ = 7;
+      current_statement__ = 8;
       auto sWeight =
         in__.template read_constrain_lb<local_scalar_t__, jacobian__>(0,
           lp__);
-      current_statement__ = 8;
+      current_statement__ = 9;
       auto z_bSite =
         in__.template read<Eigen::Matrix<local_scalar_t__,-1,1>>(nSite);
-      current_statement__ = 9;
+      current_statement__ = 10;
       auto z_bYear =
         in__.template read<Eigen::Matrix<local_scalar_t__,-1,1>>(nYear);
-      current_statement__ = 10;
+      current_statement__ = 11;
       auto z_bSiteYear =
         in__.template read<Eigen::Matrix<local_scalar_t__,-1,-1>>(nSite,
           nYear);
@@ -787,6 +861,7 @@ public:
       out__.write(bWeight);
       out__.write(bPower);
       out__.write(bFloor);
+      out__.write(bDensity);
       out__.write(sSite);
       out__.write(sYear);
       out__.write(sSiteYear);
@@ -799,13 +874,13 @@ public:
             stan::math::primitive_value(emit_generated_quantities__)))) {
         return ;
       }
-      current_statement__ = 11;
+      current_statement__ = 12;
       stan::model::assign(bSite, stan::math::multiply(z_bSite, sSite),
         "assigning variable bSite");
-      current_statement__ = 12;
+      current_statement__ = 13;
       stan::model::assign(bYear, stan::math::multiply(z_bYear, sYear),
         "assigning variable bYear");
-      current_statement__ = 13;
+      current_statement__ = 14;
       stan::model::assign(bSiteYear,
         stan::math::multiply(z_bSiteYear, sSiteYear),
         "assigning variable bSiteYear");
@@ -849,32 +924,36 @@ public:
       current_statement__ = 3;
       bFloor = in__.read<local_scalar_t__>();
       out__.write_free_lb(0, bFloor);
-      local_scalar_t__ sSite = DUMMY_VAR__;
+      local_scalar_t__ bDensity = DUMMY_VAR__;
       current_statement__ = 4;
+      bDensity = in__.read<local_scalar_t__>();
+      out__.write(bDensity);
+      local_scalar_t__ sSite = DUMMY_VAR__;
+      current_statement__ = 5;
       sSite = in__.read<local_scalar_t__>();
       out__.write_free_lb(0, sSite);
       local_scalar_t__ sYear = DUMMY_VAR__;
-      current_statement__ = 5;
+      current_statement__ = 6;
       sYear = in__.read<local_scalar_t__>();
       out__.write_free_lb(0, sYear);
       local_scalar_t__ sSiteYear = DUMMY_VAR__;
-      current_statement__ = 6;
+      current_statement__ = 7;
       sSiteYear = in__.read<local_scalar_t__>();
       out__.write_free_lb(0, sSiteYear);
       local_scalar_t__ sWeight = DUMMY_VAR__;
-      current_statement__ = 7;
+      current_statement__ = 8;
       sWeight = in__.read<local_scalar_t__>();
       out__.write_free_lb(0, sWeight);
       Eigen::Matrix<local_scalar_t__,-1,1> z_bSite =
         Eigen::Matrix<local_scalar_t__,-1,1>::Constant(nSite, DUMMY_VAR__);
-      current_statement__ = 8;
+      current_statement__ = 9;
       stan::model::assign(z_bSite,
         in__.read<Eigen::Matrix<local_scalar_t__,-1,1>>(nSite),
         "assigning variable z_bSite");
       out__.write(z_bSite);
       Eigen::Matrix<local_scalar_t__,-1,1> z_bYear =
         Eigen::Matrix<local_scalar_t__,-1,1>::Constant(nYear, DUMMY_VAR__);
-      current_statement__ = 9;
+      current_statement__ = 10;
       stan::model::assign(z_bYear,
         in__.read<Eigen::Matrix<local_scalar_t__,-1,1>>(nYear),
         "assigning variable z_bYear");
@@ -882,7 +961,7 @@ public:
       Eigen::Matrix<local_scalar_t__,-1,-1> z_bSiteYear =
         Eigen::Matrix<local_scalar_t__,-1,-1>::Constant(nSite, nYear,
           DUMMY_VAR__);
-      current_statement__ = 10;
+      current_statement__ = 11;
       stan::model::assign(z_bSiteYear,
         in__.read<Eigen::Matrix<local_scalar_t__,-1,-1>>(nSite, nYear),
         "assigning variable z_bSiteYear");
@@ -914,24 +993,27 @@ public:
       context__.validate_dims("parameter initialization", "bFloor", "double",
         std::vector<size_t>{});
       current_statement__ = 4;
+      context__.validate_dims("parameter initialization", "bDensity",
+        "double", std::vector<size_t>{});
+      current_statement__ = 5;
       context__.validate_dims("parameter initialization", "sSite", "double",
         std::vector<size_t>{});
-      current_statement__ = 5;
+      current_statement__ = 6;
       context__.validate_dims("parameter initialization", "sYear", "double",
         std::vector<size_t>{});
-      current_statement__ = 6;
+      current_statement__ = 7;
       context__.validate_dims("parameter initialization", "sSiteYear",
         "double", std::vector<size_t>{});
-      current_statement__ = 7;
+      current_statement__ = 8;
       context__.validate_dims("parameter initialization", "sWeight",
         "double", std::vector<size_t>{});
-      current_statement__ = 8;
+      current_statement__ = 9;
       context__.validate_dims("parameter initialization", "z_bSite",
         "double", std::vector<size_t>{static_cast<size_t>(nSite)});
-      current_statement__ = 9;
+      current_statement__ = 10;
       context__.validate_dims("parameter initialization", "z_bYear",
         "double", std::vector<size_t>{static_cast<size_t>(nYear)});
-      current_statement__ = 10;
+      current_statement__ = 11;
       context__.validate_dims("parameter initialization", "z_bSiteYear",
         "double",
         std::vector<size_t>{static_cast<size_t>(nSite),
@@ -950,27 +1032,31 @@ public:
       current_statement__ = 3;
       bFloor = context__.vals_r("bFloor")[(1 - 1)];
       out__.write_free_lb(0, bFloor);
-      local_scalar_t__ sSite = DUMMY_VAR__;
+      local_scalar_t__ bDensity = DUMMY_VAR__;
       current_statement__ = 4;
+      bDensity = context__.vals_r("bDensity")[(1 - 1)];
+      out__.write(bDensity);
+      local_scalar_t__ sSite = DUMMY_VAR__;
+      current_statement__ = 5;
       sSite = context__.vals_r("sSite")[(1 - 1)];
       out__.write_free_lb(0, sSite);
       local_scalar_t__ sYear = DUMMY_VAR__;
-      current_statement__ = 5;
+      current_statement__ = 6;
       sYear = context__.vals_r("sYear")[(1 - 1)];
       out__.write_free_lb(0, sYear);
       local_scalar_t__ sSiteYear = DUMMY_VAR__;
-      current_statement__ = 6;
+      current_statement__ = 7;
       sSiteYear = context__.vals_r("sSiteYear")[(1 - 1)];
       out__.write_free_lb(0, sSiteYear);
       local_scalar_t__ sWeight = DUMMY_VAR__;
-      current_statement__ = 7;
+      current_statement__ = 8;
       sWeight = context__.vals_r("sWeight")[(1 - 1)];
       out__.write_free_lb(0, sWeight);
       Eigen::Matrix<local_scalar_t__,-1,1> z_bSite =
         Eigen::Matrix<local_scalar_t__,-1,1>::Constant(nSite, DUMMY_VAR__);
       {
         std::vector<local_scalar_t__> z_bSite_flat__;
-        current_statement__ = 8;
+        current_statement__ = 9;
         z_bSite_flat__ = context__.vals_r("z_bSite");
         pos__ = 1;
         for (int sym1__ = 1; sym1__ <= nSite; ++sym1__) {
@@ -984,7 +1070,7 @@ public:
         Eigen::Matrix<local_scalar_t__,-1,1>::Constant(nYear, DUMMY_VAR__);
       {
         std::vector<local_scalar_t__> z_bYear_flat__;
-        current_statement__ = 9;
+        current_statement__ = 10;
         z_bYear_flat__ = context__.vals_r("z_bYear");
         pos__ = 1;
         for (int sym1__ = 1; sym1__ <= nYear; ++sym1__) {
@@ -999,7 +1085,7 @@ public:
           DUMMY_VAR__);
       {
         std::vector<local_scalar_t__> z_bSiteYear_flat__;
-        current_statement__ = 10;
+        current_statement__ = 11;
         z_bSiteYear_flat__ = context__.vals_r("z_bSiteYear");
         pos__ = 1;
         for (int sym1__ = 1; sym1__ <= nYear; ++sym1__) {
@@ -1021,8 +1107,8 @@ public:
                   emit_transformed_parameters__ = true, const bool
                   emit_generated_quantities__ = true) const {
     names__ = std::vector<std::string>{"bWeight", "bPower", "bFloor",
-                "sSite", "sYear", "sSiteYear", "sWeight", "z_bSite",
-                "z_bYear", "z_bSiteYear"};
+                "bDensity", "sSite", "sYear", "sSiteYear", "sWeight",
+                "z_bSite", "z_bYear", "z_bSiteYear"};
     if (emit_transformed_parameters__) {
       std::vector<std::string> temp{"bSite", "bYear", "bSiteYear"};
       names__.reserve(names__.size() + temp.size());
@@ -1038,6 +1124,7 @@ public:
                 std::vector<size_t>{}, std::vector<size_t>{},
                 std::vector<size_t>{}, std::vector<size_t>{},
                 std::vector<size_t>{}, std::vector<size_t>{},
+                std::vector<size_t>{},
                 std::vector<size_t>{static_cast<size_t>(nSite)},
                 std::vector<size_t>{static_cast<size_t>(nYear)},
                 std::vector<size_t>{static_cast<size_t>(nSite),
@@ -1060,6 +1147,7 @@ public:
     param_names__.emplace_back(std::string() + "bWeight");
     param_names__.emplace_back(std::string() + "bPower");
     param_names__.emplace_back(std::string() + "bFloor");
+    param_names__.emplace_back(std::string() + "bDensity");
     param_names__.emplace_back(std::string() + "sSite");
     param_names__.emplace_back(std::string() + "sYear");
     param_names__.emplace_back(std::string() + "sSiteYear");
@@ -1103,6 +1191,7 @@ public:
     param_names__.emplace_back(std::string() + "bWeight");
     param_names__.emplace_back(std::string() + "bPower");
     param_names__.emplace_back(std::string() + "bFloor");
+    param_names__.emplace_back(std::string() + "bDensity");
     param_names__.emplace_back(std::string() + "sSite");
     param_names__.emplace_back(std::string() + "sYear");
     param_names__.emplace_back(std::string() + "sSiteYear");
@@ -1140,10 +1229,10 @@ public:
     if (emit_generated_quantities__) {}
   }
   inline std::string get_constrained_sizedtypes() const {
-    return std::string("[{\"name\":\"bWeight\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"bPower\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"bFloor\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"sSite\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"sYear\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"sSiteYear\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"sWeight\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"z_bSite\",\"type\":{\"name\":\"vector\",\"length\":" + std::to_string(nSite) + "},\"block\":\"parameters\"},{\"name\":\"z_bYear\",\"type\":{\"name\":\"vector\",\"length\":" + std::to_string(nYear) + "},\"block\":\"parameters\"},{\"name\":\"z_bSiteYear\",\"type\":{\"name\":\"matrix\",\"rows\":" + std::to_string(nSite) + ",\"cols\":" + std::to_string(nYear) + "},\"block\":\"parameters\"},{\"name\":\"bSite\",\"type\":{\"name\":\"vector\",\"length\":" + std::to_string(nSite) + "},\"block\":\"transformed_parameters\"},{\"name\":\"bYear\",\"type\":{\"name\":\"vector\",\"length\":" + std::to_string(nYear) + "},\"block\":\"transformed_parameters\"},{\"name\":\"bSiteYear\",\"type\":{\"name\":\"matrix\",\"rows\":" + std::to_string(nSite) + ",\"cols\":" + std::to_string(nYear) + "},\"block\":\"transformed_parameters\"}]");
+    return std::string("[{\"name\":\"bWeight\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"bPower\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"bFloor\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"bDensity\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"sSite\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"sYear\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"sSiteYear\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"sWeight\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"z_bSite\",\"type\":{\"name\":\"vector\",\"length\":" + std::to_string(nSite) + "},\"block\":\"parameters\"},{\"name\":\"z_bYear\",\"type\":{\"name\":\"vector\",\"length\":" + std::to_string(nYear) + "},\"block\":\"parameters\"},{\"name\":\"z_bSiteYear\",\"type\":{\"name\":\"matrix\",\"rows\":" + std::to_string(nSite) + ",\"cols\":" + std::to_string(nYear) + "},\"block\":\"parameters\"},{\"name\":\"bSite\",\"type\":{\"name\":\"vector\",\"length\":" + std::to_string(nSite) + "},\"block\":\"transformed_parameters\"},{\"name\":\"bYear\",\"type\":{\"name\":\"vector\",\"length\":" + std::to_string(nYear) + "},\"block\":\"transformed_parameters\"},{\"name\":\"bSiteYear\",\"type\":{\"name\":\"matrix\",\"rows\":" + std::to_string(nSite) + ",\"cols\":" + std::to_string(nYear) + "},\"block\":\"transformed_parameters\"}]");
   }
   inline std::string get_unconstrained_sizedtypes() const {
-    return std::string("[{\"name\":\"bWeight\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"bPower\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"bFloor\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"sSite\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"sYear\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"sSiteYear\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"sWeight\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"z_bSite\",\"type\":{\"name\":\"vector\",\"length\":" + std::to_string(nSite) + "},\"block\":\"parameters\"},{\"name\":\"z_bYear\",\"type\":{\"name\":\"vector\",\"length\":" + std::to_string(nYear) + "},\"block\":\"parameters\"},{\"name\":\"z_bSiteYear\",\"type\":{\"name\":\"matrix\",\"rows\":" + std::to_string(nSite) + ",\"cols\":" + std::to_string(nYear) + "},\"block\":\"parameters\"},{\"name\":\"bSite\",\"type\":{\"name\":\"vector\",\"length\":" + std::to_string(nSite) + "},\"block\":\"transformed_parameters\"},{\"name\":\"bYear\",\"type\":{\"name\":\"vector\",\"length\":" + std::to_string(nYear) + "},\"block\":\"transformed_parameters\"},{\"name\":\"bSiteYear\",\"type\":{\"name\":\"matrix\",\"rows\":" + std::to_string(nSite) + ",\"cols\":" + std::to_string(nYear) + "},\"block\":\"transformed_parameters\"}]");
+    return std::string("[{\"name\":\"bWeight\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"bPower\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"bFloor\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"bDensity\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"sSite\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"sYear\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"sSiteYear\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"sWeight\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"z_bSite\",\"type\":{\"name\":\"vector\",\"length\":" + std::to_string(nSite) + "},\"block\":\"parameters\"},{\"name\":\"z_bYear\",\"type\":{\"name\":\"vector\",\"length\":" + std::to_string(nYear) + "},\"block\":\"parameters\"},{\"name\":\"z_bSiteYear\",\"type\":{\"name\":\"matrix\",\"rows\":" + std::to_string(nSite) + ",\"cols\":" + std::to_string(nYear) + "},\"block\":\"parameters\"},{\"name\":\"bSite\",\"type\":{\"name\":\"vector\",\"length\":" + std::to_string(nSite) + "},\"block\":\"transformed_parameters\"},{\"name\":\"bYear\",\"type\":{\"name\":\"vector\",\"length\":" + std::to_string(nYear) + "},\"block\":\"transformed_parameters\"},{\"name\":\"bSiteYear\",\"type\":{\"name\":\"matrix\",\"rows\":" + std::to_string(nSite) + ",\"cols\":" + std::to_string(nYear) + "},\"block\":\"transformed_parameters\"}]");
   }
   // Begin method overload boilerplate
   template <typename RNG> inline void
@@ -1152,8 +1241,8 @@ public:
               emit_transformed_parameters = true, const bool
               emit_generated_quantities = true, std::ostream*
               pstream = nullptr) const {
-    const size_t num_params__ = 1 + 1 + 1 + 1 + 1 + 1 + 1 + nSite + nYear +
-      (nSite * nYear);
+    const size_t num_params__ = 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + nSite + nYear
+      + (nSite * nYear);
     const size_t num_transformed = emit_transformed_parameters * (nSite +
       nYear + (nSite * nYear));
     const size_t num_gen_quantities = emit_generated_quantities * (0U);
@@ -1171,8 +1260,8 @@ public:
               emit_transformed_parameters = true, bool
               emit_generated_quantities = true, std::ostream*
               pstream = nullptr) const {
-    const size_t num_params__ = 1 + 1 + 1 + 1 + 1 + 1 + 1 + nSite + nYear +
-      (nSite * nYear);
+    const size_t num_params__ = 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + nSite + nYear
+      + (nSite * nYear);
     const size_t num_transformed = emit_transformed_parameters * (nSite +
       nYear + (nSite * nYear));
     const size_t num_gen_quantities = emit_generated_quantities * (0U);

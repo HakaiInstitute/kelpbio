@@ -41,6 +41,16 @@
   }
 
   log_alpha <- draws$bWeight + re_site + re_year + re_sy
+  if (.density_on(fit)) {
+    density <- standardised_density(
+      grid,
+      TRUE,
+      fit$meta$density_mean,
+      fit$meta$density_sd,
+      fit$meta$density_levels
+    )
+    log_alpha <- log_alpha + draws$bDensity * density
+  }
   log(draws$bFloor + exp(log_alpha + draws$bPower * log_x))
 }
 

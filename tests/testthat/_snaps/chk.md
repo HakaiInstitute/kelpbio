@@ -56,3 +56,11 @@
       ! Invalid `representative_site` value: "not_a_site".
       i Available sites: "site1", "site2", "site3", and "site4".
 
+# .chk_new_data_weight_nereo errors on a negative density
+
+    Code
+      .chk_new_data_weight_nereo(d)
+    Condition
+      Error in `.chk_density()`:
+      ! Column `density` of d must be greater than or equal to 0.
+

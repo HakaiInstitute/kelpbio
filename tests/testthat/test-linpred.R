@@ -248,3 +248,47 @@ test_that("the observed-data paths reject a zero-observation fit", {
     "rvar"
   )
 })
+
+test_that("density shifts log(alpha) by bDensity times standardised density", {
+  grid <- data.frame(diameter = 40, density = 7)
+  off <- weight_fit
+  off$meta$density_on <- FALSE
+  e_on <- exp(as.numeric(posterior::draws_of(.linpred(weight_fit, grid, "average"))))
+  e_off <- exp(as.numeric(posterior::draws_of(.linpred(off, grid, "average"))))
+  floor <- as.numeric(posterior::draws_of(weight_fit$draws$bFloor))
+  b_density <- as.numeric(posterior::draws_of(weight_fit$draws$bDensity))
+  z <- (7 - weight_fit$meta$density_mean) / weight_fit$meta$density_sd
+  expect_equal(log(e_on - floor) - log(e_off - floor), b_density * z)
+})
+
+test_that("a fitted site-year without supplied density uses its recorded value", {
+  levels <- weight_fit$meta$density_levels
+  key <- names(levels)[1]
+  parts <- strsplit(key, ":", fixed = TRUE)[[1]]
+  bare <- data.frame(diameter = 40, site = parts[1], year = parts[2])
+  supplied <- transform(bare, density = unname(levels[1]))
+  expect_equal(
+    posterior::draws_of(.linpred(weight_fit, bare, "average")),
+    posterior::draws_of(.linpred(weight_fit, supplied, "average"))
+  )
+})
+
+test_that("a row with no density and no recorded site-year uses the fitted mean", {
+  bare <- data.frame(diameter = 40)
+  at_mean <- data.frame(diameter = 40, density = weight_fit$meta$density_mean)
+  expect_equal(
+    posterior::draws_of(.linpred(weight_fit, bare, "average")),
+    posterior::draws_of(.linpred(weight_fit, at_mean, "average"))
+  )
+})
+
+test_that("a density column is ignored for a fit without the term", {
+  off <- weight_fit
+  off$meta$density_on <- FALSE
+  expect_equal(
+    posterior::draws_of(.linpred(off, data.frame(diameter = 40), "average")),
+    posterior::draws_of(
+      .linpred(off, data.frame(diameter = 40, density = 100), "average")
+    )
+  )
+})

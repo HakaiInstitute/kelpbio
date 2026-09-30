@@ -71,3 +71,13 @@ test_that("the error is attributed to the generic, not the default method", {
     quote(kb_model_describe(1))
   )
 })
+
+test_that("the density term is described only when fitted", {
+  on <- capture.output(kb_model_describe(weight_fit))
+  expect_true(any(grepl("bDensity * density", on, fixed = TRUE)))
+  expect_true(any(grepl("standardised site-year density", on, fixed = TRUE)))
+  off <- weight_fit
+  off$meta$density_on <- FALSE
+  out <- capture.output(kb_model_describe(off))
+  expect_false(any(grepl("density", out, ignore.case = TRUE)))
+})

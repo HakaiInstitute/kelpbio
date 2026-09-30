@@ -106,3 +106,8 @@ test_that(".chk_observed_data rejects a fit with no rows to predict at", {
   expect_error(.chk_observed_data(fit0), "no observed data")
   expect_invisible(.chk_observed_data(weight_fit))
 })
+
+test_that(".chk_new_data_weight_nereo errors on a negative density", {
+  d <- data.frame(diameter = 30, density = -2)
+  expect_snapshot(error = TRUE, .chk_new_data_weight_nereo(d))
+})

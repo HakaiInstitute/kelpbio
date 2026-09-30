@@ -4,7 +4,6 @@
 
 Rendering a fitted model as a description: kb_model_describe() over any kb_fit,
 in scientific notation or as a report-ready methods paragraph.
-
 ## Requirements
 ### Requirement: Model description in scientific notation
 
@@ -33,4 +32,16 @@ The description SHALL reflect the fitted instance, not the defaults: the priors 
 #### Scenario: Prose methods paragraph
 - **WHEN** `kb_model_describe(fit, prose = TRUE)` is called
 - **THEN** it prints a methods-section paragraph describing the same likelihood, mean structure, centering, random effects, and priors, suitable for a report
+
+### Requirement: The model description shows the density term when fitted
+
+For a *Nereocystis* weight fit with `meta$density_on` `TRUE`, `kb_model_describe()` SHALL include `bDensity * density` in the linear predictor for `log(alpha)`, define `density` as stipe density standardised by the stored mean and SD (shown as numbers), list the `bDensity` prior, and mention the density effect in the prose form. For a fit without the term none of these SHALL appear.
+
+#### Scenario: Density fit shows the term
+- **WHEN** `kb_model_describe(fit)` is called on a fit with `meta$density_on` `TRUE`
+- **THEN** the notation includes `bDensity * density`, a line defining the standardisation with the fit's `density_mean` and `density_sd`, and a `bDensity` prior line
+
+#### Scenario: Fit without density omits the term
+- **WHEN** `kb_model_describe(fit)` is called on a fit with `meta$density_on` `FALSE`
+- **THEN** no density term, standardisation line, or `bDensity` prior appears
 

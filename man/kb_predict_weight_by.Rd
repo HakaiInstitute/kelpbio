@@ -88,6 +88,10 @@ variation. Set a seed with \code{set.seed()} for reproducible \code{"sample"} in
 
 The available \code{by} values are \code{NULL} (a single population curve), \code{"site"},
 \code{"year"}, and \code{c("site", "year")}.
+
+For a \emph{Nereocystis} fit that includes density, curves for
+\code{by = c("site", "year")} use each site-year's recorded density; other curves,
+and site-years without a recorded density, use the fitted mean density.
 }
 \section{Methods (by class)}{
 \itemize{

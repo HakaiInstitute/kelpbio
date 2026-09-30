@@ -53,3 +53,25 @@ test_that("missing, mistyped, and impossible values error", {
   zero_weight$weight <- 0 # boundary: weight must be > 0
   expect_error(kb_check_data_weight_nereo(zero_weight))
 })
+
+test_that("an optional density column is validated", {
+  data <- data.frame(
+    diameter = c(20, 35, 40),
+    weight = c(0.5, 2, 3),
+    site = c("a", "a", "b"),
+    year = c("2020", "2020", "2020"),
+    density = c(3, NA, 5)
+  )
+  expect_silent(kb_check_data_weight_nereo(data))
+  data$density <- NA
+  expect_silent(kb_check_data_weight_nereo(data))
+
+  bad <- data
+  bad$density <- c(3, -1, 5)
+  expect_snapshot(error = TRUE, kb_check_data_weight_nereo(bad))
+  bad$density <- c("3", "4", "5")
+  expect_snapshot(error = TRUE, kb_check_data_weight_nereo(bad))
+  # two values in one site-year
+  bad$density <- c(3, 4, 5)
+  expect_snapshot(error = TRUE, kb_check_data_weight_nereo(bad))
+})

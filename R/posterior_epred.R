@@ -16,8 +16,8 @@
 #'
 #' @inheritParams params
 #' @param object A `kb_fit` object.
-#' @param new_data A data frame with a `diameter` column (and optional `site` /
-#'   `year` columns), or `NULL` for the observed data.
+#' @param new_data A data frame with the fit's predictor column (and optional
+#'   `site`, `year`, and `density` columns), or `NULL` for the observed data.
 #' @param ... Unused.
 #'
 #' @return A draws-by-observations (`D x N`) matrix.

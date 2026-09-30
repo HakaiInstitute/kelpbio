@@ -30,6 +30,7 @@ test_that("kb_fit_weight returns a correctly-structured object", {
       "bWeight",
       "bPower",
       "bFloor",
+      "bDensity",
       "sSite",
       "sYear",
       "sSiteYear",
@@ -179,4 +180,32 @@ test_that("a single-year fit records no site:year terms", {
   expect_false("sSiteYear" %in% fit$meta$terms$fixed)
   expect_false("bSiteYear" %in% fit$meta$terms$random)
   expect_false("sSiteYear" %in% tidy(fit)$term)
+})
+
+test_that("the fit records the density structure in meta and terms", {
+  s <- density_structure(weight_fit$data)
+  expect_true(weight_fit$meta$density_on)
+  expect_equal(weight_fit$meta$density_mean, s$mean)
+  expect_equal(weight_fit$meta$density_sd, s$sd)
+  expect_equal(weight_fit$meta$density_levels, s$levels)
+  expect_true("bDensity" %in% weight_fit$meta$terms$fixed)
+})
+
+test_that("a fit without density records the term as off", {
+  skip_on_cran()
+  d <- droplevels(subset(
+    data_weight_sim_nereo,
+    site %in% c("site1", "site2") & year %in% c("2019", "2020")
+  ))
+  d$density <- NULL
+  fit <- kb_fit_weight_nereo(
+    d,
+    chains = 1,
+    niters = 50,
+    cores = 1,
+    progress = "none",
+    seed = 1
+  )
+  expect_false(fit$meta$density_on)
+  expect_false("bDensity" %in% fit$meta$terms$fixed)
 })

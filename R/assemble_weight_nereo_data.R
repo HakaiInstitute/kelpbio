@@ -11,6 +11,7 @@
 #' @param priors A list of the resolved named priors (see `resolve_priors()`).
 #' @param diameter_ref A number of the diameter reference, from
 #'   `weight_diameter_ref()`.
+#' @param density A list from `density_structure()`.
 #'
 #' @return A named list suitable for `rstan::sampling(stanmodels$weight_nereo, data = .)`.
 #' @noRd
@@ -18,6 +19,7 @@ assemble_weight_nereo_data <- function(
   data,
   priors,
   diameter_ref,
+  density = density_structure(data),
   prior_only = FALSE,
   site_year_on = TRUE
 ) {
@@ -34,18 +36,28 @@ assemble_weight_nereo_data <- function(
     diameter = as.numeric(data$diameter),
     weight = as.numeric(data$weight),
     diameter_ref = diameter_ref,
+    density = standardised_density(
+      data,
+      density$on,
+      density$mean,
+      density$sd,
+      density$levels
+    ),
     prior_intercept_mu = priors$intercept$mean,
     prior_intercept_sd = priors$intercept$sd,
     prior_power_mu = priors$power$mean,
     prior_power_sd = priors$power$sd,
     prior_floor_mu = priors$floor$mean,
     prior_floor_sd = priors$floor$sd,
+    prior_density_mu = priors$density$mean,
+    prior_density_sd = priors$density$sd,
     prior_sd_site_rate = priors$sd_site$rate,
     prior_sd_year_rate = priors$sd_year$rate,
     prior_sd_site_year_rate = priors$sd_site_year$rate,
     prior_sd_residual_rate = priors$sd_residual$rate,
     prior_only = as.integer(prior_only),
-    site_year_on = as.integer(site_year_on)
+    site_year_on = as.integer(site_year_on),
+    density_on = as.integer(density$on)
   )
 }
 

@@ -11,6 +11,12 @@
 #' the size-dependent part of the weight while the floor is common to all
 #' groups.
 #'
+#' When `data` has a `density` column (stipes per m², a site-year value),
+#' `log(alpha)` also includes `bDensity` times density standardised by its mean
+#' and SD over the fitted plants. Site-years without a recorded density take the
+#' mean. The density term is omitted when fewer than two distinct site-year
+#' densities are recorded.
+#'
 #' `niters` is the number of saved post-warmup draws per chain; warmup defaults
 #' to match `niters` and the post-warmup phase is thinned by `nthin`.
 #' The returned object stores the extracted posterior draws, diagnostics, data,
@@ -89,6 +95,8 @@ kb_fit_weight_nereo <- function(
   # The site:year effect is determined from the data
   site_year <- site_year_structure(data)
   notify_site_year(site_year, progress = progress)
+  density <- density_structure(data)
+  notify_density(density, progress = progress)
 
   priors <- resolve_priors(priors, kb_priors_weight_nereo())
   # Shared by the Stan fit and R-side predictions (stored in meta below).
@@ -97,6 +105,7 @@ kb_fit_weight_nereo <- function(
     data,
     priors,
     diameter_ref,
+    density = density,
     prior_only = prior_only,
     site_year_on = site_year$on
   )
@@ -108,6 +117,7 @@ kb_fit_weight_nereo <- function(
       "bWeight",
       "bPower",
       "bFloor",
+      "bDensity",
       "sSite",
       "sYear",
       "sSiteYear",
@@ -140,6 +150,7 @@ kb_fit_weight_nereo <- function(
         "bWeight",
         "bPower",
         "bFloor",
+        if (density$on) "bDensity",
         "sSite",
         "sYear",
         if (site_year$on) "sSiteYear",
@@ -156,6 +167,10 @@ kb_fit_weight_nereo <- function(
     meta_extra = list(
       predictor_ref = diameter_ref,
       site_year_on = site_year$on,
+      density_on = density$on,
+      density_mean = density$mean,
+      density_sd = density$sd,
+      density_levels = density$levels,
       # Predictor/response column names let the model-level prediction and plot
       # code stay species-agnostic (macro uses "fronds").
       predictor = "diameter",

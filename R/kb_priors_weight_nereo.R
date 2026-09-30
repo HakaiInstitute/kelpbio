@@ -9,10 +9,12 @@
 #' changed. `intercept` is on the log of the weight above the floor at the
 #' reference diameter, `power` is the allometric exponent, and `floor` is the
 #' weight (kg) as diameter approaches zero. `power` and `floor` are truncated at
-#' zero.
+#' zero. `density` is the effect of standardised stipe density on the log scale
+#' and is used only when the data include density.
 #'
 #' @return A named list of prior objects with entries `intercept`, `power`,
-#'   `floor`, `sd_site`, `sd_year`, `sd_site_year`, and `sd_residual`.
+#'   `floor`, `density`, `sd_site`, `sd_year`, `sd_site_year`, and
+#'   `sd_residual`.
 #' @family priors
 #' @export
 #'
@@ -25,6 +27,7 @@ kb_priors_weight_nereo <- function() {
     # power and floor are truncated at 0 by their Stan declarations.
     power = kb_prior_normal(mean = 2, sd = 1),
     floor = kb_prior_normal(mean = 0, sd = 0.5),
+    density = kb_prior_normal(mean = 0, sd = 0.5),
     sd_site = kb_prior_exponential(rate = 1),
     sd_year = kb_prior_exponential(rate = 1),
     sd_site_year = kb_prior_exponential(rate = 1),

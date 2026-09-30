@@ -50,6 +50,7 @@ kb_model_describe.kb_fit_weight_macro <- function(fit, prose = FALSE) {
 
 .model_spec_nereo <- function(fit) {
   sy <- .site_year_on(fit)
+  dens <- .density_on(fit)
   d0 <- signif(fit$meta$predictor_ref, 3)
   pri <- fit$meta$priors
 
@@ -66,6 +67,33 @@ kb_model_describe.kb_fit_weight_macro <- function(fit, prose = FALSE) {
     sYear = pri$sd_year,
     sSite = pri$sd_site
   )
+  centering <- sprintf(
+    "x = diameter / d0,  d0 = %s  (geometric mean diameter)",
+    format(d0)
+  )
+  density_prose <- ""
+  if (dens) {
+    m <- format(signif(fit$meta$density_mean, 3))
+    s <- format(signif(fit$meta$density_sd, 3))
+    mean_terms <- append(mean_terms, "bDensity * density", after = 1L)
+    priors <- append(priors, list(bDensity = pri$density), after = 3L)
+    centering <- paste0(
+      centering,
+      sprintf(
+        "\n  density = (stipe density - %s) / %s  (standardised site-year density)",
+        m,
+        s
+      )
+    )
+    density_prose <- sprintf(
+      paste0(
+        " The log of alpha also varied linearly with site-year stipe density, ",
+        "standardised by its mean (%s) and standard deviation (%s)."
+      ),
+      m,
+      s
+    )
+  }
   if (sy) {
     mean_terms <- c(mean_terms, "bSiteYear[site, year]")
     random <- c(
@@ -90,10 +118,7 @@ kb_model_describe.kb_fit_weight_macro <- function(fit, prose = FALSE) {
     ),
     mean_lhs = "log(alpha)",
     mean_terms = mean_terms,
-    centering = sprintf(
-      "x = diameter / d0,  d0 = %s  (geometric mean diameter)",
-      format(d0)
-    ),
+    centering = centering,
     random = random,
     priors = priors,
     truncated = c("bPower", "bFloor"),
@@ -104,7 +129,7 @@ kb_model_describe.kb_fit_weight_macro <- function(fit, prose = FALSE) {
         "three-parameter power function (Packard 2008) of diameter relative to ",
         "the geometric mean diameter (%s), in which bFloor is the weight as ",
         "diameter approaches zero, alpha the weight above the floor at the ",
-        "reference diameter, and bPower the allometric exponent. %s ",
+        "reference diameter, and bPower the allometric exponent. %s%s ",
         "Regularizing priors were placed on all parameters (see the notation ",
         "form for the hyperparameters)."
       ),
@@ -113,7 +138,8 @@ kb_model_describe.kb_fit_weight_macro <- function(fit, prose = FALSE) {
         "The log of alpha varied by year, by site, and by site-year."
       } else {
         "The log of alpha varied by year and by site."
-      }
+      },
+      density_prose
     )
   )
 }
