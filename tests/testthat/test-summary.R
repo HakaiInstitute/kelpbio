@@ -57,7 +57,7 @@ test_that("print.summary_kb_fit shows the slim header, table, and footer", {
   # rebuilt.
   redact <- function(lines) {
     lines <- sub("^(\\s*\\d+ \\S+)\\s+[-0-9.].*$", "\\1 <numerics>", lines)
-    lines <- sub("^(Predictor:.*geometric mean,) .*$", "\\1 <value>", lines)
+    lines <- sub("^(Predictor: [a-z]+, reference) [0-9.]+", "\\1 <value>", lines)
     sub(
       "^[0-9.]+% divergent.*min E-BFMI [0-9.]+\\.$",
       "<n>% divergent transitions; <n>% max-treedepth; min E-BFMI <n>.",

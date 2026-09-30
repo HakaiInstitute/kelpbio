@@ -19,7 +19,7 @@
     Output
       <kb_fit_weight_nereo>
       Model:     Weight (Nereocystis luetkeana)
-      Predictor: diameter, centered at its geometric mean, 35.8
+      Predictor: diameter, reference 35.8 (geometric mean)
       Data:      320 observations; groups: site (4), year (4), site:year (16)
       Draws:     2 chains, 300 post-warmup draws each (thin = 5), 600 total
       Converged: FALSE
@@ -32,7 +32,7 @@
     Output
       <kb_fit_weight_macro>
       Model:     Weight (Macrocystis pyrifera)
-      Predictor: fronds, centered at its geometric mean, 4.95
+      Predictor: fronds, reference 4.95 (geometric mean)
       Data:      240 observations; groups: site (4), year (3), site:year (12)
       Draws:     2 chains, 300 post-warmup draws each (thin = 5), 600 total
       Converged: TRUE
