@@ -153,3 +153,15 @@ test_that("kb_predict_weight errors on a weight fit with no species method", {
   )
   expect_match(conditionMessage(err), "kb_fit_weight_nereo")
 })
+
+test_that("new_data far outside the fitted range warns but still predicts", {
+  expect_warning(
+    p <- kb_predict_weight(
+      weight_fit,
+      data.frame(diameter = 3),
+      new_levels = "average"
+    ),
+    "far outside"
+  )
+  expect_equal(nrow(p), 1L)
+})

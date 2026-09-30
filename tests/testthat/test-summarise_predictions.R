@@ -20,7 +20,8 @@ test_that("the response and predictor names come from the fit, not a constant", 
   # The summariser is shared by every sub-model, so it must carry no knowledge of
   # weight or diameter.
   for (fit in list(weight_fit, weight_macro_fit)) {
-    grid <- build_by_grid(fit, character(0), values = c(2, 5))
+    values <- range(fit$data[[fit$meta$predictor]])
+    grid <- build_by_grid(fit, character(0), values = values)
     out <- summarise_predictions(
       fit,
       grid,

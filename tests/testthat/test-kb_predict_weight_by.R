@@ -105,3 +105,10 @@ test_that("kb_predict_weight_by errors on a weight fit with no species method", 
   )
   expect_match(conditionMessage(err), "kb_fit_weight_nereo")
 })
+
+test_that("a supplied predictor sequence far outside the fitted range warns", {
+  expect_warning(
+    kb_predict_weight_by(weight_fit, diameter = c(30, 500)),
+    "far outside"
+  )
+})
