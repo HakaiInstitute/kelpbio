@@ -7,11 +7,13 @@ R package for Bayesian kelp biomass estimation. All exported functions use the `
 | Task | Command |
 |------|---------|
 | Routine build + QC | `Rscript scripts/build.R` (runs `rstan_config()` → `install()` → `roxygen2md()` → `document()` → `test()`) |
-| Full check (slow) | `KELPBIO_FULL_CHECK=true Rscript scripts/build.R` (adds pkgdown and `R CMD check`) |
-| Rebuild pre-fit objects + fixtures (slow, MCMC) | `KELPBIO_REBUILD_FITS=true Rscript scripts/build.R` (re-fits `data/fit_weight_sim_*` and `tests/testthat/fixtures/*.rds`; run after changing the fit object structure or a model) |
+| Full check (slow) | `Rscript scripts/build.R --check` (adds pkgdown and `R CMD check`) |
+| Rebuild pre-fit objects + fixtures (slow, MCMC) | `Rscript scripts/build.R --fits` (re-fits `data/fit_weight_sim_*` and `tests/testthat/fixtures/*.rds`; run after changing the fit object structure or a model) |
 | Run all tests | `devtools::test()` |
 | Run one test file | `testthat::test_file("tests/testthat/test-<name>.R")` or `devtools::test_active_file()` |
 | Document | `devtools::document()` |
+
+The build runs are also Positron/VS Code tasks (Command Palette > "Tasks: Run Task" > "kelpbio: ...", `.vscode/tasks.json`). Flags combine (`--fits --check`); `--help` lists them.
 
 - **After editing any `inst/stan/*.stan` file**: run `rstantools::rstan_config()` (regenerates `src/stanExports_*` and `R/stanmodels.R`), then `devtools::install()`. `devtools::load_all()`/`test()` compile from the generated C++ but do NOT re-transpile the Stan source, so `.stan` edits are silently missed without `rstan_config()` first.
 - When a change removes exports, run `devtools::document()` before `devtools::install()`: install reads NAMESPACE and fails on exports that no longer exist.
