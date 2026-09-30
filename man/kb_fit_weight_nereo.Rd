@@ -78,39 +78,39 @@ and SD over the fitted plants. Site-years without a recorded density take the
 mean. The density term is omitted when fewer than two distinct site-year
 densities are recorded.
 
-\code{niters} is the number of saved post-warmup draws per chain; warmup defaults
-to match \code{niters} and the post-warmup phase is thinned by \code{nthin}.
-The returned object stores the extracted posterior draws, diagnostics, data,
-and metadata.
+The site:year effect is set from the data: it is omitted when the data span a
+single year and included otherwise. When no site spans more than one year it is
+kept with a warning, since the site and site:year effects cannot then be
+interpreted separately.
+}
+\section{Sampling}{
+
+\code{niters} is the number of saved post-warmup draws per chain; warmup defaults to
+match \code{niters} and the post-warmup phase is thinned by \code{nthin}.
 
 \code{progress} controls fit-time console output. The default \code{"bar"} shows a
 progress bar; \code{"verbose"} streams rstan's per-iteration output and its
 post-sampling diagnostic warnings; \code{"none"} is silent. \code{progress} changes only
-console output, never the fit; inspect convergence with \code{\link[=converged]{converged()}} /
-\code{\link[=glance]{glance()}} / \code{\link[=summary]{summary()}} in every mode.
+console output, never the fit; inspect convergence with \code{\link[=converged]{converged()}},
+\code{\link[=glance]{glance()}}, or \code{\link[=summary]{summary()}} in every mode.
 
-Supply \code{progress_dir} (an existing directory) to have the fit write a pollable
-progress artifact there, which \code{\link[=kb_fit_progress]{kb_fit_progress()}} reads to report the
-completed fraction from another R process (for example, to drive a progress
-indicator while the fit runs in the background).
+Supply \code{progress_dir} (an existing directory) to have the fit write a progress
+record there, which \code{\link[=kb_fit_progress]{kb_fit_progress()}} reads to report the completed fraction
+from another R process (for example, to drive a progress indicator while the fit
+runs in the background).
 
 Chains run in parallel by default (\code{cores = NULL} uses \code{getOption("mc.cores")},
 falling back to \code{chains}, capped at the available cores). Set
-\code{options(mc.cores = 1)} (or pass \code{cores = 1}) on shared servers, in
-containers, or inside another parallel context.
+\code{options(mc.cores = 1)} (or pass \code{cores = 1}) on shared servers, in containers,
+or inside another parallel context.
 
-The sampler runs with a conservative \code{adapt_delta = 0.95} by default, which
-reduces divergences at the cost of slightly longer runtime. Override it, or
-set any other sampler control, by passing a \code{control} list through \code{...}, e.g.
-\code{kb_fit_weight_nereo(data, control = list(adapt_delta = 0.99))}; only the
-entries supplied are changed. See the \code{control} argument of \code{\link[rstan:stan]{rstan::stan()}}
-for the full set of tunable entries (e.g. \code{adapt_delta}, \code{max_treedepth}).
-
-The site:year effect is set from the data: it is dropped when the data span a
-single year (then confounded with the site effect) and included otherwise.
-When no site spans more than one year it is kept with a warning, since \code{sSite}
-and \code{sSiteYear} are not then separately identified.
+The sampler runs with \code{adapt_delta = 0.95} by default, which reduces divergences
+at the cost of slightly longer runtime. Override it, or set any other sampler
+control, by passing a \code{control} list through \code{...}, e.g.
+\code{control = list(adapt_delta = 0.99)}; only the entries supplied are changed. See
+the \code{control} argument of \code{\link[rstan:stan]{rstan::stan()}} for the full set of entries.
 }
+
 \examples{
 if (interactive()) {
   fit <- kb_fit_weight_nereo(data_weight_sim_nereo)

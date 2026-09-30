@@ -6,6 +6,32 @@
 #' A flag is a non-missing logical scalar.
 #'
 #' A string is a non-missing character scalar.
+#'
+#' @section Sampling:
+#' `niters` is the number of saved post-warmup draws per chain; warmup defaults to
+#' match `niters` and the post-warmup phase is thinned by `nthin`.
+#'
+#' `progress` controls fit-time console output. The default `"bar"` shows a
+#' progress bar; `"verbose"` streams rstan's per-iteration output and its
+#' post-sampling diagnostic warnings; `"none"` is silent. `progress` changes only
+#' console output, never the fit; inspect convergence with [converged()],
+#' [glance()], or [summary()] in every mode.
+#'
+#' Supply `progress_dir` (an existing directory) to have the fit write a progress
+#' record there, which [kb_fit_progress()] reads to report the completed fraction
+#' from another R process (for example, to drive a progress indicator while the fit
+#' runs in the background).
+#'
+#' Chains run in parallel by default (`cores = NULL` uses `getOption("mc.cores")`,
+#' falling back to `chains`, capped at the available cores). Set
+#' `options(mc.cores = 1)` (or pass `cores = 1`) on shared servers, in containers,
+#' or inside another parallel context.
+#'
+#' The sampler runs with `adapt_delta = 0.95` by default, which reduces divergences
+#' at the cost of slightly longer runtime. Override it, or set any other sampler
+#' control, by passing a `control` list through `...`, e.g.
+#' `control = list(adapt_delta = 0.99)`; only the entries supplied are changed. See
+#' the `control` argument of [rstan::stan()] for the full set of entries.
 #
 #' @inheritParams rlang::args_dots_empty
 #' @param data A data frame of weight observations (see
