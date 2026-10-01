@@ -222,7 +222,11 @@ kb_predict_weight(
 # --- kb_plot_predictions() / autoplot() ---------------------------------------
 pop <- kb_predict_weight_by(fit)
 kb_plot_predictions(pop)
-kb_plot_predictions(pop, observed = data_weight_sim_nereo)
+# raw data are not drawn: the curve holds the other effects at typical values,
+# so the points are not a like-for-like comparison (see the 1:1 plot below).
+# Add them as a layer if wanted:
+kb_plot_predictions(pop) +
+  geom_point(aes(diameter, weight), data = data_weight_sim_nereo, alpha = 0.3)
 autoplot(pop)
 
 # wider uncertainty - draw from RE distributions (i.e. new, unobserved site)
@@ -483,7 +487,7 @@ kb_predict_weight_by(fit_m, by = "year", fronds = 10) |>
   coord_flip()
 
 kb_predict_weight_by(fit_m, by = "site") |>
-  kb_plot_predictions(observed = data_weight_sim_macro)
+  kb_plot_predictions()
 
 augment(fit_m) |>
   ggplot(aes(log(fitted), residual)) +
