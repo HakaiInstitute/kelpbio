@@ -51,7 +51,8 @@ Three conditions must be met:
 \item every parameter's Rhat below \code{rhat} (default 1.01)
 \item every parameter's effective sample rate (bulk effective sample size divided by the number of
 saved draws) above \code{esr} (default 0.1)
-\item the divergence rate at or below \code{max_perc_divergent} (default 0.2)
+\item the percentage of divergent transitions at or below \code{max_perc_divergent}
+(default 0.2, i.e. 0.2\% of saved draws)
 }
 
 Divergent transitions indicate that the sampler failed to explore part of

@@ -44,3 +44,15 @@ test_that("converged validates its thresholds", {
   expect_error(converged(weight_fit, max_perc_divergent = -1))
   expect_error(converged(weight_fit, max_perc_divergent = "0.2"))
 })
+
+test_that("converged ignores the diagnostics of omitted effects", {
+  off <- weight_fit
+  off$meta$terms$fixed <- setdiff(off$meta$terms$fixed, "bDensity")
+  s <- off$diagnostics$summary
+  s$rhat <- 1
+  s$ess_bulk <- posterior::ndraws(off$draws)
+  s$rhat[s$variable == "bDensity"] <- 2
+  off$diagnostics$summary <- s
+  off$diagnostics$perc_divergent <- 0
+  expect_true(converged(off))
+})

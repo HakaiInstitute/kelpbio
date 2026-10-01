@@ -58,3 +58,10 @@ test_that("missing, mistyped, and impossible values error", {
   zero_fronds$fronds <- 0 # boundary: fronds must be > 0
   expect_error(kb_check_data_weight_macro(zero_fronds))
 })
+
+test_that("weight in grams warns but still passes", {
+  data <- data_weight_sim_macro
+  data$weight <- data$weight * 1000
+  expect_warning(out <- kb_check_data_weight_macro(data), "kilograms")
+  expect_identical(out, data)
+})

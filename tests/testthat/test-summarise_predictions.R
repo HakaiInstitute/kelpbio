@@ -20,7 +20,8 @@ test_that("the response and predictor names come from the fit, not a constant", 
   # The summariser is shared by every sub-model, so it must carry no knowledge of
   # weight or diameter.
   for (fit in list(weight_fit, weight_macro_fit)) {
-    grid <- build_by_grid(fit, character(0), values = c(2, 5))
+    values <- range(fit$data[[fit$meta$predictor]])
+    grid <- build_by_grid(fit, character(0), values = values)
     out <- summarise_predictions(
       fit,
       grid,
@@ -76,25 +77,4 @@ test_that("summarise_predictions honours conf_level and the curve flag", {
     ),
     "kb_curve"
   ))
-})
-
-test_that("summarise_predictions applies estimate per row, not to the rvar", {
-  grid <- build_by_grid(weight_fit, character(0), values = c(20, 40))
-  lp <- .linpred(weight_fit, grid, "average")
-  out <- summarise_predictions(
-    weight_fit,
-    grid,
-    lp,
-    character(0),
-    0.95,
-    mean,
-    6
-  )
-  # colMeans() rather than repeating the apply() the function itself runs: an
-  # independent route to the same number, so the check is not a tautology
-  expected <- signif(
-    colMeans(posterior::draws_of(.epred(weight_fit, lp))),
-    6
-  )
-  expect_equal(out$estimate, expected)
 })

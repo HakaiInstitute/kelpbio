@@ -93,4 +93,32 @@ A flag is a non-missing logical scalar.
 
 A string is a non-missing character scalar.
 }
+\section{Sampling}{
+
+\code{niters} is the number of saved post-warmup draws per chain; warmup defaults to
+match \code{niters} and the post-warmup phase is thinned by \code{nthin}.
+
+\code{progress} controls fit-time console output. The default \code{"bar"} shows a
+progress bar; \code{"verbose"} streams rstan's per-iteration output and its
+post-sampling diagnostic warnings; \code{"none"} is silent. \code{progress} changes only
+console output, never the fit; inspect convergence with \code{\link[=converged]{converged()}},
+\code{\link[=glance]{glance()}}, or \code{\link[=summary]{summary()}} in every mode.
+
+Supply \code{progress_dir} (an existing directory) to have the fit write a progress
+record there, which \code{\link[=kb_fit_progress]{kb_fit_progress()}} reads to report the completed fraction
+from another R process (for example, to drive a progress indicator while the fit
+runs in the background).
+
+Chains run in parallel by default (\code{cores = NULL} uses \code{getOption("mc.cores")},
+falling back to \code{chains}, capped at the available cores). Set
+\code{options(mc.cores = 1)} (or pass \code{cores = 1}) on shared servers, in containers,
+or inside another parallel context.
+
+The sampler runs with \code{adapt_delta = 0.95} by default, which reduces divergences
+at the cost of slightly longer runtime. Override it, or set any other sampler
+control, by passing a \code{control} list through \code{...}, e.g.
+\code{control = list(adapt_delta = 0.99)}; only the entries supplied are changed. See
+the \code{control} argument of \code{\link[rstan:stan]{rstan::stan()}} for the full set of entries.
+}
+
 \keyword{internal}

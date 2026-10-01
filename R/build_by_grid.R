@@ -35,6 +35,7 @@ predictor_grid <- function(fit, predictor, values = NULL) {
     values <- seq(rng[1], rng[2], length.out = 30L)
   } else {
     chk::chk_numeric(values)
+    warn_outside_range(fit, values, predictor)
   }
   out <- tibble::tibble(x = values)
   names(out) <- predictor

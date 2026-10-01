@@ -64,3 +64,35 @@
       Error in `.chk_density()`:
       ! Column `density` of d must be greater than or equal to 0.
 
+# .chk_new_data errors name the invalid predictor column
+
+    Code
+      .chk_new_data_weight_nereo(data.frame(diameter = 0))
+    Condition
+      Error in `.chk_positive_measure()`:
+      ! Column `diameter` of data.frame(diameter = 0) must be greater than 0.
+
+---
+
+    Code
+      .chk_new_data_weight_nereo(data.frame(diameter = "30"))
+    Condition
+      Error in `.chk_positive_measure()`:
+      ! Column `diameter` of data.frame(diameter = "30") must be numeric.
+
+---
+
+    Code
+      .chk_new_data_weight_nereo(data.frame(diameter = NA_real_))
+    Condition
+      Error in `.chk_positive_measure()`:
+      ! Column `diameter` of data.frame(diameter = NA_real_) must not have missing values.
+
+---
+
+    Code
+      .chk_new_data_weight_macro(data.frame(fronds = 2.5))
+    Condition
+      Error in `.chk_frond_count()`:
+      ! Column `fronds` of data.frame(fronds = 2.5) must be a whole number.
+

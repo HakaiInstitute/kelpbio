@@ -1,5 +1,6 @@
-# Response scale: `expectation = TRUE` the mean, `FALSE` the inverse link. These
-# differ only for a mixture likelihood, so most methods ignore the flag.
+# Response scale: `expectation = TRUE` the mean, `FALSE` the inverse link. They
+# differ where the likelihood's mean is not the inverse link of the linear
+# predictor (the Nereocystis lognormal, a mixture); other methods ignore the flag.
 #
 # `lp` arrives either as a posterior rvar (from fitted() and the prediction
 # verbs) or as a D x N draws matrix (from the posterior_* generics), and a method

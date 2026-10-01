@@ -3,7 +3,8 @@
 #
 # Structure: basic functionality first (fit, accessors, predictions, plots),
 # then advanced functionality (priors, custom-prior/prior-only fits, control,
-# progress, site:year edge cases, raw posterior draws) further down.
+# progress, site:year edge cases, fits without density, raw posterior draws)
+# further down.
 #
 # Orientation: pair this with decisions/architecture.md (the design overview);
 # the behavioural contract lives in openspec/specs/, and the rendered pkgdown
@@ -28,6 +29,8 @@ str(data_weight_sim_nereo)
 fit_weight_sim_nereo
 
 # --- kb_check_data_weight_nereo() ---------------------------------------------
+# diameter in mm, weight in kg; density (stipes per m^2) is an optional column,
+# one value per site-year (NA where a site-year has no density survey)
 kb_check_data_weight_nereo(data_weight_sim_nereo)
 
 bad <- data_weight_sim_nereo
@@ -42,7 +45,20 @@ bad <- data_weight_sim_nereo
 bad$diameter[1] <- NA_real_
 try(kb_check_data_weight_nereo(bad)) # missing value
 
+# unit checks: data in the wrong unit fit without error but give wrong results,
+# so the data checks warn when a median is implausible (diameter below 10 or
+# above 200 mm, weight above 100 kg, density above 100 stipes per m^2). The data
+# still pass.
+cm <- mutate(data_weight_sim_nereo, diameter = diameter / 10)
+kb_check_data_weight_nereo(cm)
+grams <- mutate(data_weight_sim_macro, weight = weight * 1000)
+kb_check_data_weight_macro(grams)
+
 # --- kb_fit_weight_nereo() ----------------------------------------------------
+# The model: log weight ~ Normal, expected weight = bFloor + alpha * x^bPower
+# (Packard power function of diameter relative to its geometric mean), with year,
+# site, site:year, and stipe density effects on log(alpha). The simulated data
+# have density recorded for every site-year.
 fit <- kb_fit_weight_nereo(
   data_weight_sim_nereo
 )
@@ -59,7 +75,8 @@ glance(fit)
 converged(fit)
 summary(fit)
 
-# full model in scientific notation, or as a methods paragraph (prose = TRUE)
+# full model in scientific notation, or as a methods paragraph (prose = TRUE);
+# units, truncated priors (T[0, ]), and the density standardisation are shown
 kb_model_describe(fit)
 kb_model_describe(fit, prose = TRUE)
 
@@ -86,6 +103,8 @@ dim(log_lik(fit))
 loo::loo(log_lik(fit))
 
 # --- fitted / residuals / augment (observed-data diagnostics) -----------------
+# fitted values are expected (mean) weight: for the lognormal model that is the
+# median exp(mu) times exp(sWeight^2 / 2)
 head(fitted(fit))
 head(residuals(fit))
 # appends fitted and residuals point estimates
@@ -110,6 +129,34 @@ kb_predict_weight(fit, new_data = tibble(diameter = 40))
 # use generic (wrapper of kb_predict_weight)
 predict(fit)
 
+# stipe density: each row's density is resolved in order: a supplied value, the
+# recorded density of a fitted site-year, otherwise the fitted mean.
+kb_predict_weight(
+  fit,
+  new_data = tibble(
+    diameter = 40,
+    site = c(sites[1], sites[1], "new_reef"),
+    year = "2020",
+    density = c(8, NA, NA) # supplied, recorded site-year, new site (mean)
+  ),
+  new_levels = "average"
+)
+# density effect: expected weight at 40 mm across stand density
+kb_predict_weight(
+  fit,
+  new_data = tibble(diameter = 40, density = seq(1.5, 8, by = 0.5)),
+  new_levels = "average"
+) |>
+  kb_plot_predictions(x = "density")
+
+# unit checks at prediction (for example from a pre-fit model): values far
+# outside the fitted range warn, here diameters given in cm to a fit made in mm
+kb_predict_weight(fit, new_data = tibble(diameter = c(2.5, 4)))
+
+# new_data predictor values are validated
+try(kb_predict_weight(fit, new_data = tibble(diameter = -5)))
+try(kb_predict_weight(fit, new_data = tibble(diameter = NA_real_)))
+
 # --- kb_predict_weight_by()  --------------------------------------------------
 # builds a new_data grid based on 'by' grouping (for getting group-level effect
 # estimates and plotting curves by group)
@@ -119,11 +166,36 @@ kb_predict_weight_by(fit)
 # by default generate sequence of diameters across range
 kb_predict_weight_by(fit, by = "site")
 # set the diameter sequence (the predictor argument for a nereo fit)
-kb_predict_weight_by(fit, by = "site", diameter = 5)
+kb_predict_weight_by(fit, by = "site", diameter = 30)
+# site-year curves use each site-year's recorded density
 kb_predict_weight_by(fit, by = c("site", "year"))
 # typical site and year
-kb_predict_weight_by(fit, diameter = c(5, 15, 25))
-try(kb_predict_weight_by(fit, by = "year")) # no year main effect (nereo)
+kb_predict_weight_by(fit, diameter = c(15, 30, 45))
+# both species have a year main effect, so by = "year" works for nereo too
+kb_predict_weight_by(fit, by = "year", diameter = 30)
+
+# allometric curves at low, mean, and high stand density (stipes per m^2) for a
+# typical site and year: density scales the size-dependent part of the weight,
+# so the curves spread with plant size
+tidyr::expand_grid(
+  diameter = seq(15, 80, length.out = 40),
+  density = signif(c(1.5, fit$meta$density_mean, 8), 2)
+) |>
+  kb_predict_weight(fit, new_data = _, new_levels = "average") |>
+  ggplot(aes(
+    diameter,
+    estimate,
+    colour = factor(density),
+    fill = factor(density)
+  )) +
+  geom_ribbon(aes(ymin = lower, ymax = upper), alpha = 0.15, colour = NA) +
+  geom_line() +
+  labs(
+    x = "Sub-bulb diameter (mm)",
+    y = "Wet weight (kg)",
+    colour = "Stipes per m\u00b2",
+    fill = "Stipes per m\u00b2"
+  )
 
 # sample from RE dist for wider uncertainty, i.e. for new, unobserved site/year
 kb_predict_weight_by(fit, new_levels = "sample")
@@ -190,8 +262,10 @@ kb_prior_exponential(rate = 1)
 # priors are classed
 class(kb_prior_exponential(rate = 1))
 
+# intercept, power (allometric exponent), floor (weight in kg at diameter -> 0),
+# density, and the SDs; power and floor are truncated at zero by the model
 priors <- kb_priors_weight_nereo()
-priors$diameter <- kb_prior_normal(mean = 1.5, sd = 0.05)
+priors$power <- kb_prior_normal(mean = 2, sd = 0.05)
 priors$sd_site <- kb_prior_exponential(rate = 3)
 priors
 
@@ -202,12 +276,13 @@ fit_custom <- kb_fit_weight_nereo(
   progress = "none"
 )
 
-# very tight prior on bDiameter move the slope away from the default-prior posterior
+# a very tight prior on bPower pulls the exponent away from the default-prior
+# posterior (about 3)
 bind_rows(
   mutate(coef(fit), priors = "default"),
   mutate(coef(fit_custom), priors = "custom")
 ) |>
-  filter(term == "bDiameter")
+  filter(term == "bPower")
 
 # --- prior_only (prior predictive) --------------------------------------------
 # prior_only ignores observed weights; supplied data informs RE dimensions,
@@ -301,8 +376,27 @@ fit_aliased <- kb_fit_weight_nereo(
 )
 fit_aliased$meta$site_year_on # TRUE (retained despite non-identifiability)
 
+# An omitted effect is left out of every summary and of the draws: its draws were
+# sampled from the prior alone. No sSiteYear here:
+tidy(fit_one_year)
+pars(fit_one_year)
+"sSiteYear" %in% posterior::variables(samples(fit_one_year)) # FALSE
+
+# --- fits without density ----------------------------------------------------
+# Without a density column the density effect is omitted, silently: the model is
+# the same allometry without bDensity.
+no_density <- select(data_weight_sim_nereo, -density)
+fit_no_density <- kb_fit_weight_nereo(no_density, chains = 2, niters = 300)
+fit_no_density$meta$density_on # FALSE
+tidy(fit_no_density) # no bDensity
+
 # --- raw posterior draws (rstantools generics) --------------------------------
 # users may want more low-level access to the draws to do their own diagnostics/derived quants
+# posterior_epred() is expected (mean) weight; posterior_linpred(transform =
+# TRUE) is exp() of the linear predictor, the median. They differ by
+# exp(sWeight^2 / 2) for nereo:
+median(posterior_epred(fit, new_data = nd)[, 1])
+median(posterior_linpred(fit, transform = TRUE, new_data = nd)[, 1])
 class(posterior_epred(fit))
 dim(posterior_epred(fit))
 dim(posterior_epred(fit, new_data = nd))
@@ -344,10 +438,10 @@ try(kb_predict_weight(
 # SECOND SPECIES: MACROCYSTIS (Gamma on frond count)
 # =============================================================================
 # Macrocystis has its own fit function, priors, and data check because the model
-# differs structurally from nereo: the predictor is a frond COUNT (`fronds`), the
-# response is Gamma (dispersion scales with frond count via `alpha`), and there
-# is a year main effect. The fit object is the same class, so every accessor,
-# generic, and prediction/plot function above works unchanged.
+# differs structurally from nereo: the predictor is a frond COUNT (`fronds`) and
+# the response is Gamma with a constant shape (`shape`). The fit object is the
+# same class, so every accessor, generic, and prediction/plot function above
+# works unchanged.
 
 # --- bundled data + pre-fit model ---------------------------------------------
 str(data_weight_sim_macro)
@@ -361,7 +455,7 @@ bad$fronds[1] <- 5.5
 try(kb_check_data_weight_macro(bad)) # not a whole number
 
 # --- priors (macro-specific parameter set) ------------------------------------
-kb_priors_weight_macro() # intercept, fronds, shape (alpha), sd_site/year/site_year
+kb_priors_weight_macro() # intercept, fronds, shape, sd_site/year/site_year
 
 # --- fit ----------------------------------------------------------------------
 fit_m <- kb_fit_weight_macro(
@@ -372,17 +466,18 @@ fit_m <- kb_fit_weight_macro(
 )
 fit_m # slim header; kb_model_describe(fit_m) shows the Gamma model + structure
 
-# same accessors as nereo; the term list is macro's (bFronds, alpha, sYear)
+# same accessors as nereo; the term list is macro's (bFronds, shape)
 
 tidy(fit_m)
 glance(fit_m)
 summary(fit_m)
 
 # --- predictions --------------------------------------------------------------
-# new_data uses the `fronds` predictor (not diameter)
+# new_data uses the `fronds` predictor (not diameter); fronds must be whole numbers
 kb_predict_weight(fit_m, new_data = tibble(fronds = c(2, 5, 10, 15)))
+try(kb_predict_weight(fit_m, new_data = tibble(fronds = 2.5)))
 
-# macro HAS a year main effect, so by = "year" is available (it errors for nereo)
+# one estimate per year at 10 fronds
 kb_predict_weight_by(fit_m, by = "year", fronds = 10) |>
   kb_plot_predictions() +
   coord_flip()

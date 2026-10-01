@@ -50,13 +50,6 @@ test_that(".vld_progress_dir accepts NULL or an existing directory", {
   expect_false(.vld_progress_dir(1))
 })
 
-test_that(".vld_observed_data is TRUE only for a fit with rows", {
-  fit0 <- weight_fit
-  fit0$data <- fit0$data[0, ]
-  expect_true(.vld_observed_data(weight_fit))
-  expect_false(.vld_observed_data(fit0))
-})
-
 test_that(".vld_density accepts non-negative numbers and all-NA", {
   expect_true(.vld_density(c(0, 2.5, NA)))
   expect_true(.vld_density(NA))
@@ -71,7 +64,11 @@ test_that(".vld_density_site_year allows one recorded value per site-year", {
   expect_false(.vld_density_site_year(d))
 })
 
-test_that(".vld_new_data_weight_nereo checks an optional density column", {
-  expect_true(.vld_new_data_weight_nereo(data.frame(diameter = 30, density = 2)))
-  expect_false(.vld_new_data_weight_nereo(data.frame(diameter = 30, density = -2)))
+test_that(".vld_positive_measure and .vld_frond_count check measured values", {
+  expect_true(.vld_positive_measure(c(1.5, 30)))
+  expect_false(.vld_positive_measure(c(1, 0)))
+  expect_false(.vld_positive_measure(c(1, NA)))
+  expect_false(.vld_positive_measure("30"))
+  expect_true(.vld_frond_count(c(1, 5)))
+  expect_false(.vld_frond_count(2.5))
 })

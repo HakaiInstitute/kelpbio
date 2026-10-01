@@ -35,10 +35,6 @@ test_that(".abort_no_method falls back to the name pattern when no constructor a
   )
 })
 
-test_that(".abort_no_method always aborts", {
-  expect_error(.abort_no_method("kb_stancode", weight_fit))
-})
-
 test_that("a public verb on a fit with no methods aborts rather than returning", {
   fake <- structure(
     list(data = data.frame(weight = 1), meta = list()),

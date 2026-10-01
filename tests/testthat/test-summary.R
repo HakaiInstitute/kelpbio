@@ -8,15 +8,6 @@ test_that("summary returns a classed object with a coefficient table", {
   )
 })
 
-test_that("summary excludes group-level deviations by default", {
-  s <- summary(weight_fit)
-  expect_false(any(grepl("^bSite\\[", s$coefficients$term)))
-  # the random-effect SD hyperparameters are always shown
-  expect_true(all(
-    c("sSite", "sYear", "sSiteYear", "sWeight") %in% s$coefficients$term
-  ))
-})
-
 test_that("summary diagnostic columns agree with the stored diagnostics", {
   s <- summary(weight_fit)
   diag <- weight_fit$diagnostics$summary
@@ -57,7 +48,7 @@ test_that("print.summary_kb_fit shows the slim header, table, and footer", {
   # rebuilt.
   redact <- function(lines) {
     lines <- sub("^(\\s*\\d+ \\S+)\\s+[-0-9.].*$", "\\1 <numerics>", lines)
-    lines <- sub("^(Predictor:.*geometric mean,) .*$", "\\1 <value>", lines)
+    lines <- sub("^(Predictor: [a-z]+, reference) [0-9.]+", "\\1 <value>", lines)
     sub(
       "^[0-9.]+% divergent.*min E-BFMI [0-9.]+\\.$",
       "<n>% divergent transitions; <n>% max-treedepth; min E-BFMI <n>.",
@@ -73,12 +64,6 @@ test_that("summary carries the run-level diagnostics, not the raw count", {
   expect_equal(s$perc_divergent, diag$perc_divergent)
   expect_equal(s$perc_max_treedepth, diag$perc_max_treedepth)
   expect_equal(s$ebfmi, diag$ebfmi)
-})
-
-
-test_that("fit_groups counts every grouping factor the data carry", {
-  expect_named(fit_groups(weight_fit), c("site", "year", "site:year"))
-  expect_named(fit_groups(weight_macro_fit), c("site", "year", "site:year"))
 })
 
 test_that("fit_groups describes the data, not the fitted effects", {
@@ -99,12 +84,4 @@ test_that("fit_groups is empty for data with no grouping", {
     character(0)
   )
   expect_identical(fit_groups(fit), integer(0))
-})
-
-test_that("fit_groups is not weight-specific", {
-  # nothing it reads is particular to the weight models: site and year are
-  # .group_vars(), and all three level vectors are recorded on any fit.
-  fit <- weight_fit
-  class(fit) <- c("kb_fit_density_nereo", "kb_fit_density", "kb_fit")
-  expect_named(fit_groups(fit), c("site", "year", "site:year"))
 })

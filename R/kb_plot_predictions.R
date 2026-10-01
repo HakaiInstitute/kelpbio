@@ -178,9 +178,8 @@ kb_plot_predictions <- function(
 }
 
 # Publication-ready axis title for a prediction column: a descriptive label for
-# the known model variables. Units are appended in parentheses when supplied, but
-# the weight model leaves them unset (units are the user's choice), so labels are
-# unit-free. Unrecognised columns fall back to their name (sentence-cased).
+# the known model variables. Units are appended in parentheses when supplied; the
+# weight predictions supply none, so their labels are unit-free. Unrecognised columns fall back to their name (sentence-cased).
 kb_axis_label <- function(name, units = NA_character_) {
   base <- switch(
     name,

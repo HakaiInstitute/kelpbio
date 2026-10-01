@@ -1,5 +1,13 @@
 # Dev build / QC script for kelpbio.
 #
+#   Rscript scripts/build.R                 install, document, test
+#   Rscript scripts/build.R --check         + pkgdown site and R CMD check
+#   Rscript scripts/build.R --fits          + rebuild pre-fits and test fixtures
+#   Rscript scripts/build.R --fits --check  both
+#
+# In Positron (or VS Code), the same runs are tasks: Command Palette >
+# "Tasks: Run Task" > "kelpbio: ..." (.vscode/tasks.json).
+#
 # kelpbio is an rstan/rstantools package: Stan models in inst/stan/ are
 # transpiled to C++ and compiled into the package binary at build/install time.
 #
@@ -10,21 +18,41 @@
 #   * The generated files (R/stanmodels.R, src/stanExports_*, src/RcppExports.cpp)
 #     are not hand-edited and are excluded from styling.
 #   * Linting is handled by jarl in CI (.github/workflows/lint-with-jarl.yaml,
-#     configured by jarl.toml); this script no longer lints, so local and CI
-#     checks stay in sync.
-#   * The slow, authoritative steps (R CMD check, which re-runs configure ->
-#     rstan_config() and recompiles the models, plus the pkgdown site) run only
-#     when KELPBIO_FULL_CHECK=true, so routine runs stay fast:
-#       KELPBIO_FULL_CHECK=true Rscript scripts/build.R
-#   * The pre-fit example objects (data/fit_weight_sim_*) and test fixtures
-#     (tests/testthat/fixtures/*.rds) are rebuilt from their scripts only when
-#     KELPBIO_REBUILD_FITS=true; they run Stan MCMC, so they are off by default.
-#     Rebuild after changing the fit object structure (e.g. its class/meta) or a
-#     model, so the shipped objects match the current code:
-#       KELPBIO_REBUILD_FITS=true Rscript scripts/build.R
+#     configured by jarl.toml); this script does not lint.
+#   * --check runs the slow, authoritative steps (R CMD check, which re-runs
+#     configure -> rstan_config() and recompiles the models, plus pkgdown).
+#   * --fits rebuilds the pre-fit example objects (data/fit_weight_sim_*) and test
+#     fixtures (tests/testthat/fixtures/*.rds) from their scripts. They run Stan
+#     MCMC. Rebuild after changing the fit object structure or a model, so the
+#     shipped objects match the current code.
+#   * The environment variables KELPBIO_FULL_CHECK=true and
+#     KELPBIO_REBUILD_FITS=true still switch on the same steps.
 
-full_check <- isTRUE(as.logical(Sys.getenv("KELPBIO_FULL_CHECK", "false")))
-rebuild_fits <- isTRUE(as.logical(Sys.getenv("KELPBIO_REBUILD_FITS", "false")))
+usage <- paste(
+  "Usage: Rscript scripts/build.R [--check] [--fits]",
+  "  --check  also build the pkgdown site and run R CMD check",
+  "  --fits   also rebuild the pre-fit models and test fixtures (Stan MCMC)",
+  sep = "\n"
+)
+args <- commandArgs(trailingOnly = TRUE)
+if (any(c("--help", "-h") %in% args)) {
+  cat(usage, "\n", sep = "")
+  quit(status = 0)
+}
+unknown <- setdiff(args, c("--check", "--fits"))
+if (length(unknown)) {
+  cat("Unknown option: ", paste(unknown, collapse = " "), "\n\n", usage, "\n", sep = "")
+  quit(status = 1)
+}
+
+env_flag <- function(name) isTRUE(as.logical(Sys.getenv(name, "false")))
+full_check <- "--check" %in% args || env_flag("KELPBIO_FULL_CHECK")
+rebuild_fits <- "--fits" %in% args || env_flag("KELPBIO_REBUILD_FITS")
+message(
+  "Build: install, document, test",
+  if (rebuild_fits) " + rebuild fits",
+  if (full_check) " + pkgdown + R CMD check"
+)
 
 # devtools::load_all()/test() and the fit-rebuild scripts compile the Stan models
 # in DEBUG mode (-O0 -g), leaving oversized unoptimized objects in src/. The

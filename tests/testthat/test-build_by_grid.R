@@ -55,13 +55,8 @@ test_that("a model with neither predictor nor grouping gets one population row",
 })
 
 test_that("an absent predictor reads as absent, not as predictor_ref", {
-  # `$` on a list falls back to partial matching, so fit$meta$predictor returns
-  # the numeric predictor_ref when no predictor is recorded. build_by_grid() would
-  # then index fit$data by a double. Read exactly.
-  meta <- list(predictor_ref = 43.08, site_levels = "a")
-  expect_type(meta$predictor, "double")
-  expect_null(meta[["predictor"]])
-
+  # `$` on a list falls back to partial matching, so fit$meta$predictor would
+  # return the numeric predictor_ref when no predictor is recorded.
   fit <- weight_fit
   fit$meta[["predictor"]] <- NULL
   expect_no_error(build_by_grid(fit, "site"))

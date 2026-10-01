@@ -35,10 +35,10 @@ kb_predict_weight(fit, ...)
 
 \item{...}{Passed to the species method (currently only the shared arguments).}
 
-\item{new_data}{A data frame with the fit's predictor column (\code{diameter} for
-\emph{Nereocystis}, \code{fronds} for \emph{Macrocystis}) and optional \code{site} / \code{year}
-columns (and, for \emph{Nereocystis}, an optional \code{density} column), or \code{NULL}
-to predict at the observed data.}
+\item{new_data}{A data frame with the fit's predictor column (\code{diameter} in
+millimetres for \emph{Nereocystis}, \code{fronds} for \emph{Macrocystis}) and optional
+\code{site} / \code{year} columns (and, for \emph{Nereocystis}, an optional \code{density}
+column in stipes per m²), or \code{NULL} to predict at the observed data.}
 
 \item{new_levels}{A string, one of \code{"sample"} or \code{"average"}, controlling how
 random effects that are not conditioned on are treated (factors absent from

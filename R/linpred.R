@@ -117,6 +117,13 @@ data_linpred <- function(
   } else {
     .chk_new_data(fit, new_data)
     grid <- tibble::as_tibble(new_data)
+    predictor <- fit$meta[["predictor"]]
+    if (!is.null(predictor)) {
+      warn_outside_range(fit, grid[[predictor]], predictor)
+    }
+    if (.density_on(fit) && "density" %in% names(grid)) {
+      warn_outside_range(fit, grid$density, "density", lower = FALSE)
+    }
   }
   list(
     grid = grid,

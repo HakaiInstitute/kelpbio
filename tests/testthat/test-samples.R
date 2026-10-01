@@ -12,3 +12,10 @@ test_that("samples errors on an object that is not a fit", {
   expect_error(samples(1), "must be a <kb_fit> object")
   expect_equal(rlang::catch_cnd(samples(1))$call, quote(samples(1)))
 })
+
+test_that("samples excludes effects the fit omitted", {
+  off <- weight_fit
+  off$meta$density_on <- FALSE
+  off$meta$terms$fixed <- setdiff(off$meta$terms$fixed, "bDensity")
+  expect_false("bDensity" %in% posterior::variables(samples(off)))
+})

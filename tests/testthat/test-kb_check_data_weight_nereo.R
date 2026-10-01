@@ -75,3 +75,10 @@ test_that("an optional density column is validated", {
   bad$density <- c(3, 4, 5)
   expect_snapshot(error = TRUE, kb_check_data_weight_nereo(bad))
 })
+
+test_that("data in the wrong unit warn but still pass", {
+  data <- data_weight_sim_nereo
+  data$diameter <- data$diameter / 10
+  expect_warning(out <- kb_check_data_weight_nereo(data), "millimetres")
+  expect_identical(out, data)
+})

@@ -111,3 +111,10 @@ test_that(".chk_new_data_weight_nereo errors on a negative density", {
   d <- data.frame(diameter = 30, density = -2)
   expect_snapshot(error = TRUE, .chk_new_data_weight_nereo(d))
 })
+
+test_that(".chk_new_data errors name the invalid predictor column", {
+  expect_snapshot(error = TRUE, .chk_new_data_weight_nereo(data.frame(diameter = 0)))
+  expect_snapshot(error = TRUE, .chk_new_data_weight_nereo(data.frame(diameter = "30")))
+  expect_snapshot(error = TRUE, .chk_new_data_weight_nereo(data.frame(diameter = NA_real_)))
+  expect_snapshot(error = TRUE, .chk_new_data_weight_macro(data.frame(fronds = 2.5)))
+})

@@ -11,11 +11,7 @@ test_that("residuals are deviance, not raw response residuals", {
 })
 
 test_that("macro gets Gamma deviance residuals, not the nereo Normal ones", {
-  # the shared shape (type, length, finiteness) is covered above; what is
-  # macro-specific is that its own likelihood is used
   r <- residuals(weight_macro_fit)
-  expect_length(r, nobs(weight_macro_fit))
-  expect_true(all(is.finite(r)))
   mu <- posterior::draws_of(.linpred_obs(weight_macro_fit))
   expect_equal(
     r,

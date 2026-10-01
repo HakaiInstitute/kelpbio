@@ -147,14 +147,16 @@ summary.kb_fit <- function(
   list(predictor = NA_character_, groups = integer(0))
 }
 
-# One method for both species: the predictor name and its centering reference are
-# stored generically.
+# One method for both species: the predictor name and its reference value are
+# stored generically. The wording fits both models, since nereo divides diameter
+# by the reference and macro centres log-fronds on its log.
 .fit_descriptor.kb_fit_weight <- function(x) {
   list(
     predictor = paste0(
       x$meta[["predictor"]],
-      ", centered at its geometric mean, ",
-      signif(x$meta$predictor_ref, 3)
+      ", reference ",
+      signif(x$meta$predictor_ref, 3),
+      " (geometric mean)"
     ),
     groups = fit_groups(x)
   )

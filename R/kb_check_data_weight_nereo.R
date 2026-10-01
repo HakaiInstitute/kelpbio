@@ -52,6 +52,7 @@ kb_check_data_weight_nereo <- function(
     .chk_density_site_year(data, x_name = x_name)
   }
 
+  warn_implausible_units(data, x_name)
   invisible(data)
 }
 

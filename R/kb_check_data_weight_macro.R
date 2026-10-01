@@ -3,13 +3,12 @@
 #' Check that `data` contains the columns required to fit the *Macrocystis
 #' pyrifera* weight model, with appropriate types and values.
 #'
-#' Required columns: whole-number `fronds` (> 0), numeric `weight` (> 0), and
+#' Required columns: whole-number `fronds` (> 0), numeric `weight` (kg, > 0), and
 #' factor or character `site` and `year`, with no missing values.
 #'
 #' @details
 #' `fronds` is the frond count used as the size predictor (in the Hakai surveys,
-#' the number of fronds at least 1 m long with recorded biomass). `weight` may be
-#' in any units, provided prediction data use the same units as the fitted data.
+#' the number of fronds at least 1 m long with recorded biomass).
 #'
 #' @inheritParams params
 #' @param x_name A string naming `data` in error messages.
@@ -52,5 +51,6 @@ kb_check_data_weight_macro <- function(
     chk::chk_not_any_na(data[[col]], x_name = nm)
   }
 
+  warn_implausible_units(data, x_name)
   invisible(data)
 }

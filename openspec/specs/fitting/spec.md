@@ -2,230 +2,135 @@
 
 ## Purpose
 
-Fitting the Nereocystis and Macrocystis weight models and the kb_fit object contract: draws-not-stanfit storage, prior-only / zero-observation support, and sampler control.
+Fitting a model: the input data and its checks, the priors, how the data determine
+which effects are fitted, sampler control and progress, and what a fit object
+holds. The exact model each fit function estimates (likelihood, mean, effects,
+priors) is the one `kb_model_describe()` reports, pinned by
+`tests/testthat/_snaps/kb_model_describe.md`.
 ## Requirements
-### Requirement: Fit the Nereocystis weight model
+### Requirement: Fit a weight model
 
-`kb_fit_weight_nereo(data, priors, ..., prior_only, chains, niters, nthin, cores, seed, progress, progress_dir)` SHALL fit the *Nereocystis luetkeana* allometric weight model (Packard three-parameter power mean with year, site, and a data-determined site:year random effect on its scale, and an optional stipe density covariate) via `stanmodels$weight_nereo` and return an object of class `c("kb_fit_weight_nereo", "kb_fit_weight", "kb_fit")`. The species is fixed by the function (there is no `species` argument); it is recorded as `"nereocystis"` in `meta$species`. There SHALL be no `site_year_on` argument: the site:year effect is determined from the data (see below) and the determination is recorded in `meta$site_year_on`.
+`kb_fit_weight_nereo()` and `kb_fit_weight_macro()` SHALL fit the species' weight model and return a `kb_fit` object. Arguments SHALL be validated before sampling. Fitting SHALL need no Stan toolchain on the user's machine, and changing a prior's hyperparameters SHALL need no recompilation; a prior's family is fixed by the model.
 
-The site:year effect SHALL be included when the data span more than one distinct year and omitted otherwise. When years are present but no site was sampled in more than one year (an aliased design in which the site and site:year contributions are not separately identifiable) the effect SHALL be retained and a `cli` warning issued; predictions conditioned on the observed site-years are unaffected, but the individual site and site:year terms and their standard deviations (`sSite`, `sSiteYear`) are prior-driven and SHALL NOT be interpreted separately. When the effect is omitted an informational message SHALL be issued unless `progress = "none"`.
+#### Scenario: Returns a fit
+- **WHEN** a fit function is called on valid data
+- **THEN** it returns an object inheriting from `kb_fit`, `kb_fit_weight`, and the species class (`kb_fit_weight_nereo` or `kb_fit_weight_macro`)
 
-#### Scenario: Returns a kb_fit_weight object
-- **WHEN** `kb_fit_weight_nereo()` is called on valid weight data
-- **THEN** it returns an object of class `c("kb_fit_weight_nereo", "kb_fit_weight", "kb_fit")` with `meta$species` equal to `"nereocystis"`
+#### Scenario: Invalid arguments error before sampling
+- **WHEN** a fit function is called with invalid data, an invalid sampler argument, or a prior of the wrong family
+- **THEN** it errors with a `cli` message before any sampling, a family mismatch saying that a different family needs a different model
 
-#### Scenario: Arguments are validated at entry
-- **WHEN** `kb_fit_weight_nereo()` is called with an invalid argument (e.g. bad `data`, a `priors` entry of the wrong family)
-- **THEN** it errors at entry via `chk`/`cli` before sampling (a family mismatch reports that a family change needs a different model variant)
+### Requirement: Input data
 
-#### Scenario: Site:year effect included for multi-year data
-- **WHEN** the data span more than one year and at least one site is sampled in more than one year
-- **THEN** the site:year effect is included (`meta$site_year_on` is `TRUE`) and no structural message is issued
+The required columns SHALL be `diameter` (mm, > 0), `weight` (kg, > 0), `site`, and `year` for *Nereocystis*, and `fronds` (a positive whole number), `weight` (> 0), `site`, and `year` for *Macrocystis*, with `site` and `year` character or factor and no missing values. *Nereocystis* data MAY include `density`, the stipe density (stipes per m²) of the plant's site-year: numeric, `>= 0`, `NA` where not recorded, and at most one distinct value per site-year. `kb_check_data_weight_nereo()` and `kb_check_data_weight_macro()` SHALL apply these checks, returning the data invisibly, and the fit functions SHALL apply them at entry.
 
-#### Scenario: Site:year effect omitted for single-year data
-- **WHEN** the data contain fewer than two distinct years
-- **THEN** the site:year effect is omitted (`meta$site_year_on` is `FALSE`) and, unless `progress = "none"`, an informational message reports the omission
+#### Scenario: Valid data passes
+- **WHEN** a data check is called on data meeting the requirements
+- **THEN** it returns the data invisibly with no message
 
-#### Scenario: Aliased design retains the effect with a warning
-- **WHEN** the data span more than one year but no site is sampled in more than one year
-- **THEN** the site:year effect is retained (`meta$site_year_on` is `TRUE`) and a `cli` warning reports that the site and site:year effects are not separately identifiable and that the estimate reflects the prior
+#### Scenario: A bad column errors naming it
+- **WHEN** a required column is missing, of the wrong type, out of range, or contains `NA`
+- **THEN** it errors with a message naming the column
 
-### Requirement: Fit object stores draws, not the stanfit
+#### Scenario: Conflicting density within a site-year errors
+- **WHEN** two rows of the same site-year carry different `density` values
+- **THEN** it errors naming the site-year
 
-The returned `kb_fit` SHALL store extracted posterior draws (a `posterior` draws object) plus sampler diagnostics, the input data, and resolved metadata — and SHALL NOT retain the live `stanfit`.
+#### Scenario: Density is optional
+- **WHEN** *Nereocystis* data have no `density` column, or one of all `NA`
+- **THEN** the data pass
 
-The fit SHALL NOT store any per-observation quantity. Neither the pointwise
-log-likelihood nor posterior-predictive replicates are retained: both scale as
-`nObs x ndraws` and would dominate the object, so both are recomputed in R from
-the stored draws on demand. Object size is therefore a function of the draw count
-alone, not of the number of observations.
+### Requirement: The data determine which effects are fitted
 
-The stored sampler diagnostics SHALL comprise the per-parameter Rhat and bulk/tail
-effective sample sizes, and the run-level divergent-transition count, divergence
-rate, treedepth-saturation rate, and minimum E-BFMI across chains. Every one of
-these SHALL be computed while the `stanfit` is still in scope, since none can be
-recovered from the stored draws afterwards.
+The site:year effect SHALL be included when the data span more than one year and omitted otherwise. When no site was sampled in more than one year it SHALL be retained with a warning that the site and site:year effects cannot be interpreted separately.
 
-The rates SHALL be derived from rstan's own per-iteration diagnostic vectors, so
-the numerator and the denominator come from one source and the reported
-percentages match the warnings rstan itself would emit. Because rstan records
-sampler parameters per saved iteration, a rate is over retained draws: with
-`nthin > 1` divergences on thinned-away iterations are not observable.
+The *Nereocystis* density effect SHALL be included when at least two distinct site-year densities are recorded, with density standardised by its mean and SD over the fitted plants. A row with `NA` takes its site-year's recorded value; site-years with no recorded density take the mean.
 
-#### Scenario: Draws and diagnostics are retained, stanfit discarded
-- **WHEN** the fit object is inspected
-- **THEN** it exposes posterior draws (the fixed effects `bWeight`, `bPower`, `bFloor`; the SDs `sSite`, `sYear`, `sSiteYear`, `sWeight`; the per-site `bSite`; the per-year `bYear`; the site-by-year `bSiteYear`) and diagnostics, and contains no live `stanfit`
+An omitted effect SHALL not be fitted, reported, or used in prediction (see summaries and predictions). Informational messages SHALL report an omitted site:year effect, a `density` column that yields no density effect, and the number of site-years without recorded density; none is issued when there is no `density` column, and all are suppressed by `progress = "none"`.
 
-#### Scenario: Sampler diagnostics survive the stanfit
-- **WHEN** the fit object is inspected
-- **THEN** its diagnostics carry the divergent-transition count, the divergence and treedepth-saturation rates, and the minimum E-BFMI, so `converged()`, `glance()`, and `print(summary(fit))` need no live `stanfit`
+#### Scenario: Single-year data omit site:year
+- **WHEN** the data contain one year
+- **THEN** the fit has no site:year effect and, unless `progress = "none"`, a message says so
 
-#### Scenario: A rate with no draws is unknown, not zero
-- **WHEN** a rate would be computed against an empty denominator
-- **THEN** it is `NA`, so the verdict surfaces the missing evidence rather than passing
+#### Scenario: Aliased design warns
+- **WHEN** the data span several years but no site spans more than one
+- **THEN** the site:year effect is retained and a warning is issued
 
-### Requirement: Prior-only and zero-observation fits
-
-`kb_fit_weight_nereo()` SHALL support fitting from the priors alone.
-
-#### Scenario: prior_only ignores the data
-- **WHEN** `kb_fit_weight_nereo(data, prior_only = TRUE)` is called
-- **THEN** the resulting draws reflect the priors only (a fit on permuted responses yields the same prior-only distribution)
-
-#### Scenario: Empty data is accepted under prior_only
-- **WHEN** `kb_fit_weight_nereo()` is given a zero-row data frame with `prior_only = TRUE`
-- **THEN** it returns a valid `kb_fit_weight` object sampled from the priors
-
-### Requirement: Sampler control
-
-`kb_fit_weight_nereo()` SHALL expose `chains`, `niters`, `nthin`, `cores`, `seed`, `progress`, and `progress_dir` as first-class arguments and forward other arguments to `rstan::sampling()` via `...`. `seed` (default `NULL`) SHALL be forwarded to `rstan::sampling()`; when `NULL`, rstan derives its own seed from R's RNG so a preceding `set.seed()` makes the fit reproducible, and an explicit `seed` takes precedence. `niters` is the number of saved post-warmup draws per chain (default `1000`); warmup defaults to match and the post-warmup phase is thinned by `nthin` (default `1`, no thinning). The sampler SHALL run with `adapt_delta = 0.95` by default (raised above Stan's `0.8` for the hierarchical geometry); `adapt_delta` is not a first-class argument, but a `control` list passed through `...` SHALL be merged over this default so power users can override `adapt_delta` or set other control entries (e.g. `max_treedepth`) without dropping it. The sampler SHALL NOT open an HTML progress viewer (`open_progress = FALSE`).
-
-`progress` SHALL be a string, one of `"bar"` (default), `"verbose"`, or `"none"`, validated with `rlang::arg_match()`. It controls only fit-time console output; it SHALL NOT change the returned object, the draws, or reproducibility.
-
-- `progress = "bar"` SHALL display a determinate console progress bar that advances with the fraction of sampler iterations (warmup and sampling) completed across all chains, and SHALL suppress rstan's raw per-iteration stream and its post-sampling HMC diagnostic warnings.
-- `progress = "verbose"` SHALL stream rstan's per-iteration output AND its post-sampling HMC diagnostic warnings (divergent transitions, treedepth, low BFMI, Rhat/ESS) to the console (the previous default behaviour), and SHALL NOT display the progress bar.
-- `progress = "none"` SHALL suppress all fit-time output (progress bar, rstan stream, and HMC warnings), muffled at the call site, not via a global option.
-
-`progress_dir` (default `NULL`) SHALL be `NULL` or a path to an existing, writable directory, validated at entry. When a directory is supplied, `kb_fit_weight_nereo()` SHALL write a kelpbio-owned, pollable progress artifact into it while the fit runs (a manifest recording the total expected iterations, plus the working sampler output), so another R process can read fit progress via `kb_fit_progress()`. Writing the artifact SHALL be independent of `progress`: it is produced under any of `"bar"`, `"verbose"`, `"none"` whenever `progress_dir` is supplied. A caller-supplied `progress_dir` and its contents are the caller's to clean up; kelpbio SHALL NOT delete a caller-supplied directory, and the artifact SHALL remain readable after the fit completes (a final poll reads complete). When `progress_dir` is `NULL` no external artifact is produced (the console `"bar"` may use an internal temporary location that it removes on exit).
-
-A structured convergence summary SHALL be available regardless of `progress` through `converged()`/`glance()` (Rhat and the effective sample rate) and `summary()` (per-term Rhat/ESS and the divergent-transition count). `cores = NULL` SHALL resolve to `getOption("mc.cores")` (falling back to `chains`), capped at the available cores so the default never oversubscribes; servers, containers, and `load_all()`-on-Windows users can throttle via `options(mc.cores = 1)` or `cores = 1`.
-
-`kb_fit_weight_macro()` exposes the same sampler-control arguments (`chains`, `niters`, `nthin`, `cores`, `seed`, `progress`, `progress_dir`) with identical semantics: both fit functions route through the shared internal engine `fit_stan()`, so the `progress` modes, `adapt_delta = 0.95` default and `control` merge, `cores` resolution, and `open_progress = FALSE` behaviour are the same for either species.
-
-#### Scenario: niters means saved post-warmup draws
-- **WHEN** `kb_fit_weight_nereo(niters = 1000, nthin = 2, chains = 4)` is called
-- **THEN** `niters(fit)` is `1000` (saved draws per chain) regardless of `nthin`
-
-#### Scenario: Defaults and parallelism
-- **WHEN** `kb_fit_weight_nereo()` is called with defaults
-- **THEN** it fits `chains = 4` with `nthin = 1`, runs chains in parallel using `getOption("mc.cores")` (falling back to `chains`) capped at the available cores, and (`progress = "bar"`) displays a determinate console progress bar without opening an HTML progress viewer
-
-#### Scenario: Parallelism can be throttled
-- **WHEN** `options(mc.cores = 1)` is set (or `cores = 1` is passed)
-- **THEN** the fit runs the chains serially, so it is safe on shared servers, in containers, and from `devtools::load_all()` on Windows
-
-#### Scenario: adapt_delta default and override
-- **WHEN** `kb_fit_weight_nereo()` is called with defaults, and separately with `control = list(adapt_delta = 0.99)` or `control = list(max_treedepth = 12)`
-- **THEN** the default fit samples at `adapt_delta = 0.95`; a supplied `control` is merged over the default so `adapt_delta = 0.99` overrides it and `max_treedepth = 12` is added while `adapt_delta = 0.95` is retained
-
-#### Scenario: Progress bar is the default
-- **WHEN** `kb_fit_weight_nereo()` is called with the default `progress = "bar"`
-- **THEN** a determinate progress bar advances with the fraction of iterations completed, rstan's raw per-iteration stream and HMC warnings do not reach the console, and the convergence summary remains available through `converged()`/`glance()`/`summary()`
-
-#### Scenario: Verbose reproduces the rstan stream
-- **WHEN** `kb_fit_weight_nereo(progress = "verbose")` is called
-- **THEN** rstan's per-iteration output and its post-sampling HMC diagnostic warnings (divergent transitions, treedepth, low BFMI, Rhat/ESS) reach the console and no progress bar is shown
-
-#### Scenario: None is silent
-- **WHEN** `kb_fit_weight_nereo(progress = "none")` is called
-- **THEN** no progress bar, rstan stream, or HMC warnings reach the console (suppressed at the call site, not via a global option); the convergence summary remains available through `converged()`/`glance()`/`summary()`
-
-#### Scenario: Invalid progress value errors at entry
-- **WHEN** `kb_fit_weight_nereo(progress = "loud")` is called
-- **THEN** it errors at entry via `rlang::arg_match()` before sampling, reporting the allowed values `"bar"`, `"verbose"`, `"none"`
-
-#### Scenario: Progress does not affect the draws
-- **WHEN** the same model is fit twice with the same `seed` (or the same preceding `set.seed()`) but different `progress` values
-- **THEN** the returned draws are identical: `progress` changes only console output
-
-#### Scenario: progress_dir writes a pollable artifact independent of console mode
-- **WHEN** `kb_fit_weight_nereo(data, progress_dir = d, progress = "none")` is called with `d` an existing writable directory
-- **THEN** a kelpbio-owned progress artifact is written into `d` during the fit (readable via `kb_fit_progress(d)`), no console output is produced, and the artifact remains in `d` after the fit returns (kelpbio does not delete a caller-supplied directory)
-
-#### Scenario: Invalid progress_dir errors at entry
-- **WHEN** `kb_fit_weight_nereo(data, progress_dir = "/no/such/dir")` is called with a path that is not an existing writable directory
-- **THEN** it errors at entry via `chk`/`cli` before sampling
-
-### Requirement: External fit-progress polling
-
-`kb_fit_progress(progress_dir)` SHALL be an exported function returning the completed fraction of a fit, as a number in `[0, 1]`, read from the kelpbio-owned progress artifact written by `kb_fit_weight_nereo(..., progress_dir = progress_dir)`. It SHALL enable a separate R process (for example a Shiny session polling a fit running in an `ExtendedTask` background process) to read progress without parsing the on-disk format itself. The same artifact is written by `kb_fit_weight_macro(..., progress_dir = progress_dir)`, and `kb_fit_progress()` reads it identically regardless of which fit function produced it. The fraction SHALL be computed as complete saved sampler rows across all chains (counting the thinned warmup and post-warmup rows) divided by the total expected saved rows, excluding the artifact's header and comment lines and ignoring any incomplete trailing row. A chain whose completion marker is present SHALL count as fully complete, so the function returns exactly `1` once every chain has finished regardless of small differences in the expected-row estimate. `progress_dir` SHALL be validated as a string path.
-
-#### Scenario: Returns the completed fraction
-- **WHEN** `kb_fit_progress(progress_dir)` is called while a fit writing to `progress_dir` is partway through sampling
-- **THEN** it returns a number in `[0, 1]` equal to the fraction of expected sampler iterations completed so far
-
-#### Scenario: Zero before progress, complete at end
-- **WHEN** `kb_fit_progress(progress_dir)` is called before any sampler rows are written (or on a directory holding no progress artifact yet), and separately after the fit has finished
-- **THEN** it returns `0` in the first case and `1` in the second, without erroring
-
-#### Scenario: Does not error on a torn read
-- **WHEN** `kb_fit_progress(progress_dir)` reads the artifact while another process is writing a row to it
-- **THEN** it ignores the incomplete trailing row and returns a valid fraction rather than erroring
-
-### Requirement: Fit the Macrocystis weight model
-
-`kb_fit_weight_macro(data, priors, ..., prior_only, chains, niters, nthin,
-cores, seed, progress, progress_dir)` SHALL fit the *Macrocystis pyrifera*
-allometric weight model via `stanmodels$weight_macro` and return an object of
-class `c("kb_fit_weight_macro", "kb_fit_weight", "kb_fit")`. The model is a Gamma GLM: the expected
-weight is `exp(bWeight + bSite[site] + bFronds * (log(fronds) -
-log(fronds_ref)) + bYear[year] + site:year)`, and the response is
-`weight ~ Gamma(shape, shape / eWeight)`, a constant Gamma shape
-`shape`. The species is
-fixed by the function (there is no `species` argument); it is recorded as
-`"macrocystis"` in `meta$species`. The site:year effect is data-determined by the
-same rule as the *Nereocystis* model (included when the data span more than one
-distinct year, omitted otherwise, retained with a `cli` warning under an aliased
-design) and recorded in `meta$site_year_on`. The sampler invocation, draw
-extraction, and diagnostics are delegated to the shared internal engine
-`fit_stan()`.
-
-#### Scenario: Returns a kb_fit_weight object
-- **WHEN** `kb_fit_weight_macro()` is called on valid macro weight data
-- **THEN** it returns an object of class `c("kb_fit_weight_macro", "kb_fit_weight", "kb_fit")` with
-  `meta$species` equal to `"macrocystis"`
-
-#### Scenario: Stores the macro parameters
-- **WHEN** the fit object is inspected
-- **THEN** it exposes draws for the fixed effects `bWeight`, `bFronds`; the Gamma
-  shape `shape`; the SDs `sSite`, `sYear`, `sSiteYear`; the per-level `bSite`,
-  `bYear`, `bSiteYear`; and retains no live `stanfit`
-
-#### Scenario: Arguments are validated at entry
-- **WHEN** `kb_fit_weight_macro()` is called with an invalid argument (bad
-  `data`, or a `priors` entry of the wrong family)
-- **THEN** it errors at entry via `chk`/`cli` before sampling
-
-#### Scenario: Prior-only and zero-observation fits
-- **WHEN** `kb_fit_weight_macro(data, prior_only = TRUE)` is called, including on
-  a zero-row data frame
-- **THEN** it returns a valid `kb_fit_weight` object whose draws reflect the
-  priors only; `fronds_ref` falls back to 5 when there are no observations
-
-### Requirement: Weight fit metadata carries the predictor and response names
-
-A `kb_fit_weight` object SHALL record `meta$predictor` and `meta$response` so the
-model-level prediction, grid, and plotting code is species-agnostic:
-`meta$predictor` is `"diameter"` for nereo and `"fronds"` for macro, and
-`meta$response` is `"weight"` for both. Macro additionally stores
-`meta$predictor_ref` (the geometric mean of the observed `fronds`, or 5 when there
-are none).
-
-#### Scenario: Predictor name is available for downstream code
-- **WHEN** `meta$predictor` is read from a macro fit
-- **THEN** it is `"fronds"`, and from a nereo fit it is `"diameter"`
-
-### Requirement: Optional density covariate in the Nereocystis weight fit
-
-`data` for `kb_fit_weight_nereo()` MAY contain a `density` column: the stipe density (stipes per m²) of the plant's site-year. Density is a site-year value; a row with `NA` takes the value recorded for its site-year in another row, if any. The density term SHALL be included when at least two distinct site-year densities are recorded, and omitted otherwise (no `density` column, all values `NA`, or a single distinct value). The determination SHALL be recorded in `meta$density_on`. When the term is omitted and `data` has a `density` column, an informational message SHALL be issued unless `progress = "none"`.
-
-When the term is included, density SHALL enter the model standardised by the mean and SD of density over the fitted rows whose site-year has a recorded value; both are recorded in `meta` (`density_mean`, `density_sd`), along with the recorded density of each fitted site-year. Rows whose site-year has no recorded density SHALL take standardised density `0` (the mean), and an informational message SHALL report how many site-years were affected, unless `progress = "none"`.
-
-A fit made before this requirement, with no `meta$density_on`, SHALL be treated as having the term omitted.
-
-#### Scenario: No density column omits the term silently
-- **WHEN** `kb_fit_weight_nereo()` is called on data without a `density` column
-- **THEN** `meta$density_on` is `FALSE`, `bDensity` is not a fitted term, and no density message is issued
-
-#### Scenario: All-NA density omits the term with a message
-- **WHEN** the data have a `density` column whose values are all `NA`
-- **THEN** `meta$density_on` is `FALSE` and, unless `progress = "none"`, an informational message reports that the density effect is omitted
-
-#### Scenario: Recorded density includes the term
-- **WHEN** at least two site-years have distinct recorded densities
-- **THEN** `meta$density_on` is `TRUE`, `meta$density_mean` and `meta$density_sd` hold the mean and SD of density over the rows with a recorded site-year value, and `bDensity` is a fitted term
+#### Scenario: Density effect follows the recorded values
+- **WHEN** *Nereocystis* data have no `density` column, a column of all `NA` or a single value, or at least two distinct recorded site-year values
+- **THEN** the density effect is omitted silently, omitted with a message, or included, respectively
 
 #### Scenario: Unrecorded site-years take the mean
-- **WHEN** density is recorded for some site-years and `NA` for all rows of others
-- **THEN** the rows of the unrecorded site-years enter with standardised density `0`, and, unless `progress = "none"`, a message reports the number of site-years without recorded density
+- **WHEN** density is recorded for some site-years and not others
+- **THEN** the unrecorded site-years enter at the mean density and a message gives their number
+
+### Requirement: Priors
+
+`kb_priors_weight_nereo()` and `kb_priors_weight_macro()` SHALL return a named list of prior objects, the defaults matching the analysis-project models (pinned by `tests/testthat/test-kb_priors_weight_*.R`). The *Nereocystis* entries are `intercept`, `power`, `floor`, `density`, `sd_site`, `sd_year`, `sd_site_year`, and `sd_residual`; the *Macrocystis* entries are `intercept`, `fronds`, `shape`, `sd_site`, `sd_year`, and `sd_site_year`. A list passed to `priors` SHALL override only the entries it contains. `kb_prior_normal()` and `kb_prior_exponential()` SHALL validate their hyperparameters and print as the family with its hyperparameters.
+
+#### Scenario: A partial prior list keeps the other defaults
+- **WHEN** a user changes one entry (e.g. `p$sd_site <- kb_prior_exponential(2)`) and fits with `priors = p`
+- **THEN** that entry is used and the others keep their defaults
+
+#### Scenario: Invalid hyperparameters error
+- **WHEN** `kb_prior_normal(0, sd = -1)` or `kb_prior_exponential(rate = 0)` is called
+- **THEN** it errors
+
+### Requirement: Sampler control and progress
+
+The fit functions SHALL take `chains` (default 4), `niters` (saved post-warmup draws per chain, default 1000; warmup matches), `nthin` (default 1), `cores`, `seed`, `progress`, and `progress_dir`, passing other arguments to `rstan::sampling()`. The sampler SHALL use `adapt_delta = 0.95` unless a `control` list overrides it; a supplied `control` is merged over the default. `cores = NULL` SHALL use `getOption("mc.cores")`, falling back to `chains`, capped at the available cores. A fit SHALL be reproducible from `seed`, or from a preceding `set.seed()` when `seed` is `NULL`. No HTML viewer SHALL open.
+
+`progress` SHALL be one of `"bar"` (default, a progress bar with rstan's output suppressed), `"verbose"` (rstan's per-iteration output and warnings), or `"none"` (silent). It SHALL change only console output, never the draws. When `progress_dir` names an existing directory, the fit SHALL write a progress record there under any `progress` mode, and `kb_fit_progress(progress_dir)` SHALL return the completed fraction in `[0, 1]` from another R process: `0` before sampling starts, `1` once complete, and no error mid-write. kelpbio SHALL NOT delete a caller's `progress_dir`.
+
+#### Scenario: niters counts saved draws
+- **WHEN** a fit uses `niters = 1000` and `nthin = 2`
+- **THEN** `niters(fit)` is `1000`
+
+#### Scenario: control is merged over the default
+- **WHEN** a fit is called with `control = list(max_treedepth = 12)`
+- **THEN** it samples with `max_treedepth = 12` and `adapt_delta = 0.95`
+
+#### Scenario: progress changes only output
+- **WHEN** the same model is fitted with the same `seed` and different `progress` values
+- **THEN** the draws are identical
+
+#### Scenario: Progress can be polled from another process
+- **WHEN** a fit writes to `progress_dir` and `kb_fit_progress(progress_dir)` is called during and after it
+- **THEN** it returns the completed fraction, reaching `1` when the fit finishes
+
+### Requirement: The fit object
+
+A fit SHALL store posterior draws, sampler diagnostics, the input data, and the fit's settings, and SHALL NOT keep the `stanfit` or any per-observation quantity, so its size depends on the number of draws, not observations. Every summary, diagnostic, and prediction SHALL work from a stored fit. A fit with `prior_only = TRUE` SHALL sample from the priors alone and accept zero-row data. A diagnostic rate with no draws behind it SHALL be `NA`, not zero.
+
+#### Scenario: A stored fit is self-contained
+- **WHEN** a fit is saved, reloaded in a new session, and summarised or predicted from
+- **THEN** every method works without refitting
+
+#### Scenario: Prior-only fits ignore the data
+- **WHEN** `prior_only = TRUE`, including with zero-row data
+- **THEN** the draws reflect the priors only
+
+### Requirement: Bundled example objects
+
+The package SHALL ship simulated datasets `data_weight_sim_nereo` and `data_weight_sim_macro` and small pre-fits `fit_weight_sim_nereo` and `fit_weight_sim_macro`, for examples and tests, not inference. The simulated *Nereocystis* data SHALL include a `density` column recorded for every site-year. Real survey data and inference-grade fits SHALL NOT be bundled; they belong in the companion package `kelpbiodata`.
+
+#### Scenario: Bundled objects work with the package
+- **WHEN** a bundled dataset is checked and a bundled fit is summarised or predicted from
+- **THEN** the dataset passes its data check and the fit works with every method
+
+### Requirement: Implausible units are flagged
+
+The data checks, and so the fit functions, SHALL warn when a column's median is implausible for its expected unit: `diameter` below 10 or above 200 (millimetres), `weight` above 100 (kilograms), or `density` above 100 (stipes per m²). The warning SHALL name the column, its median, and the expected unit, and SHALL NOT stop the check or the fit. The message is pinned by `tests/testthat/_snaps/warn_implausible_units.md`.
+
+#### Scenario: Diameter in centimetres is flagged
+- **WHEN** *Nereocystis* data have `diameter` in centimetres (median about 3)
+- **THEN** a warning names `diameter`, its median, and millimetres, and the data still pass
+
+#### Scenario: Weight in grams is flagged
+- **WHEN** either species' data have `weight` in grams
+- **THEN** a warning names `weight`, its median, and kilograms
+
+#### Scenario: Plausible data raise no warning
+- **WHEN** the columns are in the expected units
+- **THEN** no unit warning is issued
 

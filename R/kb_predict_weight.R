@@ -60,10 +60,10 @@ kb_predict_weight.default <- function(fit, ...) {
 #' @describeIn kb_predict_weight *Nereocystis* method; `new_data` needs a
 #'   `diameter` column.
 #' @inheritParams params
-#' @param new_data A data frame with the fit's predictor column (`diameter` for
-#'   *Nereocystis*, `fronds` for *Macrocystis*) and optional `site` / `year`
-#'   columns (and, for *Nereocystis*, an optional `density` column), or `NULL`
-#'   to predict at the observed data.
+#' @param new_data A data frame with the fit's predictor column (`diameter` in
+#'   millimetres for *Nereocystis*, `fronds` for *Macrocystis*) and optional
+#'   `site` / `year` columns (and, for *Nereocystis*, an optional `density`
+#'   column in stipes per m²), or `NULL` to predict at the observed data.
 #' @export
 kb_predict_weight.kb_fit_weight_nereo <- function(
   fit,

@@ -1,0 +1,37 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "kelpbio: build",
+      "detail": "install, document, test",
+      "type": "shell",
+      "command": "Rscript scripts/build.R",
+      "group": { "kind": "build", "isDefault": true },
+      "problemMatcher": []
+    },
+    {
+      "label": "kelpbio: build + check",
+      "detail": "also pkgdown site and R CMD check",
+      "type": "shell",
+      "command": "Rscript scripts/build.R --check",
+      "group": "build",
+      "problemMatcher": []
+    },
+    {
+      "label": "kelpbio: build + rebuild fits",
+      "detail": "also rebuild pre-fits and test fixtures (Stan MCMC)",
+      "type": "shell",
+      "command": "Rscript scripts/build.R --fits",
+      "group": "build",
+      "problemMatcher": []
+    },
+    {
+      "label": "kelpbio: build + rebuild fits + check",
+      "detail": "everything",
+      "type": "shell",
+      "command": "Rscript scripts/build.R --fits --check",
+      "group": "build",
+      "problemMatcher": []
+    }
+  ]
+}

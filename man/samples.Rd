@@ -18,7 +18,7 @@ samples(fit, ...)
 A \code{posterior} draws object.
 }
 \description{
-The raw posterior draws from a fitted model object.
+The posterior draws of the effects a fitted model estimated.
 }
 \examples{
 samples(fit_weight_sim_nereo)

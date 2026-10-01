@@ -33,7 +33,7 @@ Two cmdstanr-based alternatives were weighed (June 2026):
 `rstan` + `rstantools` compiles via the standard R C++ toolchain, which
 R-universe build servers already have, so R-universe ships a working binary with
 the models baked in and zero Stan toolchain for users or the Shiny deployment.
-The models here (Student-t, Weibull, NB/ZINB, Beta, non-centered random effects)
+The models here (lognormal, Gamma, Weibull, NB/ZINB, Beta, non-centered random effects)
 need nothing the current `rstan` (>= 2.32) lacks, so the Stan-version lag that
 motivates cmdstanr does not bite.
 
@@ -41,7 +41,7 @@ motivates cmdstanr does not bite.
 
 - Recompile is triggered by editing a `.stan` file, upgrading rstan/StanHeaders,
   or changing `Makevars`. `devtools::load_all()` does not pick up Stan changes;
-  use `devtools::install()`. (These are restated as rules in `config.yaml`.)
+  use `devtools::install()`. (The working rules are in `CLAUDE.md`.)
 - Runtime flexibility comes from priors-as-data, binary structural flags, and
   separate Stan files per major variant. Species is one such variant axis: each
   species gets its own `.stan` and its own `kb_fit_<model>_<species>()` wrapper
@@ -50,44 +50,13 @@ motivates cmdstanr does not bite.
   compile cost becomes a real bottleneck, or the audience shifts to
   CmdStan-equipped users.
 
-## Update (2026-07): distribution rationale reaffirmed; a speed scare corrected
+## Speed
 
-A perceived slowdown prompted an investigation. Two things came out of it: the
-distribution basis for this decision is stronger than first written, and an
-alarming speed measurement turned out to be a measurement artifact.
-
-Runtime, measured cleanly (weight model, `data_submax` filtered to `doy > 140`:
-1128 rows, 28 sites, 7 years; 4 chains, 1500 iterations, adapt_delta = 0.95, on
-an otherwise idle machine): raw `rstan::sampling()` ~16.4 s, draw extraction plus
-summaries ~0.5 s, full `kb_fit_weight_nereo()` ~17 s. An earlier run had reported
-~176 s and a "3.7x slower than cmdstan" gap; that rstan number was contaminated
-by concurrent background jobs oversubscribing the cores and is retracted. The
-engine speed gap versus cmdstan is therefore not established: the cmdstan
-reference (~47 s) was also measured uncontrolled (different iteration count,
-different environment, `analyse()` post-processing included). A controlled,
-sampling-only, matched-iteration comparison would be needed before any
-speed-based claim, and none is currently made. The ad-hoc timing scripts used
-during this investigation were not retained.
-
-The decision does not rest on speed. It rests on distribution, and that basis was
-re-confirmed against current (2026) sources. `instantiate`'s own documentation
-states that CmdStan's absence from CRAN/R-universe build servers means models are
-not compiled into the macOS/Windows binaries and the package must be installed
-from source with CmdStan present; shipping pre-built CmdStan executables is
-platform-specific and not portable. Only rstan + rstantools delivers a
-binary-just-works install to a toolchain-less user.
-
-Two secondary points settled along the way:
-- The Shiny "cmdstanr is non-blocking" argument in `webapp-decision.md` does not
-  hold. `cmdstanr$sample()` blocks its calling R session like `rstan::sampling()`
-  (native async is unimplemented). kelpbio already runs `rstan::sampling()`
-  inside `callr::r_bg()` (the `progress = "bar"` path in `fit_stan()`), matching
-  cmdstan's external-process model.
-- Vectorising the weight-model mean (gather random effects by observation, no
-  per-observation loop) fits ~12% faster at an identical posterior (max mean
-  difference 0.09 posterior SDs). Applied to the shipped weight model
-  (`inst/stan/weight_nereo.stan`); a candidate optimisation for the other
-  sub-models if the same gain holds.
-
-Decision reaffirmed: rstan + rstantools, on distribution grounds, which are
-independent of the speed question.
+The decision rests on distribution, not speed. Clean timings of the weight model
+(about 1,100 rows, 4 chains) put `rstan::sampling()` at roughly 16 s; no controlled
+comparison with cmdstan has been made, so no speed claim is made either way.
+`instantiate`'s documentation confirms that without CmdStan on CRAN/R-universe build
+servers its models are not compiled into binaries, so only rstan + rstantools gives
+a toolchain-less user a working binary install. `cmdstanr$sample()` also blocks its
+calling session, so it offers the Shiny app no advantage; kelpbio runs
+`rstan::sampling()` in a background process for the progress bar.
