@@ -13,13 +13,18 @@
 #' compatibility-interval ribbon for a generated curve ([kb_predict_weight_by()]
 #' over a varying predictor), and `geom_pointrange` otherwise (for example
 #' [kb_predict_size_by()]). The y-axis extends to zero. Override the inferred
-#' x-axis with `x`, and overlay the raw data with `observed`.
+#' x-axis with `x`.
+#'
+#' Only the predictions are drawn. They hold the effects not in the prediction at
+#' their typical values, while each raw observation carries its own site, year,
+#' and site-year effects, so raw data are not a like-for-like comparison. Add
+#' them as a layer with `+` if wanted. To compare the model with the data, plot
+#' the fitted values from [augment()] against the observed response, or check
+#' [posterior_predict()] replicates against the data.
 #'
 #' @param predictions A `kb_predictions` object.
 #' @param x A string naming the x-axis column, or `NULL` to infer it from the
 #'   metadata.
-#' @param observed A data frame of raw observations to overlay as points, or
-#'   `NULL` for none.
 #' @param max_facets A whole number capping the facet panels drawn; if the
 #'   grouping has more groups, the first `max_facets` are shown with a warning.
 #'   Use `Inf` to disable.
@@ -33,6 +38,15 @@
 #' # Allometric curve by site (ribbon):
 #' kb_predict_weight_by(fit_weight_sim_nereo, by = "site") |>
 #'   kb_plot_predictions()
+#'
+#' # Add the raw data as a layer:
+#' kb_predict_weight_by(fit_weight_sim_nereo) |>
+#'   kb_plot_predictions() +
+#'   ggplot2::geom_point(
+#'     ggplot2::aes(diameter, weight),
+#'     data = data_weight_sim_nereo,
+#'     alpha = 0.3
+#'   )
 #'
 #' # Expected size by site (pointrange):
 #' kb_predict_size_by(fit_size_sim_nereo, by = "site") |>
@@ -49,13 +63,9 @@ kb_plot_predictions <- function(
   predictions,
   ...,
   x = NULL,
-  observed = NULL,
   max_facets = 12L
 ) {
   rlang::check_dots_empty()
-  if (!is.null(observed)) {
-    chk::chk_data(observed)
-  }
   chk::chk_number(max_facets)
   chk::chk_gt(max_facets, value = 0)
   if (is.finite(max_facets)) {
@@ -108,13 +118,6 @@ kb_plot_predictions <- function(
         i = "Pre-filter {.arg predictions} or raise {.arg max_facets} to show more."
       ))
       predictions <- predictions[keys %in% keep, , drop = FALSE]
-      if (!is.null(observed) && all(facet %in% names(observed))) {
-        observed <- observed[
-          do.call(paste, c(observed[facet], sep = "\r")) %in% keep,
-          ,
-          drop = FALSE
-        ]
-      }
     }
   }
 
@@ -154,20 +157,6 @@ kb_plot_predictions <- function(
   }
   if (length(facet)) {
     gg <- gg + ggplot2::facet_wrap(facet)
-  }
-  if (!is.null(observed)) {
-    if (is.null(predictor) || is.null(response)) {
-      cli::cli_abort(
-        "An {.arg observed} overlay needs predictor/response metadata on {.arg predictions}."
-      )
-    }
-    gg <- gg +
-      ggplot2::geom_point(
-        data = observed,
-        mapping = ggplot2::aes(x = .data[[predictor]], y = .data[[response]]),
-        inherit.aes = FALSE,
-        alpha = 0.3
-      )
   }
   x_units <- if (identical(x, predictor)) {
     attr(predictions, "kb_predictor_units", exact = TRUE)

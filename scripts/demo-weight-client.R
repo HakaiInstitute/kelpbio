@@ -67,12 +67,14 @@ augment(fit)
 
 # A typical site: the average plant for this dataset.
 typical <- kb_predict_weight_by(fit, new_levels = "average")
-kb_plot_predictions(typical, observed = data_weight_sim_nereo) +
+kb_plot_predictions(typical) +
+  geom_point(aes(diameter, weight), data = data_weight_sim_nereo, alpha = 0.3) +
   ggtitle("Weight-at-diameter, typical site")
 
 # A new, unsurveyed site: same curve, wider band
 new_site <- kb_predict_weight_by(fit, new_levels = "sample")
-kb_plot_predictions(new_site, observed = data_weight_sim_nereo) +
+kb_plot_predictions(new_site) +
+  geom_point(aes(diameter, weight), data = data_weight_sim_nereo, alpha = 0.3) +
   ggtitle("Weight-at-diameter, a new site (wider uncertainty)")
 
 # One curve per site
@@ -204,7 +206,8 @@ prior_fit <- kb_fit_weight_nereo(
   progress = "none"
 )
 kb_predict_weight_by(prior_fit, new_levels = "sample") |>
-  kb_plot_predictions(observed = data_weight_sim_nereo) +
+  kb_plot_predictions() +
+  geom_point(aes(diameter, weight), data = data_weight_sim_nereo, alpha = 0.3) +
   ggtitle("Prior-implied curve vs observed data")
 
 # Refit with the data and compare: the strong prior pulls the slope away from

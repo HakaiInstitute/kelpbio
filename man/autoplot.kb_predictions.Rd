@@ -9,7 +9,7 @@
 \arguments{
 \item{object}{A \code{kb_predictions} object.}
 
-\item{...}{Passed to \code{\link[=kb_plot_predictions]{kb_plot_predictions()}} (e.g. \code{x}, \code{observed}).}
+\item{...}{Passed to \code{\link[=kb_plot_predictions]{kb_plot_predictions()}} (e.g. \code{x}, \code{max_facets}).}
 }
 \value{
 A \code{ggplot} object.

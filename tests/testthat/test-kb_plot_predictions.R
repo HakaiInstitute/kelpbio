@@ -79,11 +79,13 @@ test_that("max_facets caps the panels with a warning", {
   expect_silent(kb_plot_predictions(p, max_facets = Inf))
 })
 
-test_that("observed overlay adds a points layer", {
+test_that("raw data can be added as a layer", {
   p <- kb_predict_weight_by(weight_fit, new_levels = "average")
-  gg <- kb_plot_predictions(p, observed = weight_fit$data)
+  gg <- kb_plot_predictions(p) +
+    ggplot2::geom_point(ggplot2::aes(diameter, weight), data = weight_fit$data)
+  expect_no_error(ggplot2::ggplot_build(gg))
   geoms <- vapply(gg$layers, function(l) class(l$geom)[1], character(1))
-  expect_true(any(grepl("GeomPoint", geoms)))
+  expect_true("GeomPoint" %in% geoms)
 })
 
 test_that("a single ungrouped row errors helpfully rather than cryptically", {

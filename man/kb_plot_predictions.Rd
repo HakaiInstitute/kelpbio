@@ -4,13 +4,7 @@
 \alias{kb_plot_predictions}
 \title{Plot Model Predictions}
 \usage{
-kb_plot_predictions(
-  predictions,
-  ...,
-  x = NULL,
-  observed = NULL,
-  max_facets = 12L
-)
+kb_plot_predictions(predictions, ..., x = NULL, max_facets = 12L)
 }
 \arguments{
 \item{predictions}{A \code{kb_predictions} object.}
@@ -19,9 +13,6 @@ kb_plot_predictions(
 
 \item{x}{A string naming the x-axis column, or \code{NULL} to infer it from the
 metadata.}
-
-\item{observed}{A data frame of raw observations to overlay as points, or
-\code{NULL} for none.}
 
 \item{max_facets}{A whole number capping the facet panels drawn; if the
 grouping has more groups, the first \code{max_facets} are shown with a warning.
@@ -44,12 +35,28 @@ The geometry is chosen automatically, not set by an argument: a line with a
 compatibility-interval ribbon for a generated curve (\code{\link[=kb_predict_weight_by]{kb_predict_weight_by()}}
 over a varying predictor), and \code{geom_pointrange} otherwise (for example
 \code{\link[=kb_predict_size_by]{kb_predict_size_by()}}). The y-axis extends to zero. Override the inferred
-x-axis with \code{x}, and overlay the raw data with \code{observed}.
+x-axis with \code{x}.
+
+Only the predictions are drawn. They hold the effects not in the prediction at
+their typical values, while each raw observation carries its own site, year,
+and site-year effects, so raw data are not a like-for-like comparison. Add
+them as a layer with \code{+} if wanted. To compare the model with the data, plot
+the fitted values from \code{\link[=augment]{augment()}} against the observed response, or check
+\code{\link[=posterior_predict]{posterior_predict()}} replicates against the data.
 }
 \examples{
 # Allometric curve by site (ribbon):
 kb_predict_weight_by(fit_weight_sim_nereo, by = "site") |>
   kb_plot_predictions()
+
+# Add the raw data as a layer:
+kb_predict_weight_by(fit_weight_sim_nereo) |>
+  kb_plot_predictions() +
+  ggplot2::geom_point(
+    ggplot2::aes(diameter, weight),
+    data = data_weight_sim_nereo,
+    alpha = 0.3
+  )
 
 # Expected size by site (pointrange):
 kb_predict_size_by(fit_size_sim_nereo, by = "site") |>
