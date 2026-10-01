@@ -30,3 +30,13 @@ test_that("residuals rejects a non-fit and extra args", {
     class = "rlib_error_dots_nonempty"
   )
 })
+
+test_that("size residuals are finite deviance residuals from the size likelihoods", {
+  for (fit in list(size_nereo_fit, size_macro_fit)) {
+    r <- residuals(fit)
+    expect_length(r, nobs(fit))
+    expect_true(all(is.finite(r)))
+    mu <- posterior::draws_of(.linpred_obs(fit))
+    expect_equal(r, as.numeric(apply(.deviance(fit, mu), 2L, stats::median)))
+  }
+})

@@ -109,12 +109,17 @@ print.summary_kb_fit <- function(x, ...) {
 
 #' @export
 print.kb_predictions <- function(x, ...) {
-  gv <- attr(x, "kb_group_vars")
+  gv <- attr(x, "kb_group_vars", exact = TRUE)
   by <- if (length(gv)) paste0(" | by: ", paste(gv, collapse = ", ")) else ""
+  # exact = TRUE: a size prediction has no kb_predictor, which would otherwise
+  # partially match kb_predictor_units.
+  predictor <- attr(x, "kb_predictor", exact = TRUE)
+  predictor <- if (is.null(predictor)) "" else paste0(" predictor: ", predictor, " |")
   cli::cat_line(
-    cli::format_inline(
-      "{.cls kb_predictions} predictor: {attr(x, 'kb_predictor')} | response: {attr(x, 'kb_response')}"
-    ),
+    cli::format_inline("{.cls kb_predictions}"),
+    predictor,
+    " response: ",
+    attr(x, "kb_response", exact = TRUE),
     by
   )
   print(tibble::as_tibble(x), ...)

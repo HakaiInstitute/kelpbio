@@ -47,8 +47,24 @@ log_lik.kb_fit <- function(object, ...) {
 
 #' @export
 .log_lik.kb_fit_weight_macro <- function(fit, mu) {
-  shape <- as.vector(posterior::draws_of(fit$draws$shape))
+  shape <- as.vector(posterior::draws_of(fit$draws$bShape))
   .per_draw(mu, fit$data$weight, function(y, mu_d, d) {
     extras::log_lik_gamma(y, shape = shape[d], rate = shape[d] / exp(mu_d))
+  })
+}
+
+#' @export
+.log_lik.kb_fit_size_nereo <- function(fit, mu) {
+  shape <- as.vector(posterior::draws_of(fit$draws$bShape))
+  .per_draw(mu, fit$data$diameter, function(y, mu_d, d) {
+    log_lik_weibull(y, shape[d], weibull_scale(exp(mu_d), shape[d]))
+  })
+}
+
+#' @export
+.log_lik.kb_fit_size_macro <- function(fit, mu) {
+  theta <- as.vector(posterior::draws_of(fit$draws$bDispersion))
+  .per_draw(mu, fit$data$fronds, function(y, mu_d, d) {
+    log_lik_gamma_pois_zt(y, exp(mu_d), theta[d])
   })
 }

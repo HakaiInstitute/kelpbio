@@ -21,7 +21,7 @@
 #     configured by jarl.toml); this script does not lint.
 #   * --check runs the slow, authoritative steps (R CMD check, which re-runs
 #     configure -> rstan_config() and recompiles the models, plus pkgdown).
-#   * --fits rebuilds the pre-fit example objects (data/fit_weight_sim_*) and test
+#   * --fits rebuilds the pre-fit example objects (data/fit_*_sim_*) and test
 #     fixtures (tests/testthat/fixtures/*.rds) from their scripts. They run Stan
 #     MCMC. Rebuild after changing the fit object structure or a model, so the
 #     shipped objects match the current code.
@@ -81,6 +81,8 @@ if (rebuild_fits) {
   for (script in c(
     "data-raw/fit_weight_sim_nereo.R",
     "data-raw/fit_weight_sim_macro.R",
+    "data-raw/fit_size_sim_nereo.R",
+    "data-raw/fit_size_sim_macro.R",
     "tests/testthat/fixtures/make-fixtures.R"
   )) {
     message("Rebuilding via ", script)

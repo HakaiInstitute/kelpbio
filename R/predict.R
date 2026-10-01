@@ -35,3 +35,41 @@ predict.kb_fit_weight <- function(
     sig_fig = sig_fig
   )
 }
+
+#' Predict Method for a Size Model Fit
+#'
+#' A thin wrapper on [kb_predict_size()]: predict expected size at the supplied
+#' `new_data` rows (or the observed data when `new_data = NULL`). For one estimate
+#' per group, use [kb_predict_size_by()].
+#'
+#' @inheritParams params
+#' @inheritParams kb_predict_size
+#' @param object A `kb_fit_size` object.
+#' @param ... Unused.
+#'
+#' @return A `kb_predictions` object.
+#' @family generics
+#' @exportS3Method stats::predict
+#' @examples
+#' predict(fit_size_sim_nereo, data.frame(site = "site1"))
+predict.kb_fit_size <- function(
+  object,
+  new_data = NULL,
+  ...,
+  new_levels = c("sample", "average"),
+  representative_site = NULL,
+  conf_level = 0.95,
+  estimate = stats::median,
+  sig_fig = 3
+) {
+  rlang::check_dots_empty()
+  kb_predict_size(
+    object,
+    new_data = new_data,
+    new_levels = new_levels,
+    representative_site = representative_site,
+    conf_level = conf_level,
+    estimate = estimate,
+    sig_fig = sig_fig
+  )
+}

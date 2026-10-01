@@ -97,3 +97,19 @@ test_that("errors helpfully when metadata is stripped", {
   attr(bare, "kb_predictor") <- NULL
   expect_error(kb_plot_predictions(bare), "Cannot infer the x-axis")
 })
+
+test_that("size by site plots point ranges with a descriptive y axis", {
+  p <- kb_predict_size_by(size_nereo_fit, by = "site")
+  gg <- kb_plot_predictions(p)
+  geoms <- vapply(gg$layers, function(l) class(l$geom)[1], character(1))
+  expect_true(any(grepl("GeomPointrange", geoms)))
+  expect_identical(gg$labels$x, "Site")
+  expect_identical(gg$labels$y, "Sub-bulb diameter")
+  expect_equal(min(ggplot2::layer_scales(gg)$y$range$range), 0)
+})
+
+test_that("the size-by-site plot is visually stable", {
+  skip_if_not_installed("vdiffr")
+  p <- kb_predict_size_by(size_macro_fit, by = "site")
+  vdiffr::expect_doppelganger("size by site", kb_plot_predictions(p))
+})

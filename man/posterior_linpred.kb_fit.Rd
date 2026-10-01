@@ -67,6 +67,7 @@ Other generics:
 \code{\link[=log_lik.kb_fit]{log_lik.kb_fit()}},
 \code{\link[=posterior_epred.kb_fit]{posterior_epred.kb_fit()}},
 \code{\link[=posterior_predict.kb_fit]{posterior_predict.kb_fit()}},
+\code{\link[=predict.kb_fit_size]{predict.kb_fit_size()}},
 \code{\link[=predict.kb_fit_weight]{predict.kb_fit_weight()}},
 \code{\link[=prior_summary.kb_fit]{prior_summary.kb_fit()}},
 \code{\link[=residuals.kb_fit]{residuals.kb_fit()}},

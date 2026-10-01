@@ -36,6 +36,23 @@
   )
 }
 
+.chk_kb_fit_size <- function(
+  x,
+  x_name = deparse(substitute(x)),
+  call = rlang::caller_env()
+) {
+  if (.vld_kb_fit_size(x)) {
+    return(invisible(x))
+  }
+  cli::cli_abort(
+    c(
+      "{.arg {x_name}} must be a {.cls kb_fit_size} object.",
+      i = "Supported fits are created by the {.code kb_fit_size_*()} functions."
+    ),
+    call = call
+  )
+}
+
 .chk_new_data_weight_nereo <- function(x, x_name = deparse(substitute(x))) {
   if (.vld_new_data_weight_nereo(x)) {
     return(invisible(x))
@@ -108,6 +125,13 @@
     cli::cli_abort("{.arg {x_name}} must have a {.field fronds} column.")
   }
   .chk_frond_count(x$fronds, x_name = kb_xname(x_name, "fronds"))
+}
+
+.chk_new_data_size <- function(x, x_name = deparse(substitute(x))) {
+  if (.vld_new_data_size(x)) {
+    return(invisible(x))
+  }
+  cli::cli_abort("{.arg {x_name}} must be a data frame.")
 }
 
 .chk_representative_site <- function(fit, representative_site) {
@@ -243,4 +267,10 @@
 #' @export
 .chk_new_data.kb_fit_weight_macro <- function(fit, new_data) {
   .chk_new_data_weight_macro(new_data)
+}
+
+# Both size species take the same new_data (no predictor column).
+#' @export
+.chk_new_data.kb_fit_size <- function(fit, new_data) {
+  .chk_new_data_size(new_data)
 }

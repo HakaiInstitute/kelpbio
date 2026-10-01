@@ -42,12 +42,17 @@ is a standard \code{ggplot} that can be refined with \code{+} (scales, labels, t
 
 The geometry is chosen automatically, not set by an argument: a line with a
 compatibility-interval ribbon for a generated curve (\code{\link[=kb_predict_weight_by]{kb_predict_weight_by()}}
-over a varying predictor), and \code{geom_pointrange} otherwise. Override the
-inferred x-axis with \code{x}, and overlay the raw data with \code{observed}.
+over a varying predictor), and \code{geom_pointrange} otherwise (for example
+\code{\link[=kb_predict_size_by]{kb_predict_size_by()}}). The y-axis extends to zero. Override the inferred
+x-axis with \code{x}, and overlay the raw data with \code{observed}.
 }
 \examples{
 # Allometric curve by site (ribbon):
 kb_predict_weight_by(fit_weight_sim_nereo, by = "site") |>
+  kb_plot_predictions()
+
+# Expected size by site (pointrange):
+kb_predict_size_by(fit_size_sim_nereo, by = "site") |>
   kb_plot_predictions()
 
 # Weight at a reference diameter by site (pointrange, sites on the y-axis):
@@ -61,6 +66,8 @@ kb_predict_weight_by(
 \seealso{
 Other prediction:
 \code{\link[=autoplot.kb_predictions]{autoplot.kb_predictions()}},
+\code{\link[=kb_predict_size]{kb_predict_size()}},
+\code{\link[=kb_predict_size_by]{kb_predict_size_by()}},
 \code{\link[=kb_predict_weight]{kb_predict_weight()}},
 \code{\link[=kb_predict_weight_by]{kb_predict_weight_by()}}
 }

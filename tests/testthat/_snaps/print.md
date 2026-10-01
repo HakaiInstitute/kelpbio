@@ -38,3 +38,27 @@
       Converged: FALSE
       See kb_model_describe(fit) for the model equation and priors.
 
+# print.kb_fit shows the size headers without a predictor line
+
+    Code
+      print(size_nereo_fit)
+    Output
+      <kb_fit_size_nereo>
+      Model:     Size (Nereocystis luetkeana)
+      Data:      240 observations; groups: site (4), year (4), site:year (16)
+      Draws:     2 chains, 300 post-warmup draws each (thin = 5), 600 total
+      Converged: TRUE
+      See kb_model_describe(fit) for the model equation and priors.
+
+---
+
+    Code
+      print(size_macro_fit)
+    Output
+      <kb_fit_size_macro>
+      Model:     Size (Macrocystis pyrifera)
+      Data:      320 observations; groups: site (4), year (4), site:year (16)
+      Draws:     2 chains, 300 post-warmup draws each (thin = 5), 600 total
+      Converged: TRUE
+      See kb_model_describe(fit) for the model equation and priors.
+

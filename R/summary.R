@@ -162,6 +162,11 @@ summary.kb_fit <- function(
   )
 }
 
+# The size models have no predictor, so the header shows only the group counts.
+.fit_descriptor.kb_fit_size <- function(x) {
+  list(predictor = NA_character_, groups = fit_groups(x))
+}
+
 # Level counts for each grouping factor the fit's data carry. Not weight-specific:
 # site and year are .group_vars(), shared by every model, and all three level
 # vectors are recorded at fit time, so this is a pure metadata read.

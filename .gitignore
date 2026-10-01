@@ -16,6 +16,7 @@
 
 # compiled Stan / C++ artifacts (regenerated at install)
 *.o
+*.o.tmp
 *.so
 *.dll
 

@@ -17,7 +17,7 @@ static constexpr std::array<const char*, 66> locations_array__ =
   {" (found before start of program)",
   " (in 'weight_macro', line 41, column 2 to column 15)",
   " (in 'weight_macro', line 42, column 2 to column 15)",
-  " (in 'weight_macro', line 43, column 2 to column 22)",
+  " (in 'weight_macro', line 43, column 2 to column 23)",
   " (in 'weight_macro', line 44, column 2 to column 22)",
   " (in 'weight_macro', line 45, column 2 to column 22)",
   " (in 'weight_macro', line 46, column 2 to column 26)",
@@ -29,7 +29,7 @@ static constexpr std::array<const char*, 66> locations_array__ =
   " (in 'weight_macro', line 54, column 2 to column 59)",
   " (in 'weight_macro', line 57, column 2 to column 59)",
   " (in 'weight_macro', line 58, column 2 to column 53)",
-  " (in 'weight_macro', line 59, column 2 to column 40)",
+  " (in 'weight_macro', line 59, column 2 to column 41)",
   " (in 'weight_macro', line 60, column 2 to column 42)",
   " (in 'weight_macro', line 61, column 2 to column 42)",
   " (in 'weight_macro', line 62, column 2 to column 51)",
@@ -41,8 +41,8 @@ static constexpr std::array<const char*, 66> locations_array__ =
   " (in 'weight_macro', line 72, column 6 to line 75, column 53)",
   " (in 'weight_macro', line 71, column 22 to line 76, column 5)",
   " (in 'weight_macro', line 71, column 4 to line 76, column 5)",
-  " (in 'weight_macro', line 78, column 6 to column 48)",
-  " (in 'weight_macro', line 79, column 6 to column 39)",
+  " (in 'weight_macro', line 78, column 6 to column 49)",
+  " (in 'weight_macro', line 79, column 6 to column 40)",
   " (in 'weight_macro', line 77, column 22 to line 80, column 5)",
   " (in 'weight_macro', line 77, column 4 to line 80, column 5)",
   " (in 'weight_macro', line 66, column 23 to line 81, column 3)",
@@ -392,7 +392,7 @@ public:
       current_statement__ = 2;
       auto bFronds = in__.template read<local_scalar_t__>();
       current_statement__ = 3;
-      auto shape =
+      auto bShape =
         in__.template read_constrain_lb<local_scalar_t__, jacobian__>(0,
           lp__);
       current_statement__ = 4;
@@ -442,7 +442,7 @@ public:
         lp_accum__.add(stan::math::normal_lpdf<propto__>(bFronds,
                          prior_fronds_mu, prior_fronds_sd));
         current_statement__ = 15;
-        lp_accum__.add(stan::math::exponential_lpdf<propto__>(shape,
+        lp_accum__.add(stan::math::exponential_lpdf<propto__>(bShape,
                          prior_shape_rate));
         current_statement__ = 16;
         lp_accum__.add(stan::math::exponential_lpdf<propto__>(sSite,
@@ -491,14 +491,14 @@ public:
           for (int i = 1; i <= nObs; ++i) {
             local_scalar_t__ rate_i = DUMMY_VAR__;
             current_statement__ = 27;
-            rate_i = (shape /
+            rate_i = (bShape /
               stan::math::exp(
                 stan::model::rvalue(log_eWeight, "log_eWeight",
                   stan::model::index_uni(i))));
             current_statement__ = 28;
             lp_accum__.add(stan::math::gamma_lpdf<propto__>(
                              stan::model::rvalue(weight, "weight",
-                               stan::model::index_uni(i)), shape, rate_i));
+                               stan::model::index_uni(i)), bShape, rate_i));
           }
         }
       }
@@ -537,7 +537,7 @@ public:
       current_statement__ = 2;
       auto bFronds = in__.template read<local_scalar_t__>();
       current_statement__ = 3;
-      auto shape =
+      auto bShape =
         in__.template read_constrain_lb<local_scalar_t__, jacobian__>(0,
           lp__);
       current_statement__ = 4;
@@ -587,7 +587,7 @@ public:
         lp_accum__.add(stan::math::normal_lpdf<propto__>(bFronds,
                          prior_fronds_mu, prior_fronds_sd));
         current_statement__ = 15;
-        lp_accum__.add(stan::math::exponential_lpdf<propto__>(shape,
+        lp_accum__.add(stan::math::exponential_lpdf<propto__>(bShape,
                          prior_shape_rate));
         current_statement__ = 16;
         lp_accum__.add(stan::math::exponential_lpdf<propto__>(sSite,
@@ -636,14 +636,14 @@ public:
           for (int i = 1; i <= nObs; ++i) {
             local_scalar_t__ rate_i = DUMMY_VAR__;
             current_statement__ = 27;
-            rate_i = (shape /
+            rate_i = (bShape /
               stan::math::exp(
                 stan::model::rvalue(log_eWeight, "log_eWeight",
                   stan::model::index_uni(i))));
             current_statement__ = 28;
             lp_accum__.add(stan::math::gamma_lpdf<propto__>(
                              stan::model::rvalue(weight, "weight",
-                               stan::model::index_uni(i)), shape, rate_i));
+                               stan::model::index_uni(i)), bShape, rate_i));
           }
         }
       }
@@ -693,7 +693,7 @@ public:
       current_statement__ = 2;
       auto bFronds = in__.template read<local_scalar_t__>();
       current_statement__ = 3;
-      auto shape =
+      auto bShape =
         in__.template read_constrain_lb<local_scalar_t__, jacobian__>(0,
           lp__);
       current_statement__ = 4;
@@ -729,7 +729,7 @@ public:
           std::numeric_limits<double>::quiet_NaN());
       out__.write(bWeight);
       out__.write(bFronds);
-      out__.write(shape);
+      out__.write(bShape);
       out__.write(sSite);
       out__.write(sYear);
       out__.write(sSiteYear);
@@ -787,10 +787,10 @@ public:
       current_statement__ = 2;
       bFronds = in__.read<local_scalar_t__>();
       out__.write(bFronds);
-      local_scalar_t__ shape = DUMMY_VAR__;
+      local_scalar_t__ bShape = DUMMY_VAR__;
       current_statement__ = 3;
-      shape = in__.read<local_scalar_t__>();
-      out__.write_free_lb(0, shape);
+      bShape = in__.read<local_scalar_t__>();
+      out__.write_free_lb(0, bShape);
       local_scalar_t__ sSite = DUMMY_VAR__;
       current_statement__ = 4;
       sSite = in__.read<local_scalar_t__>();
@@ -849,7 +849,7 @@ public:
       context__.validate_dims("parameter initialization", "bFronds",
         "double", std::vector<size_t>{});
       current_statement__ = 3;
-      context__.validate_dims("parameter initialization", "shape", "double",
+      context__.validate_dims("parameter initialization", "bShape", "double",
         std::vector<size_t>{});
       current_statement__ = 4;
       context__.validate_dims("parameter initialization", "sSite", "double",
@@ -881,10 +881,10 @@ public:
       current_statement__ = 2;
       bFronds = context__.vals_r("bFronds")[(1 - 1)];
       out__.write(bFronds);
-      local_scalar_t__ shape = DUMMY_VAR__;
+      local_scalar_t__ bShape = DUMMY_VAR__;
       current_statement__ = 3;
-      shape = context__.vals_r("shape")[(1 - 1)];
-      out__.write_free_lb(0, shape);
+      bShape = context__.vals_r("bShape")[(1 - 1)];
+      out__.write_free_lb(0, bShape);
       local_scalar_t__ sSite = DUMMY_VAR__;
       current_statement__ = 4;
       sSite = context__.vals_r("sSite")[(1 - 1)];
@@ -951,7 +951,7 @@ public:
   get_param_names(std::vector<std::string>& names__, const bool
                   emit_transformed_parameters__ = true, const bool
                   emit_generated_quantities__ = true) const {
-    names__ = std::vector<std::string>{"bWeight", "bFronds", "shape",
+    names__ = std::vector<std::string>{"bWeight", "bFronds", "bShape",
                 "sSite", "sYear", "sSiteYear", "z_bSite", "z_bYear",
                 "z_bSiteYear"};
     if (emit_transformed_parameters__) {
@@ -990,7 +990,7 @@ public:
                           emit_generated_quantities__ = true) const final {
     param_names__.emplace_back(std::string() + "bWeight");
     param_names__.emplace_back(std::string() + "bFronds");
-    param_names__.emplace_back(std::string() + "shape");
+    param_names__.emplace_back(std::string() + "bShape");
     param_names__.emplace_back(std::string() + "sSite");
     param_names__.emplace_back(std::string() + "sYear");
     param_names__.emplace_back(std::string() + "sSiteYear");
@@ -1032,7 +1032,7 @@ public:
                             emit_generated_quantities__ = true) const final {
     param_names__.emplace_back(std::string() + "bWeight");
     param_names__.emplace_back(std::string() + "bFronds");
-    param_names__.emplace_back(std::string() + "shape");
+    param_names__.emplace_back(std::string() + "bShape");
     param_names__.emplace_back(std::string() + "sSite");
     param_names__.emplace_back(std::string() + "sYear");
     param_names__.emplace_back(std::string() + "sSiteYear");
@@ -1069,10 +1069,10 @@ public:
     if (emit_generated_quantities__) {}
   }
   inline std::string get_constrained_sizedtypes() const {
-    return std::string("[{\"name\":\"bWeight\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"bFronds\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"shape\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"sSite\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"sYear\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"sSiteYear\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"z_bSite\",\"type\":{\"name\":\"vector\",\"length\":" + std::to_string(nSite) + "},\"block\":\"parameters\"},{\"name\":\"z_bYear\",\"type\":{\"name\":\"vector\",\"length\":" + std::to_string(nYear) + "},\"block\":\"parameters\"},{\"name\":\"z_bSiteYear\",\"type\":{\"name\":\"matrix\",\"rows\":" + std::to_string(nSite) + ",\"cols\":" + std::to_string(nYear) + "},\"block\":\"parameters\"},{\"name\":\"bSite\",\"type\":{\"name\":\"vector\",\"length\":" + std::to_string(nSite) + "},\"block\":\"transformed_parameters\"},{\"name\":\"bYear\",\"type\":{\"name\":\"vector\",\"length\":" + std::to_string(nYear) + "},\"block\":\"transformed_parameters\"},{\"name\":\"bSiteYear\",\"type\":{\"name\":\"matrix\",\"rows\":" + std::to_string(nSite) + ",\"cols\":" + std::to_string(nYear) + "},\"block\":\"transformed_parameters\"}]");
+    return std::string("[{\"name\":\"bWeight\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"bFronds\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"bShape\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"sSite\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"sYear\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"sSiteYear\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"z_bSite\",\"type\":{\"name\":\"vector\",\"length\":" + std::to_string(nSite) + "},\"block\":\"parameters\"},{\"name\":\"z_bYear\",\"type\":{\"name\":\"vector\",\"length\":" + std::to_string(nYear) + "},\"block\":\"parameters\"},{\"name\":\"z_bSiteYear\",\"type\":{\"name\":\"matrix\",\"rows\":" + std::to_string(nSite) + ",\"cols\":" + std::to_string(nYear) + "},\"block\":\"parameters\"},{\"name\":\"bSite\",\"type\":{\"name\":\"vector\",\"length\":" + std::to_string(nSite) + "},\"block\":\"transformed_parameters\"},{\"name\":\"bYear\",\"type\":{\"name\":\"vector\",\"length\":" + std::to_string(nYear) + "},\"block\":\"transformed_parameters\"},{\"name\":\"bSiteYear\",\"type\":{\"name\":\"matrix\",\"rows\":" + std::to_string(nSite) + ",\"cols\":" + std::to_string(nYear) + "},\"block\":\"transformed_parameters\"}]");
   }
   inline std::string get_unconstrained_sizedtypes() const {
-    return std::string("[{\"name\":\"bWeight\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"bFronds\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"shape\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"sSite\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"sYear\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"sSiteYear\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"z_bSite\",\"type\":{\"name\":\"vector\",\"length\":" + std::to_string(nSite) + "},\"block\":\"parameters\"},{\"name\":\"z_bYear\",\"type\":{\"name\":\"vector\",\"length\":" + std::to_string(nYear) + "},\"block\":\"parameters\"},{\"name\":\"z_bSiteYear\",\"type\":{\"name\":\"matrix\",\"rows\":" + std::to_string(nSite) + ",\"cols\":" + std::to_string(nYear) + "},\"block\":\"parameters\"},{\"name\":\"bSite\",\"type\":{\"name\":\"vector\",\"length\":" + std::to_string(nSite) + "},\"block\":\"transformed_parameters\"},{\"name\":\"bYear\",\"type\":{\"name\":\"vector\",\"length\":" + std::to_string(nYear) + "},\"block\":\"transformed_parameters\"},{\"name\":\"bSiteYear\",\"type\":{\"name\":\"matrix\",\"rows\":" + std::to_string(nSite) + ",\"cols\":" + std::to_string(nYear) + "},\"block\":\"transformed_parameters\"}]");
+    return std::string("[{\"name\":\"bWeight\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"bFronds\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"bShape\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"sSite\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"sYear\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"sSiteYear\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"z_bSite\",\"type\":{\"name\":\"vector\",\"length\":" + std::to_string(nSite) + "},\"block\":\"parameters\"},{\"name\":\"z_bYear\",\"type\":{\"name\":\"vector\",\"length\":" + std::to_string(nYear) + "},\"block\":\"parameters\"},{\"name\":\"z_bSiteYear\",\"type\":{\"name\":\"matrix\",\"rows\":" + std::to_string(nSite) + ",\"cols\":" + std::to_string(nYear) + "},\"block\":\"parameters\"},{\"name\":\"bSite\",\"type\":{\"name\":\"vector\",\"length\":" + std::to_string(nSite) + "},\"block\":\"transformed_parameters\"},{\"name\":\"bYear\",\"type\":{\"name\":\"vector\",\"length\":" + std::to_string(nYear) + "},\"block\":\"transformed_parameters\"},{\"name\":\"bSiteYear\",\"type\":{\"name\":\"matrix\",\"rows\":" + std::to_string(nSite) + ",\"cols\":" + std::to_string(nYear) + "},\"block\":\"transformed_parameters\"}]");
   }
   // Begin method overload boilerplate
   template <typename RNG> inline void

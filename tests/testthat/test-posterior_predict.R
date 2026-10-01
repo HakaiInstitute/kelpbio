@@ -64,3 +64,18 @@ test_that("macro posterior_predict draws positive Gamma noise, wider than epred"
   expect_true(all(pp > 0)) # Gamma support is strictly positive
   expect_gt(mean(apply(pp, 2, stats::sd)), mean(apply(ep, 2, stats::sd)))
 })
+
+test_that("size posterior_predict draws plant sizes from the size likelihoods", {
+  withr::local_seed(1)
+  nd <- data.frame(site = c("site1", "site2"))
+  pp <- posterior_predict(size_nereo_fit, new_data = nd, new_levels = "average")
+  expect_equal(dim(pp), c(posterior::ndraws(size_nereo_fit$draws), 2L))
+  expect_true(all(pp > 0))
+
+  pm <- posterior_predict(size_macro_fit, new_data = nd, new_levels = "average")
+  expect_true(all(pm >= 1))
+  expect_true(all(pm == round(pm)))
+  # the predictive mean matches the expected (truncated) frond count
+  ep <- posterior_epred(size_macro_fit, new_data = nd, new_levels = "average")
+  expect_equal(colMeans(pm), colMeans(ep), tolerance = 0.15)
+})

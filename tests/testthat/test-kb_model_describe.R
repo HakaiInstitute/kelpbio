@@ -58,3 +58,16 @@ test_that("the density term is left out when not fitted", {
   out <- capture.output(kb_model_describe(off))
   expect_false(any(grepl("density", out, ignore.case = TRUE)))
 })
+
+test_that("kb_model_describe renders the size notation blocks", {
+  expect_snapshot(kb_model_describe(size_nereo_fit))
+  expect_snapshot(kb_model_describe(size_macro_fit))
+  expect_snapshot(kb_model_describe(size_macro_fit, prose = TRUE))
+})
+
+test_that("a dropped site:year effect is omitted from the size description", {
+  fit <- size_nereo_fit
+  fit$meta$site_year_on <- FALSE
+  out <- capture.output(kb_model_describe(fit))
+  expect_false(any(grepl("SiteYear", out)))
+})
