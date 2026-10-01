@@ -15,7 +15,7 @@ R package for Bayesian kelp biomass estimation. All exported functions use the `
 
 The build runs are also Positron/VS Code tasks (Command Palette > "Tasks: Run Task" > "kelpbio: ...", `.vscode/tasks.json`). Flags combine (`--fits --check`); `--help` lists them.
 
-- **After editing any `inst/stan/*.stan` file**: run `rstantools::rstan_config()` (regenerates `src/stanExports_*` and `R/stanmodels.R`), then `devtools::install()`. `devtools::load_all()`/`test()` compile from the generated C++ but do NOT re-transpile the Stan source, so `.stan` edits are silently missed without `rstan_config()` first.
+- **After editing any `inst/stan/*.stan` file**: run `rstantools::rstan_config()` (regenerates `src/stanExports_*` and `R/stanmodels.R`), then `devtools::install()`. `devtools::load_all()`/`test()` compile from the generated C++ but do NOT re-transpile the Stan source, so `.stan` edits are silently missed without `rstan_config()` first. A fit stores its Stan source (`kb_stancode()`), so any `.stan` edit, comments included, also means rebuilding the pre-fits and fixtures (`--fits`) in the same PR.
 - When a change removes exports, run `devtools::document()` before `devtools::install()`: install reads NAMESPACE and fails on exports that no longer exist.
 - Generated files (`R/stanmodels.R`, `src/stanExports_*`, `src/RcppExports.cpp`) are never hand-edited and are excluded from styling and linting.
 - **Linting** runs in CI via jarl (`.github/workflows/lint-with-jarl.yaml`, config `jarl.toml`); the build script does not lint.
@@ -38,7 +38,7 @@ One fact, one home: behaviour in the specs, the exact models and outputs in code
 Follow `openspec/workflow.md`. In addition:
 
 - **A change folder only for user-visible behaviour or model changes.** Fixes, refactors, tests, and docs go straight through, with `Spec impact: none` in the PR.
-- **Definition of done, all in the same PR:** code + tests green in CI, reader docs (roxygen / README / vignette) updated, specs and reader docs checked against the code, and the change archived. Do not defer archiving.
+- **Definition of done, all in the same PR:** code + tests green in CI, reader docs (roxygen / README / vignette) updated, specs and reader docs checked against the code, and the change archived. Do not defer archiving. Exception while sub-models are being added: README and vignette updates wait for one pass once all sub-models are in; roxygen, `_pkgdown.yml`, specs, and the demo scripts still update per PR.
 - **One open change per capability.** Two unarchived changes rewriting the same requirement regress the spec when the second is archived.
 - **Trust the test suite + green CI as the "done" signal**, not `tasks.md` checkboxes.
 - **Stacked PRs.** Each change gets its own branch and PR, based on the previous branch in the stack (the first bases on `dev`). Every PR must pass CI on its own before review is requested on the whole stack; merge in stack order, retargeting each PR to `dev` as its base merges.
@@ -65,7 +65,8 @@ Adaptations from the analysis Stan models: prior hyperparameters are passed thro
 
 - **Backend**: `rstan` + `rstantools`; Stan models in `inst/stan/` are pre-compiled at `R CMD INSTALL`. Users need no `cmdstanr` or Stan installation. Why: `decisions/engine-choice.md`.
 - **Priors as data**: hyperparameters go in the Stan `data` block; the prior family is fixed at compile time. Users set priors with `kb_prior_normal()` / `kb_prior_exponential()` in the list from `kb_priors_*()`.
-- **Structural flags**: small effects are toggled by 0/1 data flags (`site_year_on`, `density_on`, `prior_only`) that the fitting layer sets from the data, never user arguments. Use a separate `.stan` only for a different likelihood or major variant; each species is such a variant (`decisions/species-as-variant.md`).
+- **Structural flags**: small effects are toggled by 0/1 data flags (`site_year_on`, `density_on`, `floor_on`, `prior_only`) that the fitting layer sets from the data or from a model-choice argument (`form`), never exposed as flag arguments themselves. Use a separate `.stan` only for a different likelihood or major variant; each species is such a variant (`decisions/species-as-variant.md`).
+- **Parameter names**: every estimated parameter takes the `b` prefix (`bWeight`, `bShape`, `bDispersion`) except standard deviations, which take `s` (`sSite`, `sWeight`). An intercept is named after the response (`bDiameter`), a slope after its predictor (`bFronds`, `bDensity`).
 - **Stan code**: non-centred random effects (`z_* * s_*`); the mean is a local in the `model` block and there are no generated quantities, since `log_lik` and replicates are computed in R from the stored draws.
 - **Sampling** defaults: 4 chains, `adapt_delta = 0.95`, thinning by `nthin`.
 
