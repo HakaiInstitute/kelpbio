@@ -9,13 +9,15 @@ log-log" form with the full random-effect structure.
 
 ### A string argument, not a flag
 
-`form = c("packard", "power")`, matched with `rlang::arg_match()`. A later form
+`form = c("packard_floor", "power")`, matched with `rlang::arg_match()`. A later form
 (for example a quadratic in log diameter) adds a value without changing the
 signature. Alternative: `floor = TRUE`. Rejected because it cannot express a
 third form.
 
-`form` is a detail argument after `...`, alongside the sampler settings, and is
-validated before sampling.
+`form` specifies the model, as `priors` does, so it is a descriptor before
+`...`: `kb_fit_weight_nereo(data, priors, form, ...)`. It follows `priors` so
+that `priors` stays the second argument of every fit function. It is validated
+before sampling.
 
 ### One Stan model with a structural flag
 

@@ -51,7 +51,9 @@
     )
     log_alpha <- log_alpha + draws$bDensity * density
   }
-  log(draws$bFloor + exp(log_alpha + draws$bPower * log_x))
+  # A power-law fit has no floor; its bFloor draws are prior-only.
+  floor <- if (.floor_on(fit)) draws$bFloor else 0
+  log(floor + exp(log_alpha + draws$bPower * log_x))
 }
 
 # Macrocystis mean, returned on the log scale like nereo so the shared faces are

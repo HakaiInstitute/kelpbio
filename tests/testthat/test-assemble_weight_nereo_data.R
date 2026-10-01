@@ -22,8 +22,25 @@ test_that("assemble_weight_nereo_data maps data and priors to the Stan data bloc
   # the supplied diameter reference is passed straight through
   expect_equal(sd$diameter_ref, 42)
   expect_equal(sd$prior_only, 0L)
-  # site:year random effect included by default
+  # site:year random effect and weight floor included by default
   expect_equal(sd$site_year_on, 1L)
+  expect_equal(sd$floor_on, 1L)
+})
+
+test_that("assemble_weight_nereo_data encodes floor_on as 0/1", {
+  data <- data.frame(
+    diameter = c(20, 35),
+    weight = c(0.5, 2),
+    site = factor(c("a", "b")),
+    year = factor(c("2020", "2021"))
+  )
+  sd <- assemble_weight_nereo_data(
+    data,
+    kb_priors_weight_nereo(),
+    diameter_ref = 30,
+    floor_on = FALSE
+  )
+  expect_equal(sd$floor_on, 0L)
 })
 
 test_that("assemble_weight_nereo_data maps every prior hyperparameter to its own Stan field", {

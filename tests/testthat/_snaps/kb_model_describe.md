@@ -69,7 +69,7 @@
     Output
       Wet weight was modelled on the log scale with a Normal likelihood as an
       allometric function of sub-bulb diameter. Expected weight followed a
-      three-parameter power function (Packard 2008) of diameter relative to the
+      three-parameter power function (Packard 2023) of diameter relative to the
       geometric mean diameter (35.8), in which bFloor is the weight as diameter
       approaches zero, alpha the weight above the floor at the reference
       diameter, and bPower the allometric exponent. The log of alpha varied by
@@ -143,4 +143,52 @@
       to all plants. The log of the untruncated mean, mu, varied by site, year,
       and site-year. Regularizing priors were placed on all parameters (see the
       notation form for the hyperparameters).
+
+# kb_model_describe follows the power-law form
+
+    Code
+      kb_model_describe(power)
+    Output
+      Weight allometry - Nereocystis luetkeana
+      Response: wet weight (kg); predictor: sub-bulb diameter (mm)
+      
+      Likelihood
+        log(weight) ~ Normal(log(mu), sWeight)
+        mu = alpha * x^bPower
+        log(alpha) = bWeight
+                   + bDensity * density
+                   + bYear[year]
+                   + bSite[site]
+                   + bSiteYear[site, year]
+        x = diameter / d0,  d0 = 35.8  (geometric mean diameter)
+        density = (stipe density - 4.23) / 1.84  (standardised site-year density)
+      
+      Random effects
+        bYear[year]           ~ Normal(0, sYear)      year effect on log(alpha)
+        bSite[site]           ~ Normal(0, sSite)      site effect on log(alpha)
+        bSiteYear[site, year] ~ Normal(0, sSiteYear)  site:year effect on log(alpha)
+      
+      Priors
+        bWeight        ~ Normal(0, 2)
+        bPower         ~ Normal(2, 1) T[0, ]
+        bDensity       ~ Normal(0, 0.5)
+        sWeight        ~ Exponential(1)
+        sYear          ~ Exponential(1)
+        sSite          ~ Exponential(1)
+        sSiteYear      ~ Exponential(1)
+
+---
+
+    Code
+      kb_model_describe(power, prose = TRUE)
+    Output
+      Wet weight was modelled on the log scale with a Normal likelihood as an
+      allometric function of sub-bulb diameter. Expected weight followed a power
+      law in diameter relative to the geometric mean diameter (35.8), in which
+      alpha is the weight at the reference diameter and bPower the allometric
+      exponent. The log of alpha varied by year, by site, and by site-year. The
+      log of alpha also varied linearly with site-year stipe density,
+      standardised by its mean (4.23) and standard deviation (1.84). Regularizing
+      priors were placed on all parameters (see the notation form for the
+      hyperparameters).
 

@@ -206,3 +206,45 @@ test_that("data without density give a fit with the density term off", {
   expect_false("bDensity" %in% fit$meta$terms$fixed)
   expect_false("bDensity" %in% tidy(fit)$term)
 })
+
+test_that("the form defaults to packard_floor and power drops the floor", {
+  local_fit_stan_stub()
+  d <- weight_fit$data
+  default <- kb_fit_weight_nereo(d, progress = "none")
+  expect_identical(default$meta$form, "packard_floor")
+  expect_true("bFloor" %in% default$meta$terms$fixed)
+
+  power <- kb_fit_weight_nereo(d, form = "power", progress = "none")
+  expect_identical(power$meta$form, "power")
+  expect_false("bFloor" %in% power$meta$terms$fixed)
+  expect_false("bFloor" %in% tidy(power)$term)
+  expect_false("bFloor" %in% posterior::variables(samples(power)))
+})
+
+test_that("an unknown form errors before sampling, naming the forms", {
+  local_fit_stan_stub()
+  expect_snapshot(
+    kb_fit_weight_nereo(weight_fit$data, form = "cubic"),
+    error = TRUE
+  )
+})
+
+test_that("a power-law fit samples and records no floor", {
+  skip_on_cran()
+  d <- droplevels(subset(
+    data_weight_sim_nereo,
+    site %in% c("site1", "site2") & year %in% c("2019", "2020")
+  ))
+  fit <- kb_fit_weight_nereo(
+    d,
+    form = "power",
+    chains = 2,
+    niters = 100,
+    cores = 2,
+    progress = "none",
+    seed = 1
+  )
+  expect_identical(fit$meta$form, "power")
+  expect_false("bFloor" %in% tidy(fit)$term)
+  expect_true(all(is.finite(log_lik(fit))))
+})

@@ -7,6 +7,7 @@
 kb_fit_weight_nereo(
   data,
   priors = NULL,
+  form = c("packard_floor", "power"),
   ...,
   prior_only = FALSE,
   chains = 4L,
@@ -25,6 +26,9 @@ kb_fit_weight_nereo(
 \item{priors}{A named list of prior objects (see \code{\link[=kb_priors_weight_nereo]{kb_priors_weight_nereo()}}), or
 \code{NULL} to use the defaults. Supplied entries override the corresponding
 defaults; unspecified entries keep their defaults.}
+
+\item{form}{A string, one of \code{"packard_floor"} (the default) or \code{"power"},
+giving the mean function of weight in diameter (see Details).}
 
 \item{...}{Additional arguments passed to \code{\link[rstan:sampling]{rstan::sampling()}}, including a
 \code{control} list (merged over the \code{adapt_delta = 0.95} default); see the
@@ -64,13 +68,25 @@ An object of class \code{c("kb_fit_weight_nereo", "kb_fit_weight", "kb_fit")}.
 Fit an allometric weight model for \emph{Nereocystis luetkeana} via Stan.
 }
 \details{
-Log wet weight (kg) is modelled with a Normal likelihood. Expected weight is a
-three-parameter power function of sub-bulb diameter (mm),
-\code{bFloor + alpha * (diameter / d0)^bPower}, where \code{bFloor} is the weight floor,
-\code{bPower} the allometric exponent, and \code{d0} the geometric mean diameter of the
-data. The year, site, and \code{site:year} effects act on \code{alpha}, so they scale
-the size-dependent part of the weight while the floor is common to all
-groups.
+Log wet weight (kg) is modelled with a Normal likelihood. \code{form} sets expected
+weight as a function of sub-bulb diameter (mm), with \code{x = diameter / d0} and
+\code{d0} the geometric mean diameter of the data:
+\itemize{
+\item \code{"packard_floor"} (the default): \code{bFloor + alpha * x^bPower}, the
+three-parameter power function of Packard (2023). The weight floor
+\code{bFloor} makes the relationship curve on log-log axes: the local allometric
+exponent rises with plant size and levels off toward \code{bPower} as the
+floor's share of weight shrinks.
+\item \code{"power"}: \code{alpha * x^bPower}, a power law, which is a straight line on
+log-log axes with the single exponent \code{bPower}.
+}
+
+\code{"packard_floor"} is recommended. On a coastwide compilation of \emph{Nereocystis}
+harvests (Alaska to California), the power law fitted worse and
+underestimated the weight of both the smallest and the largest plants.
+
+The year, site, and \code{site:year} effects act on \code{alpha}, so they scale the
+size-dependent part of the weight while any floor is common to all groups.
 
 When \code{data} has a \code{density} column (stipes per m², a site-year value),
 \code{log(alpha)} also includes \code{bDensity} times density standardised by its mean
@@ -118,6 +134,10 @@ if (interactive()) {
 }
 # A pre-fit example model is included with the package:
 tidy(fit_weight_sim_nereo)
+}
+\references{
+Packard, G. C. (2023). What is complex allometry? \emph{Biology Open},
+12, bio060148. \doi{10.1242/bio.060148}
 }
 \seealso{
 Other model:

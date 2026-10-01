@@ -10,7 +10,7 @@ further forms later, not a flag.
 
 ## What Changes
 
-- `kb_fit_weight_nereo()` gains `form`, a string: `"packard"` (the default, the
+- `kb_fit_weight_nereo()` gains `form`, a string: `"packard_floor"` (the default, the
   current model) or `"power"` (a power law in diameter, with no floor). An
   invalid value errors listing the available forms.
 - Under `"power"`, expected weight is `alpha * (diameter / d0)^bPower`, with the

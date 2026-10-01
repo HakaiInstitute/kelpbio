@@ -5,13 +5,16 @@
 //                + bSiteYear[site, year]
 //   x          = diameter / diameter_ref
 //
-// The mean function is Packard's (2008) three-parameter power function,
+// The mean function is Packard's (2023) three-parameter power function,
 // W = a + b * D^c, with diameter expressed relative to a reference so that alpha
 // is the weight above the floor at diameter_ref. bFloor is the weight floor, in
 // the units of weight, as diameter approaches zero, and bPower the allometric
 // scaling exponent; neither depends on diameter_ref. The implied log-log slope,
 // bPower * (eWeight - bFloor) / eWeight, is increasing and bounded in (0, bPower),
 // so expected weight is monotone in diameter.
+//
+// floor_on = 0 drops the floor (the "power" form), giving the power law
+// eWeight = alpha * x^bPower, linear on log-log axes.
 //
 // The random effects act on alpha, not on the whole expectation: they scale the
 // size-dependent part of the weight and leave the floor common, since the floor
@@ -62,6 +65,7 @@ data {
   int<lower=0, upper=1> prior_only;       // 1 = skip likelihood, sample from priors
   int<lower=0, upper=1> site_year_on;     // 0 = drop the site:year term (set to 0)
   int<lower=0, upper=1> density_on;       // 0 = drop the density term
+  int<lower=0, upper=1> floor_on;         // 0 = drop the floor (power-law form)
 }
 transformed data {
   vector[nObs] log_x = log(diameter) - log(diameter_ref);
@@ -113,7 +117,7 @@ model {
     vector[nObs] log_alpha = bWeight + density_on * bDensity * density
       + bYear[year] + bSite[site]
       + site_year_on * to_vector(bSiteYear)[sy_idx];
-    vector[nObs] log_eWeight = log(bFloor + exp(log_alpha + bPower * log_x));
+    vector[nObs] log_eWeight = log(floor_on * bFloor + exp(log_alpha + bPower * log_x));
     log_weight ~ normal(log_eWeight, sWeight);
   }
 }

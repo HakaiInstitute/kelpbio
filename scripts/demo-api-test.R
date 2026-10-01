@@ -55,12 +55,19 @@ grams <- mutate(data_weight_sim_macro, weight = weight * 1000)
 kb_check_data_weight_macro(grams)
 
 # --- kb_fit_weight_nereo() ----------------------------------------------------
-# The model: log weight ~ Normal, expected weight = bFloor + alpha * x^bPower
-# (Packard power function of diameter relative to its geometric mean), with year,
-# site, site:year, and stipe density effects on log(alpha). The simulated data
-# have density recorded for every site-year.
+# The model: log weight ~ Normal, with year, site, site:year, and stipe density
+# effects on log(alpha). The simulated data have density recorded for every
+# site-year. form sets expected weight as a function of x = diameter / d0:
+#   "packard_floor" (default): bFloor + alpha * x^bPower, a power law plus a
+#     weight floor, so the log-log curve bends (recommended)
+#   "power": alpha * x^bPower, a straight line on log-log axes (no bFloor)
 fit <- kb_fit_weight_nereo(
-  data_weight_sim_nereo
+  data_weight_sim_nereo,
+  form = "packard_floor"
+)
+fit_power <- kb_fit_weight_nereo(
+  data_weight_sim_nereo,
+  form = "power"
 )
 # print key model info (see other generics including summary() below)
 fit
@@ -101,6 +108,15 @@ dim(log_lik(fit))
 # log_lik is the pointwise matrix loo expects, so model comparison / influence
 # diagnostics work directly off the fit.
 loo::loo(log_lik(fit))
+
+# compare the two functional forms: elpd_diff is relative to the better form,
+# with se_diff its standard error
+loo::loo_compare(
+  list(
+    packard_floor = loo::loo(log_lik(fit)),
+    power = loo::loo(log_lik(fit_power))
+  )
+)
 
 # --- fitted / residuals / augment (observed-data diagnostics) -----------------
 # fitted values are expected (mean) weight: for the lognormal model that is the
@@ -385,6 +401,22 @@ fit_aliased$meta$site_year_on # TRUE (retained despite non-identifiability)
 tidy(fit_one_year)
 pars(fit_one_year)
 "sSiteYear" %in% posterior::variables(samples(fit_one_year)) # FALSE
+
+# --- functional form ---------------------------------------------------------
+# fit_power (fitted above with form = "power") has no bFloor; its straight
+# log-log line pivots to fit the small plants, so it sits below the
+# packard_floor curve for the smallest and largest plants and above it between
+tidy(fit_power)
+kb_model_describe(fit_power)
+bind_rows(
+  mutate(kb_predict_weight_by(fit, new_levels = "average"), form = "packard_floor"),
+  mutate(kb_predict_weight_by(fit_power, new_levels = "average"), form = "power")
+) |>
+  ggplot(aes(diameter, estimate, colour = form, fill = form)) +
+  geom_ribbon(aes(ymin = lower, ymax = upper), alpha = 0.15, colour = NA) +
+  geom_line() +
+  scale_x_log10() +
+  scale_y_log10()
 
 # --- fits without density ----------------------------------------------------
 # Without a density column the density effect is omitted, silently: the model is
