@@ -13,86 +13,87 @@ namespace model_weight_nereo_namespace {
 using stan::model::model_base_crtp;
 using namespace stan::math;
 stan::math::profile_map profiles__;
-static constexpr std::array<const char*, 79> locations_array__ =
+static constexpr std::array<const char*, 80> locations_array__ =
   {" (found before start of program)",
-  " (in 'weight_nereo', line 75, column 2 to column 15)",
-  " (in 'weight_nereo', line 76, column 2 to column 23)",
-  " (in 'weight_nereo', line 77, column 2 to column 23)",
-  " (in 'weight_nereo', line 78, column 2 to column 16)",
-  " (in 'weight_nereo', line 79, column 2 to column 22)",
-  " (in 'weight_nereo', line 80, column 2 to column 22)",
-  " (in 'weight_nereo', line 81, column 2 to column 26)",
-  " (in 'weight_nereo', line 82, column 2 to column 24)",
-  " (in 'weight_nereo', line 83, column 2 to column 24)",
-  " (in 'weight_nereo', line 84, column 2 to column 24)",
-  " (in 'weight_nereo', line 85, column 2 to column 35)",
-  " (in 'weight_nereo', line 88, column 2 to column 40)",
-  " (in 'weight_nereo', line 89, column 2 to column 40)",
-  " (in 'weight_nereo', line 90, column 2 to column 59)",
-  " (in 'weight_nereo', line 93, column 2 to column 59)",
-  " (in 'weight_nereo', line 96, column 2 to column 50)",
-  " (in 'weight_nereo', line 97, column 2 to column 50)",
-  " (in 'weight_nereo', line 98, column 2 to column 56)",
-  " (in 'weight_nereo', line 99, column 2 to column 42)",
-  " (in 'weight_nereo', line 100, column 2 to column 42)",
-  " (in 'weight_nereo', line 101, column 2 to column 51)",
-  " (in 'weight_nereo', line 102, column 2 to column 48)",
-  " (in 'weight_nereo', line 103, column 2 to column 25)",
-  " (in 'weight_nereo', line 104, column 2 to column 25)",
-  " (in 'weight_nereo', line 105, column 2 to column 40)",
-  " (in 'weight_nereo', line 111, column 11 to column 15)",
-  " (in 'weight_nereo', line 111, column 4 to line 113, column 52)",
-  " (in 'weight_nereo', line 114, column 11 to column 15)",
-  " (in 'weight_nereo', line 114, column 4 to column 77)",
-  " (in 'weight_nereo', line 115, column 4 to column 46)",
-  " (in 'weight_nereo', line 106, column 23 to line 116, column 3)",
-  " (in 'weight_nereo', line 106, column 2 to line 116, column 3)",
-  " (in 'weight_nereo', line 38, column 2 to column 20)",
-  " (in 'weight_nereo', line 39, column 2 to column 21)",
-  " (in 'weight_nereo', line 40, column 2 to column 21)",
-  " (in 'weight_nereo', line 41, column 8 to column 12)",
-  " (in 'weight_nereo', line 41, column 2 to column 45)",
-  " (in 'weight_nereo', line 42, column 8 to column 12)",
-  " (in 'weight_nereo', line 42, column 2 to column 45)",
-  " (in 'weight_nereo', line 43, column 18 to column 22)",
-  " (in 'weight_nereo', line 43, column 2 to column 33)",
-  " (in 'weight_nereo', line 44, column 18 to column 22)",
-  " (in 'weight_nereo', line 44, column 2 to column 31)",
-  " (in 'weight_nereo', line 45, column 2 to column 29)",
-  " (in 'weight_nereo', line 46, column 9 to column 13)",
-  " (in 'weight_nereo', line 46, column 2 to column 23)",
-  " (in 'weight_nereo', line 48, column 2 to column 26)",
-  " (in 'weight_nereo', line 49, column 2 to column 35)",
-  " (in 'weight_nereo', line 50, column 2 to column 22)",
-  " (in 'weight_nereo', line 51, column 2 to column 31)",
-  " (in 'weight_nereo', line 52, column 2 to column 22)",
-  " (in 'weight_nereo', line 53, column 2 to column 31)",
-  " (in 'weight_nereo', line 54, column 2 to column 24)",
-  " (in 'weight_nereo', line 55, column 2 to column 33)",
-  " (in 'weight_nereo', line 56, column 2 to column 35)",
-  " (in 'weight_nereo', line 57, column 2 to column 35)",
-  " (in 'weight_nereo', line 58, column 2 to column 40)",
-  " (in 'weight_nereo', line 59, column 2 to column 39)",
+  " (in 'weight_nereo', line 79, column 2 to column 15)",
+  " (in 'weight_nereo', line 80, column 2 to column 23)",
+  " (in 'weight_nereo', line 81, column 2 to column 23)",
+  " (in 'weight_nereo', line 82, column 2 to column 16)",
+  " (in 'weight_nereo', line 83, column 2 to column 22)",
+  " (in 'weight_nereo', line 84, column 2 to column 22)",
+  " (in 'weight_nereo', line 85, column 2 to column 26)",
+  " (in 'weight_nereo', line 86, column 2 to column 24)",
+  " (in 'weight_nereo', line 87, column 2 to column 24)",
+  " (in 'weight_nereo', line 88, column 2 to column 24)",
+  " (in 'weight_nereo', line 89, column 2 to column 35)",
+  " (in 'weight_nereo', line 92, column 2 to column 40)",
+  " (in 'weight_nereo', line 93, column 2 to column 40)",
+  " (in 'weight_nereo', line 94, column 2 to column 59)",
+  " (in 'weight_nereo', line 97, column 2 to column 59)",
+  " (in 'weight_nereo', line 100, column 2 to column 50)",
+  " (in 'weight_nereo', line 101, column 2 to column 50)",
+  " (in 'weight_nereo', line 102, column 2 to column 56)",
+  " (in 'weight_nereo', line 103, column 2 to column 42)",
+  " (in 'weight_nereo', line 104, column 2 to column 42)",
+  " (in 'weight_nereo', line 105, column 2 to column 51)",
+  " (in 'weight_nereo', line 106, column 2 to column 48)",
+  " (in 'weight_nereo', line 107, column 2 to column 25)",
+  " (in 'weight_nereo', line 108, column 2 to column 25)",
+  " (in 'weight_nereo', line 109, column 2 to column 40)",
+  " (in 'weight_nereo', line 115, column 11 to column 15)",
+  " (in 'weight_nereo', line 115, column 4 to line 117, column 52)",
+  " (in 'weight_nereo', line 118, column 11 to column 15)",
+  " (in 'weight_nereo', line 118, column 4 to column 88)",
+  " (in 'weight_nereo', line 119, column 4 to column 46)",
+  " (in 'weight_nereo', line 110, column 23 to line 120, column 3)",
+  " (in 'weight_nereo', line 110, column 2 to line 120, column 3)",
+  " (in 'weight_nereo', line 41, column 2 to column 20)",
+  " (in 'weight_nereo', line 42, column 2 to column 21)",
+  " (in 'weight_nereo', line 43, column 2 to column 21)",
+  " (in 'weight_nereo', line 44, column 8 to column 12)",
+  " (in 'weight_nereo', line 44, column 2 to column 45)",
+  " (in 'weight_nereo', line 45, column 8 to column 12)",
+  " (in 'weight_nereo', line 45, column 2 to column 45)",
+  " (in 'weight_nereo', line 46, column 18 to column 22)",
+  " (in 'weight_nereo', line 46, column 2 to column 33)",
+  " (in 'weight_nereo', line 47, column 18 to column 22)",
+  " (in 'weight_nereo', line 47, column 2 to column 31)",
+  " (in 'weight_nereo', line 48, column 2 to column 29)",
+  " (in 'weight_nereo', line 49, column 9 to column 13)",
+  " (in 'weight_nereo', line 49, column 2 to column 23)",
+  " (in 'weight_nereo', line 51, column 2 to column 26)",
+  " (in 'weight_nereo', line 52, column 2 to column 35)",
+  " (in 'weight_nereo', line 53, column 2 to column 22)",
+  " (in 'weight_nereo', line 54, column 2 to column 31)",
+  " (in 'weight_nereo', line 55, column 2 to column 22)",
+  " (in 'weight_nereo', line 56, column 2 to column 31)",
+  " (in 'weight_nereo', line 57, column 2 to column 24)",
+  " (in 'weight_nereo', line 58, column 2 to column 33)",
+  " (in 'weight_nereo', line 59, column 2 to column 35)",
   " (in 'weight_nereo', line 60, column 2 to column 35)",
-  " (in 'weight_nereo', line 61, column 2 to column 37)",
-  " (in 'weight_nereo', line 62, column 2 to column 35)",
-  " (in 'weight_nereo', line 65, column 9 to column 13)",
-  " (in 'weight_nereo', line 65, column 2 to column 57)",
-  " (in 'weight_nereo', line 66, column 9 to column 13)",
-  " (in 'weight_nereo', line 66, column 2 to column 40)",
-  " (in 'weight_nereo', line 69, column 8 to column 12)",
-  " (in 'weight_nereo', line 69, column 2 to column 25)",
-  " (in 'weight_nereo', line 71, column 4 to column 48)",
-  " (in 'weight_nereo', line 70, column 20 to line 72, column 3)",
-  " (in 'weight_nereo', line 70, column 2 to line 72, column 3)",
-  " (in 'weight_nereo', line 83, column 9 to column 14)",
-  " (in 'weight_nereo', line 84, column 9 to column 14)",
-  " (in 'weight_nereo', line 85, column 9 to column 14)",
-  " (in 'weight_nereo', line 85, column 16 to column 21)",
+  " (in 'weight_nereo', line 61, column 2 to column 40)",
+  " (in 'weight_nereo', line 62, column 2 to column 39)",
+  " (in 'weight_nereo', line 63, column 2 to column 35)",
+  " (in 'weight_nereo', line 64, column 2 to column 37)",
+  " (in 'weight_nereo', line 65, column 2 to column 35)",
+  " (in 'weight_nereo', line 66, column 2 to column 33)",
+  " (in 'weight_nereo', line 69, column 9 to column 13)",
+  " (in 'weight_nereo', line 69, column 2 to column 57)",
+  " (in 'weight_nereo', line 70, column 9 to column 13)",
+  " (in 'weight_nereo', line 70, column 2 to column 40)",
+  " (in 'weight_nereo', line 73, column 8 to column 12)",
+  " (in 'weight_nereo', line 73, column 2 to column 25)",
+  " (in 'weight_nereo', line 75, column 4 to column 48)",
+  " (in 'weight_nereo', line 74, column 20 to line 76, column 3)",
+  " (in 'weight_nereo', line 74, column 2 to line 76, column 3)",
+  " (in 'weight_nereo', line 87, column 9 to column 14)",
   " (in 'weight_nereo', line 88, column 9 to column 14)",
   " (in 'weight_nereo', line 89, column 9 to column 14)",
-  " (in 'weight_nereo', line 90, column 9 to column 14)",
-  " (in 'weight_nereo', line 90, column 16 to column 21)"};
+  " (in 'weight_nereo', line 89, column 16 to column 21)",
+  " (in 'weight_nereo', line 92, column 9 to column 14)",
+  " (in 'weight_nereo', line 93, column 9 to column 14)",
+  " (in 'weight_nereo', line 94, column 9 to column 14)",
+  " (in 'weight_nereo', line 94, column 16 to column 21)"};
 #include <stan_meta_header.hpp>
 class model_weight_nereo final : public model_base_crtp<model_weight_nereo> {
 private:
@@ -120,6 +121,7 @@ private:
   int prior_only;
   int site_year_on;
   int density_on;
+  int floor_on;
   Eigen::Matrix<double,-1,1> log_x_data__;
   Eigen::Matrix<double,-1,1> log_weight_data__;
   std::vector<int> sy_idx;
@@ -404,54 +406,64 @@ public:
       current_statement__ = 61;
       stan::math::check_less_or_equal(function__, "density_on", density_on, 1);
       current_statement__ = 62;
-      stan::math::validate_non_negative_index("log_x", "nObs", nObs);
+      context__.validate_dims("data initialization", "floor_on", "int",
+        std::vector<size_t>{});
+      floor_on = std::numeric_limits<int>::min();
+      current_statement__ = 62;
+      floor_on = context__.vals_i("floor_on")[(1 - 1)];
+      current_statement__ = 62;
+      stan::math::check_greater_or_equal(function__, "floor_on", floor_on, 0);
+      current_statement__ = 62;
+      stan::math::check_less_or_equal(function__, "floor_on", floor_on, 1);
       current_statement__ = 63;
+      stan::math::validate_non_negative_index("log_x", "nObs", nObs);
+      current_statement__ = 64;
       log_x_data__ = Eigen::Matrix<double,-1,1>::Constant(nObs,
                        std::numeric_limits<double>::quiet_NaN());
       new (&log_x)
         Eigen::Map<Eigen::Matrix<double,-1,1>>(log_x_data__.data(), nObs);
-      current_statement__ = 63;
+      current_statement__ = 64;
       stan::model::assign(log_x,
         stan::math::subtract(stan::math::log(diameter),
           stan::math::log(diameter_ref)), "assigning variable log_x");
-      current_statement__ = 64;
-      stan::math::validate_non_negative_index("log_weight", "nObs", nObs);
       current_statement__ = 65;
+      stan::math::validate_non_negative_index("log_weight", "nObs", nObs);
+      current_statement__ = 66;
       log_weight_data__ = Eigen::Matrix<double,-1,1>::Constant(nObs,
                             std::numeric_limits<double>::quiet_NaN());
       new (&log_weight)
         Eigen::Map<Eigen::Matrix<double,-1,1>>(log_weight_data__.data(),
         nObs);
-      current_statement__ = 65;
+      current_statement__ = 66;
       stan::model::assign(log_weight, stan::math::log(weight),
         "assigning variable log_weight");
-      current_statement__ = 66;
-      stan::math::validate_non_negative_index("sy_idx", "nObs", nObs);
       current_statement__ = 67;
+      stan::math::validate_non_negative_index("sy_idx", "nObs", nObs);
+      current_statement__ = 68;
       sy_idx = std::vector<int>(nObs, std::numeric_limits<int>::min());
-      current_statement__ = 70;
+      current_statement__ = 71;
       for (int i = 1; i <= nObs; ++i) {
-        current_statement__ = 68;
+        current_statement__ = 69;
         stan::model::assign(sy_idx,
           (stan::model::rvalue(site, "site", stan::model::index_uni(i)) +
           ((stan::model::rvalue(year, "year", stan::model::index_uni(i)) - 1)
           * nSite)), "assigning variable sy_idx", stan::model::index_uni(i));
       }
-      current_statement__ = 71;
-      stan::math::validate_non_negative_index("z_bSite", "nSite", nSite);
       current_statement__ = 72;
-      stan::math::validate_non_negative_index("z_bYear", "nYear", nYear);
+      stan::math::validate_non_negative_index("z_bSite", "nSite", nSite);
       current_statement__ = 73;
-      stan::math::validate_non_negative_index("z_bSiteYear", "nSite", nSite);
+      stan::math::validate_non_negative_index("z_bYear", "nYear", nYear);
       current_statement__ = 74;
-      stan::math::validate_non_negative_index("z_bSiteYear", "nYear", nYear);
+      stan::math::validate_non_negative_index("z_bSiteYear", "nSite", nSite);
       current_statement__ = 75;
-      stan::math::validate_non_negative_index("bSite", "nSite", nSite);
+      stan::math::validate_non_negative_index("z_bSiteYear", "nYear", nYear);
       current_statement__ = 76;
-      stan::math::validate_non_negative_index("bYear", "nYear", nYear);
+      stan::math::validate_non_negative_index("bSite", "nSite", nSite);
       current_statement__ = 77;
-      stan::math::validate_non_negative_index("bSiteYear", "nSite", nSite);
+      stan::math::validate_non_negative_index("bYear", "nYear", nYear);
       current_statement__ = 78;
+      stan::math::validate_non_negative_index("bSiteYear", "nSite", nSite);
+      current_statement__ = 79;
       stan::math::validate_non_negative_index("bSiteYear", "nYear", nYear);
     } catch (const std::exception& e) {
       stan::lang::rethrow_located(e, locations_array__[current_statement__]);
@@ -605,7 +617,7 @@ public:
           current_statement__ = 29;
           stan::model::assign(log_eWeight,
             stan::math::log(
-              stan::math::add(bFloor,
+              stan::math::add((floor_on * bFloor),
                 stan::math::exp(
                   stan::math::add(log_alpha,
                     stan::math::multiply(bPower, log_x))))),
@@ -760,7 +772,7 @@ public:
           current_statement__ = 29;
           stan::model::assign(log_eWeight,
             stan::math::log(
-              stan::math::add(bFloor,
+              stan::math::add((floor_on * bFloor),
                 stan::math::exp(
                   stan::math::add(log_alpha,
                     stan::math::multiply(bPower, log_x))))),

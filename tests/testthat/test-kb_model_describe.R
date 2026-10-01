@@ -71,3 +71,10 @@ test_that("a dropped site:year effect is omitted from the size description", {
   out <- capture.output(kb_model_describe(fit))
   expect_false(any(grepl("SiteYear", out)))
 })
+
+test_that("kb_model_describe follows the power-law form", {
+  power <- weight_fit
+  power$meta$form <- "power"
+  expect_snapshot(kb_model_describe(power))
+  expect_snapshot(kb_model_describe(power, prose = TRUE))
+})

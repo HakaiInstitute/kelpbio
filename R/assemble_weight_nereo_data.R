@@ -21,7 +21,8 @@ assemble_weight_nereo_data <- function(
   diameter_ref,
   density = density_structure(data),
   prior_only = FALSE,
-  site_year_on = TRUE
+  site_year_on = TRUE,
+  floor_on = TRUE
 ) {
   site <- factor(data$site)
   year <- factor(data$year)
@@ -57,7 +58,8 @@ assemble_weight_nereo_data <- function(
     prior_sd_residual_rate = priors$sd_residual$rate,
     prior_only = as.integer(prior_only),
     site_year_on = as.integer(site_year_on),
-    density_on = as.integer(density$on)
+    density_on = as.integer(density$on),
+    floor_on = as.integer(floor_on)
   )
 }
 

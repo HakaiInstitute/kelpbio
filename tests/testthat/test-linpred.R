@@ -194,3 +194,21 @@ test_that("new_data predictions work for a model with no continuous predictor", 
   fit$meta$predictor <- NULL
   expect_no_error(data_linpred(fit, data.frame(diameter = 30), "average"))
 })
+
+test_that("a power-law fit's mean is log(alpha) + bPower * log(x), with no floor", {
+  grid <- data.frame(diameter = c(15, 40), density = 4)
+  power <- weight_fit
+  power$meta$form <- "power"
+  lp_power <- posterior::draws_of(.linpred(power, grid, "average"))
+  lp_floor <- posterior::draws_of(.linpred(weight_fit, grid, "average"))
+  floor <- as.numeric(posterior::draws_of(weight_fit$draws$bFloor))
+  # removing the floor from the packard_floor mean gives the power-law mean
+  expect_equal(exp(lp_power), exp(lp_floor) - floor, ignore_attr = TRUE)
+  # and it is linear in log(diameter)
+  b_power <- as.numeric(posterior::draws_of(weight_fit$draws$bPower))
+  expect_equal(
+    lp_power[, 2] - lp_power[, 1],
+    b_power * (log(40) - log(15)),
+    ignore_attr = TRUE
+  )
+})

@@ -3,13 +3,24 @@
 #' Fit an allometric weight model for *Nereocystis luetkeana* via Stan.
 #'
 #' @details
-#' Log wet weight (kg) is modelled with a Normal likelihood. Expected weight is a
-#' three-parameter power function of sub-bulb diameter (mm),
-#' `bFloor + alpha * (diameter / d0)^bPower`, where `bFloor` is the weight floor,
-#' `bPower` the allometric exponent, and `d0` the geometric mean diameter of the
-#' data. The year, site, and `site:year` effects act on `alpha`, so they scale
-#' the size-dependent part of the weight while the floor is common to all
-#' groups.
+#' Log wet weight (kg) is modelled with a Normal likelihood. `form` sets expected
+#' weight as a function of sub-bulb diameter (mm), with `x = diameter / d0` and
+#' `d0` the geometric mean diameter of the data:
+#'
+#' - `"packard_floor"` (the default): `bFloor + alpha * x^bPower`, the
+#'   three-parameter power function of Packard (2023). The weight floor
+#'   `bFloor` makes the relationship curve on log-log axes: the local allometric
+#'   exponent rises with plant size and levels off toward `bPower` as the
+#'   floor's share of weight shrinks.
+#' - `"power"`: `alpha * x^bPower`, a power law, which is a straight line on
+#'   log-log axes with the single exponent `bPower`.
+#'
+#' `"packard_floor"` is recommended. On a coastwide compilation of *Nereocystis*
+#' harvests (Alaska to California), the power law fitted worse and
+#' underestimated the weight of both the smallest and the largest plants.
+#'
+#' The year, site, and `site:year` effects act on `alpha`, so they scale the
+#' size-dependent part of the weight while any floor is common to all groups.
 #'
 #' When `data` has a `density` column (stipes per m², a site-year value),
 #' `log(alpha)` also includes `bDensity` times density standardised by its mean
@@ -24,11 +35,15 @@
 #'
 #' @inheritSection params Sampling
 #' @inheritParams params
+#' @param form A string, one of `"packard_floor"` (the default) or `"power"`,
+#'   giving the mean function of weight in diameter (see Details).
 #' @param ... Additional arguments passed to [rstan::sampling()], including a
 #'   `control` list (merged over the `adapt_delta = 0.95` default); see the
 #'   `control` argument of [rstan::stan()] for the available entries.
 #'
 #' @return An object of class `c("kb_fit_weight_nereo", "kb_fit_weight", "kb_fit")`.
+#' @references Packard, G. C. (2023). What is complex allometry? *Biology Open*,
+#'   12, bio060148. \doi{10.1242/bio.060148}
 #' @family model
 #' @export
 #'
@@ -42,6 +57,7 @@
 kb_fit_weight_nereo <- function(
   data,
   priors = NULL,
+  form = c("packard_floor", "power"),
   ...,
   prior_only = FALSE,
   chains = 4L,
@@ -52,6 +68,7 @@ kb_fit_weight_nereo <- function(
   progress = c("bar", "verbose", "none"),
   progress_dir = NULL
 ) {
+  form <- rlang::arg_match(form)
   progress <- rlang::arg_match(progress)
   .chk_sampler_args(
     prior_only = prior_only,
@@ -80,7 +97,8 @@ kb_fit_weight_nereo <- function(
     diameter_ref,
     density = density,
     prior_only = prior_only,
-    site_year_on = site_year$on
+    site_year_on = site_year$on,
+    floor_on = form == "packard_floor"
   )
 
   core <- fit_stan(
@@ -122,7 +140,7 @@ kb_fit_weight_nereo <- function(
       fixed = c(
         "bWeight",
         "bPower",
-        "bFloor",
+        if (form == "packard_floor") "bFloor",
         if (density$on) "bDensity",
         "sSite",
         "sYear",
@@ -138,6 +156,7 @@ kb_fit_weight_nereo <- function(
     prior_only = prior_only,
     nthin = as.integer(nthin),
     meta_extra = list(
+      form = form,
       predictor_ref = diameter_ref,
       site_year_on = site_year$on,
       density_on = density$on,

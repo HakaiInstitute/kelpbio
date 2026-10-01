@@ -63,6 +63,7 @@ kb_model_describe.kb_fit_size_macro <- function(fit, prose = FALSE) {
 .model_spec_nereo <- function(fit) {
   sy <- .site_year_on(fit)
   dens <- .density_on(fit)
+  floor <- .floor_on(fit)
   d0 <- signif(fit$meta$predictor_ref, 3)
   pri <- fit$meta$priors
 
@@ -119,6 +120,31 @@ kb_model_describe.kb_fit_size_macro <- function(fit, prose = FALSE) {
     priors$sSiteYear <- pri$sd_site_year
   }
 
+  if (!floor) {
+    priors$bFloor <- NULL
+  }
+  form_prose <- if (floor) {
+    sprintf(
+      paste0(
+        "Expected weight followed a three-parameter power function (Packard ",
+        "2023) of diameter relative to the geometric mean diameter ",
+        "(%s), in which bFloor is the weight as diameter approaches zero, alpha ",
+        "the weight above the floor at the reference diameter, and bPower the ",
+        "allometric exponent."
+      ),
+      format(d0)
+    )
+  } else {
+    sprintf(
+      paste0(
+        "Expected weight followed a power law in diameter relative to the ",
+        "geometric mean diameter (%s), in which alpha is the weight at the ",
+        "reference diameter and bPower the allometric exponent."
+      ),
+      format(d0)
+    )
+  }
+
   list(
     title = "Weight allometry",
     species = .species_label(fit$meta$species),
@@ -126,32 +152,27 @@ kb_model_describe.kb_fit_size_macro <- function(fit, prose = FALSE) {
     predictor_desc = "sub-bulb diameter (mm)",
     likelihood = paste0(
       "log(weight) ~ Normal(log(mu), sWeight)",
-      "\n  mu = bFloor + alpha * x^bPower"
+      if (floor) "\n  mu = bFloor + alpha * x^bPower" else "\n  mu = alpha * x^bPower"
     ),
     mean_lhs = "log(alpha)",
     mean_terms = mean_terms,
     centering = centering,
     random = random,
     priors = priors,
-    truncated = c("bPower", "bFloor"),
-    prose = sprintf(
-      paste0(
-        "Wet weight was modelled on the log scale with a Normal likelihood as an ",
-        "allometric function of sub-bulb diameter. Expected weight followed a ",
-        "three-parameter power function (Packard 2008) of diameter relative to ",
-        "the geometric mean diameter (%s), in which bFloor is the weight as ",
-        "diameter approaches zero, alpha the weight above the floor at the ",
-        "reference diameter, and bPower the allometric exponent. %s%s ",
-        "Regularizing priors were placed on all parameters (see the notation ",
-        "form for the hyperparameters)."
-      ),
-      format(d0),
+    truncated = c("bPower", if (floor) "bFloor"),
+    prose = paste0(
+      "Wet weight was modelled on the log scale with a Normal likelihood as an ",
+      "allometric function of sub-bulb diameter. ",
+      form_prose,
+      " ",
       if (sy) {
         "The log of alpha varied by year, by site, and by site-year."
       } else {
         "The log of alpha varied by year and by site."
       },
-      density_prose
+      density_prose,
+      " Regularizing priors were placed on all parameters (see the notation ",
+      "form for the hyperparameters)."
     )
   )
 }
