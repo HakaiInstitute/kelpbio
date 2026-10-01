@@ -4,7 +4,7 @@
 # Structure: basic functionality first (fit, accessors, predictions, plots),
 # then advanced functionality (priors, custom-prior/prior-only fits, control,
 # progress, site:year edge cases, fits without density, raw posterior draws)
-# further down.
+# further down, then the Macrocystis weight model and the size models.
 #
 # Orientation: pair this with decisions/architecture.md (the design overview);
 # the behavioural contract lives in openspec/specs/, and the rendered pkgdown
@@ -439,7 +439,7 @@ try(kb_predict_weight(
 # =============================================================================
 # Macrocystis has its own fit function, priors, and data check because the model
 # differs structurally from nereo: the predictor is a frond COUNT (`fronds`) and
-# the response is Gamma with a constant shape (`shape`). The fit object is the
+# the response is Gamma with a constant shape (`bShape`). The fit object is the
 # same class, so every accessor, generic, and prediction/plot function above
 # works unchanged.
 
@@ -466,7 +466,7 @@ fit_m <- kb_fit_weight_macro(
 )
 fit_m # slim header; kb_model_describe(fit_m) shows the Gamma model + structure
 
-# same accessors as nereo; the term list is macro's (bFronds, shape)
+# same accessors as nereo; the term list is macro's (bFronds, bShape)
 
 tidy(fit_m)
 glance(fit_m)
@@ -496,3 +496,59 @@ range(pp_m) # all > 0
 
 # residuals are Gamma deviance residuals
 head(residuals(fit_m))
+
+# =============================================================================
+# SIZE DISTRIBUTION MODELS
+# =============================================================================
+# Size is one row per plant: maximum sub-bulb diameter (mm) for nereo (Weibull),
+# fronds reaching 1 m above the holdfast for macro (zero-truncated negative
+# binomial). The log mean size varies by site, year, and site:year. There is no
+# predictor, so predictions are one expected size per row or group.
+
+str(data_size_sim_nereo)
+kb_check_data_size_nereo(data_size_sim_nereo)
+kb_check_data_size_macro(data_size_sim_macro)
+try(kb_check_data_size_macro(mutate(data_size_sim_macro, fronds = 0))) # >= 1
+
+kb_priors_size_nereo() # intercept, shape, sd_site/year/site_year
+kb_priors_size_macro() # intercept, dispersion, sd_site/year/site_year
+
+fit_s <- kb_fit_size_nereo(data_size_sim_nereo)
+fit_s
+tidy(fit_s)
+summary(fit_s)
+kb_model_describe(fit_s)
+
+fit_sm <- kb_fit_size_macro(data_size_sim_macro)
+kb_model_describe(fit_sm)
+
+# expected size by group (the mean of the distribution); for macro, the
+# expected frond count of a plant with at least one frond at 1 m
+kb_predict_size_by(fit_s)
+kb_predict_size_by(fit_s, by = "site") |>
+  kb_plot_predictions() +
+  coord_flip()
+kb_predict_size_by(fit_sm, by = "year") |>
+  kb_plot_predictions()
+
+# rows of site/year (no predictor column); a new site is sampled by default
+kb_predict_size(fit_s, new_data = tibble(site = c("site1", "new_reef")))
+kb_predict_size(
+  fit_s,
+  new_data = tibble(site = "new_reef"),
+  representative_site = "site1"
+)
+
+# macro: posterior_epred is the truncated mean; linpred(transform = TRUE) is the
+# untruncated mean, which is lower
+nd <- tibble(site = "site1")
+median(posterior_epred(fit_sm, new_data = nd))
+median(posterior_linpred(fit_sm, transform = TRUE, new_data = nd))
+
+# draws of individual plant sizes (whole numbers >= 1 for macro)
+ppc_dens_overlay(fit_s$data$diameter, posterior_predict(fit_s)[1:50, ])
+head(residuals(fit_sm))
+augment(fit_s) |>
+  ggplot(aes(fitted, residual)) +
+  geom_hline(yintercept = 0, linetype = 2) +
+  geom_jitter(width = 0.2, alpha = 0.3)

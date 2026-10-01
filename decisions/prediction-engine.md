@@ -118,8 +118,11 @@ the `fct_lump_n`/`fct_lump_prop` precedent):
   renders as a curve over the continuous predictor (weight, blade) or grouped
   points (density, size). Exists wherever the model has grouping factors.
 - Scalar, intercept-only models (wet/dry, carbon) have only the bare verb (the
-  population estimate); no `_by`. The size model returns a distribution and needs
-  its own pass.
+  population estimate); no `_by`.
+- The size models have no predictor, so both verbs report the expected size (the
+  mean of the size distribution) as grouped points. The distribution itself is
+  reached through `posterior_predict()`; the biomass composition draws from it
+  per draw rather than through a prediction verb.
 
 `augment()` stays a diagnostics verb (fitted/residuals on the training data), not
 a prediction entry point.

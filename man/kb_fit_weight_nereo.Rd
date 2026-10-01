@@ -121,6 +121,8 @@ tidy(fit_weight_sim_nereo)
 }
 \seealso{
 Other model:
+\code{\link[=kb_fit_size_macro]{kb_fit_size_macro()}},
+\code{\link[=kb_fit_size_nereo]{kb_fit_size_nereo()}},
 \code{\link[=kb_fit_weight_macro]{kb_fit_weight_macro()}},
 \code{\link[=kb_model_describe]{kb_model_describe()}}
 }

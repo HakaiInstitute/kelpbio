@@ -46,6 +46,18 @@ kb_model_describe.kb_fit_weight_macro <- function(fit, prose = FALSE) {
   .render_model(.model_spec_macro(fit), prose)
 }
 
+#' @export
+kb_model_describe.kb_fit_size_nereo <- function(fit, prose = FALSE) {
+  chk::chk_flag(prose)
+  .render_model(.model_spec_size_nereo(fit), prose)
+}
+
+#' @export
+kb_model_describe.kb_fit_size_macro <- function(fit, prose = FALSE) {
+  chk::chk_flag(prose)
+  .render_model(.model_spec_size_macro(fit), prose)
+}
+
 # ---- species model specs (single source for notation and prose) -------------
 
 .model_spec_nereo <- function(fit) {
@@ -157,7 +169,7 @@ kb_model_describe.kb_fit_weight_macro <- function(fit, prose = FALSE) {
   priors <- list(
     bWeight = pri$intercept,
     bFronds = pri$fronds,
-    shape = pri$shape,
+    bShape = pri$shape,
     sSite = pri$sd_site,
     sYear = pri$sd_year
   )
@@ -179,7 +191,7 @@ kb_model_describe.kb_fit_weight_macro <- function(fit, prose = FALSE) {
     species = .species_label(fit$meta$species),
     response_desc = "wet weight",
     predictor_desc = "frond count",
-    likelihood = "weight ~ Gamma(shape, shape / mu)",
+    likelihood = "weight ~ Gamma(bShape, bShape / mu)",
     mean_lhs = "log(mu)",
     mean_terms = mean_terms,
     centering = sprintf(
@@ -198,6 +210,98 @@ kb_model_describe.kb_fit_weight_macro <- function(fit, prose = FALSE) {
       ),
       format(f0),
       if (sy) ", and site-year" else ""
+    )
+  )
+}
+
+# The size models share their random-effect structure, so the terms, random
+# effects, and SD priors are assembled once; `intercept` is the species'
+# intercept name.
+.size_spec_effects <- function(fit, intercept) {
+  sy <- .site_year_on(fit)
+  pri <- fit$meta$priors
+  mean_terms <- c(intercept, "bSite[site]", "bYear[year]")
+  random <- list(
+    list(term = "bSite[site]", sd = "sSite", gloss = "site effect on log(mu)"),
+    list(term = "bYear[year]", sd = "sYear", gloss = "year effect on log(mu)")
+  )
+  sds <- list(sSite = pri$sd_site, sYear = pri$sd_year)
+  if (sy) {
+    mean_terms <- c(mean_terms, "bSiteYear[site, year]")
+    random <- c(
+      random,
+      list(list(
+        term = "bSiteYear[site, year]",
+        sd = "sSiteYear",
+        gloss = "site:year effect on log(mu)"
+      ))
+    )
+    sds$sSiteYear <- pri$sd_site_year
+  }
+  list(
+    mean_terms = mean_terms,
+    random = random,
+    sds = sds,
+    groups = if (sy) "site, year, and site-year" else "site and year"
+  )
+}
+
+.model_spec_size_nereo <- function(fit) {
+  pri <- fit$meta$priors
+  eff <- .size_spec_effects(fit, "bDiameter")
+  list(
+    title = "Size distribution",
+    species = .species_label(fit$meta$species),
+    response_desc = "maximum sub-bulb diameter (mm)",
+    likelihood = paste0(
+      "diameter ~ Weibull(bShape, mu / gamma(1 + 1 / bShape))"
+    ),
+    mean_lhs = "log(mu)",
+    mean_terms = eff$mean_terms,
+    random = eff$random,
+    priors = c(
+      list(bDiameter = pri$intercept, bShape = pri$shape),
+      eff$sds
+    ),
+    prose = sprintf(
+      paste0(
+        "Maximum sub-bulb diameter was modelled with a Weibull likelihood ",
+        "parameterised by its mean, mu, with a shape common to all plants. ",
+        "The log of mu varied by %s. Regularizing priors were placed on all ",
+        "parameters (see the notation form for the hyperparameters)."
+      ),
+      eff$groups
+    )
+  )
+}
+
+.model_spec_size_macro <- function(fit) {
+  pri <- fit$meta$priors
+  eff <- .size_spec_effects(fit, "bFronds")
+  list(
+    title = "Size distribution",
+    species = .species_label(fit$meta$species),
+    response_desc = "fronds reaching 1 m above the holdfast",
+    likelihood = paste0(
+      "fronds ~ NegBinomial(mu, 1 / bDispersion) T[1, ]",
+      "\n  E[fronds] = mu / (1 - P(fronds = 0))"
+    ),
+    mean_lhs = "log(mu)",
+    mean_terms = eff$mean_terms,
+    random = eff$random,
+    priors = c(
+      list(bFronds = pri$intercept, bDispersion = pri$dispersion),
+      eff$sds
+    ),
+    prose = sprintf(
+      paste0(
+        "The number of fronds reaching 1 m above the holdfast was modelled with ",
+        "a zero-truncated negative binomial likelihood, with an overdispersion ",
+        "common to all plants. The log of the untruncated mean, mu, varied by ",
+        "%s. Regularizing priors were placed on all parameters (see the ",
+        "notation form for the hyperparameters)."
+      ),
+      eff$groups
     )
   )
 }
@@ -255,19 +359,26 @@ kb_model_describe.kb_fit_weight_macro <- function(fit, prose = FALSE) {
     character(1)
   )
 
+  # A model without a predictor (size) has no predictor or centering line.
+  predictor <- if (is.null(spec$predictor_desc)) {
+    ""
+  } else {
+    paste0("; predictor: ", spec$predictor_desc)
+  }
+  centering <- if (is.null(spec$centering)) {
+    NULL
+  } else {
+    paste0("  ", spec$centering)
+  }
+
   lines <- c(
     paste0(spec$title, " - ", spec$species),
-    paste0(
-      "Response: ",
-      spec$response_desc,
-      "; predictor: ",
-      spec$predictor_desc
-    ),
+    paste0("Response: ", spec$response_desc, predictor),
     "",
     "Likelihood",
     paste0("  ", spec$likelihood),
     mean_lines,
-    paste0("  ", spec$centering),
+    centering,
     "",
     "Random effects",
     re_lines,

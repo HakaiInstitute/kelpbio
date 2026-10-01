@@ -41,7 +41,7 @@
       Response: wet weight; predictor: frond count
       
       Likelihood
-        weight ~ Gamma(shape, shape / mu)
+        weight ~ Gamma(bShape, bShape / mu)
         log(mu) = bWeight
                 + bFronds * x
                 + bSite[site]
@@ -57,7 +57,7 @@
       Priors
         bWeight        ~ Normal(0, 2)
         bFronds        ~ Normal(1, 0.5)
-        shape          ~ Exponential(0.1)
+        bShape         ~ Exponential(0.1)
         sSite          ~ Exponential(1)
         sYear          ~ Exponential(1)
         sSiteYear      ~ Exponential(1)
@@ -77,4 +77,70 @@
       site-year stipe density, standardised by its mean (4.23) and standard
       deviation (1.84). Regularizing priors were placed on all parameters (see
       the notation form for the hyperparameters).
+
+# kb_model_describe renders the size notation blocks
+
+    Code
+      kb_model_describe(size_nereo_fit)
+    Output
+      Size distribution - Nereocystis luetkeana
+      Response: maximum sub-bulb diameter (mm)
+      
+      Likelihood
+        diameter ~ Weibull(bShape, mu / gamma(1 + 1 / bShape))
+        log(mu) = bDiameter
+                + bSite[site]
+                + bYear[year]
+                + bSiteYear[site, year]
+      
+      Random effects
+        bSite[site]           ~ Normal(0, sSite)      site effect on log(mu)
+        bYear[year]           ~ Normal(0, sYear)      year effect on log(mu)
+        bSiteYear[site, year] ~ Normal(0, sSiteYear)  site:year effect on log(mu)
+      
+      Priors
+        bDiameter      ~ Normal(0, 2)
+        bShape         ~ Exponential(0.1)
+        sSite          ~ Exponential(1)
+        sYear          ~ Exponential(1)
+        sSiteYear      ~ Exponential(1)
+
+---
+
+    Code
+      kb_model_describe(size_macro_fit)
+    Output
+      Size distribution - Macrocystis pyrifera
+      Response: fronds reaching 1 m above the holdfast
+      
+      Likelihood
+        fronds ~ NegBinomial(mu, 1 / bDispersion) T[1, ]
+        E[fronds] = mu / (1 - P(fronds = 0))
+        log(mu) = bFronds
+                + bSite[site]
+                + bYear[year]
+                + bSiteYear[site, year]
+      
+      Random effects
+        bSite[site]           ~ Normal(0, sSite)      site effect on log(mu)
+        bYear[year]           ~ Normal(0, sYear)      year effect on log(mu)
+        bSiteYear[site, year] ~ Normal(0, sSiteYear)  site:year effect on log(mu)
+      
+      Priors
+        bFronds        ~ Normal(0, 2)
+        bDispersion    ~ Exponential(1)
+        sSite          ~ Exponential(1)
+        sYear          ~ Exponential(1)
+        sSiteYear      ~ Exponential(1)
+
+---
+
+    Code
+      kb_model_describe(size_macro_fit, prose = TRUE)
+    Output
+      The number of fronds reaching 1 m above the holdfast was modelled with a
+      zero-truncated negative binomial likelihood, with an overdispersion common
+      to all plants. The log of the untruncated mean, mu, varied by site, year,
+      and site-year. Regularizing priors were placed on all parameters (see the
+      notation form for the hyperparameters).
 

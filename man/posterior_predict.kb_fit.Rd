@@ -41,16 +41,19 @@ still follows \code{new_levels}.}
 A draws-by-observations (\verb{D x N}) matrix.
 }
 \description{
-Draws from the posterior predictive distribution: replicate weights carrying
-both parameter uncertainty and species-appropriate observation noise
-(Normal on log weight with SD \code{sWeight} for \emph{Nereocystis}; Gamma with
-shape \code{shape} for \emph{Macrocystis}, matching the Stan likelihood). With
-\code{new_data = NULL} the replicates are at the observed data, for use with
-\code{bayesplot::pp_check()}.
+Draws from the posterior predictive distribution: replicate responses (weights
+or plant sizes) carrying both parameter uncertainty and observation noise from
+the model's likelihood. With \code{new_data = NULL} the replicates are at the
+observed data, for use with \code{bayesplot::pp_check()}.
 }
 \details{
 For supplied \code{new_data}, conditioning is inferred from the grouping columns
 present (see \code{\link[=posterior_epred]{posterior_epred()}}).
+
+The observation noise follows the fitted likelihood: Normal on log weight
+(\emph{Nereocystis} weight), Gamma (\emph{Macrocystis} weight), Weibull (\emph{Nereocystis}
+size), and zero-truncated negative binomial (\emph{Macrocystis} size, so every
+draw is a whole number of at least 1).
 
 The observation noise is drawn in R, for every \code{new_data} including \code{NULL}, so
 repeated calls return different replicates. Set a seed with \code{set.seed()} for
@@ -72,6 +75,7 @@ Other generics:
 \code{\link[=log_lik.kb_fit]{log_lik.kb_fit()}},
 \code{\link[=posterior_epred.kb_fit]{posterior_epred.kb_fit()}},
 \code{\link[=posterior_linpred.kb_fit]{posterior_linpred.kb_fit()}},
+\code{\link[=predict.kb_fit_size]{predict.kb_fit_size()}},
 \code{\link[=predict.kb_fit_weight]{predict.kb_fit_weight()}},
 \code{\link[=prior_summary.kb_fit]{prior_summary.kb_fit()}},
 \code{\link[=residuals.kb_fit]{residuals.kb_fit()}},

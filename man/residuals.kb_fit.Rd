@@ -16,12 +16,18 @@ A numeric vector of deviance residuals, length \code{nobs(object)}.
 }
 \description{
 Posterior point estimates of the deviance residual at each observed row, from
-the fitted likelihood (Normal on log weight for \emph{Nereocystis}, Gamma on
-weight for \emph{Macrocystis}), matching \code{\link[=augment]{augment()}}'s \code{residual} column.
+the fitted likelihood, matching \code{\link[=augment]{augment()}}'s \code{residual} column.
 }
 \details{
 The deviance residual is computed per draw, then summarised with the posterior
-median.
+median. The likelihoods are Normal on log weight (\emph{Nereocystis} weight), Gamma
+on weight (\emph{Macrocystis} weight), Weibull on diameter (\emph{Nereocystis} size), and
+zero-truncated negative binomial on frond count (\emph{Macrocystis} size).
+
+A size residual is zero where the observation equals the value that
+maximises its likelihood with the shape or overdispersion held fixed: the
+Weibull scale for \emph{Nereocystis} (which exceeds the mean when the shape is
+greater than 1), and the truncated mean for \emph{Macrocystis}.
 }
 \examples{
 residuals(fit_weight_sim_nereo)
@@ -40,6 +46,7 @@ Other generics:
 \code{\link[=posterior_epred.kb_fit]{posterior_epred.kb_fit()}},
 \code{\link[=posterior_linpred.kb_fit]{posterior_linpred.kb_fit()}},
 \code{\link[=posterior_predict.kb_fit]{posterior_predict.kb_fit()}},
+\code{\link[=predict.kb_fit_size]{predict.kb_fit_size()}},
 \code{\link[=predict.kb_fit_weight]{predict.kb_fit_weight()}},
 \code{\link[=prior_summary.kb_fit]{prior_summary.kb_fit()}},
 \code{\link[=samples]{samples()}},

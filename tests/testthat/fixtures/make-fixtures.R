@@ -67,3 +67,38 @@ weight_macro_fit <- kb_fit_weight_macro(
 
 saveRDS(weight_macro_fit, "tests/testthat/fixtures/weight_macro_fit.rds")
 message("Wrote tests/testthat/fixtures/weight_macro_fit.rds")
+
+# Size fixtures: subsets of the bundled data_size_sim_*, mirroring the weight
+# fixtures above.
+size_subset <- function(data) {
+  d <- subset(data, site %in% c("site1", "site2", "site3", "site4"))
+  d$site <- droplevels(factor(d$site))
+  d$year <- droplevels(factor(d$year))
+  d
+}
+
+size_nereo_fit <- kb_fit_size_nereo(
+  size_subset(data_size_sim_nereo),
+  chains = 2L,
+  niters = 300L,
+  nthin = 5L,
+  cores = 2L,
+  progress = "none",
+  seed = 42L,
+  control = list(adapt_delta = 0.999)
+)
+saveRDS(size_nereo_fit, "tests/testthat/fixtures/size_nereo_fit.rds")
+message("Wrote tests/testthat/fixtures/size_nereo_fit.rds")
+
+size_macro_fit <- kb_fit_size_macro(
+  size_subset(data_size_sim_macro),
+  chains = 2L,
+  niters = 300L,
+  nthin = 5L,
+  cores = 2L,
+  progress = "none",
+  seed = 42L,
+  control = list(adapt_delta = 0.999)
+)
+saveRDS(size_macro_fit, "tests/testthat/fixtures/size_macro_fit.rds")
+message("Wrote tests/testthat/fixtures/size_macro_fit.rds")

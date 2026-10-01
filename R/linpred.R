@@ -87,6 +87,54 @@
     re_sy
 }
 
+# Size-model mean (log scale), a posterior rvar over grid rows, mirroring
+# inst/stan/size_*.stan. The two species share the structure (an intercept plus
+# site, year, and site:year effects, no predictor) and differ only in the
+# intercept's name, so each method passes its intercept to .linpred_size().
+#' @export
+.linpred.kb_fit_size_nereo <- function(
+  fit,
+  grid,
+  new_levels,
+  representative_site = NULL
+) {
+  .linpred_size(fit, fit$draws$bDiameter, grid, new_levels, representative_site)
+}
+
+#' @export
+.linpred.kb_fit_size_macro <- function(
+  fit,
+  grid,
+  new_levels,
+  representative_site = NULL
+) {
+  .linpred_size(fit, fit$draws$bFronds, grid, new_levels, representative_site)
+}
+
+.linpred_size <- function(
+  fit,
+  intercept,
+  grid,
+  new_levels,
+  representative_site
+) {
+  draws <- fit$draws
+  ix <- .grid_indices(fit, grid, representative_site)
+
+  re_site <- resolve_re1(draws$bSite, ix$site, new_levels, draws$sSite, ix$rep)
+  # representative_site borrows only the site effect, so year follows new_levels.
+  re_year <- resolve_re1(draws$bYear, ix$year, new_levels, draws$sYear)
+  # When the fit omitted the site:year effect its draws are prior-only noise, so
+  # predictions must add nothing rather than reintroduce spurious variation.
+  re_sy <- if (.site_year_on(fit)) {
+    resolve_re2(draws$bSiteYear, ix$site, ix$year, new_levels, draws$sSiteYear)
+  } else {
+    0
+  }
+
+  intercept + re_site + re_year + re_sy
+}
+
 # Link-scale mean at the observed rows. Every level is a fitted level, since
 # meta$*_levels was taken from this same data frame at fit time, so new_levels is
 # immaterial here.

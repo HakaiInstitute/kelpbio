@@ -29,7 +29,7 @@ test_that("kb_fit_weight_macro returns a correctly-structured object", {
     c(
       "bWeight",
       "bFronds",
-      "shape",
+      "bShape",
       "sSite",
       "sYear",
       "sSiteYear",

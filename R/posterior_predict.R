@@ -1,15 +1,18 @@
 #' Posterior-Predictive Draws
 #'
-#' Draws from the posterior predictive distribution: replicate weights carrying
-#' both parameter uncertainty and species-appropriate observation noise
-#' (Normal on log weight with SD `sWeight` for *Nereocystis*; Gamma with
-#' shape `shape` for *Macrocystis*, matching the Stan likelihood). With
-#' `new_data = NULL` the replicates are at the observed data, for use with
-#' `bayesplot::pp_check()`.
+#' Draws from the posterior predictive distribution: replicate responses (weights
+#' or plant sizes) carrying both parameter uncertainty and observation noise from
+#' the model's likelihood. With `new_data = NULL` the replicates are at the
+#' observed data, for use with `bayesplot::pp_check()`.
 #'
 #' @details
 #' For supplied `new_data`, conditioning is inferred from the grouping columns
 #' present (see [posterior_epred()]).
+#'
+#' The observation noise follows the fitted likelihood: Normal on log weight
+#' (*Nereocystis* weight), Gamma (*Macrocystis* weight), Weibull (*Nereocystis*
+#' size), and zero-truncated negative binomial (*Macrocystis* size, so every
+#' draw is a whole number of at least 1).
 #'
 #' The observation noise is drawn in R, for every `new_data` including `NULL`, so
 #' repeated calls return different replicates. Set a seed with `set.seed()` for
@@ -70,10 +73,10 @@ posterior_predict.kb_fit <- function(
 
 #' @export
 .add_noise.kb_fit_weight_macro <- function(fit, lp) {
-  # weight ~ gamma(shape, shape / eWeight); constant Gamma shape matches
+  # weight ~ gamma(bShape, bShape / eWeight); constant Gamma shape matches
   # weight_macro.stan.
   ewt <- exp(lp)
-  shape <- as.vector(posterior::draws_of(fit$draws$shape)) # length D
+  shape <- as.vector(posterior::draws_of(fit$draws$bShape)) # length D
   shape_mat <- matrix(shape, nrow = nrow(ewt), ncol = ncol(ewt)) # D x N, constant per draw
   rate <- shape_mat / ewt
   draws <- stats::rgamma(
@@ -82,4 +85,29 @@ posterior_predict.kb_fit <- function(
     rate = as.vector(rate)
   )
   matrix(draws, nrow = nrow(shape_mat))
+}
+
+#' @export
+.add_noise.kb_fit_size_nereo <- function(fit, lp) {
+  shape <- as.vector(posterior::draws_of(fit$draws$bShape)) # length D
+  # shape recycles down each column of the D x N matrix, so element (d, n) gets
+  # draw d's shape.
+  scale <- weibull_scale(exp(lp), shape)
+  draws <- stats::rweibull(
+    length(lp),
+    shape = rep_len(shape, length(lp)),
+    scale = as.vector(scale)
+  )
+  matrix(draws, nrow = nrow(lp))
+}
+
+#' @export
+.add_noise.kb_fit_size_macro <- function(fit, lp) {
+  theta <- as.vector(posterior::draws_of(fit$draws$bDispersion)) # length D
+  draws <- ran_gamma_pois_zt(
+    length(lp),
+    lambda = exp(as.vector(lp)),
+    theta = rep_len(theta, length(lp))
+  )
+  matrix(draws, nrow = nrow(lp))
 }

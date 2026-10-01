@@ -38,3 +38,26 @@
   }
   exp(lp + sw^2 / 2)
 }
+
+# Log link for both species. The Nereocystis Weibull is parameterised by its
+# mean, so exp(lp) is the mean.
+#' @export
+.epred.kb_fit_size <- function(fit, lp, expectation = TRUE) {
+  exp(lp)
+}
+
+# Macrocystis frond counts are zero-truncated: exp(lp) is the mean before
+# truncation, and the expected count of a recorded plant is the truncated mean.
+#' @export
+.epred.kb_fit_size_macro <- function(fit, lp, expectation = TRUE) {
+  if (!expectation) {
+    return(exp(lp))
+  }
+  theta <- fit$draws$bDispersion
+  if (!posterior::is_rvar(lp)) {
+    # A D x N matrix: a length-D vector recycles down each column, so element
+    # (d, n) gets draw d's overdispersion.
+    theta <- as.vector(posterior::draws_of(theta))
+  }
+  mean_gamma_pois_zt(exp(lp), theta)
+}

@@ -8,6 +8,10 @@
   inherits(x, "kb_fit_weight")
 }
 
+.vld_kb_fit_size <- function(x) {
+  inherits(x, "kb_fit_size")
+}
+
 .vld_representative_site <- function(representative_site, site_levels) {
   is.null(representative_site) ||
     (is.character(representative_site) &&
@@ -49,6 +53,11 @@
 
 .vld_new_data_weight_macro <- function(x) {
   is.data.frame(x) && "fronds" %in% names(x) && .vld_frond_count(x$fronds)
+}
+
+# Size new_data has no predictor: any data frame, with optional site and year.
+.vld_new_data_size <- function(x) {
+  is.data.frame(x)
 }
 
 .vld_progress <- function(x) {

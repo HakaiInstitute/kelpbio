@@ -33,7 +33,7 @@ test_that("macro summary carries the term list and year group", {
   expect_equal(s$model, "Weight")
   expect_named(s$groups, c("site", "year", "site:year"))
   expect_true(all(
-    c("bWeight", "bFronds", "shape", "sSite", "sYear", "sSiteYear") %in%
+    c("bWeight", "bFronds", "bShape", "sSite", "sYear", "sSiteYear") %in%
       s$coefficients$term
   ))
   expect_false(any(grepl("^bYear\\[", s$coefficients$term)))

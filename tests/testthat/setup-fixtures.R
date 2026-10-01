@@ -4,7 +4,8 @@
 # that use these fits report a scatter of cryptic errors instead of naming the
 # cause. setup-*.R runs for test() and R CMD check but not a bare load_all(),
 # which is exactly where the distinction belongs.
-if (is.null(weight_fit) || is.null(weight_macro_fit)) {
+fixtures <- list(weight_fit, weight_macro_fit, size_nereo_fit, size_macro_fit)
+if (any(vapply(fixtures, is.null, logical(1)))) {
   stop(
     "Test fixtures are missing. Rebuild them with:\n",
     "  KELPBIO_REBUILD_FITS=true Rscript scripts/build.R"

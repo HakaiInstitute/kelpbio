@@ -1,12 +1,18 @@
 #' Deviance Residuals
 #'
 #' Posterior point estimates of the deviance residual at each observed row, from
-#' the fitted likelihood (Normal on log weight for *Nereocystis*, Gamma on
-#' weight for *Macrocystis*), matching [augment()]'s `residual` column.
+#' the fitted likelihood, matching [augment()]'s `residual` column.
 #'
 #' @details
 #' The deviance residual is computed per draw, then summarised with the posterior
-#' median.
+#' median. The likelihoods are Normal on log weight (*Nereocystis* weight), Gamma
+#' on weight (*Macrocystis* weight), Weibull on diameter (*Nereocystis* size), and
+#' zero-truncated negative binomial on frond count (*Macrocystis* size).
+#'
+#' A size residual is zero where the observation equals the value that
+#' maximises its likelihood with the shape or overdispersion held fixed: the
+#' Weibull scale for *Nereocystis* (which exceeds the mean when the shape is
+#' greater than 1), and the truncated mean for *Macrocystis*.
 #'
 #' @param object A `kb_fit` object.
 #' @param ... Unused.
@@ -44,8 +50,24 @@ residuals.kb_fit <- function(object, ...) {
 
 #' @export
 .deviance.kb_fit_weight_macro <- function(fit, mu) {
-  shape <- as.vector(posterior::draws_of(fit$draws$shape))
+  shape <- as.vector(posterior::draws_of(fit$draws$bShape))
   .per_draw(mu, fit$data$weight, function(y, mu_d, d) {
     extras::res_gamma(y, shape = shape[d], rate = shape[d] / exp(mu_d))
+  })
+}
+
+#' @export
+.deviance.kb_fit_size_nereo <- function(fit, mu) {
+  shape <- as.vector(posterior::draws_of(fit$draws$bShape))
+  .per_draw(mu, fit$data$diameter, function(y, mu_d, d) {
+    res_weibull(y, shape[d], weibull_scale(exp(mu_d), shape[d]))
+  })
+}
+
+#' @export
+.deviance.kb_fit_size_macro <- function(fit, mu) {
+  theta <- as.vector(posterior::draws_of(fit$draws$bDispersion))
+  .per_draw(mu, fit$data$fronds, function(y, mu_d, d) {
+    res_gamma_pois_zt(y, exp(mu_d), theta[d])
   })
 }

@@ -6,7 +6,7 @@
 #' The response is wet weight, modelled on the natural scale with a Gamma
 #' likelihood. Expected weight is a log-linear (allometric) function of log frond
 #' count, centered at its geometric mean so the intercept is the expected weight
-#' at a typical frond count. The Gamma shape (`shape`) is constant across plants.
+#' at a typical frond count. The Gamma shape (`bShape`) is constant across plants.
 #' The intercept varies by site, by year, and by `site:year`.
 #'
 #' The site:year effect is set from the data: it is omitted when the data span a
@@ -80,7 +80,7 @@ kb_fit_weight_macro <- function(
     param_vars = c(
       "bWeight",
       "bFronds",
-      "shape",
+      "bShape",
       "sSite",
       "sYear",
       "sSiteYear",
@@ -111,7 +111,7 @@ kb_fit_weight_macro <- function(
       fixed = c(
         "bWeight",
         "bFronds",
-        "shape",
+        "bShape",
         "sSite",
         "sYear",
         if (site_year$on) "sSiteYear"
