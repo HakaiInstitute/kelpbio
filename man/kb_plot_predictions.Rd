@@ -4,13 +4,7 @@
 \alias{kb_plot_predictions}
 \title{Plot Model Predictions}
 \usage{
-kb_plot_predictions(
-  predictions,
-  ...,
-  x = NULL,
-  observed = NULL,
-  max_facets = 12L
-)
+kb_plot_predictions(predictions, ..., x = NULL, max_facets = 12L)
 }
 \arguments{
 \item{predictions}{A \code{kb_predictions} object.}
