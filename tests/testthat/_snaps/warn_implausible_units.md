@@ -25,3 +25,12 @@
       Column `stipes_m2` of `d` has median 25000, which is unusually large for stipes per m².
       i Check that stipes_m2 is in stipes per m².
 
+---
+
+    Code
+      warn_implausible_units(data.frame(area_m2 = c(4e+05, 2e+05)), "`d`")
+    Condition
+      Warning:
+      Column `area_m2` of `d` has median 3e+05, which is unusually large for square metres.
+      i Check that area_m2 is in square metres.
+

@@ -17,3 +17,9 @@ test_that("stanmodels$size_nereo and size_macro are compiled Stan models", {
   expect_s4_class(stanmodels$size_nereo, "stanmodel")
   expect_s4_class(stanmodels$size_macro, "stanmodel")
 })
+
+test_that("stanmodels$density_nereo and density_macro are compiled Stan models", {
+  skip_on_cran()
+  expect_s4_class(stanmodels$density_nereo, "stanmodel")
+  expect_s4_class(stanmodels$density_macro, "stanmodel")
+})

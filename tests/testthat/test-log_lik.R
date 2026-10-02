@@ -82,3 +82,40 @@ test_that("macro size log_lik matches the truncated negative binomial computed d
   ))
   expect_equal(log_lik(size_macro_fit), expected, tolerance = 1e-8)
 })
+
+test_that("nereo density log_lik matches the zero-inflated negative binomial computed directly", {
+  mu <- exp(posterior_linpred(density_nereo_fit))
+  theta <- as.vector(posterior::draws_of(density_nereo_fit$draws$bDispersion))
+  zi <- stats::plogis(
+    as.vector(posterior::draws_of(density_nereo_fit$draws$bZeroInflation))
+  )
+  y <- density_nereo_fit$data$stipes
+  expected <- t(vapply(
+    seq_len(nrow(mu)),
+    function(d) {
+      p <- (1 - zi[d]) * stats::dnbinom(y, mu = mu[d, ], size = 1 / theta[d])
+      log(p + zi[d] * (y == 0))
+    },
+    numeric(length(y))
+  ))
+  expect_equal(log_lik(density_nereo_fit), expected, tolerance = 1e-8)
+})
+
+test_that("macro density log_lik matches the negative binomial computed directly", {
+  mu <- exp(posterior_linpred(density_macro_fit))
+  theta <- as.vector(posterior::draws_of(density_macro_fit$draws$bDispersion))
+  y <- density_macro_fit$data$plants
+  expected <- t(vapply(
+    seq_len(nrow(mu)),
+    function(d) stats::dnbinom(y, mu = mu[d, ], size = 1 / theta[d], log = TRUE),
+    numeric(length(y))
+  ))
+  expect_equal(log_lik(density_macro_fit), expected, tolerance = 1e-8)
+})
+
+test_that("the density log-likelihood uses each transect's area", {
+  fit <- density_macro_fit
+  doubled <- fit
+  doubled$data$area_m2 <- 2 * doubled$data$area_m2
+  expect_false(isTRUE(all.equal(log_lik(fit), log_lik(doubled))))
+})

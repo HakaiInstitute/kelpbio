@@ -73,6 +73,8 @@ kb_predict_weight_by(
 \seealso{
 Other prediction:
 \code{\link[=autoplot.kb_predictions]{autoplot.kb_predictions()}},
+\code{\link[=kb_predict_density]{kb_predict_density()}},
+\code{\link[=kb_predict_density_by]{kb_predict_density_by()}},
 \code{\link[=kb_predict_size]{kb_predict_size()}},
 \code{\link[=kb_predict_size_by]{kb_predict_size_by()}},
 \code{\link[=kb_predict_weight]{kb_predict_weight()}},

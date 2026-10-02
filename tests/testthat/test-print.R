@@ -20,3 +20,8 @@ test_that("print.kb_fit shows the size headers without a predictor line", {
   expect_snapshot(print(size_nereo_fit))
   expect_snapshot(print(size_macro_fit))
 })
+
+test_that("print.kb_fit shows the density headers without a predictor line", {
+  expect_snapshot(print(density_nereo_fit))
+  expect_snapshot(print(density_macro_fit))
+})

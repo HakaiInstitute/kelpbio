@@ -21,8 +21,9 @@ data:
   column, predictor column, likelihood family, functional form, random-effect
   structure, and parameter set.
 - Size: different predictor (`sbulb_max` vs `fronds_1m`) and likelihood/params.
-- Density: same zero-inflated likelihood but different columns (`stipe_count`
-  vs `n_plants`).
+- Density: different response column (`stipes` vs `plants`) and likelihood (zero
+  inflation for the annual *Nereocystis*, a plain negative binomial for the
+  perennial *Macrocystis*).
 - wetdry / carbon: structurally identical across species.
 
 A single `kb_fit_weight(data, species)` would force the function's required data

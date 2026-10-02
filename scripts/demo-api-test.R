@@ -248,7 +248,11 @@ kb_plot_predictions(pop)
 # so the points are not a like-for-like comparison (see the 1:1 plot below).
 # Add them as a layer if wanted:
 kb_plot_predictions(pop) +
-  geom_point(aes(diameter_mm, weight_kg), data = data_weight_sim_nereo, alpha = 0.3)
+  geom_point(
+    aes(diameter_mm, weight_kg),
+    data = data_weight_sim_nereo,
+    alpha = 0.3
+  )
 autoplot(pop)
 
 # wider uncertainty - draw from RE distributions (i.e. new, unobserved site)
@@ -415,8 +419,14 @@ pars(fit_one_year)
 tidy(fit_power)
 kb_model_describe(fit_power)
 bind_rows(
-  mutate(kb_predict_weight_by(fit, new_levels = "average"), form = "packard_floor"),
-  mutate(kb_predict_weight_by(fit_power, new_levels = "average"), form = "power")
+  mutate(
+    kb_predict_weight_by(fit, new_levels = "average"),
+    form = "packard_floor"
+  ),
+  mutate(
+    kb_predict_weight_by(fit_power, new_levels = "average"),
+    form = "power"
+  )
 ) |>
   ggplot(aes(diameter_mm, estimate, colour = form, fill = form)) +
   geom_ribbon(aes(ymin = lower, ymax = upper), alpha = 0.15, colour = NA) +
@@ -594,3 +604,62 @@ augment(fit_s) |>
   ggplot(aes(fitted, residual)) +
   geom_hline(yintercept = 0, linetype = 2) +
   geom_jitter(width = 0.2, alpha = 0.3)
+
+# =============================================================================
+# DENSITY MODELS
+# =============================================================================
+# Density is one row per transect: the count of stipes (nereo, zero-inflated
+# negative binomial) or plants (macro, negative binomial) on a transect of
+# area_m2. The expected count is area times density, so area_m2 is an offset.
+# Log density varies by site, year, and site:year. Sum bin-level counts (and
+# their areas) to one row per transect before fitting.
+
+str(data_density_sim_nereo)
+kb_check_data_density_nereo(data_density_sim_nereo)
+kb_check_data_density_macro(data_density_sim_macro)
+try(kb_check_data_density_nereo(mutate(data_density_sim_nereo, area_m2 = 0)))
+# area in cm^2 warns
+kb_check_data_density_nereo(mutate(
+  data_density_sim_nereo,
+  area_m2 = area_m2 * 1e4
+))
+
+kb_priors_density_nereo() # intercept, zero_inflation, dispersion, sd_*
+kb_priors_density_macro() # intercept, dispersion, sd_*
+
+fit_d <- kb_fit_density_nereo(data_density_sim_nereo)
+fit_d
+tidy(fit_d) # bStipes: log stipes per m^2; bZeroInflation: logit P(no stipes)
+kb_model_describe(fit_d)
+
+fit_dm <- kb_fit_density_macro(data_density_sim_macro)
+kb_model_describe(fit_dm)
+
+# density per m^2 by group (zero inflation included for nereo)
+kb_predict_density_by(fit_d)
+kb_predict_density_by(fit_d, by = "site") |>
+  kb_plot_predictions() +
+  coord_flip()
+kb_predict_density_by(fit_dm, by = c("site", "year")) |>
+  kb_plot_predictions()
+
+# expected counts on transects of a given area; area_m2 is required
+kb_predict_density(
+  fit_d,
+  new_data = tibble(site = "site1", area_m2 = c(20, 40))
+)
+try(kb_predict_density(fit_d, new_data = tibble(site = "site1")))
+
+# nereo: posterior_epred includes the zero-inflation probability;
+# linpred(transform = TRUE) is the mean on a transect holding stipes, so higher
+nd <- tibble(site = "site1", area_m2 = 1)
+median(posterior_epred(fit_d, new_data = nd))
+median(posterior_linpred(fit_d, transform = TRUE, new_data = nd))
+median(posterior_linpred(fit_d, new_data = nd))
+
+# draws of transect counts (whole numbers >= 0)
+ppc_bars(fit_d$data$stipes, posterior_predict(fit_d)[1:50, ])
+augment(fit_dm) |>
+  ggplot(aes(fitted, residual)) +
+  geom_hline(yintercept = 0, linetype = 2) +
+  geom_point(alpha = 0.3)

@@ -11,13 +11,14 @@ Each model SHALL have a row-wise verb and a `_by` verb, both returning a `kb_pre
 
 - Weight: `kb_predict_weight(fit, new_data)` and `kb_predict_weight_by(fit, by)` predict expected weight (kg). `kb_predict_weight_by()` predicts curves over a sequence of the species predictor (`diameter_mm` for *Nereocystis*, `fronds` for *Macrocystis*), auto-generated over the observed range unless supplied through the argument of the same name. The returned predictor column SHALL take the input column's name. New data SHALL use the predictor reference stored at fit time.
 - Size: `kb_predict_size(fit, new_data)` and `kb_predict_size_by(fit, by)` predict expected size, the mean of the size distribution: sub-bulb diameter (mm) for *Nereocystis*, and fronds at 1 m for *Macrocystis*, among plants with at least one. Size has no predictor, so `kb_predict_size_by()` returns one row per group, and `new_data` needs no columns.
+- Density: `kb_predict_density(fit, new_data)` predicts the expected count (stipes or plants) on a transect of the supplied `area_m2`, so `new_data` SHALL have an `area_m2` column. `kb_predict_density_by(fit, by)` predicts expected density (stipes or plants per m²), one row per group. For *Nereocystis* both include the probability that a transect holds no stipes.
 
 #### Scenario: Predict at the observed data
-- **WHEN** `kb_predict_weight(fit)` or `kb_predict_size(fit)` is called
+- **WHEN** `kb_predict_weight(fit)`, `kb_predict_size(fit)`, or `kb_predict_density(fit)` is called
 - **THEN** it returns one prediction per observed row, whose `estimate` equals `augment(fit)$fitted`
 
 #### Scenario: Predict at supplied rows
-- **WHEN** `new_data` carries the columns the model needs (the species predictor for weight, none for size)
+- **WHEN** `new_data` carries the columns the model needs (the species predictor for weight, none for size, `area_m2` for density)
 - **THEN** predictions are returned at exactly those rows
 
 #### Scenario: Curves are returned over the named predictor
@@ -28,13 +29,21 @@ Each model SHALL have a row-wise verb and a `_by` verb, both returning a `kb_pre
 - **WHEN** `kb_predict_size_by(fit, by = "site")` is called
 - **THEN** it returns one row per fitted site, and `by = NULL` returns a single row for the typical site and year
 
+#### Scenario: Density by group is per square metre
+- **WHEN** `kb_predict_density_by(fit, by = "site")` is called
+- **THEN** it returns one row per fitted site, whose `estimate` equals `kb_predict_density()` at the same site with `area_m2 = 1`
+
+#### Scenario: Expected counts scale with area
+- **WHEN** `kb_predict_density()` is called with `new_levels = "average"` at the same site and year with `area_m2` of 10 and 20
+- **THEN** the second estimate is twice the first, up to rounding
+
 #### Scenario: A wrong predictor errors
 - **WHEN** `new_data` lacks the weight model's species predictor, or `kb_predict_weight_by()` is given the other species' predictor argument
 - **THEN** it errors naming the correct column or argument
 
 ### Requirement: Groups are resolved per row
 
-A row whose `site`, `year`, or site-year is a fitted level SHALL be conditioned on that level's estimated effect. A new level or an absent grouping column SHALL be handled by `new_levels`: `"sample"` draws a new effect from its estimated distribution, and `"average"` sets it to zero (the typical group). The default SHALL be `"sample"` for the row-wise verbs (`kb_predict_weight()`, `kb_predict_size()`) and the `posterior_*()` generics, and `"average"` for the `_by` verbs. A new level SHALL NOT error. `representative_site` SHALL instead give a new or absent site the estimated site effect of the named fitted site(s), averaged per draw when several are named, while site:year still follows `new_levels`; a name not in the fit SHALL error listing the fitted sites. An effect the fit omitted SHALL contribute nothing, under any `new_levels`.
+A row whose `site`, `year`, or site-year is a fitted level SHALL be conditioned on that level's estimated effect. A new level or an absent grouping column SHALL be handled by `new_levels`: `"sample"` draws a new effect from its estimated distribution, and `"average"` sets it to zero (the typical group). The default SHALL be `"sample"` for the row-wise verbs (`kb_predict_weight()`, `kb_predict_size()`, `kb_predict_density()`) and the `posterior_*()` generics, and `"average"` for the `_by` verbs. A new level SHALL NOT error. `representative_site` SHALL instead give a new or absent site the estimated site effect of the named fitted site(s), averaged per draw when several are named, while site:year still follows `new_levels`; a name not in the fit SHALL error listing the fitted sites. An effect the fit omitted SHALL contribute nothing, under any `new_levels`.
 
 #### Scenario: New levels are sampled or averaged
 - **WHEN** `new_data` holds a site the fit never saw
@@ -66,8 +75,9 @@ For a *Nereocystis* fit with the density effect, each row SHALL use its `stipes_
 
 - *Nereocystis* weight, whose log weight is Normal: the expected weight is `exp(mu + sWeight^2 / 2)`, above the median `exp(mu)`.
 - *Macrocystis* size, whose frond count is a zero-truncated negative binomial: the expected count is the truncated mean, above the untruncated mean `exp(mu)`.
+- *Nereocystis* density, whose stipe count is a zero-inflated negative binomial: the expected count is `(1 - zi) * exp(mu)`, below the mean of a transect holding stipes, `exp(mu)`, where `zi` is the zero-inflation probability.
 
-The prediction verbs, `fitted()`, and `augment()` SHALL summarise `posterior_epred()`. `posterior_predict()` SHALL add observation noise from the model's likelihood, so repeated calls differ unless a seed is set; for size it draws plant sizes, and *Macrocystis* draws are whole numbers of at least 1. `log_lik()` SHALL return the deterministic pointwise log-likelihood of the observed data, suitable for `loo::loo()`, and error for a fit with no observations. `prior_summary()` SHALL return the priors used.
+The prediction verbs, `fitted()`, and `augment()` SHALL summarise `posterior_epred()`. `posterior_predict()` SHALL add observation noise from the model's likelihood, so repeated calls differ unless a seed is set; for size it draws plant sizes, and *Macrocystis* draws are whole numbers of at least 1; for density it draws transect counts, whole numbers of at least 0. `log_lik()` SHALL return the deterministic pointwise log-likelihood of the observed data, suitable for `loo::loo()`, and error for a fit with no observations. `prior_summary()` SHALL return the priors used.
 
 #### Scenario: Expected weight exceeds the median for Nereocystis
 - **WHEN** `posterior_epred()` and `posterior_linpred(transform = TRUE)` are called on the same *Nereocystis* weight rows
@@ -77,13 +87,17 @@ The prediction verbs, `fitted()`, and `augment()` SHALL summarise `posterior_epr
 - **WHEN** `posterior_epred()` and `posterior_linpred(transform = TRUE)` are called on the same *Macrocystis* size rows
 - **THEN** each draw of the former is greater than the latter and at least 1
 
+#### Scenario: Expected stipe count includes zero inflation
+- **WHEN** `posterior_epred()` and `posterior_linpred(transform = TRUE)` are called on the same *Nereocystis* density rows
+- **THEN** each draw of the former equals the latter times one minus that draw's zero-inflation probability
+
 #### Scenario: Predictive draws are reproducible under a seed
 - **WHEN** `posterior_predict()` is called twice after the same `set.seed()`
 - **THEN** it returns identical draws
 
 ### Requirement: Plot predictions
 
-`kb_plot_predictions(predictions)` SHALL return a `ggplot` built from a `kb_predictions` object, never from a fit, and `autoplot()` on a `kb_predictions` object SHALL return the same plot. A curve from `kb_predict_weight_by()` over a varying predictor SHALL be drawn as a line with a compatibility-interval ribbon; otherwise predictions SHALL be drawn as point ranges. The x-axis variable SHALL default from the prediction's metadata and be overridable through `x`; the remaining grouping variables SHALL be faceted, the x-axis variable never. `max_facets` SHALL cap the panels drawn with a warning giving how many were shown. The plot SHALL draw only the predictions; raw data are not overlaid, and a user can add them as a layer. The y-axis SHALL extend to zero. Axis titles SHALL be descriptive (e.g. "Sub-bulb diameter", "Wet weight"). When the prediction's metadata has been stripped, it SHALL error asking for `x`.
+`kb_plot_predictions(predictions)` SHALL return a `ggplot` built from a `kb_predictions` object, never from a fit, and `autoplot()` on a `kb_predictions` object SHALL return the same plot. A curve from `kb_predict_weight_by()` over a varying predictor SHALL be drawn as a line with a compatibility-interval ribbon; otherwise predictions SHALL be drawn as point ranges. The x-axis variable SHALL default from the prediction's metadata and be overridable through `x`; the remaining grouping variables SHALL be faceted, the x-axis variable never. `max_facets` SHALL cap the panels drawn with a warning giving how many were shown. The plot SHALL draw only the predictions; raw data are not overlaid, and a user can add them as a layer. The y-axis SHALL extend to zero. Axis titles SHALL be descriptive (e.g. "Sub-bulb diameter", "Wet weight", "Stipe density"). When the prediction's metadata has been stripped, it SHALL error asking for `x`.
 
 #### Scenario: Curves get a ribbon, rows get points
 - **WHEN** a curve from `kb_predict_weight_by()` and rows from `kb_predict_weight()` are plotted
@@ -96,6 +110,10 @@ The prediction verbs, `fitted()`, and `augment()` SHALL summarise `posterior_epr
 #### Scenario: Size by site
 - **WHEN** `kb_predict_size_by(fit, by = "site")` is plotted
 - **THEN** point ranges are drawn per site, and the y-axis is titled with the size response
+
+#### Scenario: Density by site
+- **WHEN** `kb_predict_density_by(fit, by = "site")` is plotted
+- **THEN** point ranges are drawn per site, and the y-axis is titled as a density per m², not a count
 
 #### Scenario: Too many facets
 - **WHEN** a prediction has more groups than `max_facets`
@@ -119,7 +137,7 @@ Prediction SHALL warn when supplied values of the species predictor lie below ha
 
 ### Requirement: New data predictor values are validated
 
-`new_data` SHALL be validated before prediction: it SHALL be a data frame; for weight, *Nereocystis* `diameter_mm` SHALL be numeric, greater than 0, with no missing values, and *Macrocystis* `fronds` a positive whole number with no missing values. Size `new_data` needs no predictor column. An invalid value SHALL error with a message naming the column, pinned by `tests/testthat/_snaps/chk.md`.
+`new_data` SHALL be validated before prediction: it SHALL be a data frame; for weight, *Nereocystis* `diameter_mm` SHALL be numeric, greater than 0, with no missing values, and *Macrocystis* `fronds` a positive whole number with no missing values; for density, `area_m2` SHALL be present, numeric, greater than 0, with no missing values. Size `new_data` needs no predictor column. An invalid value SHALL error with a message naming the column, pinned by `tests/testthat/_snaps/chk.md`.
 
 #### Scenario: An impossible diameter errors
 - **WHEN** weight `new_data` has a `diameter_mm` that is zero, negative, missing, or not numeric
@@ -132,4 +150,8 @@ Prediction SHALL warn when supplied values of the species predictor lie below ha
 #### Scenario: Size new data need no columns
 - **WHEN** `kb_predict_size(fit, new_data)` is called with a data frame of only `site`, or of no columns and `n` rows
 - **THEN** it returns one prediction per row
+
+#### Scenario: Density new data need an area
+- **WHEN** `kb_predict_density(fit, new_data)` is called with `new_data` lacking `area_m2`, or with an `area_m2` of zero
+- **THEN** prediction errors naming `area_m2` and pointing to `kb_predict_density_by()` for density per m²
 

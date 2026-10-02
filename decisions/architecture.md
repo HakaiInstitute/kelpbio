@@ -67,8 +67,8 @@ A rate model's survey effort enters as an offset taken from the grid, so what a
 prediction reports is fixed by the rows it was given: supplied rows carry the effort
 actually recorded, while a generated grid takes one neutral unit, so a `_by` verb
 reports a rate and a row-wise verb reports the response as modelled. No argument
-selects between them (`decisions/prediction-engine.md`). The weight models have no
-offset.
+selects between them (`decisions/prediction-engine.md`). The density models carry
+the offset (`area_m2`); weight and size have none.
 
 ## Random-effect resolution
 

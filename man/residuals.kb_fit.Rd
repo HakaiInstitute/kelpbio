@@ -21,8 +21,10 @@ the fitted likelihood, matching \code{\link[=augment]{augment()}}'s \code{residu
 \details{
 The deviance residual is computed per draw, then summarised with the posterior
 median. The likelihoods are Normal on log weight (\emph{Nereocystis} weight), Gamma
-on weight (\emph{Macrocystis} weight), Weibull on diameter (\emph{Nereocystis} size), and
-zero-truncated negative binomial on frond count (\emph{Macrocystis} size).
+on weight (\emph{Macrocystis} weight), Weibull on diameter (\emph{Nereocystis} size),
+zero-truncated negative binomial on frond count (\emph{Macrocystis} size),
+zero-inflated negative binomial on stipe count (\emph{Nereocystis} density), and
+negative binomial on plant count (\emph{Macrocystis} density).
 
 A size residual is zero where the observation equals the value that
 maximises its likelihood with the shape or overdispersion held fixed: the
@@ -46,6 +48,7 @@ Other generics:
 \code{\link[=posterior_epred.kb_fit]{posterior_epred.kb_fit()}},
 \code{\link[=posterior_linpred.kb_fit]{posterior_linpred.kb_fit()}},
 \code{\link[=posterior_predict.kb_fit]{posterior_predict.kb_fit()}},
+\code{\link[=predict.kb_fit_density]{predict.kb_fit_density()}},
 \code{\link[=predict.kb_fit_size]{predict.kb_fit_size()}},
 \code{\link[=predict.kb_fit_weight]{predict.kb_fit_weight()}},
 \code{\link[=prior_summary.kb_fit]{prior_summary.kb_fit()}},

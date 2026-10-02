@@ -6,8 +6,10 @@
 #' @details
 #' The deviance residual is computed per draw, then summarised with the posterior
 #' median. The likelihoods are Normal on log weight (*Nereocystis* weight), Gamma
-#' on weight (*Macrocystis* weight), Weibull on diameter (*Nereocystis* size), and
-#' zero-truncated negative binomial on frond count (*Macrocystis* size).
+#' on weight (*Macrocystis* weight), Weibull on diameter (*Nereocystis* size),
+#' zero-truncated negative binomial on frond count (*Macrocystis* size),
+#' zero-inflated negative binomial on stipe count (*Nereocystis* density), and
+#' negative binomial on plant count (*Macrocystis* density).
 #'
 #' A size residual is zero where the observation equals the value that
 #' maximises its likelihood with the shape or overdispersion held fixed: the
@@ -69,5 +71,22 @@ residuals.kb_fit <- function(object, ...) {
   theta <- as.vector(posterior::draws_of(fit$draws$bDispersion))
   .per_draw(mu, fit$data$fronds, function(y, mu_d, d) {
     res_gamma_pois_zt(y, exp(mu_d), theta[d])
+  })
+}
+
+#' @export
+.deviance.kb_fit_density_nereo <- function(fit, mu) {
+  theta <- as.vector(posterior::draws_of(fit$draws$bDispersion))
+  zi <- 1 / (1 + exp(-as.vector(posterior::draws_of(fit$draws$bZeroInflation))))
+  .per_draw(mu, fit$data$stipes, function(y, mu_d, d) {
+    extras::res_gamma_pois_zi(y, exp(mu_d), theta[d], prob = zi[d])
+  })
+}
+
+#' @export
+.deviance.kb_fit_density_macro <- function(fit, mu) {
+  theta <- as.vector(posterior::draws_of(fit$draws$bDispersion))
+  .per_draw(mu, fit$data$plants, function(y, mu_d, d) {
+    extras::res_gamma_pois(y, exp(mu_d), theta[d])
   })
 }

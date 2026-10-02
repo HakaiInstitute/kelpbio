@@ -12,6 +12,10 @@
   inherits(x, "kb_fit_size")
 }
 
+.vld_kb_fit_density <- function(x) {
+  inherits(x, "kb_fit_density")
+}
+
 .vld_representative_site <- function(representative_site, site_levels) {
   is.null(representative_site) ||
     (is.character(representative_site) &&
@@ -58,6 +62,13 @@
 # Size new_data has no predictor: any data frame, with optional site and year.
 .vld_new_data_size <- function(x) {
   is.data.frame(x)
+}
+
+# Density new_data carries the transect area, since its rows predict counts.
+.vld_new_data_density <- function(x) {
+  is.data.frame(x) &&
+    "area_m2" %in% names(x) &&
+    .vld_positive_measure(x$area_m2)
 }
 
 .vld_progress <- function(x) {

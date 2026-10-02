@@ -118,3 +118,15 @@ test_that(".chk_new_data errors name the invalid predictor column", {
   expect_snapshot(error = TRUE, .chk_new_data_weight_nereo(data.frame(diameter_mm = NA_real_)))
   expect_snapshot(error = TRUE, .chk_new_data_weight_macro(data.frame(fronds = 2.5)))
 })
+
+test_that(".chk_kb_fit_density passes a density fit through and errors otherwise", {
+  expect_invisible(.chk_kb_fit_density(density_nereo_fit))
+  expect_error(.chk_kb_fit_density(weight_fit), "must be a <kb_fit_density> object")
+})
+
+test_that(".chk_new_data_density errors name the area column", {
+  expect_invisible(.chk_new_data_density(data.frame(area_m2 = 40)))
+  expect_snapshot(error = TRUE, .chk_new_data_density(data.frame(site = "a")))
+  expect_snapshot(error = TRUE, .chk_new_data_density(data.frame(area_m2 = -1)))
+  expect_error(.chk_new_data_density(1), "must be a data frame")
+})
