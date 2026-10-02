@@ -58,6 +58,18 @@ kb_model_describe.kb_fit_size_macro <- function(fit, prose = FALSE) {
   .render_model(.model_spec_size_macro(fit), prose)
 }
 
+#' @export
+kb_model_describe.kb_fit_density_nereo <- function(fit, prose = FALSE) {
+  chk::chk_flag(prose)
+  .render_model(.model_spec_density_nereo(fit), prose)
+}
+
+#' @export
+kb_model_describe.kb_fit_density_macro <- function(fit, prose = FALSE) {
+  chk::chk_flag(prose)
+  .render_model(.model_spec_density_macro(fit), prose)
+}
+
 # ---- species model specs (single source for notation and prose) -------------
 
 .model_spec_nereo <- function(fit) {
@@ -235,10 +247,10 @@ kb_model_describe.kb_fit_size_macro <- function(fit, prose = FALSE) {
   )
 }
 
-# The size models share their random-effect structure, so the terms, random
-# effects, and SD priors are assembled once; `intercept` is the species'
+# The size and density models share their random-effect structure, so the terms,
+# random effects, and SD priors are assembled once; `intercept` is the species'
 # intercept name.
-.size_spec_effects <- function(fit, intercept) {
+.group_spec_effects <- function(fit, intercept) {
   sy <- .site_year_on(fit)
   pri <- fit$meta$priors
   mean_terms <- c(intercept, "bSite[site]", "bYear[year]")
@@ -269,7 +281,7 @@ kb_model_describe.kb_fit_size_macro <- function(fit, prose = FALSE) {
 
 .model_spec_size_nereo <- function(fit) {
   pri <- fit$meta$priors
-  eff <- .size_spec_effects(fit, "bDiameter")
+  eff <- .group_spec_effects(fit, "bDiameter")
   list(
     title = "Size distribution",
     species = .species_label(fit$meta$species),
@@ -298,7 +310,7 @@ kb_model_describe.kb_fit_size_macro <- function(fit, prose = FALSE) {
 
 .model_spec_size_macro <- function(fit) {
   pri <- fit$meta$priors
-  eff <- .size_spec_effects(fit, "bFronds")
+  eff <- .group_spec_effects(fit, "bFronds")
   list(
     title = "Size distribution",
     species = .species_label(fit$meta$species),
@@ -320,6 +332,72 @@ kb_model_describe.kb_fit_size_macro <- function(fit, prose = FALSE) {
         "a zero-truncated negative binomial likelihood, with an overdispersion ",
         "common to all plants. The log of the untruncated mean, mu, varied by ",
         "%s. Regularizing priors were placed on all parameters (see the ",
+        "notation form for the hyperparameters)."
+      ),
+      eff$groups
+    )
+  )
+}
+
+# The area offset leads the mean so the notation reads as area times density.
+.model_spec_density_nereo <- function(fit) {
+  pri <- fit$meta$priors
+  eff <- .group_spec_effects(fit, "bStipes")
+  list(
+    title = "Density",
+    species = .species_label(fit$meta$species),
+    response_desc = "stipes counted on a transect of area_m2 (m\u00b2)",
+    likelihood = paste0(
+      "stipes ~ ZeroInflatedNegBinomial(mu, 1 / bDispersion, zi)",
+      "\n  zi = inv_logit(bZeroInflation)",
+      "\n  E[stipes] = (1 - zi) * mu"
+    ),
+    mean_lhs = "log(mu)",
+    mean_terms = c("log(area_m2)", eff$mean_terms),
+    random = eff$random,
+    priors = c(
+      list(
+        bStipes = pri$intercept,
+        bZeroInflation = pri$zero_inflation,
+        bDispersion = pri$dispersion
+      ),
+      eff$sds
+    ),
+    prose = sprintf(
+      paste0(
+        "The number of stipes on a transect was modelled with a zero-inflated ",
+        "negative binomial likelihood, with the transect area as an offset. The ",
+        "zero-inflation probability, zi, and the overdispersion were common to ",
+        "all transects. The log stipe density on transects holding stipes ",
+        "varied by %s. Regularizing priors were placed on all parameters (see ",
+        "the notation form for the hyperparameters)."
+      ),
+      eff$groups
+    )
+  )
+}
+
+.model_spec_density_macro <- function(fit) {
+  pri <- fit$meta$priors
+  eff <- .group_spec_effects(fit, "bPlants")
+  list(
+    title = "Density",
+    species = .species_label(fit$meta$species),
+    response_desc = "plants counted on a transect of area_m2 (m\u00b2)",
+    likelihood = "plants ~ NegBinomial(mu, 1 / bDispersion)",
+    mean_lhs = "log(mu)",
+    mean_terms = c("log(area_m2)", eff$mean_terms),
+    random = eff$random,
+    priors = c(
+      list(bPlants = pri$intercept, bDispersion = pri$dispersion),
+      eff$sds
+    ),
+    prose = sprintf(
+      paste0(
+        "The number of plants on a transect was modelled with a negative ",
+        "binomial likelihood, with the transect area as an offset and an ",
+        "overdispersion common to all transects. The log plant density varied ",
+        "by %s. Regularizing priors were placed on all parameters (see the ",
         "notation form for the hyperparameters)."
       ),
       eff$groups

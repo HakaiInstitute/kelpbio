@@ -61,3 +61,26 @@
   }
   mean_gamma_pois_zt(exp(lp), theta)
 }
+
+# Log link for both species: exp(lp) is the expected count on the row's area
+# (the offset is already in lp). For Macrocystis it is the mean.
+#' @export
+.epred.kb_fit_density <- function(fit, lp, expectation = TRUE) {
+  exp(lp)
+}
+
+# Nereocystis counts are zero-inflated: exp(lp) is the mean on a transect holding
+# stipes, and the expected count also carries the probability 1 - zi that it does.
+#' @export
+.epred.kb_fit_density_nereo <- function(fit, lp, expectation = TRUE) {
+  if (!expectation) {
+    return(exp(lp))
+  }
+  b_zi <- fit$draws$bZeroInflation
+  if (!posterior::is_rvar(lp)) {
+    # A D x N matrix: a length-D vector recycles down each column, so element
+    # (d, n) gets draw d's zero-inflation probability.
+    b_zi <- as.vector(posterior::draws_of(b_zi))
+  }
+  exp(lp) / (1 + exp(b_zi))
+}

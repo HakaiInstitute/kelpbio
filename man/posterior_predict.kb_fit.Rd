@@ -16,8 +16,8 @@
 \item{object}{A \code{kb_fit} object.}
 
 \item{new_data}{A data frame with the fit's predictor column (and optional
-\code{site}, \code{year}, and \code{stipes_m2} columns), or \code{NULL} to predict at the
-observed data.}
+\code{site}, \code{year}, and \code{stipes_m2} columns; \code{area_m2} for a density fit), or
+\code{NULL} to predict at the observed data.}
 
 \item{...}{Unused.}
 
@@ -41,8 +41,8 @@ still follows \code{new_levels}.}
 A draws-by-observations (\verb{D x N}) matrix.
 }
 \description{
-Draws from the posterior predictive distribution: replicate responses (weights
-or plant sizes) carrying both parameter uncertainty and observation noise from
+Draws from the posterior predictive distribution: replicate responses (weights,
+plant sizes, or transect counts) carrying both parameter uncertainty and observation noise from
 the model's likelihood. With \code{new_data = NULL} the replicates are at the
 observed data, for use with \code{bayesplot::pp_check()}.
 }
@@ -52,8 +52,10 @@ present (see \code{\link[=posterior_epred]{posterior_epred()}}).
 
 The observation noise follows the fitted likelihood: Normal on log weight
 (\emph{Nereocystis} weight), Gamma (\emph{Macrocystis} weight), Weibull (\emph{Nereocystis}
-size), and zero-truncated negative binomial (\emph{Macrocystis} size, so every
-draw is a whole number of at least 1).
+size), zero-truncated negative binomial (\emph{Macrocystis} size, so every draw is a
+whole number of at least 1), zero-inflated negative binomial (\emph{Nereocystis}
+density), and negative binomial (\emph{Macrocystis} density). Density draws are
+counts on each row's \code{area_m2}.
 
 The observation noise is drawn in R, for every \code{new_data} including \code{NULL}, so
 repeated calls return different replicates. Set a seed with \code{set.seed()} for
@@ -75,6 +77,7 @@ Other generics:
 \code{\link[=log_lik.kb_fit]{log_lik.kb_fit()}},
 \code{\link[=posterior_epred.kb_fit]{posterior_epred.kb_fit()}},
 \code{\link[=posterior_linpred.kb_fit]{posterior_linpred.kb_fit()}},
+\code{\link[=predict.kb_fit_density]{predict.kb_fit_density()}},
 \code{\link[=predict.kb_fit_size]{predict.kb_fit_size()}},
 \code{\link[=predict.kb_fit_weight]{predict.kb_fit_weight()}},
 \code{\link[=prior_summary.kb_fit]{prior_summary.kb_fit()}},

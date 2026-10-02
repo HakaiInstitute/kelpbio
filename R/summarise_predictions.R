@@ -1,6 +1,8 @@
 # Shared summariser over a link-scale linpred rvar: put it on the response scale,
 # reduce each row to estimate/lower/upper, attach the kb_predictions metadata.
-# Used by every prediction verb so the summary is defined once.
+# Used by every prediction verb so the summary is defined once. `response` names
+# what the estimate measures; it differs from the fit's response only where the
+# grid changes the scale (density per m\u00b2 rather than a transect count).
 summarise_predictions <- function(
   fit,
   grid,
@@ -9,7 +11,8 @@ summarise_predictions <- function(
   conf_level,
   estimate,
   sig_fig,
-  curve = FALSE
+  curve = FALSE,
+  response = fit$meta$response
 ) {
   epred <- .epred(fit, linpred)
   a <- (1 - conf_level) / 2
@@ -28,7 +31,7 @@ summarise_predictions <- function(
     out,
     predictor = fit$meta[["predictor"]],
     group_vars = group_vars,
-    response = fit$meta$response,
+    response = response,
     curve = curve
   )
 }

@@ -68,8 +68,8 @@ weight_macro_fit <- kb_fit_weight_macro(
 saveRDS(weight_macro_fit, "tests/testthat/fixtures/weight_macro_fit.rds")
 message("Wrote tests/testthat/fixtures/weight_macro_fit.rds")
 
-# Size fixtures: subsets of the bundled data_size_sim_*, mirroring the weight
-# fixtures above.
+# Size and density fixtures: subsets of the bundled data_size_sim_* and
+# data_density_sim_*, mirroring the weight fixtures above.
 size_subset <- function(data) {
   d <- subset(data, site %in% c("site1", "site2", "site3", "site4"))
   d$site <- droplevels(factor(d$site))
@@ -102,3 +102,29 @@ size_macro_fit <- kb_fit_size_macro(
 )
 saveRDS(size_macro_fit, "tests/testthat/fixtures/size_macro_fit.rds")
 message("Wrote tests/testthat/fixtures/size_macro_fit.rds")
+
+density_nereo_fit <- kb_fit_density_nereo(
+  size_subset(data_density_sim_nereo),
+  chains = 2L,
+  niters = 300L,
+  nthin = 5L,
+  cores = 2L,
+  progress = "none",
+  seed = 42L,
+  control = list(adapt_delta = 0.999)
+)
+saveRDS(density_nereo_fit, "tests/testthat/fixtures/density_nereo_fit.rds")
+message("Wrote tests/testthat/fixtures/density_nereo_fit.rds")
+
+density_macro_fit <- kb_fit_density_macro(
+  size_subset(data_density_sim_macro),
+  chains = 2L,
+  niters = 300L,
+  nthin = 5L,
+  cores = 2L,
+  progress = "none",
+  seed = 42L,
+  control = list(adapt_delta = 0.999)
+)
+saveRDS(density_macro_fit, "tests/testthat/fixtures/density_macro_fit.rds")
+message("Wrote tests/testthat/fixtures/density_macro_fit.rds")

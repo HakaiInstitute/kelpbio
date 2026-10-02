@@ -123,6 +123,10 @@ the `fct_lump_n`/`fct_lump_prop` precedent):
   mean of the size distribution) as grouped points. The distribution itself is
   reached through `posterior_predict()`; the biomass composition draws from it
   per draw rather than through a prediction verb.
+- The density models have no predictor either. The row-wise verb reports the
+  expected count on each row's `area_m2`, so `new_data` must carry it; the `_by`
+  verb's grid takes one m², so it reports density per m², and its response is
+  named `<count>_m2` (`stipes_m2`, `plants_m2`) to say so.
 
 `augment()` stays a diagnostics verb (fitted/residuals on the training data), not
 a prediction entry point.

@@ -16,7 +16,8 @@
 \item{object}{A \code{kb_fit} object.}
 
 \item{new_data}{A data frame with the fit's predictor column (and optional
-\code{site}, \code{year}, and \code{stipes_m2} columns), or \code{NULL} for the observed data.}
+\code{site}, \code{year}, and \code{stipes_m2} columns; \code{area_m2} for a density fit), or
+\code{NULL} for the observed data.}
 
 \item{...}{Unused.}
 
@@ -40,13 +41,16 @@ still follows \code{new_levels}.}
 A draws-by-observations (\verb{D x N}) matrix.
 }
 \description{
-Draws of the expected weight.
+Draws of the expected response.
 }
 \details{
-Each draw is the expected weight given that draw's parameters:
-\code{exp(mu + sWeight^2 / 2)} for \emph{Nereocystis}, where \code{mu} is the linear
-predictor, and \code{exp(mu)} for \emph{Macrocystis}. For draws of weight that include
-observation noise, use \code{\link[=posterior_predict]{posterior_predict()}}.
+Each draw is the expected response given that draw's parameters, where \code{mu} is
+the linear predictor: for weight, \code{exp(mu + sWeight^2 / 2)} (\emph{Nereocystis}) or
+\code{exp(mu)} (\emph{Macrocystis}); for size, \code{exp(mu)} (\emph{Nereocystis}) or the mean of
+the zero-truncated distribution (\emph{Macrocystis}); for density, the expected
+count on the row's \code{area_m2}, \code{(1 - zi) * exp(mu)} with \code{zi} the
+zero-inflation probability (\emph{Nereocystis}) or \code{exp(mu)} (\emph{Macrocystis}). For
+draws that include observation noise, use \code{\link[=posterior_predict]{posterior_predict()}}.
 
 Conditioning is inferred from the grouping columns present in \code{new_data}: a
 \code{site} (and optionally \code{year}) column with known levels is conditioned on;
@@ -71,6 +75,7 @@ Other generics:
 \code{\link[=log_lik.kb_fit]{log_lik.kb_fit()}},
 \code{\link[=posterior_linpred.kb_fit]{posterior_linpred.kb_fit()}},
 \code{\link[=posterior_predict.kb_fit]{posterior_predict.kb_fit()}},
+\code{\link[=predict.kb_fit_density]{predict.kb_fit_density()}},
 \code{\link[=predict.kb_fit_size]{predict.kb_fit_size()}},
 \code{\link[=predict.kb_fit_weight]{predict.kb_fit_weight()}},
 \code{\link[=prior_summary.kb_fit]{prior_summary.kb_fit()}},

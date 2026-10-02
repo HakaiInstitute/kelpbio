@@ -4,5 +4,6 @@
 column_units <- c(
   diameter_mm = "millimetres",
   weight_kg = "kilograms",
-  stipes_m2 = "stipes per m\u00b2"
+  stipes_m2 = "stipes per m\u00b2",
+  area_m2 = "square metres"
 )

@@ -73,3 +73,42 @@ predict.kb_fit_size <- function(
     sig_fig = sig_fig
   )
 }
+
+#' Predict Method for a Density Model Fit
+#'
+#' A thin wrapper on [kb_predict_density()]: predict the expected count at the
+#' supplied `new_data` rows, each a transect of its `area_m2` (or at the observed
+#' data when `new_data = NULL`). For density per m² by group, use
+#' [kb_predict_density_by()].
+#'
+#' @inheritParams params
+#' @inheritParams kb_predict_density
+#' @param object A `kb_fit_density` object.
+#' @param ... Unused.
+#'
+#' @return A `kb_predictions` object.
+#' @family generics
+#' @exportS3Method stats::predict
+#' @examples
+#' predict(fit_density_sim_nereo, data.frame(site = "site1", area_m2 = 40))
+predict.kb_fit_density <- function(
+  object,
+  new_data = NULL,
+  ...,
+  new_levels = c("sample", "average"),
+  representative_site = NULL,
+  conf_level = 0.95,
+  estimate = stats::median,
+  sig_fig = 3
+) {
+  rlang::check_dots_empty()
+  kb_predict_density(
+    object,
+    new_data = new_data,
+    new_levels = new_levels,
+    representative_site = representative_site,
+    conf_level = conf_level,
+    estimate = estimate,
+    sig_fig = sig_fig
+  )
+}

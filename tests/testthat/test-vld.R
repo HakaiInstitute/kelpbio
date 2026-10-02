@@ -72,3 +72,18 @@ test_that(".vld_positive_measure and .vld_frond_count check measured values", {
   expect_true(.vld_frond_count(c(1, 5)))
   expect_false(.vld_frond_count(2.5))
 })
+
+test_that(".vld_kb_fit_density recognises a density fit", {
+  expect_true(.vld_kb_fit_density(density_nereo_fit))
+  expect_true(.vld_kb_fit_density(density_macro_fit))
+  expect_false(.vld_kb_fit_density(size_nereo_fit))
+  expect_false(.vld_kb_fit_density(1))
+})
+
+test_that(".vld_new_data_density requires a data frame with a positive area", {
+  expect_true(.vld_new_data_density(data.frame(area_m2 = c(20, 40))))
+  expect_false(.vld_new_data_density(data.frame(site = "a")))
+  expect_false(.vld_new_data_density(data.frame(area_m2 = 0)))
+  expect_false(.vld_new_data_density(data.frame(area_m2 = NA_real_)))
+  expect_false(.vld_new_data_density(list(area_m2 = 20)))
+})

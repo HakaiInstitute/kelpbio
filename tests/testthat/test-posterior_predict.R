@@ -79,3 +79,17 @@ test_that("size posterior_predict draws plant sizes from the size likelihoods", 
   ep <- posterior_epred(size_macro_fit, new_data = nd, new_levels = "average")
   expect_equal(colMeans(pm), colMeans(ep), tolerance = 0.15)
 })
+
+test_that("density posterior_predict draws transect counts", {
+  withr::local_seed(1)
+  nd <- data.frame(site = c("site1", "site2"), area_m2 = c(40, 80))
+  for (fit in list(density_nereo_fit, density_macro_fit)) {
+    pp <- posterior_predict(fit, new_data = nd, new_levels = "average")
+    expect_equal(dim(pp), c(posterior::ndraws(fit$draws), 2L))
+    expect_true(all(pp >= 0))
+    expect_true(all(pp == round(pp)))
+    # the predictive mean matches the expected count, zero inflation included
+    ep <- posterior_epred(fit, new_data = nd, new_levels = "average")
+    expect_equal(colMeans(pp), colMeans(ep), tolerance = 0.15)
+  }
+})

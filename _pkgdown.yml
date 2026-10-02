@@ -16,6 +16,8 @@ reference:
     - kb_fit_weight_macro
     - kb_fit_size_nereo
     - kb_fit_size_macro
+    - kb_fit_density_nereo
+    - kb_fit_density_macro
     - kb_fit_progress
 - title: "Priors"
   desc: "Specify priors for model parameters."
@@ -24,6 +26,8 @@ reference:
     - kb_priors_weight_macro
     - kb_priors_size_nereo
     - kb_priors_size_macro
+    - kb_priors_density_nereo
+    - kb_priors_density_macro
     - kb_prior_normal
     - kb_prior_exponential
 - title: "Data"
@@ -33,14 +37,20 @@ reference:
     - kb_check_data_weight_macro
     - kb_check_data_size_nereo
     - kb_check_data_size_macro
+    - kb_check_data_density_nereo
+    - kb_check_data_density_macro
     - data_weight_sim_nereo
     - data_weight_sim_macro
     - data_size_sim_nereo
     - data_size_sim_macro
+    - data_density_sim_nereo
+    - data_density_sim_macro
     - fit_weight_sim_nereo
     - fit_weight_sim_macro
     - fit_size_sim_nereo
     - fit_size_sim_macro
+    - fit_density_sim_nereo
+    - fit_density_sim_macro
 - title: "Predictions and Plotting"
   desc: "Predict and visualise model output."
   contents:
@@ -48,6 +58,8 @@ reference:
     - kb_predict_weight_by
     - kb_predict_size
     - kb_predict_size_by
+    - kb_predict_density
+    - kb_predict_density_by
     - kb_plot_predictions
 - title: "Model Summaries and Diagnostics"
   desc: "Summarise fits, extract coefficients and draws, and assess convergence."
@@ -67,6 +79,7 @@ reference:
     - residuals.kb_fit
     - predict.kb_fit_weight
     - predict.kb_fit_size
+    - predict.kb_fit_density
     - posterior_epred.kb_fit
     - posterior_linpred.kb_fit
     - posterior_predict.kb_fit

@@ -1,7 +1,7 @@
 #' Posterior-Predictive Draws
 #'
-#' Draws from the posterior predictive distribution: replicate responses (weights
-#' or plant sizes) carrying both parameter uncertainty and observation noise from
+#' Draws from the posterior predictive distribution: replicate responses (weights,
+#' plant sizes, or transect counts) carrying both parameter uncertainty and observation noise from
 #' the model's likelihood. With `new_data = NULL` the replicates are at the
 #' observed data, for use with `bayesplot::pp_check()`.
 #'
@@ -11,8 +11,10 @@
 #'
 #' The observation noise follows the fitted likelihood: Normal on log weight
 #' (*Nereocystis* weight), Gamma (*Macrocystis* weight), Weibull (*Nereocystis*
-#' size), and zero-truncated negative binomial (*Macrocystis* size, so every
-#' draw is a whole number of at least 1).
+#' size), zero-truncated negative binomial (*Macrocystis* size, so every draw is a
+#' whole number of at least 1), zero-inflated negative binomial (*Nereocystis*
+#' density), and negative binomial (*Macrocystis* density). Density draws are
+#' counts on each row's `area_m2`.
 #'
 #' The observation noise is drawn in R, for every `new_data` including `NULL`, so
 #' repeated calls return different replicates. Set a seed with `set.seed()` for
@@ -21,8 +23,8 @@
 #' @inheritParams params
 #' @param object A `kb_fit` object.
 #' @param new_data A data frame with the fit's predictor column (and optional
-#'   `site`, `year`, and `stipes_m2` columns), or `NULL` to predict at the
-#'   observed data.
+#'   `site`, `year`, and `stipes_m2` columns; `area_m2` for a density fit), or
+#'   `NULL` to predict at the observed data.
 #' @param ... Unused.
 #'
 #' @return A draws-by-observations (`D x N`) matrix.
@@ -105,6 +107,33 @@ posterior_predict.kb_fit <- function(
 .add_noise.kb_fit_size_macro <- function(fit, lp) {
   theta <- as.vector(posterior::draws_of(fit$draws$bDispersion)) # length D
   draws <- ran_gamma_pois_zt(
+    length(lp),
+    lambda = exp(as.vector(lp)),
+    theta = rep_len(theta, length(lp))
+  )
+  matrix(draws, nrow = nrow(lp))
+}
+
+#' @export
+.add_noise.kb_fit_density_nereo <- function(fit, lp) {
+  theta <- as.vector(posterior::draws_of(fit$draws$bDispersion)) # length D
+  b_zi <- as.vector(posterior::draws_of(fit$draws$bZeroInflation))
+  zi <- 1 / (1 + exp(-b_zi))
+  # rep_len() follows the column-major order of the D x N matrix, so element
+  # (d, n) gets draw d's parameters.
+  draws <- extras::ran_gamma_pois_zi(
+    length(lp),
+    lambda = exp(as.vector(lp)),
+    theta = rep_len(theta, length(lp)),
+    prob = rep_len(zi, length(lp))
+  )
+  matrix(draws, nrow = nrow(lp))
+}
+
+#' @export
+.add_noise.kb_fit_density_macro <- function(fit, lp) {
+  theta <- as.vector(posterior::draws_of(fit$draws$bDispersion)) # length D
+  draws <- extras::ran_gamma_pois(
     length(lp),
     lambda = exp(as.vector(lp)),
     theta = rep_len(theta, length(lp))

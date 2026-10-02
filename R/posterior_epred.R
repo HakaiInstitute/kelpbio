@@ -1,12 +1,15 @@
 #' Response-Scale Posterior Draws
 #'
-#' Draws of the expected weight.
+#' Draws of the expected response.
 #'
 #' @details
-#' Each draw is the expected weight given that draw's parameters:
-#' `exp(mu + sWeight^2 / 2)` for *Nereocystis*, where `mu` is the linear
-#' predictor, and `exp(mu)` for *Macrocystis*. For draws of weight that include
-#' observation noise, use [posterior_predict()].
+#' Each draw is the expected response given that draw's parameters, where `mu` is
+#' the linear predictor: for weight, `exp(mu + sWeight^2 / 2)` (*Nereocystis*) or
+#' `exp(mu)` (*Macrocystis*); for size, `exp(mu)` (*Nereocystis*) or the mean of
+#' the zero-truncated distribution (*Macrocystis*); for density, the expected
+#' count on the row's `area_m2`, `(1 - zi) * exp(mu)` with `zi` the
+#' zero-inflation probability (*Nereocystis*) or `exp(mu)` (*Macrocystis*). For
+#' draws that include observation noise, use [posterior_predict()].
 #'
 #' Conditioning is inferred from the grouping columns present in `new_data`: a
 #' `site` (and optionally `year`) column with known levels is conditioned on;
@@ -17,7 +20,8 @@
 #' @inheritParams params
 #' @param object A `kb_fit` object.
 #' @param new_data A data frame with the fit's predictor column (and optional
-#'   `site`, `year`, and `stipes_m2` columns), or `NULL` for the observed data.
+#'   `site`, `year`, and `stipes_m2` columns; `area_m2` for a density fit), or
+#'   `NULL` for the observed data.
 #' @param ... Unused.
 #'
 #' @return A draws-by-observations (`D x N`) matrix.

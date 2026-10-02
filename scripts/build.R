@@ -83,6 +83,8 @@ if (rebuild_fits) {
     "data-raw/fit_weight_sim_macro.R",
     "data-raw/fit_size_sim_nereo.R",
     "data-raw/fit_size_sim_macro.R",
+    "data-raw/fit_density_sim_nereo.R",
+    "data-raw/fit_density_sim_macro.R",
     "tests/testthat/fixtures/make-fixtures.R"
   )) {
     message("Rebuilding via ", script)

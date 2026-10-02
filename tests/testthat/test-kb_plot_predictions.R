@@ -110,6 +110,27 @@ test_that("size by site plots point ranges with a descriptive y axis", {
   expect_equal(min(ggplot2::layer_scales(gg)$y$range$range), 0)
 })
 
+test_that("density by site plots point ranges titled as a density", {
+  p <- kb_predict_density_by(density_nereo_fit, by = "site")
+  gg <- kb_plot_predictions(p)
+  geoms <- vapply(gg$layers, function(l) class(l$geom)[1], character(1))
+  expect_true(any(grepl("GeomPointrange", geoms)))
+  expect_identical(gg$labels$x, "Site")
+  expect_identical(gg$labels$y, "Stipe density")
+  expect_identical(
+    kb_plot_predictions(
+      kb_predict_density_by(density_macro_fit, by = "site")
+    )$labels$y,
+    "Plant density"
+  )
+})
+
+test_that("the density-by-site plot is visually stable", {
+  skip_if_not_installed("vdiffr")
+  p <- kb_predict_density_by(density_macro_fit, by = "site")
+  vdiffr::expect_doppelganger("density by site", kb_plot_predictions(p))
+})
+
 test_that("the size-by-site plot is visually stable", {
   skip_if_not_installed("vdiffr")
   p <- kb_predict_size_by(size_macro_fit, by = "site")

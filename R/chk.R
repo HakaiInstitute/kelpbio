@@ -53,6 +53,23 @@
   )
 }
 
+.chk_kb_fit_density <- function(
+  x,
+  x_name = deparse(substitute(x)),
+  call = rlang::caller_env()
+) {
+  if (.vld_kb_fit_density(x)) {
+    return(invisible(x))
+  }
+  cli::cli_abort(
+    c(
+      "{.arg {x_name}} must be a {.cls kb_fit_density} object.",
+      i = "Supported fits are created by the {.code kb_fit_density_*()} functions."
+    ),
+    call = call
+  )
+}
+
 .chk_new_data_weight_nereo <- function(x, x_name = deparse(substitute(x))) {
   if (.vld_new_data_weight_nereo(x)) {
     return(invisible(x))
@@ -132,6 +149,22 @@
     return(invisible(x))
   }
   cli::cli_abort("{.arg {x_name}} must be a data frame.")
+}
+
+.chk_new_data_density <- function(x, x_name = deparse(substitute(x))) {
+  if (.vld_new_data_density(x)) {
+    return(invisible(x))
+  }
+  if (!is.data.frame(x)) {
+    cli::cli_abort("{.arg {x_name}} must be a data frame.")
+  }
+  if (!"area_m2" %in% names(x)) {
+    cli::cli_abort(c(
+      "{.arg {x_name}} must have an {.field area_m2} column.",
+      i = "Its rows predict the count on a transect of that area; use {.fn kb_predict_density_by} for density per m\u00b2."
+    ))
+  }
+  .chk_positive_measure(x$area_m2, x_name = kb_xname(x_name, "area_m2"))
 }
 
 .chk_representative_site <- function(fit, representative_site) {
@@ -273,4 +306,10 @@
 #' @export
 .chk_new_data.kb_fit_size <- function(fit, new_data) {
   .chk_new_data_size(new_data)
+}
+
+# Both density species take the same new_data (the transect area).
+#' @export
+.chk_new_data.kb_fit_density <- function(fit, new_data) {
+  .chk_new_data_density(new_data)
 }

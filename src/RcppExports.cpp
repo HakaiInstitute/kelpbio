@@ -12,12 +12,16 @@ Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
 
+RcppExport SEXP _rcpp_module_boot_stan_fit4density_macro_mod();
+RcppExport SEXP _rcpp_module_boot_stan_fit4density_nereo_mod();
 RcppExport SEXP _rcpp_module_boot_stan_fit4size_macro_mod();
 RcppExport SEXP _rcpp_module_boot_stan_fit4size_nereo_mod();
 RcppExport SEXP _rcpp_module_boot_stan_fit4weight_macro_mod();
 RcppExport SEXP _rcpp_module_boot_stan_fit4weight_nereo_mod();
 
 static const R_CallMethodDef CallEntries[] = {
+    {"_rcpp_module_boot_stan_fit4density_macro_mod", (DL_FUNC) &_rcpp_module_boot_stan_fit4density_macro_mod, 0},
+    {"_rcpp_module_boot_stan_fit4density_nereo_mod", (DL_FUNC) &_rcpp_module_boot_stan_fit4density_nereo_mod, 0},
     {"_rcpp_module_boot_stan_fit4size_macro_mod", (DL_FUNC) &_rcpp_module_boot_stan_fit4size_macro_mod, 0},
     {"_rcpp_module_boot_stan_fit4size_nereo_mod", (DL_FUNC) &_rcpp_module_boot_stan_fit4size_nereo_mod, 0},
     {"_rcpp_module_boot_stan_fit4weight_macro_mod", (DL_FUNC) &_rcpp_module_boot_stan_fit4weight_macro_mod, 0},

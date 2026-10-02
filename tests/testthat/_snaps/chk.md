@@ -96,3 +96,20 @@
       Error in `.chk_frond_count()`:
       ! Column `fronds` of data.frame(fronds = 2.5) must be a whole number.
 
+# .chk_new_data_density errors name the area column
+
+    Code
+      .chk_new_data_density(data.frame(site = "a"))
+    Condition
+      Error in `.chk_new_data_density()`:
+      ! `data.frame(site = "a")` must have an area_m2 column.
+      i Its rows predict the count on a transect of that area; use `kb_predict_density_by()` for density per m².
+
+---
+
+    Code
+      .chk_new_data_density(data.frame(area_m2 = -1))
+    Condition
+      Error in `.chk_positive_measure()`:
+      ! Column `area_m2` of data.frame(area_m2 = -1) must be greater than 0.
+

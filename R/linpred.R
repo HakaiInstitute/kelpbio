@@ -89,10 +89,12 @@
     re_sy
 }
 
-# Size-model mean (log scale), a posterior rvar over grid rows, mirroring
-# inst/stan/size_*.stan. The two species share the structure (an intercept plus
-# site, year, and site:year effects, no predictor) and differ only in the
-# intercept's name, so each method passes its intercept to .linpred_size().
+# Size- and density-model means (log scale), posterior rvars over grid rows,
+# mirroring inst/stan/size_*.stan and inst/stan/density_*.stan. Every species
+# shares the structure (an intercept plus site, year, and site:year effects, no
+# predictor) and differs only in the intercept's name, so each method passes its
+# intercept to .linpred_groups(). The density offset is added by the callers, as
+# for every model.
 #' @export
 .linpred.kb_fit_size_nereo <- function(
   fit,
@@ -100,7 +102,7 @@
   new_levels,
   representative_site = NULL
 ) {
-  .linpred_size(fit, fit$draws$bDiameter, grid, new_levels, representative_site)
+  .linpred_groups(fit, fit$draws$bDiameter, grid, new_levels, representative_site)
 }
 
 #' @export
@@ -110,10 +112,30 @@
   new_levels,
   representative_site = NULL
 ) {
-  .linpred_size(fit, fit$draws$bFronds, grid, new_levels, representative_site)
+  .linpred_groups(fit, fit$draws$bFronds, grid, new_levels, representative_site)
 }
 
-.linpred_size <- function(
+#' @export
+.linpred.kb_fit_density_nereo <- function(
+  fit,
+  grid,
+  new_levels,
+  representative_site = NULL
+) {
+  .linpred_groups(fit, fit$draws$bStipes, grid, new_levels, representative_site)
+}
+
+#' @export
+.linpred.kb_fit_density_macro <- function(
+  fit,
+  grid,
+  new_levels,
+  representative_site = NULL
+) {
+  .linpred_groups(fit, fit$draws$bPlants, grid, new_levels, representative_site)
+}
+
+.linpred_groups <- function(
   fit,
   intercept,
   grid,

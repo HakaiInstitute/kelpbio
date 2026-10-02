@@ -144,6 +144,77 @@
       and site-year. Regularizing priors were placed on all parameters (see the
       notation form for the hyperparameters).
 
+# kb_model_describe renders the density notation blocks
+
+    Code
+      kb_model_describe(density_nereo_fit)
+    Output
+      Density - Nereocystis luetkeana
+      Response: stipes counted on a transect of area_m2 (m²)
+      
+      Likelihood
+        stipes ~ ZeroInflatedNegBinomial(mu, 1 / bDispersion, zi)
+        zi = inv_logit(bZeroInflation)
+        E[stipes] = (1 - zi) * mu
+        log(mu) = log(area_m2)
+                + bStipes
+                + bSite[site]
+                + bYear[year]
+                + bSiteYear[site, year]
+      
+      Random effects
+        bSite[site]           ~ Normal(0, sSite)      site effect on log(mu)
+        bYear[year]           ~ Normal(0, sYear)      year effect on log(mu)
+        bSiteYear[site, year] ~ Normal(0, sSiteYear)  site:year effect on log(mu)
+      
+      Priors
+        bStipes        ~ Normal(0, 2)
+        bZeroInflation ~ Normal(0, 2)
+        bDispersion    ~ Exponential(1)
+        sSite          ~ Exponential(1)
+        sYear          ~ Exponential(1)
+        sSiteYear      ~ Exponential(1)
+
+---
+
+    Code
+      kb_model_describe(density_nereo_fit, prose = TRUE)
+    Output
+      The number of stipes on a transect was modelled with a zero-inflated
+      negative binomial likelihood, with the transect area as an offset. The
+      zero-inflation probability, zi, and the overdispersion were common to all
+      transects. The log stipe density on transects holding stipes varied by
+      site, year, and site-year. Regularizing priors were placed on all
+      parameters (see the notation form for the hyperparameters).
+
+---
+
+    Code
+      kb_model_describe(density_macro_fit)
+    Output
+      Density - Macrocystis pyrifera
+      Response: plants counted on a transect of area_m2 (m²)
+      
+      Likelihood
+        plants ~ NegBinomial(mu, 1 / bDispersion)
+        log(mu) = log(area_m2)
+                + bPlants
+                + bSite[site]
+                + bYear[year]
+                + bSiteYear[site, year]
+      
+      Random effects
+        bSite[site]           ~ Normal(0, sSite)      site effect on log(mu)
+        bYear[year]           ~ Normal(0, sYear)      year effect on log(mu)
+        bSiteYear[site, year] ~ Normal(0, sSiteYear)  site:year effect on log(mu)
+      
+      Priors
+        bPlants        ~ Normal(0, 2)
+        bDispersion    ~ Exponential(1)
+        sSite          ~ Exponential(1)
+        sYear          ~ Exponential(1)
+        sSiteYear      ~ Exponential(1)
+
 # kb_model_describe follows the power-law form
 
     Code

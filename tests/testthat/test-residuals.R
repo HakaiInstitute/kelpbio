@@ -40,3 +40,13 @@ test_that("size residuals are finite deviance residuals from the size likelihood
     expect_equal(r, as.numeric(apply(.deviance(fit, mu), 2L, stats::median)))
   }
 })
+
+test_that("density residuals are finite deviance residuals from the count likelihoods", {
+  for (fit in list(density_nereo_fit, density_macro_fit)) {
+    r <- residuals(fit)
+    expect_length(r, nobs(fit))
+    expect_true(all(is.finite(r)))
+    mu <- posterior::draws_of(.linpred_obs(fit))
+    expect_equal(r, as.numeric(apply(.deviance(fit, mu), 2L, stats::median)))
+  }
+})

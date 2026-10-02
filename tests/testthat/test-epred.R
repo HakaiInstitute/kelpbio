@@ -54,3 +54,37 @@ test_that("the macro size mean is the truncated mean, above the untruncated one"
   expect_true(all(ep > mu))
   expect_true(all(ep >= 1))
 })
+
+test_that(".epred returns the type it was given for the density models", {
+  for (fit in list(density_nereo_fit, density_macro_fit)) {
+    nd <- posterior::ndraws(fit$draws)
+    rv <- posterior::rvar(matrix(rnorm(nd * 2), nrow = nd))
+    expect_s3_class(.epred(fit, rv), "rvar")
+    expect_equal(
+      posterior::draws_of(.epred(fit, rv)),
+      .epred(fit, posterior::draws_of(rv)),
+      ignore_attr = TRUE
+    )
+  }
+})
+
+test_that("the nereo density mean carries the zero-inflation probability", {
+  nd <- data.frame(site = c("site1", "site2"), area_m2 = 40)
+  ep <- posterior_epred(density_nereo_fit, new_data = nd, new_levels = "average")
+  mu <- posterior_linpred(
+    density_nereo_fit,
+    transform = TRUE,
+    new_data = nd,
+    new_levels = "average"
+  )
+  zi <- stats::plogis(
+    as.vector(posterior::draws_of(density_nereo_fit$draws$bZeroInflation))
+  )
+  expect_equal(ep, mu * (1 - zi))
+  expect_true(all(ep < mu))
+})
+
+test_that("the macro density mean is the inverse log link", {
+  lp <- matrix(c(3, 3.5, 3.2, 3.8), nrow = 2)
+  expect_equal(.epred(density_macro_fit, lp), exp(lp))
+})

@@ -68,3 +68,20 @@ log_lik.kb_fit <- function(object, ...) {
     log_lik_gamma_pois_zt(y, exp(mu_d), theta[d])
   })
 }
+
+#' @export
+.log_lik.kb_fit_density_nereo <- function(fit, mu) {
+  theta <- as.vector(posterior::draws_of(fit$draws$bDispersion))
+  zi <- 1 / (1 + exp(-as.vector(posterior::draws_of(fit$draws$bZeroInflation))))
+  .per_draw(mu, fit$data$stipes, function(y, mu_d, d) {
+    extras::log_lik_gamma_pois_zi(y, exp(mu_d), theta[d], prob = zi[d])
+  })
+}
+
+#' @export
+.log_lik.kb_fit_density_macro <- function(fit, mu) {
+  theta <- as.vector(posterior::draws_of(fit$draws$bDispersion))
+  .per_draw(mu, fit$data$plants, function(y, mu_d, d) {
+    extras::log_lik_gamma_pois(y, exp(mu_d), theta[d])
+  })
+}
