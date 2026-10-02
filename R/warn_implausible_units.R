@@ -7,9 +7,9 @@
 # blocked.
 warn_implausible_units <- function(data, x_name) {
   limits <- list(
-    diameter = c(10, 200),
-    weight = c(-Inf, 100),
-    density = c(-Inf, 100)
+    diameter_mm = c(10, 200),
+    weight_kg = c(-Inf, 100),
+    stipes_m2 = c(-Inf, 100)
   )
   for (col in intersect(names(limits), names(data))) {
     x <- suppressWarnings(as.numeric(data[[col]]))

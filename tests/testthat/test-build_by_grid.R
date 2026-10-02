@@ -1,8 +1,8 @@
 test_that("build_by_grid spans the observed predictor range by default", {
   grid <- build_by_grid(weight_fit, character(0))
-  expect_named(grid, "diameter")
+  expect_named(grid, "diameter_mm")
   expect_equal(nrow(grid), 30L)
-  expect_equal(range(grid$diameter), range(weight_fit$data$diameter))
+  expect_equal(range(grid$diameter_mm), range(weight_fit$data$diameter_mm))
 })
 
 test_that("build_by_grid names the predictor column from the fit", {

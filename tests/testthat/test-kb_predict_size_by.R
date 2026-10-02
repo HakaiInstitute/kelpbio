@@ -5,7 +5,7 @@ test_that("kb_predict_size_by returns one row per group", {
   expect_named(site, c("site", "estimate", "lower", "upper"))
   expect_equal(attr(site, "kb_group_vars"), "site")
   expect_null(attr(site, "kb_predictor", exact = TRUE))
-  expect_identical(attr(site, "kb_response"), "diameter")
+  expect_identical(attr(site, "kb_response"), "diameter_mm")
 
   pop <- kb_predict_size_by(size_macro_fit)
   expect_equal(nrow(pop), 1L)
@@ -17,7 +17,7 @@ test_that("kb_predict_size_by rejects a bad by and a weight fit", {
   expect_error(kb_predict_size_by(size_nereo_fit, by = "month"), "Invalid")
   expect_error(kb_predict_size_by(weight_fit), "must be a <kb_fit_size> object")
   expect_error(
-    kb_predict_size_by(size_nereo_fit, diameter = 30),
+    kb_predict_size_by(size_nereo_fit, diameter_mm = 30),
     class = "rlib_error_dots_nonempty"
   )
 })

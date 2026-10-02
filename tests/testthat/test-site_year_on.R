@@ -14,7 +14,7 @@ test_that("the prediction engine and the model description agree on the flag", {
   # model that is not the one the predictions came from.
   s <- weight_fit$meta$site_levels[1]
   y <- weight_fit$meta$year_levels[1]
-  grid <- data.frame(diameter = 40, site = s, year = y)
+  grid <- data.frame(diameter_mm = 40, site = s, year = y)
 
   for (flag in list(TRUE, FALSE, NULL)) {
     fit <- weight_fit

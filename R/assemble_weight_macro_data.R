@@ -2,7 +2,7 @@
 #'
 #' Map validated weight data and a resolved prior list to the `data` block of
 #' `inst/stan/weight_macro.stan`. `site` and `year` are encoded as integer factor
-#' codes; the raw `fronds` and `weight` vectors are passed through (the Stan model
+#' codes; the raw `fronds` and `weight_kg` vectors are passed through (the Stan model
 #' applies the `log(fronds) - log(fronds_ref)` transform). `fronds_ref` is the
 #' geometric mean of the observed frond count. Zero-row data is supported (for
 #' prior-only fits): `nObs` is `0` and `nSite` / `nYear` fall back to `1`.
@@ -29,7 +29,7 @@ assemble_weight_macro_data <- function(
     site = as.integer(site),
     year = as.integer(year),
     fronds = as.numeric(data$fronds),
-    weight = as.numeric(data$weight),
+    weight = as.numeric(data$weight_kg),
     fronds_ref = weight_fronds_ref(data$fronds),
     prior_intercept_mu = priors$intercept$mean,
     prior_intercept_sd = priors$intercept$sd,

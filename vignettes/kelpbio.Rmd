@@ -36,9 +36,9 @@ installation is required.
 
 ## Providing data
 
-The weight model is fitted to a data frame with a numeric `diameter` (sub-bulb
-diameter, mm), a numeric `weight` (wet weight, kg), and `site` and `year`
-grouping factors. An optional `density` column gives the stipe density
+The weight model is fitted to a data frame with a numeric `diameter_mm` (sub-bulb
+diameter, mm), a numeric `weight_kg` (wet weight, kg), and `site` and `year`
+grouping factors. An optional `stipes_m2` column gives the stipe density
 (stipes per m²) of each site-year; when present, the model includes its effect on
 plant weight. A small simulated dataset is included with the package:
 
@@ -131,7 +131,7 @@ kb_predict_weight_by(fit, by = "site") |>
 returning a point estimate and compatibility limits for each row:
 
 ```{r}
-new_data <- data.frame(diameter = c(20, 35, 50, 65, 80), site = "site1")
+new_data <- data.frame(diameter_mm = c(20, 35, 50, 65, 80), site = "site1")
 kb_predict_weight(fit, new_data)
 ```
 
@@ -143,7 +143,7 @@ with a Gamma likelihood whose dispersion scales with the frond count. The model
 also carries a year main effect in addition to site and site-by-year. These
 differences are why *Macrocystis* has its own functions rather than a `species`
 argument. The bundled `data_weight_sim_macro` has the same shape as the
-*Nereocystis* dataset, with `fronds` in place of `diameter`:
+*Nereocystis* dataset, with `fronds` in place of `diameter_mm`:
 
 ```{r}
 data_weight_sim_macro
@@ -188,7 +188,7 @@ from `posterior_predict()`:
 # The replicates are drawn, so set a seed to reproduce a check.
 set.seed(1)
 bayesplot::ppc_dens_overlay(
-  y = fit$data$weight,
+  y = fit$data$weight_kg,
   yrep = posterior_predict(fit)
 )
 ```

@@ -1,10 +1,10 @@
 # missing, mistyped, and impossible values error
 
     Code
-      kb_check_data_weight_macro(good[c("weight", "site", "year")])
+      kb_check_data_weight_macro(good[c("weight_kg", "site", "year")])
     Condition
       Error in `kb_check_data_weight_macro()`:
-      ! `good[c("weight", "site", "year")]` must include 'fronds'.
+      ! `good[c("weight_kg", "site", "year")]` must include 'fronds'.
 
 ---
 
@@ -20,7 +20,7 @@
       kb_check_data_weight_macro(bad_value)
     Condition
       Error in `kb_check_data_weight_macro()`:
-      ! Column `weight` of `bad_value` must be greater than 0, not -1.
+      ! Column `weight_kg` of `bad_value` must be greater than 0, not -1.
 
 ---
 

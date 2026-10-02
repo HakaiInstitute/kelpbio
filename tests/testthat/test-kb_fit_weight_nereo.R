@@ -97,7 +97,7 @@ test_that("prior_only fit ignores the data", {
     seed = 7
   )
   d2 <- d
-  d2$weight <- rev(d2$weight)
+  d2$weight_kg <- rev(d2$weight_kg)
   f2 <- kb_fit_weight_nereo(
     d2,
     prior_only = TRUE,
@@ -149,7 +149,7 @@ test_that("progress_dir writes an artifact that kb_fit_progress reads as complet
     site %in% c("site1", "site2") & year %in% c("2019", "2020")
   ))
   # "bar" shows fit messages; without density there is none to print
-  d$density <- NULL
+  d$stipes_m2 <- NULL
   dir <- withr::local_tempdir()
   fit <- kb_fit_weight_nereo(
     d,
@@ -184,13 +184,13 @@ test_that("the fit records the density structure in meta and terms", {
   # the fixture every row of a recorded site-year carries its density, so the
   # plant-weighted mean and SD are over the non-missing rows.
   d <- weight_fit$data
-  recorded <- !is.na(d$density)
+  recorded <- !is.na(d$stipes_m2)
   expect_true(weight_fit$meta$density_on)
-  expect_equal(weight_fit$meta$density_mean, mean(d$density[recorded]))
-  expect_equal(weight_fit$meta$density_sd, stats::sd(d$density[recorded]))
+  expect_equal(weight_fit$meta$density_mean, mean(d$stipes_m2[recorded]))
+  expect_equal(weight_fit$meta$density_sd, stats::sd(d$stipes_m2[recorded]))
 
   keys <- paste(d$site, d$year, sep = ":")
-  per_site_year <- tapply(d$density[recorded], keys[recorded], unique)
+  per_site_year <- tapply(d$stipes_m2[recorded], keys[recorded], unique)
   levels <- weight_fit$meta$density_levels
   expect_setequal(names(levels), names(per_site_year))
   expect_equal(unname(levels[names(per_site_year)]), as.vector(per_site_year))
@@ -200,7 +200,7 @@ test_that("the fit records the density structure in meta and terms", {
 test_that("data without density give a fit with the density term off", {
   local_fit_stan_stub()
   d <- weight_fit$data
-  d$density <- NULL
+  d$stipes_m2 <- NULL
   fit <- kb_fit_weight_nereo(d, progress = "none")
   expect_false(fit$meta$density_on)
   expect_false("bDensity" %in% fit$meta$terms$fixed)

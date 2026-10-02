@@ -37,7 +37,7 @@ test_that(".abort_no_method falls back to the name pattern when no constructor a
 
 test_that("a public verb on a fit with no methods aborts rather than returning", {
   fake <- structure(
-    list(data = data.frame(weight = 1), meta = list()),
+    list(data = data.frame(weight_kg = 1), meta = list()),
     class = c("kb_fit_other", "kb_fit")
   )
   expect_error(log_lik(fake), "no method for a <kb_fit_other>")

@@ -60,11 +60,11 @@
   if (!is.data.frame(x)) {
     cli::cli_abort("{.arg {x_name}} must be a data frame.")
   }
-  if (!"diameter" %in% names(x)) {
-    cli::cli_abort("{.arg {x_name}} must have a {.field diameter} column.")
+  if (!"diameter_mm" %in% names(x)) {
+    cli::cli_abort("{.arg {x_name}} must have a {.field diameter_mm} column.")
   }
-  .chk_positive_measure(x$diameter, x_name = kb_xname(x_name, "diameter"))
-  .chk_density(x$density, x_name = kb_xname(x_name, "density"))
+  .chk_positive_measure(x$diameter_mm, x_name = kb_xname(x_name, "diameter_mm"))
+  .chk_density(x$stipes_m2, x_name = kb_xname(x_name, "stipes_m2"))
 }
 
 .chk_positive_measure <- function(x, x_name = deparse(substitute(x))) {
@@ -102,14 +102,14 @@
   if (.vld_density_site_year(data)) {
     return(invisible(data))
   }
-  recorded <- !is.na(data$density)
+  recorded <- !is.na(data$stipes_m2)
   key <- site_year_key(data$site, data$year)[recorded]
-  n_distinct <- tapply(data$density[recorded], key, function(x) {
+  n_distinct <- tapply(data$stipes_m2[recorded], key, function(x) {
     length(unique(x))
   })
   bad <- names(n_distinct)[n_distinct > 1L]
   cli::cli_abort(c(
-    "{kb_xname(x_name, 'density')} must have one value per site-year.",
+    "{kb_xname(x_name, 'stipes_m2')} must have one value per site-year.",
     x = "Conflicting values in site-year{?s} {.val {bad}}."
   ))
 }
@@ -217,10 +217,10 @@
 # Contextual bundle like .chk_sampler_args(): no single-boolean .vld_ partner.
 # Extra dots beyond the predictor are left to the method's rlang::check_dots_empty().
 .chk_wrong_predictor <- function(fit, ..., call = rlang::caller_env()) {
-  right <- c(nereocystis = "diameter", macrocystis = "fronds")[[
+  right <- c(nereocystis = "diameter_mm", macrocystis = "fronds")[[
     fit$meta$species
   ]]
-  wrong <- setdiff(c("diameter", "fronds"), right)
+  wrong <- setdiff(c("diameter_mm", "fronds"), right)
   if (wrong %in% rlang::names2(rlang::list2(...))) {
     cli::cli_abort(
       c(

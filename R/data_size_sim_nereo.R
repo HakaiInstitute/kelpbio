@@ -1,6 +1,6 @@
 #' Simulated Nereocystis Size Dataset
 #'
-#' A small simulated dataset of maximum sub-bulb diameter (columns `diameter`,
+#' A small simulated dataset of maximum sub-bulb diameter (columns `diameter_mm`,
 #' `site`, `year`), one row per plant, for fast tests and runnable examples. It is
 #' simulated from the size-model structure (a Weibull distribution with site,
 #' year, and site:year effects on the log mean), not real survey data, and is not
@@ -8,7 +8,7 @@
 #'
 #' @format A data frame with columns:
 #' \describe{
-#'   \item{diameter}{Maximum sub-bulb diameter (mm), a positive number.}
+#'   \item{diameter_mm}{Maximum sub-bulb diameter (mm), a positive number.}
 #'   \item{site}{Survey site, a factor (10 levels).}
 #'   \item{year}{Survey year, a factor (4 levels).}
 #' }

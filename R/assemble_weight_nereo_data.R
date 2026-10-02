@@ -2,7 +2,7 @@
 #'
 #' Map validated weight data and a resolved prior list to the `data` block of
 #' `inst/stan/weight_nereo.stan`. `site` and `year` are encoded as integer factor
-#' codes; the raw `diameter` and `weight` vectors are passed through (the Stan
+#' codes; the raw `diameter_mm` and `weight_kg` vectors are passed through (the Stan
 #' model applies the `log(diameter) - log(diameter_ref)` and `log(weight)`
 #' transforms). Zero-row data is supported (for prior-only fits): `nObs` is `0`
 #' and `nSite` / `nYear` fall back to `1`.
@@ -34,8 +34,8 @@ assemble_weight_nereo_data <- function(
     nYear = max(1L, nlevels(year)),
     site = as.integer(site),
     year = as.integer(year),
-    diameter = as.numeric(data$diameter),
-    weight = as.numeric(data$weight),
+    diameter = as.numeric(data$diameter_mm),
+    weight = as.numeric(data$weight_kg),
     diameter_ref = diameter_ref,
     density = standardised_density(
       data,

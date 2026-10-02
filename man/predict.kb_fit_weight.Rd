@@ -18,9 +18,9 @@
 \arguments{
 \item{object}{A \code{kb_fit_weight} object.}
 
-\item{new_data}{A data frame with the fit's predictor column (\code{diameter} in
+\item{new_data}{A data frame with the fit's predictor column (\code{diameter_mm} in
 millimetres for \emph{Nereocystis}, \code{fronds} for \emph{Macrocystis}) and optional
-\code{site} / \code{year} columns (and, for \emph{Nereocystis}, an optional \code{density}
+\code{site} / \code{year} columns (and, for \emph{Nereocystis}, an optional \code{stipes_m2}
 column in stipes per m²), or \code{NULL} to predict at the observed data.}
 
 \item{...}{Unused.}
@@ -58,7 +58,7 @@ rows (or the observed data when \code{new_data = NULL}). For allometric curves t
 visualise, use \code{\link[=kb_predict_weight_by]{kb_predict_weight_by()}}.
 }
 \examples{
-predict(fit_weight_sim_nereo, data.frame(diameter = c(20, 40)))
+predict(fit_weight_sim_nereo, data.frame(diameter_mm = c(20, 40)))
 }
 \seealso{
 Other generics:

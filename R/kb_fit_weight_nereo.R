@@ -4,7 +4,7 @@
 #'
 #' @details
 #' Log wet weight (kg) is modelled with a Normal likelihood. `form` sets expected
-#' weight as a function of sub-bulb diameter (mm), with `x = diameter / d0` and
+#' weight as a function of sub-bulb diameter (mm), with `x = diameter_mm / d0` and
 #' `d0` the geometric mean diameter of the data:
 #'
 #' - `"packard_floor"` (the default): `bFloor + alpha * x^bPower`, the
@@ -22,7 +22,7 @@
 #' The year, site, and `site:year` effects act on `alpha`, so they scale the
 #' size-dependent part of the weight while any floor is common to all groups.
 #'
-#' When `data` has a `density` column (stipes per m², a site-year value),
+#' When `data` has a `stipes_m2` column (stipes per m², a site-year value),
 #' `log(alpha)` also includes `bDensity` times density standardised by its mean
 #' and SD over the fitted plants. Site-years without a recorded density take the
 #' mean. The density term is omitted when fewer than two distinct site-year
@@ -90,7 +90,7 @@ kb_fit_weight_nereo <- function(
 
   priors <- resolve_priors(priors, kb_priors_weight_nereo())
   # Shared by the Stan fit and R-side predictions (stored in meta below).
-  diameter_ref <- weight_diameter_ref(data$diameter)
+  diameter_ref <- weight_diameter_ref(data$diameter_mm)
   stan_data <- assemble_weight_nereo_data(
     data,
     priors,
@@ -165,8 +165,8 @@ kb_fit_weight_nereo <- function(
       density_levels = density$levels,
       # Predictor/response column names let the model-level prediction and plot
       # code stay species-agnostic (macro uses "fronds").
-      predictor = "diameter",
-      response = "weight"
+      predictor = "diameter_mm",
+      response = "weight_kg"
     )
   )
 }

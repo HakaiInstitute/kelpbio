@@ -37,14 +37,14 @@ test_that("a zero-observation fit still predicts at supplied new_data", {
   fit0$data <- fit0$data[0, ]
   pp <- posterior_predict(
     fit0,
-    new_data = data.frame(diameter = c(20, 40)),
+    new_data = data.frame(diameter_mm = c(20, 40)),
     new_levels = "average"
   )
   expect_equal(dim(pp), c(posterior::ndraws(fit0$draws), 2L))
 })
 
 test_that("posterior_predict at new data is wider than posterior_epred", {
-  nd <- data.frame(diameter = c(20, 40, 60))
+  nd <- data.frame(diameter_mm = c(20, 40, 60))
   pp <- posterior_predict(weight_fit, new_data = nd, new_levels = "average")
   ep <- posterior_epred(weight_fit, new_data = nd, new_levels = "average")
   expect_equal(dim(pp), dim(ep))

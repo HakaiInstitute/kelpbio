@@ -1,7 +1,7 @@
 test_that("assemble_weight_macro_data maps data and priors to the Stan data block", {
   data <- data.frame(
     fronds = c(3L, 8L, 5L),
-    weight = c(0.4, 2, 1),
+    weight_kg = c(0.4, 2, 1),
     site = factor(c("a", "b", "a")),
     year = factor(c("2020", "2020", "2021"))
   )
@@ -27,7 +27,7 @@ test_that("assemble_weight_macro_data maps data and priors to the Stan data bloc
 test_that("assemble_weight_macro_data maps every prior hyperparameter to its own Stan field", {
   data <- data.frame(
     fronds = c(3L, 8L, 5L),
-    weight = c(0.4, 2, 1),
+    weight_kg = c(0.4, 2, 1),
     site = factor(c("a", "b", "a")),
     year = factor(c("2020", "2020", "2021"))
   )
@@ -54,7 +54,7 @@ test_that("assemble_weight_macro_data maps every prior hyperparameter to its own
 test_that("assemble_weight_macro_data encodes site_year_on as 0/1", {
   data <- data.frame(
     fronds = c(3L, 8L, 5L),
-    weight = c(0.4, 2, 1),
+    weight_kg = c(0.4, 2, 1),
     site = factor(c("a", "b", "a")),
     year = factor(c("2020", "2020", "2021"))
   )
@@ -75,7 +75,7 @@ test_that("assemble_weight_macro_data encodes site_year_on as 0/1", {
 test_that("assemble_weight_macro_data accepts zero-row data", {
   data <- data.frame(
     fronds = numeric(0),
-    weight = numeric(0),
+    weight_kg = numeric(0),
     site = factor(character(0)),
     year = factor(character(0))
   )

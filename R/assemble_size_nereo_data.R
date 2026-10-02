@@ -2,7 +2,7 @@
 #'
 #' Map validated size data and a resolved prior list to the `data` block of
 #' `inst/stan/size_nereo.stan`. `site` and `year` are encoded as integer factor
-#' codes and `diameter` is passed through. Zero-row data is supported (for
+#' codes and `diameter_mm` is passed through. Zero-row data is supported (for
 #' prior-only fits): `nObs` is `0` and `nSite` / `nYear` fall back to `1`.
 #'
 #' @inheritParams params
@@ -25,7 +25,7 @@ assemble_size_nereo_data <- function(
     nYear = max(1L, nlevels(year)),
     site = as.integer(site),
     year = as.integer(year),
-    diameter = as.numeric(data$diameter),
+    diameter = as.numeric(data$diameter_mm),
     prior_intercept_mu = priors$intercept$mean,
     prior_intercept_sd = priors$intercept$sd,
     prior_shape_rate = priors$shape$rate,

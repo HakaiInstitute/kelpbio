@@ -40,7 +40,7 @@ test_that("the fit records the species, response, and no predictor", {
   local_size_nereo_stub()
   fit <- kb_fit_size_nereo(size_nereo_fit$data, progress = "none")
   expect_identical(fit$meta$species, "nereocystis")
-  expect_identical(fit$meta$response, "diameter")
+  expect_identical(fit$meta$response, "diameter_mm")
   expect_null(fit$meta[["predictor"]])
   expect_null(fit$meta$offset)
   expect_true(fit$meta$site_year_on)

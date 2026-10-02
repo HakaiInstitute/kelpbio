@@ -11,7 +11,7 @@ core <- function() {
 }
 
 data <- function() {
-  data.frame(site = c("a", "b"), year = c("2020", "2021"), weight = c(1, 2))
+  data.frame(site = c("a", "b"), year = c("2020", "2021"), weight_kg = c(1, 2))
 }
 
 terms <- function() {
@@ -56,13 +56,13 @@ test_that("new_kb_fit is not weight-specific", {
 test_that("new_kb_fit records the levels and carries meta_extra through", {
   fit <- build(
     nthin = 2L,
-    meta_extra = list(predictor = "diameter", response = "weight")
+    meta_extra = list(predictor = "diameter_mm", response = "weight_kg")
   )
   expect_named(fit, c("draws", "diagnostics", "data", "meta"))
   expect_identical(fit$meta$site_levels, c("a", "b"))
   expect_identical(fit$meta$year_levels, c("2020", "2021"))
   expect_identical(fit$meta$nthin, 2L)
-  expect_identical(fit$meta$predictor, "diameter")
+  expect_identical(fit$meta$predictor, "diameter_mm")
   expect_identical(fit$meta$stancode, "// stan")
 })
 

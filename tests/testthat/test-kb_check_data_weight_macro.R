@@ -1,7 +1,7 @@
 test_that("valid macro weight data passes invisibly", {
   data <- data.frame(
     fronds = c(3L, 8L),
-    weight = c(0.4, 1.7),
+    weight_kg = c(0.4, 1.7),
     site = factor(c("a", "b")),
     year = factor(c("2020", "2021"))
   )
@@ -12,7 +12,7 @@ test_that("valid macro weight data passes invisibly", {
 test_that("character site/year is accepted", {
   data <- data.frame(
     fronds = 5L,
-    weight = 0.9,
+    weight_kg = 0.9,
     site = "a",
     year = "2020",
     stringsAsFactors = FALSE
@@ -23,20 +23,20 @@ test_that("character site/year is accepted", {
 test_that("missing, mistyped, and impossible values error", {
   good <- data.frame(
     fronds = 5L,
-    weight = 0.9,
+    weight_kg = 0.9,
     site = factor("a"),
     year = factor("2020")
   )
   # distinct cli messages (missing column, wrong type, non-positive) snapshotted
   expect_snapshot(
-    kb_check_data_weight_macro(good[c("weight", "site", "year")]),
+    kb_check_data_weight_macro(good[c("weight_kg", "site", "year")]),
     error = TRUE
   )
   bad_type <- good
   bad_type$fronds <- "x"
   expect_snapshot(kb_check_data_weight_macro(bad_type), error = TRUE)
   bad_value <- good
-  bad_value$weight <- -1
+  bad_value$weight_kg <- -1
   expect_snapshot(kb_check_data_weight_macro(bad_value), error = TRUE)
 
   # fronds must be a whole number (a count)
@@ -49,7 +49,7 @@ test_that("missing, mistyped, and impossible values error", {
   na_fronds$fronds <- NA_real_
   expect_error(kb_check_data_weight_macro(na_fronds), "missing")
   na_weight <- good
-  na_weight$weight <- NA_real_
+  na_weight$weight_kg <- NA_real_
   expect_error(kb_check_data_weight_macro(na_weight), "missing")
   numeric_site <- good
   numeric_site$site <- 1
@@ -61,7 +61,7 @@ test_that("missing, mistyped, and impossible values error", {
 
 test_that("weight in grams warns but still passes", {
   data <- data_weight_sim_macro
-  data$weight <- data$weight * 1000
+  data$weight_kg <- data$weight_kg * 1000
   expect_warning(out <- kb_check_data_weight_macro(data), "kilograms")
   expect_identical(out, data)
 })

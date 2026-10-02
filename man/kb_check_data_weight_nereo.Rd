@@ -23,16 +23,16 @@ Check that \code{data} contains the columns required to fit the \emph{Nereocysti
 luetkeana} weight model, with appropriate types and values.
 }
 \details{
-Required columns: numeric \code{diameter} (mm, > 0), numeric \code{weight} (kg, > 0),
+Required columns: numeric \code{diameter_mm} (mm, > 0), numeric \code{weight_kg} (kg, > 0),
 and factor or character \code{site} and \code{year}, with no missing values.
 
-Optional column: numeric \code{density}, the stipe density (stipes per m²) of the
+Optional column: numeric \code{stipes_m2}, the stipe density (stipes per m²) of the
 plant's site-year, \verb{>= 0} with \code{NA} where not recorded. Rows from the same
 site-year must not have different values.
 }
 \examples{
 data <- data.frame(
-  diameter = c(20, 35), weight = c(0.5, 2.1),
+  diameter_mm = c(20, 35), weight_kg = c(0.5, 2.1),
   site = factor(c("a", "b")), year = factor(c("2020", "2021"))
 )
 kb_check_data_weight_nereo(data)

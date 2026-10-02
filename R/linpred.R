@@ -27,7 +27,7 @@
 ) {
   draws <- fit$draws
   ix <- .grid_indices(fit, grid, representative_site)
-  log_x <- log(grid$diameter) - log(fit$meta$predictor_ref)
+  log_x <- log(grid$diameter_mm) - log(fit$meta$predictor_ref)
 
   re_site <- resolve_re1(draws$bSite, ix$site, new_levels, draws$sSite, ix$rep)
   # representative_site borrows only the site effect, so year follows new_levels.
@@ -171,8 +171,8 @@ data_linpred <- function(
     if (!is.null(predictor)) {
       warn_outside_range(fit, grid[[predictor]], predictor)
     }
-    if (.density_on(fit) && "density" %in% names(grid)) {
-      warn_outside_range(fit, grid$density, "density", lower = FALSE)
+    if (.density_on(fit) && "stipes_m2" %in% names(grid)) {
+      warn_outside_range(fit, grid$stipes_m2, "stipes_m2", lower = FALSE)
     }
   }
   list(

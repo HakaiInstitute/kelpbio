@@ -26,7 +26,7 @@ test_that("the fit checkers attribute the error to the supplied call", {
 })
 
 test_that(".chk_new_data_weight_nereo passes valid new_data through invisibly", {
-  d <- data.frame(diameter = c(20, 40))
+  d <- data.frame(diameter_mm = c(20, 40))
   expect_invisible(.chk_new_data_weight_nereo(d))
   expect_identical(.chk_new_data_weight_nereo(d), d)
 })
@@ -108,13 +108,13 @@ test_that(".chk_observed_data rejects a fit with no rows to predict at", {
 })
 
 test_that(".chk_new_data_weight_nereo errors on a negative density", {
-  d <- data.frame(diameter = 30, density = -2)
+  d <- data.frame(diameter_mm = 30, stipes_m2 = -2)
   expect_snapshot(error = TRUE, .chk_new_data_weight_nereo(d))
 })
 
 test_that(".chk_new_data errors name the invalid predictor column", {
-  expect_snapshot(error = TRUE, .chk_new_data_weight_nereo(data.frame(diameter = 0)))
-  expect_snapshot(error = TRUE, .chk_new_data_weight_nereo(data.frame(diameter = "30")))
-  expect_snapshot(error = TRUE, .chk_new_data_weight_nereo(data.frame(diameter = NA_real_)))
+  expect_snapshot(error = TRUE, .chk_new_data_weight_nereo(data.frame(diameter_mm = 0)))
+  expect_snapshot(error = TRUE, .chk_new_data_weight_nereo(data.frame(diameter_mm = "30")))
+  expect_snapshot(error = TRUE, .chk_new_data_weight_nereo(data.frame(diameter_mm = NA_real_)))
   expect_snapshot(error = TRUE, .chk_new_data_weight_macro(data.frame(fronds = 2.5)))
 })

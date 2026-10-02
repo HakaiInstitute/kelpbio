@@ -69,7 +69,7 @@ Fit an allometric weight model for \emph{Nereocystis luetkeana} via Stan.
 }
 \details{
 Log wet weight (kg) is modelled with a Normal likelihood. \code{form} sets expected
-weight as a function of sub-bulb diameter (mm), with \code{x = diameter / d0} and
+weight as a function of sub-bulb diameter (mm), with \code{x = diameter_mm / d0} and
 \code{d0} the geometric mean diameter of the data:
 \itemize{
 \item \code{"packard_floor"} (the default): \code{bFloor + alpha * x^bPower}, the
@@ -88,7 +88,7 @@ underestimated the weight of both the smallest and the largest plants.
 The year, site, and \code{site:year} effects act on \code{alpha}, so they scale the
 size-dependent part of the weight while any floor is common to all groups.
 
-When \code{data} has a \code{density} column (stipes per m², a site-year value),
+When \code{data} has a \code{stipes_m2} column (stipes per m², a site-year value),
 \code{log(alpha)} also includes \code{bDensity} times density standardised by its mean
 and SD over the fitted plants. Site-years without a recorded density take the
 mean. The density term is omitted when fewer than two distinct site-year

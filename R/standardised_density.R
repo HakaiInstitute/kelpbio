@@ -8,8 +8,8 @@ standardised_density <- function(grid, on, mean, sd, levels) {
   if (!isTRUE(on)) {
     return(rep(0, n))
   }
-  density <- if ("density" %in% names(grid)) {
-    as.numeric(grid$density)
+  density <- if ("stipes_m2" %in% names(grid)) {
+    as.numeric(grid$stipes_m2)
   } else {
     rep(NA_real_, n)
   }

@@ -19,18 +19,18 @@ kb_check_data_weight_nereo(data_weight_sim_nereo)
 
 # wrong column name
 bad_name <- data_weight_sim_nereo
-names(bad_name)[names(bad_name) == "diameter"] <- "diam"
+names(bad_name)[names(bad_name) == "diameter_mm"] <- "diam"
 kb_check_data_weight_nereo(bad_name)
 
 # missing diameter
 bad_na <- data_weight_sim_nereo
-bad_na$diameter[1] <- NA_real_
+bad_na$diameter_mm[1] <- NA_real_
 kb_check_data_weight_nereo(bad_na)
 
 # A typo turned a number into text ("1.1o" instead of "1.10"):
 bad_chr <- data_weight_sim_nereo
-bad_chr$diameter <- as.character(bad_chr$diameter)
-bad_chr$diameter[1] <- "1.1o"
+bad_chr$diameter_mm <- as.character(bad_chr$diameter_mm)
+bad_chr$diameter_mm[1] <- "1.1o"
 kb_check_data_weight_nereo(bad_chr)
 
 # =============================================================================
@@ -68,13 +68,13 @@ augment(fit)
 # A typical site: the average plant for this dataset.
 typical <- kb_predict_weight_by(fit, new_levels = "average")
 kb_plot_predictions(typical) +
-  geom_point(aes(diameter, weight), data = data_weight_sim_nereo, alpha = 0.3) +
+  geom_point(aes(diameter_mm, weight_kg), data = data_weight_sim_nereo, alpha = 0.3) +
   ggtitle("Weight-at-diameter, typical site")
 
 # A new, unsurveyed site: same curve, wider band
 new_site <- kb_predict_weight_by(fit, new_levels = "sample")
 kb_plot_predictions(new_site) +
-  geom_point(aes(diameter, weight), data = data_weight_sim_nereo, alpha = 0.3) +
+  geom_point(aes(diameter_mm, weight_kg), data = data_weight_sim_nereo, alpha = 0.3) +
   ggtitle("Weight-at-diameter, a new site (wider uncertainty)")
 
 # One curve per site
@@ -90,7 +90,7 @@ kb_predict_weight_by(fit, by = c("site", "year")) |>
 
 # Pointrange estimates at a reference diameter. Holding diameter at one value
 # turns the curve into grouped points: sites land on the x-axis, no facet.
-kb_predict_weight_by(fit, by = "site", diameter = 30, new_levels = "average") |>
+kb_predict_weight_by(fit, by = "site", diameter_mm = 30, new_levels = "average") |>
   kb_plot_predictions() +
   ggtitle("Weight at 30 mm diameter by site")
 
@@ -110,13 +110,13 @@ kb_predict_weight(fit)
 # New diameters at a site you have surveyed before (uses what we know there):
 kb_predict_weight(
   fit,
-  new_data = tibble(diameter = c(25, 40, 55), site = sites[1])
+  new_data = tibble(diameter_mm = c(25, 40, 55), site = sites[1])
 )
 
 # New diameters at a brand-new site (works, just wider uncertainty):
 kb_predict_weight(
   fit,
-  new_data = tibble(diameter = c(25, 40, 55), site = "new_reef"),
+  new_data = tibble(diameter_mm = c(25, 40, 55), site = "new_reef"),
   new_levels = "sample"
 )
 
@@ -124,7 +124,7 @@ kb_predict_weight(
 kb_predict_weight(
   fit,
   new_data = tidyr::expand_grid(
-    diameter = c(25, 40, 55),
+    diameter_mm = c(25, 40, 55),
     site = sites[1:2],
     year = "2099"
   ),
@@ -136,7 +136,7 @@ kb_predict_weight(
 kb_predict_weight(
   fit,
   new_data = tibble(
-    diameter = 30,
+    diameter_mm = 30,
     site = c(sites[1], sites[2], "new_reef_A", "new_reef_B")
   ),
   new_levels = "sample"
@@ -147,7 +147,7 @@ kb_predict_weight(
 # =============================================================================
 # choose one more more representative sites for new, unobserved site
 
-new_data <- tibble(diameter = c(20, 30, 40, 50, 60), site = "new_reef")
+new_data <- tibble(diameter_mm = c(20, 30, 40, 50, 60), site = "new_reef")
 ref_sites <- sites[1:2] # two surveyed sites we expect the new reef to resemble
 
 kb_predict_weight(fit, new_data, representative_site = ref_sites)
@@ -164,7 +164,7 @@ compare <- bind_rows(
 # Compare the predicted weights (with 95% intervals) across the three options.
 # The reference-site curve tracks the chosen sites and is tighter than the
 # generic "sample" new site.
-ggplot(compare, aes(diameter, estimate, colour = option, fill = option)) +
+ggplot(compare, aes(diameter_mm, estimate, colour = option, fill = option)) +
   geom_ribbon(aes(ymin = lower, ymax = upper), alpha = 0.15, colour = NA) +
   geom_line(linewidth = 1) +
   scale_x_continuous("Sub-bulb diameter (mm)") +
@@ -207,7 +207,7 @@ prior_fit <- kb_fit_weight_nereo(
 )
 kb_predict_weight_by(prior_fit, new_levels = "sample") |>
   kb_plot_predictions() +
-  geom_point(aes(diameter, weight), data = data_weight_sim_nereo, alpha = 0.3) +
+  geom_point(aes(diameter_mm, weight_kg), data = data_weight_sim_nereo, alpha = 0.3) +
   ggtitle("Prior-implied curve vs observed data")
 
 # Refit with the data and compare: the strong prior pulls the slope away from
@@ -227,7 +227,7 @@ bind_rows(
 # Standard rstantools generics work and return the same predictions as the
 # kb_* verbs, as a draws-by-rows matrix for loo/bayesplot/bespoke analysis.
 prior_summary(fit)
-nd <- data.frame(diameter = c(20, 40, 60))
+nd <- data.frame(diameter_mm = c(20, 40, 60))
 dim(posterior_epred(fit, new_data = nd))
 class(posterior_epred(fit, new_data = nd))
 samples(fit) |>

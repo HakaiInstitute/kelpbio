@@ -10,7 +10,7 @@
 # single value has no spread to estimate an effect from.
 density_structure <- function(data) {
   out <- list(
-    has_column = "density" %in% names(data),
+    has_column = "stipes_m2" %in% names(data),
     on = FALSE,
     levels = stats::setNames(numeric(0), character(0)),
     mean = NA_real_,
@@ -22,7 +22,7 @@ density_structure <- function(data) {
   }
 
   key <- site_year_key(data$site, data$year)
-  density <- as.numeric(data$density)
+  density <- as.numeric(data$stipes_m2)
   recorded <- !is.na(density)
   first <- !duplicated(key[recorded])
   levels <- stats::setNames(density[recorded][first], key[recorded][first])

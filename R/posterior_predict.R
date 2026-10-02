@@ -21,7 +21,7 @@
 #' @inheritParams params
 #' @param object A `kb_fit` object.
 #' @param new_data A data frame with the fit's predictor column (and optional
-#'   `site`, `year`, and `density` columns), or `NULL` to predict at the
+#'   `site`, `year`, and `stipes_m2` columns), or `NULL` to predict at the
 #'   observed data.
 #' @param ... Unused.
 #'

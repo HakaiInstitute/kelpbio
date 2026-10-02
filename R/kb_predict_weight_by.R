@@ -3,7 +3,7 @@
 #' Summarise the fitted allometric relationship over a generated prediction grid:
 #' a sequence of predictor values crossed with the grouping factors named in `by`
 #' (one curve per group). The predictor sequence is supplied through the fit's
-#' species predictor argument: `diameter` for a *Nereocystis* fit, `fronds` for a
+#' species predictor argument: `diameter_mm` for a *Nereocystis* fit, `fronds` for a
 #' *Macrocystis* fit (see the methods linked below).
 #'
 #' @details
@@ -22,7 +22,7 @@
 #' and site-years without a recorded density, use the fitted mean density.
 #'
 #' @param fit A `kb_fit_weight` object.
-#' @param ... Passed to the species method: the predictor sequence (`diameter` for
+#' @param ... Passed to the species method: the predictor sequence (`diameter_mm` for
 #'   *Nereocystis*, `fronds` for *Macrocystis*) and the shared summary arguments.
 #'
 #' @return A `kb_predictions` object: a summary tibble with `estimate`, `lower`,
@@ -46,16 +46,16 @@ kb_predict_weight_by.default <- function(fit, ...) {
 }
 
 #' @describeIn kb_predict_weight_by *Nereocystis* method; predicts over a sub-bulb
-#'   `diameter` sequence.
+#'   `diameter_mm` sequence.
 #' @inheritParams params
-#' @param diameter A numeric vector of sub-bulb diameter values (mm) to predict
+#' @param diameter_mm A numeric vector of sub-bulb diameter values (mm) to predict
 #'   over, or `NULL` for an automatic sequence
 #'   spanning the observed range.
 #' @export
 kb_predict_weight_by.kb_fit_weight_nereo <- function(
   fit,
   by = NULL,
-  diameter = NULL,
+  diameter_mm = NULL,
   ...,
   new_levels = c("average", "sample"),
   conf_level = 0.95,
@@ -67,7 +67,7 @@ kb_predict_weight_by.kb_fit_weight_nereo <- function(
   .kb_predict_weight_by(
     fit,
     by,
-    diameter,
+    diameter_mm,
     new_levels,
     conf_level,
     estimate,

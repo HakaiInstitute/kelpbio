@@ -21,7 +21,7 @@
 #' more named reference sites (the per-draw average across several). The
 #' `site:year` interaction still follows `new_levels`.
 #'
-#' For a *Nereocystis* fit that includes density, each row uses its `density`
+#' For a *Nereocystis* fit that includes density, each row uses its `stipes_m2`
 #' value if present, otherwise the recorded density of its site-year in the
 #' fitted data, otherwise the fitted mean density.
 #'
@@ -38,11 +38,11 @@
 #' @export
 #'
 #' @examples
-#' new_data <- data.frame(diameter = c(20, 40, 60))
+#' new_data <- data.frame(diameter_mm = c(20, 40, 60))
 #' kb_predict_weight(fit_weight_sim_nereo, new_data, new_levels = "average")
 #'
 #' # Predict a new site as if it behaves like a known reference site:
-#' new_site <- data.frame(diameter = c(20, 40, 60), site = "new_site")
+#' new_site <- data.frame(diameter_mm = c(20, 40, 60), site = "new_site")
 #' kb_predict_weight(
 #'   fit_weight_sim_nereo, new_site,
 #'   representative_site = fit_weight_sim_nereo$meta$site_levels[1]
@@ -58,11 +58,11 @@ kb_predict_weight.default <- function(fit, ...) {
 }
 
 #' @describeIn kb_predict_weight *Nereocystis* method; `new_data` needs a
-#'   `diameter` column.
+#'   `diameter_mm` column.
 #' @inheritParams params
-#' @param new_data A data frame with the fit's predictor column (`diameter` in
+#' @param new_data A data frame with the fit's predictor column (`diameter_mm` in
 #'   millimetres for *Nereocystis*, `fronds` for *Macrocystis*) and optional
-#'   `site` / `year` columns (and, for *Nereocystis*, an optional `density`
+#'   `site` / `year` columns (and, for *Nereocystis*, an optional `stipes_m2`
 #'   column in stipes per m²), or `NULL` to predict at the observed data.
 #' @export
 kb_predict_weight.kb_fit_weight_nereo <- function(

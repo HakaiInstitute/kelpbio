@@ -8,7 +8,7 @@
 A data frame with columns:
 \describe{
 \item{fronds}{Frond count, a positive whole number.}
-\item{weight}{Wet weight (kg), a positive number.}
+\item{weight_kg}{Wet weight (kg), a positive number.}
 \item{site}{Survey site, a factor (10 levels).}
 \item{year}{Survey year, a factor (4 levels).}
 }
@@ -18,7 +18,7 @@ data_weight_sim_macro
 }
 \description{
 A small simulated dataset of frond count and wet weight (columns \code{fronds},
-\code{weight}, \code{site}, \code{year}), for fast tests and runnable examples. It is
+\code{weight_kg}, \code{site}, \code{year}), for fast tests and runnable examples. It is
 simulated from the weight-model structure (Gamma response with site, year, and
 site:year random intercepts on the log mean), not real survey data, and is not
 intended for inference. Built by \code{data-raw/data_weight_sim_macro.R}.

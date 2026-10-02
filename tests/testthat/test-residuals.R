@@ -7,7 +7,7 @@ test_that("residuals returns a finite deviance-residual vector", {
 
 test_that("residuals are deviance, not raw response residuals", {
   a <- augment(weight_fit)
-  expect_false(isTRUE(all.equal(a$residual, a$weight - a$fitted)))
+  expect_false(isTRUE(all.equal(a$residual, a$weight_kg - a$fitted)))
 })
 
 test_that("macro gets Gamma deviance residuals, not the nereo Normal ones", {

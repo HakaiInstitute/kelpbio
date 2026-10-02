@@ -22,16 +22,16 @@ Check that \code{data} contains the columns required to fit the \emph{Nereocysti
 luetkeana} size model, with appropriate types and values.
 }
 \details{
-Required columns: numeric \code{diameter} (mm, > 0), and factor or character
+Required columns: numeric \code{diameter_mm} (mm, > 0), and factor or character
 \code{site} and \code{year}, with no missing values.
 
-\code{diameter} is the maximum sub-bulb diameter of each plant, the same
+\code{diameter_mm} is the maximum sub-bulb diameter of each plant, the same
 measurement as the predictor of the weight model (\code{\link[=kb_fit_weight_nereo]{kb_fit_weight_nereo()}}).
 Other columns are ignored.
 }
 \examples{
 data <- data.frame(
-  diameter = c(22, 41), site = factor(c("a", "b")),
+  diameter_mm = c(22, 41), site = factor(c("a", "b")),
   year = factor(c("2020", "2021"))
 )
 kb_check_data_size_nereo(data)
