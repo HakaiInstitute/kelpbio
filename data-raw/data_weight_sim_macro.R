@@ -46,7 +46,7 @@ rows <- lapply(seq_len(nrow(grid)), function(i) {
   weight <- stats::rgamma(n_per, shape = shape, rate = shape / exp(log_ew))
   data.frame(
     fronds = as.integer(fronds),
-    weight = round(weight, 3),
+    weight_kg = round(weight, 3),
     site = s,
     year = y
   )

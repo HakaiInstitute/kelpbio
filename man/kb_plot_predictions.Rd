@@ -53,7 +53,7 @@ kb_predict_weight_by(fit_weight_sim_nereo, by = "site") |>
 kb_predict_weight_by(fit_weight_sim_nereo) |>
   kb_plot_predictions() +
   ggplot2::geom_point(
-    ggplot2::aes(diameter, weight),
+    ggplot2::aes(diameter_mm, weight_kg),
     data = data_weight_sim_nereo,
     alpha = 0.3
   )
@@ -65,7 +65,7 @@ kb_predict_size_by(fit_size_sim_nereo, by = "site") |>
 # Weight at a reference diameter by site (pointrange, sites on the y-axis):
 kb_predict_weight_by(
   fit_weight_sim_nereo,
-  by = "site", diameter = 30, new_levels = "average"
+  by = "site", diameter_mm = 30, new_levels = "average"
 ) |>
   kb_plot_predictions() +
   ggplot2::coord_flip()

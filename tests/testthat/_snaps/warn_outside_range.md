@@ -1,10 +1,10 @@
 # values beyond half the minimum or twice the maximum warn
 
     Code
-      warn_outside_range(fit, c(3, 30, 150), "diameter")
+      warn_outside_range(fit, c(3, 30, 150), "diameter_mm")
     Condition
       Warning:
-      2 values of diameter lie far outside the fitted range (10 to 50).
+      2 values of diameter_mm lie far outside the fitted range (10 to 50).
       i Check that the values are in millimetres.
 
 # a column without a unit gets no unit hint

@@ -4,7 +4,7 @@
 # ---- Nereocystis -------------------------------------------------------------
 
 test_that(".linpred returns a log-scale rvar aligned to the grid (nereo)", {
-  grid <- data.frame(diameter = c(20, 40, 60))
+  grid <- data.frame(diameter_mm = c(20, 40, 60))
   lp <- .linpred(weight_fit, grid, new_levels = "average")
   expect_s3_class(lp, "rvar")
   expect_length(lp, 3L)
@@ -13,8 +13,8 @@ test_that(".linpred returns a log-scale rvar aligned to the grid (nereo)", {
 
 test_that("conditioning follows the grid columns (nereo)", {
   site1 <- weight_fit$meta$site_levels[1]
-  bare <- data.frame(diameter = c(30, 30))
-  with_site <- data.frame(diameter = c(30, 30), site = site1)
+  bare <- data.frame(diameter_mm = c(30, 30))
+  with_site <- data.frame(diameter_mm = c(30, 30), site = site1)
 
   lp_avg <- posterior::draws_of(.linpred(
     weight_fit,
@@ -33,7 +33,7 @@ test_that("conditioning follows the grid columns (nereo)", {
 
 test_that("per-row resolution: known rows conditioned, new rows drawn (nereo)", {
   site1 <- weight_fit$meta$site_levels[1]
-  grid <- data.frame(diameter = c(30, 30), site = c(site1, "brand_new_site"))
+  grid <- data.frame(diameter_mm = c(30, 30), site = c(site1, "brand_new_site"))
   # Must not error on the unknown level.
   expect_no_error(.linpred(
     weight_fit,
@@ -51,12 +51,12 @@ test_that("per-row resolution: known rows conditioned, new rows drawn (nereo)", 
   lp_known <- posterior::draws_of(
     .linpred(
       weight_fit,
-      data.frame(diameter = 30, site = site1),
+      data.frame(diameter_mm = 30, site = site1),
       "average"
     )
   )
   lp_typical <- posterior::draws_of(
-    .linpred(weight_fit, data.frame(diameter = 30), "average")
+    .linpred(weight_fit, data.frame(diameter_mm = 30), "average")
   )
   expect_equal(lp_avg[, 1], lp_known[, 1])
   expect_equal(lp_avg[, 2], lp_typical[, 1])
@@ -64,7 +64,7 @@ test_that("per-row resolution: known rows conditioned, new rows drawn (nereo)", 
 
 test_that("sample widens vs average when a factor is omitted (nereo)", {
   withr::local_seed(1) # the "sample" path draws random effects; pin them
-  grid <- data.frame(diameter = c(20, 40, 60))
+  grid <- data.frame(diameter_mm = c(20, 40, 60))
   sd_avg <- apply(
     posterior::draws_of(.linpred(weight_fit, grid, "average")),
     2,
@@ -85,7 +85,7 @@ test_that("a dropped site:year effect contributes nothing to the linear predicto
   off$meta$site_year_on <- FALSE
   s <- weight_fit$meta$site_levels[1]
   y <- weight_fit$meta$year_levels[1]
-  grid <- data.frame(diameter = 40, site = s, year = y)
+  grid <- data.frame(diameter_mm = 40, site = s, year = y)
 
   e_on <- exp(as.numeric(posterior::draws_of(.linpred(on, grid, "average"))))
   e_off <- exp(as.numeric(posterior::draws_of(.linpred(off, grid, "average"))))
@@ -147,14 +147,14 @@ test_that("data_linpred checks new_data and new_levels before computing", {
   # the predictor column is checked by the fit's own .chk_new_data method
   expect_error(
     data_linpred(weight_fit, data.frame(fronds = 5), "average"),
-    "diameter"
+    "diameter_mm"
   )
   expect_error(
-    data_linpred(weight_fit, data.frame(diameter = 30), "bogus"),
+    data_linpred(weight_fit, data.frame(diameter_mm = 30), "bogus"),
     class = "rlang_error"
   )
   # no grouping column supplied, so there is nothing to condition on
-  res <- data_linpred(weight_fit, data.frame(diameter = 30), "average")
+  res <- data_linpred(weight_fit, data.frame(diameter_mm = 30), "average")
   expect_equal(res$group_vars, character(0))
 })
 
@@ -171,13 +171,13 @@ test_that("the observed-data paths reject a zero-observation fit", {
   expect_error(posterior_epred(fit0), "no observed data")
   # supplied new_data still works: the fit's parameters are estimable
   expect_s3_class(
-    data_linpred(fit0, data.frame(diameter = 30), "average")$linpred,
+    data_linpred(fit0, data.frame(diameter_mm = 30), "average")$linpred,
     "rvar"
   )
 })
 
 test_that("density shifts log(alpha) by bDensity times standardised density", {
-  grid <- data.frame(diameter = 40, density = 7)
+  grid <- data.frame(diameter_mm = 40, stipes_m2 = 7)
   off <- weight_fit
   off$meta$density_on <- FALSE
   e_on <- exp(as.numeric(posterior::draws_of(.linpred(weight_fit, grid, "average"))))
@@ -192,11 +192,11 @@ test_that("new_data predictions work for a model with no continuous predictor", 
   # the range check must skip, not index the grid with NULL
   fit <- weight_fit
   fit$meta$predictor <- NULL
-  expect_no_error(data_linpred(fit, data.frame(diameter = 30), "average"))
+  expect_no_error(data_linpred(fit, data.frame(diameter_mm = 30), "average"))
 })
 
 test_that("a power-law fit's mean is log(alpha) + bPower * log(x), with no floor", {
-  grid <- data.frame(diameter = c(15, 40), density = 4)
+  grid <- data.frame(diameter_mm = c(15, 40), stipes_m2 = 4)
   power <- weight_fit
   power$meta$form <- "power"
   lp_power <- posterior::draws_of(.linpred(power, grid, "average"))

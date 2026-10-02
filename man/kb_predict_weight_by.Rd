@@ -11,7 +11,7 @@ kb_predict_weight_by(fit, ...)
 \method{kb_predict_weight_by}{kb_fit_weight_nereo}(
   fit,
   by = NULL,
-  diameter = NULL,
+  diameter_mm = NULL,
   ...,
   new_levels = c("average", "sample"),
   conf_level = 0.95,
@@ -33,7 +33,7 @@ kb_predict_weight_by(fit, ...)
 \arguments{
 \item{fit}{A \code{kb_fit_weight} object.}
 
-\item{...}{Passed to the species method: the predictor sequence (\code{diameter} for
+\item{...}{Passed to the species method: the predictor sequence (\code{diameter_mm} for
 \emph{Nereocystis}, \code{fronds} for \emph{Macrocystis}) and the shared summary arguments.}
 
 \item{by}{A character vector of grouping factors, each drawn as a separate
@@ -41,7 +41,7 @@ curve, or \code{NULL} for a single population-level curve. Each named factor is
 expanded over its observed levels and conditioned on its estimated random
 effects.}
 
-\item{diameter}{A numeric vector of sub-bulb diameter values (mm) to predict
+\item{diameter_mm}{A numeric vector of sub-bulb diameter values (mm) to predict
 over, or \code{NULL} for an automatic sequence
 spanning the observed range.}
 
@@ -75,7 +75,7 @@ weight, the predictor column, and the \code{by} grouping columns.
 Summarise the fitted allometric relationship over a generated prediction grid:
 a sequence of predictor values crossed with the grouping factors named in \code{by}
 (one curve per group). The predictor sequence is supplied through the fit's
-species predictor argument: \code{diameter} for a \emph{Nereocystis} fit, \code{fronds} for a
+species predictor argument: \code{diameter_mm} for a \emph{Nereocystis} fit, \code{fronds} for a
 \emph{Macrocystis} fit (see the methods linked below).
 }
 \details{
@@ -96,7 +96,7 @@ and site-years without a recorded density, use the fitted mean density.
 \section{Methods (by class)}{
 \itemize{
 \item \code{kb_predict_weight_by(kb_fit_weight_nereo)}: \emph{Nereocystis} method; predicts over a sub-bulb
-\code{diameter} sequence.
+\code{diameter_mm} sequence.
 
 \item \code{kb_predict_weight_by(kb_fit_weight_macro)}: \emph{Macrocystis} method; predicts over a
 \code{fronds} sequence.

@@ -23,7 +23,7 @@ test_that("axis titles are publication-ready descriptive labels", {
 test_that("a held predictor puts the grouping factor on a descriptive x axis", {
   p <- kb_predict_weight(
     weight_fit,
-    new_data = data.frame(diameter = 30, site = levels(weight_fit$data$site)[1])
+    new_data = data.frame(diameter_mm = 30, site = levels(weight_fit$data$site)[1])
   )
   gg <- kb_plot_predictions(p)
   expect_identical(gg$labels$x, "Site")
@@ -36,7 +36,7 @@ test_that("reference-diameter by site is pointrange with sites on x, no facet", 
   p <- kb_predict_weight_by(
     weight_fit,
     by = "site",
-    diameter = 30,
+    diameter_mm = 30,
     new_levels = "average"
   )
   gg <- kb_plot_predictions(p)
@@ -48,7 +48,7 @@ test_that("reference-diameter by site is pointrange with sites on x, no facet", 
 })
 
 test_that("reference-diameter by site:year puts year on x, facets by site", {
-  p <- kb_predict_weight_by(weight_fit, by = c("site", "year"), diameter = 30)
+  p <- kb_predict_weight_by(weight_fit, by = c("site", "year"), diameter_mm = 30)
   gg <- kb_plot_predictions(p)
   expect_identical(gg$labels$x, "Year")
   expect_false(inherits(gg$facet, "FacetNull"))
@@ -57,7 +57,7 @@ test_that("reference-diameter by site:year puts year on x, facets by site", {
 test_that("scattered supplied rows render as points, not a ribbon", {
   p <- kb_predict_weight(
     weight_fit,
-    new_data = data.frame(diameter = c(20, 40, 60))
+    new_data = data.frame(diameter_mm = c(20, 40, 60))
   )
   gg <- kb_plot_predictions(p)
   expect_identical(gg$labels$x, "Sub-bulb diameter")
@@ -82,14 +82,14 @@ test_that("max_facets caps the panels with a warning", {
 test_that("raw data can be added as a layer", {
   p <- kb_predict_weight_by(weight_fit, new_levels = "average")
   gg <- kb_plot_predictions(p) +
-    ggplot2::geom_point(ggplot2::aes(diameter, weight), data = weight_fit$data)
+    ggplot2::geom_point(ggplot2::aes(diameter_mm, weight_kg), data = weight_fit$data)
   expect_no_error(ggplot2::ggplot_build(gg))
   geoms <- vapply(gg$layers, function(l) class(l$geom)[1], character(1))
   expect_true("GeomPoint" %in% geoms)
 })
 
 test_that("a single ungrouped row errors helpfully rather than cryptically", {
-  p <- kb_predict_weight(weight_fit, new_data = data.frame(diameter = 30))
+  p <- kb_predict_weight(weight_fit, new_data = data.frame(diameter_mm = 30))
   expect_error(kb_plot_predictions(p), "Supply")
 })
 

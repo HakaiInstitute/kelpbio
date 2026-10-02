@@ -21,7 +21,7 @@
       .chk_new_data_weight_nereo(no_diameter)
     Condition
       Error in `.chk_new_data_weight_nereo()`:
-      ! `no_diameter` must have a diameter column.
+      ! `no_diameter` must have a diameter_mm column.
 
 # .chk_progress passes a valid mode through invisibly and errors otherwise
 
@@ -62,31 +62,31 @@
       .chk_new_data_weight_nereo(d)
     Condition
       Error in `.chk_density()`:
-      ! Column `density` of d must be greater than or equal to 0.
+      ! Column `stipes_m2` of d must be greater than or equal to 0.
 
 # .chk_new_data errors name the invalid predictor column
 
     Code
-      .chk_new_data_weight_nereo(data.frame(diameter = 0))
+      .chk_new_data_weight_nereo(data.frame(diameter_mm = 0))
     Condition
       Error in `.chk_positive_measure()`:
-      ! Column `diameter` of data.frame(diameter = 0) must be greater than 0.
+      ! Column `diameter_mm` of data.frame(diameter_mm = 0) must be greater than 0.
 
 ---
 
     Code
-      .chk_new_data_weight_nereo(data.frame(diameter = "30"))
+      .chk_new_data_weight_nereo(data.frame(diameter_mm = "30"))
     Condition
       Error in `.chk_positive_measure()`:
-      ! Column `diameter` of data.frame(diameter = "30") must be numeric.
+      ! Column `diameter_mm` of data.frame(diameter_mm = "30") must be numeric.
 
 ---
 
     Code
-      .chk_new_data_weight_nereo(data.frame(diameter = NA_real_))
+      .chk_new_data_weight_nereo(data.frame(diameter_mm = NA_real_))
     Condition
       Error in `.chk_positive_measure()`:
-      ! Column `diameter` of data.frame(diameter = NA_real_) must not have missing values.
+      ! Column `diameter_mm` of data.frame(diameter_mm = NA_real_) must not have missing values.
 
 ---
 

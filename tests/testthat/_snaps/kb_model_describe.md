@@ -7,14 +7,14 @@
       Response: wet weight (kg); predictor: sub-bulb diameter (mm)
       
       Likelihood
-        log(weight) ~ Normal(log(mu), sWeight)
+        log(weight_kg) ~ Normal(log(mu), sWeight)
         mu = bFloor + alpha * x^bPower
         log(alpha) = bWeight
                    + bDensity * density
                    + bYear[year]
                    + bSite[site]
                    + bSiteYear[site, year]
-        x = diameter / d0,  d0 = 35.8  (geometric mean diameter)
+        x = diameter_mm / d0,  d0 = 35.8  (geometric mean diameter)
         density = (stipe density - 4.23) / 1.84  (standardised site-year density)
       
       Random effects
@@ -41,7 +41,7 @@
       Response: wet weight; predictor: frond count
       
       Likelihood
-        weight ~ Gamma(bShape, bShape / mu)
+        weight_kg ~ Gamma(bShape, bShape / mu)
         log(mu) = bWeight
                 + bFronds * x
                 + bSite[site]
@@ -87,7 +87,7 @@
       Response: maximum sub-bulb diameter (mm)
       
       Likelihood
-        diameter ~ Weibull(bShape, mu / gamma(1 + 1 / bShape))
+        diameter_mm ~ Weibull(bShape, mu / gamma(1 + 1 / bShape))
         log(mu) = bDiameter
                 + bSite[site]
                 + bYear[year]
@@ -153,14 +153,14 @@
       Response: wet weight (kg); predictor: sub-bulb diameter (mm)
       
       Likelihood
-        log(weight) ~ Normal(log(mu), sWeight)
+        log(weight_kg) ~ Normal(log(mu), sWeight)
         mu = alpha * x^bPower
         log(alpha) = bWeight
                    + bDensity * density
                    + bYear[year]
                    + bSite[site]
                    + bSiteYear[site, year]
-        x = diameter / d0,  d0 = 35.8  (geometric mean diameter)
+        x = diameter_mm / d0,  d0 = 35.8  (geometric mean diameter)
         density = (stipe density - 4.23) / 1.84  (standardised site-year density)
       
       Random effects

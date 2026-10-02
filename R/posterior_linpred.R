@@ -13,7 +13,7 @@
 #' @param transform A flag specifying whether to return the response-scale
 #'   value (`exp`).
 #' @param new_data A data frame with the fit's predictor column (and optional
-#'   `site`, `year`, and `density` columns), or `NULL` for the observed data.
+#'   `site`, `year`, and `stipes_m2` columns), or `NULL` for the observed data.
 #' @param ... Unused.
 #'
 #' @return A draws-by-observations (`D x N`) matrix.

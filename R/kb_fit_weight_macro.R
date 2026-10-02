@@ -129,7 +129,7 @@ kb_fit_weight_macro <- function(
       predictor_ref = weight_fronds_ref(data$fronds),
       site_year_on = site_year$on,
       predictor = "fronds",
-      response = "weight"
+      response = "weight_kg"
     )
   )
 }

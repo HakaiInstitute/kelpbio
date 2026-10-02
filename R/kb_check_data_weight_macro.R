@@ -3,7 +3,7 @@
 #' Check that `data` contains the columns required to fit the *Macrocystis
 #' pyrifera* weight model, with appropriate types and values.
 #'
-#' Required columns: whole-number `fronds` (> 0), numeric `weight` (kg, > 0), and
+#' Required columns: whole-number `fronds` (> 0), numeric `weight_kg` (kg, > 0), and
 #' factor or character `site` and `year`, with no missing values.
 #'
 #' @details
@@ -19,7 +19,7 @@
 #'
 #' @examples
 #' data <- data.frame(
-#'   fronds = c(3, 8), weight = c(0.4, 1.7),
+#'   fronds = c(3, 8), weight_kg = c(0.4, 1.7),
 #'   site = factor(c("a", "b")), year = factor(c("2020", "2021"))
 #' )
 #' kb_check_data_weight_macro(data)
@@ -30,7 +30,7 @@ kb_check_data_weight_macro <- function(
   chk::chk_data(data, x_name = x_name)
   chk::chk_superset(
     names(data),
-    c("fronds", "weight", "site", "year"),
+    c("fronds", "weight_kg", "site", "year"),
     x_name = x_name
   )
 
@@ -40,10 +40,10 @@ kb_check_data_weight_macro <- function(
   chk::chk_gt(data$fronds, value = 0, x_name = nm)
   chk::chk_whole_numeric(data$fronds, x_name = nm)
 
-  nm <- kb_xname(x_name, "weight")
-  chk::chk_numeric(data$weight, x_name = nm)
-  chk::chk_not_any_na(data$weight, x_name = nm)
-  chk::chk_gt(data$weight, value = 0, x_name = nm)
+  nm <- kb_xname(x_name, "weight_kg")
+  chk::chk_numeric(data$weight_kg, x_name = nm)
+  chk::chk_not_any_na(data$weight_kg, x_name = nm)
+  chk::chk_gt(data$weight_kg, value = 0, x_name = nm)
 
   for (col in c("site", "year")) {
     nm <- kb_xname(x_name, col)

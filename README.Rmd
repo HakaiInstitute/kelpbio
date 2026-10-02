@@ -56,8 +56,8 @@ kelpbio fits each biomass component with its own `kb_fit_*()` function. The
 allometric weight model relates wet weight to sub-bulb diameter, with random
 effects for year, site, and site-by-year.
 
-The model is fitted to a data frame of `diameter`, `weight`, `site`, and
-`year`, with an optional site-year stipe `density`. A small simulated dataset is included with the package:
+The model is fitted to a data frame of `diameter_mm`, `weight_kg`, `site`, and
+`year`, with an optional site-year stipe density, `stipes_m2`. A small simulated dataset is included with the package:
 
 ```{r data}
 library(kelpbio)
@@ -98,7 +98,7 @@ Predict weight at new diameters with `kb_predict_weight()`. It returns a table
 with a point estimate and `conf_level` compatibility limits for each row:
 
 ```{r predict}
-new_data <- data.frame(diameter = c(20, 35, 50, 65, 80), site = "site1")
+new_data <- data.frame(diameter_mm = c(20, 35, 50, 65, 80), site = "site1")
 
 set.seed(1)
 kb_predict_weight(fit, new_data)

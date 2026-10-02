@@ -31,7 +31,7 @@ rows <- lapply(seq_len(nrow(grid)), function(i) {
   y <- grid$year[i]
   mu <- exp(b_diameter + a_site[[s]] + a_year[[y]] + stats::rnorm(1, 0, sd_site_year))
   diameter <- stats::rweibull(n_per, shape = shape, scale = mu / gamma(1 + 1 / shape))
-  data.frame(diameter = round(diameter, 1), site = s, year = y)
+  data.frame(diameter_mm = round(diameter, 1), site = s, year = y)
 })
 
 data_size_sim_nereo <- do.call(rbind, rows)

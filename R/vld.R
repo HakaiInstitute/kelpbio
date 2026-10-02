@@ -21,9 +21,9 @@
 
 .vld_new_data_weight_nereo <- function(x) {
   is.data.frame(x) &&
-    "diameter" %in% names(x) &&
-    .vld_positive_measure(x$diameter) &&
-    (!"density" %in% names(x) || .vld_density(x$density))
+    "diameter_mm" %in% names(x) &&
+    .vld_positive_measure(x$diameter_mm) &&
+    (!"stipes_m2" %in% names(x) || .vld_density(x$stipes_m2))
 }
 
 # A measured size: numeric, positive, no missing values.
@@ -43,9 +43,9 @@
 
 # Density is a site-year value: at most one distinct recorded value per site-year.
 .vld_density_site_year <- function(data) {
-  recorded <- !is.na(data$density)
+  recorded <- !is.na(data$stipes_m2)
   key <- site_year_key(data$site, data$year)[recorded]
-  n_distinct <- tapply(data$density[recorded], key, function(x) {
+  n_distinct <- tapply(data$stipes_m2[recorded], key, function(x) {
     length(unique(x))
   })
   all(n_distinct <= 1L)

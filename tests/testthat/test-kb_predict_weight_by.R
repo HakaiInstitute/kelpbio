@@ -17,7 +17,7 @@ test_that("by produces one curve per group", {
 
 test_that("a supplied predictor sequence is used for either species", {
   expect_equal(
-    kb_predict_weight_by(weight_fit, diameter = c(25, 50, 75))$diameter,
+    kb_predict_weight_by(weight_fit, diameter_mm = c(25, 50, 75))$diameter_mm,
     c(25, 50, 75)
   )
   expect_equal(
@@ -30,11 +30,11 @@ test_that("the wrong-species predictor argument errors", {
   # `fronds` is the Macrocystis predictor; a Nereocystis fit rejects it
   expect_error(
     kb_predict_weight_by(weight_fit, fronds = c(2, 5)),
-    "diameter"
+    "diameter_mm"
   )
   # `diameter` is the Nereocystis predictor; a Macrocystis fit rejects it
   expect_error(
-    kb_predict_weight_by(weight_macro_fit, diameter = c(20, 40)),
+    kb_predict_weight_by(weight_macro_fit, diameter_mm = c(20, 40)),
     "fronds"
   )
 })
@@ -89,7 +89,7 @@ test_that("kb_predict_weight_by errors on a weight fit with no species method", 
 
 test_that("a supplied predictor sequence far outside the fitted range warns", {
   expect_warning(
-    kb_predict_weight_by(weight_fit, diameter = c(30, 500)),
+    kb_predict_weight_by(weight_fit, diameter_mm = c(30, 500)),
     "far outside"
   )
 })
@@ -97,12 +97,12 @@ test_that("a supplied predictor sequence far outside the fitted range warns", {
 test_that("site-year curves use each site-year's recorded density", {
   # one site-year curve at 30 mm equals predicting that site-year with its
   # recorded density supplied explicitly
-  curve <- kb_predict_weight_by(weight_fit, by = c("site", "year"), diameter = 30)
+  curve <- kb_predict_weight_by(weight_fit, by = c("site", "year"), diameter_mm = 30)
   row <- curve[curve$site == "site1" & curve$year == "2019", ]
   recorded <- weight_fit$meta$density_levels[["site1:2019"]]
   explicit <- kb_predict_weight(
     weight_fit,
-    data.frame(diameter = 30, site = "site1", year = "2019", density = recorded),
+    data.frame(diameter_mm = 30, site = "site1", year = "2019", stipes_m2 = recorded),
     new_levels = "average"
   )
   expect_equal(row$estimate, explicit$estimate)

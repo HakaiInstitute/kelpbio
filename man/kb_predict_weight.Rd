@@ -35,9 +35,9 @@ kb_predict_weight(fit, ...)
 
 \item{...}{Passed to the species method (currently only the shared arguments).}
 
-\item{new_data}{A data frame with the fit's predictor column (\code{diameter} in
+\item{new_data}{A data frame with the fit's predictor column (\code{diameter_mm} in
 millimetres for \emph{Nereocystis}, \code{fronds} for \emph{Macrocystis}) and optional
-\code{site} / \code{year} columns (and, for \emph{Nereocystis}, an optional \code{density}
+\code{site} / \code{year} columns (and, for \emph{Nereocystis}, an optional \code{stipes_m2}
 column in stipes per m²), or \code{NULL} to predict at the observed data.}
 
 \item{new_levels}{A string, one of \code{"sample"} or \code{"average"}, controlling how
@@ -91,25 +91,25 @@ For a new site, \code{representative_site} offers a third approach: instead of
 more named reference sites (the per-draw average across several). The
 \code{site:year} interaction still follows \code{new_levels}.
 
-For a \emph{Nereocystis} fit that includes density, each row uses its \code{density}
+For a \emph{Nereocystis} fit that includes density, each row uses its \code{stipes_m2}
 value if present, otherwise the recorded density of its site-year in the
 fitted data, otherwise the fitted mean density.
 }
 \section{Methods (by class)}{
 \itemize{
 \item \code{kb_predict_weight(kb_fit_weight_nereo)}: \emph{Nereocystis} method; \code{new_data} needs a
-\code{diameter} column.
+\code{diameter_mm} column.
 
 \item \code{kb_predict_weight(kb_fit_weight_macro)}: \emph{Macrocystis} method; \code{new_data} needs a
 \code{fronds} column.
 
 }}
 \examples{
-new_data <- data.frame(diameter = c(20, 40, 60))
+new_data <- data.frame(diameter_mm = c(20, 40, 60))
 kb_predict_weight(fit_weight_sim_nereo, new_data, new_levels = "average")
 
 # Predict a new site as if it behaves like a known reference site:
-new_site <- data.frame(diameter = c(20, 40, 60), site = "new_site")
+new_site <- data.frame(diameter_mm = c(20, 40, 60), site = "new_site")
 kb_predict_weight(
   fit_weight_sim_nereo, new_site,
   representative_site = fit_weight_sim_nereo$meta$site_levels[1]

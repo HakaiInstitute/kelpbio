@@ -81,7 +81,7 @@ kb_model_describe.kb_fit_size_macro <- function(fit, prose = FALSE) {
     sSite = pri$sd_site
   )
   centering <- sprintf(
-    "x = diameter / d0,  d0 = %s  (geometric mean diameter)",
+    "x = diameter_mm / d0,  d0 = %s  (geometric mean diameter)",
     format(d0)
   )
   density_prose <- ""
@@ -151,7 +151,7 @@ kb_model_describe.kb_fit_size_macro <- function(fit, prose = FALSE) {
     response_desc = "wet weight (kg)",
     predictor_desc = "sub-bulb diameter (mm)",
     likelihood = paste0(
-      "log(weight) ~ Normal(log(mu), sWeight)",
+      "log(weight_kg) ~ Normal(log(mu), sWeight)",
       if (floor) "\n  mu = bFloor + alpha * x^bPower" else "\n  mu = alpha * x^bPower"
     ),
     mean_lhs = "log(alpha)",
@@ -212,7 +212,7 @@ kb_model_describe.kb_fit_size_macro <- function(fit, prose = FALSE) {
     species = .species_label(fit$meta$species),
     response_desc = "wet weight",
     predictor_desc = "frond count",
-    likelihood = "weight ~ Gamma(bShape, bShape / mu)",
+    likelihood = "weight_kg ~ Gamma(bShape, bShape / mu)",
     mean_lhs = "log(mu)",
     mean_terms = mean_terms,
     centering = sprintf(
@@ -275,7 +275,7 @@ kb_model_describe.kb_fit_size_macro <- function(fit, prose = FALSE) {
     species = .species_label(fit$meta$species),
     response_desc = "maximum sub-bulb diameter (mm)",
     likelihood = paste0(
-      "diameter ~ Weibull(bShape, mu / gamma(1 + 1 / bShape))"
+      "diameter_mm ~ Weibull(bShape, mu / gamma(1 + 1 / bShape))"
     ),
     mean_lhs = "log(mu)",
     mean_terms = eff$mean_terms,

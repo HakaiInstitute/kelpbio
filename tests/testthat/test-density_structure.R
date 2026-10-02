@@ -2,7 +2,7 @@ density_data <- function(density) {
   data.frame(
     site = c("a", "a", "b", "b", "c"),
     year = c("2020", "2020", "2020", "2021", "2021"),
-    density = density
+    stipes_m2 = density
   )
 }
 

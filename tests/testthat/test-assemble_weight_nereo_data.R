@@ -1,7 +1,7 @@
 test_that("assemble_weight_nereo_data maps data and priors to the Stan data block", {
   data <- data.frame(
-    diameter = c(20, 35, 50),
-    weight = c(0.5, 2, 4),
+    diameter_mm = c(20, 35, 50),
+    weight_kg = c(0.5, 2, 4),
     site = factor(c("a", "b", "a")),
     year = factor(c("2020", "2020", "2021"))
   )
@@ -29,8 +29,8 @@ test_that("assemble_weight_nereo_data maps data and priors to the Stan data bloc
 
 test_that("assemble_weight_nereo_data encodes floor_on as 0/1", {
   data <- data.frame(
-    diameter = c(20, 35),
-    weight = c(0.5, 2),
+    diameter_mm = c(20, 35),
+    weight_kg = c(0.5, 2),
     site = factor(c("a", "b")),
     year = factor(c("2020", "2021"))
   )
@@ -45,8 +45,8 @@ test_that("assemble_weight_nereo_data encodes floor_on as 0/1", {
 
 test_that("assemble_weight_nereo_data maps every prior hyperparameter to its own Stan field", {
   data <- data.frame(
-    diameter = c(20, 35, 50),
-    weight = c(0.5, 2, 4),
+    diameter_mm = c(20, 35, 50),
+    weight_kg = c(0.5, 2, 4),
     site = factor(c("a", "b", "a")),
     year = factor(c("2020", "2020", "2021"))
   )
@@ -83,8 +83,8 @@ test_that("assemble_weight_nereo_data maps every prior hyperparameter to its own
 
 test_that("assemble_weight_nereo_data encodes site_year_on as 0/1", {
   data <- data.frame(
-    diameter = c(20, 35, 50),
-    weight = c(0.5, 2, 4),
+    diameter_mm = c(20, 35, 50),
+    weight_kg = c(0.5, 2, 4),
     site = factor(c("a", "b", "a")),
     year = factor(c("2020", "2020", "2021"))
   )
@@ -106,8 +106,8 @@ test_that("assemble_weight_nereo_data encodes site_year_on as 0/1", {
 
 test_that("assemble_weight_nereo_data accepts zero-row data", {
   data <- data.frame(
-    diameter = numeric(0),
-    weight = numeric(0),
+    diameter_mm = numeric(0),
+    weight_kg = numeric(0),
     site = factor(character(0)),
     year = factor(character(0))
   )
@@ -138,11 +138,11 @@ test_that("weight_diameter_ref falls back to 30 for zero-row data", {
 
 test_that("assemble_weight_nereo_data passes standardised density and its flag", {
   data <- data.frame(
-    diameter = c(20, 35, 50, 40),
-    weight = c(0.5, 2, 4, 3),
+    diameter_mm = c(20, 35, 50, 40),
+    weight_kg = c(0.5, 2, 4, 3),
     site = c("a", "b", "a", "b"),
     year = c("2020", "2020", "2021", "2021"),
-    density = c(2, 4, NA, NA)
+    stipes_m2 = c(2, 4, NA, NA)
   )
   sd <- assemble_weight_nereo_data(data, kb_priors_weight_nereo(), 30)
   expect_equal(sd$density_on, 1L)
@@ -152,8 +152,8 @@ test_that("assemble_weight_nereo_data passes standardised density and its flag",
 
 test_that("assemble_weight_nereo_data zeroes density when there is none", {
   data <- data.frame(
-    diameter = c(20, 35),
-    weight = c(0.5, 2),
+    diameter_mm = c(20, 35),
+    weight_kg = c(0.5, 2),
     site = c("a", "b"),
     year = c("2020", "2020")
   )

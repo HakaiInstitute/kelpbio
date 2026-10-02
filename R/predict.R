@@ -13,7 +13,7 @@
 #' @family generics
 #' @exportS3Method stats::predict
 #' @examples
-#' predict(fit_weight_sim_nereo, data.frame(diameter = c(20, 40)))
+#' predict(fit_weight_sim_nereo, data.frame(diameter_mm = c(20, 40)))
 predict.kb_fit_weight <- function(
   object,
   new_data = NULL,

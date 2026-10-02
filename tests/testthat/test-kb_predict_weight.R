@@ -13,16 +13,16 @@ test_that("new_data = NULL predicts at the observed rows, conditioned", {
 })
 
 test_that("predicts at supplied rows", {
-  nd <- data.frame(diameter = c(20, 40, 60))
+  nd <- data.frame(diameter_mm = c(20, 40, 60))
   p <- kb_predict_weight(weight_fit, new_data = nd)
   expect_equal(nrow(p), 3L)
-  expect_equal(p$diameter, c(20, 40, 60))
+  expect_equal(p$diameter_mm, c(20, 40, 60))
 })
 
 test_that("a new site is sampled by default: wider than a known site, reproducible", {
   site1 <- weight_fit$meta$site_levels[1]
-  known <- kb_predict_weight(weight_fit, data.frame(diameter = 40, site = site1))
-  new_site <- data.frame(diameter = 40, site = "brand_new_site")
+  known <- kb_predict_weight(weight_fit, data.frame(diameter_mm = 40, site = site1))
+  new_site <- data.frame(diameter_mm = 40, site = "brand_new_site")
   set.seed(1)
   new <- kb_predict_weight(weight_fit, new_site)
   set.seed(1)
@@ -34,7 +34,7 @@ test_that("a new site is sampled by default: wider than a known site, reproducib
 })
 
 test_that("estimate reduces each row's draws (custom function, matches posterior_epred)", {
-  nd <- data.frame(diameter = c(20, 40), site = weight_fit$meta$site_levels[1])
+  nd <- data.frame(diameter_mm = c(20, 40), site = weight_fit$meta$site_levels[1])
   # A trimmed mean has no rvar method; it must be applied to the numeric draws.
   trimmed <- function(x) mean(x, trim = 0.1)
   p <- kb_predict_weight(
@@ -55,7 +55,7 @@ test_that("macro predicts on the fronds predictor and rejects a diameter column"
   expect_equal(attr(p, "kb_predictor"), "fronds")
   expect_true(all(p$estimate > 0))
   expect_error(
-    kb_predict_weight(weight_macro_fit, new_data = data.frame(diameter = 30)),
+    kb_predict_weight(weight_macro_fit, new_data = data.frame(diameter_mm = 30)),
     "fronds"
   )
 })
@@ -67,20 +67,20 @@ test_that("representative_site borrows a known site's main effects for a new sit
   # for both, so a new site borrowing site1 must match predicting site1 itself.
   rep <- kb_predict_weight(
     weight_fit,
-    data.frame(diameter = diameter, site = "brand_new_site"),
+    data.frame(diameter_mm = diameter, site = "brand_new_site"),
     new_levels = "average",
     representative_site = site1
   )
   known <- kb_predict_weight(
     weight_fit,
-    data.frame(diameter = diameter, site = site1),
+    data.frame(diameter_mm = diameter, site = site1),
     new_levels = "average"
   )
   expect_equal(rep$estimate, known$estimate)
 })
 
 test_that("representative_site rejects sites not in the fit", {
-  nd <- data.frame(diameter = 40, site = "brand_new_site")
+  nd <- data.frame(diameter_mm = 40, site = "brand_new_site")
   # the message itself is pinned in test-chk.R
   expect_error(
     kb_predict_weight(weight_fit, nd, representative_site = "not_a_site"),
@@ -115,7 +115,7 @@ test_that("new_data far outside the fitted range warns but still predicts", {
   expect_warning(
     p <- kb_predict_weight(
       weight_fit,
-      data.frame(diameter = 3),
+      data.frame(diameter_mm = 3),
       new_levels = "average"
     ),
     "far outside"
@@ -131,16 +131,16 @@ test_that("a fitted site-year recorded without density uses the fitted mean", {
   fit$meta$density_levels <- levels[names(levels) != "site2:2020"]
   bare <- kb_predict_weight(
     fit,
-    data.frame(diameter = 30, site = "site2", year = "2020"),
+    data.frame(diameter_mm = 30, site = "site2", year = "2020"),
     new_levels = "average"
   )
   at_mean <- kb_predict_weight(
     fit,
     data.frame(
-      diameter = 30,
+      diameter_mm = 30,
       site = "site2",
       year = "2020",
-      density = fit$meta$density_mean
+      stipes_m2 = fit$meta$density_mean
     ),
     new_levels = "average"
   )
@@ -148,7 +148,7 @@ test_that("a fitted site-year recorded without density uses the fitted mean", {
 })
 
 test_that("density far above the fitted range warns; a sparse density does not", {
-  nd <- function(density) data.frame(diameter = 30, density = density)
+  nd <- function(density) data.frame(diameter_mm = 30, stipes_m2 = density)
   expect_warning(
     kb_predict_weight(weight_fit, nd(40000), new_levels = "average"),
     "far outside"

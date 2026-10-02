@@ -125,7 +125,7 @@ kb_fit_size_nereo <- function(
       site_year_on = site_year$on,
       # No predictor: size is predicted per group, so the grids carry no
       # predictor sequence.
-      response = "diameter"
+      response = "diameter_mm"
     )
   )
 }

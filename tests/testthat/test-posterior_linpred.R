@@ -1,5 +1,5 @@
 test_that("posterior_linpred returns the log-scale linear predictor", {
-  nd <- data.frame(diameter = c(20, 40))
+  nd <- data.frame(diameter_mm = c(20, 40))
   lp <- posterior_linpred(weight_fit, new_data = nd)
   expect_true(is.matrix(lp))
   expect_equal(dim(lp), c(posterior::ndraws(weight_fit$draws), 2L))
@@ -8,7 +8,7 @@ test_that("posterior_linpred returns the log-scale linear predictor", {
 test_that("transform = TRUE is exp of the log-scale linear predictor", {
   # new_levels = "average" zeroes the random effects, so the two calls share a
   # deterministic linear predictor and the exp relationship is exact.
-  nd <- data.frame(diameter = c(20, 40))
+  nd <- data.frame(diameter_mm = c(20, 40))
   lp <- posterior_linpred(weight_fit, new_data = nd, new_levels = "average")
   lpt <- posterior_linpred(
     weight_fit,

@@ -58,7 +58,7 @@ test_that("prior_only fit ignores the data", {
     seed = 7
   )
   d2 <- d
-  d2$weight <- rev(d2$weight)
+  d2$weight_kg <- rev(d2$weight_kg)
   f2 <- kb_fit_weight_macro(
     d2,
     prior_only = TRUE,

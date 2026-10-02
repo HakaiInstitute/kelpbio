@@ -1,6 +1,6 @@
 size_nereo_data <- function() {
   data.frame(
-    diameter = c(20, 35, 50),
+    diameter_mm = c(20, 35, 50),
     site = factor(c("a", "b", "a")),
     year = factor(c("2020", "2020", "2021"))
   )

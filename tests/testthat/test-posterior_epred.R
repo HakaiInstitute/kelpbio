@@ -1,7 +1,7 @@
 test_that("posterior_epred returns a D x N matrix of positive expected weights", {
   m <- posterior_epred(
     weight_fit,
-    new_data = data.frame(diameter = c(20, 40, 60))
+    new_data = data.frame(diameter_mm = c(20, 40, 60))
   )
   expect_true(is.matrix(m))
   expect_equal(ncol(m), 3L)

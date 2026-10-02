@@ -43,7 +43,7 @@
 #' kb_predict_weight_by(fit_weight_sim_nereo) |>
 #'   kb_plot_predictions() +
 #'   ggplot2::geom_point(
-#'     ggplot2::aes(diameter, weight),
+#'     ggplot2::aes(diameter_mm, weight_kg),
 #'     data = data_weight_sim_nereo,
 #'     alpha = 0.3
 #'   )
@@ -55,7 +55,7 @@
 #' # Weight at a reference diameter by site (pointrange, sites on the y-axis):
 #' kb_predict_weight_by(
 #'   fit_weight_sim_nereo,
-#'   by = "site", diameter = 30, new_levels = "average"
+#'   by = "site", diameter_mm = 30, new_levels = "average"
 #' ) |>
 #'   kb_plot_predictions() +
 #'   ggplot2::coord_flip()
@@ -182,9 +182,9 @@ kb_plot_predictions <- function(
 kb_axis_label <- function(name, units = NA_character_) {
   base <- switch(
     name,
-    diameter = "Sub-bulb diameter",
+    diameter_mm = "Sub-bulb diameter",
     fronds = "Fronds",
-    weight = "Wet weight",
+    weight_kg = "Wet weight",
     site = "Site",
     year = "Year",
     estimate = "Estimate",

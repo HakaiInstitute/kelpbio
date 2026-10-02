@@ -2,7 +2,7 @@
 # names are shared across models, so a sub-model reusing a column reuses its unit.
 # Read by the unit and range warnings.
 column_units <- c(
-  diameter = "millimetres",
-  weight = "kilograms",
-  density = "stipes per m\u00b2"
+  diameter_mm = "millimetres",
+  weight_kg = "kilograms",
+  stipes_m2 = "stipes per m\u00b2"
 )

@@ -16,7 +16,7 @@
 \item{object}{A \code{kb_fit} object.}
 
 \item{new_data}{A data frame with the fit's predictor column (and optional
-\code{site}, \code{year}, and \code{density} columns), or \code{NULL} to predict at the
+\code{site}, \code{year}, and \code{stipes_m2} columns), or \code{NULL} to predict at the
 observed data.}
 
 \item{...}{Unused.}
