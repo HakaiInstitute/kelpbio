@@ -96,6 +96,16 @@ summary.kb_fit <- function(
   sub("^kb_fit_", "", cls[[match("kb_fit", cls) - 1L]])
 }
 
+# Display label for the model: the class name capitalised, except where the class
+# name is not a word (wetdry).
+.model_label <- function(fit) {
+  model <- .kb_model(fit)
+  if (identical(model, "wetdry")) {
+    return("Wet/dry")
+  }
+  .capitalize(model)
+}
+
 # Upper-case the first letter, for display labels.
 .capitalize <- function(x) {
   paste0(toupper(substr(x, 1L, 1L)), substring(x, 2L))
@@ -121,7 +131,7 @@ summary.kb_fit <- function(
 .kb_fit_header <- function(fit) {
   descr <- .fit_descriptor(fit)
   list(
-    model = .capitalize(.kb_model(fit)),
+    model = .model_label(fit),
     species = .species_label(fit$meta$species),
     predictor = descr$predictor,
     groups = descr$groups,
@@ -169,6 +179,11 @@ summary.kb_fit <- function(
 
 # Density has no predictor either: area is an offset, not a predictor.
 .fit_descriptor.kb_fit_density <- function(x) {
+  list(predictor = NA_character_, groups = fit_groups(x))
+}
+
+# Wet/dry has no predictor; its groups are reported only if the data carry them.
+.fit_descriptor.kb_fit_wetdry <- function(x) {
   list(predictor = NA_character_, groups = fit_groups(x))
 }
 

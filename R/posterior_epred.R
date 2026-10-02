@@ -8,7 +8,8 @@
 #' `exp(mu)` (*Macrocystis*); for size, `exp(mu)` (*Nereocystis*) or the mean of
 #' the zero-truncated distribution (*Macrocystis*); for density, the expected
 #' count on the row's `area_m2`, `(1 - zi) * exp(mu)` with `zi` the
-#' zero-inflation probability (*Nereocystis*) or `exp(mu)` (*Macrocystis*). For
+#' zero-inflation probability (*Nereocystis*) or `exp(mu)` (*Macrocystis*); for
+#' wet/dry, the mean dry:wet ratio `inv_logit(mu)`. For
 #' draws that include observation noise, use [posterior_predict()].
 #'
 #' Conditioning is inferred from the grouping columns present in `new_data`: a

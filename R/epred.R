@@ -84,3 +84,9 @@
   }
   exp(lp) / (1 + exp(b_zi))
 }
+
+# Logit link: the inverse is the Beta mean, the expected dry:wet ratio.
+#' @export
+.epred.kb_fit_wetdry <- function(fit, lp, expectation = TRUE) {
+  1 / (1 + exp(-lp))
+}

@@ -50,3 +50,13 @@ test_that("density residuals are finite deviance residuals from the count likeli
     expect_equal(r, as.numeric(apply(.deviance(fit, mu), 2L, stats::median)))
   }
 })
+
+test_that("wet/dry residuals are finite Beta deviance residuals", {
+  for (fit in list(wetdry_nereo_fit, wetdry_macro_fit)) {
+    r <- residuals(fit)
+    expect_length(r, nobs(fit))
+    expect_true(all(is.finite(r)))
+    mu <- posterior::draws_of(.linpred_obs(fit))
+    expect_equal(r, as.numeric(apply(.deviance(fit, mu), 2L, stats::median)))
+  }
+})

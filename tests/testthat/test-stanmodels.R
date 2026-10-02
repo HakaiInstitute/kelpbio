@@ -23,3 +23,8 @@ test_that("stanmodels$density_nereo and density_macro are compiled Stan models",
   expect_s4_class(stanmodels$density_nereo, "stanmodel")
   expect_s4_class(stanmodels$density_macro, "stanmodel")
 })
+
+test_that("stanmodels$wetdry is a compiled Stan model", {
+  skip_on_cran()
+  expect_s4_class(stanmodels$wetdry, "stanmodel")
+})

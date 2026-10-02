@@ -35,6 +35,7 @@ Other generics:
 \code{\link[=predict.kb_fit_density]{predict.kb_fit_density()}},
 \code{\link[=predict.kb_fit_size]{predict.kb_fit_size()}},
 \code{\link[=predict.kb_fit_weight]{predict.kb_fit_weight()}},
+\code{\link[=predict.kb_fit_wetdry]{predict.kb_fit_wetdry()}},
 \code{\link[=residuals.kb_fit]{residuals.kb_fit()}},
 \code{\link[=samples]{samples()}},
 \code{\link[=summary.kb_fit]{summary.kb_fit()}},

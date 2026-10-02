@@ -23,8 +23,9 @@ The deviance residual is computed per draw, then summarised with the posterior
 median. The likelihoods are Normal on log weight (\emph{Nereocystis} weight), Gamma
 on weight (\emph{Macrocystis} weight), Weibull on diameter (\emph{Nereocystis} size),
 zero-truncated negative binomial on frond count (\emph{Macrocystis} size),
-zero-inflated negative binomial on stipe count (\emph{Nereocystis} density), and
-negative binomial on plant count (\emph{Macrocystis} density).
+zero-inflated negative binomial on stipe count (\emph{Nereocystis} density),
+negative binomial on plant count (\emph{Macrocystis} density), and Beta on the
+dry:wet mass ratio (wet/dry).
 
 A size residual is zero where the observation equals the value that
 maximises its likelihood with the shape or overdispersion held fixed: the
@@ -51,6 +52,7 @@ Other generics:
 \code{\link[=predict.kb_fit_density]{predict.kb_fit_density()}},
 \code{\link[=predict.kb_fit_size]{predict.kb_fit_size()}},
 \code{\link[=predict.kb_fit_weight]{predict.kb_fit_weight()}},
+\code{\link[=predict.kb_fit_wetdry]{predict.kb_fit_wetdry()}},
 \code{\link[=prior_summary.kb_fit]{prior_summary.kb_fit()}},
 \code{\link[=samples]{samples()}},
 \code{\link[=summary.kb_fit]{summary.kb_fit()}},

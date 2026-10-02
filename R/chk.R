@@ -70,6 +70,23 @@
   )
 }
 
+.chk_kb_fit_wetdry <- function(
+  x,
+  x_name = deparse(substitute(x)),
+  call = rlang::caller_env()
+) {
+  if (.vld_kb_fit_wetdry(x)) {
+    return(invisible(x))
+  }
+  cli::cli_abort(
+    c(
+      "{.arg {x_name}} must be a {.cls kb_fit_wetdry} object.",
+      i = "Supported fits are created by the {.code kb_fit_wetdry_*()} functions."
+    ),
+    call = call
+  )
+}
+
 .chk_new_data_weight_nereo <- function(x, x_name = deparse(substitute(x))) {
   if (.vld_new_data_weight_nereo(x)) {
     return(invisible(x))
@@ -305,6 +322,13 @@
 # Both size species take the same new_data (no predictor column).
 #' @export
 .chk_new_data.kb_fit_size <- function(fit, new_data) {
+  .chk_new_data_size(new_data)
+}
+
+# Wet/dry has no predictor or groups, so, like size, any data frame will do: each
+# row predicts the population ratio.
+#' @export
+.chk_new_data.kb_fit_wetdry <- function(fit, new_data) {
   .chk_new_data_size(new_data)
 }
 

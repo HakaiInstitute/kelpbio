@@ -34,3 +34,12 @@
       Column `area_m2` of `d` has median 3e+05, which is unusually large for square metres.
       i Check that area_m2 is in square metres.
 
+---
+
+    Code
+      warn_implausible_units(data.frame(wet_mass_g = c(4000, 5000)), "`d`")
+    Condition
+      Warning:
+      Column `wet_mass_g` of `d` has median 4500, which is unusually large for grams.
+      i Check that wet_mass_g is in grams.
+

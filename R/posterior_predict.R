@@ -1,7 +1,7 @@
 #' Posterior-Predictive Draws
 #'
 #' Draws from the posterior predictive distribution: replicate responses (weights,
-#' plant sizes, or transect counts) carrying both parameter uncertainty and observation noise from
+#' plant sizes, transect counts, or dry:wet ratios) carrying both parameter uncertainty and observation noise from
 #' the model's likelihood. With `new_data = NULL` the replicates are at the
 #' observed data, for use with `bayesplot::pp_check()`.
 #'
@@ -13,8 +13,9 @@
 #' (*Nereocystis* weight), Gamma (*Macrocystis* weight), Weibull (*Nereocystis*
 #' size), zero-truncated negative binomial (*Macrocystis* size, so every draw is a
 #' whole number of at least 1), zero-inflated negative binomial (*Nereocystis*
-#' density), and negative binomial (*Macrocystis* density). Density draws are
-#' counts on each row's `area_m2`.
+#' density), negative binomial (*Macrocystis* density), and Beta (wet/dry, so
+#' every draw lies between 0 and 1). Density draws are counts on each row's
+#' `area_m2`.
 #'
 #' The observation noise is drawn in R, for every `new_data` including `NULL`, so
 #' repeated calls return different replicates. Set a seed with `set.seed()` for
@@ -137,6 +138,20 @@ posterior_predict.kb_fit <- function(
     length(lp),
     lambda = exp(as.vector(lp)),
     theta = rep_len(theta, length(lp))
+  )
+  matrix(draws, nrow = nrow(lp))
+}
+
+#' @export
+.add_noise.kb_fit_wetdry <- function(fit, lp) {
+  precision <- as.vector(posterior::draws_of(fit$draws$bPrecision)) # length D
+  # precision recycles down each column of the D x N matrix, so element (d, n)
+  # gets draw d's precision.
+  m <- 1 / (1 + exp(-lp))
+  draws <- stats::rbeta(
+    length(lp),
+    shape1 = as.vector(m * precision),
+    shape2 = as.vector((1 - m) * precision)
   )
   matrix(draws, nrow = nrow(lp))
 }
