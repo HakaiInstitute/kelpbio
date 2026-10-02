@@ -87,3 +87,9 @@ test_that(".vld_new_data_density requires a data frame with a positive area", {
   expect_false(.vld_new_data_density(data.frame(area_m2 = NA_real_)))
   expect_false(.vld_new_data_density(list(area_m2 = 20)))
 })
+
+test_that(".vld_kb_fit_wetdry recognises a wet/dry fit", {
+  expect_true(.vld_kb_fit_wetdry(wetdry_nereo_fit))
+  expect_false(.vld_kb_fit_wetdry(density_nereo_fit))
+  expect_false(.vld_kb_fit_wetdry(1))
+})

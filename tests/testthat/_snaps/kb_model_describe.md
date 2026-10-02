@@ -215,6 +215,33 @@
         sYear          ~ Exponential(1)
         sSiteYear      ~ Exponential(1)
 
+# kb_model_describe renders the wet/dry model without random effects
+
+    Code
+      kb_model_describe(wetdry_nereo_fit)
+    Output
+      Wet/dry ratio - Nereocystis luetkeana
+      Response: dry_mass_g / wet_mass_g, the dry:wet mass ratio of a sample
+      
+      Likelihood
+        ratio ~ Beta(mu * bPrecision, (1 - mu) * bPrecision)
+        logit(mu) = bDryWet
+      
+      Priors
+        bDryWet        ~ Normal(0, 2)
+        bPrecision     ~ Exponential(0.01)
+
+---
+
+    Code
+      kb_model_describe(wetdry_macro_fit, prose = TRUE)
+    Output
+      The dry:wet mass ratio of each sample was modelled with a Beta likelihood
+      parameterised by its mean, mu, and precision, both common to all samples.
+      Samples were pooled over the months, sites, and tissues they came from.
+      Regularizing priors were placed on all parameters (see the notation form
+      for the hyperparameters).
+
 # kb_model_describe follows the power-law form
 
     Code

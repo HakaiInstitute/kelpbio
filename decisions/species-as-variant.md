@@ -41,6 +41,8 @@ Species is a variant axis, handled uniformly across all six models:
 - Each species gets its own public fit function `kb_fit_<model>_<species>()`
   (e.g. `kb_fit_weight_nereo()`), its own `kb_priors_<model>_<species>()` and
   `kb_check_data_<model>_<species>()`, and its own `inst/stan/<model>_<species>.stan`.
+  A model that is structurally identical across species (wetdry) has one
+  `inst/stan/<model>.stan`, since two identical files would differ in nothing.
 - The species-agnostic mechanics (sampler invocation, control merge, warmup/thin
   math, core resolution, draws-to-rvars extraction, convergence diagnostics) live in one shared internal engine, `fit_stan()`. Each
   species wrapper supplies only what differs: validated data, resolved priors,
@@ -73,7 +75,9 @@ Species is a variant axis, handled uniformly across all six models:
 - Uniformity wins over local optimisation: even where a model is structurally
   identical across species (wetdry, carbon), the species-suffixed function is
   kept so users learn one rule and `meta$species` is always available for the
-  biomass composition (which requires all six fits to share a species).
+  biomass composition (which requires all six fits to share a species). The
+  species functions then share one internal body and Stan file and differ only in
+  the species they record.
 
 This reverses the prior "species enters as data, not a variant" rule in
 `config.yaml`, updated to match.

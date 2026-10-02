@@ -116,6 +116,7 @@ Other prediction:
 \code{\link[=kb_predict_density_by]{kb_predict_density_by()}},
 \code{\link[=kb_predict_size]{kb_predict_size()}},
 \code{\link[=kb_predict_size_by]{kb_predict_size_by()}},
-\code{\link[=kb_predict_weight]{kb_predict_weight()}}
+\code{\link[=kb_predict_weight]{kb_predict_weight()}},
+\code{\link[=kb_predict_wetdry]{kb_predict_wetdry()}}
 }
 \concept{prediction}

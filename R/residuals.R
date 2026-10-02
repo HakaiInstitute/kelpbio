@@ -8,8 +8,9 @@
 #' median. The likelihoods are Normal on log weight (*Nereocystis* weight), Gamma
 #' on weight (*Macrocystis* weight), Weibull on diameter (*Nereocystis* size),
 #' zero-truncated negative binomial on frond count (*Macrocystis* size),
-#' zero-inflated negative binomial on stipe count (*Nereocystis* density), and
-#' negative binomial on plant count (*Macrocystis* density).
+#' zero-inflated negative binomial on stipe count (*Nereocystis* density),
+#' negative binomial on plant count (*Macrocystis* density), and Beta on the
+#' dry:wet mass ratio (wet/dry).
 #'
 #' A size residual is zero where the observation equals the value that
 #' maximises its likelihood with the shape or overdispersion held fixed: the
@@ -88,5 +89,15 @@ residuals.kb_fit <- function(object, ...) {
   theta <- as.vector(posterior::draws_of(fit$draws$bDispersion))
   .per_draw(mu, fit$data$plants, function(y, mu_d, d) {
     extras::res_gamma_pois(y, exp(mu_d), theta[d])
+  })
+}
+
+#' @export
+.deviance.kb_fit_wetdry <- function(fit, mu) {
+  precision <- as.vector(posterior::draws_of(fit$draws$bPrecision))
+  ratio <- fit$data$dry_mass_g / fit$data$wet_mass_g
+  .per_draw(mu, ratio, function(y, mu_d, d) {
+    m <- 1 / (1 + exp(-mu_d))
+    res_beta(y, m * precision[d], (1 - m) * precision[d])
   })
 }

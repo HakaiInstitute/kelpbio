@@ -49,7 +49,8 @@ the linear predictor: for weight, \code{exp(mu + sWeight^2 / 2)} (\emph{Nereocys
 \code{exp(mu)} (\emph{Macrocystis}); for size, \code{exp(mu)} (\emph{Nereocystis}) or the mean of
 the zero-truncated distribution (\emph{Macrocystis}); for density, the expected
 count on the row's \code{area_m2}, \code{(1 - zi) * exp(mu)} with \code{zi} the
-zero-inflation probability (\emph{Nereocystis}) or \code{exp(mu)} (\emph{Macrocystis}). For
+zero-inflation probability (\emph{Nereocystis}) or \code{exp(mu)} (\emph{Macrocystis}); for
+wet/dry, the mean dry:wet ratio \code{inv_logit(mu)}. For
 draws that include observation noise, use \code{\link[=posterior_predict]{posterior_predict()}}.
 
 Conditioning is inferred from the grouping columns present in \code{new_data}: a
@@ -78,6 +79,7 @@ Other generics:
 \code{\link[=predict.kb_fit_density]{predict.kb_fit_density()}},
 \code{\link[=predict.kb_fit_size]{predict.kb_fit_size()}},
 \code{\link[=predict.kb_fit_weight]{predict.kb_fit_weight()}},
+\code{\link[=predict.kb_fit_wetdry]{predict.kb_fit_wetdry()}},
 \code{\link[=prior_summary.kb_fit]{prior_summary.kb_fit()}},
 \code{\link[=residuals.kb_fit]{residuals.kb_fit()}},
 \code{\link[=samples]{samples()}},

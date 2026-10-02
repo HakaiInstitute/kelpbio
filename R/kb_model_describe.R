@@ -70,6 +70,12 @@ kb_model_describe.kb_fit_density_macro <- function(fit, prose = FALSE) {
   .render_model(.model_spec_density_macro(fit), prose)
 }
 
+#' @export
+kb_model_describe.kb_fit_wetdry <- function(fit, prose = FALSE) {
+  chk::chk_flag(prose)
+  .render_model(.model_spec_wetdry(fit), prose)
+}
+
 # ---- species model specs (single source for notation and prose) -------------
 
 .model_spec_nereo <- function(fit) {
@@ -405,6 +411,28 @@ kb_model_describe.kb_fit_density_macro <- function(fit, prose = FALSE) {
   )
 }
 
+# One model for both species, with no random effects.
+.model_spec_wetdry <- function(fit) {
+  pri <- fit$meta$priors
+  list(
+    title = "Wet/dry ratio",
+    species = .species_label(fit$meta$species),
+    response_desc = "dry_mass_g / wet_mass_g, the dry:wet mass ratio of a sample",
+    likelihood = "ratio ~ Beta(mu * bPrecision, (1 - mu) * bPrecision)",
+    mean_lhs = "logit(mu)",
+    mean_terms = "bDryWet",
+    random = list(),
+    priors = list(bDryWet = pri$intercept, bPrecision = pri$precision),
+    prose = paste0(
+      "The dry:wet mass ratio of each sample was modelled with a Beta ",
+      "likelihood parameterised by its mean, mu, and precision, both common to ",
+      "all samples. Samples were pooled over the months, sites, and tissues ",
+      "they came from. Regularizing priors were placed on all parameters (see ",
+      "the notation form for the hyperparameters)."
+    )
+  )
+}
+
 # ---- rendering ---------------------------------------------------------------
 
 # Left-justify to the widest element, so adjacent columns line up.
@@ -436,18 +464,9 @@ kb_model_describe.kb_fit_density_macro <- function(fit, prose = FALSE) {
   # operands stay in one column for either mean_lhs ("mu" or "log(mu)").
   mean_lines <- c(
     paste0("  ", spec$mean_lhs, " = ", spec$mean_terms[1]),
-    paste0(strrep(" ", nchar(spec$mean_lhs) + 3), "+ ", spec$mean_terms[-1])
-  )
-  # Pad the term and distribution columns so the glosses line up.
-  re_lines <- sprintf(
-    "  %s ~ %s  %s",
-    .pad_right(vapply(spec$random, function(r) r$term, character(1))),
-    .pad_right(vapply(
-      spec$random,
-      function(r) sprintf("Normal(0, %s)", r$sd),
-      character(1)
-    )),
-    vapply(spec$random, function(r) r$gloss, character(1))
+    if (length(spec$mean_terms) > 1L) {
+      paste0(strrep(" ", nchar(spec$mean_lhs) + 3), "+ ", spec$mean_terms[-1])
+    }
   )
   prior_lines <- vapply(
     names(spec$priors),
@@ -470,6 +489,22 @@ kb_model_describe.kb_fit_density_macro <- function(fit, prose = FALSE) {
     paste0("  ", spec$centering)
   }
 
+  # A model without random effects (wet/dry) has no random-effects block. Pad the
+  # term and distribution columns so the glosses line up.
+  random_block <- if (length(spec$random)) {
+    re_lines <- sprintf(
+      "  %s ~ %s  %s",
+      .pad_right(vapply(spec$random, function(r) r$term, character(1))),
+      .pad_right(vapply(
+        spec$random,
+        function(r) sprintf("Normal(0, %s)", r$sd),
+        character(1)
+      )),
+      vapply(spec$random, function(r) r$gloss, character(1))
+    )
+    c("", "Random effects", re_lines)
+  }
+
   lines <- c(
     paste0(spec$title, " - ", spec$species),
     paste0("Response: ", spec$response_desc, predictor),
@@ -478,9 +513,7 @@ kb_model_describe.kb_fit_density_macro <- function(fit, prose = FALSE) {
     paste0("  ", spec$likelihood),
     mean_lines,
     centering,
-    "",
-    "Random effects",
-    re_lines,
+    random_block,
     "",
     "Priors",
     prior_lines

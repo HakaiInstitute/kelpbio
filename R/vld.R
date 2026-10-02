@@ -16,6 +16,10 @@
   inherits(x, "kb_fit_density")
 }
 
+.vld_kb_fit_wetdry <- function(x) {
+  inherits(x, "kb_fit_wetdry")
+}
+
 .vld_representative_site <- function(representative_site, site_levels) {
   is.null(representative_site) ||
     (is.character(representative_site) &&

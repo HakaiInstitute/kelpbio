@@ -663,3 +663,34 @@ augment(fit_dm) |>
   ggplot(aes(fitted, residual)) +
   geom_hline(yintercept = 0, linetype = 2) +
   geom_point(alpha = 0.3)
+
+# =============================================================================
+# WET/DRY MODELS
+# =============================================================================
+# Wet/dry is one row per tissue sample: wet_mass_g and dry_mass_g. The dry:wet
+# ratio is Beta with one mean and precision for all samples (no random effects;
+# samples pooled over months, sites, and tissues). For a season-specific ratio,
+# fit to that season's samples only.
+
+str(data_wetdry_sim_nereo)
+kb_check_data_wetdry_nereo(data_wetdry_sim_nereo)
+try(kb_check_data_wetdry_nereo(mutate(data_wetdry_sim_nereo, dry_mass_g = wet_mass_g)))
+# masses in mg warn
+kb_check_data_wetdry_macro(mutate(data_wetdry_sim_macro, across(everything(), ~ .x * 1000)))
+
+kb_priors_wetdry_nereo() # intercept (logit ratio), precision
+
+fit_w <- kb_fit_wetdry_nereo(data_wetdry_sim_nereo)
+fit_w
+tidy(fit_w) # bDryWet: logit mean ratio; bPrecision: Beta precision
+kb_model_describe(fit_w)
+
+# the expected dry:wet ratio, one estimate
+kb_predict_wetdry(fit_w)
+kb_predict_wetdry(kb_fit_wetdry_macro(data_wetdry_sim_macro))
+
+# draws of individual sample ratios
+ppc_dens_overlay(
+  fit_w$data$dry_mass_g / fit_w$data$wet_mass_g,
+  posterior_predict(fit_w)[1:50, ]
+)

@@ -7,13 +7,14 @@ R package for Bayesian kelp biomass estimation. All exported functions use the `
 | Task | Command |
 |------|---------|
 | Routine build + QC | `Rscript scripts/build.R` (runs `rstan_config()` → `install()` → `roxygen2md()` → `document()` → `test()`) |
-| Full check (slow) | `Rscript scripts/build.R --check` (adds pkgdown and `R CMD check`) |
-| Rebuild pre-fit objects + fixtures (slow, MCMC) | `Rscript scripts/build.R --fits` (re-fits `data/fit_weight_sim_*` and `tests/testthat/fixtures/*.rds`; run after changing the fit object structure or a model) |
+| Full check (slow) | `Rscript scripts/build.R --check` (`R CMD check` in place of `test()`, since check runs the tests) |
+| pkgdown site | `Rscript scripts/build.R --site` (CI builds the site and runs `R CMD check` on every PR, so neither is needed locally for routine work) |
+| Rebuild pre-fit objects + fixtures (slow, MCMC) | `Rscript scripts/build.R --fits` re-fits every `data/fit_*_sim_*` and `tests/testthat/fixtures/*.rds`; `--fits=density,wetdry` only those models'. Run after changing the fit object structure (all models) or a model (that model) |
 | Run all tests | `devtools::test()` |
 | Run one test file | `testthat::test_file("tests/testthat/test-<name>.R")` or `devtools::test_active_file()` |
 | Document | `devtools::document()` |
 
-The build runs are also Positron/VS Code tasks (Command Palette > "Tasks: Run Task" > "kelpbio: ...", `.vscode/tasks.json`). Flags combine (`--fits --check`); `--help` lists them.
+The build runs are also Positron/VS Code tasks (Command Palette > "Tasks: Run Task" > "kelpbio: ...", `.vscode/tasks.json`). Flags combine (`--fits=wetdry --check`); `--help` lists them.
 
 - **After editing any `inst/stan/*.stan` file**: run `rstantools::rstan_config()` (regenerates `src/stanExports_*` and `R/stanmodels.R`), then `devtools::install()`. `devtools::load_all()`/`test()` compile from the generated C++ but do NOT re-transpile the Stan source, so `.stan` edits are silently missed without `rstan_config()` first. A fit stores its Stan source (`kb_stancode()`), so any `.stan` edit, comments included, also means rebuilding the pre-fits and fixtures (`--fits`) in the same PR.
 - When a change removes exports, run `devtools::document()` before `devtools::install()`: install reads NAMESPACE and fails on exports that no longer exist.

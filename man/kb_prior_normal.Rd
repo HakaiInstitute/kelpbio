@@ -29,6 +29,8 @@ Other priors:
 \code{\link[=kb_priors_size_macro]{kb_priors_size_macro()}},
 \code{\link[=kb_priors_size_nereo]{kb_priors_size_nereo()}},
 \code{\link[=kb_priors_weight_macro]{kb_priors_weight_macro()}},
-\code{\link[=kb_priors_weight_nereo]{kb_priors_weight_nereo()}}
+\code{\link[=kb_priors_weight_nereo]{kb_priors_weight_nereo()}},
+\code{\link[=kb_priors_wetdry_macro]{kb_priors_wetdry_macro()}},
+\code{\link[=kb_priors_wetdry_nereo]{kb_priors_wetdry_nereo()}}
 }
 \concept{priors}

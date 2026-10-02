@@ -38,8 +38,10 @@ new_kb_fit <- function(
       prior_only = prior_only,
       priors = priors,
       stancode = core$stancode,
-      site_levels = levels(factor(data$site)),
-      year_levels = levels(factor(data$year)),
+      # [[ ]] rather than $: a tibble warns on $ for an absent column, and wet/dry
+      # data carry no site or year.
+      site_levels = levels(factor(data[["site"]])),
+      year_levels = levels(factor(data[["year"]])),
       # Recorded rather than recomputed from fit$data, so the group counts a fit
       # reports are a pure metadata read. Describes the data's grouping structure,
       # which is what print()/summary() label as "Data:", not the model's effects.

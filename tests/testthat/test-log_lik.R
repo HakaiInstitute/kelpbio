@@ -119,3 +119,22 @@ test_that("the density log-likelihood uses each transect's area", {
   doubled$data$area_m2 <- 2 * doubled$data$area_m2
   expect_false(isTRUE(all.equal(log_lik(fit), log_lik(doubled))))
 })
+
+test_that("wet/dry log_lik matches the Beta density of the ratio computed directly", {
+  mu <- stats::plogis(posterior_linpred(wetdry_nereo_fit))
+  precision <- as.vector(posterior::draws_of(wetdry_nereo_fit$draws$bPrecision))
+  y <- wetdry_nereo_fit$data$dry_mass_g / wetdry_nereo_fit$data$wet_mass_g
+  expected <- t(vapply(
+    seq_len(nrow(mu)),
+    function(d) {
+      stats::dbeta(
+        y,
+        mu[d, ] * precision[d],
+        (1 - mu[d, ]) * precision[d],
+        log = TRUE
+      )
+    },
+    numeric(length(y))
+  ))
+  expect_equal(log_lik(wetdry_nereo_fit), expected, tolerance = 1e-10)
+})
