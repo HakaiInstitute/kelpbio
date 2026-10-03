@@ -144,14 +144,10 @@ posterior_predict.kb_fit <- function(
 
 #' @export
 .add_noise.kb_fit_wetdry <- function(fit, lp) {
-  precision <- as.vector(posterior::draws_of(fit$draws$bPrecision)) # length D
-  # precision recycles down each column of the D x N matrix, so element (d, n)
-  # gets draw d's precision.
-  m <- 1 / (1 + exp(-lp))
-  draws <- stats::rbeta(
-    length(lp),
-    shape1 = as.vector(m * precision),
-    shape2 = as.vector((1 - m) * precision)
-  )
-  matrix(draws, nrow = nrow(lp))
+  .add_noise_beta_mean(fit, lp)
+}
+
+#' @export
+.add_noise.kb_fit_carbon <- function(fit, lp) {
+  .add_noise_beta_mean(fit, lp)
 }

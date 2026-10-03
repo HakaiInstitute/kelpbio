@@ -30,11 +30,11 @@
 #     fixtures (tests/testthat/fixtures/*.rds) from their scripts. They run Stan
 #     MCMC. Rebuild after changing the fit object structure or a model, so the
 #     shipped objects match the current code. --fits=<models> (comma-separated:
-#     weight, size, density, wetdry) rebuilds only those models' objects.
+#     weight, size, density, wetdry, carbon) rebuilds only those models' objects.
 #   * The environment variables KELPBIO_FULL_CHECK=true and
 #     KELPBIO_REBUILD_FITS=true still switch on --check and --fits.
 
-models <- c("weight", "size", "density", "wetdry")
+models <- c("weight", "size", "density", "wetdry", "carbon")
 usage <- paste(
   "Usage: Rscript scripts/build.R [--fits[=<models>]] [--check] [--site]",
   "  --fits           also rebuild the pre-fit models and test fixtures (Stan MCMC)",

@@ -1,12 +1,18 @@
-# The wet/dry fit shared by both species: they have one model and data contract,
-# so the exported kb_fit_wetdry_<species>() functions supply only their species,
-# data check, and default priors (decisions/species-as-variant.md).
-fit_wetdry <- function(
+# The fit shared by the proportion models (wet/dry, carbon): a Beta likelihood on
+# one derived proportion per sample, with a logit-mean intercept and a precision,
+# identical across species. The exported kb_fit_<model>_<species>() functions
+# supply the model and species, their data check, default priors, and Stan data
+# assembler (decisions/species-as-variant.md).
+fit_beta_model <- function(
   data,
   priors,
+  model,
+  species,
+  intercept,
+  response,
   check_data,
   defaults,
-  species,
+  assemble,
   ...,
   prior_only,
   chains,
@@ -32,12 +38,12 @@ fit_wetdry <- function(
   # The species' own check, so its errors name the function users know.
   check_data(data, x_name = "`data`")
   priors <- resolve_priors(priors, defaults)
-  stan_data <- assemble_wetdry_data(data, priors, prior_only = prior_only)
+  stan_data <- assemble(data, priors, prior_only = prior_only)
 
   core <- fit_stan(
-    stanmodels$wetdry,
+    stanmodels[[model]],
     stan_data,
-    param_vars = c("bDryWet", "bPrecision"),
+    param_vars = c(intercept, "bPrecision"),
     chains = chains,
     niters = niters,
     nthin = nthin,
@@ -45,7 +51,7 @@ fit_wetdry <- function(
     seed = seed,
     progress = progress,
     progress_dir = progress_dir,
-    stanmodel_name = "wetdry",
+    stanmodel_name = model,
     ...
   )
 
@@ -53,16 +59,14 @@ fit_wetdry <- function(
     core,
     data = data,
     priors = priors,
-    model = "wetdry",
+    model = model,
     species = species,
-    # A ratio of masses from the same sample, so there is no survey effort.
+    # A proportion within one sample, so there is no survey effort.
     offset = NULL,
-    terms = list(fixed = c("bDryWet", "bPrecision"), random = character(0)),
+    terms = list(fixed = c(intercept, "bPrecision"), random = character(0)),
     prior_only = prior_only,
     nthin = as.integer(nthin),
-    meta_extra = list(
-      # The ratio is derived from wet_mass_g and dry_mass_g, not a data column.
-      response = "dry_wet_ratio"
-    )
+    # The response is the derived proportion every summary reports.
+    meta_extra = list(response = response)
   )
 }

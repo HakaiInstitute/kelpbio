@@ -187,6 +187,11 @@ summary.kb_fit <- function(
   list(predictor = NA_character_, groups = fit_groups(x))
 }
 
+# Carbon, like wet/dry, has no predictor.
+.fit_descriptor.kb_fit_carbon <- function(x) {
+  list(predictor = NA_character_, groups = fit_groups(x))
+}
+
 # Level counts for each grouping factor the fit's data carry. Not weight-specific:
 # site and year are .group_vars(), shared by every model, and all three level
 # vectors are recorded at fit time, so this is a pure metadata read.

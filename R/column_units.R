@@ -7,5 +7,7 @@ column_units <- c(
   stipes_m2 = "stipes per m\u00b2",
   area_m2 = "square metres",
   wet_mass_g = "grams",
-  dry_mass_g = "grams"
+  dry_mass_g = "grams",
+  sample_mass_mg = "milligrams",
+  carbon_mass_ug = "micrograms"
 )

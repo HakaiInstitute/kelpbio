@@ -148,6 +148,17 @@
   fit$draws$bDryWet + rep(0, nrow(grid))
 }
 
+# Carbon mean (logit scale): one value for every row, as for wet/dry.
+#' @export
+.linpred.kb_fit_carbon <- function(
+  fit,
+  grid,
+  new_levels,
+  representative_site = NULL
+) {
+  fit$draws$bCarbon + rep(0, nrow(grid))
+}
+
 .linpred_groups <- function(
   fit,
   intercept,

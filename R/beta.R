@@ -32,3 +32,35 @@ res_beta <- function(x, alpha, beta) {
   x0 <- stats::plogis(digamma(alpha) - digamma(beta))
   sign(x - x0) * sqrt(pmax(2 * (ll_sat - ll_fit), 0))
 }
+
+# Beta draws for the mean-parameterised proportion models (wet/dry, carbon): the
+# logit mean is `mu`, a D x N draws matrix, and the precision is the fit's
+# bPrecision. `y` is the observed proportion, each model's own derived response.
+.log_lik_beta_mean <- function(fit, mu, y) {
+  precision <- as.vector(posterior::draws_of(fit$draws$bPrecision))
+  .per_draw(mu, y, function(y, mu_d, d) {
+    m <- 1 / (1 + exp(-mu_d))
+    extras::log_lik_beta(y, m * precision[d], (1 - m) * precision[d])
+  })
+}
+
+.deviance_beta_mean <- function(fit, mu, y) {
+  precision <- as.vector(posterior::draws_of(fit$draws$bPrecision))
+  .per_draw(mu, y, function(y, mu_d, d) {
+    m <- 1 / (1 + exp(-mu_d))
+    res_beta(y, m * precision[d], (1 - m) * precision[d])
+  })
+}
+
+.add_noise_beta_mean <- function(fit, lp) {
+  precision <- as.vector(posterior::draws_of(fit$draws$bPrecision)) # length D
+  # precision recycles down each column of the D x N matrix, so element (d, n)
+  # gets draw d's precision.
+  m <- 1 / (1 + exp(-lp))
+  draws <- stats::rbeta(
+    length(lp),
+    shape1 = as.vector(m * precision),
+    shape2 = as.vector((1 - m) * precision)
+  )
+  matrix(draws, nrow = nrow(lp))
+}

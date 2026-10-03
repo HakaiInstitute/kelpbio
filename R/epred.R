@@ -90,3 +90,9 @@
 .epred.kb_fit_wetdry <- function(fit, lp, expectation = TRUE) {
   1 / (1 + exp(-lp))
 }
+
+# Logit link: the inverse is the Beta mean, the expected carbon fraction.
+#' @export
+.epred.kb_fit_carbon <- function(fit, lp, expectation = TRUE) {
+  1 / (1 + exp(-lp))
+}

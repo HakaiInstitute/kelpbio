@@ -26,6 +26,7 @@ ggplot2::autoplot(p)
 \seealso{
 Other prediction:
 \code{\link[=kb_plot_predictions]{kb_plot_predictions()}},
+\code{\link[=kb_predict_carbon]{kb_predict_carbon()}},
 \code{\link[=kb_predict_density]{kb_predict_density()}},
 \code{\link[=kb_predict_density_by]{kb_predict_density_by()}},
 \code{\link[=kb_predict_size]{kb_predict_size()}},

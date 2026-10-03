@@ -76,6 +76,11 @@ test_that("kb_model_describe renders the wet/dry model without random effects", 
   expect_snapshot(kb_model_describe(wetdry_macro_fit, prose = TRUE))
 })
 
+test_that("kb_model_describe renders the carbon model", {
+  expect_snapshot(kb_model_describe(carbon_nereo_fit))
+  expect_snapshot(kb_model_describe(carbon_macro_fit, prose = TRUE))
+})
+
 test_that("a dropped site:year effect is omitted from the size description", {
   fit <- size_nereo_fit
   fit$meta$site_year_on <- FALSE

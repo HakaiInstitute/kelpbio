@@ -93,3 +93,8 @@ test_that(".vld_kb_fit_wetdry recognises a wet/dry fit", {
   expect_false(.vld_kb_fit_wetdry(density_nereo_fit))
   expect_false(.vld_kb_fit_wetdry(1))
 })
+
+test_that(".vld_kb_fit_carbon recognises a carbon fit", {
+  expect_true(.vld_kb_fit_carbon(carbon_nereo_fit))
+  expect_false(.vld_kb_fit_carbon(wetdry_nereo_fit))
+})

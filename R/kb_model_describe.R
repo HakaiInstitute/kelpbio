@@ -76,6 +76,12 @@ kb_model_describe.kb_fit_wetdry <- function(fit, prose = FALSE) {
   .render_model(.model_spec_wetdry(fit), prose)
 }
 
+#' @export
+kb_model_describe.kb_fit_carbon <- function(fit, prose = FALSE) {
+  chk::chk_flag(prose)
+  .render_model(.model_spec_carbon(fit), prose)
+}
+
 # ---- species model specs (single source for notation and prose) -------------
 
 .model_spec_nereo <- function(fit) {
@@ -425,6 +431,31 @@ kb_model_describe.kb_fit_wetdry <- function(fit, prose = FALSE) {
     priors = list(bDryWet = pri$intercept, bPrecision = pri$precision),
     prose = paste0(
       "The dry:wet mass ratio of each sample was modelled with a Beta ",
+      "likelihood parameterised by its mean, mu, and precision, both common to ",
+      "all samples. Samples were pooled over the months, sites, and tissues ",
+      "they came from. Regularizing priors were placed on all parameters (see ",
+      "the notation form for the hyperparameters)."
+    )
+  )
+}
+
+# One model for both species, with no random effects, as for wet/dry.
+.model_spec_carbon <- function(fit) {
+  pri <- fit$meta$priors
+  list(
+    title = "Carbon fraction",
+    species = .species_label(fit$meta$species),
+    response_desc = paste0(
+      "carbon_fraction = carbon_mass_ug / 1000 / sample_mass_mg, the fraction ",
+      "of a dry sample's mass that is carbon"
+    ),
+    likelihood = "carbon_fraction ~ Beta(mu * bPrecision, (1 - mu) * bPrecision)",
+    mean_lhs = "logit(mu)",
+    mean_terms = "bCarbon",
+    random = list(),
+    priors = list(bCarbon = pri$intercept, bPrecision = pri$precision),
+    prose = paste0(
+      "The carbon fraction of each dried sample was modelled with a Beta ",
       "likelihood parameterised by its mean, mu, and precision, both common to ",
       "all samples. Samples were pooled over the months, sites, and tissues ",
       "they came from. Regularizing priors were placed on all parameters (see ",

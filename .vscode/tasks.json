@@ -57,7 +57,7 @@
     {
       "id": "fitModels",
       "type": "promptString",
-      "description": "Models to refit, comma-separated (weight, size, density, wetdry)",
+      "description": "Models to refit, comma-separated (weight, size, density, wetdry, carbon)",
       "default": "density,wetdry"
     }
   ]

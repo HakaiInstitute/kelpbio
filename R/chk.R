@@ -87,6 +87,23 @@
   )
 }
 
+.chk_kb_fit_carbon <- function(
+  x,
+  x_name = deparse(substitute(x)),
+  call = rlang::caller_env()
+) {
+  if (.vld_kb_fit_carbon(x)) {
+    return(invisible(x))
+  }
+  cli::cli_abort(
+    c(
+      "{.arg {x_name}} must be a {.cls kb_fit_carbon} object.",
+      i = "Supported fits are created by the {.code kb_fit_carbon_*()} functions."
+    ),
+    call = call
+  )
+}
+
 .chk_new_data_weight_nereo <- function(x, x_name = deparse(substitute(x))) {
   if (.vld_new_data_weight_nereo(x)) {
     return(invisible(x))
@@ -329,6 +346,12 @@
 # row predicts the population ratio.
 #' @export
 .chk_new_data.kb_fit_wetdry <- function(fit, new_data) {
+  .chk_new_data_size(new_data)
+}
+
+# Carbon, like wet/dry, has no predictor or groups.
+#' @export
+.chk_new_data.kb_fit_carbon <- function(fit, new_data) {
   .chk_new_data_size(new_data)
 }
 

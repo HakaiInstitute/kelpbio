@@ -25,6 +25,10 @@ test_that("print.kb_fit shows the wet/dry header without predictor or group line
   expect_snapshot(print(wetdry_nereo_fit))
 })
 
+test_that("print.kb_fit shows the carbon header", {
+  expect_snapshot(print(carbon_nereo_fit))
+})
+
 test_that("print.kb_fit shows the density headers without a predictor line", {
   expect_snapshot(print(density_nereo_fit))
   expect_snapshot(print(density_macro_fit))
