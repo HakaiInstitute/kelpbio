@@ -44,6 +44,15 @@ produce. Alternatives: a single `dry_wet_ratio` column (loses the masses and the
 dry < wet check), or unsuffixed masses in any unit (breaks the convention). The
 check lists only the two mass columns; other columns are ignored.
 
+The analysis excludes ratios outside 0.02 to 0.5 before fitting (5 *Nereocystis*
+records, none for *Macrocystis*). The bounds lie in natural gaps of the lab data
+(no ratios between 0.021 and 0.038, or between 0.21 and 0.46), so they catch only
+records consistent with transcription or weighing errors. kelpbio warns with the
+number of such samples and keeps them, following the package rule of flagging
+rather than silently excluding. The analysis also drops whole batches with known
+weighing problems; that is data cleaning specific to the Hakai record and is left
+to the user.
+
 `meta$response` is `dry_wet_ratio`, the quantity every summary reports; it is
 derived from the two columns rather than stored. `log_lik()` is on the ratio scale.
 The analysis subtracts `log(wet_mass)` to put it on the dry-mass scale, which only

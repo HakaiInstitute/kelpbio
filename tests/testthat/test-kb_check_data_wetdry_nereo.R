@@ -21,3 +21,12 @@ test_that("masses in milligrams warn", {
   data <- data.frame(wet_mass_g = c(4000, 5000), dry_mass_g = c(400, 450))
   expect_warning(kb_check_data_wetdry_nereo(data), "wet_mass_g")
 })
+
+test_that("an implausible dry:wet ratio warns and the data still pass", {
+  data <- data.frame(wet_mass_g = c(4, 4), dry_mass_g = c(0.4, 2.8))
+  expect_warning(
+    out <- kb_check_data_wetdry_nereo(data),
+    "1 sample in `data` has a dry:wet mass ratio outside 0.02 to 0.5"
+  )
+  expect_identical(out, data)
+})

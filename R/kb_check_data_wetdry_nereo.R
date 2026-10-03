@@ -8,7 +8,9 @@
 #'
 #' @details
 #' Each row is one tissue sample: `wet_mass_g` is its mass before drying and
-#' `dry_mass_g` after. Other columns are ignored.
+#' `dry_mass_g` after. A warning gives the number of samples whose dry:wet ratio
+#' falls outside 0.02 to 0.5, the plausible range for kelp tissue; they are kept,
+#' not removed. Other columns are ignored.
 #'
 #' @param data A data frame of wet/dry observations, one row per sample.
 #' @param x_name A string naming `data` in error messages.
@@ -44,6 +46,7 @@ kb_check_data_wetdry_nereo <- function(
     )
   }
 
+  warn_dry_wet_ratio(data, x_name)
   warn_implausible_units(data, x_name)
   invisible(data)
 }

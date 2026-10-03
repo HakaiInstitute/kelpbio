@@ -675,6 +675,10 @@ augment(fit_dm) |>
 str(data_wetdry_sim_nereo)
 kb_check_data_wetdry_nereo(data_wetdry_sim_nereo)
 try(kb_check_data_wetdry_nereo(mutate(data_wetdry_sim_nereo, dry_mass_g = wet_mass_g)))
+# one implausible sample (ratio 0.7): a warning, and the sample is kept
+odd <- data_wetdry_sim_nereo
+odd$dry_mass_g[1] <- 0.7 * odd$wet_mass_g[1]
+kb_check_data_wetdry_nereo(odd)
 # masses in mg warn
 kb_check_data_wetdry_macro(mutate(data_wetdry_sim_macro, across(everything(), ~ .x * 1000)))
 

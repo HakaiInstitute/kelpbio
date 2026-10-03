@@ -12,7 +12,8 @@ samples, with a month random effect on the logit mean, identical for both specie
   `kb_priors_wetdry_nereo()`, and `kb_priors_wetdry_macro()`, following the other
   sub-models' data-check, prior, sampler, progress, and fit-object behaviour.
 - Input data are one row per sample: `wet_mass_g` and `dry_mass_g` (g, > 0), with
-  `dry_mass_g` less than `wet_mass_g`. Other columns are ignored.
+  `dry_mass_g` less than `wet_mass_g`. Samples with a ratio outside 0.02 to 0.5
+  raise a warning and are kept. Other columns are ignored.
 - The ratio `dry_mass_g / wet_mass_g` follows a Beta distribution with logit mean
   `bDryWet` and precision `bPrecision`, common to all samples. There are no random
   effects: the analysis month effect is dropped, and samples are pooled over the

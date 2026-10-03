@@ -22,7 +22,7 @@ The required columns SHALL be, with `site` and `year` (where required) character
 - *Macrocystis* size: `fronds` (fronds at 1 m above the holdfast, a positive whole number), `site`, and `year`.
 - *Nereocystis* density: `stipes` (stipes counted on a transect, a whole number `>= 0`), `area_m2` (area surveyed, m², > 0), `site`, and `year`.
 - *Macrocystis* density: `plants` (plants counted on a transect, a whole number `>= 0`), `area_m2` (area surveyed, m², > 0), `site`, and `year`.
-- Wet/dry, both species: `wet_mass_g` (wet mass of a sample, g, > 0) and `dry_mass_g` (its dry mass, g, > 0 and less than `wet_mass_g`).
+- Wet/dry, both species: `wet_mass_g` (wet mass of a sample, g, > 0) and `dry_mass_g` (its dry mass, g, > 0 and less than `wet_mass_g`). A warning SHALL give the number of samples whose dry:wet ratio lies outside 0.02 to 0.5, the plausible range for kelp tissue, and those samples SHALL be kept.
 
 *Nereocystis* weight data MAY include `stipes_m2`, the stipe density (stipes per m²) of the plant's site-year: numeric, `>= 0`, `NA` where not recorded, and at most one distinct value per site-year. Other columns SHALL be ignored. `kb_check_data_weight_nereo()`, `kb_check_data_weight_macro()`, `kb_check_data_size_nereo()`, `kb_check_data_size_macro()`, `kb_check_data_density_nereo()`, `kb_check_data_density_macro()`, `kb_check_data_wetdry_nereo()`, and `kb_check_data_wetdry_macro()` SHALL apply these checks, returning the data invisibly, and the fit functions SHALL apply them at entry.
 
@@ -53,6 +53,10 @@ The required columns SHALL be, with `site` and `year` (where required) character
 #### Scenario: A dry mass not below the wet mass errors
 - **WHEN** wet/dry data contain a sample whose `dry_mass_g` is greater than or equal to its `wet_mass_g`
 - **THEN** it errors naming `dry_mass_g`
+
+#### Scenario: An implausible dry:wet ratio warns
+- **WHEN** a sample's dry:wet ratio lies outside 0.02 to 0.5
+- **THEN** a warning gives the number of such samples, and the data still pass with every sample kept
 
 #### Scenario: Conflicting density within a site-year errors
 - **WHEN** two rows of the same site-year carry different `stipes_m2` values
