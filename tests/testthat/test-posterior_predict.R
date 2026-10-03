@@ -93,3 +93,15 @@ test_that("density posterior_predict draws transect counts", {
     expect_equal(colMeans(pp), colMeans(ep), tolerance = 0.15)
   }
 })
+
+test_that("wet/dry posterior_predict draws ratios between 0 and 1", {
+  withr::local_seed(1)
+  pp <- posterior_predict(wetdry_nereo_fit)
+  expect_equal(
+    dim(pp),
+    c(posterior::ndraws(wetdry_nereo_fit$draws), nobs(wetdry_nereo_fit))
+  )
+  expect_true(all(pp > 0 & pp < 1))
+  ep <- posterior_epred(wetdry_nereo_fit)
+  expect_equal(mean(pp), mean(ep), tolerance = 0.02)
+})

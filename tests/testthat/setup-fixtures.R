@@ -10,7 +10,9 @@ fixtures <- list(
   size_nereo_fit,
   size_macro_fit,
   density_nereo_fit,
-  density_macro_fit
+  density_macro_fit,
+  wetdry_nereo_fit,
+  wetdry_macro_fit
 )
 if (any(vapply(fixtures, is.null, logical(1)))) {
   stop(

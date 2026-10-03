@@ -85,3 +85,13 @@ log_lik.kb_fit <- function(object, ...) {
     extras::log_lik_gamma_pois(y, exp(mu_d), theta[d])
   })
 }
+
+#' @export
+.log_lik.kb_fit_wetdry <- function(fit, mu) {
+  precision <- as.vector(posterior::draws_of(fit$draws$bPrecision))
+  ratio <- fit$data$dry_mass_g / fit$data$wet_mass_g
+  .per_draw(mu, ratio, function(y, mu_d, d) {
+    m <- 1 / (1 + exp(-mu_d))
+    extras::log_lik_beta(y, m * precision[d], (1 - m) * precision[d])
+  })
+}

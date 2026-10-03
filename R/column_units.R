@@ -5,5 +5,7 @@ column_units <- c(
   diameter_mm = "millimetres",
   weight_kg = "kilograms",
   stipes_m2 = "stipes per m\u00b2",
-  area_m2 = "square metres"
+  area_m2 = "square metres",
+  wet_mass_g = "grams",
+  dry_mass_g = "grams"
 )

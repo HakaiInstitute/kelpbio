@@ -42,7 +42,7 @@ A draws-by-observations (\verb{D x N}) matrix.
 }
 \description{
 Draws from the posterior predictive distribution: replicate responses (weights,
-plant sizes, or transect counts) carrying both parameter uncertainty and observation noise from
+plant sizes, transect counts, or dry:wet ratios) carrying both parameter uncertainty and observation noise from
 the model's likelihood. With \code{new_data = NULL} the replicates are at the
 observed data, for use with \code{bayesplot::pp_check()}.
 }
@@ -54,8 +54,9 @@ The observation noise follows the fitted likelihood: Normal on log weight
 (\emph{Nereocystis} weight), Gamma (\emph{Macrocystis} weight), Weibull (\emph{Nereocystis}
 size), zero-truncated negative binomial (\emph{Macrocystis} size, so every draw is a
 whole number of at least 1), zero-inflated negative binomial (\emph{Nereocystis}
-density), and negative binomial (\emph{Macrocystis} density). Density draws are
-counts on each row's \code{area_m2}.
+density), negative binomial (\emph{Macrocystis} density), and Beta (wet/dry, so
+every draw lies between 0 and 1). Density draws are counts on each row's
+\code{area_m2}.
 
 The observation noise is drawn in R, for every \code{new_data} including \code{NULL}, so
 repeated calls return different replicates. Set a seed with \code{set.seed()} for
@@ -80,6 +81,7 @@ Other generics:
 \code{\link[=predict.kb_fit_density]{predict.kb_fit_density()}},
 \code{\link[=predict.kb_fit_size]{predict.kb_fit_size()}},
 \code{\link[=predict.kb_fit_weight]{predict.kb_fit_weight()}},
+\code{\link[=predict.kb_fit_wetdry]{predict.kb_fit_wetdry()}},
 \code{\link[=prior_summary.kb_fit]{prior_summary.kb_fit()}},
 \code{\link[=residuals.kb_fit]{residuals.kb_fit()}},
 \code{\link[=samples]{samples()}},

@@ -112,3 +112,33 @@ predict.kb_fit_density <- function(
     sig_fig = sig_fig
   )
 }
+
+#' Predict Method for a Wet/Dry Model Fit
+#'
+#' A thin wrapper on [kb_predict_wetdry()]: the expected dry:wet mass ratio as a
+#' single estimate.
+#'
+#' @inheritParams params
+#' @param object A `kb_fit_wetdry` object.
+#' @param ... Unused.
+#'
+#' @return A `kb_predictions` object.
+#' @family generics
+#' @exportS3Method stats::predict
+#' @examples
+#' predict(fit_wetdry_sim_macro)
+predict.kb_fit_wetdry <- function(
+  object,
+  ...,
+  conf_level = 0.95,
+  estimate = stats::median,
+  sig_fig = 3
+) {
+  rlang::check_dots_empty()
+  kb_predict_wetdry(
+    object,
+    conf_level = conf_level,
+    estimate = estimate,
+    sig_fig = sig_fig
+  )
+}

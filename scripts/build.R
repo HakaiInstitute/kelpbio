@@ -1,9 +1,11 @@
 # Dev build / QC script for kelpbio.
 #
-#   Rscript scripts/build.R                 install, document, test
-#   Rscript scripts/build.R --check         + pkgdown site and R CMD check
-#   Rscript scripts/build.R --fits          + rebuild pre-fits and test fixtures
-#   Rscript scripts/build.R --fits --check  both
+#   Rscript scripts/build.R                       install, document, test
+#   Rscript scripts/build.R --fits                + rebuild all pre-fits and fixtures
+#   Rscript scripts/build.R --fits=density,wetdry + rebuild only those models'
+#   Rscript scripts/build.R --check               R CMD check in place of test()
+#   Rscript scripts/build.R --site                + build the pkgdown site
+#   Flags combine, e.g. --fits=wetdry --check.
 #
 # In Positron (or VS Code), the same runs are tasks: Command Palette >
 # "Tasks: Run Task" > "kelpbio: ..." (.vscode/tasks.json).
@@ -19,19 +21,27 @@
 #     are not hand-edited and are excluded from styling.
 #   * Linting is handled by jarl in CI (.github/workflows/lint-with-jarl.yaml,
 #     configured by jarl.toml); this script does not lint.
-#   * --check runs the slow, authoritative steps (R CMD check, which re-runs
-#     configure -> rstan_config() and recompiles the models, plus pkgdown).
+#   * --check runs R CMD check, which re-runs configure -> rstan_config(),
+#     recompiles the models, and runs the test suite, so test() is skipped.
+#   * --site builds the pkgdown site, which reruns every example and the
+#     vignette. CI builds the site and runs R CMD check on every pull request, so
+#     neither is needed locally for routine work.
 #   * --fits rebuilds the pre-fit example objects (data/fit_*_sim_*) and test
 #     fixtures (tests/testthat/fixtures/*.rds) from their scripts. They run Stan
 #     MCMC. Rebuild after changing the fit object structure or a model, so the
-#     shipped objects match the current code.
+#     shipped objects match the current code. --fits=<models> (comma-separated:
+#     weight, size, density, wetdry) rebuilds only those models' objects.
 #   * The environment variables KELPBIO_FULL_CHECK=true and
-#     KELPBIO_REBUILD_FITS=true still switch on the same steps.
+#     KELPBIO_REBUILD_FITS=true still switch on --check and --fits.
 
+models <- c("weight", "size", "density", "wetdry")
 usage <- paste(
-  "Usage: Rscript scripts/build.R [--check] [--fits]",
-  "  --check  also build the pkgdown site and run R CMD check",
-  "  --fits   also rebuild the pre-fit models and test fixtures (Stan MCMC)",
+  "Usage: Rscript scripts/build.R [--fits[=<models>]] [--check] [--site]",
+  "  --fits           also rebuild the pre-fit models and test fixtures (Stan MCMC)",
+  "  --fits=<models>  only for these comma-separated models:",
+  paste0("                   ", paste(models, collapse = ", ")),
+  "  --check          run R CMD check instead of the test suite",
+  "  --site           also build the pkgdown site",
   sep = "\n"
 )
 args <- commandArgs(trailingOnly = TRUE)
@@ -39,7 +49,10 @@ if (any(c("--help", "-h") %in% args)) {
   cat(usage, "\n", sep = "")
   quit(status = 0)
 }
-unknown <- setdiff(args, c("--check", "--fits"))
+fits_arg <- args[startsWith(args, "--fits")]
+unknown <- setdiff(args, c("--check", "--site", fits_arg))
+fit_models <- unique(unlist(strsplit(sub("^--fits=?", "", fits_arg), ",")))
+unknown <- c(unknown, setdiff(fit_models, models))
 if (length(unknown)) {
   cat("Unknown option: ", paste(unknown, collapse = " "), "\n\n", usage, "\n", sep = "")
   quit(status = 1)
@@ -47,11 +60,17 @@ if (length(unknown)) {
 
 env_flag <- function(name) isTRUE(as.logical(Sys.getenv(name, "false")))
 full_check <- "--check" %in% args || env_flag("KELPBIO_FULL_CHECK")
-rebuild_fits <- "--fits" %in% args || env_flag("KELPBIO_REBUILD_FITS")
+build_site <- "--site" %in% args
+rebuild_fits <- length(fits_arg) > 0L || env_flag("KELPBIO_REBUILD_FITS")
+# A bare --fits (or the environment variable) rebuilds every model.
+if (rebuild_fits && !length(fit_models)) {
+  fit_models <- models
+}
 message(
-  "Build: install, document, test",
-  if (rebuild_fits) " + rebuild fits",
-  if (full_check) " + pkgdown + R CMD check"
+  "Build: install, document",
+  if (rebuild_fits) paste0(" + rebuild fits (", paste(fit_models, collapse = ", "), ")"),
+  if (full_check) " + R CMD check" else " + test",
+  if (build_site) " + pkgdown"
 )
 
 # devtools::load_all()/test() and the fit-rebuild scripts compile the Stan models
@@ -78,23 +97,28 @@ devtools::document()
 # the fit object structure or a model has changed. Each script runs in a fresh R
 # process via callr and picks up the current source with devtools::load_all().
 if (rebuild_fits) {
-  for (script in c(
-    "data-raw/fit_weight_sim_nereo.R",
-    "data-raw/fit_weight_sim_macro.R",
-    "data-raw/fit_size_sim_nereo.R",
-    "data-raw/fit_size_sim_macro.R",
-    "data-raw/fit_density_sim_nereo.R",
-    "data-raw/fit_density_sim_macro.R",
-    "tests/testthat/fixtures/make-fixtures.R"
-  )) {
-    message("Rebuilding via ", script)
-    callr::rscript(script, show = TRUE)
+  for (model in fit_models) {
+    for (species in c("nereo", "macro")) {
+      script <- paste0("data-raw/fit_", model, "_sim_", species, ".R")
+      message("Rebuilding via ", script)
+      callr::rscript(script, show = TRUE)
+    }
   }
+  message("Rebuilding fixtures for ", paste(fit_models, collapse = ", "))
+  callr::rscript(
+    "tests/testthat/fixtures/make-fixtures.R",
+    cmdargs = fit_models,
+    show = TRUE
+  )
 }
 
-devtools::test()
-
+# R CMD check runs the test suite itself, so test() would only repeat it.
 if (full_check) {
-  pkgdown::build_site()
   devtools::check()
+} else {
+  devtools::test()
+}
+
+if (build_site) {
+  pkgdown::build_site()
 }

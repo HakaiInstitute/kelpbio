@@ -88,3 +88,16 @@ test_that("the macro density mean is the inverse log link", {
   lp <- matrix(c(3, 3.5, 3.2, 3.8), nrow = 2)
   expect_equal(.epred(density_macro_fit, lp), exp(lp))
 })
+
+test_that("the wet/dry mean is the inverse logit, for rvar and matrix input", {
+  lp <- matrix(c(-2.4, -2.3, -2.5, -2.2), nrow = 2)
+  expect_equal(.epred(wetdry_nereo_fit, lp), stats::plogis(lp))
+  nd <- posterior::ndraws(wetdry_nereo_fit$draws)
+  rv <- posterior::rvar(matrix(rnorm(nd * 2), nrow = nd))
+  expect_s3_class(.epred(wetdry_nereo_fit, rv), "rvar")
+  expect_equal(
+    posterior::draws_of(.epred(wetdry_nereo_fit, rv)),
+    .epred(wetdry_nereo_fit, posterior::draws_of(rv)),
+    ignore_attr = TRUE
+  )
+})

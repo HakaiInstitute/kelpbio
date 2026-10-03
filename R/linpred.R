@@ -135,6 +135,19 @@
   .linpred_groups(fit, fit$draws$bPlants, grid, new_levels, representative_site)
 }
 
+# Wet/dry mean (logit scale): one value for every row, since the model has no
+# groups or predictor. Adding a zero vector broadcasts the scalar rvar over the
+# grid rows.
+#' @export
+.linpred.kb_fit_wetdry <- function(
+  fit,
+  grid,
+  new_levels,
+  representative_site = NULL
+) {
+  fit$draws$bDryWet + rep(0, nrow(grid))
+}
+
 .linpred_groups <- function(
   fit,
   intercept,

@@ -130,3 +130,8 @@ test_that(".chk_new_data_density errors name the area column", {
   expect_snapshot(error = TRUE, .chk_new_data_density(data.frame(area_m2 = -1)))
   expect_error(.chk_new_data_density(1), "must be a data frame")
 })
+
+test_that(".chk_kb_fit_wetdry passes a wet/dry fit through and errors otherwise", {
+  expect_invisible(.chk_kb_fit_wetdry(wetdry_macro_fit))
+  expect_error(.chk_kb_fit_wetdry(weight_fit), "must be a <kb_fit_wetdry> object")
+})

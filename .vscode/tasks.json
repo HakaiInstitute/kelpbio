@@ -6,12 +6,15 @@
       "detail": "install, document, test",
       "type": "shell",
       "command": "Rscript scripts/build.R",
-      "group": { "kind": "build", "isDefault": true },
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
       "problemMatcher": []
     },
     {
       "label": "kelpbio: build + check",
-      "detail": "also pkgdown site and R CMD check",
+      "detail": "R CMD check in place of the test suite",
       "type": "shell",
       "command": "Rscript scripts/build.R --check",
       "group": "build",
@@ -19,19 +22,43 @@
     },
     {
       "label": "kelpbio: build + rebuild fits",
-      "detail": "also rebuild pre-fits and test fixtures (Stan MCMC)",
+      "detail": "also rebuild every pre-fit and test fixture (Stan MCMC)",
       "type": "shell",
       "command": "Rscript scripts/build.R --fits",
       "group": "build",
       "problemMatcher": []
     },
     {
+      "label": "kelpbio: build + rebuild fits for models",
+      "detail": "rebuild only the named models' pre-fits and fixtures (Stan MCMC)",
+      "type": "shell",
+      "command": "Rscript scripts/build.R --fits=${input:fitModels}",
+      "group": "build",
+      "problemMatcher": []
+    },
+    {
+      "label": "kelpbio: build + pkgdown site",
+      "detail": "also build the pkgdown site",
+      "type": "shell",
+      "command": "Rscript scripts/build.R --site",
+      "group": "build",
+      "problemMatcher": []
+    },
+    {
       "label": "kelpbio: build + rebuild fits + check",
-      "detail": "everything",
+      "detail": "rebuild every fit, then R CMD check",
       "type": "shell",
       "command": "Rscript scripts/build.R --fits --check",
       "group": "build",
       "problemMatcher": []
+    }
+  ],
+  "inputs": [
+    {
+      "id": "fitModels",
+      "type": "promptString",
+      "description": "Models to refit, comma-separated (weight, size, density, wetdry)",
+      "default": "density,wetdry"
     }
   ]
 }

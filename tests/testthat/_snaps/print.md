@@ -62,6 +62,18 @@
       Converged: TRUE
       See kb_model_describe(fit) for the model equation and priors.
 
+# print.kb_fit shows the wet/dry header without predictor or group lines
+
+    Code
+      print(wetdry_nereo_fit)
+    Output
+      <kb_fit_wetdry_nereo>
+      Model:     Wet/dry (Nereocystis luetkeana)
+      Data:      80 observations
+      Draws:     2 chains, 300 post-warmup draws each (thin = 5), 600 total
+      Converged: TRUE
+      See kb_model_describe(fit) for the model equation and priors.
+
 # print.kb_fit shows the density headers without a predictor line
 
     Code

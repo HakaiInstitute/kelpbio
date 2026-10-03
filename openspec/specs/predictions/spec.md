@@ -7,11 +7,12 @@ are resolved per row, the rstantools draw generics, and plotting predictions.
 ## Requirements
 ### Requirement: Two prediction verbs
 
-Each model SHALL have a row-wise verb and a `_by` verb, both returning a `kb_predictions` object whose `estimate`, `lower`, and `upper` columns summarise the posterior distribution of the expected response, using `conf_level` (default 0.95), `estimate` (default `median`), and `sig_fig` (default 3). The row-wise verb SHALL predict at the rows of `new_data`, or at the observed data when `new_data = NULL`. The `_by` verb SHALL predict with one row or curve per level of the factors named in `by` (`NULL`, `"site"`, `"year"`, or `c("site", "year")`, the last taking only observed combinations).
+Each model with grouping factors SHALL have a row-wise verb and a `_by` verb, both returning a `kb_predictions` object whose `estimate`, `lower`, and `upper` columns summarise the posterior distribution of the expected response, using `conf_level` (default 0.95), `estimate` (default `median`), and `sig_fig` (default 3). The row-wise verb SHALL predict at the rows of `new_data`, or at the observed data when `new_data = NULL`. The `_by` verb SHALL predict with one row or curve per level of the factors named in `by` (`NULL`, `"site"`, `"year"`, or `c("site", "year")`, the last taking only observed combinations).
 
 - Weight: `kb_predict_weight(fit, new_data)` and `kb_predict_weight_by(fit, by)` predict expected weight (kg). `kb_predict_weight_by()` predicts curves over a sequence of the species predictor (`diameter_mm` for *Nereocystis*, `fronds` for *Macrocystis*), auto-generated over the observed range unless supplied through the argument of the same name. The returned predictor column SHALL take the input column's name. New data SHALL use the predictor reference stored at fit time.
 - Size: `kb_predict_size(fit, new_data)` and `kb_predict_size_by(fit, by)` predict expected size, the mean of the size distribution: sub-bulb diameter (mm) for *Nereocystis*, and fronds at 1 m for *Macrocystis*, among plants with at least one. Size has no predictor, so `kb_predict_size_by()` returns one row per group, and `new_data` needs no columns.
 - Density: `kb_predict_density(fit, new_data)` predicts the expected count (stipes or plants) on a transect of the supplied `area_m2`, so `new_data` SHALL have an `area_m2` column. `kb_predict_density_by(fit, by)` predicts expected density (stipes or plants per m²), one row per group. For *Nereocystis* both include the probability that a transect holds no stipes.
+- Wet/dry: `kb_predict_wetdry(fit)` predicts the expected dry:wet mass ratio, one row for the population of samples. The model has no grouping factors or predictor, so there is no `_by` verb and no `new_data`; the same summary arguments apply.
 
 #### Scenario: Predict at the observed data
 - **WHEN** `kb_predict_weight(fit)`, `kb_predict_size(fit)`, or `kb_predict_density(fit)` is called
@@ -36,6 +37,10 @@ Each model SHALL have a row-wise verb and a `_by` verb, both returning a `kb_pre
 #### Scenario: Expected counts scale with area
 - **WHEN** `kb_predict_density()` is called with `new_levels = "average"` at the same site and year with `area_m2` of 10 and 20
 - **THEN** the second estimate is twice the first, up to rounding
+
+#### Scenario: Wet/dry returns one population estimate
+- **WHEN** `kb_predict_wetdry(fit)` is called
+- **THEN** it returns one row whose `estimate` equals each value of `augment(fit)$fitted`
 
 #### Scenario: A wrong predictor errors
 - **WHEN** `new_data` lacks the weight model's species predictor, or `kb_predict_weight_by()` is given the other species' predictor argument
@@ -77,7 +82,7 @@ For a *Nereocystis* fit with the density effect, each row SHALL use its `stipes_
 - *Macrocystis* size, whose frond count is a zero-truncated negative binomial: the expected count is the truncated mean, above the untruncated mean `exp(mu)`.
 - *Nereocystis* density, whose stipe count is a zero-inflated negative binomial: the expected count is `(1 - zi) * exp(mu)`, below the mean of a transect holding stipes, `exp(mu)`, where `zi` is the zero-inflation probability.
 
-The prediction verbs, `fitted()`, and `augment()` SHALL summarise `posterior_epred()`. `posterior_predict()` SHALL add observation noise from the model's likelihood, so repeated calls differ unless a seed is set; for size it draws plant sizes, and *Macrocystis* draws are whole numbers of at least 1; for density it draws transect counts, whole numbers of at least 0. `log_lik()` SHALL return the deterministic pointwise log-likelihood of the observed data, suitable for `loo::loo()`, and error for a fit with no observations. `prior_summary()` SHALL return the priors used.
+The prediction verbs, `fitted()`, and `augment()` SHALL summarise `posterior_epred()`. `posterior_predict()` SHALL add observation noise from the model's likelihood, so repeated calls differ unless a seed is set; for size it draws plant sizes, and *Macrocystis* draws are whole numbers of at least 1; for density it draws transect counts, whole numbers of at least 0; for wet/dry it draws dry:wet ratios between 0 and 1. `log_lik()` SHALL return the deterministic pointwise log-likelihood of the observed data, suitable for `loo::loo()`, and error for a fit with no observations. `prior_summary()` SHALL return the priors used.
 
 #### Scenario: Expected weight exceeds the median for Nereocystis
 - **WHEN** `posterior_epred()` and `posterior_linpred(transform = TRUE)` are called on the same *Nereocystis* weight rows
@@ -137,7 +142,7 @@ Prediction SHALL warn when supplied values of the species predictor lie below ha
 
 ### Requirement: New data predictor values are validated
 
-`new_data` SHALL be validated before prediction: it SHALL be a data frame; for weight, *Nereocystis* `diameter_mm` SHALL be numeric, greater than 0, with no missing values, and *Macrocystis* `fronds` a positive whole number with no missing values; for density, `area_m2` SHALL be present, numeric, greater than 0, with no missing values. Size `new_data` needs no predictor column. An invalid value SHALL error with a message naming the column, pinned by `tests/testthat/_snaps/chk.md`.
+`new_data` SHALL be validated before prediction: it SHALL be a data frame; for weight, *Nereocystis* `diameter_mm` SHALL be numeric, greater than 0, with no missing values, and *Macrocystis* `fronds` a positive whole number with no missing values; for density, `area_m2` SHALL be present, numeric, greater than 0, with no missing values. Size and wet/dry `new_data` need no predictor column. An invalid value SHALL error with a message naming the column, pinned by `tests/testthat/_snaps/chk.md`.
 
 #### Scenario: An impossible diameter errors
 - **WHEN** weight `new_data` has a `diameter_mm` that is zero, negative, missing, or not numeric
