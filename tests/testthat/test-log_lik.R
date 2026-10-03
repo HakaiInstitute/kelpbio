@@ -138,3 +138,22 @@ test_that("wet/dry log_lik matches the Beta density of the ratio computed direct
   ))
   expect_equal(log_lik(wetdry_nereo_fit), expected, tolerance = 1e-10)
 })
+
+test_that("carbon log_lik matches the Beta density of the fraction computed directly", {
+  mu <- stats::plogis(posterior_linpred(carbon_macro_fit))
+  precision <- as.vector(posterior::draws_of(carbon_macro_fit$draws$bPrecision))
+  y <- carbon_fraction(carbon_macro_fit$data)
+  expected <- t(vapply(
+    seq_len(nrow(mu)),
+    function(d) {
+      stats::dbeta(
+        y,
+        mu[d, ] * precision[d],
+        (1 - mu[d, ]) * precision[d],
+        log = TRUE
+      )
+    },
+    numeric(length(y))
+  ))
+  expect_equal(log_lik(carbon_macro_fit), expected, tolerance = 1e-10)
+})

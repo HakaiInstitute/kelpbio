@@ -7,7 +7,9 @@ test_that("column_units names the unit of each unit-bearing column", {
       "stipes_m2",
       "area_m2",
       "wet_mass_g",
-      "dry_mass_g"
+      "dry_mass_g",
+      "sample_mass_mg",
+      "carbon_mass_ug"
     )
   )
   expect_identical(column_units[["diameter_mm"]], "millimetres")

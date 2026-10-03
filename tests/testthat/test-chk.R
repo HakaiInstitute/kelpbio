@@ -135,3 +135,8 @@ test_that(".chk_kb_fit_wetdry passes a wet/dry fit through and errors otherwise"
   expect_invisible(.chk_kb_fit_wetdry(wetdry_macro_fit))
   expect_error(.chk_kb_fit_wetdry(weight_fit), "must be a <kb_fit_wetdry> object")
 })
+
+test_that(".chk_kb_fit_carbon passes a carbon fit through and errors otherwise", {
+  expect_invisible(.chk_kb_fit_carbon(carbon_macro_fit))
+  expect_error(.chk_kb_fit_carbon(wetdry_macro_fit), "must be a <kb_fit_carbon> object")
+})

@@ -41,7 +41,7 @@ Species is a variant axis, handled uniformly across all six models:
 - Each species gets its own public fit function `kb_fit_<model>_<species>()`
   (e.g. `kb_fit_weight_nereo()`), its own `kb_priors_<model>_<species>()` and
   `kb_check_data_<model>_<species>()`, and its own `inst/stan/<model>_<species>.stan`.
-  A model that is structurally identical across species (wetdry) has one
+  A model that is structurally identical across species (wetdry, carbon) has one
   `inst/stan/<model>.stan`, since two identical files would differ in nothing.
 - The species-agnostic mechanics (sampler invocation, control merge, warmup/thin
   math, core resolution, draws-to-rvars extraction, convergence diagnostics) live in one shared internal engine, `fit_stan()`. Each

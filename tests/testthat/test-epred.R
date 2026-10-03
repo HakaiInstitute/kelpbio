@@ -101,3 +101,8 @@ test_that("the wet/dry mean is the inverse logit, for rvar and matrix input", {
     ignore_attr = TRUE
   )
 })
+
+test_that("the carbon mean is the inverse logit", {
+  lp <- matrix(c(-1, -1.1, -0.9, -1.2), nrow = 2)
+  expect_equal(.epred(carbon_nereo_fit, lp), stats::plogis(lp))
+})

@@ -74,6 +74,18 @@
       Converged: TRUE
       See kb_model_describe(fit) for the model equation and priors.
 
+# print.kb_fit shows the carbon header
+
+    Code
+      print(carbon_nereo_fit)
+    Output
+      <kb_fit_carbon_nereo>
+      Model:     Carbon (Nereocystis luetkeana)
+      Data:      80 observations
+      Draws:     2 chains, 300 post-warmup draws each (thin = 5), 600 total
+      Converged: TRUE
+      See kb_model_describe(fit) for the model equation and priors.
+
 # print.kb_fit shows the density headers without a predictor line
 
     Code

@@ -60,3 +60,11 @@ test_that("wet/dry residuals are finite Beta deviance residuals", {
     expect_equal(r, as.numeric(apply(.deviance(fit, mu), 2L, stats::median)))
   }
 })
+
+test_that("carbon residuals are finite Beta deviance residuals", {
+  for (fit in list(carbon_nereo_fit, carbon_macro_fit)) {
+    r <- residuals(fit)
+    expect_length(r, nobs(fit))
+    expect_true(all(is.finite(r)))
+  }
+})

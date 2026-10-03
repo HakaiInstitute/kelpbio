@@ -105,3 +105,10 @@ test_that("wet/dry posterior_predict draws ratios between 0 and 1", {
   ep <- posterior_epred(wetdry_nereo_fit)
   expect_equal(mean(pp), mean(ep), tolerance = 0.02)
 })
+
+test_that("carbon posterior_predict draws fractions between 0 and 1", {
+  withr::local_seed(1)
+  pp <- posterior_predict(carbon_nereo_fit)
+  expect_true(all(pp > 0 & pp < 1))
+  expect_equal(mean(pp), mean(posterior_epred(carbon_nereo_fit)), tolerance = 0.02)
+})

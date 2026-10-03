@@ -48,11 +48,15 @@ kb_fit_wetdry_macro <- function(
   progress = c("bar", "verbose", "none"),
   progress_dir = NULL
 ) {
-  fit_wetdry(
+  fit_beta_model(
     data,
     priors,
+    model = "wetdry",
+    intercept = "bDryWet",
+    response = "dry_wet_ratio",
     check_data = kb_check_data_wetdry_macro,
     defaults = kb_priors_wetdry_macro(),
+    assemble = assemble_wetdry_data,
     species = "macrocystis",
     ...,
     prior_only = prior_only,

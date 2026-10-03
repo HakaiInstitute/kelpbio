@@ -674,13 +674,19 @@ augment(fit_dm) |>
 
 str(data_wetdry_sim_nereo)
 kb_check_data_wetdry_nereo(data_wetdry_sim_nereo)
-try(kb_check_data_wetdry_nereo(mutate(data_wetdry_sim_nereo, dry_mass_g = wet_mass_g)))
+try(kb_check_data_wetdry_nereo(mutate(
+  data_wetdry_sim_nereo,
+  dry_mass_g = wet_mass_g
+)))
 # one implausible sample (ratio 0.7): a warning, and the sample is kept
 odd <- data_wetdry_sim_nereo
 odd$dry_mass_g[1] <- 0.7 * odd$wet_mass_g[1]
 kb_check_data_wetdry_nereo(odd)
 # masses in mg warn
-kb_check_data_wetdry_macro(mutate(data_wetdry_sim_macro, across(everything(), ~ .x * 1000)))
+kb_check_data_wetdry_macro(mutate(
+  data_wetdry_sim_macro,
+  across(everything(), ~ .x * 1000)
+))
 
 kb_priors_wetdry_nereo() # intercept (logit ratio), precision
 
@@ -698,3 +704,37 @@ ppc_dens_overlay(
   fit_w$data$dry_mass_g / fit_w$data$wet_mass_g,
   posterior_predict(fit_w)[1:50, ]
 )
+
+# =============================================================================
+# CARBON MODELS
+# =============================================================================
+# Carbon is one row per dried tissue sample, as the isotope lab reports it:
+# sample_mass_mg and carbon_mass_ug. The response is the carbon fraction,
+# carbon_mass_ug / 1000 / sample_mass_mg: Beta with one mean and precision for
+# all samples, pooled over months; fit to a season's samples for a
+# season-specific fraction. Fractions outside 0.10 to 0.50 warn but are kept.
+
+str(data_carbon_sim_nereo)
+kb_check_data_carbon_nereo(data_carbon_sim_nereo)
+# one implausible sample (fraction 0.60): a warning, and the sample is kept
+odd <- data_carbon_sim_nereo
+odd$carbon_mass_ug[1] <- 0.6 * odd$sample_mass_mg[1] * 1000
+kb_check_data_carbon_nereo(odd)
+# carbon in mg rather than ug: every fraction falls far below 0.10, so all warn
+kb_check_data_carbon_nereo(mutate(
+  data_carbon_sim_nereo,
+  carbon_mass_ug = carbon_mass_ug / 1000
+))
+# sample mass in g rather than mg: carbon exceeds the sample mass, an error
+try(kb_check_data_carbon_nereo(mutate(
+  data_carbon_sim_nereo,
+  sample_mass_mg = sample_mass_mg / 1000
+)))
+
+kb_priors_carbon_nereo() # intercept (logit fraction), precision
+
+fit_c <- kb_fit_carbon_nereo(data_carbon_sim_nereo)
+fit_c
+kb_model_describe(fit_c)
+kb_predict_carbon(fit_c)
+kb_predict_carbon(kb_fit_carbon_macro(data_carbon_sim_macro))

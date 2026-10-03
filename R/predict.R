@@ -142,3 +142,33 @@ predict.kb_fit_wetdry <- function(
     sig_fig = sig_fig
   )
 }
+
+#' Predict Method for a Carbon Model Fit
+#'
+#' A thin wrapper on [kb_predict_carbon()]: the expected carbon fraction of dry
+#' mass as a single estimate.
+#'
+#' @inheritParams params
+#' @param object A `kb_fit_carbon` object.
+#' @param ... Unused.
+#'
+#' @return A `kb_predictions` object.
+#' @family generics
+#' @exportS3Method stats::predict
+#' @examples
+#' predict(fit_carbon_sim_macro)
+predict.kb_fit_carbon <- function(
+  object,
+  ...,
+  conf_level = 0.95,
+  estimate = stats::median,
+  sig_fig = 3
+) {
+  rlang::check_dots_empty()
+  kb_predict_carbon(
+    object,
+    conf_level = conf_level,
+    estimate = estimate,
+    sig_fig = sig_fig
+  )
+}

@@ -12,7 +12,7 @@
 
 devtools::load_all(quiet = TRUE)
 
-models <- c("weight", "size", "density", "wetdry")
+models <- c("weight", "size", "density", "wetdry", "carbon")
 selected <- commandArgs(trailingOnly = TRUE)
 if (!length(selected)) {
   selected <- models
@@ -173,4 +173,32 @@ if ("wetdry" %in% selected) {
   )
   saveRDS(wetdry_macro_fit, "tests/testthat/fixtures/wetdry_macro_fit.rds")
   message("Wrote tests/testthat/fixtures/wetdry_macro_fit.rds")
+}
+
+if ("carbon" %in% selected) {
+  # Carbon fixtures: the first 80 samples of the bundled data_carbon_sim_*, which
+  # have no grouping factors to subset by.
+  carbon_nereo_fit <- kb_fit_carbon_nereo(
+    data_carbon_sim_nereo[1:80, ],
+    chains = 2L,
+    niters = 300L,
+    nthin = 5L,
+    cores = 2L,
+    progress = "none",
+    seed = 42L
+  )
+  saveRDS(carbon_nereo_fit, "tests/testthat/fixtures/carbon_nereo_fit.rds")
+  message("Wrote tests/testthat/fixtures/carbon_nereo_fit.rds")
+
+  carbon_macro_fit <- kb_fit_carbon_macro(
+    data_carbon_sim_macro[1:80, ],
+    chains = 2L,
+    niters = 300L,
+    nthin = 5L,
+    cores = 2L,
+    progress = "none",
+    seed = 42L
+  )
+  saveRDS(carbon_macro_fit, "tests/testthat/fixtures/carbon_macro_fit.rds")
+  message("Wrote tests/testthat/fixtures/carbon_macro_fit.rds")
 }

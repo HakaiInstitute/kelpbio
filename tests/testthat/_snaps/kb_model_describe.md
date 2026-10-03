@@ -242,6 +242,33 @@
       Regularizing priors were placed on all parameters (see the notation form
       for the hyperparameters).
 
+# kb_model_describe renders the carbon model
+
+    Code
+      kb_model_describe(carbon_nereo_fit)
+    Output
+      Carbon fraction - Nereocystis luetkeana
+      Response: carbon_fraction = carbon_mass_ug / 1000 / sample_mass_mg, the fraction of a dry sample's mass that is carbon
+      
+      Likelihood
+        carbon_fraction ~ Beta(mu * bPrecision, (1 - mu) * bPrecision)
+        logit(mu) = bCarbon
+      
+      Priors
+        bCarbon        ~ Normal(-0.8, 0.3)
+        bPrecision     ~ Exponential(0.001)
+
+---
+
+    Code
+      kb_model_describe(carbon_macro_fit, prose = TRUE)
+    Output
+      The carbon fraction of each dried sample was modelled with a Beta
+      likelihood parameterised by its mean, mu, and precision, both common to all
+      samples. Samples were pooled over the months, sites, and tissues they came
+      from. Regularizing priors were placed on all parameters (see the notation
+      form for the hyperparameters).
+
 # kb_model_describe follows the power-law form
 
     Code

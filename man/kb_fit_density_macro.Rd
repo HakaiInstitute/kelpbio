@@ -114,6 +114,8 @@ tidy(fit_density_sim_macro)
 }
 \seealso{
 Other model:
+\code{\link[=kb_fit_carbon_macro]{kb_fit_carbon_macro()}},
+\code{\link[=kb_fit_carbon_nereo]{kb_fit_carbon_nereo()}},
 \code{\link[=kb_fit_density_nereo]{kb_fit_density_nereo()}},
 \code{\link[=kb_fit_size_macro]{kb_fit_size_macro()}},
 \code{\link[=kb_fit_size_nereo]{kb_fit_size_nereo()}},

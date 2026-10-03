@@ -1,4 +1,4 @@
-test_that("fit_wetdry uses the species and default priors it is given", {
+test_that("fit_beta_model uses the model, species, and default priors it is given", {
   local_mocked_bindings(
     fit_stan = function(...) {
       list(
@@ -10,12 +10,16 @@ test_that("fit_wetdry uses the species and default priors it is given", {
   )
   defaults <- kb_priors_wetdry_macro()
   defaults$intercept <- kb_prior_normal(-2, 1)
-  fit <- fit_wetdry(
+  fit <- fit_beta_model(
     wetdry_macro_fit$data,
     priors = NULL,
+    model = "wetdry",
+    species = "macrocystis",
+    intercept = "bDryWet",
+    response = "dry_wet_ratio",
     check_data = kb_check_data_wetdry_macro,
     defaults = defaults,
-    species = "macrocystis",
+    assemble = assemble_wetdry_data,
     prior_only = FALSE,
     chains = 1L,
     niters = 10L,
@@ -27,4 +31,6 @@ test_that("fit_wetdry uses the species and default priors it is given", {
   )
   expect_s3_class(fit, "kb_fit_wetdry_macro")
   expect_equal(fit$meta$priors$intercept, kb_prior_normal(-2, 1))
+  expect_identical(fit$meta$response, "dry_wet_ratio")
+  expect_identical(fit$meta$terms$fixed, c("bDryWet", "bPrecision"))
 })

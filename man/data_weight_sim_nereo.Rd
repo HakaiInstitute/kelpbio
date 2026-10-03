@@ -29,6 +29,8 @@ and is not intended for inference. Built by \code{data-raw/data_weight_sim_nereo
 \link{fit_weight_sim_nereo} for a fit to this dataset.
 
 Other data:
+\code{\link{data_carbon_sim_macro}},
+\code{\link{data_carbon_sim_nereo}},
 \code{\link{data_density_sim_macro}},
 \code{\link{data_density_sim_nereo}},
 \code{\link{data_size_sim_macro}},
@@ -36,6 +38,8 @@ Other data:
 \code{\link{data_weight_sim_macro}},
 \code{\link{data_wetdry_sim_macro}},
 \code{\link{data_wetdry_sim_nereo}},
+\code{\link{fit_carbon_sim_macro}},
+\code{\link{fit_carbon_sim_nereo}},
 \code{\link{fit_density_sim_macro}},
 \code{\link{fit_density_sim_nereo}},
 \code{\link{fit_size_sim_macro}},
@@ -44,6 +48,8 @@ Other data:
 \code{\link{fit_weight_sim_nereo}},
 \code{\link{fit_wetdry_sim_macro}},
 \code{\link{fit_wetdry_sim_nereo}},
+\code{\link[=kb_check_data_carbon_macro]{kb_check_data_carbon_macro()}},
+\code{\link[=kb_check_data_carbon_nereo]{kb_check_data_carbon_nereo()}},
 \code{\link[=kb_check_data_density_macro]{kb_check_data_density_macro()}},
 \code{\link[=kb_check_data_density_nereo]{kb_check_data_density_nereo()}},
 \code{\link[=kb_check_data_size_macro]{kb_check_data_size_macro()}},

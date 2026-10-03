@@ -88,10 +88,10 @@ log_lik.kb_fit <- function(object, ...) {
 
 #' @export
 .log_lik.kb_fit_wetdry <- function(fit, mu) {
-  precision <- as.vector(posterior::draws_of(fit$draws$bPrecision))
-  ratio <- fit$data$dry_mass_g / fit$data$wet_mass_g
-  .per_draw(mu, ratio, function(y, mu_d, d) {
-    m <- 1 / (1 + exp(-mu_d))
-    extras::log_lik_beta(y, m * precision[d], (1 - m) * precision[d])
-  })
+  .log_lik_beta_mean(fit, mu, fit$data$dry_mass_g / fit$data$wet_mass_g)
+}
+
+#' @export
+.log_lik.kb_fit_carbon <- function(fit, mu) {
+  .log_lik_beta_mean(fit, mu, carbon_fraction(fit$data))
 }
