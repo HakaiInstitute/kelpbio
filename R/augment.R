@@ -23,10 +23,7 @@ augment.kb_fit <- function(x, ...) {
   mu <- .linpred_obs(x)
   out <- tibble::as_tibble(x$data)
   out$fitted <- as.numeric(stats::median(.epred(x, mu)))
-  out$residual <- as.numeric(apply(
-    .deviance(x, posterior::draws_of(mu)),
-    2L,
-    stats::median
-  ))
+  res <- .eval_family(x, posterior::draws_of(mu), x$data, "res")
+  out$residual <- as.numeric(apply(res, 2L, stats::median))
   out
 }

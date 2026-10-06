@@ -4,7 +4,9 @@
 #'
 #' @details
 #' Computed from the stored draws by evaluating the model's likelihood at the
-#' observed data.
+#' observed data. Each value is the log density of the response as recorded (for
+#' example weight in kg, not log weight), so models of the same response can be
+#' compared with `loo::loo_compare()`.
 #'
 #' @param object A `kb_fit` object.
 #' @param ... Unused.
@@ -24,86 +26,5 @@ log_lik.kb_fit <- function(object, ...) {
     )
   }
   mu <- posterior::draws_of(.linpred_obs(object)) # link scale, D x N
-  .log_lik(object, mu)
-}
-
-# Pointwise log-likelihood, D x N and unreduced; see .per_draw() for the shape.
-.log_lik <- function(fit, mu) {
-  UseMethod(".log_lik")
-}
-
-#' @export
-.log_lik.default <- function(fit, mu) {
-  .abort_no_method(x = fit, call = NULL)
-}
-
-#' @export
-.log_lik.kb_fit_weight_nereo <- function(fit, mu) {
-  sw <- as.vector(posterior::draws_of(fit$draws$sWeight))
-  .per_draw(mu, log(fit$data$weight_kg), function(y, mu_d, d) {
-    extras::log_lik_norm(y, mu_d, sd = sw[d])
-  })
-}
-
-#' @export
-.log_lik.kb_fit_weight_macro <- function(fit, mu) {
-  shape <- as.vector(posterior::draws_of(fit$draws$bShape))
-  .per_draw(mu, fit$data$weight_kg, function(y, mu_d, d) {
-    extras::log_lik_gamma(y, shape = shape[d], rate = shape[d] / exp(mu_d))
-  })
-}
-
-#' @export
-.log_lik.kb_fit_size_nereo <- function(fit, mu) {
-  shape <- as.vector(posterior::draws_of(fit$draws$bShape))
-  .per_draw(mu, fit$data$diameter_mm, function(y, mu_d, d) {
-    log_lik_weibull(y, shape[d], weibull_scale(exp(mu_d), shape[d]))
-  })
-}
-
-#' @export
-.log_lik.kb_fit_size_macro <- function(fit, mu) {
-  theta <- as.vector(posterior::draws_of(fit$draws$bDispersion))
-  .per_draw(mu, fit$data$fronds, function(y, mu_d, d) {
-    log_lik_gamma_pois_zt(y, exp(mu_d), theta[d])
-  })
-}
-
-#' @export
-.log_lik.kb_fit_density_nereo <- function(fit, mu) {
-  theta <- as.vector(posterior::draws_of(fit$draws$bDispersion))
-  zi <- 1 / (1 + exp(-as.vector(posterior::draws_of(fit$draws$bZeroInflation))))
-  .per_draw(mu, fit$data$stipes, function(y, mu_d, d) {
-    extras::log_lik_gamma_pois_zi(y, exp(mu_d), theta[d], prob = zi[d])
-  })
-}
-
-#' @export
-.log_lik.kb_fit_density_macro <- function(fit, mu) {
-  theta <- as.vector(posterior::draws_of(fit$draws$bDispersion))
-  .per_draw(mu, fit$data$plants, function(y, mu_d, d) {
-    extras::log_lik_gamma_pois(y, exp(mu_d), theta[d])
-  })
-}
-
-#' @export
-.log_lik.kb_fit_wetdry <- function(fit, mu) {
-  .log_lik_beta_mean(fit, mu, fit$data$dry_mass_g / fit$data$wet_mass_g)
-}
-
-#' @export
-.log_lik.kb_fit_carbon <- function(fit, mu) {
-  .log_lik_beta_mean(fit, mu, carbon_fraction(fit$data))
-}
-
-# Normal on the log in situ estimate. The Jacobian (-log estimate) makes it the
-# log density of the estimate itself, comparable with a model fitted on that
-# scale.
-#' @export
-.log_lik.kb_fit_cover_biomass <- function(fit, mu) {
-  scaling <- as.vector(posterior::draws_of(fit$draws$bScaling))
-  sd_log <- cover_log_sd(fit$data$lower, fit$data$upper, fit$meta$conf_level)
-  .per_draw(mu, log(fit$data$estimate), function(y, mu_d, d) {
-    extras::log_lik_norm(y, mu_d, sd = scaling[d] * sd_log) - y
-  })
+  .eval_family(object, mu, object$data, "log_lik")
 }

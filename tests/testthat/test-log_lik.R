@@ -9,15 +9,16 @@ test_that("log_lik returns a D x N matrix usable by loo", {
   expect_s3_class(suppressWarnings(loo::loo(ll)), "loo")
 })
 
-test_that("nereo log_lik matches the Normal density computed directly", {
+test_that("nereo log_lik is the lognormal density of weight", {
   # Independent of extras, so this pins the parameterisation (the density is of
-  # log(weight), not weight) as well as the orientation.
+  # weight, the Normal density of log weight minus log weight) as well as the
+  # orientation.
   mu <- posterior_linpred(weight_fit)
   sw <- as.vector(posterior::draws_of(weight_fit$draws$sWeight))
-  y <- log(weight_fit$data$weight_kg)
+  y <- weight_fit$data$weight_kg
   expected <- t(vapply(
     seq_along(sw),
-    function(d) stats::dnorm(y, mu[d, ], sw[d], log = TRUE),
+    function(d) stats::dnorm(log(y), mu[d, ], sw[d], log = TRUE) - log(y),
     numeric(length(y))
   ))
   expect_equal(log_lik(weight_fit), expected, tolerance = 1e-10)
@@ -172,4 +173,28 @@ test_that("cover log_lik is the Normal density of the log estimate with its Jaco
     numeric(length(y))
   ))
   expect_equal(log_lik(fit), expected, tolerance = 1e-10, ignore_attr = TRUE)
+})
+
+test_that("log_lik agrees with the Stan model's likelihood for every model", {
+  skip_on_cran()
+  fits <- list(
+    weight_fit,
+    weight_macro_fit,
+    size_nereo_fit,
+    size_macro_fit,
+    density_nereo_fit,
+    density_macro_fit,
+    wetdry_nereo_fit,
+    wetdry_macro_fit,
+    carbon_nereo_fit,
+    carbon_macro_fit,
+    cover_biomass_nereo_fit,
+    cover_biomass_macro_fit
+  )
+  for (fit in fits) {
+    stan <- stan_log_lik(fit)
+    # Equal up to the constants Stan drops, which do not vary by draw.
+    gap <- rowSums(log_lik(stan$fit)) - stan$lp
+    expect_equal(gap, rep(gap[1], length(gap)), tolerance = 1e-8, label = class(fit)[1])
+  }
 })

@@ -52,7 +52,7 @@ For a *Nereocystis* fit with the density effect, each row SHALL use its `stipes_
 
 For cover biomass, whose residual is the in situ estimation error rather than variation in biomass, the expected biomass is the inverse link, `exp(mu)`.
 
-The prediction verbs, `fitted()`, and `augment()` SHALL summarise `posterior_epred()`; the density verb at 1 m². `posterior_predict()` SHALL add observation noise from the model's likelihood, so repeated calls differ unless a seed is set; for size it draws plant sizes, and *Macrocystis* draws are whole numbers of at least 1; for density it draws transect counts, whole numbers of at least 0; for wet/dry and carbon it draws ratios or fractions between 0 and 1; for cover biomass it draws positive in situ biomass estimates, with each row's precision taken from its `lower` and `upper`, which `new_data` SHALL then carry. `log_lik()` SHALL return the deterministic pointwise log-likelihood of the observed data, suitable for `loo::loo()`, and error for a fit with no observations. `prior_summary()` SHALL return the priors used.
+The prediction verbs, `fitted()`, and `augment()` SHALL summarise `posterior_epred()`; the density verb at 1 m². `posterior_predict()` SHALL add observation noise from the model's likelihood, so repeated calls differ unless a seed is set; for size it draws plant sizes, and *Macrocystis* draws are whole numbers of at least 1; for density it draws transect counts, whole numbers of at least 0; for wet/dry and carbon it draws ratios or fractions between 0 and 1; for cover biomass it draws positive in situ biomass estimates, with each row's precision taken from its `lower` and `upper`, which `new_data` SHALL then carry. `log_lik()` SHALL return the deterministic pointwise log-likelihood of the observed data, suitable for `loo::loo()`, and error for a fit with no observations. Each value SHALL be the log density of the recorded response on its recorded scale (weight in kg, diameter in mm, a count, a ratio or fraction, or an in situ biomass estimate), including the Jacobian where the model's likelihood is stated on a transformed scale, so the pointwise log-likelihoods of two models of the same response are comparable. `log_lik()`, `residuals()`, and `posterior_predict()` SHALL use the same observation distribution, and it SHALL be the distribution of the fitted Stan model. `prior_summary()` SHALL return the priors used.
 
 #### Scenario: Expected weight exceeds the median for Nereocystis
 - **WHEN** `posterior_epred()` and `posterior_linpred(transform = TRUE)` are called on the same *Nereocystis* weight rows
@@ -81,6 +81,14 @@ The prediction verbs, `fitted()`, and `augment()` SHALL summarise `posterior_epr
 #### Scenario: Predictive draws are reproducible under a seed
 - **WHEN** `posterior_predict()` is called twice after the same `set.seed()`
 - **THEN** it returns identical draws
+
+#### Scenario: Log-likelihood is on the recorded scale
+- **WHEN** `log_lik()` is called on a *Nereocystis* weight fit
+- **THEN** each value equals the log density of the Normal on log weight minus the log of that row's `weight_kg`
+
+#### Scenario: Log-likelihood agrees with the Stan model
+- **WHEN** `log_lik()` is summed over the observed rows for each draw of any fit
+- **THEN** it differs from the Stan model's log density with the likelihood, minus the same log density without it, by an amount that is the same for every draw
 
 ### Requirement: Plot predictions
 
@@ -350,4 +358,3 @@ Site and year SHALL be resolved as in the prediction verbs, with name-only `new_
 #### Scenario: Reproducible under a seed
 - **WHEN** it is called twice after the same `set.seed()`
 - **THEN** the results are identical
-

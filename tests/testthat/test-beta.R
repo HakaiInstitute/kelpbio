@@ -34,3 +34,10 @@ test_that("res_beta residuals are about standard normal under the model", {
   expect_equal(mean(r), 0, tolerance = 0.1)
   expect_equal(stats::sd(r), 1, tolerance = 0.05)
 })
+
+test_that("ran_beta draws proportions with the Beta mean", {
+  withr::local_seed(1)
+  x <- ran_beta(2e4, 15, 155)
+  expect_true(all(x > 0 & x < 1))
+  expect_equal(mean(x), 15 / 170, tolerance = 0.02)
+})

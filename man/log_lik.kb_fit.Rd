@@ -19,7 +19,9 @@ The pointwise log-likelihood of the observed data, suitable for \code{loo::loo()
 }
 \details{
 Computed from the stored draws by evaluating the model's likelihood at the
-observed data.
+observed data. Each value is the log density of the response as recorded (for
+example weight in kg, not log weight), so models of the same response can be
+compared with \code{loo::loo_compare()}.
 }
 \examples{
 ll <- log_lik(fit_weight_sim_nereo)
