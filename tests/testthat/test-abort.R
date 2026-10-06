@@ -1,15 +1,12 @@
 test_that(".fit_constructors reads the registered methods rather than a fixed list", {
-  constructors <- .fit_constructors("kb_predict_weight")
-  expect_setequal(
-    constructors,
-    c("kb_fit_weight_nereo", "kb_fit_weight_macro")
-  )
+  constructors <- .fit_constructors("kb_model_describe")
+  expect_true(all(c("kb_fit_weight_nereo", "kb_fit_weight_macro") %in% constructors))
   # Every name returned is an exported function that really has a method for the
   # generic, so adding a sub-model updates the hint without touching this code.
   for (constructor in constructors) {
     expect_true(constructor %in% getNamespaceExports(asNamespace("kelpbio")))
     expect_false(is.null(
-      utils::getS3method("kb_predict_weight", constructor, optional = TRUE)
+      utils::getS3method("kb_model_describe", constructor, optional = TRUE)
     ))
   }
 })
@@ -24,7 +21,7 @@ test_that(".abort_no_method names the generic, the class, and the constructors",
   fake <- structure(list(), class = c("kb_fit_weight_other", "kb_fit_weight"))
   expect_snapshot(
     error = TRUE,
-    .abort_no_method("kb_predict_weight", fake)
+    .abort_no_method("kb_model_describe", fake)
   )
 })
 

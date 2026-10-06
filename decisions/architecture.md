@@ -63,12 +63,11 @@ average. The Normal gives the expected weight `exp(mu + sWeight^2 / 2)`.
 
 ## Offsets
 
-A rate model's survey effort enters as an offset taken from the grid, so what a
-prediction reports is fixed by the rows it was given: supplied rows carry the effort
-actually recorded, while a generated grid takes one neutral unit, so a `_by` verb
-reports a rate and a row-wise verb reports the response as modelled. No argument
-selects between them (`decisions/prediction-engine.md`). The density models carry
-the offset (`area_m2`); weight and size have none.
+A rate model's survey effort enters as an offset taken from the grid: rows with
+the offset column use the effort recorded, and rows without it take one neutral
+unit. The draw generics follow the rows, while the density verb drops the offset
+so it always reports the rate (`decisions/prediction-engine.md`). The density
+models carry the offset (`area_m2`); weight and size have none.
 
 ## Random-effect resolution
 

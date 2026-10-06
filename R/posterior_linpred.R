@@ -13,7 +13,8 @@
 #' @param transform A flag specifying whether to return the response-scale
 #'   value (`exp`).
 #' @param new_data A data frame with the fit's predictor column (and optional
-#'   `site`, `year`, and `stipes_m2` columns; `area_m2` for a density fit), or
+#'   `site`, `year`, and `stipes_m2` columns; for a density fit, an optional
+#'   `area_m2` column giving each transect's area, 1 m² when absent), or
 #'   `NULL` for the observed data.
 #' @param ... Unused.
 #'
@@ -28,7 +29,7 @@ posterior_linpred.kb_fit <- function(
   transform = FALSE,
   new_data = NULL,
   ...,
-  new_levels = "sample",
+  new_levels = c("average", "sample"),
   representative_site = NULL
 ) {
   rlang::check_dots_empty()
@@ -36,7 +37,10 @@ posterior_linpred.kb_fit <- function(
   .chk_kb_fit(object)
   .chk_representative_site(object, representative_site)
   res <- data_linpred(object, new_data, new_levels, representative_site)
-  m <- posterior::draws_of(res$linpred)
+  lp <- res$linpred
   # transform is contractually the inverse link, not the response mean.
-  if (transform) .epred(object, m, expectation = FALSE) else m
+  if (transform) {
+    lp <- .epred(object, lp, expectation = FALSE)
+  }
+  posterior::draws_of(lp)
 }

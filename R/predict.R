@@ -1,8 +1,8 @@
 #' Predict Method for a Weight Model Fit
 #'
 #' A thin wrapper on [kb_predict_weight()]: predict weight at the supplied `new_data`
-#' rows (or the observed data when `new_data = NULL`). For allometric curves to
-#' visualise, use [kb_predict_weight_by()].
+#' rows (or the observed data when `new_data = NULL`). For curves by site or year,
+#' build the rows with [kb_new_data()].
 #'
 #' @inheritParams params
 #' @inheritParams kb_predict_weight
@@ -18,7 +18,7 @@ predict.kb_fit_weight <- function(
   object,
   new_data = NULL,
   ...,
-  new_levels = c("sample", "average"),
+  new_levels = c("average", "sample"),
   representative_site = NULL,
   conf_level = 0.95,
   estimate = stats::median,
@@ -40,7 +40,7 @@ predict.kb_fit_weight <- function(
 #'
 #' A thin wrapper on [kb_predict_size()]: predict expected size at the supplied
 #' `new_data` rows (or the observed data when `new_data = NULL`). For one estimate
-#' per group, use [kb_predict_size_by()].
+#' per site or year, build the rows with [kb_new_data()].
 #'
 #' @inheritParams params
 #' @inheritParams kb_predict_size
@@ -56,7 +56,7 @@ predict.kb_fit_size <- function(
   object,
   new_data = NULL,
   ...,
-  new_levels = c("sample", "average"),
+  new_levels = c("average", "sample"),
   representative_site = NULL,
   conf_level = 0.95,
   estimate = stats::median,
@@ -76,10 +76,10 @@ predict.kb_fit_size <- function(
 
 #' Predict Method for a Density Model Fit
 #'
-#' A thin wrapper on [kb_predict_density()]: predict the expected count at the
-#' supplied `new_data` rows, each a transect of its `area_m2` (or at the observed
-#' data when `new_data = NULL`). For density per m² by group, use
-#' [kb_predict_density_by()].
+#' A thin wrapper on [kb_predict_density()]: predict the expected density per m²
+#' at the supplied `new_data` rows (or at the observed transects when
+#' `new_data = NULL`). For one estimate per site or year, build the rows with
+#' [kb_new_data()].
 #'
 #' @inheritParams params
 #' @inheritParams kb_predict_density
@@ -90,12 +90,12 @@ predict.kb_fit_size <- function(
 #' @family generics
 #' @exportS3Method stats::predict
 #' @examples
-#' predict(fit_density_sim_nereo, data.frame(site = "site1", area_m2 = 40))
+#' predict(fit_density_sim_nereo, data.frame(site = "site1"))
 predict.kb_fit_density <- function(
   object,
   new_data = NULL,
   ...,
-  new_levels = c("sample", "average"),
+  new_levels = c("average", "sample"),
   representative_site = NULL,
   conf_level = 0.95,
   estimate = stats::median,

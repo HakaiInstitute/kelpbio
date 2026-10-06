@@ -16,6 +16,11 @@
   inherits(x, "kb_fit_density")
 }
 
+# The models with grouping factors, which kb_new_data() builds grids for.
+.vld_kb_fit_grouped <- function(x) {
+  inherits(x, c("kb_fit_weight", "kb_fit_size", "kb_fit_density"))
+}
+
 .vld_kb_fit_wetdry <- function(x) {
   inherits(x, "kb_fit_wetdry")
 }
@@ -82,11 +87,10 @@
   is.data.frame(x)
 }
 
-# Density new_data carries the transect area, since its rows predict counts.
+# Density new_data may carry the transect area, read by the draw generics.
 .vld_new_data_density <- function(x) {
   is.data.frame(x) &&
-    "area_m2" %in% names(x) &&
-    .vld_positive_measure(x$area_m2)
+    (!"area_m2" %in% names(x) || .vld_positive_measure(x$area_m2))
 }
 
 .vld_progress <- function(x) {

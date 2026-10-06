@@ -2,12 +2,9 @@
 % Please edit documentation in R/kb_predict_wetdry.R
 \name{kb_predict_wetdry}
 \alias{kb_predict_wetdry}
-\alias{kb_predict_wetdry.kb_fit_wetdry}
 \title{Predict the Dry:Wet Mass Ratio}
 \usage{
-kb_predict_wetdry(fit, ...)
-
-\method{kb_predict_wetdry}{kb_fit_wetdry}(
+kb_predict_wetdry(
   fit,
   ...,
   conf_level = 0.95,
@@ -18,7 +15,7 @@ kb_predict_wetdry(fit, ...)
 \arguments{
 \item{fit}{A \code{kb_fit_wetdry} object.}
 
-\item{...}{These dots are for future extensions and must be empty.}
+\item{...}{Unused.}
 
 \item{conf_level}{A number between 0 and 1 giving the compatibility-interval
 level.}
@@ -51,14 +48,12 @@ kb_predict_wetdry(fit_wetdry_sim_nereo)
 
 Other prediction:
 \code{\link[=autoplot.kb_predictions]{autoplot.kb_predictions()}},
+\code{\link[=kb_new_data]{kb_new_data()}},
 \code{\link[=kb_plot_predictions]{kb_plot_predictions()}},
 \code{\link[=kb_predict_carbon]{kb_predict_carbon()}},
 \code{\link[=kb_predict_density]{kb_predict_density()}},
-\code{\link[=kb_predict_density_by]{kb_predict_density_by()}},
 \code{\link[=kb_predict_plot_biomass]{kb_predict_plot_biomass()}},
 \code{\link[=kb_predict_size]{kb_predict_size()}},
-\code{\link[=kb_predict_size_by]{kb_predict_size_by()}},
-\code{\link[=kb_predict_weight]{kb_predict_weight()}},
-\code{\link[=kb_predict_weight_by]{kb_predict_weight_by()}}
+\code{\link[=kb_predict_weight]{kb_predict_weight()}}
 }
 \concept{prediction}

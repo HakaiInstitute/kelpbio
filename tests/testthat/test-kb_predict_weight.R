@@ -19,18 +19,26 @@ test_that("predicts at supplied rows", {
   expect_equal(p$diameter_mm, c(20, 40, 60))
 })
 
-test_that("a new site is sampled by default: wider than a known site, reproducible", {
-  site1 <- weight_fit$meta$site_levels[1]
-  known <- kb_predict_weight(weight_fit, data.frame(diameter_mm = 40, site = site1))
+test_that("a new site is averaged by default; sample gives a wider interval", {
   new_site <- data.frame(diameter_mm = 40, site = "brand_new_site")
-  set.seed(1)
-  new <- kb_predict_weight(weight_fit, new_site)
+  default <- kb_predict_weight(weight_fit, new_site)
+  averaged <- kb_predict_weight(weight_fit, new_site, new_levels = "average")
+  # the default is deterministic, with no seed
+  expect_identical(default, kb_predict_weight(weight_fit, new_site))
+  expect_identical(default, averaged)
   set.seed(1)
   sampled <- kb_predict_weight(weight_fit, new_site, new_levels = "sample")
-  expect_gt(new$upper - new$lower, known$upper - known$lower)
-  # the default is "sample": the same seed gives the same interval
-  expect_equal(new$lower, sampled$lower)
-  expect_equal(new$upper, sampled$upper)
+  expect_gt(sampled$upper - sampled$lower, averaged$upper - averaged$lower)
+})
+
+test_that("predictions at a kb_new_data() grid are marked as curves", {
+  expect_true(attr(kb_predict_weight(weight_fit, kb_new_data(weight_fit)), "kb_curve"))
+  expect_false(attr(kb_predict_weight(weight_fit), "kb_curve"))
+})
+
+test_that("a by argument is redirected to kb_new_data()", {
+  expect_error(kb_predict_weight(weight_fit, by = "site"), "kb_new_data")
+  expect_error(kb_predict_weight(weight_fit, "site"), "kb_new_data")
 })
 
 test_that("estimate reduces each row's draws (custom function, matches posterior_epred)", {
@@ -100,15 +108,10 @@ test_that("kb_predict_weight errors on an object that is not a weight fit", {
 
 test_that("kb_predict_weight errors on a weight fit with no species method", {
   fake <- structure(
-    list(),
+    list(data = data.frame(diameter_mm = 30), meta = list()),
     class = c("kb_fit_weight_other", "kb_fit_weight", "kb_fit")
   )
-  # the enumerated-constructor wording is pinned once in test-abort.R
-  err <- expect_error(
-    kb_predict_weight(fake),
-    "no method for.*<kb_fit_weight_other>"
-  )
-  expect_match(conditionMessage(err), "kb_fit_weight_nereo")
+  expect_error(kb_predict_weight(fake), "no method for.*<kb_fit_weight_other>")
 })
 
 test_that("new_data far outside the fitted range warns but still predicts", {

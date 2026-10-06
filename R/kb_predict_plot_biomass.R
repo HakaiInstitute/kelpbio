@@ -49,10 +49,12 @@
 #' @param ... Unused.
 #' @param measure A string, one of `"wet"` (kg/m²), `"dry"` (kg/m²), or
 #'   `"carbon"` (g C/m²), giving the biomass to predict.
-#' @param new_levels A string, one of `"sample"` or `"average"`, controlling how
-#'   a site or year the weight or size fit never saw is treated: `"sample"` draws
-#'   its effect from the fitted distribution, `"average"` holds it at zero (the
-#'   typical site or year).
+#' @param new_levels A string, one of `"sample"` (the default) or `"average"`,
+#'   controlling how a site or year the weight or size fit never saw is treated:
+#'   `"sample"` draws its effect from the fitted distribution, so the interval
+#'   includes the variation between sites or years, as suits an estimate for that
+#'   particular site-year; `"average"` holds it at zero (the typical site or
+#'   year).
 #' @param representative_site A character vector of sites fitted in both
 #'   `weight` and `size`, or `NULL`. When supplied, a site either fit never saw
 #'   takes the named sites' effects (the per-draw average when several are
@@ -137,13 +139,10 @@ kb_predict_plot_biomass <- function(
   groups <- grid[c("site", "year")]
 
   # Expected density per m^2: every row is an observed site-year of the density
-  # fit, so its own effects apply.
-  density_grid <- groups
-  density_grid[[density$meta$offset]] <- 1
+  # fit, so its own effects apply, and the grid holds no area, so no offset.
   density_draws <- posterior::draws_of(.epred(
     density,
-    .linpred(density, density_grid, new_levels) +
-      grid_offset(density, density_grid)
+    .linpred(density, groups, new_levels)
   ))
 
   size_lp <- posterior::draws_of(

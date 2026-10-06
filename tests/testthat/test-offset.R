@@ -8,24 +8,11 @@ test_that("a model with no offset contributes zero", {
   )
 })
 
-test_that("a model with no offset gets no column injected into its grid", {
-  grid <- tibble::tibble(site = factor("a"))
-  expect_identical(add_offset_default(weight_fit, grid), grid)
-})
-
 test_that("the offset is the log of the column meta names", {
   fit <- weight_fit
   fit$meta$offset <- "area"
   grid <- tibble::tibble(area = c(1, 10, 100))
   expect_equal(grid_offset(fit, grid), log(c(1, 10, 100)))
-})
-
-test_that("a generated grid takes one unit of the offset column, so log is zero", {
-  fit <- weight_fit
-  fit$meta$offset <- "area"
-  grid <- add_offset_default(fit, tibble::tibble(site = factor(c("a", "b"))))
-  expect_identical(grid$area, c(1, 1))
-  expect_equal(grid_offset(fit, grid), c(0, 0))
 })
 
 test_that("an offset is added elementwise over grid rows, not draws", {
@@ -48,8 +35,8 @@ test_that("an offset is added elementwise over grid rows, not draws", {
   )
 })
 
-test_that("a missing offset column fails rather than returning nothing", {
+test_that("a grid without the offset column takes one unit of it", {
   fit <- weight_fit
   fit$meta$offset <- "area"
-  expect_error(grid_offset(fit, tibble::tibble(site = factor("a"))))
+  expect_identical(grid_offset(fit, tibble::tibble(site = factor("a"))), 0)
 })

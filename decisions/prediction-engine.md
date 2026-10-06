@@ -28,14 +28,14 @@ Build the engine on the **`posterior` `rvar` datatype**:
 - The `rstantools` generics (`posterior_linpred`/`posterior_epred`/
   `posterior_predict`/`log_lik`) are thin faces over that helper, returning
   `D x N` matrices for ecosystem interop (`bayesplot`, `loo`).
-- Prediction grids are built by `build_by_grid()` (`tibble::tibble()` plus
-  `dplyr::cross_join()`), which crosses the grouping levels named in `by` with the
-  fit's predictor sequence. Either side may be absent, so one builder covers a
-  curve model, a grouped-points model with no continuous predictor, and an
-  intercept-only model. An earlier draft of this record specified
-  `newdata::xnew_data`; the dependency was never taken, because the grids kelpbio
-  needs are a cross join over the fit's own stored levels and `xnew_data` is built
-  for deriving a grid from a data frame of covariates.
+- Grids of rows to predict at are built by `kb_new_data()` (`tibble::tibble()`
+  plus `dplyr::cross_join()`), which crosses the grouping levels named in `by`
+  with the fit's predictor sequence. Either side may be absent, so one builder
+  covers a curve model and a grouped-points model with no continuous predictor.
+  An earlier draft of this record specified `newdata::xnew_data`; the dependency
+  was never taken, because the grids kelpbio needs are a cross join over the
+  fit's own stored levels and `xnew_data` is built for deriving a grid from a data
+  frame of covariates.
 - The predictor enters relative to a reference stored at fit time (the geometric
   mean of the observed predictor, `meta$predictor_ref`), with no per-new_data
   rescaling step: *Nereocystis* uses `diameter / d0`, *Macrocystis*
@@ -47,14 +47,15 @@ Build the engine on the **`posterior` `rvar` datatype**:
   linear predictor is still an `rvar` over grid rows, so it broadcasts
   elementwise; adding it to a `D x N` draws matrix would recycle down columns.
   `.linpred()` itself stays offset-free, so the mean still has one definition.
-- There is no argument selecting whether to apply it. Every path adds it, and
-  what a function returns is fixed by the grid it was given rather than by how it
-  was called: supplied rows carry the survey effort actually recorded, so the
-  row-wise verb and the generics report the response as modelled, while
-  `build_by_grid()` gives a generated grid one unit of the offset column, so a
-  `_by` verb reports the rate. Each function therefore has one contract, and no
-  caller has to learn an extra argument to know what scale it returns. The
-  neutral value is always `1` because the offset always enters as `log()`.
+- The offset comes from the grid: rows carrying the offset column (the observed
+  transects, or user rows with `area_m2`) use it, and rows without it take one
+  unit, whose log is zero. The draw generics (`posterior_*()`) therefore return
+  counts on the supplied transects, or per m² when no area is given. The density
+  verb drops the offset at any rows, so it always reports density per m²: a
+  verb's unit never depends on its input, and the expected count on a transect is
+  the per-m² estimate and limits times its area, since the expected count is
+  linear in area. The neutral value is always `1` because the offset always
+  enters as `log()`.
 - Summaries, `augment()`, and the biomass composition all reuse the same engine;
   there is no bespoke `_samples()` function.
 
@@ -102,45 +103,56 @@ Only the production `rvar` paths are used (native operators, `rvar_rng`, the
   needed; the result is identical and re-wrapped as an `rvar`.
 ## Cross-model prediction contract
 
-Prediction is split into two verbs per model, with independent arguments so no
-`by` + `new_data` combination is representable (tidyverse argument independence;
-the `fct_lump_n`/`fct_lump_prop` precedent):
+Every model has one prediction verb, `kb_predict_<model>(fit, new_data)`, meaning
+"the expected response at these rows" (the observed data when `new_data = NULL`,
+matching base R `predict()`), in the model's natural quantity. Rows by group, or
+over a predictor sequence, come from `kb_new_data(fit, by, ...)`, passed as
+`new_data`:
 
-- **`kb_predict_<model>(fit, new_data, new_levels)` + `predict()`** - predict at
-  the rows you supply (or the observed data when `new_data = NULL`, matching base
-  R `predict()`). The genuinely-new capability: turn cheaply-measured predictors
-  into the expensive response without re-fitting. Most useful for the
-  continuous-predictor models (weight, blade fraction), where the predictor
-  (diameter) is the cheap field measurement; the bare verb is valid but rarely
-  needed where the response is measured directly (density, size).
-- **`kb_predict_<model>_by(fit, by, new_levels)`** - the grid-free, `by`-driven
-  summary; the function builds the design grid (no user grid construction). It
-  renders as a curve over the continuous predictor (weight, blade) or grouped
-  points (density, size). Exists wherever the model has grouping factors.
-- Scalar, intercept-only models (wet/dry, carbon) have only the bare verb (the
-  population estimate); no `_by`.
-- The size models have no predictor, so both verbs report the expected size (the
-  mean of the size distribution) as grouped points. The distribution itself is
-  reached through `posterior_predict()`; the biomass composition draws from it
-  per draw rather than through a prediction verb.
-- The density models have no predictor either. The row-wise verb reports the
-  expected count on each row's `area_m2`, so `new_data` must carry it; the `_by`
-  verb's grid takes one m², so it reports density per m², and its response is
-  named `<count>_m2` (`stipes_m2`, `plants_m2`) to say so.
+```r
+kb_predict_weight(fit)                                     # observed plants
+kb_predict_weight(fit, kb_new_data(fit, by = "site"))      # curves by site
+kb_predict_weight(fit, plants)                             # your own rows
+```
 
-`augment()` stays a diagnostics verb (fitted/residuals on the training data), not
-a prediction entry point.
+- This follows modelr (`data_grid()` then `add_predictions()`) and tidymodels
+  (`predict(fit, new_data)`, one row per input row), and keeps `new_data` and
+  `by` off the same function (tidyverse design guide: no mutually exclusive
+  arguments). It replaced a row-wise verb plus a `_by` verb per model, whose
+  split meant something different for each model (predictor values for weight,
+  site/year rows for size, a transect count versus a density for density) and
+  whose `new_levels` defaults differed. `_by` wrappers can be added later without
+  breaking code, as exact one-line wrappers over `kb_new_data()`.
+- The verbs stay model-named rather than one generic `kb_predict()`: when a
+  pre-fit model is loaded in a reviewed script, the call names the model in play.
+  They are plain functions that check the fit class, not S3 generics.
+- `kb_new_data()` takes the species predictor by its column name through `...`
+  (`diameter_mm` or `fronds`) and checks it against the fit, so no species
+  dispatch is needed. It marks its grid as a curve, and the mark travels into the
+  `kb_predictions` object so `kb_plot_predictions()` draws a ribbon only for
+  curves: observed plants also vary in diameter, so the data alone cannot say.
+- Density reports per m² everywhere it is summarised (see the offset above);
+  transect counts come from the draw generics.
+- Scalar, intercept-only models (wet/dry, carbon) take no `new_data` and return
+  the population estimate.
+- The size models have no predictor, so the verb reports the expected size (the
+  mean of the size distribution). The distribution itself is reached through
+  `posterior_predict()`; the biomass composition draws from it per draw rather
+  than through a prediction verb.
+
+`augment()` stays a diagnostics verb (fitted/residuals on the training data, on
+the observation scale), not a prediction entry point.
 
 Conditioning is resolved **per row, per factor** by level membership, in the
 shared `.linpred()` engine: a row whose grouping level is known is
 conditioned on its estimated random effect; a new level, or an absent grouping
-column, is handled by `new_levels` (`"sample"` draws `Normal(0, sd)`, `"average"`
-zeroes it). Known levels condition regardless of `new_levels`. This makes a mix
-of observed and new groups resolve in a single call (no bind), and lets the
+column, is handled by `new_levels` (`"average"` zeroes it, `"sample"` draws
+`Normal(0, sd)`). Known levels condition regardless of `new_levels`. This makes a
+mix of observed and new groups resolve in a single call (no bind), and lets the
 `rstantools` generics infer conditioning from the `new_data` columns with no `by`
-argument. For the row-wise verb and the generics `new_levels` defaults to
-`"sample"`, so an unseen group carries honest between-group uncertainty;
-`"average"` reports the typical group, not a calibrated interval for the specific
-new group, and is the default for the curve verb, whose curves describe the
-typical group. Later sub-models follow
-this same contract.
+argument. `"average"` is the default for every verb and the draw generics: with
+a grid that has no `site` column the typical site is what users usually mean,
+and the result needs no seed. `"sample"` gives a calibrated interval for a
+specific new group and is documented for that case. The biomass composition
+defaults to `"sample"`, since its rows are always specific surveyed site-years,
+and its limits become the measurement error of a cover biomass fit. Later sub-models follow this same contract.

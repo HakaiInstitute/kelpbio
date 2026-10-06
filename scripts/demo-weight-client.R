@@ -62,41 +62,42 @@ augment(fit)
 # 4. Prediction Scenario 1 - predictions over grid - understand allometric relationships for different groups
 # =============================================================================
 
-# new_levels: if "average" then gets predictions for typical ('average') site/site:year (narrower uncertainty)
-#             if "sample" then shows prediction for new, unobserved site/site:year (wider uncertainty)
+# kb_new_data() builds the rows to predict at: a diameter sequence, optionally by
+# site or year.
+# new_levels: "average" (the default) gives the typical ('average') site/site:year (narrower uncertainty)
+#             "sample" gives a new, unobserved site/site:year (wider uncertainty)
 
 # A typical site: the average plant for this dataset.
-typical <- kb_predict_weight_by(fit, new_levels = "average")
+typical <- kb_predict_weight(fit, kb_new_data(fit))
 kb_plot_predictions(typical) +
   geom_point(aes(diameter_mm, weight_kg), data = data_weight_sim_nereo, alpha = 0.3) +
   ggtitle("Weight-at-diameter, typical site")
 
 # A new, unsurveyed site: same curve, wider band
-new_site <- kb_predict_weight_by(fit, new_levels = "sample")
+new_site <- kb_predict_weight(fit, kb_new_data(fit), new_levels = "sample")
 kb_plot_predictions(new_site) +
   geom_point(aes(diameter_mm, weight_kg), data = data_weight_sim_nereo, alpha = 0.3) +
   ggtitle("Weight-at-diameter, a new site (wider uncertainty)")
 
 # One curve per site
-kb_predict_weight_by(fit, by = "site", new_levels = "average") |>
+kb_predict_weight(fit, kb_new_data(fit, by = "site")) |>
   kb_plot_predictions() +
   ggtitle("Weight-at-diameter by site")
 
 # Per site and year. With many site-years the plot caps the number of panels
 # and warns; raise max_facets or pre-filter to see more.
-kb_predict_weight_by(fit, by = c("site", "year")) |>
+kb_predict_weight(fit, kb_new_data(fit, by = c("site", "year"))) |>
   kb_plot_predictions() +
   ggtitle("Weight-at-diameter by site and year")
 
 # Pointrange estimates at a reference diameter. Holding diameter at one value
 # turns the curve into grouped points: sites land on the x-axis, no facet.
-kb_predict_weight_by(fit, by = "site", diameter_mm = 30, new_levels = "average") |>
+kb_predict_weight(fit, kb_new_data(fit, by = "site", diameter_mm = 30)) |>
   kb_plot_predictions() +
   ggtitle("Weight at 30 mm diameter by site")
 
-# Note: year on its own won't work since intercept/slope doesnt vary by year alone (only site:year):
-# question: arguably for most general-prupose model intercept could also vary by year RE?
-kb_predict_weight_by(fit, by = "year")
+# One curve per year
+kb_predict_weight(fit, kb_new_data(fit, by = "year"))
 
 # =============================================================================
 # 5. Prediction scenario 2 - Predict weight on new diameters
@@ -205,7 +206,7 @@ prior_fit <- kb_fit_weight_nereo(
   prior_only = TRUE,
   progress = "none"
 )
-kb_predict_weight_by(prior_fit, new_levels = "sample") |>
+kb_predict_weight(prior_fit, kb_new_data(prior_fit), new_levels = "sample") |>
   kb_plot_predictions() +
   geom_point(aes(diameter_mm, weight_kg), data = data_weight_sim_nereo, alpha = 0.3) +
   ggtitle("Prior-implied curve vs observed data")

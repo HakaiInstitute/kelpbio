@@ -25,10 +25,6 @@ test_that("build_by_grid crosses only the observed site-year combinations", {
   expect_setequal(unique(paste(grid$site, grid$year)), observed)
 })
 
-test_that("build_by_grid rejects a non-numeric predictor sequence", {
-  expect_error(build_by_grid(weight_fit, character(0), values = "a"), "numeric")
-})
-
 test_that("a model with no predictor gets a grid of grouping levels alone", {
   # density and mean size have no continuous predictor, so the grid is the
   # grouping factors; the column and row order still follow the fit's levels.

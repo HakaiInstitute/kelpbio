@@ -102,11 +102,11 @@ tidy(fit)
 #> 7 sWeight         0.163   0.153   0.174
 ```
 
-Predict the weight-diameter curve for each site with
-`kb_predict_weight_by()` and plot it with `kb_plot_predictions()`:
+Predict the weight-diameter curve for each site at a grid from `kb_new_data()`
+and plot it with `kb_plot_predictions()`:
 
 ``` r
-kb_predict_weight_by(fit, by = "site") |>
+kb_predict_weight(fit, kb_new_data(fit, by = "site")) |>
   kb_plot_predictions()
 ```
 

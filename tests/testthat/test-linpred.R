@@ -134,7 +134,7 @@ test_that("a known year contributes its estimated bYear main effect (macro)", {
 
 test_that("data_linpred resolves NULL new_data to the observed rows", {
   res <- data_linpred(weight_fit, NULL, "average")
-  expect_named(res, c("grid", "group_vars", "linpred"))
+  expect_named(res, c("grid", "group_vars", "linpred", "curve"))
   expect_equal(nrow(res$grid), nrow(weight_fit$data))
   expect_equal(res$group_vars, c("site", "year"))
   expect_equal(

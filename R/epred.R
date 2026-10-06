@@ -2,11 +2,9 @@
 # differ where the likelihood's mean is not the inverse link of the linear
 # predictor (the Nereocystis lognormal, a mixture); other methods ignore the flag.
 #
-# `lp` arrives either as a posterior rvar (from fitted() and the prediction
-# verbs) or as a D x N draws matrix (from the posterior_* generics), and a method
-# must return the same type it was given. Write bodies with arithmetic:
-# `1 / (1 + exp(-lp))`, not plogis(), since `/`, `+`, `-` and `exp` are Ops/Math
-# group generics that work on both, while plogis() errors on an rvar.
+# `lp` is a posterior rvar over grid rows, and so is the result. Write bodies
+# with arithmetic, `1 / (1 + exp(-lp))` rather than plogis(), since Ops and Math
+# group generics work on an rvar while plogis() errors on one.
 .epred <- function(fit, lp, expectation = TRUE) {
   UseMethod(".epred")
 }
@@ -30,13 +28,7 @@
   if (!expectation) {
     return(exp(lp))
   }
-  sw <- fit$draws$sWeight
-  if (!posterior::is_rvar(lp)) {
-    # A D x N matrix: a length-D vector recycles down each column, so element
-    # (d, n) gets draw d's residual SD.
-    sw <- as.vector(posterior::draws_of(sw))
-  }
-  exp(lp + sw^2 / 2)
+  exp(lp + fit$draws$sWeight^2 / 2)
 }
 
 # Log link for both species. The Nereocystis Weibull is parameterised by its
@@ -53,13 +45,7 @@
   if (!expectation) {
     return(exp(lp))
   }
-  theta <- fit$draws$bDispersion
-  if (!posterior::is_rvar(lp)) {
-    # A D x N matrix: a length-D vector recycles down each column, so element
-    # (d, n) gets draw d's overdispersion.
-    theta <- as.vector(posterior::draws_of(theta))
-  }
-  mean_gamma_pois_zt(exp(lp), theta)
+  mean_gamma_pois_zt(exp(lp), fit$draws$bDispersion)
 }
 
 # Log link for both species: exp(lp) is the expected count on the row's area
@@ -76,13 +62,7 @@
   if (!expectation) {
     return(exp(lp))
   }
-  b_zi <- fit$draws$bZeroInflation
-  if (!posterior::is_rvar(lp)) {
-    # A D x N matrix: a length-D vector recycles down each column, so element
-    # (d, n) gets draw d's zero-inflation probability.
-    b_zi <- as.vector(posterior::draws_of(b_zi))
-  }
-  exp(lp) / (1 + exp(b_zi))
+  exp(lp) / (1 + exp(fit$draws$bZeroInflation))
 }
 
 # Logit link: the inverse is the Beta mean, the expected dry:wet ratio.

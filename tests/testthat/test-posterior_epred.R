@@ -41,8 +41,29 @@ test_that("rows naming one new site share its sampled effect", {
   y <- density_nereo_fit$meta$year_levels[1]
   p <- posterior_epred(
     density_nereo_fit,
-    data.frame(site = c("new", "new", "other"), year = y, area_m2 = 10)
+    data.frame(site = c("new", "new", "other"), year = y, area_m2 = 10),
+    new_levels = "sample"
   )
   expect_identical(p[, 1], p[, 2])
   expect_false(identical(p[, 1], p[, 3]))
+})
+
+test_that("the default new_levels is average, so a new site needs no seed", {
+  nd <- data.frame(diameter_mm = 40, site = "new_site")
+  expect_identical(
+    posterior_epred(weight_fit, nd),
+    posterior_epred(weight_fit, nd, new_levels = "average")
+  )
+})
+
+test_that("density draws scale with area_m2, which defaults to one m2", {
+  for (fit in list(density_nereo_fit, density_macro_fit)) {
+    nd <- data.frame(site = "site1", year = "2019", area_m2 = c(10, 20))
+    ep <- posterior_epred(fit, nd)
+    expect_equal(ep[, 2], 2 * ep[, 1])
+    expect_equal(
+      posterior_epred(fit, nd[1, c("site", "year")]),
+      posterior_epred(fit, transform(nd[1, ], area_m2 = 1))
+    )
+  }
 })

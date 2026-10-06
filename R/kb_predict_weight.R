@@ -1,140 +1,78 @@
-#' Predict Weight for New Data
+#' Predict Weight
 #'
-#' Predict weight for the supplied rows, or for the observed data when
-#' `new_data = NULL`. For an allometric curve over a predictor sequence, use
-#' [kb_predict_weight_by()] instead.
+#' Predict the expected wet weight (kg) of a plant at each row of `new_data`, or
+#' at the observed data when `new_data = NULL`.
 #'
 #' @details
-#' Conditioning is resolved per row: a `site`/`year` value the model has seen is
-#' conditioned on its estimated random effects; a new site or year, or an absent
-#' grouping column, is handled by `new_levels`.
+#' Each row is resolved on its own: a `site` or `year` the model has seen is
+#' conditioned on its estimated effect, and a new or absent site or year follows
+#' `new_levels`. With the default `"average"`, an unseen site is the typical
+#' site; use `"sample"` for an interval that includes the variation between
+#' sites. For a new site, `representative_site` instead borrows the site effect of
+#' one or more named fitted sites (the per-draw average across several), while
+#' the site:year interaction still follows `new_levels`.
 #'
-#' With the default `new_levels = "sample"`, an absent or new group draws a random
-#' effect from its estimated distribution, so the interval includes between-group
-#' variation; `"average"` instead holds those random effects at zero. `"sample"`
-#' draws fresh values on each call; set a seed with `set.seed()` for a
-#' reproducible interval. `"sample"` is the default because it produces honest
-#' uncertainty for a new, unobserved site/year.
-#'
-#' For a new site, `representative_site` offers a third approach: instead of
-#' `new_levels` (`"sample"` or `"average"`) it borrows the site effect of one or
-#' more named reference sites (the per-draw average across several). The
-#' `site:year` interaction still follows `new_levels`.
+#' For curves by site or year, build the rows with [kb_new_data()].
 #'
 #' For a *Nereocystis* fit that includes density, each row uses its `stipes_m2`
 #' value if present, otherwise the recorded density of its site-year in the
 #' fitted data, otherwise the fitted mean density.
 #'
+#' @inheritParams params
 #' @param fit A `kb_fit_weight` object.
-#' @param ... Passed to the species method (currently only the shared arguments).
+#' @param new_data A data frame with the fit's predictor column (`diameter_mm` in
+#'   millimetres for *Nereocystis*, `fronds` for *Macrocystis*) and optional
+#'   `site` and `year` columns (and, for *Nereocystis*, an optional `stipes_m2`
+#'   column in stipes per m²), or `NULL` to predict at the observed data.
+#' @param ... Unused.
 #'
-#' @return A `kb_predictions` object: the input rows with added `estimate`,
-#'   `lower`, and `upper` columns summarising the posterior distribution of
-#'   expected weight.
+#' @return A `kb_predictions` object: the rows of `new_data` with added
+#'   `estimate`, `lower`, and `upper` columns summarising the posterior
+#'   distribution of expected weight.
 #' @family prediction
-#' @seealso [kb_predict_weight_by()] to generate new_data by grouping factors and
-#' a predictor sequence, and [augment()] for fitted/residual values at the
-#' observed data.
+#' @seealso [kb_new_data()] to build rows by site or year over a predictor
+#'   sequence, and [posterior_predict()] for draws of individual plant weights.
 #' @export
 #'
 #' @examples
-#' new_data <- data.frame(diameter_mm = c(20, 40, 60))
-#' kb_predict_weight(fit_weight_sim_nereo, new_data, new_levels = "average")
+#' fit <- fit_weight_sim_nereo
 #'
-#' # Predict a new site as if it behaves like a known reference site:
-#' new_site <- data.frame(diameter_mm = c(20, 40, 60), site = "new_site")
+#' # At the observed plants:
+#' kb_predict_weight(fit)
+#'
+#' # Curves by site:
+#' kb_predict_weight(fit, kb_new_data(fit, by = "site"))
+#'
+#' # At your own measurements:
+#' kb_predict_weight(fit, data.frame(diameter_mm = c(20, 40, 60)))
+#'
+#' # A new site, with between-site variation:
+#' set.seed(1)
 #' kb_predict_weight(
-#'   fit_weight_sim_nereo, new_site,
-#'   representative_site = fit_weight_sim_nereo$meta$site_levels[1]
+#'   fit,
+#'   data.frame(diameter_mm = 40, site = "new_site"),
+#'   new_levels = "sample"
 #' )
-kb_predict_weight <- function(fit, ...) {
-  UseMethod("kb_predict_weight")
-}
-
-#' @export
-kb_predict_weight.default <- function(fit, ...) {
-  .chk_kb_fit_weight(fit, call = rlang::current_env())
-  .abort_no_method("kb_predict_weight", fit, call = rlang::current_env())
-}
-
-#' @describeIn kb_predict_weight *Nereocystis* method; `new_data` needs a
-#'   `diameter_mm` column.
-#' @inheritParams params
-#' @param new_data A data frame with the fit's predictor column (`diameter_mm` in
-#'   millimetres for *Nereocystis*, `fronds` for *Macrocystis*) and optional
-#'   `site` / `year` columns (and, for *Nereocystis*, an optional `stipes_m2`
-#'   column in stipes per m²), or `NULL` to predict at the observed data.
-#' @export
-kb_predict_weight.kb_fit_weight_nereo <- function(
+kb_predict_weight <- function(
   fit,
   new_data = NULL,
   ...,
-  new_levels = c("sample", "average"),
+  new_levels = c("average", "sample"),
   representative_site = NULL,
   conf_level = 0.95,
   estimate = stats::median,
   sig_fig = 3
-) {
-  rlang::check_dots_empty()
-  .kb_predict_weight(
-    fit,
-    new_data,
-    new_levels,
-    representative_site,
-    conf_level,
-    estimate,
-    sig_fig
-  )
-}
-
-#' @describeIn kb_predict_weight *Macrocystis* method; `new_data` needs a
-#'   `fronds` column.
-#' @export
-kb_predict_weight.kb_fit_weight_macro <- function(
-  fit,
-  new_data = NULL,
-  ...,
-  new_levels = c("sample", "average"),
-  representative_site = NULL,
-  conf_level = 0.95,
-  estimate = stats::median,
-  sig_fig = 3
-) {
-  rlang::check_dots_empty()
-  .kb_predict_weight(
-    fit,
-    new_data,
-    new_levels,
-    representative_site,
-    conf_level,
-    estimate,
-    sig_fig
-  )
-}
-
-# Shared implementation for the species methods (the former single-function body).
-.kb_predict_weight <- function(
-  fit,
-  new_data,
-  new_levels,
-  representative_site,
-  conf_level,
-  estimate,
-  sig_fig
 ) {
   .chk_kb_fit_weight(fit)
-  .chk_representative_site(fit, representative_site)
-  .chk_summary_args(conf_level, estimate, sig_fig)
-
-  res <- data_linpred(fit, new_data, new_levels, representative_site)
-  summarise_predictions(
+  .chk_by_habit(new_data, ..., verb = "kb_predict_weight")
+  rlang::check_dots_empty()
+  predict_rows(
     fit,
-    res$grid,
-    res$linpred,
-    res$group_vars,
-    conf_level = conf_level,
-    estimate = estimate,
-    sig_fig = sig_fig,
-    curve = FALSE
+    new_data,
+    new_levels,
+    representative_site,
+    conf_level,
+    estimate,
+    sig_fig
   )
 }

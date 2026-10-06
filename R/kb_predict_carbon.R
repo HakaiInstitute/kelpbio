@@ -11,6 +11,7 @@
 #'
 #' @inheritParams params
 #' @param fit A `kb_fit_carbon` object.
+#' @param ... Unused.
 #'
 #' @return A `kb_predictions` object: a one-row tibble with `estimate`, `lower`,
 #'   and `upper` columns summarising the posterior distribution of the expected
@@ -21,29 +22,18 @@
 #'
 #' @examples
 #' kb_predict_carbon(fit_carbon_sim_nereo)
-kb_predict_carbon <- function(fit, ...) {
-  UseMethod("kb_predict_carbon")
-}
-
-#' @export
-kb_predict_carbon.default <- function(fit, ...) {
-  .chk_kb_fit_carbon(fit, call = rlang::current_env())
-  .abort_no_method("kb_predict_carbon", fit, call = rlang::current_env())
-}
-
-#' @rdname kb_predict_carbon
-#' @export
-kb_predict_carbon.kb_fit_carbon <- function(
+kb_predict_carbon <- function(
   fit,
   ...,
   conf_level = 0.95,
   estimate = stats::median,
   sig_fig = 3
 ) {
+  .chk_kb_fit_carbon(fit)
   rlang::check_dots_empty()
   .chk_summary_args(conf_level, estimate, sig_fig)
 
-  # One row with no columns: every row has the same expected fraction.
+  # One row with no columns: every row has the same expected value.
   res <- data_linpred(fit, tibble::tibble(.rows = 1L), new_levels = "average")
   summarise_predictions(
     fit,
@@ -52,7 +42,6 @@ kb_predict_carbon.kb_fit_carbon <- function(
     res$group_vars,
     conf_level = conf_level,
     estimate = estimate,
-    sig_fig = sig_fig,
-    curve = FALSE
+    sig_fig = sig_fig
   )
 }

@@ -2,16 +2,13 @@
 % Please edit documentation in R/kb_predict_density.R
 \name{kb_predict_density}
 \alias{kb_predict_density}
-\alias{kb_predict_density.kb_fit_density}
-\title{Predict Density Counts for New Data}
+\title{Predict Density}
 \usage{
-kb_predict_density(fit, new_data = NULL, ...)
-
-\method{kb_predict_density}{kb_fit_density}(
+kb_predict_density(
   fit,
   new_data = NULL,
   ...,
-  new_levels = c("sample", "average"),
+  new_levels = c("average", "sample"),
   representative_site = NULL,
   conf_level = 0.95,
   estimate = stats::median,
@@ -21,21 +18,20 @@ kb_predict_density(fit, new_data = NULL, ...)
 \arguments{
 \item{fit}{A \code{kb_fit_density} object.}
 
-\item{new_data}{A data frame with an \code{area_m2} column (the transect area, m²)
-and optional \code{site} and \code{year} columns, one row per prediction, or \code{NULL} to
-predict at the observed data.}
+\item{new_data}{A data frame with optional \code{site} and \code{year} columns, one row
+per prediction, or \code{NULL} to predict at the observed transects.}
 
-\item{...}{These dots are for future extensions and must be empty.}
+\item{...}{Unused.}
 
-\item{new_levels}{A string, one of \code{"sample"} or \code{"average"}, controlling how
-random effects that are not conditioned on are treated (factors absent from
-the prediction, and any new level not seen in the fit). \code{"sample"} draws a
-new random effect from \code{Normal(0, sd)}, widening the interval to include
-between-group variation; \code{"average"} holds the random effects at zero,
-giving the typical (median) group rather than the average over the
-random-effect distribution. Known levels are always conditioned on. \code{"sample"}
-draws fresh randomness on each call, so set a seed with \code{set.seed()} for a
-reproducible interval.}
+\item{new_levels}{A string, one of \code{"average"} (the default) or \code{"sample"},
+controlling how random effects that are not conditioned on are treated
+(factors absent from the rows, and any new level not seen in the fit).
+\code{"average"} holds them at zero, giving the typical (median) group;
+\code{"sample"} draws a new random effect from \code{Normal(0, sd)}, widening the
+interval to include between-group variation, as suits a prediction for a
+particular unsurveyed site. Known levels are always conditioned on.
+\code{"sample"} draws fresh randomness on each call, so set a seed with
+\code{set.seed()} for a reproducible interval.}
 
 \item{representative_site}{A character vector of site levels present in the
 fit, or \code{NULL} (the default). When supplied, a new or absent site takes the
@@ -52,56 +48,58 @@ a scalar point estimate (e.g. \code{median} or \code{mean}).}
 \item{sig_fig}{A whole number of significant figures for summary output.}
 }
 \value{
-A \code{kb_predictions} object: the input rows with added \code{estimate},
-\code{lower}, and \code{upper} columns summarising the posterior distribution of the
-expected count.
+A \code{kb_predictions} object: the rows of \code{new_data} with added
+\code{estimate}, \code{lower}, and \code{upper} columns summarising the posterior
+distribution of expected density per m².
 }
 \description{
-Predict the expected count of stipes (\emph{Nereocystis}) or plants (\emph{Macrocystis})
-on a transect of the supplied area, for the supplied rows or for the observed
-data when \code{new_data = NULL}. For density per m² by site or year, use
-\code{\link[=kb_predict_density_by]{kb_predict_density_by()}} instead.
+Predict the expected density, stipes (\emph{Nereocystis}) or plants
+(\emph{Macrocystis}) per m², at each row of \code{new_data}, or at the observed
+transects when \code{new_data = NULL}.
 }
 \details{
-Each row predicts the count on a transect of its \code{area_m2}, so the estimate
-scales with the area. For \emph{Nereocystis}, the expected count includes the
-probability that a transect holds no stipes.
+The estimate is always per m²: an \code{area_m2} column is not used. The expected
+count on a transect is the density times its area, and so are its limits. For
+draws of transect counts, use \code{\link[=posterior_predict]{posterior_predict()}} with an \code{area_m2} column.
+For \emph{Nereocystis}, the expected density includes the probability that a
+transect holds no stipes.
 
-Conditioning is resolved per row: a \code{site}/\code{year} value the model has seen is
-conditioned on its estimated random effects; a new site or year, or an absent
-grouping column, is handled by \code{new_levels}.
+\code{new_data} needs no columns: each row is a site, a year, or a site-year, given
+by its optional \code{site} and \code{year} columns. For one row per site or year, build
+the rows with \code{\link[=kb_new_data]{kb_new_data()}}.
 
-With the default \code{new_levels = "sample"}, an absent or new group draws a random
-effect from its estimated distribution, so the interval includes between-group
-variation; \code{"average"} instead holds those random effects at zero. \code{"sample"}
-draws fresh values on each call; set a seed with \code{set.seed()} for a
-reproducible interval.
-
-For a new site, \code{representative_site} instead borrows the site effect of one
-or more named reference sites (the per-draw average across several). The
-\code{site:year} interaction still follows \code{new_levels}.
+Each row is resolved on its own: a \code{site} or \code{year} the model has seen is
+conditioned on its estimated effect, and a new or absent site or year follows
+\code{new_levels}. With the default \code{"average"}, an unseen site is the typical
+site; use \code{"sample"} for an interval that includes the variation between
+sites. For a new site, \code{representative_site} instead borrows the site effect of
+one or more named fitted sites (the per-draw average across several), while
+the site:year interaction still follows \code{new_levels}.
 }
 \examples{
-kb_predict_density(
-  fit_density_sim_nereo,
-  data.frame(site = c("site1", "new_site"), area_m2 = 40),
-  new_levels = "average"
-)
+fit <- fit_density_sim_nereo
+
+# At the observed transects:
+kb_predict_density(fit)
+
+# By site:
+kb_predict_density(fit, kb_new_data(fit, by = "site"))
+
+# At your own rows, including a new site:
+kb_predict_density(fit, data.frame(site = c("site1", "new_site")))
 }
 \seealso{
-\code{\link[=kb_predict_density_by]{kb_predict_density_by()}} for density per m² by group, and
+\code{\link[=kb_new_data]{kb_new_data()}} to build rows by site or year, and
 \code{\link[=posterior_predict]{posterior_predict()}} for draws of transect counts.
 
 Other prediction:
 \code{\link[=autoplot.kb_predictions]{autoplot.kb_predictions()}},
+\code{\link[=kb_new_data]{kb_new_data()}},
 \code{\link[=kb_plot_predictions]{kb_plot_predictions()}},
 \code{\link[=kb_predict_carbon]{kb_predict_carbon()}},
-\code{\link[=kb_predict_density_by]{kb_predict_density_by()}},
 \code{\link[=kb_predict_plot_biomass]{kb_predict_plot_biomass()}},
 \code{\link[=kb_predict_size]{kb_predict_size()}},
-\code{\link[=kb_predict_size_by]{kb_predict_size_by()}},
 \code{\link[=kb_predict_weight]{kb_predict_weight()}},
-\code{\link[=kb_predict_weight_by]{kb_predict_weight_by()}},
 \code{\link[=kb_predict_wetdry]{kb_predict_wetdry()}}
 }
 \concept{prediction}

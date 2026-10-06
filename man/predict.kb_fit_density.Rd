@@ -8,7 +8,7 @@
   object,
   new_data = NULL,
   ...,
-  new_levels = c("sample", "average"),
+  new_levels = c("average", "sample"),
   representative_site = NULL,
   conf_level = 0.95,
   estimate = stats::median,
@@ -18,21 +18,20 @@
 \arguments{
 \item{object}{A \code{kb_fit_density} object.}
 
-\item{new_data}{A data frame with an \code{area_m2} column (the transect area, m²)
-and optional \code{site} and \code{year} columns, one row per prediction, or \code{NULL} to
-predict at the observed data.}
+\item{new_data}{A data frame with optional \code{site} and \code{year} columns, one row
+per prediction, or \code{NULL} to predict at the observed transects.}
 
 \item{...}{Unused.}
 
-\item{new_levels}{A string, one of \code{"sample"} or \code{"average"}, controlling how
-random effects that are not conditioned on are treated (factors absent from
-the prediction, and any new level not seen in the fit). \code{"sample"} draws a
-new random effect from \code{Normal(0, sd)}, widening the interval to include
-between-group variation; \code{"average"} holds the random effects at zero,
-giving the typical (median) group rather than the average over the
-random-effect distribution. Known levels are always conditioned on. \code{"sample"}
-draws fresh randomness on each call, so set a seed with \code{set.seed()} for a
-reproducible interval.}
+\item{new_levels}{A string, one of \code{"average"} (the default) or \code{"sample"},
+controlling how random effects that are not conditioned on are treated
+(factors absent from the rows, and any new level not seen in the fit).
+\code{"average"} holds them at zero, giving the typical (median) group;
+\code{"sample"} draws a new random effect from \code{Normal(0, sd)}, widening the
+interval to include between-group variation, as suits a prediction for a
+particular unsurveyed site. Known levels are always conditioned on.
+\code{"sample"} draws fresh randomness on each call, so set a seed with
+\code{set.seed()} for a reproducible interval.}
 
 \item{representative_site}{A character vector of site levels present in the
 fit, or \code{NULL} (the default). When supplied, a new or absent site takes the
@@ -52,13 +51,13 @@ a scalar point estimate (e.g. \code{median} or \code{mean}).}
 A \code{kb_predictions} object.
 }
 \description{
-A thin wrapper on \code{\link[=kb_predict_density]{kb_predict_density()}}: predict the expected count at the
-supplied \code{new_data} rows, each a transect of its \code{area_m2} (or at the observed
-data when \code{new_data = NULL}). For density per m² by group, use
-\code{\link[=kb_predict_density_by]{kb_predict_density_by()}}.
+A thin wrapper on \code{\link[=kb_predict_density]{kb_predict_density()}}: predict the expected density per m²
+at the supplied \code{new_data} rows (or at the observed transects when
+\code{new_data = NULL}). For one estimate per site or year, build the rows with
+\code{\link[=kb_new_data]{kb_new_data()}}.
 }
 \examples{
-predict(fit_density_sim_nereo, data.frame(site = "site1", area_m2 = 40))
+predict(fit_density_sim_nereo, data.frame(site = "site1"))
 }
 \seealso{
 Other generics:

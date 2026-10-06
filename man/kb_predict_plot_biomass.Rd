@@ -41,10 +41,12 @@ or \code{NULL}.}
 \item{measure}{A string, one of \code{"wet"} (kg/m²), \code{"dry"} (kg/m²), or
 \code{"carbon"} (g C/m²), giving the biomass to predict.}
 
-\item{new_levels}{A string, one of \code{"sample"} or \code{"average"}, controlling how
-a site or year the weight or size fit never saw is treated: \code{"sample"} draws
-its effect from the fitted distribution, \code{"average"} holds it at zero (the
-typical site or year).}
+\item{new_levels}{A string, one of \code{"sample"} (the default) or \code{"average"},
+controlling how a site or year the weight or size fit never saw is treated:
+\code{"sample"} draws its effect from the fitted distribution, so the interval
+includes the variation between sites or years, as suits an estimate for that
+particular site-year; \code{"average"} holds it at zero (the typical site or
+year).}
 
 \item{representative_site}{A character vector of sites fitted in both
 \code{weight} and \code{size}, or \code{NULL}. When supplied, a site either fit never saw
@@ -122,14 +124,12 @@ kb_predict_plot_biomass(
 \seealso{
 Other prediction:
 \code{\link[=autoplot.kb_predictions]{autoplot.kb_predictions()}},
+\code{\link[=kb_new_data]{kb_new_data()}},
 \code{\link[=kb_plot_predictions]{kb_plot_predictions()}},
 \code{\link[=kb_predict_carbon]{kb_predict_carbon()}},
 \code{\link[=kb_predict_density]{kb_predict_density()}},
-\code{\link[=kb_predict_density_by]{kb_predict_density_by()}},
 \code{\link[=kb_predict_size]{kb_predict_size()}},
-\code{\link[=kb_predict_size_by]{kb_predict_size_by()}},
 \code{\link[=kb_predict_weight]{kb_predict_weight()}},
-\code{\link[=kb_predict_weight_by]{kb_predict_weight_by()}},
 \code{\link[=kb_predict_wetdry]{kb_predict_wetdry()}}
 }
 \concept{prediction}

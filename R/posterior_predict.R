@@ -15,7 +15,7 @@
 #' whole number of at least 1), zero-inflated negative binomial (*Nereocystis*
 #' density), negative binomial (*Macrocystis* density), and Beta (wet/dry, so
 #' every draw lies between 0 and 1). Density draws are counts on each row's
-#' `area_m2`.
+#' `area_m2`, or on 1 m² when `new_data` has no `area_m2` column.
 #'
 #' The observation noise is drawn in R, for every `new_data` including `NULL`, so
 #' repeated calls return different replicates. Set a seed with `set.seed()` for
@@ -24,7 +24,8 @@
 #' @inheritParams params
 #' @param object A `kb_fit` object.
 #' @param new_data A data frame with the fit's predictor column (and optional
-#'   `site`, `year`, and `stipes_m2` columns; `area_m2` for a density fit), or
+#'   `site`, `year`, and `stipes_m2` columns; for a density fit, an optional
+#'   `area_m2` column giving each transect's area, 1 m² when absent), or
 #'   `NULL` to predict at the observed data.
 #' @param ... Unused.
 #'
@@ -39,7 +40,7 @@ posterior_predict.kb_fit <- function(
   object,
   new_data = NULL,
   ...,
-  new_levels = "sample",
+  new_levels = c("average", "sample"),
   representative_site = NULL
 ) {
   rlang::check_dots_empty()

@@ -118,16 +118,17 @@ fit <- kb_fit_weight_nereo(data_weight_sim_nereo, priors = priors, seed = 1)
 
 ## Predictions
 
-`kb_predict_weight_by()` summarises the fitted weight-diameter curve over a
-generated diameter sequence, one curve per group named in `by`. Pass the result
-to `kb_plot_predictions()` to plot the curve with its compatibility band:
+`kb_new_data()` builds a diameter sequence crossed with the groups named in
+`by`, and `kb_predict_weight()` summarises the fitted weight-diameter curve at
+those rows, one curve per group. Pass the result to `kb_plot_predictions()` to
+plot the curve with its compatibility band:
 
 ```{r, fig.width = 7, fig.height = 4.5}
-kb_predict_weight_by(fit, by = "site") |>
+kb_predict_weight(fit, kb_new_data(fit, by = "site")) |>
   kb_plot_predictions()
 ```
 
-`kb_predict_weight()` instead predicts at the rows of a supplied data frame,
+`kb_predict_weight()` also predicts at the rows of your own data frame,
 returning a point estimate and compatibility limits for each row:
 
 ```{r}
@@ -170,11 +171,10 @@ the *Macrocystis* structure: a single frond slope (`bFronds`), the Gamma shape
 tidy(fit_macro)
 ```
 
-Because the *Macrocystis* model has a year main effect, `by = "year"` is an
-available grouping for `kb_predict_weight_by()` (it is not for *Nereocystis*):
+One curve per year:
 
 ```{r, fig.width = 7, fig.height = 4.5}
-kb_predict_weight_by(fit_macro, by = "year") |>
+kb_predict_weight(fit_macro, kb_new_data(fit_macro, by = "year")) |>
   kb_plot_predictions()
 ```
 

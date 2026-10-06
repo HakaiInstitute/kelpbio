@@ -1,9 +1,9 @@
-# new_data must carry a valid area_m2
+# a by argument is redirected to kb_new_data()
 
     Code
-      kb_predict_density(density_nereo_fit, data.frame(site = "site1"))
+      kb_predict_density(density_nereo_fit, by = "site")
     Condition
-      Error in `.chk_new_data_density()`:
-      ! `new_data` must have an area_m2 column.
-      i Its rows predict the count on a transect of that area; use `kb_predict_density_by()` for density per m².
+      Error in `kb_predict_density()`:
+      ! `kb_predict_density()` predicts at the rows of `new_data`; it has no `by` argument.
+      i For predictions by group, use `kb_predict_density(fit, kb_new_data(fit, by = "site"))`.
 

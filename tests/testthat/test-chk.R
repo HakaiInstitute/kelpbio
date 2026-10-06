@@ -124,9 +124,58 @@ test_that(".chk_kb_fit_density passes a density fit through and errors otherwise
   expect_error(.chk_kb_fit_density(weight_fit), "must be a <kb_fit_density> object")
 })
 
+test_that(".chk_kb_fit_grouped errors for a non-fit and a model without groups", {
+  expect_invisible(.chk_kb_fit_grouped(size_nereo_fit))
+  expect_error(.chk_kb_fit_grouped(1), "must be a <kb_fit> object")
+  expect_snapshot(error = TRUE, .chk_kb_fit_grouped(wetdry_nereo_fit))
+})
+
+test_that(".chk_grid_predictor accepts the fit's predictor and rejects others", {
+  expect_invisible(.chk_grid_predictor(weight_fit, list()))
+  expect_invisible(.chk_grid_predictor(weight_fit, list(diameter_mm = 30)))
+  expect_invisible(.chk_grid_predictor(weight_macro_fit, list(fronds = 1:3)))
+  expect_snapshot(
+    error = TRUE,
+    .chk_grid_predictor(weight_fit, list(fronds = 3))
+  )
+  expect_snapshot(
+    error = TRUE,
+    .chk_grid_predictor(weight_macro_fit, list(diameter_mm = 30))
+  )
+  expect_snapshot(
+    error = TRUE,
+    .chk_grid_predictor(weight_fit, list(30))
+  )
+  expect_snapshot(
+    error = TRUE,
+    .chk_grid_predictor(size_nereo_fit, list(diameter_mm = 30))
+  )
+  expect_snapshot(
+    error = TRUE,
+    .chk_grid_predictor(weight_fit, list(diameter_mm = 30, diameter_mm = 40))
+  )
+  expect_snapshot(
+    error = TRUE,
+    .chk_grid_predictor(weight_fit, list(diameter_mm = "a"))
+  )
+})
+
+test_that(".chk_by_habit redirects a by argument to kb_new_data()", {
+  expect_invisible(.chk_by_habit(NULL, verb = "kb_predict_size"))
+  expect_invisible(.chk_by_habit(data.frame(site = "a"), verb = "kb_predict_size"))
+  expect_snapshot(
+    error = TRUE,
+    .chk_by_habit(NULL, by = "site", verb = "kb_predict_density")
+  )
+  expect_snapshot(
+    error = TRUE,
+    .chk_by_habit(c("site", "year"), verb = "kb_predict_size")
+  )
+})
+
 test_that(".chk_new_data_density errors name the area column", {
   expect_invisible(.chk_new_data_density(data.frame(area_m2 = 40)))
-  expect_snapshot(error = TRUE, .chk_new_data_density(data.frame(site = "a")))
+  expect_invisible(.chk_new_data_density(data.frame(site = "a")))
   expect_snapshot(error = TRUE, .chk_new_data_density(data.frame(area_m2 = -1)))
   expect_error(.chk_new_data_density(1), "must be a data frame")
 })
