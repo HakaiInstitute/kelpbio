@@ -46,7 +46,7 @@ test_that("a public verb on a fit with no methods aborts rather than returning",
 test_that("the internal-generic form names no generic, argument or constructor", {
   expect_snapshot(
     error = TRUE,
-    .log_lik(structure(list(), class = c("kb_fit_other", "kb_fit")), 1)
+    .obs_family(structure(list(), class = c("kb_fit_other", "kb_fit")), 1)
   )
 })
 
@@ -73,13 +73,11 @@ test_that("every internal generic has a default, and only display ones are total
   expect_setequal(
     aborting,
     c(
-      ".add_noise",
       ".chk_new_data",
-      ".deviance",
       ".epred",
       ".grid_columns",
       ".linpred",
-      ".log_lik",
+      ".obs_family",
       ".plant_sizes"
     )
   )

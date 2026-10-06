@@ -48,3 +48,10 @@ test_that("res_weibull is zero at the scale and signed against it", {
   r <- res_weibull(seq(1, 100, by = 0.1), shape, scale)
   expect_true(all(diff(r) > 0))
 })
+
+test_that("ran_weibull draws with the Weibull mean", {
+  withr::local_seed(1)
+  x <- ran_weibull(2e4, shape = 2.5, scale = weibull_scale(30, 2.5))
+  expect_true(all(x > 0))
+  expect_equal(mean(x), 30, tolerance = 0.02)
+})

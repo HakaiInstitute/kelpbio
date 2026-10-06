@@ -64,7 +64,7 @@ Species is a variant axis, handled uniformly across all six models:
     being structurally identical across species, will register at this tier
     throughout.
   - **`kb_fit_<model>_<species>`** for methods that do vary: `.linpred`,
-    `.log_lik`, `.deviance`, `.add_noise`, `.chk_new_data`.
+    `.obs_family`, `.chk_new_data`.
 
   So no method branches on `meta$species` (kept for display/reference), and
   **adding a sub-model registers methods, not public methods**. Each internal generic

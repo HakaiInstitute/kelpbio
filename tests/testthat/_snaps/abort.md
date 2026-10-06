@@ -19,7 +19,7 @@
 # the internal-generic form names no generic, argument or constructor
 
     Code
-      .log_lik(structure(list(), class = c("kb_fit_other", "kb_fit")), 1)
+      .obs_family(structure(list(), class = c("kb_fit_other", "kb_fit")), 1)
     Condition
       Error:
       ! kelpbio has no method for a <kb_fit_other> object.

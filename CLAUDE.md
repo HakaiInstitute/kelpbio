@@ -91,7 +91,7 @@ predict.kb_fit_weight  # model tier: wraps the model-named kb_predict_weight()
 # fails loudly. .fit_descriptor is the one exception, supplying print()'s header
 # fields, where a missing method degrades a display rather than a number.
 .epred.kb_fit_weight              # model tier (nereo overrides for the lognormal mean)
-.linpred.kb_fit_weight_nereo      # leaf: also .log_lik/.deviance/.add_noise/.chk_new_data
+.linpred.kb_fit_weight_nereo      # leaf: also .obs_family/.chk_new_data
 # Per-model facts that are values, not behaviour, live in meta instead (offset,
 # terms, predictor, predictor_ref, the structural flags). See "Meta Versus
 # Dispatch" in decisions/architecture.md for the rule that decides which.

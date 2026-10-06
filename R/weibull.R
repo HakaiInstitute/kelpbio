@@ -25,3 +25,7 @@ res_weibull <- function(x, shape, scale) {
   dev <- 2 * (t^shape - 1 - shape * log(t))
   sign(x - scale) * sqrt(pmax(dev, 0))
 }
+
+ran_weibull <- function(n, shape, scale) {
+  stats::rweibull(n, shape = shape, scale = scale)
+}

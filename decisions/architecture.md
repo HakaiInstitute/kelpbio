@@ -61,6 +61,31 @@ Biomass averages expected weight over the size distribution. Under a Student-t o
 log weight, `E[weight]` does not exist, so the integration would have nothing to
 average. The Normal gives the expected weight `exp(mu + sWeight^2 / 2)`.
 
+## The observation distribution is stated once in R
+
+The pointwise log-likelihood, deviance residuals, and posterior-predictive
+replicates are computed in R from the stored draws, not in Stan `generated
+quantities`: that would store `D x N` values in every fit, pre-fit, and fixture,
+turn every diagnostic fix into a `.stan` edit and a refit, and put the saturated
+likelihoods that deviance residuals need (found by bisection for some families)
+where they cannot be unit-tested.
+
+Each model states its distribution once, in its `.obs_family()` method: an
+extras-style family name, the response, and the family's parameters per draw.
+`log_lik()`, `residuals()`, `augment()`, and `posterior_predict()` evaluate that
+one statement through a table of `log_lik_*`/`res_*`/`ran_*` functions, so they
+cannot use different parameterisations. The family name could be a frozen `meta`
+value, but it must agree with the parameter mapping, which is arithmetic, so both
+stay in the method (see "Meta Versus Dispatch"). Models on the log of a response
+use the `lnorm` family on the response itself, so `log_lik()` is always the
+density of the recorded response. The expected response stays in `.epred()`, on
+`rvar`s (`decisions/prediction-engine.md`).
+
+The likelihood is still written twice, in Stan and in R. A test evaluates the
+Stan model's log density with and without the likelihood (`prior_only`) at random
+parameter values and checks the difference against `log_lik()`, so the two cannot
+drift apart.
+
 ## Offsets
 
 A rate model's survey effort enters as an offset taken from the grid: rows with
