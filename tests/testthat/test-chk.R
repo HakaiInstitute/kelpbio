@@ -150,9 +150,11 @@ test_that(".chk_grid_predictor accepts the fit's predictor and rejects others", 
     error = TRUE,
     .chk_grid_predictor(size_nereo_fit, list(diameter_mm = 30))
   )
+  # the predictor named twice, as `...` can carry it
+  twice <- stats::setNames(list(30, 40), c("diameter_mm", "diameter_mm"))
   expect_snapshot(
     error = TRUE,
-    .chk_grid_predictor(weight_fit, list(diameter_mm = 30, diameter_mm = 40))
+    .chk_grid_predictor(weight_fit, twice)
   )
   expect_snapshot(
     error = TRUE,

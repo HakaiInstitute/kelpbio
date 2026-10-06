@@ -143,7 +143,7 @@
 ---
 
     Code
-      .chk_grid_predictor(weight_fit, list(diameter_mm = 30, diameter_mm = 40))
+      .chk_grid_predictor(weight_fit, twice)
     Condition
       Error:
       ! Supply `diameter_mm` once.
