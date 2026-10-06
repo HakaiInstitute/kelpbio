@@ -12,5 +12,6 @@ column_units <- c(
   carbon_mass_ug = "micrograms",
   canopy_area_m2 = "square metres",
   plot_area_m2 = "square metres",
+  site_area_m2 = "square metres",
   tide_height_m = "metres"
 )

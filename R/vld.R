@@ -161,3 +161,35 @@
     all(x$lower <= x$estimate & x$estimate <= x$upper)
 }
 
+
+# Drone surveys of sites for site totals: a non-negative canopy area and a tide
+# height, site and year labels, all with no missing values, and an optional site
+# area at least as large as the canopy.
+.vld_site_surveys <- function(x) {
+  is.data.frame(x) &&
+    all(c("canopy_area_m2", "tide_height_m", "site", "year") %in% names(x)) &&
+    is.numeric(x$canopy_area_m2) &&
+    !anyNA(x$canopy_area_m2) &&
+    all(x$canopy_area_m2 >= 0) &&
+    is.numeric(x$tide_height_m) &&
+    !anyNA(x$tide_height_m) &&
+    .vld_group_column(x$site) &&
+    .vld_group_column(x$year) &&
+    (!"site_area_m2" %in% names(x) ||
+      (.vld_positive_measure(x$site_area_m2) &&
+        all(x$canopy_area_m2 <= x$site_area_m2)))
+}
+
+# A grouping column: character or factor with no missing values.
+.vld_group_column <- function(x) {
+  (is.character(x) || is.factor(x)) && !anyNA(x)
+}
+
+# `sum_by`: NULL, or names of grouping columns of `data`.
+.vld_sum_by <- function(sum_by, data) {
+  is.null(sum_by) ||
+    (is.character(sum_by) &&
+      !anyNA(sum_by) &&
+      all(sum_by %in% names(data)) &&
+      all(vapply(data[sum_by], .vld_group_column, logical(1))))
+}

@@ -94,6 +94,7 @@ reference:
     - kb_predict_carbon
     - kb_predict_plot_biomass
     - kb_predict_cover_biomass
+    - kb_predict_site_biomass
     - kb_plot_predictions
 - title: "Model Summaries and Diagnostics"
   desc: "Summarise fits, extract coefficients and draws, and assess convergence."

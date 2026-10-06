@@ -234,3 +234,28 @@ test_that(".chk_biomass_limits and .chk_biomass_estimate name the offending limi
   expect_error(.chk_biomass_estimate(transform(good, estimate = 0.5)), "estimate")
   expect_error(.chk_biomass_estimate(transform(good, estimate = 5)), "upper")
 })
+
+test_that(".chk_site_surveys errors name the survey column", {
+  good <- data.frame(site = "a", year = "2020", canopy_area_m2 = 100, tide_height_m = 0.5)
+  expect_invisible(.chk_site_surveys(good))
+  expect_snapshot(error = TRUE, .chk_site_surveys(good[c("site", "year", "canopy_area_m2")]))
+  expect_snapshot(error = TRUE, .chk_site_surveys(transform(good, site_area_m2 = 50)))
+  expect_error(.chk_site_surveys(transform(good, site_area_m2 = 0)), "site_area_m2")
+  expect_error(.chk_site_surveys(transform(good, year = NA)), "year")
+  expect_error(.chk_site_surveys(1), "must be a data frame")
+})
+
+test_that(".chk_sum_by names a missing or non-grouping column", {
+  data <- data.frame(region = "north", zone = 1)
+  expect_invisible(.chk_sum_by("region", data))
+  expect_snapshot(error = TRUE, .chk_sum_by("zone", data))
+  expect_snapshot(error = TRUE, .chk_sum_by(c("region", "district"), data))
+  expect_error(.chk_sum_by(1, data), "character")
+})
+
+test_that(".chk_measure_fits requires the fits a measure needs", {
+  expect_invisible(.chk_measure_fits("wet", NULL, NULL))
+  expect_error(.chk_measure_fits("dry", NULL, NULL), "wetdry")
+  expect_error(.chk_measure_fits("carbon", wetdry_nereo_fit, NULL), "carbon")
+  expect_error(.chk_measure_fits("dry", carbon_nereo_fit, NULL), "kb_fit_wetdry")
+})

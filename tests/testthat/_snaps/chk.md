@@ -226,3 +226,37 @@
       ! good["estimate"] must have lower and upper columns.
       i They are the compatibility limits of the in situ biomass estimate, which set its precision.
 
+# .chk_site_surveys errors name the survey column
+
+    Code
+      .chk_site_surveys(good[c("site", "year", "canopy_area_m2")])
+    Condition
+      Error in `.chk_site_surveys()`:
+      ! Good[c("site", "year", "canopy_area_m2")] must include 'tide_height_m'.
+
+---
+
+    Code
+      .chk_site_surveys(transform(good, site_area_m2 = 50))
+    Condition
+      Error in `.chk_site_surveys()`:
+      ! Column `canopy_area_m2` of transform(good, site_area_m2 = 50) must not exceed site_area_m2.
+      i The canopy is the area mapped within the site boundary.
+
+# .chk_sum_by names a missing or non-grouping column
+
+    Code
+      .chk_sum_by("zone", data)
+    Condition
+      Error:
+      ! `sum_by` column zone must be character or factor with no missing values.
+      i Convert a numeric code with `as.character()` or `factor()`.
+
+---
+
+    Code
+      .chk_sum_by(c("region", "district"), data)
+    Condition
+      Error:
+      ! `sum_by` names column district that `new_data` does not have.
+
