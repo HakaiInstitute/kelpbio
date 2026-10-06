@@ -917,3 +917,47 @@ plot_biomass <- kb_predict_plot_biomass(
 fit_cv_e2e <- kb_fit_cover_biomass_nereo(data_cover_biomass_sim_nereo, plot_biomass)
 kb_predict_cover_biomass(fit_cv_e2e, kb_new_data(fit_cv_e2e)) |>
   kb_plot_predictions()
+
+# =============================================================================
+# SITE BIOMASS
+# =============================================================================
+# kb_predict_site_biomass() turns a cover biomass fit and drone surveys of whole
+# sites into total biomass: the expected biomass per m2 of bed (floor included)
+# times each survey's tide-corrected canopy area, in kg (wet, dry) or kg C. The
+# surveys need site, year, canopy_area_m2, and tide_height_m; site_area_m2 (the
+# area within the site boundary) is optional and caps the corrected canopy.
+# Unseen sites and years are sampled by default, so set a seed.
+
+drone <- tibble(
+  site = c("site1", "site1", "site2", "site3", "new_reef"),
+  year = c("2019", "2020", "2020", "2020", "2020"),
+  canopy_area_m2 = c(1500, 1100, 4800, 2600, 900),
+  tide_height_m = c(1.7, 0.7, 0.5, 1.2, 0.9),
+  site_area_m2 = 5e4,
+  region = c("north", "north", "south", "south", "south")
+)
+set.seed(1)
+# one total per survey; cover_support says what the cover fit has for it
+kb_predict_site_biomass(fit_cv, drone)
+kb_predict_site_biomass(fit_cv, drone) |>
+  kb_plot_predictions()
+# a new site at its typical value instead of sampled
+kb_predict_site_biomass(fit_cv, drone, new_levels = "average")
+# totals summed on the draws: by region, by year, and over all surveys
+kb_predict_site_biomass(fit_cv, drone, sum_by = "region")
+kb_predict_site_biomass(fit_cv, drone, sum_by = "year")
+kb_predict_site_biomass(fit_cv, drone, sum_by = character(0))
+# carbon stock (kg C) by year, from the wet/dry and carbon fits
+kb_predict_site_biomass(
+  fit_cv,
+  drone,
+  fit_wetdry_sim_nereo,
+  fit_carbon_sim_nereo,
+  measure = "carbon",
+  sum_by = "year"
+)
+# a numeric grouping column, or two surveys of one site-year in a group
+try(kb_predict_site_biomass(fit_cv, mutate(drone, zone = 1), sum_by = "zone"))
+kb_predict_site_biomass(fit_cv, bind_rows(drone, drone[1, ]), sum_by = "region")
+# a canopy larger than its site: an error
+try(kb_predict_site_biomass(fit_cv, mutate(drone, site_area_m2 = 1000)))

@@ -595,3 +595,74 @@
   .chk_cover_survey(new_data, x_name = "`new_data`")
 }
 
+
+.chk_site_surveys <- function(x, x_name = deparse(substitute(x))) {
+  if (.vld_site_surveys(x)) {
+    return(invisible(x))
+  }
+  if (!is.data.frame(x)) {
+    cli::cli_abort("{x_name} must be a data frame.")
+  }
+  chk::chk_superset(
+    names(x),
+    c("canopy_area_m2", "tide_height_m", "site", "year"),
+    x_name = x_name
+  )
+  nm <- kb_xname(x_name, "canopy_area_m2")
+  chk::chk_numeric(x$canopy_area_m2, x_name = nm)
+  chk::chk_not_any_na(x$canopy_area_m2, x_name = nm)
+  chk::chk_gte(x$canopy_area_m2, value = 0, x_name = nm)
+  nm <- kb_xname(x_name, "tide_height_m")
+  chk::chk_numeric(x$tide_height_m, x_name = nm)
+  chk::chk_not_any_na(x$tide_height_m, x_name = nm)
+  .chk_group_columns(x, x_name)
+  # Every other column passed, so site_area_m2 is present and either invalid or
+  # smaller than the canopy.
+  .chk_positive_measure(x$site_area_m2, x_name = kb_xname(x_name, "site_area_m2"))
+  cli::cli_abort(c(
+    "{kb_xname(x_name, 'canopy_area_m2')} must not exceed {.field site_area_m2}.",
+    i = "The canopy is the area mapped within the site boundary."
+  ))
+}
+
+.chk_sum_by <- function(sum_by, data, call = rlang::caller_env()) {
+  if (.vld_sum_by(sum_by, data)) {
+    return(invisible(sum_by))
+  }
+  chk::chk_character(sum_by, x_name = "`sum_by`")
+  chk::chk_not_any_na(sum_by, x_name = "`sum_by`")
+  missing <- setdiff(sum_by, names(data))
+  if (length(missing)) {
+    cli::cli_abort(
+      "{.arg sum_by} names {cli::qty(missing)}column{?s} {.field {missing}} that {.arg new_data} does not have.",
+      call = call
+    )
+  }
+  bad <- sum_by[!vapply(data[sum_by], .vld_group_column, logical(1))]
+  cli::cli_abort(
+    c(
+      "{.arg sum_by} column{?s} {.field {bad}} must be character or factor with no missing values.",
+      i = "Convert a numeric code with {.fn as.character} or {.fn factor}."
+    ),
+    call = call
+  )
+}
+
+# The fits a biomass `measure` needs: a wet/dry fit for dry, and also a carbon fit
+# for carbon, each of its model when supplied. Contextual bundle like
+# .chk_sampler_args(): no single-boolean .vld_ partner.
+.chk_measure_fits <- function(measure, wetdry, carbon, call = rlang::caller_env()) {
+  if (measure %in% c("dry", "carbon") && is.null(wetdry)) {
+    cli::cli_abort("{.arg wetdry} is required for {measure} biomass.", call = call)
+  }
+  if (measure == "carbon" && is.null(carbon)) {
+    cli::cli_abort("{.arg carbon} is required for carbon biomass.", call = call)
+  }
+  if (!is.null(wetdry)) {
+    .chk_kb_fit_wetdry(wetdry, call = call)
+  }
+  if (!is.null(carbon)) {
+    .chk_kb_fit_carbon(carbon, call = call)
+  }
+  invisible(NULL)
+}

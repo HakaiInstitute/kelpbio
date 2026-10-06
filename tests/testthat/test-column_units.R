@@ -12,6 +12,7 @@ test_that("column_units names the unit of each unit-bearing column", {
       "carbon_mass_ug",
       "canopy_area_m2",
       "plot_area_m2",
+      "site_area_m2",
       "tide_height_m"
     )
   )

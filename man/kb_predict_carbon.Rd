@@ -53,6 +53,7 @@ Other prediction:
 \code{\link[=kb_predict_cover_biomass]{kb_predict_cover_biomass()}},
 \code{\link[=kb_predict_density]{kb_predict_density()}},
 \code{\link[=kb_predict_plot_biomass]{kb_predict_plot_biomass()}},
+\code{\link[=kb_predict_site_biomass]{kb_predict_site_biomass()}},
 \code{\link[=kb_predict_size]{kb_predict_size()}},
 \code{\link[=kb_predict_weight]{kb_predict_weight()}},
 \code{\link[=kb_predict_wetdry]{kb_predict_wetdry()}}

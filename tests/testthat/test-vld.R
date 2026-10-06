@@ -154,3 +154,24 @@ test_that(".vld_plot_biomass needs one valid row per site-year", {
   expect_false(.vld_plot_biomass(good[c("site", "estimate", "lower", "upper")]))
   expect_false(.vld_plot_biomass(transform(good, lower = 3)))
 })
+
+test_that(".vld_site_surveys needs canopy, tide, site, and year, and a large enough site", {
+  good <- data.frame(site = "a", year = "2020", canopy_area_m2 = 100, tide_height_m = 0.5)
+  expect_true(.vld_site_surveys(good))
+  expect_true(.vld_site_surveys(transform(good, site_area_m2 = 1e4)))
+  expect_false(.vld_site_surveys(transform(good, site_area_m2 = 50)))
+  expect_false(.vld_site_surveys(transform(good, canopy_area_m2 = -1)))
+  expect_false(.vld_site_surveys(transform(good, site = NA)))
+  expect_false(.vld_site_surveys(good[c("site", "year", "canopy_area_m2")]))
+  expect_false(.vld_site_surveys(list(good)))
+})
+
+test_that(".vld_sum_by accepts NULL or grouping columns of the data", {
+  data <- data.frame(region = "north", zone = 1, site = NA_character_)
+  expect_true(.vld_sum_by(NULL, data))
+  expect_true(.vld_sum_by(character(0), data))
+  expect_true(.vld_sum_by("region", data))
+  expect_false(.vld_sum_by("zone", data))
+  expect_false(.vld_sum_by("site", data))
+  expect_false(.vld_sum_by("missing", data))
+})

@@ -107,18 +107,7 @@ kb_predict_plot_biomass <- function(
   if (!.vld_observed_data(density)) {
     cli::cli_abort("{.arg density} has no observed site-years to predict at.")
   }
-  if (measure %in% c("dry", "carbon") && is.null(wetdry)) {
-    cli::cli_abort("{.arg wetdry} is required for {measure} biomass.")
-  }
-  if (measure == "carbon" && is.null(carbon)) {
-    cli::cli_abort("{.arg carbon} is required for carbon biomass.")
-  }
-  if (!is.null(wetdry)) {
-    .chk_kb_fit_wetdry(wetdry)
-  }
-  if (!is.null(carbon)) {
-    .chk_kb_fit_carbon(carbon)
-  }
+  .chk_measure_fits(measure, wetdry, carbon)
   fits <- list(
     weight = weight,
     size = size,

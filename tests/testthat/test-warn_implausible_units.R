@@ -42,3 +42,11 @@ test_that("the median, not an extreme value, decides", {
     warn_implausible_units(data.frame(weight_kg = c(1, 2, 3, 500)), "`d`")
   )
 })
+
+test_that("a site area in hectares warns", {
+  expect_warning(
+    warn_implausible_units(data.frame(site_area_m2 = c(5, 8)), "`d`"),
+    "site_area_m2"
+  )
+  expect_no_warning(warn_implausible_units(data.frame(site_area_m2 = 5e4), "`d`"))
+})

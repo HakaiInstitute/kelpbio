@@ -14,6 +14,7 @@ warn_implausible_units <- function(data, x_name) {
     stipes_m2 = c(-Inf, 100),
     area_m2 = c(1, 5000),
     plot_area_m2 = c(1, 1e6),
+    site_area_m2 = c(10, 1e9),
     tide_height_m = c(-1, 5),
     wet_mass_g = c(-Inf, 1000),
     dry_mass_g = c(-Inf, 1000)
