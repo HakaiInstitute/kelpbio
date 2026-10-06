@@ -33,3 +33,8 @@ test_that("stanmodels$carbon is a compiled Stan model", {
   skip_on_cran()
   expect_s4_class(stanmodels$carbon, "stanmodel")
 })
+
+test_that("stanmodels$cover_biomass is a compiled Stan model", {
+  skip_on_cran()
+  expect_s4_class(stanmodels$cover_biomass, "stanmodel")
+})

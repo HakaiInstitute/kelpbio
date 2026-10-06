@@ -159,6 +159,27 @@
   fit$draws$bCarbon + rep(0, nrow(grid))
 }
 
+# Cover-model mean (log scale), mirroring inst/stan/cover_biomass.stan: a floor common to
+# every site and year plus a canopy term proportional to tide-corrected cover, on
+# which the site and year effects act. Both species share it.
+#' @export
+.linpred.kb_fit_cover_biomass <- function(
+  fit,
+  grid,
+  new_levels,
+  representative_site = NULL
+) {
+  draws <- fit$draws
+  ix <- .grid_indices(fit, grid, representative_site)
+
+  re_site <- resolve_re1(draws$bSite, ix$site, new_levels, draws$sSite, ix$rep)
+  # representative_site borrows only the site effect, so year follows new_levels.
+  re_year <- resolve_re1(draws$bYear, ix$year, new_levels, draws$sYear)
+  cover <- tide_corrected_cover(grid, draws$bTide)
+
+  log(draws$bFloor + draws$bCanopy * exp(re_site + re_year) * cover)
+}
+
 .linpred_groups <- function(
   fit,
   intercept,
@@ -216,8 +237,9 @@ data_linpred <- function(
   } else {
     .chk_new_data(fit, new_data)
     grid <- tibble::as_tibble(new_data)
-    predictor <- fit$meta[["predictor"]]
-    if (!is.null(predictor)) {
+    # A predictor the data hold as a column (not cover, which is derived).
+    predictor <- intersect(fit$meta[["predictor"]], names(fit$data))
+    if (length(predictor)) {
       warn_outside_range(fit, grid[[predictor]], predictor)
     }
     if (.density_on(fit) && "stipes_m2" %in% names(grid)) {

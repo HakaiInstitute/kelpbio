@@ -114,3 +114,43 @@ test_that(".vld_same_species and .vld_same_ndraws compare fits", {
   expect_true(.vld_same_ndraws(list(weight_fit, size_nereo_fit)))
   expect_false(.vld_same_ndraws(list(weight_fit, fit_size_sim_nereo)))
 })
+
+
+test_that(".vld_kb_fit_cover_biomass recognises a cover biomass fit", {
+  expect_true(.vld_kb_fit_cover_biomass(cover_biomass_nereo_fit))
+  expect_false(.vld_kb_fit_cover_biomass(carbon_nereo_fit))
+})
+
+test_that(".vld_cover_survey accepts zero canopy within the plot", {
+  good <- data.frame(canopy_area_m2 = c(0, 40), plot_area_m2 = 200, tide_height_m = -0.3)
+  expect_true(.vld_cover_survey(good))
+  expect_false(.vld_cover_survey(transform(good, canopy_area_m2 = 300)))
+  expect_false(.vld_cover_survey(transform(good, plot_area_m2 = 0)))
+  expect_false(.vld_cover_survey(transform(good, tide_height_m = NA)))
+  expect_false(.vld_cover_survey(good[c("canopy_area_m2", "plot_area_m2")]))
+})
+
+test_that(".vld_biomass_limits and .vld_biomass_estimate need bracketing limits", {
+  good <- data.frame(estimate = 2, lower = 1, upper = 4)
+  expect_true(.vld_biomass_limits(good))
+  expect_true(.vld_biomass_estimate(good))
+  expect_false(.vld_biomass_limits(transform(good, upper = 1)))
+  expect_false(.vld_biomass_estimate(transform(good, estimate = 5)))
+  expect_false(.vld_biomass_estimate(transform(good, estimate = 0.5)))
+  expect_false(.vld_biomass_limits(good["estimate"]))
+})
+
+test_that(".vld_plot_biomass needs one valid row per site-year", {
+  good <- data.frame(
+    site = c("a", "b"),
+    year = "2020",
+    estimate = 2,
+    lower = 1,
+    upper = 4
+  )
+  expect_true(.vld_plot_biomass(good))
+  expect_false(.vld_plot_biomass(rbind(good, good[1, ])))
+  expect_false(.vld_plot_biomass(transform(good, year = 2020)))
+  expect_false(.vld_plot_biomass(good[c("site", "estimate", "lower", "upper")]))
+  expect_false(.vld_plot_biomass(transform(good, lower = 3)))
+})

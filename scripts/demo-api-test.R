@@ -831,3 +831,89 @@ try(kb_predict_plot_biomass(
   fit_size_sim_macro,
   fit_density_sim_nereo
 ))
+
+# =============================================================================
+# COVER BIOMASS MODELS
+# =============================================================================
+# Cover takes two data frames. `data` is one row per drone survey:
+# canopy_area_m2 within plot_area_m2, the survey tide_height_m, site, and year.
+# `biomass` is the in situ wet biomass of each site-year (kg/m^2) as
+# estimate/lower/upper, such as kb_predict_plot_biomass() output; the fit pairs them
+# by site and year, and surveys with no biomass are dropped with a message.
+# Biomass is a floor plus a term proportional to tide-corrected cover; each
+# survey is weighted by the precision of its in situ estimate.
+
+str(data_cover_biomass_sim_nereo)
+str(data_plot_biomass_sim_nereo)
+kb_check_data_cover_biomass_nereo(data_cover_biomass_sim_nereo, data_plot_biomass_sim_nereo)
+# canopy larger than its plot: an error
+try(kb_check_data_cover_biomass_nereo(mutate(
+  data_cover_biomass_sim_nereo,
+  canopy_area_m2 = plot_area_m2 + 1
+)))
+# limits that do not bracket the estimate: an error
+try(kb_check_data_cover_biomass_nereo(
+  data_cover_biomass_sim_nereo,
+  mutate(data_plot_biomass_sim_nereo, lower = estimate * 2)
+))
+# two biomass rows for one site-year: an error
+try(kb_check_data_cover_biomass_nereo(
+  data_cover_biomass_sim_nereo,
+  rbind(data_plot_biomass_sim_nereo, data_plot_biomass_sim_nereo[1, ])
+))
+# tide in cm: a warning
+kb_check_data_cover_biomass_nereo(mutate(
+  data_cover_biomass_sim_nereo,
+  tide_height_m = tide_height_m * 100
+))
+
+kb_priors_cover_biomass_nereo() # canopy (log), floor, tide, scaling, sd_site, sd_year
+kb_priors_cover_biomass_macro() # macro differs in the floor and tide priors
+
+fit_cv <- kb_fit_cover_biomass_nereo(data_cover_biomass_sim_nereo, data_plot_biomass_sim_nereo)
+fit_cv
+kb_model_describe(fit_cv)
+tidy(fit_cv)
+augment(fit_cv) # surveys with the paired in situ biomass, fitted, residual
+kb_predict_cover_biomass(
+  fit_cv,
+  data.frame(
+    canopy_area_m2 = c(0, 50, 150),
+    plot_area_m2 = 200,
+    tide_height_m = 0.5
+  )
+)
+# curves over tide-corrected cover (0 to 1 by default) by site: each grid row is
+# a unit plot at zero tide height
+kb_new_data(fit_cv, by = "site", cover = c(0, 0.5, 1))
+kb_predict_cover_biomass(fit_cv, kb_new_data(fit_cv, by = "site")) |>
+  kb_plot_predictions()
+# a new site: the typical site by default, "sample" adds between-site variation
+new_survey <- data.frame(
+  site = "new_reef",
+  canopy_area_m2 = 80,
+  plot_area_m2 = 200,
+  tide_height_m = 0.5
+)
+kb_predict_cover_biomass(fit_cv, new_survey)
+kb_predict_cover_biomass(fit_cv, new_survey, new_levels = "sample")
+# surveys without in situ biomass are dropped with a message
+kb_fit_cover_biomass_nereo(data_cover_biomass_sim_nereo, data_plot_biomass_sim_nereo[-(1:3), ])
+# in situ limits at 90% rather than 95%
+kb_fit_cover_biomass_macro(
+  data_cover_biomass_sim_macro,
+  data_plot_biomass_sim_macro,
+  conf_level = 0.9
+)
+
+# end to end: in situ biomass from the weight, size, and density fits, then the
+# cover fit on it (surveys of site-years without plot biomass are dropped)
+set.seed(1)
+plot_biomass <- kb_predict_plot_biomass(
+  fit_weight_sim_nereo,
+  fit_size_sim_nereo,
+  fit_density_sim_nereo
+)
+fit_cv_e2e <- kb_fit_cover_biomass_nereo(data_cover_biomass_sim_nereo, plot_biomass)
+kb_predict_cover_biomass(fit_cv_e2e, kb_new_data(fit_cv_e2e)) |>
+  kb_plot_predictions()

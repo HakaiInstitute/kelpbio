@@ -7,24 +7,26 @@
 kb_new_data(fit, by = NULL, ...)
 }
 \arguments{
-\item{fit}{A \code{kb_fit_weight}, \code{kb_fit_size}, or \code{kb_fit_density} object.}
+\item{fit}{A \code{kb_fit_weight}, \code{kb_fit_size}, \code{kb_fit_density}, or
+\code{kb_fit_cover_biomass} object.}
 
 \item{by}{A character vector of grouping factors, \code{"site"}, \code{"year"}, or
 both, giving one row per fitted level (per observed site-year for both), or
 \code{NULL} for a single row for the typical site and year.}
 
-\item{...}{For a weight fit, the predictor values as a named numeric vector
-(\code{diameter_mm} or \code{fronds}). If omitted, 30 evenly spaced values span the
-observed range.}
+\item{...}{For a weight or cover biomass fit, the predictor values as a named
+numeric vector (\code{diameter_mm}, \code{fronds}, or \code{cover}). If omitted, 30 evenly
+spaced values span the observed range for weight, and 0 to 1 for cover.}
 }
 \value{
-A tibble with the grouping columns named in \code{by} and, for a weight
-fit, the predictor column.
+A tibble with the grouping columns named in \code{by}, the predictor
+column for a weight or cover biomass fit, and for a cover biomass fit the
+survey columns.
 }
 \description{
 Build a grid of rows to predict at: one row per fitted site, year, or
-observed site-year, crossed for a weight fit with a sequence of the species
-predictor.
+observed site-year, crossed for a weight or cover biomass fit with a sequence
+of its predictor.
 }
 \details{
 Pass the result as \code{new_data} to the model's prediction function, for example
@@ -33,9 +35,13 @@ named in \code{by} are absent from the grid, so the prediction treats them as se
 by \code{new_levels}: with the default \code{"average"}, the typical site or year.
 
 For a weight fit, supply the predictor values by the predictor's column name:
-\code{diameter_mm} for \emph{Nereocystis}, \code{fronds} for \emph{Macrocystis}. A single value
-gives one row per group at that size. Predictions over a grid with several
-predictor values are drawn by \code{\link[=kb_plot_predictions]{kb_plot_predictions()}} as curves.
+\code{diameter_mm} for \emph{Nereocystis}, \code{fronds} for \emph{Macrocystis}. For a cover
+biomass fit, supply \code{cover}, the tide-corrected proportion of the plot
+covered by canopy (0 to 1); each row is then a unit plot at zero tide height,
+with the \code{canopy_area_m2}, \code{plot_area_m2}, and \code{tide_height_m} columns the
+prediction reads. A single value gives one row per group at that value.
+Predictions over a grid with several predictor values are drawn by
+\code{\link[=kb_plot_predictions]{kb_plot_predictions()}} as curves.
 
 \code{by = c("site", "year")} gives only the site-years in the fitted data. The
 result is an ordinary data frame: rows can be filtered and columns added (such
@@ -55,6 +61,7 @@ Other prediction:
 \code{\link[=autoplot.kb_predictions]{autoplot.kb_predictions()}},
 \code{\link[=kb_plot_predictions]{kb_plot_predictions()}},
 \code{\link[=kb_predict_carbon]{kb_predict_carbon()}},
+\code{\link[=kb_predict_cover_biomass]{kb_predict_cover_biomass()}},
 \code{\link[=kb_predict_density]{kb_predict_density()}},
 \code{\link[=kb_predict_plot_biomass]{kb_predict_plot_biomass()}},
 \code{\link[=kb_predict_size]{kb_predict_size()}},

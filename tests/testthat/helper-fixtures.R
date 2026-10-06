@@ -11,7 +11,7 @@ fixture <- function(name) {
 # Nereocystis (lognormal) and Macrocystis (Gamma) weight fits, the Nereocystis
 # (Weibull) and Macrocystis (zero-truncated negative binomial) size fits, and the
 # Nereocystis (zero-inflated negative binomial) and Macrocystis (negative
-# binomial) density fits, and the Beta wet/dry and carbon fits. Fit/check tests use the bundled simulated datasets
+# binomial) density fits, the Beta wet/dry and carbon fits, and the cover biomass fits. Fit/check tests use the bundled simulated datasets
 # (data_*_sim_*) directly, so there are no separate simulated-data fixtures.
 weight_fit <- fixture("weight_fit.rds")
 weight_macro_fit <- fixture("weight_macro_fit.rds")
@@ -23,3 +23,14 @@ wetdry_nereo_fit <- fixture("wetdry_nereo_fit.rds")
 wetdry_macro_fit <- fixture("wetdry_macro_fit.rds")
 carbon_nereo_fit <- fixture("carbon_nereo_fit.rds")
 carbon_macro_fit <- fixture("carbon_macro_fit.rds")
+cover_biomass_nereo_fit <- fixture("cover_biomass_nereo_fit.rds")
+cover_biomass_macro_fit <- fixture("cover_biomass_macro_fit.rds")
+
+# A cover biomass fit's stored data are its surveys paired with their in situ biomass;
+# these split them back into the two inputs a cover biomass fit takes.
+cover_surveys <- function(fit) {
+  fit$data[setdiff(names(fit$data), c("estimate", "lower", "upper"))]
+}
+cover_biomass <- function(fit) {
+  fit$data[c("site", "year", "estimate", "lower", "upper")]
+}

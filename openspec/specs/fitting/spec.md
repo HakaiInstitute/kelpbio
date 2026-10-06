@@ -10,11 +10,11 @@ priors) is the one `kb_model_describe()` reports, pinned by
 ## Requirements
 ### Requirement: Fit a model
 
-`kb_fit_weight_nereo()`, `kb_fit_weight_macro()`, `kb_fit_size_nereo()`, `kb_fit_size_macro()`, `kb_fit_density_nereo()`, `kb_fit_density_macro()`, `kb_fit_wetdry_nereo()`, `kb_fit_wetdry_macro()`, `kb_fit_carbon_nereo()`, and `kb_fit_carbon_macro()` SHALL fit the species' weight, size, density, wet/dry, or carbon model and return a `kb_fit` object. Arguments SHALL be validated before sampling. Fitting SHALL need no Stan toolchain on the user's machine, and changing a prior's hyperparameters SHALL need no recompilation; a prior's family is fixed by the model.
+`kb_fit_weight_nereo()`, `kb_fit_weight_macro()`, `kb_fit_size_nereo()`, `kb_fit_size_macro()`, `kb_fit_density_nereo()`, `kb_fit_density_macro()`, `kb_fit_wetdry_nereo()`, `kb_fit_wetdry_macro()`, `kb_fit_carbon_nereo()`, `kb_fit_carbon_macro()`, `kb_fit_cover_biomass_nereo()`, and `kb_fit_cover_biomass_macro()` SHALL fit the species' weight, size, density, wet/dry, carbon, or cover biomass model and return a `kb_fit` object. Arguments SHALL be validated before sampling. Fitting SHALL need no Stan toolchain on the user's machine, and changing a prior's hyperparameters SHALL need no recompilation; a prior's family is fixed by the model.
 
 #### Scenario: Returns a fit
 - **WHEN** a fit function is called on valid data
-- **THEN** it returns an object inheriting from `kb_fit`, the model class (`kb_fit_weight`, `kb_fit_size`, `kb_fit_density`, `kb_fit_wetdry`, or `kb_fit_carbon`), and the species class (e.g. `kb_fit_density_nereo`)
+- **THEN** it returns an object inheriting from `kb_fit`, the model class (`kb_fit_weight`, `kb_fit_size`, `kb_fit_density`, `kb_fit_wetdry`, `kb_fit_carbon`, or `kb_fit_cover_biomass`), and the species class (e.g. `kb_fit_density_nereo`)
 
 #### Scenario: Invalid arguments error before sampling
 - **WHEN** a fit function is called with invalid data, an invalid sampler argument, or a prior of the wrong family
@@ -32,8 +32,9 @@ The required columns SHALL be, with `site` and `year` (where required) character
 - *Macrocystis* density: `plants` (plants counted on a transect, a whole number `>= 0`), `area_m2` (area surveyed, m², > 0), `site`, and `year`.
 - Wet/dry, both species: `wet_mass_g` (wet mass of a sample, g, > 0) and `dry_mass_g` (its dry mass, g, > 0 and less than `wet_mass_g`). A warning SHALL give the number of samples whose dry:wet ratio lies outside 0.02 to 0.5, the plausible range for kelp tissue, and those samples SHALL be kept.
 - Carbon, both species: `sample_mass_mg` (mass of a dried sample, mg, > 0) and `carbon_mass_ug` (carbon measured in it, µg, > 0), the carbon fraction `carbon_mass_ug / 1000 / sample_mass_mg` being less than 1. A warning SHALL give the number of samples whose carbon fraction lies outside 0.10 to 0.50, the plausible range for kelp tissue, and those samples SHALL be kept.
+- Cover biomass, both species: `data` holds the drone surveys, `canopy_area_m2` (canopy delineated in the plot, m², `>= 0`), `plot_area_m2` (plot area, m², > 0 and at least `canopy_area_m2`), `tide_height_m` (tide height at the survey, m, chart datum), `site`, and `year`, and no `estimate`, `lower`, or `upper` column. The in situ wet biomass (kg/m²) is a separate data frame, the fit functions' required second argument `biomass` (before `priors`): `site` and `year`, one row per site-year, and `estimate` (> 0) with its compatibility limits `lower` and `upper` (`0 < lower <= estimate <= upper`, `lower < upper`), the columns of a `kb_predictions` object, so a biomass prediction passes in unchanged. Each survey SHALL be paired with the biomass of its site-year. Surveys with none SHALL be dropped with a message giving their number and site-years (suppressed by `progress = "none"`), and the fit SHALL error when no survey is paired. The level of the limits SHALL be the one a `kb_predictions` object records, else the name-only `conf_level`, else 0.95; a `conf_level` that contradicts the recorded level SHALL error.
 
-*Nereocystis* weight data MAY include `stipes_m2`, the stipe density (stipes per m²) of the plant's site-year: numeric, `>= 0`, `NA` where not recorded, and at most one distinct value per site-year. Other columns SHALL be ignored. `kb_check_data_weight_nereo()`, `kb_check_data_weight_macro()`, `kb_check_data_size_nereo()`, `kb_check_data_size_macro()`, `kb_check_data_density_nereo()`, `kb_check_data_density_macro()`, `kb_check_data_wetdry_nereo()`, `kb_check_data_wetdry_macro()`, `kb_check_data_carbon_nereo()`, and `kb_check_data_carbon_macro()` SHALL apply these checks, returning the data invisibly, and the fit functions SHALL apply them at entry.
+*Nereocystis* weight data MAY include `stipes_m2`, the stipe density (stipes per m²) of the plant's site-year: numeric, `>= 0`, `NA` where not recorded, and at most one distinct value per site-year. Other columns SHALL be ignored. `kb_check_data_weight_nereo()`, `kb_check_data_weight_macro()`, `kb_check_data_size_nereo()`, `kb_check_data_size_macro()`, `kb_check_data_density_nereo()`, `kb_check_data_density_macro()`, `kb_check_data_wetdry_nereo()`, `kb_check_data_wetdry_macro()`, `kb_check_data_carbon_nereo()`, `kb_check_data_carbon_macro()`, `kb_check_data_cover_biomass_nereo()`, and `kb_check_data_cover_biomass_macro()` SHALL apply these checks, returning the data invisibly, and the fit functions SHALL apply them at entry. The cover biomass checks SHALL also check `biomass` when it is supplied.
 
 #### Scenario: Valid data passes
 - **WHEN** a data check is called on data meeting the requirements
@@ -75,6 +76,30 @@ The required columns SHALL be, with `site` and `year` (where required) character
 - **WHEN** a sample's carbon fraction lies outside 0.10 to 0.50
 - **THEN** a warning gives the number of such samples, and the data still pass with every sample kept
 
+#### Scenario: Zero canopy is valid for cover biomass
+- **WHEN** cover biomass data contain a survey with `canopy_area_m2` of `0`
+- **THEN** the data pass
+
+#### Scenario: Canopy larger than its plot errors
+- **WHEN** cover biomass data contain a survey whose `canopy_area_m2` exceeds its `plot_area_m2`
+- **THEN** it errors naming `canopy_area_m2`
+
+#### Scenario: Limits that do not bracket the estimate error
+- **WHEN** cover biomass `biomass` contains a site-year whose `lower` exceeds `estimate`, whose `upper` is below it, or whose `lower` equals `upper`
+- **THEN** it errors naming the offending limit
+
+#### Scenario: Repeated site-years in the biomass error
+- **WHEN** cover biomass `biomass` has two rows for one site-year
+- **THEN** it errors naming the site-year
+
+#### Scenario: A biomass prediction passes straight in
+- **WHEN** `biomass` is a `kb_predictions` object with `site` and `year` columns
+- **THEN** the fit pairs it with the surveys and uses the interval level it records
+
+#### Scenario: Surveys without biomass are dropped
+- **WHEN** some surveys' site-years have no row in `biomass`
+- **THEN** those surveys are not fitted, and a message gives their number and site-years
+
 #### Scenario: Conflicting density within a site-year errors
 - **WHEN** two rows of the same site-year carry different `stipes_m2` values
 - **THEN** it errors naming the site-year
@@ -85,7 +110,7 @@ The required columns SHALL be, with `site` and `year` (where required) character
 
 ### Requirement: The data determine which effects are fitted
 
-The site:year effect SHALL be included when the data span more than one year and omitted otherwise, for every model with site and year effects (all but wet/dry and carbon, which have no random effects). When no site was sampled in more than one year it SHALL be retained with a warning that the site and site:year effects cannot be interpreted separately.
+The site:year effect SHALL be included when the data span more than one year and omitted otherwise, for every model with a site:year effect (weight, size, and density; wet/dry and carbon have no random effects, and cover biomass has site and year effects but never a site:year effect). When no site was sampled in more than one year it SHALL be retained with a warning that the site and site:year effects cannot be interpreted separately.
 
 The *Nereocystis* weight model's density effect SHALL be included when at least two distinct site-year values of `stipes_m2` are recorded, with density standardised by its mean and SD over the fitted plants. A row with `NA` takes its site-year's recorded value; site-years with no recorded density take the mean.
 
@@ -99,6 +124,10 @@ An omitted effect SHALL not be fitted, reported, or used in prediction (see summ
 - **WHEN** the data span several years but no site spans more than one
 - **THEN** the site:year effect is retained and a warning is issued
 
+#### Scenario: Cover biomass never fits site:year
+- **WHEN** a cover biomass model is fitted to data spanning several years
+- **THEN** the fit has site and year effects, no site:year effect, and no site:year message or warning
+
 #### Scenario: Density effect follows the recorded values
 - **WHEN** *Nereocystis* weight data have no `stipes_m2` column, a column of all `NA` or a single value, or at least two distinct recorded site-year values
 - **THEN** the density effect is omitted silently, omitted with a message, or included, respectively
@@ -109,7 +138,7 @@ An omitted effect SHALL not be fitted, reported, or used in prediction (see summ
 
 ### Requirement: Priors
 
-`kb_priors_weight_nereo()`, `kb_priors_weight_macro()`, `kb_priors_size_nereo()`, `kb_priors_size_macro()`, `kb_priors_density_nereo()`, `kb_priors_density_macro()`, `kb_priors_wetdry_nereo()`, `kb_priors_wetdry_macro()`, `kb_priors_carbon_nereo()`, and `kb_priors_carbon_macro()` SHALL return a named list of prior objects, the defaults pinned by `tests/testthat/test-kb_priors_*.R`. The weight, size, wet/dry, and carbon defaults match the analysis-project models; the density defaults are weakly informative round values. The entries are:
+`kb_priors_weight_nereo()`, `kb_priors_weight_macro()`, `kb_priors_size_nereo()`, `kb_priors_size_macro()`, `kb_priors_density_nereo()`, `kb_priors_density_macro()`, `kb_priors_wetdry_nereo()`, `kb_priors_wetdry_macro()`, `kb_priors_carbon_nereo()`, `kb_priors_carbon_macro()`, `kb_priors_cover_biomass_nereo()`, and `kb_priors_cover_biomass_macro()` SHALL return a named list of prior objects, the defaults pinned by `tests/testthat/test-kb_priors_*.R`. The weight, size, wet/dry, carbon, and cover defaults match the analysis-project models; the density defaults are weakly informative round values. The entries are:
 
 - *Nereocystis* weight: `intercept`, `power`, `floor`, `density`, `sd_site`, `sd_year`, `sd_site_year`, and `sd_residual`.
 - *Macrocystis* weight: `intercept`, `fronds`, `shape`, `sd_site`, `sd_year`, and `sd_site_year`.
@@ -118,6 +147,7 @@ An omitted effect SHALL not be fitted, reported, or used in prediction (see summ
 - *Nereocystis* density: `intercept`, `zero_inflation`, `dispersion`, `sd_site`, `sd_year`, and `sd_site_year`.
 - *Macrocystis* density: `intercept`, `dispersion`, `sd_site`, `sd_year`, and `sd_site_year`.
 - Wet/dry and carbon, both species: `intercept` and `precision`.
+- Cover biomass, both species: `canopy` (on the log scale), `floor`, `tide`, `scaling`, `sd_site`, and `sd_year`.
 
 A list passed to `priors` SHALL override only the entries it contains. `kb_prior_normal()` and `kb_prior_exponential()` SHALL validate their hyperparameters and print as the family with its hyperparameters.
 
@@ -165,7 +195,7 @@ A fit SHALL store posterior draws, sampler diagnostics, the input data, and the 
 
 ### Requirement: Bundled example objects
 
-The package SHALL ship simulated datasets `data_weight_sim_nereo`, `data_weight_sim_macro`, `data_size_sim_nereo`, `data_size_sim_macro`, `data_density_sim_nereo`, `data_density_sim_macro`, `data_wetdry_sim_nereo`, `data_wetdry_sim_macro`, `data_carbon_sim_nereo`, and `data_carbon_sim_macro`, and small pre-fits `fit_weight_sim_nereo`, `fit_weight_sim_macro`, `fit_size_sim_nereo`, `fit_size_sim_macro`, `fit_density_sim_nereo`, `fit_density_sim_macro`, `fit_wetdry_sim_nereo`, `fit_wetdry_sim_macro`, `fit_carbon_sim_nereo`, and `fit_carbon_sim_macro`, for examples and tests, not inference. The bundled datasets and the data stored in the pre-fits SHALL use the input column names above. The simulated *Nereocystis* weight data SHALL include a `stipes_m2` column recorded for every site-year. Real survey data and inference-grade fits SHALL NOT be bundled; they belong in the companion package `kelpbiodata`.
+The package SHALL ship simulated datasets `data_weight_sim_nereo`, `data_weight_sim_macro`, `data_size_sim_nereo`, `data_size_sim_macro`, `data_density_sim_nereo`, `data_density_sim_macro`, `data_wetdry_sim_nereo`, `data_wetdry_sim_macro`, `data_carbon_sim_nereo`, `data_carbon_sim_macro`, `data_cover_biomass_sim_nereo`, `data_cover_biomass_sim_macro`, `data_plot_biomass_sim_nereo`, and `data_plot_biomass_sim_macro`, and small pre-fits `fit_weight_sim_nereo`, `fit_weight_sim_macro`, `fit_size_sim_nereo`, `fit_size_sim_macro`, `fit_density_sim_nereo`, `fit_density_sim_macro`, `fit_wetdry_sim_nereo`, `fit_wetdry_sim_macro`, `fit_carbon_sim_nereo`, `fit_carbon_sim_macro`, `fit_cover_biomass_sim_nereo`, and `fit_cover_biomass_sim_macro`, for examples and tests, not inference. The bundled datasets and the data stored in the pre-fits SHALL use the input column names above. The simulated *Nereocystis* weight data SHALL include a `stipes_m2` column recorded for every site-year. Real survey data and inference-grade fits SHALL NOT be bundled; they belong in the companion package `kelpbiodata`.
 
 #### Scenario: Bundled objects work with the package
 - **WHEN** a bundled dataset is checked and a bundled fit is summarised or predicted from
@@ -173,7 +203,7 @@ The package SHALL ship simulated datasets `data_weight_sim_nereo`, `data_weight_
 
 ### Requirement: Implausible units are flagged
 
-The data checks, and so the fit functions, SHALL warn when a column's median is implausible for the unit its name states: `diameter_mm` below 10 or above 200 (millimetres), `weight_kg` above 100 (kilograms), `stipes_m2` above 100 (stipes per m²), `area_m2` below 1 or above 5000 (square metres), or `wet_mass_g` or `dry_mass_g` above 1000 (grams). The warning SHALL name the column, its median, and the expected unit, and SHALL NOT stop the check or the fit. The message is pinned by `tests/testthat/_snaps/warn_implausible_units.md`.
+The data checks, and so the fit functions, SHALL warn when a column's median is implausible for the unit its name states: `diameter_mm` below 10 or above 200 (millimetres), `weight_kg` above 100 (kilograms), `stipes_m2` above 100 (stipes per m²), `area_m2` below 1 or above 5000 (square metres), `plot_area_m2` below 1 or above 1,000,000 (square metres), `tide_height_m` below -1 or above 5 (metres), or `wet_mass_g` or `dry_mass_g` above 1000 (grams). The warning SHALL name the column, its median, and the expected unit, and SHALL NOT stop the check or the fit. The message is pinned by `tests/testthat/_snaps/warn_implausible_units.md`.
 
 #### Scenario: Diameter in centimetres is flagged
 - **WHEN** *Nereocystis* data have `diameter_mm` in centimetres (median about 3)
@@ -186,6 +216,10 @@ The data checks, and so the fit functions, SHALL warn when a column's median is 
 #### Scenario: Area in square centimetres is flagged
 - **WHEN** density data have `area_m2` in square centimetres (median about 400,000)
 - **THEN** a warning names `area_m2`, its median, and square metres, and the data still pass
+
+#### Scenario: Tide height in centimetres is flagged
+- **WHEN** cover biomass data have `tide_height_m` in centimetres (median about 60)
+- **THEN** a warning names `tide_height_m`, its median, and metres, and the data still pass
 
 #### Scenario: Sample masses in milligrams are flagged
 - **WHEN** wet/dry data have `wet_mass_g` in milligrams (median about 4000)

@@ -1,7 +1,8 @@
 #' Posterior-Predictive Draws
 #'
 #' Draws from the posterior predictive distribution: replicate responses (weights,
-#' plant sizes, transect counts, or dry:wet ratios) carrying both parameter uncertainty and observation noise from
+#' plant sizes, transect counts, dry:wet ratios, carbon fractions, or in situ
+#' biomass estimates) carrying both parameter uncertainty and observation noise from
 #' the model's likelihood. With `new_data = NULL` the replicates are at the
 #' observed data, for use with `bayesplot::pp_check()`.
 #'
@@ -13,9 +14,12 @@
 #' (*Nereocystis* weight), Gamma (*Macrocystis* weight), Weibull (*Nereocystis*
 #' size), zero-truncated negative binomial (*Macrocystis* size, so every draw is a
 #' whole number of at least 1), zero-inflated negative binomial (*Nereocystis*
-#' density), negative binomial (*Macrocystis* density), and Beta (wet/dry, so
-#' every draw lies between 0 and 1). Density draws are counts on each row's
-#' `area_m2`, or on 1 m² when `new_data` has no `area_m2` column.
+#' density), negative binomial (*Macrocystis* density), Beta (wet/dry and
+#' carbon, so every draw lies between 0 and 1), and lognormal (cover). Density
+#' draws are counts on each row's `area_m2`, or on 1 m² when `new_data` has no
+#' `area_m2` column. Cover draws are in situ biomass estimates whose log-scale SD
+#' is `bScaling` times that implied by the row's `lower` and `upper` (at the
+#' fit's `conf_level`), so cover `new_data` must carry those columns.
 #'
 #' The observation noise is drawn in R, for every `new_data` including `NULL`, so
 #' repeated calls return different replicates. Set a seed with `set.seed()` for
@@ -25,7 +29,9 @@
 #' @param object A `kb_fit` object.
 #' @param new_data A data frame with the fit's predictor column (and optional
 #'   `site`, `year`, and `stipes_m2` columns; for a density fit, an optional
-#'   `area_m2` column giving each transect's area, 1 m² when absent), or
+#'   `area_m2` column giving each transect's area, 1 m² when absent;
+#'   `canopy_area_m2`, `plot_area_m2`, `tide_height_m`, `lower`, and `upper` for
+#'   a cover fit), or
 #'   `NULL` to predict at the observed data.
 #' @param ... Unused.
 #'
@@ -53,21 +59,23 @@ posterior_predict.kb_fit <- function(
   }
   res <- data_linpred(object, new_data, new_levels, representative_site)
   lp <- posterior::draws_of(res$linpred) # D x N, log scale
-  .add_noise(object, lp)
+  .add_noise(object, lp, res$grid)
 }
 
 # Add observation noise to the link-scale mean (D x N), returning response scale.
-.add_noise <- function(fit, lp) {
+# `grid` holds the rows predicted at, for a model whose noise depends on them
+# (cover biomass, through each row's in situ precision); the others ignore it.
+.add_noise <- function(fit, lp, grid) {
   UseMethod(".add_noise")
 }
 
 #' @export
-.add_noise.default <- function(fit, lp) {
+.add_noise.default <- function(fit, lp, grid) {
   .abort_no_method(x = fit, call = NULL)
 }
 
 #' @export
-.add_noise.kb_fit_weight_nereo <- function(fit, lp) {
+.add_noise.kb_fit_weight_nereo <- function(fit, lp, grid) {
   sweight <- as.vector(posterior::draws_of(fit$draws$sWeight)) # length D
   # sweight recycles down each column of the D x N matrix, so element (d, n)
   # gets draw d's residual SD.
@@ -76,7 +84,7 @@ posterior_predict.kb_fit <- function(
 }
 
 #' @export
-.add_noise.kb_fit_weight_macro <- function(fit, lp) {
+.add_noise.kb_fit_weight_macro <- function(fit, lp, grid) {
   # weight ~ gamma(bShape, bShape / eWeight); constant Gamma shape matches
   # weight_macro.stan.
   ewt <- exp(lp)
@@ -92,7 +100,7 @@ posterior_predict.kb_fit <- function(
 }
 
 #' @export
-.add_noise.kb_fit_size_nereo <- function(fit, lp) {
+.add_noise.kb_fit_size_nereo <- function(fit, lp, grid) {
   shape <- as.vector(posterior::draws_of(fit$draws$bShape)) # length D
   # shape recycles down each column of the D x N matrix, so element (d, n) gets
   # draw d's shape.
@@ -106,7 +114,7 @@ posterior_predict.kb_fit <- function(
 }
 
 #' @export
-.add_noise.kb_fit_size_macro <- function(fit, lp) {
+.add_noise.kb_fit_size_macro <- function(fit, lp, grid) {
   theta <- as.vector(posterior::draws_of(fit$draws$bDispersion)) # length D
   draws <- ran_gamma_pois_zt(
     length(lp),
@@ -117,7 +125,7 @@ posterior_predict.kb_fit <- function(
 }
 
 #' @export
-.add_noise.kb_fit_density_nereo <- function(fit, lp) {
+.add_noise.kb_fit_density_nereo <- function(fit, lp, grid) {
   theta <- as.vector(posterior::draws_of(fit$draws$bDispersion)) # length D
   b_zi <- as.vector(posterior::draws_of(fit$draws$bZeroInflation))
   zi <- 1 / (1 + exp(-b_zi))
@@ -133,7 +141,7 @@ posterior_predict.kb_fit <- function(
 }
 
 #' @export
-.add_noise.kb_fit_density_macro <- function(fit, lp) {
+.add_noise.kb_fit_density_macro <- function(fit, lp, grid) {
   theta <- as.vector(posterior::draws_of(fit$draws$bDispersion)) # length D
   draws <- extras::ran_gamma_pois(
     length(lp),
@@ -144,11 +152,24 @@ posterior_predict.kb_fit <- function(
 }
 
 #' @export
-.add_noise.kb_fit_wetdry <- function(fit, lp) {
+.add_noise.kb_fit_wetdry <- function(fit, lp, grid) {
   .add_noise_beta_mean(fit, lp)
 }
 
 #' @export
-.add_noise.kb_fit_carbon <- function(fit, lp) {
+.add_noise.kb_fit_carbon <- function(fit, lp, grid) {
   .add_noise_beta_mean(fit, lp)
+}
+
+# Lognormal around the calibration mean, with each row's log-scale SD from its
+# in situ limits scaled by bScaling.
+#' @export
+.add_noise.kb_fit_cover_biomass <- function(fit, lp, grid) {
+  .chk_biomass_limits(grid, x_name = "`new_data`")
+  scaling <- as.vector(posterior::draws_of(fit$draws$bScaling)) # length D
+  sd_log <- cover_log_sd(grid$lower, grid$upper, fit$meta$conf_level)
+  # Element (d, n) gets draw d's scaling times row n's SD.
+  sd <- outer(scaling, sd_log)
+  noise <- matrix(stats::rnorm(length(lp)), nrow = nrow(lp))
+  exp(lp + sd * noise)
 }

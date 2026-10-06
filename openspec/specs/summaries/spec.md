@@ -40,11 +40,15 @@ An effect the fit omitted (site:year for single-year data, density when not fitt
 
 ### Requirement: Fitted values, residuals, and augment
 
-`fitted()` SHALL return the posterior median of the expected response at each observed row (weight, size, the dry:wet ratio, the carbon fraction, or, for density, the expected count on that row's transect area), and `residuals()` the posterior median of the deviance residual under the model's likelihood. `augment()` SHALL return the input data with `fitted` and `residual` columns equal to those values, and no interval columns.
+`fitted()` SHALL return the posterior median of the expected response at each observed row (weight, size, the dry:wet ratio, the carbon fraction, for density the expected count on that row's transect area, or for cover the expected wet biomass per m² of that row's plot), and `residuals()` the posterior median of the deviance residual under the model's likelihood. `augment()` SHALL return the input data with `fitted` and `residual` columns equal to those values, and no interval columns added.
 
 #### Scenario: augment agrees with fitted and residuals
-- **WHEN** `augment(fit)` is called on a weight, size, density, wet/dry, or carbon fit
+- **WHEN** `augment(fit)` is called on a weight, size, density, wet/dry, carbon, or cover biomass fit
 - **THEN** its `fitted` and `residual` columns equal `fitted(fit)` and `residuals(fit)`
+
+#### Scenario: augment keeps the in situ biomass of a cover biomass fit
+- **WHEN** `augment(fit)` is called on a cover biomass fit
+- **THEN** it returns the fitted surveys with their paired `estimate`, `lower`, and `upper` columns unchanged
 
 ### Requirement: Print and summary
 
@@ -61,6 +65,10 @@ An effect the fit omitted (site:year for single-year data, density when not fitt
 #### Scenario: A density fit has no predictor line
 - **WHEN** `print()` is called on a density fit
 - **THEN** the header has no predictor line, since the area is an offset rather than a predictor
+
+#### Scenario: A cover biomass fit has no predictor line
+- **WHEN** `print()` is called on a cover biomass fit
+- **THEN** the header has no predictor line, since cover is derived from the canopy, plot, and tide columns rather than supplied
 
 #### Scenario: A wet/dry fit has no predictor or group line
 - **WHEN** `print()` is called on a wet/dry fit whose data have no `site` or `year` column
@@ -84,7 +92,7 @@ An effect the fit omitted (site:year for single-year data, density when not fitt
 
 ### Requirement: Errors for unsupported objects
 
-A kelpbio function taking a fit (the generics `kb_model_describe()`, `kb_stancode()`, and `samples()`, the prediction verbs `kb_predict_weight()`, `kb_predict_size()`, `kb_predict_density()`, `kb_predict_wetdry()`, and `kb_predict_carbon()`, and `kb_new_data()`) called on an object it does not support SHALL error with a `cli` message naming the argument and the required class (`kb_fit`, or the model class such as `kb_fit_weight`, `kb_fit_size`, `kb_fit_density`, `kb_fit_wetdry`, or `kb_fit_carbon` for the prediction verbs) and pointing to the `kb_fit_*()` functions, attributed to the function the user called. Any method called on a fit whose model has no implementation for it SHALL error naming the object's class rather than return a value. kelpbio SHALL NOT add default methods to generics owned by other packages.
+A kelpbio function taking a fit (the generics `kb_model_describe()`, `kb_stancode()`, and `samples()`, the prediction verbs `kb_predict_weight()`, `kb_predict_size()`, `kb_predict_density()`, `kb_predict_wetdry()`, `kb_predict_carbon()`, and `kb_predict_cover_biomass()`, and `kb_new_data()`) called on an object it does not support SHALL error with a `cli` message naming the argument and the required class (`kb_fit`, or the model class such as `kb_fit_weight`, `kb_fit_size`, `kb_fit_density`, `kb_fit_wetdry`, `kb_fit_carbon`, or `kb_fit_cover_biomass` for the prediction verbs) and pointing to the `kb_fit_*()` functions, attributed to the function the user called. Any method called on a fit whose model has no implementation for it SHALL error naming the object's class rather than return a value. kelpbio SHALL NOT add default methods to generics owned by other packages.
 
 #### Scenario: A non-fit errors helpfully
 - **WHEN** `kb_model_describe(1)` or `kb_predict_weight(1)` is called

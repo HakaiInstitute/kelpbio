@@ -4,6 +4,11 @@ test_that("a column in the wrong unit warns, naming it and the expected unit", {
   expect_snapshot(warn_implausible_units(data.frame(stipes_m2 = c(20000, 30000)), "`d`"))
   expect_snapshot(warn_implausible_units(data.frame(area_m2 = c(4e5, 2e5)), "`d`"))
   expect_snapshot(warn_implausible_units(data.frame(wet_mass_g = c(4000, 5000)), "`d`"))
+  expect_snapshot(warn_implausible_units(data.frame(tide_height_m = c(50, 120)), "`d`"))
+  expect_warning(
+    warn_implausible_units(data.frame(plot_area_m2 = c(2e6, 3e6)), "`d`"),
+    "unusually large for square metres"
+  )
   expect_warning(
     warn_implausible_units(data.frame(area_m2 = c(0.004, 0.006)), "`d`"),
     "unusually small for square metres"

@@ -269,6 +269,75 @@
       from. Regularizing priors were placed on all parameters (see the notation
       form for the hyperparameters).
 
+# kb_model_describe renders the cover biomass model with each species' priors
+
+    Code
+      kb_model_describe(cover_biomass_nereo_fit)
+    Output
+      Cover biomass - Nereocystis luetkeana
+      Response: estimate, the in situ wet biomass of a plot (kg/m²), with compatibility limits lower and upper
+      
+      Likelihood
+        log(estimate) ~ Normal(log(mu), bScaling * sd)
+        mu = bFloor
+           + bCanopy * exp(bYear[year] + bSite[site]) * cover
+        cover = min(1, canopy_area_m2 * (1 + bTide * tide_height_m) / plot_area_m2)
+        sd = (log(upper) - log(lower)) / (2 * 1.96)  (log-scale SD of the in situ estimate)
+      
+      Random effects
+        bYear[year] ~ Normal(0, sYear)  year effect on log(bCanopy)
+        bSite[site] ~ Normal(0, sSite)  site effect on log(bCanopy)
+      
+      Priors
+        log(bCanopy)   ~ Normal(2, 1)
+        bFloor         ~ Normal(0, 0.1) T[0, ]
+        bTide          ~ Normal(0.276, 0.04) T[0, ]
+        bScaling       ~ Normal(1, 0.5) T[0, ]
+        sYear          ~ Exponential(1)
+        sSite          ~ Exponential(1)
+
+---
+
+    Code
+      kb_model_describe(cover_biomass_macro_fit)
+    Output
+      Cover biomass - Macrocystis pyrifera
+      Response: estimate, the in situ wet biomass of a plot (kg/m²), with compatibility limits lower and upper
+      
+      Likelihood
+        log(estimate) ~ Normal(log(mu), bScaling * sd)
+        mu = bFloor
+           + bCanopy * exp(bYear[year] + bSite[site]) * cover
+        cover = min(1, canopy_area_m2 * (1 + bTide * tide_height_m) / plot_area_m2)
+        sd = (log(upper) - log(lower)) / (2 * 1.96)  (log-scale SD of the in situ estimate)
+      
+      Random effects
+        bYear[year] ~ Normal(0, sYear)  year effect on log(bCanopy)
+        bSite[site] ~ Normal(0, sSite)  site effect on log(bCanopy)
+      
+      Priors
+        log(bCanopy)   ~ Normal(2, 1)
+        bFloor         ~ Normal(0.4, 0.3) T[0, ]
+        bTide          ~ Normal(0.227, 0.03) T[0, ]
+        bScaling       ~ Normal(1, 0.5) T[0, ]
+        sYear          ~ Exponential(1)
+        sSite          ~ Exponential(1)
+
+---
+
+    Code
+      kb_model_describe(cover_biomass_macro_fit, prose = TRUE)
+    Output
+      The in situ wet biomass of each surveyed plot was modelled as a biomass
+      floor, common to all sites and years, plus a term proportional to the
+      plot's tide-corrected canopy cover, whose slope varied by site and year.
+      Canopy area was increased by a fixed fraction per metre of tide height, and
+      cover was capped at 1. The log of each in situ estimate was modelled with a
+      normal likelihood whose standard deviation was the log-scale standard
+      deviation of that estimate multiplied by a scaling parameter. Regularizing
+      priors were placed on all parameters, with an informative prior on the tide
+      correction (see the notation form for the hyperparameters).
+
 # kb_model_describe follows the power-law form
 
     Code

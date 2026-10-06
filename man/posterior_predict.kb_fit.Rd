@@ -17,7 +17,9 @@
 
 \item{new_data}{A data frame with the fit's predictor column (and optional
 \code{site}, \code{year}, and \code{stipes_m2} columns; for a density fit, an optional
-\code{area_m2} column giving each transect's area, 1 m² when absent), or
+\code{area_m2} column giving each transect's area, 1 m² when absent;
+\code{canopy_area_m2}, \code{plot_area_m2}, \code{tide_height_m}, \code{lower}, and \code{upper} for
+a cover fit), or
 \code{NULL} to predict at the observed data.}
 
 \item{...}{Unused.}
@@ -43,7 +45,8 @@ A draws-by-observations (\verb{D x N}) matrix.
 }
 \description{
 Draws from the posterior predictive distribution: replicate responses (weights,
-plant sizes, transect counts, or dry:wet ratios) carrying both parameter uncertainty and observation noise from
+plant sizes, transect counts, dry:wet ratios, carbon fractions, or in situ
+biomass estimates) carrying both parameter uncertainty and observation noise from
 the model's likelihood. With \code{new_data = NULL} the replicates are at the
 observed data, for use with \code{bayesplot::pp_check()}.
 }
@@ -55,9 +58,12 @@ The observation noise follows the fitted likelihood: Normal on log weight
 (\emph{Nereocystis} weight), Gamma (\emph{Macrocystis} weight), Weibull (\emph{Nereocystis}
 size), zero-truncated negative binomial (\emph{Macrocystis} size, so every draw is a
 whole number of at least 1), zero-inflated negative binomial (\emph{Nereocystis}
-density), negative binomial (\emph{Macrocystis} density), and Beta (wet/dry, so
-every draw lies between 0 and 1). Density draws are counts on each row's
-\code{area_m2}, or on 1 m² when \code{new_data} has no \code{area_m2} column.
+density), negative binomial (\emph{Macrocystis} density), Beta (wet/dry and
+carbon, so every draw lies between 0 and 1), and lognormal (cover). Density
+draws are counts on each row's \code{area_m2}, or on 1 m² when \code{new_data} has no
+\code{area_m2} column. Cover draws are in situ biomass estimates whose log-scale SD
+is \code{bScaling} times that implied by the row's \code{lower} and \code{upper} (at the
+fit's \code{conf_level}), so cover \code{new_data} must carry those columns.
 
 The observation noise is drawn in R, for every \code{new_data} including \code{NULL}, so
 repeated calls return different replicates. Set a seed with \code{set.seed()} for
@@ -80,6 +86,7 @@ Other generics:
 \code{\link[=posterior_epred.kb_fit]{posterior_epred.kb_fit()}},
 \code{\link[=posterior_linpred.kb_fit]{posterior_linpred.kb_fit()}},
 \code{\link[=predict.kb_fit_carbon]{predict.kb_fit_carbon()}},
+\code{\link[=predict.kb_fit_cover_biomass]{predict.kb_fit_cover_biomass()}},
 \code{\link[=predict.kb_fit_density]{predict.kb_fit_density()}},
 \code{\link[=predict.kb_fit_size]{predict.kb_fit_size()}},
 \code{\link[=predict.kb_fit_weight]{predict.kb_fit_weight()}},

@@ -50,7 +50,9 @@ For a *Nereocystis* fit with the density effect, each row SHALL use its `stipes_
 - *Macrocystis* size, whose frond count is a zero-truncated negative binomial: the expected count is the truncated mean, above the untruncated mean `exp(mu)`.
 - *Nereocystis* density, whose stipe count is a zero-inflated negative binomial: the expected count is `(1 - zi) * exp(mu)`, below the mean of a transect holding stipes, `exp(mu)`, where `zi` is the zero-inflation probability.
 
-The prediction verbs, `fitted()`, and `augment()` SHALL summarise `posterior_epred()`; the density verb at 1 m². `posterior_predict()` SHALL add observation noise from the model's likelihood, so repeated calls differ unless a seed is set; for size it draws plant sizes, and *Macrocystis* draws are whole numbers of at least 1; for density it draws transect counts, whole numbers of at least 0; for wet/dry and carbon it draws ratios or fractions between 0 and 1. `log_lik()` SHALL return the deterministic pointwise log-likelihood of the observed data, suitable for `loo::loo()`, and error for a fit with no observations. `prior_summary()` SHALL return the priors used.
+For cover biomass, whose residual is the in situ estimation error rather than variation in biomass, the expected biomass is the inverse link, `exp(mu)`.
+
+The prediction verbs, `fitted()`, and `augment()` SHALL summarise `posterior_epred()`; the density verb at 1 m². `posterior_predict()` SHALL add observation noise from the model's likelihood, so repeated calls differ unless a seed is set; for size it draws plant sizes, and *Macrocystis* draws are whole numbers of at least 1; for density it draws transect counts, whole numbers of at least 0; for wet/dry and carbon it draws ratios or fractions between 0 and 1; for cover biomass it draws positive in situ biomass estimates, with each row's precision taken from its `lower` and `upper`, which `new_data` SHALL then carry. `log_lik()` SHALL return the deterministic pointwise log-likelihood of the observed data, suitable for `loo::loo()`, and error for a fit with no observations. `prior_summary()` SHALL return the priors used.
 
 #### Scenario: Expected weight exceeds the median for Nereocystis
 - **WHEN** `posterior_epred()` and `posterior_linpred(transform = TRUE)` are called on the same *Nereocystis* weight rows
@@ -71,6 +73,10 @@ The prediction verbs, `fitted()`, and `augment()` SHALL summarise `posterior_epr
 #### Scenario: Density draws default to one square metre
 - **WHEN** `posterior_epred()` is called on a density fit with `new_data` lacking `area_m2`
 - **THEN** it equals the same call with `area_m2 = 1`, and its summary equals `kb_predict_density()` at those rows
+
+#### Scenario: Cover predictive draws need the in situ limits
+- **WHEN** `posterior_predict()` is called on a cover biomass fit with `new_data` lacking `lower` or `upper`
+- **THEN** it errors naming the missing columns
 
 #### Scenario: Predictive draws are reproducible under a seed
 - **WHEN** `posterior_predict()` is called twice after the same `set.seed()`
@@ -179,6 +185,7 @@ Each model SHALL have one prediction verb, `kb_predict_<model>()`, returning a `
 - Weight: `kb_predict_weight(fit, new_data)` predicts expected weight (kg). `new_data` SHALL have the species predictor column (`diameter_mm` for *Nereocystis*, `fronds` for *Macrocystis*). New data SHALL use the predictor reference stored at fit time.
 - Size: `kb_predict_size(fit, new_data)` predicts expected size, the mean of the size distribution: sub-bulb diameter (mm) for *Nereocystis*, and fronds at 1 m for *Macrocystis*, among plants with at least one. `new_data` needs no columns.
 - Density: `kb_predict_density(fit, new_data)` predicts expected density, stipes (*Nereocystis*) or plants (*Macrocystis*) per m², in a response column named `stipes_m2` or `plants_m2`. It SHALL NOT read an `area_m2` column, so the estimate is per m² at the observed data too. For *Nereocystis* it includes the probability that a transect holds no stipes.
+- Cover biomass: `kb_predict_cover_biomass(fit, new_data)` predicts the expected wet biomass (kg/m²) of a plot from its `canopy_area_m2`, `plot_area_m2`, and `tide_height_m`, which `new_data` SHALL carry.
 - Wet/dry: `kb_predict_wetdry(fit)` predicts the expected dry:wet mass ratio, one row for the population of samples. The model has no grouping factors or predictor, so the verb takes no `new_data`; the same summary arguments apply.
 - Carbon: `kb_predict_carbon(fit)` predicts the expected carbon fraction of dry mass, one row for the population of samples, on the same terms as wet/dry.
 
@@ -187,7 +194,7 @@ Each model SHALL have one prediction verb, `kb_predict_<model>()`, returning a `
 A verb called with a `by` argument, or with a character vector in place of `new_data`, SHALL error, showing the equivalent call through `kb_new_data()`.
 
 #### Scenario: Predict at the observed data
-- **WHEN** `kb_predict_weight(fit)` or `kb_predict_size(fit)` is called
+- **WHEN** `kb_predict_weight(fit)`, `kb_predict_size(fit)`, or `kb_predict_cover_biomass(fit)` is called
 - **THEN** it returns one prediction per observed row, whose `estimate` equals `augment(fit)$fitted`
 
 #### Scenario: Density at the observed data is per square metre
@@ -195,12 +202,16 @@ A verb called with a `by` argument, or with a character vector in place of `new_
 - **THEN** it returns one prediction per observed transect, whose `estimate` equals `augment(fit)$fitted` divided by the transect's `area_m2`, up to rounding
 
 #### Scenario: Predict at supplied rows
-- **WHEN** `new_data` carries the columns the model needs (the species predictor for weight, none for size or density)
+- **WHEN** `new_data` carries the columns the model needs (the species predictor for weight, none for size or density, `canopy_area_m2`, `plot_area_m2`, and `tide_height_m` for cover biomass)
 - **THEN** predictions are returned at exactly those rows, in their order
 
 #### Scenario: Density ignores the transect area
 - **WHEN** `kb_predict_density()` is called at the same site and year with `area_m2` of 10 and of 20
 - **THEN** the two estimates are equal
+
+#### Scenario: Zero cover predicts the floor
+- **WHEN** `kb_predict_cover_biomass()` is called at `canopy_area_m2 = 0`
+- **THEN** the prediction is the same for every site and year
 
 #### Scenario: Group predictions come from a grid
 - **WHEN** `kb_predict_size(fit, kb_new_data(fit, by = "site"))` is called
@@ -228,7 +239,7 @@ A verb called with a `by` argument, or with a character vector in place of `new_
 
 ### Requirement: Prediction grids
 
-`kb_new_data(fit, by = NULL, ...)` SHALL return a data frame for use as `new_data` with a weight, size, or density fit: one row per level of the factors named in `by` (`NULL` for a single row with no grouping columns, `"site"`, `"year"`, or `c("site", "year")`, the last taking only the combinations in the fitted data), in the fit's level order. For a weight fit the rows SHALL be crossed with values of the species predictor, supplied as a named numeric vector of any length (`diameter_mm` for *Nereocystis*, `fronds` for *Macrocystis*) and defaulting to 30 evenly spaced values over the observed range; the predictor column SHALL take the input column's name. The grid SHALL hold no `area_m2` column. It SHALL error, naming the valid values, for an unknown `by` value, a predictor argument the fit does not have (the other species' predictor, or any predictor for a size or density fit), or a fit with no grouping factors.
+`kb_new_data(fit, by = NULL, ...)` SHALL return a data frame for use as `new_data` with a weight, size, density, or cover biomass fit: one row per level of the factors named in `by` (`NULL` for a single row with no grouping columns, `"site"`, `"year"`, or `c("site", "year")`, the last taking only the combinations in the fitted data), in the fit's level order. For a weight fit the rows SHALL be crossed with values of the species predictor, supplied as a named numeric vector of any length (`diameter_mm` for *Nereocystis*, `fronds` for *Macrocystis*) and defaulting to 30 evenly spaced values over the observed range; the predictor column SHALL take the input column's name. For a cover biomass fit the rows SHALL be crossed with values of tide-corrected cover, supplied as `cover` (proportions from 0 to 1) and defaulting to 30 evenly spaced values from 0 to 1, each row being a unit plot at zero tide height with the `canopy_area_m2`, `plot_area_m2`, and `tide_height_m` columns the prediction reads. The grid SHALL hold no `area_m2` column. It SHALL error, naming the valid values, for an unknown `by` value, a `cover` outside 0 to 1, a predictor argument the fit does not have (the other species' predictor, or any predictor for a size or density fit), or a fit with no grouping factors.
 
 #### Scenario: Curves over a named predictor
 - **WHEN** `kb_new_data(fit, by = "site", diameter_mm = c(20, 40))` is called on a *Nereocystis* weight fit
@@ -237,6 +248,10 @@ A verb called with a `by` argument, or with a character vector in place of `new_
 #### Scenario: A single predictor value
 - **WHEN** `kb_new_data(fit, by = "site", diameter_mm = 50)` is called on a *Nereocystis* weight fit
 - **THEN** it returns one row per fitted site, each at 50 mm
+
+#### Scenario: Cover grids agree with survey rows
+- **WHEN** `kb_predict_cover_biomass(fit, kb_new_data(fit, by = "site", cover = 0.5))` is called, and `kb_predict_cover_biomass()` at the same sites with `canopy_area_m2 = 50`, `plot_area_m2 = 100`, and `tide_height_m = 0`
+- **THEN** the estimates are equal
 
 #### Scenario: A default predictor sequence
 - **WHEN** `kb_new_data(fit)` is called on a weight fit
@@ -256,7 +271,7 @@ A verb called with a `by` argument, or with a character vector in place of `new_
 
 ### Requirement: New data are validated
 
-`new_data` SHALL be validated before prediction: it SHALL be a data frame; for weight, *Nereocystis* `diameter_mm` SHALL be numeric, greater than 0, with no missing values, and *Macrocystis* `fronds` a positive whole number with no missing values; for density, an `area_m2` column, where present, SHALL be numeric, greater than 0, with no missing values. Size and density `new_data` need no columns, and wet/dry and carbon take no `new_data`. An invalid value SHALL error with a message naming the column, pinned by `tests/testthat/_snaps/chk.md`.
+`new_data` SHALL be validated before prediction: it SHALL be a data frame; for weight, *Nereocystis* `diameter_mm` SHALL be numeric, greater than 0, with no missing values, and *Macrocystis* `fronds` a positive whole number with no missing values; for density, an `area_m2` column, where present, SHALL be numeric, greater than 0, with no missing values; for cover biomass, `canopy_area_m2` (`>= 0`), `plot_area_m2` (> 0 and at least `canopy_area_m2`), and `tide_height_m` SHALL be present, numeric, with no missing values. Size and density `new_data` need no columns, and wet/dry and carbon take no `new_data`. An invalid value SHALL error with a message naming the column, pinned by `tests/testthat/_snaps/chk.md`.
 
 #### Scenario: An impossible diameter errors
 - **WHEN** weight `new_data` has a `diameter_mm` that is zero, negative, missing, or not numeric
@@ -269,6 +284,10 @@ A verb called with a `by` argument, or with a character vector in place of `new_
 #### Scenario: Size and density new data need no columns
 - **WHEN** `kb_predict_size()` or `kb_predict_density()` is called with a data frame of only `site`, or of no columns and `n` rows
 - **THEN** it returns one prediction per row
+
+#### Scenario: Cover new data need the survey columns
+- **WHEN** `kb_predict_cover_biomass(fit, new_data)` is called with `new_data` lacking `tide_height_m`, or with a `canopy_area_m2` above its `plot_area_m2`
+- **THEN** prediction errors naming the column
 
 #### Scenario: An impossible area errors
 - **WHEN** density `new_data` has an `area_m2` of zero, negative, missing, or not numeric

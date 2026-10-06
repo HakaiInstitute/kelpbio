@@ -95,3 +95,15 @@ log_lik.kb_fit <- function(object, ...) {
 .log_lik.kb_fit_carbon <- function(fit, mu) {
   .log_lik_beta_mean(fit, mu, carbon_fraction(fit$data))
 }
+
+# Normal on the log in situ estimate. The Jacobian (-log estimate) makes it the
+# log density of the estimate itself, comparable with a model fitted on that
+# scale.
+#' @export
+.log_lik.kb_fit_cover_biomass <- function(fit, mu) {
+  scaling <- as.vector(posterior::draws_of(fit$draws$bScaling))
+  sd_log <- cover_log_sd(fit$data$lower, fit$data$upper, fit$meta$conf_level)
+  .per_draw(mu, log(fit$data$estimate), function(y, mu_d, d) {
+    extras::log_lik_norm(y, mu_d, sd = scaling[d] * sd_log) - y
+  })
+}

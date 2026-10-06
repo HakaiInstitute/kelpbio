@@ -37,6 +37,8 @@ kb_model_describe(fit_weight_sim_macro, prose = TRUE)
 Other model:
 \code{\link[=kb_fit_carbon_macro]{kb_fit_carbon_macro()}},
 \code{\link[=kb_fit_carbon_nereo]{kb_fit_carbon_nereo()}},
+\code{\link[=kb_fit_cover_biomass_macro]{kb_fit_cover_biomass_macro()}},
+\code{\link[=kb_fit_cover_biomass_nereo]{kb_fit_cover_biomass_nereo()}},
 \code{\link[=kb_fit_density_macro]{kb_fit_density_macro()}},
 \code{\link[=kb_fit_density_nereo]{kb_fit_density_nereo()}},
 \code{\link[=kb_fit_size_macro]{kb_fit_size_macro()}},

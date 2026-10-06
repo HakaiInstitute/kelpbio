@@ -82,6 +82,12 @@ kb_model_describe.kb_fit_carbon <- function(fit, prose = FALSE) {
   .render_model(.model_spec_carbon(fit), prose)
 }
 
+#' @export
+kb_model_describe.kb_fit_cover_biomass <- function(fit, prose = FALSE) {
+  chk::chk_flag(prose)
+  .render_model(.model_spec_cover_biomass(fit), prose)
+}
+
 # ---- species model specs (single source for notation and prose) -------------
 
 .model_spec_nereo <- function(fit) {
@@ -460,6 +466,55 @@ kb_model_describe.kb_fit_carbon <- function(fit, prose = FALSE) {
       "all samples. Samples were pooled over the months, sites, and tissues ",
       "they came from. Regularizing priors were placed on all parameters (see ",
       "the notation form for the hyperparameters)."
+    )
+  )
+}
+
+# One model for both species; the species differ only in their default priors.
+# The canopy prior is lognormal, so it is shown on the log scale it is set on.
+.model_spec_cover_biomass <- function(fit) {
+  pri <- fit$meta$priors
+  z <- format(signif(stats::qnorm(1 - (1 - fit$meta$conf_level) / 2), 3))
+  list(
+    title = "Cover biomass",
+    species = .species_label(fit$meta$species),
+    response_desc = paste0(
+      "estimate, the in situ wet biomass of a plot (kg/m\u00b2), ",
+      "with compatibility limits lower and upper"
+    ),
+    likelihood = "log(estimate) ~ Normal(log(mu), bScaling * sd)",
+    mean_lhs = "mu",
+    mean_terms = c("bFloor", "bCanopy * exp(bYear[year] + bSite[site]) * cover"),
+    centering = paste0(
+      "cover = min(1, canopy_area_m2 * (1 + bTide * tide_height_m) / plot_area_m2)\n",
+      "  sd = (log(upper) - log(lower)) / (2 * ",
+      z,
+      ")  (log-scale SD of the in situ estimate)"
+    ),
+    random = list(
+      list(term = "bYear[year]", sd = "sYear", gloss = "year effect on log(bCanopy)"),
+      list(term = "bSite[site]", sd = "sSite", gloss = "site effect on log(bCanopy)")
+    ),
+    priors = list(
+      `log(bCanopy)` = pri$canopy,
+      bFloor = pri$floor,
+      bTide = pri$tide,
+      bScaling = pri$scaling,
+      sYear = pri$sd_year,
+      sSite = pri$sd_site
+    ),
+    truncated = c("bFloor", "bTide", "bScaling"),
+    prose = paste0(
+      "The in situ wet biomass of each surveyed plot was modelled as a biomass ",
+      "floor, common to all sites and years, plus a term proportional to the ",
+      "plot's tide-corrected canopy cover, whose slope varied by site and year. ",
+      "Canopy area was increased by a fixed fraction per metre of tide height, ",
+      "and cover was capped at 1. The log of each in situ estimate was modelled ",
+      "with a normal likelihood whose standard deviation was the log-scale ",
+      "standard deviation of that estimate multiplied by a scaling parameter. ",
+      "Regularizing priors were placed on all parameters, with an informative ",
+      "prior on the tide correction (see the notation form for the ",
+      "hyperparameters)."
     )
   )
 }

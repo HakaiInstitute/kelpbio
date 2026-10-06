@@ -153,3 +153,14 @@ test_that("the size-by-site plot is visually stable", {
   p <- kb_predict_size(size_macro_fit, kb_new_data(size_macro_fit, by = "site"))
   vdiffr::expect_doppelganger("size by site", kb_plot_predictions(p))
 })
+
+test_that("a cover curve plots a ribbon over tide-corrected cover", {
+  fit <- cover_biomass_nereo_fit
+  p <- kb_predict_cover_biomass(fit, kb_new_data(fit))
+  gg <- kb_plot_predictions(p)
+  expect_s3_class(gg, "ggplot")
+  geoms <- vapply(gg$layers, function(l) class(l$geom)[1], character(1))
+  expect_true(any(grepl("GeomRibbon", geoms)))
+  expect_identical(gg$labels$x, "Tide-corrected canopy cover")
+  expect_identical(gg$labels$y, "Wet biomass")
+})

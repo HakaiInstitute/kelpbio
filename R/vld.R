@@ -18,7 +18,10 @@
 
 # The models with grouping factors, which kb_new_data() builds grids for.
 .vld_kb_fit_grouped <- function(x) {
-  inherits(x, c("kb_fit_weight", "kb_fit_size", "kb_fit_density"))
+  inherits(
+    x,
+    c("kb_fit_weight", "kb_fit_size", "kb_fit_density", "kb_fit_cover_biomass")
+  )
 }
 
 .vld_kb_fit_wetdry <- function(x) {
@@ -108,3 +111,53 @@
 .vld_observed_data <- function(fit) {
   nrow(fit$data) > 0L
 }
+
+.vld_kb_fit_cover_biomass <- function(x) {
+  inherits(x, "kb_fit_cover_biomass")
+}
+
+# The survey columns of cover biomass data and new_data: a canopy area within a positive
+# plot area, and the tide height, all numeric with no missing values.
+.vld_cover_survey <- function(x) {
+  is.data.frame(x) &&
+    all(c("canopy_area_m2", "plot_area_m2", "tide_height_m") %in% names(x)) &&
+    is.numeric(x$canopy_area_m2) &&
+    !anyNA(x$canopy_area_m2) &&
+    all(x$canopy_area_m2 >= 0) &&
+    .vld_positive_measure(x$plot_area_m2) &&
+    all(x$canopy_area_m2 <= x$plot_area_m2) &&
+    is.numeric(x$tide_height_m) &&
+    !anyNA(x$tide_height_m)
+}
+
+# Compatibility limits of an in situ biomass estimate: positive, with no missing
+# values, and the lower strictly below the upper so the implied SD is positive.
+.vld_biomass_limits <- function(x) {
+  is.data.frame(x) &&
+    all(c("lower", "upper") %in% names(x)) &&
+    .vld_positive_measure(x$lower) &&
+    .vld_positive_measure(x$upper) &&
+    all(x$lower < x$upper)
+}
+
+# The in situ biomass of a cover biomass fit: one row per site-year, each a valid
+# estimate within its limits.
+.vld_plot_biomass <- function(x) {
+  is.data.frame(x) &&
+    all(c("site", "year") %in% names(x)) &&
+    (is.character(x$site) || is.factor(x$site)) &&
+    (is.character(x$year) || is.factor(x$year)) &&
+    !anyNA(x$site) &&
+    !anyNA(x$year) &&
+    .vld_biomass_estimate(x) &&
+    !anyDuplicated(site_year_key(x$site, x$year))
+}
+
+# An in situ biomass estimate: positive, and within its limits.
+.vld_biomass_estimate <- function(x) {
+  .vld_biomass_limits(x) &&
+    "estimate" %in% names(x) &&
+    .vld_positive_measure(x$estimate) &&
+    all(x$lower <= x$estimate & x$estimate <= x$upper)
+}
+

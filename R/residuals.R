@@ -9,8 +9,9 @@
 #' on weight (*Macrocystis* weight), Weibull on diameter (*Nereocystis* size),
 #' zero-truncated negative binomial on frond count (*Macrocystis* size),
 #' zero-inflated negative binomial on stipe count (*Nereocystis* density),
-#' negative binomial on plant count (*Macrocystis* density), and Beta on the
-#' dry:wet mass ratio (wet/dry).
+#' negative binomial on plant count (*Macrocystis* density), Beta on the
+#' dry:wet mass ratio (wet/dry) and the carbon fraction (carbon), and Normal on
+#' the log in situ biomass estimate (cover).
 #'
 #' A size residual is zero where the observation equals the value that
 #' maximises its likelihood with the shape or overdispersion held fixed: the
@@ -100,4 +101,13 @@ residuals.kb_fit <- function(object, ...) {
 #' @export
 .deviance.kb_fit_carbon <- function(fit, mu) {
   .deviance_beta_mean(fit, mu, carbon_fraction(fit$data))
+}
+
+#' @export
+.deviance.kb_fit_cover_biomass <- function(fit, mu) {
+  scaling <- as.vector(posterior::draws_of(fit$draws$bScaling))
+  sd_log <- cover_log_sd(fit$data$lower, fit$data$upper, fit$meta$conf_level)
+  .per_draw(mu, log(fit$data$estimate), function(y, mu_d, d) {
+    extras::res_norm(y, mu_d, sd = scaling[d] * sd_log)
+  })
 }

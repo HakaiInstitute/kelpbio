@@ -204,3 +204,33 @@ test_that(".chk_same_species and .chk_same_ndraws name the fits", {
     error = TRUE
   )
 })
+
+
+test_that(".chk_kb_fit_cover_biomass passes a cover biomass fit through and errors otherwise", {
+  expect_invisible(.chk_kb_fit_cover_biomass(cover_biomass_macro_fit))
+  expect_error(.chk_kb_fit_cover_biomass(carbon_macro_fit), "must be a <kb_fit_cover_biomass> object")
+})
+
+test_that(".chk_cover_survey errors name the survey column", {
+  good <- data.frame(canopy_area_m2 = 40, plot_area_m2 = 200, tide_height_m = 0.5)
+  expect_invisible(.chk_cover_survey(good))
+  expect_snapshot(error = TRUE, .chk_cover_survey(good[c("canopy_area_m2", "plot_area_m2")]))
+  bad <- good
+  bad$canopy_area_m2 <- 300
+  expect_snapshot(error = TRUE, .chk_cover_survey(bad))
+  bad <- good
+  bad$tide_height_m <- "low"
+  expect_error(.chk_cover_survey(bad), "tide_height_m")
+  expect_error(.chk_cover_survey(1), "must be a data frame")
+})
+
+test_that(".chk_biomass_limits and .chk_biomass_estimate name the offending limit", {
+  good <- data.frame(estimate = 2, lower = 1, upper = 4)
+  expect_invisible(.chk_biomass_limits(good))
+  expect_invisible(.chk_biomass_estimate(good))
+  expect_snapshot(error = TRUE, .chk_biomass_limits(good["estimate"]))
+  expect_error(.chk_biomass_limits(transform(good, lower = 0)), "lower")
+  expect_error(.chk_biomass_limits(transform(good, upper = 1)), "less than")
+  expect_error(.chk_biomass_estimate(transform(good, estimate = 0.5)), "estimate")
+  expect_error(.chk_biomass_estimate(transform(good, estimate = 5)), "upper")
+})

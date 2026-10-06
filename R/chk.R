@@ -82,7 +82,7 @@
   cli::cli_abort(
     c(
       "{.arg {x_name}} is a {.cls {class(x)[1]}} object, whose model has no grouping factors.",
-      i = "Grids are built for weight, size, and density fits."
+      i = "Grids are built for weight, size, density, and cover biomass fits."
     ),
     call = call
   )
@@ -441,3 +441,157 @@
 .chk_new_data.kb_fit_density <- function(fit, new_data) {
   .chk_new_data_density(new_data)
 }
+
+.chk_kb_fit_cover_biomass <- function(
+  x,
+  x_name = deparse(substitute(x)),
+  call = rlang::caller_env()
+) {
+  if (.vld_kb_fit_cover_biomass(x)) {
+    return(invisible(x))
+  }
+  cli::cli_abort(
+    c(
+      "{.arg {x_name}} must be a {.cls kb_fit_cover_biomass} object.",
+      i = "Supported fits are created by the {.code kb_fit_cover_biomass_*()} functions."
+    ),
+    call = call
+  )
+}
+
+# `x_name` names the data frame; column messages name the column within it.
+.chk_cover_survey <- function(x, x_name = deparse(substitute(x))) {
+  if (.vld_cover_survey(x)) {
+    return(invisible(x))
+  }
+  if (!is.data.frame(x)) {
+    cli::cli_abort("{x_name} must be a data frame.")
+  }
+  chk::chk_superset(
+    names(x),
+    c("canopy_area_m2", "plot_area_m2", "tide_height_m"),
+    x_name = x_name
+  )
+  nm <- kb_xname(x_name, "canopy_area_m2")
+  chk::chk_numeric(x$canopy_area_m2, x_name = nm)
+  chk::chk_not_any_na(x$canopy_area_m2, x_name = nm)
+  chk::chk_gte(x$canopy_area_m2, value = 0, x_name = nm)
+  .chk_positive_measure(x$plot_area_m2, x_name = kb_xname(x_name, "plot_area_m2"))
+  if (any(x$canopy_area_m2 > x$plot_area_m2)) {
+    cli::cli_abort(c(
+      "{nm} must not exceed {.field plot_area_m2}.",
+      i = "The canopy is the area delineated within the plot."
+    ))
+  }
+  nm <- kb_xname(x_name, "tide_height_m")
+  chk::chk_numeric(x$tide_height_m, x_name = nm)
+  chk::chk_not_any_na(x$tide_height_m, x_name = nm)
+}
+
+# The data check shared by both cover species: the survey columns of `data`, and
+# the in situ biomass when supplied.
+.chk_cover_biomass_data <- function(data, biomass, x_name, call = rlang::caller_env()) {
+  chk::chk_data(data, x_name = x_name)
+  chk::chk_superset(
+    names(data),
+    c("canopy_area_m2", "plot_area_m2", "tide_height_m", "site", "year"),
+    x_name = x_name
+  )
+  # The response comes from `biomass`; columns of the same name in `data` would
+  # be ambiguous once the two are joined.
+  in_data <- intersect(c("estimate", "lower", "upper"), names(data))
+  if (length(in_data)) {
+    cli::cli_abort(
+      c(
+        "{x_name} must not have the column{?s} {.field {in_data}}.",
+        i = "Supply the in situ biomass through {.arg biomass}."
+      ),
+      call = call
+    )
+  }
+  .chk_cover_survey(data, x_name)
+  .chk_group_columns(data, x_name)
+  warn_implausible_units(data, x_name)
+  if (!is.null(biomass)) {
+    .chk_plot_biomass(biomass, call = call)
+  }
+  invisible(data)
+}
+
+# `site` and `year`: character or factor, with no missing values.
+.chk_group_columns <- function(x, x_name) {
+  for (col in c("site", "year")) {
+    nm <- kb_xname(x_name, col)
+    chk::chk_character_or_factor(x[[col]], x_name = nm)
+    chk::chk_not_any_na(x[[col]], x_name = nm)
+  }
+  invisible(x)
+}
+
+.chk_plot_biomass <- function(
+  x,
+  x_name = "`biomass`",
+  call = rlang::caller_env()
+) {
+  if (.vld_plot_biomass(x)) {
+    return(invisible(x))
+  }
+  chk::chk_data(x, x_name = x_name)
+  chk::chk_superset(
+    names(x),
+    c("site", "year", "estimate", "lower", "upper"),
+    x_name = x_name
+  )
+  .chk_group_columns(x, x_name)
+  .chk_biomass_estimate(x, x_name)
+  dup <- unique(site_year_key(x$site, x$year)[
+    duplicated(site_year_key(x$site, x$year))
+  ])
+  cli::cli_abort(
+    c(
+      "{x_name} must have one row per site-year.",
+      i = "Repeated: {.val {dup}}."
+    ),
+    call = call
+  )
+}
+
+.chk_biomass_limits <- function(x, x_name = deparse(substitute(x))) {
+  if (.vld_biomass_limits(x)) {
+    return(invisible(x))
+  }
+  if (!all(c("lower", "upper") %in% names(x))) {
+    cli::cli_abort(c(
+      "{x_name} must have {.field lower} and {.field upper} columns.",
+      i = "They are the compatibility limits of the in situ biomass estimate, which set its precision."
+    ))
+  }
+  .chk_positive_measure(x$lower, x_name = kb_xname(x_name, "lower"))
+  .chk_positive_measure(x$upper, x_name = kb_xname(x_name, "upper"))
+  cli::cli_abort(
+    "{kb_xname(x_name, 'lower')} must be less than {.field upper}."
+  )
+}
+
+.chk_biomass_estimate <- function(x, x_name = deparse(substitute(x))) {
+  if (.vld_biomass_estimate(x)) {
+    return(invisible(x))
+  }
+  .chk_biomass_limits(x, x_name)
+  .chk_positive_measure(x$estimate, x_name = kb_xname(x_name, "estimate"))
+  if (any(x$lower > x$estimate)) {
+    cli::cli_abort(
+      "{kb_xname(x_name, 'lower')} must not exceed {.field estimate}."
+    )
+  }
+  cli::cli_abort(
+    "{kb_xname(x_name, 'upper')} must not be less than {.field estimate}."
+  )
+}
+
+# Both cover species take the same new_data (the survey columns).
+#' @export
+.chk_new_data.kb_fit_cover_biomass <- function(fit, new_data) {
+  .chk_cover_survey(new_data, x_name = "`new_data`")
+}
+
