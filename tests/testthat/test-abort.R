@@ -81,7 +81,8 @@ test_that("every internal generic has a default, and only display ones are total
       ".deviance",
       ".epred",
       ".linpred",
-      ".log_lik"
+      ".log_lik",
+      ".plant_sizes"
     )
   )
 

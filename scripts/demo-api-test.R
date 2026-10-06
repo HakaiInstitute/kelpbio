@@ -361,7 +361,7 @@ fit_none <- kb_fit_weight_nereo(
 
 # The same progress signal drives a Shiny app: point the fit at a directory with
 # progress_dir, run it in a background process (e.g. shiny::ExtendedTask), and
-# poll kb_fit_progress() from the app to read the completed fraction (0 to 1)
+# poll kb_progress() from the app to read the completed fraction (0 to 1)
 # while the fit runs. Here the fit is synchronous, so progress reads 1 once done.
 progress_dir <- tempfile()
 dir.create(progress_dir)
@@ -372,7 +372,7 @@ fit_polled <- kb_fit_weight_nereo(
   progress = "none",
   progress_dir = progress_dir
 )
-kb_fit_progress(progress_dir) # 1 (complete)
+kb_progress(progress_dir) # 1 (complete)
 
 # --- site:year effect edge cases ----------------------------------------------
 # The site:year effect is determined automatically from the data (there is no
@@ -738,3 +738,35 @@ fit_c
 kb_model_describe(fit_c)
 kb_predict_carbon(fit_c)
 kb_predict_carbon(kb_fit_carbon_macro(data_carbon_sim_macro))
+
+# =============================================================================
+# PLOT BIOMASS
+# =============================================================================
+# kb_predict_plot_biomass() combines a weight, a size, and a density fit of one
+# species into the expected biomass per m2 of each site-year surveyed for
+# density: density x mean plant weight over the size distribution, per draw.
+# measure = "dry" adds a wet/dry fit, "carbon" a carbon fit too (g C/m2).
+# weight_support / size_support say what data each fit has for the site-year:
+# "site-year", "site, year" (both, not together), "site", "year", or "none".
+
+set.seed(1)
+kb_predict_plot_biomass(
+  fit_weight_sim_nereo,
+  fit_size_sim_nereo,
+  fit_density_sim_nereo
+)
+kb_predict_plot_biomass(
+  fit_weight_sim_macro,
+  fit_size_sim_macro,
+  fit_density_sim_macro,
+  fit_wetdry_sim_macro,
+  fit_carbon_sim_macro,
+  measure = "carbon"
+) |>
+  kb_plot_predictions()
+# fits of different species, or different draw counts: an error
+try(kb_predict_plot_biomass(
+  fit_weight_sim_nereo,
+  fit_size_sim_macro,
+  fit_density_sim_nereo
+))

@@ -139,7 +139,7 @@ test_that("progress accepts only the three modes", {
   expect_error(kb_fit_weight_nereo(d, progress = "loud"), "must be one of")
 })
 
-test_that("progress_dir writes an artifact that kb_fit_progress reads as complete", {
+test_that("progress_dir writes an artifact that kb_progress reads as complete", {
   # Exercises the background "bar" path (callr subprocess) writing to a
   # caller-supplied progress_dir; the subprocess loads the installed package, so
   # skip on CRAN.
@@ -165,7 +165,7 @@ test_that("progress_dir writes an artifact that kb_fit_progress reads as complet
   # a caller-supplied progress_dir is left in place and reads complete
   expect_true(file.exists(file.path(dir, "manifest.rds")))
   expect_true(length(list.files(dir, pattern = "^samples.*\\.csv$")) >= 1L)
-  expect_identical(kb_fit_progress(dir), 1)
+  expect_identical(kb_progress(dir), 1)
 })
 
 test_that("a single-year fit records no site:year terms", {

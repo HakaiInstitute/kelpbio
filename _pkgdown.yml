@@ -22,7 +22,7 @@ reference:
     - kb_fit_wetdry_macro
     - kb_fit_carbon_nereo
     - kb_fit_carbon_macro
-    - kb_fit_progress
+    - kb_progress
 - title: "Priors"
   desc: "Specify priors for model parameters."
   contents:
@@ -82,6 +82,7 @@ reference:
     - kb_predict_density_by
     - kb_predict_wetdry
     - kb_predict_carbon
+    - kb_predict_plot_biomass
     - kb_plot_predictions
 - title: "Model Summaries and Diagnostics"
   desc: "Summarise fits, extract coefficients and draws, and assess convergence."

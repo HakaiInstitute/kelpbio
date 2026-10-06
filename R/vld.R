@@ -24,6 +24,16 @@
   inherits(x, "kb_fit_carbon")
 }
 
+# A list of fits shares one species.
+.vld_same_species <- function(fits) {
+  length(unique(vapply(fits, function(f) f$meta$species, character(1)))) == 1L
+}
+
+# A list of fits shares one number of posterior draws.
+.vld_same_ndraws <- function(fits) {
+  length(unique(vapply(fits, function(f) posterior::ndraws(f$draws), numeric(1)))) == 1L
+}
+
 .vld_representative_site <- function(representative_site, site_levels) {
   is.null(representative_site) ||
     (is.character(representative_site) &&

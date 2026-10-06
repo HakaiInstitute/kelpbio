@@ -98,3 +98,10 @@ test_that(".vld_kb_fit_carbon recognises a carbon fit", {
   expect_true(.vld_kb_fit_carbon(carbon_nereo_fit))
   expect_false(.vld_kb_fit_carbon(wetdry_nereo_fit))
 })
+
+test_that(".vld_same_species and .vld_same_ndraws compare fits", {
+  expect_true(.vld_same_species(list(weight_fit, size_nereo_fit)))
+  expect_false(.vld_same_species(list(weight_fit, size_macro_fit)))
+  expect_true(.vld_same_ndraws(list(weight_fit, size_nereo_fit)))
+  expect_false(.vld_same_ndraws(list(weight_fit, fit_size_sim_nereo)))
+})

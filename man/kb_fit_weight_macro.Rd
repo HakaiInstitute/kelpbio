@@ -54,7 +54,7 @@ bar), \code{"verbose"} (rstan's per-iteration output and diagnostic warnings), o
 \code{"none"} (silent). Controls fit-time console output only.}
 
 \item{progress_dir}{A string giving an existing directory in which to write a
-pollable progress artifact (read by \code{\link[=kb_fit_progress]{kb_fit_progress()}}), or \code{NULL} (the
+pollable progress artifact (read by \code{\link[=kb_progress]{kb_progress()}}), or \code{NULL} (the
 default) to write none.}
 }
 \value{
@@ -87,7 +87,7 @@ console output, never the fit; inspect convergence with \code{\link[=converged]{
 \code{\link[=glance]{glance()}}, or \code{\link[=summary]{summary()}} in every mode.
 
 Supply \code{progress_dir} (an existing directory) to have the fit write a progress
-record there, which \code{\link[=kb_fit_progress]{kb_fit_progress()}} reads to report the completed fraction
+record there, which \code{\link[=kb_progress]{kb_progress()}} reads to report the completed fraction
 from another R process (for example, to drive a progress indicator while the fit
 runs in the background).
 

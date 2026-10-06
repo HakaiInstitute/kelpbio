@@ -140,3 +140,16 @@ test_that(".chk_kb_fit_carbon passes a carbon fit through and errors otherwise",
   expect_invisible(.chk_kb_fit_carbon(carbon_macro_fit))
   expect_error(.chk_kb_fit_carbon(wetdry_macro_fit), "must be a <kb_fit_carbon> object")
 })
+
+test_that(".chk_same_species and .chk_same_ndraws name the fits", {
+  expect_invisible(.chk_same_species(list(weight = weight_fit, size = size_nereo_fit)))
+  expect_snapshot(
+    .chk_same_species(list(weight = weight_fit, size = size_macro_fit)),
+    error = TRUE
+  )
+  expect_invisible(.chk_same_ndraws(list(weight = weight_fit, size = size_nereo_fit)))
+  expect_snapshot(
+    .chk_same_ndraws(list(weight = weight_fit, size = fit_size_sim_nereo)),
+    error = TRUE
+  )
+})

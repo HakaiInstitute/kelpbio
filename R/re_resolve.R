@@ -10,6 +10,24 @@ re_draw <- function(n, sd_rvar) {
   posterior::rvar_rng(stats::rnorm, n, mean = 0, sd = sd_rvar)
 }
 
+# Draws (D x length(keys)) for the unknown rows of one effect, one draw per
+# distinct key, so rows naming the same new level share its effect: a new site
+# is one site, whichever rows name it. An NA key (the grouping column is absent)
+# is no particular level, so each such row draws its own.
+re_draw_shared <- function(keys, sd_rvar) {
+  named <- !is.na(keys)
+  group <- match(keys, unique(keys[named]))
+  group[!named] <- max(0L, group, na.rm = TRUE) + seq_len(sum(!named))
+  draws <- posterior::draws_of(re_draw(max(group), sd_rvar))
+  draws[, group, drop = FALSE]
+}
+
+# The level labels of an index from .grid_indices(), NA where the grid omits the
+# grouping column; all NA for an index without labels.
+re_labels <- function(idx) {
+  attr(idx, "labels", exact = TRUE) %||% rep(NA_character_, length(idx))
+}
+
 # One-factor random effect per row: known rows take their estimated effect; unknown
 # rows borrow the per-draw mean of the representative sites (rep_idx) if given,
 # else follow new_levels.
@@ -29,7 +47,7 @@ resolve_re1 <- function(param, idx, new_levels, sd_rvar, rep_idx = NULL) {
     if (!is.null(rep_idx)) {
       out[, !known] <- rowMeans(param_draws[, rep_idx, drop = FALSE])
     } else if (new_levels == "sample") {
-      out[, !known] <- posterior::draws_of(re_draw(sum(!known), sd_rvar))
+      out[, !known] <- re_draw_shared(re_labels(idx)[!known], sd_rvar)
     }
     # new_levels == "average" leaves unknown columns at zero.
   }
@@ -52,7 +70,11 @@ resolve_re2 <- function(param, i, j, new_levels, sd_rvar) {
     )
   }
   if (!all(known) && new_levels == "sample") {
-    out[, !known] <- posterior::draws_of(re_draw(sum(!known), sd_rvar))
+    # A cell is a level only when both its site and year are named.
+    site <- re_labels(i)[!known]
+    year <- re_labels(j)[!known]
+    keys <- ifelse(is.na(site) | is.na(year), NA_character_, site_year_key(site, year))
+    out[, !known] <- re_draw_shared(keys, sd_rvar)
   }
   posterior::rvar(out)
 }
@@ -68,12 +90,15 @@ rvar_index1 <- function(rv, idx) {
 # opens with this, so the level matching is defined once rather than per model.
 .grid_indices <- function(fit, grid, representative_site = NULL) {
   n <- nrow(grid)
+  # Each index carries its level labels, so rows naming the same new level can
+  # share one sampled effect (see re_draw_shared()).
   idx <- lapply(.group_vars(), function(nm) {
-    if (nm %in% names(grid)) {
-      match(as.character(grid[[nm]]), .fit_levels(fit, nm))
+    labels <- if (nm %in% names(grid)) {
+      as.character(grid[[nm]])
     } else {
-      rep(NA_integer_, n)
+      rep(NA_character_, n)
     }
+    structure(match(labels, .fit_levels(fit, nm)), labels = labels)
   })
   names(idx) <- .group_vars()
   rep_idx <- if (is.null(representative_site)) {

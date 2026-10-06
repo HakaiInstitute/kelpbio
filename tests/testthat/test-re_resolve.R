@@ -61,15 +61,17 @@ test_that(".grid_indices matches known levels and NAs the rest", {
   grid <- data.frame(diameter_mm = c(30, 30), site = c(s, "new_site"), year = y)
   ix <- .grid_indices(weight_fit, grid)
   expect_named(ix, c("site", "year", "rep"))
-  expect_identical(ix$site, c(1L, NA_integer_))
-  expect_identical(ix$year, c(1L, 1L))
+  expect_identical(as.vector(ix$site), c(1L, NA_integer_))
+  expect_identical(as.vector(ix$year), c(1L, 1L))
+  expect_identical(attr(ix$site, "labels"), c(s, "new_site"))
   expect_null(ix$rep)
 })
 
 test_that(".grid_indices NAs a factor the grid omits entirely", {
   ix <- .grid_indices(weight_fit, data.frame(diameter_mm = c(30, 40)))
-  expect_identical(ix$site, rep(NA_integer_, 2L))
-  expect_identical(ix$year, rep(NA_integer_, 2L))
+  expect_identical(as.vector(ix$site), rep(NA_integer_, 2L))
+  expect_identical(as.vector(ix$year), rep(NA_integer_, 2L))
+  expect_identical(attr(ix$site, "labels"), rep(NA_character_, 2L))
 })
 
 test_that(".grid_indices resolves representative_site against the fit's levels", {
@@ -90,4 +92,33 @@ test_that("resolve_re2 draws unknown cells under sample", {
     ignore_attr = TRUE
   )
   expect_false(all(posterior::draws_of(out)[, 2L] == 0))
+})
+
+test_that("rows naming the same new level share one sampled effect", {
+  withr::local_seed(1)
+  param <- posterior::rvar(matrix(rnorm(200), nrow = 100))
+  sd <- posterior::rvar(rep(1, 100))
+  idx <- structure(c(1L, NA, NA, NA), labels = c("a", "new", "new", "other"))
+  out <- posterior::draws_of(resolve_re1(param, idx, "sample", sd))
+  expect_identical(out[, 2], out[, 3])
+  expect_false(identical(out[, 2], out[, 4]))
+})
+
+test_that("rows with no grouping label draw independently", {
+  withr::local_seed(1)
+  param <- posterior::rvar(matrix(rnorm(200), nrow = 100))
+  sd <- posterior::rvar(rep(1, 100))
+  out <- posterior::draws_of(resolve_re1(param, c(NA_integer_, NA_integer_), "sample", sd))
+  expect_false(identical(out[, 1], out[, 2]))
+})
+
+test_that("a new site:year cell is shared only when both labels are named", {
+  withr::local_seed(1)
+  param <- posterior::rvar(array(rnorm(400), dim = c(100, 2, 2)))
+  sd <- posterior::rvar(rep(1, 100))
+  i <- structure(rep(NA_integer_, 3), labels = c("new", "new", "new"))
+  j <- structure(rep(NA_integer_, 3), labels = c("2030", "2030", NA))
+  out <- posterior::draws_of(resolve_re2(param, i, j, "sample", sd))
+  expect_identical(out[, 1], out[, 2])
+  expect_false(identical(out[, 1], out[, 3]))
 })

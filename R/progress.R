@@ -1,7 +1,7 @@
-# Progress infrastructure for the fitting engine. A fit can write a kelpbio-owned,
-# pollable artifact (a manifest plus rstan's per-chain sample_file CSVs) that the
-# console reporter and the public kb_fit_progress() reader turn into a completed
-# fraction. rstan writes thinned warmup rows by default and an "# Elapsed Time"
+# Progress infrastructure. A fit can write a kelpbio-owned, pollable artifact (a
+# manifest plus rstan's per-chain sample_file CSVs), and a long prediction a
+# record of its completed steps; the console reporter and the public
+# kb_progress() reader turn either into a completed fraction. rstan writes thinned warmup rows by default and an "# Elapsed Time"
 # footer at chain completion (see the change design for the full rationale).
 
 # Base name for the rstan sample_file; rstan appends _<chain> before the
@@ -123,6 +123,36 @@ read_progress_fraction <- function(dir) {
   min(count_progress_rows(dir, manifest) / total, 1)
 }
 
+# A long prediction's record: the steps completed out of the total, written
+# whole to a temporary file and renamed into place, so a reader in another
+# process sees the previous record or the new one, never a partial write.
+progress_prediction_file <- function(dir) {
+  file.path(dir, "prediction.rds")
+}
+
+write_prediction_progress <- function(dir, completed, total) {
+  if (is.null(dir)) {
+    return(invisible(NULL))
+  }
+  tmp <- tempfile("prediction-", tmpdir = dir, fileext = ".rds")
+  saveRDS(list(completed = completed, total = total), tmp)
+  file.rename(tmp, progress_prediction_file(dir))
+  invisible(NULL)
+}
+
+# Completed fraction of a prediction, or NULL when the directory holds none.
+read_prediction_progress <- function(dir) {
+  path <- progress_prediction_file(dir)
+  if (!file.exists(path)) {
+    return(NULL)
+  }
+  record <- tryCatch(readRDS(path), error = function(e) NULL)
+  if (is.null(record) || record$total <= 0) {
+    return(NULL)
+  }
+  min(record$completed / record$total, 1)
+}
+
 # Resolve where (if anywhere) the pollable artifact is written. A caller-supplied
 # progress_dir is used as-is and left in place; the console "bar" otherwise uses
 # an internal temp directory (owned = TRUE, removed by the caller on exit).
@@ -141,10 +171,11 @@ resolve_progress_dir <- function(progress, progress_dir) {
 
 # Console reporter seam: "bar" binds a cli progress bar, every other value a
 # no-op. The reporter renders the fraction; it does not produce it, so the
-# console bar and an external kb_fit_progress() poller share one signal.
-progress_reporter <- function(progress) {
+# console bar and an external kb_progress() poller share one signal. `label`
+# names the task on the bar.
+progress_reporter <- function(progress, label = "Fitting model") {
   if (identical(progress, "bar")) {
-    return(bar_reporter())
+    return(bar_reporter(label))
   }
   noop_reporter()
 }
@@ -160,7 +191,7 @@ noop_reporter <- function() {
   )
 }
 
-bar_reporter <- function() {
+bar_reporter <- function(label = "Fitting model") {
   id <- NULL
   structure(
     list(
@@ -170,14 +201,14 @@ bar_reporter <- function() {
       # progress bar"). The bar is looked up by id thereafter.
       start = function(total) {
         id <<- cli::cli_progress_bar(
-          "Fitting model",
+          label,
           total = total,
           format = paste(
-            "{cli::pb_spin} Fitting model {cli::pb_bar}",
+            "{cli::pb_spin}", label, "{cli::pb_bar}",
             "{cli::pb_percent} | {cli::pb_eta_str}"
           ),
           format_done = paste(
-            "{cli::col_green(cli::symbol$tick)} Fitting model",
+            "{cli::col_green(cli::symbol$tick)}", label,
             "[{cli::pb_elapsed}]"
           ),
           clear = FALSE,

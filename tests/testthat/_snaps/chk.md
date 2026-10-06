@@ -113,3 +113,21 @@
       Error in `.chk_positive_measure()`:
       ! Column `area_m2` of data.frame(area_m2 = -1) must be greater than 0.
 
+# .chk_same_species and .chk_same_ndraws name the fits
+
+    Code
+      .chk_same_species(list(weight = weight_fit, size = size_macro_fit))
+    Condition
+      Error:
+      ! The fits must be of one species.
+      i `weight` and `size` are "Nereocystis luetkeana" and "Macrocystis pyrifera".
+
+---
+
+    Code
+      .chk_same_ndraws(list(weight = weight_fit, size = fit_size_sim_nereo))
+    Condition
+      Error:
+      ! The fits must have the same number of posterior draws.
+      i `weight` and `size` have 600 and 1500 draws.
+
