@@ -74,12 +74,10 @@ reference:
 - title: "Predictions and Plotting"
   desc: "Predict and visualise model output."
   contents:
+    - kb_new_data
     - kb_predict_weight
-    - kb_predict_weight_by
     - kb_predict_size
-    - kb_predict_size_by
     - kb_predict_density
-    - kb_predict_density_by
     - kb_predict_wetdry
     - kb_predict_carbon
     - kb_predict_plot_biomass

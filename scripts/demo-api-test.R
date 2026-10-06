@@ -17,7 +17,8 @@ library(dplyr)
 library(bayesplot)
 
 # new_levels = "sample" draws fresh random effects on each call; set a seed so
-# the sampled prediction intervals below are reproducible.
+# the sampled prediction intervals below are reproducible. The default,
+# "average", needs no seed.
 set.seed(42)
 
 # =============================================================================
@@ -138,7 +139,7 @@ augment(fit) |>
   geom_point(alpha = 0.3)
 
 # --- kb_predict_weight()  + predict() wrapper ---------------------------------
-# expects user to provide new_data, gets predictions row-by-row
+# every prediction verb predicts the expected response at the rows of new_data
 nd <- data.frame(diameter_mm = c(22, 41, 38, 12))
 sites <- levels(fit$data$site)
 
@@ -160,14 +161,12 @@ kb_predict_weight(
     site = c(sites[1], sites[1], "new_reef"),
     year = "2020",
     stipes_m2 = c(8, NA, NA) # supplied, recorded site-year, new site (mean)
-  ),
-  new_levels = "average"
+  )
 )
 # density effect: expected weight at 40 mm across stand density
 kb_predict_weight(
   fit,
-  new_data = tibble(diameter_mm = 40, stipes_m2 = seq(1.5, 8, by = 0.5)),
-  new_levels = "average"
+  new_data = tibble(diameter_mm = 40, stipes_m2 = seq(1.5, 8, by = 0.5))
 ) |>
   kb_plot_predictions(x = "stipes_m2")
 
@@ -179,31 +178,37 @@ kb_predict_weight(fit, new_data = tibble(diameter_mm = c(2.5, 4)))
 try(kb_predict_weight(fit, new_data = tibble(diameter_mm = -5)))
 try(kb_predict_weight(fit, new_data = tibble(diameter_mm = NA_real_)))
 
-# --- kb_predict_weight_by()  --------------------------------------------------
-# builds a new_data grid based on 'by' grouping (for getting group-level effect
-# estimates and plotting curves by group)
-# default is for 'average' site and year (RE zeroed) over diameter sequence
-# spanning observed range
-kb_predict_weight_by(fit)
-# by default generate sequence of diameters across range
-kb_predict_weight_by(fit, by = "site")
-# set the diameter_mm sequence (the predictor argument for a nereo fit)
-kb_predict_weight_by(fit, by = "site", diameter_mm = 30)
-# site-year curves use each site-year's recorded density
-kb_predict_weight_by(fit, by = c("site", "year"))
-# typical site and year
-kb_predict_weight_by(fit, diameter_mm = c(15, 30, 45))
-# both species have a year main effect, so by = "year" works for nereo too
-kb_predict_weight_by(fit, by = "year", diameter_mm = 30)
+# --- kb_new_data(): rows by group ---------------------------------------------
+# builds new_data by grouping (for group-level estimates and curves by group);
+# the factors not named in `by` are absent, so they take the typical level
+kb_new_data(fit)
+# one row per site, crossed with a diameter sequence spanning the observed range
+kb_new_data(fit, by = "site")
+# set the diameter_mm values (the predictor argument for a nereo fit)
+kb_new_data(fit, by = "site", diameter_mm = 30)
+# by site and year gives only the site-years in the fitted data
+kb_new_data(fit, by = c("site", "year"), diameter_mm = 30)
+# the wrong species' predictor, or a by on the verb, errors with the fix
+try(kb_new_data(fit, fronds = 5))
+try(kb_predict_weight(fit, by = "site"))
 
-# allometric curves at low, mean, and high stand density (stipes per m^2) for a
-# typical site and year: density scales the size-dependent part of the weight,
-# so the curves spread with plant size
+# predict at the grid: curves for the typical site and year, and by site
+kb_predict_weight(fit, kb_new_data(fit))
+kb_predict_weight(fit, kb_new_data(fit, by = "site"))
+# site-year curves use each site-year's recorded density
+kb_predict_weight(fit, kb_new_data(fit, by = c("site", "year"), diameter_mm = 30))
+# both species have a year main effect, so by = "year" works for nereo too
+kb_predict_weight(fit, kb_new_data(fit, by = "year", diameter_mm = 30))
+
+# the grid is an ordinary data frame: build your own, e.g. allometric curves at
+# low, mean, and high stand density (stipes per m^2) for a typical site and
+# year; density scales the size-dependent part of the weight, so the curves
+# spread with plant size
 tidyr::expand_grid(
   diameter_mm = seq(15, 80, length.out = 40),
   stipes_m2 = signif(c(1.5, fit$meta$density_mean, 8), 2)
 ) |>
-  kb_predict_weight(fit, new_data = _, new_levels = "average") |>
+  kb_predict_weight(fit, new_data = _) |>
   ggplot(aes(
     diameter_mm,
     estimate,
@@ -215,17 +220,51 @@ tidyr::expand_grid(
   labs(
     x = "Sub-bulb diameter (mm)",
     y = "Wet weight (kg)",
-    colour = "Stipes per m\u00b2",
-    fill = "Stipes per m\u00b2"
+    colour = "Stipes per m²",
+    fill = "Stipes per m²"
   )
 
-# sample from RE dist for wider uncertainty, i.e. for new, unobserved site/year
-kb_predict_weight_by(fit, new_levels = "sample")
-kb_predict_weight(
-  fit,
-  new_data = tibble(diameter_mm = 40, site = "new_reef"),
-  new_levels = "sample"
-)
+# --- new_levels: "average" (default) versus "sample" --------------------------
+# A site, year, or site-year the fit never saw (or a grouping column that is
+# absent) has no estimated effect. new_levels decides what stands in for it:
+# - "average" (the default): the effect is zero, the typical site. The interval
+#   is for the typical site, and the same on every call.
+# - "sample": a new effect is drawn from the fitted between-site distribution,
+#   so the interval includes how much sites differ. Use it for a prediction at a
+#   particular unsurveyed site. It changes between calls unless a seed is set.
+new_reef <- tibble(diameter_mm = c(20, 40, 60), site = "new_reef")
+kb_predict_weight(fit, new_reef)
+kb_predict_weight(fit, new_reef, new_levels = "sample")
+# a fitted site is conditioned on its own effect under either setting
+kb_predict_weight(fit, tibble(diameter_mm = 40, site = sites[1]))
+kb_predict_weight(fit, tibble(diameter_mm = 40, site = sites[1]), new_levels = "sample")
+
+# the same contrast on a grid: the typical-site curve versus a new-site curve
+bind_rows(
+  average = kb_predict_weight(fit, kb_new_data(fit)),
+  sample = kb_predict_weight(fit, kb_new_data(fit), new_levels = "sample"),
+  .id = "new_levels"
+) |>
+  ggplot(aes(diameter_mm, estimate, colour = new_levels, fill = new_levels)) +
+  geom_ribbon(aes(ymin = lower, ymax = upper), alpha = 0.15, colour = NA) +
+  geom_line() +
+  labs(x = "Sub-bulb diameter (mm)", y = "Wet weight (kg)")
+
+# side by side with kb_plot_predictions()
+patchwork_available <- requireNamespace("patchwork", quietly = TRUE)
+p_average <- kb_predict_weight(fit, kb_new_data(fit)) |>
+  kb_plot_predictions() +
+  ggtitle('new_levels = "average"')
+p_sample <- kb_predict_weight(fit, kb_new_data(fit), new_levels = "sample") |>
+  kb_plot_predictions() +
+  ggtitle('new_levels = "sample"')
+if (patchwork_available) {
+  patchwork::wrap_plots(p_average, p_sample) &
+    coord_cartesian(ylim = c(0, max(layer_data(p_sample)$ymax)))
+} else {
+  print(p_average)
+  print(p_sample)
+}
 
 # gives users ability to select a representative site(s) to apply to new sites (not existing in fit dataset)
 # this was requested from feedback in workshop
@@ -238,11 +277,13 @@ kb_predict_weight(
     site = c("new_reef", sites[1]),
     year = c(2020, 2020)
   ),
+  new_levels = "sample",
   representative_site = sites[1]
 )
 
 # --- kb_plot_predictions() / autoplot() ---------------------------------------
-pop <- kb_predict_weight_by(fit)
+# predictions at a kb_new_data() grid over several diameters are drawn as curves
+pop <- kb_predict_weight(fit, kb_new_data(fit))
 kb_plot_predictions(pop)
 # raw data are not drawn: the curve holds the other effects at typical values,
 # so the points are not a like-for-like comparison (see the 1:1 plot below).
@@ -255,18 +296,14 @@ kb_plot_predictions(pop) +
   )
 autoplot(pop)
 
-# wider uncertainty - draw from RE distributions (i.e. new, unobserved site)
-pop <- kb_predict_weight_by(fit, new_levels = "sample")
-kb_plot_predictions(pop)
-
 # plot allometric curves for 'typical' year by site
-# grouping from kb_predict function is stored and retrieved by plot function so is aware of how to facet
+# grouping from the prediction is stored and retrieved by plot function so is aware of how to facet
 # note the default is to cap facets - user can set max_facets or pre-filter (see warning)
-kb_predict_weight_by(fit) |>
+kb_predict_weight(fit, kb_new_data(fit, by = "site")) |>
   kb_plot_predictions()
 
 # when only one predictor value per group, plot function knows to plot pointrange instead of line/ribbon
-kb_predict_weight_by(fit, by = "site", diameter_mm = 30) |>
+kb_predict_weight(fit, kb_new_data(fit, by = "site", diameter_mm = 30)) |>
   kb_plot_predictions() +
   coord_flip()
 
@@ -420,11 +457,11 @@ tidy(fit_power)
 kb_model_describe(fit_power)
 bind_rows(
   mutate(
-    kb_predict_weight_by(fit, new_levels = "average"),
+    kb_predict_weight(fit, kb_new_data(fit)),
     form = "packard_floor"
   ),
   mutate(
-    kb_predict_weight_by(fit_power, new_levels = "average"),
+    kb_predict_weight(fit_power, kb_new_data(fit_power)),
     form = "power"
   )
 ) |>
@@ -530,11 +567,12 @@ kb_predict_weight(fit_m, new_data = tibble(fronds = c(2, 5, 10, 15)))
 try(kb_predict_weight(fit_m, new_data = tibble(fronds = 2.5)))
 
 # one estimate per year at 10 fronds
-kb_predict_weight_by(fit_m, by = "year", fronds = 10) |>
+kb_predict_weight(fit_m, kb_new_data(fit_m, by = "year", fronds = 10)) |>
   kb_plot_predictions() +
   coord_flip()
 
-kb_predict_weight_by(fit_m, by = "site") |>
+# the default frond sequence takes whole numbers over the observed range
+kb_predict_weight(fit_m, kb_new_data(fit_m, by = "site")) |>
   kb_plot_predictions()
 
 augment(fit_m) |>
@@ -576,15 +614,21 @@ kb_model_describe(fit_sm)
 
 # expected size by group (the mean of the distribution); for macro, the
 # expected frond count of a plant with at least one frond at 1 m
-kb_predict_size_by(fit_s)
-kb_predict_size_by(fit_s, by = "site") |>
+kb_predict_size(fit_s, kb_new_data(fit_s))
+kb_predict_size(fit_s, kb_new_data(fit_s, by = "site")) |>
   kb_plot_predictions() +
   coord_flip()
-kb_predict_size_by(fit_sm, by = "year") |>
+kb_predict_size(fit_sm, kb_new_data(fit_sm, by = "year")) |>
   kb_plot_predictions()
 
-# rows of site/year (no predictor column); a new site is sampled by default
+# rows of site/year (no predictor column); a new site is the typical site by
+# default, and "sample" adds the variation between sites
 kb_predict_size(fit_s, new_data = tibble(site = c("site1", "new_reef")))
+kb_predict_size(
+  fit_s,
+  new_data = tibble(site = c("site1", "new_reef")),
+  new_levels = "sample"
+)
 kb_predict_size(
   fit_s,
   new_data = tibble(site = "new_reef"),
@@ -635,24 +679,32 @@ kb_model_describe(fit_d)
 fit_dm <- kb_fit_density_macro(data_density_sim_macro)
 kb_model_describe(fit_dm)
 
-# density per m^2 by group (zero inflation included for nereo)
-kb_predict_density_by(fit_d)
-kb_predict_density_by(fit_d, by = "site") |>
+# density is always per m^2 (zero inflation included for nereo), at the
+# observed transects, by group, or at your own rows
+kb_predict_density(fit_d)
+kb_predict_density(fit_d, kb_new_data(fit_d))
+kb_predict_density(fit_d, kb_new_data(fit_d, by = "site")) |>
   kb_plot_predictions() +
   coord_flip()
-kb_predict_density_by(fit_dm, by = c("site", "year")) |>
+kb_predict_density(fit_dm, kb_new_data(fit_dm, by = c("site", "year"))) |>
   kb_plot_predictions()
+kb_predict_density(fit_d, new_data = tibble(site = c("site1", "new_reef")))
 
-# expected counts on transects of a given area; area_m2 is required
-kb_predict_density(
-  fit_d,
-  new_data = tibble(site = "site1", area_m2 = c(20, 40))
-)
-try(kb_predict_density(fit_d, new_data = tibble(site = "site1")))
+# an area_m2 column does not change the estimate: it stays per m^2
+kb_predict_density(fit_d, new_data = tibble(site = "site1", area_m2 = c(20, 40)))
+# the expected count on a 40 m^2 transect, and its limits, are the density x 40
+kb_predict_density(fit_d, new_data = tibble(site = "site1")) |>
+  mutate(across(c(estimate, lower, upper), \(x) x * 40))
+
+# transect counts: the draw generics read area_m2 (1 m^2 when absent)
+transects <- tibble(site = "site1", area_m2 = c(20, 40))
+apply(posterior_epred(fit_d, new_data = transects), 2, median) # expected counts
+pp_counts <- posterior_predict(fit_d, new_data = transects) # simulated counts
+apply(pp_counts, 2, quantile, probs = c(0.025, 0.5, 0.975))
 
 # nereo: posterior_epred includes the zero-inflation probability;
 # linpred(transform = TRUE) is the mean on a transect holding stipes, so higher
-nd <- tibble(site = "site1", area_m2 = 1)
+nd <- tibble(site = "site1")
 median(posterior_epred(fit_d, new_data = nd))
 median(posterior_linpred(fit_d, transform = TRUE, new_data = nd))
 median(posterior_linpred(fit_d, new_data = nd))
@@ -749,11 +801,20 @@ kb_predict_carbon(kb_fit_carbon_macro(data_carbon_sim_macro))
 # weight_support / size_support say what data each fit has for the site-year:
 # "site-year", "site, year" (both, not together), "site", "year", or "none".
 
+# site-years the weight or size fit never saw draw their effects ("sample", the
+# default, unlike the prediction verbs: every row is a particular site-year), so
+# set a seed; "average" gives them the typical site and year instead
 set.seed(1)
 kb_predict_plot_biomass(
   fit_weight_sim_nereo,
   fit_size_sim_nereo,
   fit_density_sim_nereo
+)
+kb_predict_plot_biomass(
+  fit_weight_sim_nereo,
+  fit_size_sim_nereo,
+  fit_density_sim_nereo,
+  new_levels = "average"
 )
 kb_predict_plot_biomass(
   fit_weight_sim_macro,

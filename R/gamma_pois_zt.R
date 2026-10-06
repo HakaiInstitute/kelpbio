@@ -11,7 +11,7 @@ log_p0_gamma_pois <- function(lambda, theta) {
 
 # Mean of the truncated distribution, lambda / (1 - P(Y = 0)). Written with
 # functions that also work on a posterior rvar (log1p and expm1 are Math group
-# generics), so .epred() can pass either an rvar or a draws matrix.
+# generics), since .epred() passes one.
 mean_gamma_pois_zt <- function(lambda, theta) {
   lambda / -expm1(-log1p(lambda * theta) / theta)
 }

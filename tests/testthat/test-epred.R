@@ -1,82 +1,66 @@
+# A link-scale rvar over n rows with the fit's draws and chains, as .linpred()
+# returns.
+lp_rvar <- function(fit, values) {
+  nd <- posterior::ndraws(fit$draws)
+  posterior::rvar(
+    matrix(rep(values, each = nd), nrow = nd),
+    nchains = posterior::nchains(fit$draws)
+  )
+}
+
 test_that(".epred is the inverse log link for macro and the nereo median", {
-  lp <- matrix(c(0, 1, -1, 2), nrow = 2)
+  lp <- lp_rvar(weight_macro_fit, c(0, 1))
   expect_equal(.epred(weight_macro_fit, lp), exp(lp))
   expect_equal(.epred(weight_macro_fit, lp, expectation = FALSE), exp(lp))
+  lp <- lp_rvar(weight_fit, c(0, 1))
   expect_equal(.epred(weight_fit, lp, expectation = FALSE), exp(lp))
 })
 
-test_that(".epred returns the type it was given", {
-  # fitted() and the prediction verbs pass an rvar; the posterior_* generics
-  # pass a D x N matrix. A method written with stats transforms instead of
-  # arithmetic would error on the rvar.
-  for (fit in list(weight_fit, weight_macro_fit)) {
-    nd <- posterior::ndraws(fit$draws)
-    rv <- posterior::rvar(matrix(rnorm(nd * 2), nrow = nd))
-    expect_s3_class(.epred(fit, rv), "rvar")
-    expect_true(is.matrix(.epred(fit, posterior::draws_of(rv))))
-    expect_equal(
-      posterior::draws_of(.epred(fit, rv)),
-      .epred(fit, posterior::draws_of(rv)),
-      ignore_attr = TRUE
-    )
-  }
+test_that("the nereo weight mean carries the lognormal retransformation", {
+  lp <- lp_rvar(weight_fit, c(0, 1))
+  expect_equal(
+    .epred(weight_fit, lp),
+    exp(lp + weight_fit$draws$sWeight^2 / 2)
+  )
 })
 
-test_that(".epred returns the type it was given for the size models", {
-  for (fit in list(size_nereo_fit, size_macro_fit)) {
-    nd <- posterior::ndraws(fit$draws)
-    rv <- posterior::rvar(matrix(rnorm(nd * 2), nrow = nd))
-    expect_s3_class(.epred(fit, rv), "rvar")
-    expect_equal(
-      posterior::draws_of(.epred(fit, rv)),
-      .epred(fit, posterior::draws_of(rv)),
-      ignore_attr = TRUE
-    )
+test_that(".epred returns an rvar for every model", {
+  fits <- list(
+    weight_fit,
+    weight_macro_fit,
+    size_nereo_fit,
+    size_macro_fit,
+    density_nereo_fit,
+    density_macro_fit,
+    wetdry_nereo_fit,
+    carbon_nereo_fit
+  )
+  for (fit in fits) {
+    out <- .epred(fit, lp_rvar(fit, c(0.5, 1)))
+    expect_s3_class(out, "rvar")
+    expect_length(out, 2L)
   }
 })
 
 test_that("the nereo size mean is the inverse log link", {
-  lp <- matrix(c(3, 3.5, 3.2, 3.8), nrow = 2)
+  lp <- lp_rvar(size_nereo_fit, c(3, 3.5))
   expect_equal(.epred(size_nereo_fit, lp), exp(lp))
 })
 
 test_that("the macro size mean is the truncated mean, above the untruncated one", {
   nd <- data.frame(site = c("site1", "site2"))
-  ep <- posterior_epred(size_macro_fit, new_data = nd, new_levels = "average")
-  mu <- posterior_linpred(
-    size_macro_fit,
-    transform = TRUE,
-    new_data = nd,
-    new_levels = "average"
-  )
+  ep <- posterior_epred(size_macro_fit, new_data = nd)
+  mu <- posterior_linpred(size_macro_fit, transform = TRUE, new_data = nd)
   theta <- as.vector(posterior::draws_of(size_macro_fit$draws$bDispersion))
   expect_equal(ep, mu / (1 - (1 + mu * theta)^(-1 / theta)))
   expect_true(all(ep > mu))
   expect_true(all(ep >= 1))
 })
 
-test_that(".epred returns the type it was given for the density models", {
-  for (fit in list(density_nereo_fit, density_macro_fit)) {
-    nd <- posterior::ndraws(fit$draws)
-    rv <- posterior::rvar(matrix(rnorm(nd * 2), nrow = nd))
-    expect_s3_class(.epred(fit, rv), "rvar")
-    expect_equal(
-      posterior::draws_of(.epred(fit, rv)),
-      .epred(fit, posterior::draws_of(rv)),
-      ignore_attr = TRUE
-    )
-  }
-})
-
 test_that("the nereo density mean carries the zero-inflation probability", {
   nd <- data.frame(site = c("site1", "site2"), area_m2 = 40)
-  ep <- posterior_epred(density_nereo_fit, new_data = nd, new_levels = "average")
-  mu <- posterior_linpred(
-    density_nereo_fit,
-    transform = TRUE,
-    new_data = nd,
-    new_levels = "average"
-  )
+  ep <- posterior_epred(density_nereo_fit, new_data = nd)
+  mu <- posterior_linpred(density_nereo_fit, transform = TRUE, new_data = nd)
   zi <- stats::plogis(
     as.vector(posterior::draws_of(density_nereo_fit$draws$bZeroInflation))
   )
@@ -85,24 +69,16 @@ test_that("the nereo density mean carries the zero-inflation probability", {
 })
 
 test_that("the macro density mean is the inverse log link", {
-  lp <- matrix(c(3, 3.5, 3.2, 3.8), nrow = 2)
+  lp <- lp_rvar(density_macro_fit, c(3, 3.5))
   expect_equal(.epred(density_macro_fit, lp), exp(lp))
 })
 
-test_that("the wet/dry mean is the inverse logit, for rvar and matrix input", {
-  lp <- matrix(c(-2.4, -2.3, -2.5, -2.2), nrow = 2)
-  expect_equal(.epred(wetdry_nereo_fit, lp), stats::plogis(lp))
-  nd <- posterior::ndraws(wetdry_nereo_fit$draws)
-  rv <- posterior::rvar(matrix(rnorm(nd * 2), nrow = nd))
-  expect_s3_class(.epred(wetdry_nereo_fit, rv), "rvar")
-  expect_equal(
-    posterior::draws_of(.epred(wetdry_nereo_fit, rv)),
-    .epred(wetdry_nereo_fit, posterior::draws_of(rv)),
-    ignore_attr = TRUE
-  )
-})
-
-test_that("the carbon mean is the inverse logit", {
-  lp <- matrix(c(-1, -1.1, -0.9, -1.2), nrow = 2)
-  expect_equal(.epred(carbon_nereo_fit, lp), stats::plogis(lp))
+test_that("the wet/dry and carbon means are the inverse logit", {
+  for (fit in list(wetdry_nereo_fit, carbon_nereo_fit)) {
+    lp <- lp_rvar(fit, c(-2.4, -1))
+    expect_equal(
+      posterior::draws_of(.epred(fit, lp)),
+      stats::plogis(posterior::draws_of(lp))
+    )
+  }
 })

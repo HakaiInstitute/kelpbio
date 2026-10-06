@@ -32,10 +32,10 @@ is a standard \code{ggplot} that can be refined with \code{+} (scales, labels, t
 \code{coord_flip()}).
 
 The geometry is chosen automatically, not set by an argument: a line with a
-compatibility-interval ribbon for a generated curve (\code{\link[=kb_predict_weight_by]{kb_predict_weight_by()}}
-over a varying predictor), and \code{geom_pointrange} otherwise (for example
-\code{\link[=kb_predict_size_by]{kb_predict_size_by()}}). The y-axis extends to zero. Override the inferred
-x-axis with \code{x}.
+compatibility-interval ribbon for predictions at a \code{\link[=kb_new_data]{kb_new_data()}} grid over
+several predictor values (weight curves), and \code{geom_pointrange} otherwise (for
+example size by site, or weight at the observed plants). The y-axis extends to
+zero. Override the inferred x-axis with \code{x}.
 
 Only the predictions are drawn. They hold the effects not in the prediction at
 their typical values, while each raw observation carries its own site, year,
@@ -45,12 +45,14 @@ the fitted values from \code{\link[=augment]{augment()}} against the observed re
 \code{\link[=posterior_predict]{posterior_predict()}} replicates against the data.
 }
 \examples{
+fit <- fit_weight_sim_nereo
+
 # Allometric curve by site (ribbon):
-kb_predict_weight_by(fit_weight_sim_nereo, by = "site") |>
+kb_predict_weight(fit, kb_new_data(fit, by = "site")) |>
   kb_plot_predictions()
 
 # Add the raw data as a layer:
-kb_predict_weight_by(fit_weight_sim_nereo) |>
+kb_predict_weight(fit, kb_new_data(fit)) |>
   kb_plot_predictions() +
   ggplot2::geom_point(
     ggplot2::aes(diameter_mm, weight_kg),
@@ -59,28 +61,26 @@ kb_predict_weight_by(fit_weight_sim_nereo) |>
   )
 
 # Expected size by site (pointrange):
-kb_predict_size_by(fit_size_sim_nereo, by = "site") |>
+kb_predict_size(
+  fit_size_sim_nereo,
+  kb_new_data(fit_size_sim_nereo, by = "site")
+) |>
   kb_plot_predictions()
 
 # Weight at a reference diameter by site (pointrange, sites on the y-axis):
-kb_predict_weight_by(
-  fit_weight_sim_nereo,
-  by = "site", diameter_mm = 30, new_levels = "average"
-) |>
+kb_predict_weight(fit, kb_new_data(fit, by = "site", diameter_mm = 30)) |>
   kb_plot_predictions() +
   ggplot2::coord_flip()
 }
 \seealso{
 Other prediction:
 \code{\link[=autoplot.kb_predictions]{autoplot.kb_predictions()}},
+\code{\link[=kb_new_data]{kb_new_data()}},
 \code{\link[=kb_predict_carbon]{kb_predict_carbon()}},
 \code{\link[=kb_predict_density]{kb_predict_density()}},
-\code{\link[=kb_predict_density_by]{kb_predict_density_by()}},
 \code{\link[=kb_predict_plot_biomass]{kb_predict_plot_biomass()}},
 \code{\link[=kb_predict_size]{kb_predict_size()}},
-\code{\link[=kb_predict_size_by]{kb_predict_size_by()}},
 \code{\link[=kb_predict_weight]{kb_predict_weight()}},
-\code{\link[=kb_predict_weight_by]{kb_predict_weight_by()}},
 \code{\link[=kb_predict_wetdry]{kb_predict_wetdry()}}
 }
 \concept{prediction}

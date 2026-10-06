@@ -10,10 +10,10 @@
 #' `coord_flip()`).
 #'
 #' The geometry is chosen automatically, not set by an argument: a line with a
-#' compatibility-interval ribbon for a generated curve ([kb_predict_weight_by()]
-#' over a varying predictor), and `geom_pointrange` otherwise (for example
-#' [kb_predict_size_by()]). The y-axis extends to zero. Override the inferred
-#' x-axis with `x`.
+#' compatibility-interval ribbon for predictions at a [kb_new_data()] grid over
+#' several predictor values (weight curves), and `geom_pointrange` otherwise (for
+#' example size by site, or weight at the observed plants). The y-axis extends to
+#' zero. Override the inferred x-axis with `x`.
 #'
 #' Only the predictions are drawn. They hold the effects not in the prediction at
 #' their typical values, while each raw observation carries its own site, year,
@@ -35,12 +35,14 @@
 #' @export
 #'
 #' @examples
+#' fit <- fit_weight_sim_nereo
+#'
 #' # Allometric curve by site (ribbon):
-#' kb_predict_weight_by(fit_weight_sim_nereo, by = "site") |>
+#' kb_predict_weight(fit, kb_new_data(fit, by = "site")) |>
 #'   kb_plot_predictions()
 #'
 #' # Add the raw data as a layer:
-#' kb_predict_weight_by(fit_weight_sim_nereo) |>
+#' kb_predict_weight(fit, kb_new_data(fit)) |>
 #'   kb_plot_predictions() +
 #'   ggplot2::geom_point(
 #'     ggplot2::aes(diameter_mm, weight_kg),
@@ -49,14 +51,14 @@
 #'   )
 #'
 #' # Expected size by site (pointrange):
-#' kb_predict_size_by(fit_size_sim_nereo, by = "site") |>
+#' kb_predict_size(
+#'   fit_size_sim_nereo,
+#'   kb_new_data(fit_size_sim_nereo, by = "site")
+#' ) |>
 #'   kb_plot_predictions()
 #'
 #' # Weight at a reference diameter by site (pointrange, sites on the y-axis):
-#' kb_predict_weight_by(
-#'   fit_weight_sim_nereo,
-#'   by = "site", diameter_mm = 30, new_levels = "average"
-#' ) |>
+#' kb_predict_weight(fit, kb_new_data(fit, by = "site", diameter_mm = 30)) |>
 #'   kb_plot_predictions() +
 #'   ggplot2::coord_flip()
 kb_plot_predictions <- function(
@@ -82,8 +84,6 @@ kb_plot_predictions <- function(
     )
   }
 
-  # exact = TRUE: a size prediction has no kb_predictor, which would otherwise
-  # partially match kb_predictor_units.
   predictor <- attr(predictions, "kb_predictor", exact = TRUE)
   response <- attr(predictions, "kb_response", exact = TRUE)
   group_vars <- attr(predictions, "kb_group_vars", exact = TRUE)
@@ -158,29 +158,21 @@ kb_plot_predictions <- function(
   if (length(facet)) {
     gg <- gg + ggplot2::facet_wrap(facet)
   }
-  x_units <- if (identical(x, predictor)) {
-    attr(predictions, "kb_predictor_units", exact = TRUE)
-  } else {
-    NA_character_
-  }
   # Every kelpbio response is non-negative, so the y-axis starts at zero and
   # differences are read against the full scale.
   gg +
     ggplot2::expand_limits(y = 0) +
     ggplot2::labs(
-      x = kb_axis_label(x, x_units),
-      y = kb_axis_label(
-        response %||% "estimate",
-        attr(predictions, "kb_response_units", exact = TRUE)
-      )
+      x = kb_axis_label(x),
+      y = kb_axis_label(response %||% "estimate")
     )
 }
 
 # Publication-ready axis title for a prediction column: a descriptive label for
-# the known model variables. Units are appended in parentheses when supplied; the
-# weight predictions supply none, so their labels are unit-free. Unrecognised columns fall back to their name (sentence-cased).
-kb_axis_label <- function(name, units = NA_character_) {
-  base <- switch(
+# the known model variables. Unrecognised columns fall back to their name
+# (sentence-cased).
+kb_axis_label <- function(name) {
+  switch(
     name,
     diameter_mm = "Sub-bulb diameter",
     fronds = "Fronds",
@@ -195,5 +187,4 @@ kb_axis_label <- function(name, units = NA_character_) {
     estimate = "Estimate",
     paste0(toupper(substring(name, 1, 1)), substring(name, 2))
   )
-  if (!is.na(units) && nzchar(units)) paste0(base, " (", units, ")") else base
 }

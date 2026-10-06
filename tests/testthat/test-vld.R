@@ -80,9 +80,18 @@ test_that(".vld_kb_fit_density recognises a density fit", {
   expect_false(.vld_kb_fit_density(1))
 })
 
-test_that(".vld_new_data_density requires a data frame with a positive area", {
+test_that(".vld_kb_fit_grouped recognises the models with grouping factors", {
+  expect_true(.vld_kb_fit_grouped(weight_fit))
+  expect_true(.vld_kb_fit_grouped(size_macro_fit))
+  expect_true(.vld_kb_fit_grouped(density_nereo_fit))
+  expect_false(.vld_kb_fit_grouped(wetdry_nereo_fit))
+  expect_false(.vld_kb_fit_grouped(carbon_nereo_fit))
+  expect_false(.vld_kb_fit_grouped(1))
+})
+
+test_that(".vld_new_data_density requires a data frame with any area positive", {
   expect_true(.vld_new_data_density(data.frame(area_m2 = c(20, 40))))
-  expect_false(.vld_new_data_density(data.frame(site = "a")))
+  expect_true(.vld_new_data_density(data.frame(site = "a")))
   expect_false(.vld_new_data_density(data.frame(area_m2 = 0)))
   expect_false(.vld_new_data_density(data.frame(area_m2 = NA_real_)))
   expect_false(.vld_new_data_density(list(area_m2 = 20)))

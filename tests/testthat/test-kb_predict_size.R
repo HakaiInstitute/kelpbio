@@ -25,6 +25,18 @@ test_that("new_data needs no columns", {
   expect_length(unique(bare$estimate), 1L)
 })
 
+test_that("a kb_new_data() grid gives one row per group", {
+  site <- kb_predict_size(size_nereo_fit, kb_new_data(size_nereo_fit, by = "site"))
+  expect_equal(nrow(site), length(size_nereo_fit$meta$site_levels))
+  expect_named(site, c("site", "estimate", "lower", "upper"))
+  expect_equal(attr(site, "kb_group_vars"), "site")
+  expect_null(attr(site, "kb_predictor", exact = TRUE))
+  expect_identical(attr(site, "kb_response"), "diameter_mm")
+
+  pop <- kb_predict_size(size_macro_fit, kb_new_data(size_macro_fit))
+  expect_equal(nrow(pop), 1L)
+})
+
 test_that("a new site is sampled or averaged, and a representative site stands in", {
   withr::local_seed(1)
   nd <- data.frame(site = "new_site")

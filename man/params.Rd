@@ -63,20 +63,19 @@ group-level random-effect terms in the output.}
 saved draws that ended in a divergent transition. \code{0} requires a fit with no
 divergent transitions.}
 
-\item{by}{A character vector of grouping factors, each drawn as a separate
-curve, or \code{NULL} for a single population-level curve. Each named factor is
-expanded over its observed levels and conditioned on its estimated random
-effects.}
+\item{by}{A character vector of grouping factors, \code{"site"}, \code{"year"}, or
+both, giving one row per fitted level (per observed site-year for both), or
+\code{NULL} for a single row for the typical site and year.}
 
-\item{new_levels}{A string, one of \code{"sample"} or \code{"average"}, controlling how
-random effects that are not conditioned on are treated (factors absent from
-the prediction, and any new level not seen in the fit). \code{"sample"} draws a
-new random effect from \code{Normal(0, sd)}, widening the interval to include
-between-group variation; \code{"average"} holds the random effects at zero,
-giving the typical (median) group rather than the average over the
-random-effect distribution. Known levels are always conditioned on. \code{"sample"}
-draws fresh randomness on each call, so set a seed with \code{set.seed()} for a
-reproducible interval.}
+\item{new_levels}{A string, one of \code{"average"} (the default) or \code{"sample"},
+controlling how random effects that are not conditioned on are treated
+(factors absent from the rows, and any new level not seen in the fit).
+\code{"average"} holds them at zero, giving the typical (median) group;
+\code{"sample"} draws a new random effect from \code{Normal(0, sd)}, widening the
+interval to include between-group variation, as suits a prediction for a
+particular unsurveyed site. Known levels are always conditioned on.
+\code{"sample"} draws fresh randomness on each call, so set a seed with
+\code{set.seed()} for a reproducible interval.}
 
 \item{representative_site}{A character vector of site levels present in the
 fit, or \code{NULL} (the default). When supplied, a new or absent site takes the

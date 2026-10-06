@@ -70,6 +70,24 @@
   )
 }
 
+.chk_kb_fit_grouped <- function(
+  x,
+  x_name = deparse(substitute(x)),
+  call = rlang::caller_env()
+) {
+  if (.vld_kb_fit_grouped(x)) {
+    return(invisible(x))
+  }
+  .chk_kb_fit(x, x_name = x_name, call = call)
+  cli::cli_abort(
+    c(
+      "{.arg {x_name}} is a {.cls {class(x)[1]}} object, whose model has no grouping factors.",
+      i = "Grids are built for weight, size, and density fits."
+    ),
+    call = call
+  )
+}
+
 .chk_kb_fit_wetdry <- function(
   x,
   x_name = deparse(substitute(x)),
@@ -192,12 +210,6 @@
   if (!is.data.frame(x)) {
     cli::cli_abort("{.arg {x_name}} must be a data frame.")
   }
-  if (!"area_m2" %in% names(x)) {
-    cli::cli_abort(c(
-      "{.arg {x_name}} must have an {.field area_m2} column.",
-      i = "Its rows predict the count on a transect of that area; use {.fn kb_predict_density_by} for density per m\u00b2."
-    ))
-  }
   .chk_positive_measure(x$area_m2, x_name = kb_xname(x_name, "area_m2"))
 }
 
@@ -310,25 +322,63 @@
   invisible(NULL)
 }
 
-# Reject the other species' predictor argument (a Macrocystis `fronds` on a
-# Nereocystis fit, or vice versa) with a message naming the correct argument.
-# Contextual bundle like .chk_sampler_args(): no single-boolean .vld_ partner.
-# Extra dots beyond the predictor are left to the method's rlang::check_dots_empty().
-.chk_wrong_predictor <- function(fit, ..., call = rlang::caller_env()) {
-  right <- c(nereocystis = "diameter_mm", macrocystis = "fronds")[[
-    fit$meta$species
-  ]]
-  wrong <- setdiff(c("diameter_mm", "fronds"), right)
-  if (wrong %in% rlang::names2(rlang::list2(...))) {
+# The predictor values passed to kb_new_data() through `...`: at most one named
+# argument, naming the fit's predictor (`diameter_mm` for a Nereocystis weight
+# fit, `fronds` for a Macrocystis one), with numeric values. Contextual bundle
+# like .chk_sampler_args(): no single-boolean .vld_ partner.
+.chk_grid_predictor <- function(fit, dots, call = rlang::caller_env()) {
+  predictor <- fit$meta[["predictor"]]
+  if (length(dots) && is.null(predictor)) {
     cli::cli_abort(
-      c(
-        "{.arg {wrong}} is not the predictor argument for a {fit$meta$species} fit.",
-        i = "Use {.arg {right}} to supply the predictor sequence."
-      ),
+      "A {.cls {class(fit)[1]}} fit has no predictor, so {.arg ...} must be empty.",
       call = call
     )
   }
+  nms <- rlang::names2(dots)
+  hint <- "Use {.arg {predictor}} to supply the predictor values."
+  if (any(nms == "")) {
+    cli::cli_abort(
+      c("Predictor values in {.arg ...} must be named.", i = hint),
+      call = call
+    )
+  }
+  bad <- setdiff(nms, predictor)
+  if (length(bad)) {
+    cli::cli_abort(
+      c("{.arg {bad}} is not the predictor of a {fit$meta$species} fit.", i = hint),
+      call = call
+    )
+  }
+  if (length(dots) > 1L) {
+    cli::cli_abort("Supply {.arg {predictor}} once.", call = call)
+  }
+  if (length(dots)) {
+    chk::chk_numeric(dots[[1]], x_name = predictor)
+    chk::chk_not_empty(dots[[1]], x_name = predictor)
+  }
   invisible(fit)
+}
+
+# A prediction verb called the old way, with `by` or with grouping factors in
+# place of new_data, errors with the equivalent kb_new_data() call. Contextual
+# bundle: no .vld_ partner. Other dots are left to rlang::check_dots_empty().
+.chk_by_habit <- function(new_data, ..., verb, call = rlang::caller_env()) {
+  dots <- rlang::list2(...)
+  if ("by" %in% rlang::names2(dots)) {
+    by <- dots$by
+  } else if (is.character(new_data)) {
+    by <- new_data
+  } else {
+    return(invisible(new_data))
+  }
+  by_code <- paste(deparse(by), collapse = "")
+  cli::cli_abort(
+    c(
+      "{.fn {verb}} predicts at the rows of {.arg new_data}; it has no {.arg by} argument.",
+      i = "For predictions by group, use {.code {verb}(fit, kb_new_data(fit, by = {by_code}))}."
+    ),
+    call = call
+  )
 }
 
 # Every path that predicts at the stored data needs rows to predict at. Without

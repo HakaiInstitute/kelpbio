@@ -196,16 +196,19 @@
 }
 
 # Resolve new_data (or the observed data) into a grid plus its link-scale linpred.
-# The offset comes from the grid, so what this returns is fixed by the rows it was
-# given rather than by an argument: supplied rows carry their own survey effort.
+# The offset comes from the grid: supplied rows carry their own survey effort, and
+# rows without the offset column take one unit of it. `offset = FALSE` drops it,
+# so a rate model returns its rate at any rows, including the observed data.
+# `curve` passes on whether new_data is a kb_new_data() grid over a predictor.
 data_linpred <- function(
   fit,
   new_data,
   new_levels,
-  representative_site = NULL
+  representative_site = NULL,
+  offset = TRUE
 ) {
   .chk_kb_fit(fit)
-  new_levels <- rlang::arg_match(new_levels, c("sample", "average"))
+  new_levels <- rlang::arg_match(new_levels, c("average", "sample"))
   if (is.null(new_data)) {
     # fit$data already passed its model's data check at fit time.
     .chk_observed_data(fit)
@@ -221,10 +224,14 @@ data_linpred <- function(
       warn_outside_range(fit, grid$stipes_m2, "stipes_m2", lower = FALSE)
     }
   }
+  linpred <- .linpred(fit, grid, new_levels, representative_site)
+  if (offset) {
+    linpred <- linpred + grid_offset(fit, grid)
+  }
   list(
     grid = grid,
     group_vars = intersect(.group_vars(), names(grid)),
-    linpred = .linpred(fit, grid, new_levels, representative_site) +
-      grid_offset(fit, grid)
+    linpred = linpred,
+    curve = isTRUE(attr(new_data, "kb_curve", exact = TRUE))
   )
 }

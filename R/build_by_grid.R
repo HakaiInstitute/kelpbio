@@ -1,7 +1,7 @@
-# The prediction grid for a `_by` verb: the grouping levels named in `by` crossed
-# with the fit's predictor sequence. Either side may be absent, so this covers a
-# curve model (weight), a grouped-points model with no continuous predictor
-# (density, mean size) and an intercept-only model (wet/dry, carbon).
+# The grid behind kb_new_data(): the grouping levels named in `by` crossed with
+# the fit's predictor sequence. Either side may be absent, so this covers a curve
+# model (weight) and a grouped-points model with no continuous predictor (density,
+# size).
 build_by_grid <- function(fit, by, values = NULL) {
   predictor <- fit$meta[["predictor"]]
   preds <- if (is.null(predictor)) {
@@ -11,7 +11,7 @@ build_by_grid <- function(fit, by, values = NULL) {
   }
   groups <- by_grid(fit, by)
 
-  out <- if (is.null(groups)) {
+  if (is.null(groups)) {
     # No grouping: the predictor sequence alone, or a single population row when
     # the model has no predictor either.
     preds %||% tibble::tibble(.rows = 1L)
@@ -24,18 +24,20 @@ build_by_grid <- function(fit, by, values = NULL) {
       dplyr::pick(dplyr::all_of(c(names(groups), predictor)))
     )
   }
-  # Add default offset for reporting rate (e.g. area = 1)
-  add_offset_default(fit, out)
 }
 
 # The predictor sequence, spanning the observed range unless values are supplied.
+# Supplied values are checked against the fitted range when the grid is predicted
+# at, as for any new_data.
 predictor_grid <- function(fit, predictor, values = NULL) {
   if (is.null(values)) {
-    rng <- range(fit$data[[predictor]], na.rm = TRUE)
+    observed <- fit$data[[predictor]]
+    rng <- range(observed, na.rm = TRUE)
     values <- seq(rng[1], rng[2], length.out = 30L)
-  } else {
-    chk::chk_numeric(values)
-    warn_outside_range(fit, values, predictor)
+    # A count predictor (fronds) takes whole numbers only.
+    if (all(observed == round(observed), na.rm = TRUE)) {
+      values <- unique(round(values))
+    }
   }
   out <- tibble::tibble(x = values)
   names(out) <- predictor

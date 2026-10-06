@@ -20,20 +20,19 @@ object: a thin wrapper on \code{\link[=kb_plot_predictions]{kb_plot_predictions(
 prediction data frame, never on a fit.
 }
 \examples{
-p <- kb_predict_weight_by(fit_weight_sim_nereo, by = "site")
+fit <- fit_weight_sim_nereo
+p <- kb_predict_weight(fit, kb_new_data(fit, by = "site"))
 ggplot2::autoplot(p)
 }
 \seealso{
 Other prediction:
+\code{\link[=kb_new_data]{kb_new_data()}},
 \code{\link[=kb_plot_predictions]{kb_plot_predictions()}},
 \code{\link[=kb_predict_carbon]{kb_predict_carbon()}},
 \code{\link[=kb_predict_density]{kb_predict_density()}},
-\code{\link[=kb_predict_density_by]{kb_predict_density_by()}},
 \code{\link[=kb_predict_plot_biomass]{kb_predict_plot_biomass()}},
 \code{\link[=kb_predict_size]{kb_predict_size()}},
-\code{\link[=kb_predict_size_by]{kb_predict_size_by()}},
 \code{\link[=kb_predict_weight]{kb_predict_weight()}},
-\code{\link[=kb_predict_weight_by]{kb_predict_weight_by()}},
 \code{\link[=kb_predict_wetdry]{kb_predict_wetdry()}}
 }
 \concept{prediction}

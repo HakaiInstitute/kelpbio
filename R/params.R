@@ -71,19 +71,18 @@
 #' @param max_perc_divergent A number giving the maximum acceptable percentage of
 #'   saved draws that ended in a divergent transition. `0` requires a fit with no
 #'   divergent transitions.
-#' @param by A character vector of grouping factors, each drawn as a separate
-#'   curve, or `NULL` for a single population-level curve. Each named factor is
-#'   expanded over its observed levels and conditioned on its estimated random
-#'   effects.
-#' @param new_levels A string, one of `"sample"` or `"average"`, controlling how
-#'   random effects that are not conditioned on are treated (factors absent from
-#'   the prediction, and any new level not seen in the fit). `"sample"` draws a
-#'   new random effect from `Normal(0, sd)`, widening the interval to include
-#'   between-group variation; `"average"` holds the random effects at zero,
-#'   giving the typical (median) group rather than the average over the
-#'   random-effect distribution. Known levels are always conditioned on. `"sample"`
-#'   draws fresh randomness on each call, so set a seed with `set.seed()` for a
-#'   reproducible interval.
+#' @param by A character vector of grouping factors, `"site"`, `"year"`, or
+#'   both, giving one row per fitted level (per observed site-year for both), or
+#'   `NULL` for a single row for the typical site and year.
+#' @param new_levels A string, one of `"average"` (the default) or `"sample"`,
+#'   controlling how random effects that are not conditioned on are treated
+#'   (factors absent from the rows, and any new level not seen in the fit).
+#'   `"average"` holds them at zero, giving the typical (median) group;
+#'   `"sample"` draws a new random effect from `Normal(0, sd)`, widening the
+#'   interval to include between-group variation, as suits a prediction for a
+#'   particular unsurveyed site. Known levels are always conditioned on.
+#'   `"sample"` draws fresh randomness on each call, so set a seed with
+#'   `set.seed()` for a reproducible interval.
 #' @param representative_site A character vector of site levels present in the
 #'   fit, or `NULL` (the default). When supplied, a new or absent site takes the
 #'   named reference site's site effect (the per-draw average when several are

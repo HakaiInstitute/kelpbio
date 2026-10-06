@@ -96,16 +96,85 @@
       Error in `.chk_frond_count()`:
       ! Column `fronds` of data.frame(fronds = 2.5) must be a whole number.
 
-# .chk_new_data_density errors name the area column
+# .chk_kb_fit_grouped errors for a non-fit and a model without groups
 
     Code
-      .chk_new_data_density(data.frame(site = "a"))
+      .chk_kb_fit_grouped(wetdry_nereo_fit)
     Condition
-      Error in `.chk_new_data_density()`:
-      ! `data.frame(site = "a")` must have an area_m2 column.
-      i Its rows predict the count on a transect of that area; use `kb_predict_density_by()` for density per m².
+      Error:
+      ! `wetdry_nereo_fit` is a <kb_fit_wetdry_nereo> object, whose model has no grouping factors.
+      i Grids are built for weight, size, and density fits.
+
+# .chk_grid_predictor accepts the fit's predictor and rejects others
+
+    Code
+      .chk_grid_predictor(weight_fit, list(fronds = 3))
+    Condition
+      Error:
+      ! `fronds` is not the predictor of a nereocystis fit.
+      i Use `diameter_mm` to supply the predictor values.
 
 ---
+
+    Code
+      .chk_grid_predictor(weight_macro_fit, list(diameter_mm = 30))
+    Condition
+      Error:
+      ! `diameter_mm` is not the predictor of a macrocystis fit.
+      i Use `fronds` to supply the predictor values.
+
+---
+
+    Code
+      .chk_grid_predictor(weight_fit, list(30))
+    Condition
+      Error:
+      ! Predictor values in `...` must be named.
+      i Use `diameter_mm` to supply the predictor values.
+
+---
+
+    Code
+      .chk_grid_predictor(size_nereo_fit, list(diameter_mm = 30))
+    Condition
+      Error:
+      ! A <kb_fit_size_nereo> fit has no predictor, so `...` must be empty.
+
+---
+
+    Code
+      .chk_grid_predictor(weight_fit, twice)
+    Condition
+      Error:
+      ! Supply `diameter_mm` once.
+
+---
+
+    Code
+      .chk_grid_predictor(weight_fit, list(diameter_mm = "a"))
+    Condition
+      Error in `.chk_grid_predictor()`:
+      ! Diameter_mm must be numeric.
+
+# .chk_by_habit redirects a by argument to kb_new_data()
+
+    Code
+      .chk_by_habit(NULL, by = "site", verb = "kb_predict_density")
+    Condition
+      Error:
+      ! `kb_predict_density()` predicts at the rows of `new_data`; it has no `by` argument.
+      i For predictions by group, use `kb_predict_density(fit, kb_new_data(fit, by = "site"))`.
+
+---
+
+    Code
+      .chk_by_habit(c("site", "year"), verb = "kb_predict_size")
+    Condition
+      Error:
+      ! `kb_predict_size()` predicts at the rows of `new_data`; it has no `by` argument.
+      i For predictions by group, use `kb_predict_size(fit, kb_new_data(fit, by = c("site", "year")))`.
+
+# .chk_new_data_density errors name the area column
 
     Code
       .chk_new_data_density(data.frame(area_m2 = -1))

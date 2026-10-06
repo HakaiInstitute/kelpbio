@@ -1,11 +1,11 @@
 # .abort_no_method names the generic, the class, and the constructors
 
     Code
-      .abort_no_method("kb_predict_weight", fake)
+      .abort_no_method("kb_model_describe", fake)
     Condition
       Error:
-      ! `kb_predict_weight()` has no method for `fake`, a <kb_fit_weight_other> object.
-      i Supported fits are created by `kb_fit_weight_macro()` and `kb_fit_weight_nereo()`.
+      ! `kb_model_describe()` has no method for `fake`, a <kb_fit_weight_other> object.
+      i Supported fits are created by `kb_fit_density_macro()`, `kb_fit_density_nereo()`, `kb_fit_size_macro()`, `kb_fit_size_nereo()`, `kb_fit_weight_macro()`, and `kb_fit_weight_nereo()`.
 
 # .abort_no_method falls back to the name pattern when no constructor applies
 

@@ -11,7 +11,8 @@
 #' @family prediction
 #' @exportS3Method ggplot2::autoplot
 #' @examples
-#' p <- kb_predict_weight_by(fit_weight_sim_nereo, by = "site")
+#' fit <- fit_weight_sim_nereo
+#' p <- kb_predict_weight(fit, kb_new_data(fit, by = "site"))
 #' ggplot2::autoplot(p)
 autoplot.kb_predictions <- function(object, ...) {
   kb_plot_predictions(object, ...)

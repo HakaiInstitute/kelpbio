@@ -86,11 +86,11 @@ glance(fit)
 tidy(fit)
 ```
 
-Predict the weight-diameter curve for each site with `kb_predict_weight_by()`
+Predict the weight-diameter curve for each site at a grid from `kb_new_data()`
 and plot it with `kb_plot_predictions()`:
 
 ```{r weight-curve}
-kb_predict_weight_by(fit, by = "site") |>
+kb_predict_weight(fit, kb_new_data(fit, by = "site")) |>
   kb_plot_predictions()
 ```
 

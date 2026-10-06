@@ -1,8 +1,7 @@
-#' Predict Size for New Data
+#' Predict Size
 #'
-#' Predict the expected plant size for the supplied rows, or for the observed
-#' data when `new_data = NULL`. For one estimate per site or year, use
-#' [kb_predict_size_by()] instead.
+#' Predict the expected plant size at each row of `new_data`, or at the observed
+#' data when `new_data = NULL`.
 #'
 #' @details
 #' The expected size is the mean of the fitted size distribution: maximum
@@ -12,74 +11,61 @@
 #'
 #' The size models have no predictor, so `new_data` needs no columns: each row is
 #' a site, a year, or a site-year, given by its optional `site` and `year`
-#' columns. Conditioning is resolved per row: a `site`/`year` value the model has
-#' seen is conditioned on its estimated random effects; a new site or year, or an
-#' absent grouping column, is handled by `new_levels`.
+#' columns. For one row per site or year, build the rows with [kb_new_data()].
 #'
-#' With the default `new_levels = "sample"`, an absent or new group draws a random
-#' effect from its estimated distribution, so the interval includes between-group
-#' variation; `"average"` instead holds those random effects at zero. `"sample"`
-#' draws fresh values on each call; set a seed with `set.seed()` for a
-#' reproducible interval.
-#'
-#' For a new site, `representative_site` instead borrows the site effect of one
-#' or more named reference sites (the per-draw average across several). The
-#' `site:year` interaction still follows `new_levels`.
+#' Each row is resolved on its own: a `site` or `year` the model has seen is
+#' conditioned on its estimated effect, and a new or absent site or year follows
+#' `new_levels`. With the default `"average"`, an unseen site is the typical
+#' site; use `"sample"` for an interval that includes the variation between
+#' sites. For a new site, `representative_site` instead borrows the site effect of
+#' one or more named fitted sites (the per-draw average across several), while
+#' the site:year interaction still follows `new_levels`.
 #'
 #' @inheritParams params
 #' @param fit A `kb_fit_size` object.
 #' @param new_data A data frame with optional `site` and `year` columns, one row
 #'   per prediction, or `NULL` to predict at the observed data.
+#' @param ... Unused.
 #'
-#' @return A `kb_predictions` object: the input rows with added `estimate`,
-#'   `lower`, and `upper` columns summarising the posterior distribution of
-#'   expected size.
+#' @return A `kb_predictions` object: the rows of `new_data` with added
+#'   `estimate`, `lower`, and `upper` columns summarising the posterior
+#'   distribution of expected size.
 #' @family prediction
-#' @seealso [kb_predict_size_by()] for one estimate per group, and
+#' @seealso [kb_new_data()] to build rows by site or year, and
 #'   [posterior_predict()] for draws of individual plant sizes.
 #' @export
 #'
 #' @examples
-#' kb_predict_size(
-#'   fit_size_sim_nereo,
-#'   data.frame(site = c("site1", "new_site")),
-#'   new_levels = "average"
-#' )
-kb_predict_size <- function(fit, new_data = NULL, ...) {
-  UseMethod("kb_predict_size")
-}
-
-#' @export
-kb_predict_size.default <- function(fit, new_data = NULL, ...) {
-  .chk_kb_fit_size(fit, call = rlang::current_env())
-  .abort_no_method("kb_predict_size", fit, call = rlang::current_env())
-}
-
-#' @rdname kb_predict_size
-#' @export
-kb_predict_size.kb_fit_size <- function(
+#' fit <- fit_size_sim_nereo
+#'
+#' # At the observed plants:
+#' kb_predict_size(fit)
+#'
+#' # By site:
+#' kb_predict_size(fit, kb_new_data(fit, by = "site"))
+#'
+#' # At your own rows, including a new site:
+#' kb_predict_size(fit, data.frame(site = c("site1", "new_site")))
+kb_predict_size <- function(
   fit,
   new_data = NULL,
   ...,
-  new_levels = c("sample", "average"),
+  new_levels = c("average", "sample"),
   representative_site = NULL,
   conf_level = 0.95,
   estimate = stats::median,
   sig_fig = 3
 ) {
+  .chk_kb_fit_size(fit)
+  .chk_by_habit(new_data, ..., verb = "kb_predict_size")
   rlang::check_dots_empty()
-  .chk_representative_site(fit, representative_site)
-  .chk_summary_args(conf_level, estimate, sig_fig)
-
-  res <- data_linpred(fit, new_data, new_levels, representative_site)
-  summarise_predictions(
+  predict_rows(
     fit,
-    res$grid,
-    res$linpred,
-    res$group_vars,
-    conf_level = conf_level,
-    estimate = estimate,
-    sig_fig = sig_fig,
-    curve = FALSE
+    new_data,
+    new_levels,
+    representative_site,
+    conf_level,
+    estimate,
+    sig_fig
   )
 }

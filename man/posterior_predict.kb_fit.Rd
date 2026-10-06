@@ -8,7 +8,7 @@
   object,
   new_data = NULL,
   ...,
-  new_levels = "sample",
+  new_levels = c("average", "sample"),
   representative_site = NULL
 )
 }
@@ -16,20 +16,21 @@
 \item{object}{A \code{kb_fit} object.}
 
 \item{new_data}{A data frame with the fit's predictor column (and optional
-\code{site}, \code{year}, and \code{stipes_m2} columns; \code{area_m2} for a density fit), or
+\code{site}, \code{year}, and \code{stipes_m2} columns; for a density fit, an optional
+\code{area_m2} column giving each transect's area, 1 m² when absent), or
 \code{NULL} to predict at the observed data.}
 
 \item{...}{Unused.}
 
-\item{new_levels}{A string, one of \code{"sample"} or \code{"average"}, controlling how
-random effects that are not conditioned on are treated (factors absent from
-the prediction, and any new level not seen in the fit). \code{"sample"} draws a
-new random effect from \code{Normal(0, sd)}, widening the interval to include
-between-group variation; \code{"average"} holds the random effects at zero,
-giving the typical (median) group rather than the average over the
-random-effect distribution. Known levels are always conditioned on. \code{"sample"}
-draws fresh randomness on each call, so set a seed with \code{set.seed()} for a
-reproducible interval.}
+\item{new_levels}{A string, one of \code{"average"} (the default) or \code{"sample"},
+controlling how random effects that are not conditioned on are treated
+(factors absent from the rows, and any new level not seen in the fit).
+\code{"average"} holds them at zero, giving the typical (median) group;
+\code{"sample"} draws a new random effect from \code{Normal(0, sd)}, widening the
+interval to include between-group variation, as suits a prediction for a
+particular unsurveyed site. Known levels are always conditioned on.
+\code{"sample"} draws fresh randomness on each call, so set a seed with
+\code{set.seed()} for a reproducible interval.}
 
 \item{representative_site}{A character vector of site levels present in the
 fit, or \code{NULL} (the default). When supplied, a new or absent site takes the
@@ -56,7 +57,7 @@ size), zero-truncated negative binomial (\emph{Macrocystis} size, so every draw 
 whole number of at least 1), zero-inflated negative binomial (\emph{Nereocystis}
 density), negative binomial (\emph{Macrocystis} density), and Beta (wet/dry, so
 every draw lies between 0 and 1). Density draws are counts on each row's
-\code{area_m2}.
+\code{area_m2}, or on 1 m² when \code{new_data} has no \code{area_m2} column.
 
 The observation noise is drawn in R, for every \code{new_data} including \code{NULL}, so
 repeated calls return different replicates. Set a seed with \code{set.seed()} for

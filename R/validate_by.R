@@ -1,4 +1,4 @@
-# Validate the `by` grouping axis of a `_by` prediction verb. Every kelpbio model
+# Validate the `by` grouping axis of kb_new_data(). Every kelpbio model
 # with random effects carries the same three: year, site, and site:year where the
 # design supports it. So membership in .group_vars() is the whole rule, and there
 # is no per-model generic deciding which combinations a fit offers.

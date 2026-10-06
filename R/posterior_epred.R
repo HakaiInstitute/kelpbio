@@ -7,7 +7,7 @@
 #' the linear predictor: for weight, `exp(mu + sWeight^2 / 2)` (*Nereocystis*) or
 #' `exp(mu)` (*Macrocystis*); for size, `exp(mu)` (*Nereocystis*) or the mean of
 #' the zero-truncated distribution (*Macrocystis*); for density, the expected
-#' count on the row's `area_m2`, `(1 - zi) * exp(mu)` with `zi` the
+#' count on the row's `area_m2` (1 m² when absent), `(1 - zi) * exp(mu)` with `zi` the
 #' zero-inflation probability (*Nereocystis*) or `exp(mu)` (*Macrocystis*); for
 #' wet/dry, the mean dry:wet ratio `inv_logit(mu)`. For
 #' draws that include observation noise, use [posterior_predict()].
@@ -21,7 +21,8 @@
 #' @inheritParams params
 #' @param object A `kb_fit` object.
 #' @param new_data A data frame with the fit's predictor column (and optional
-#'   `site`, `year`, and `stipes_m2` columns; `area_m2` for a density fit), or
+#'   `site`, `year`, and `stipes_m2` columns; for a density fit, an optional
+#'   `area_m2` column giving each transect's area, 1 m² when absent), or
 #'   `NULL` for the observed data.
 #' @param ... Unused.
 #'
@@ -36,12 +37,12 @@ posterior_epred.kb_fit <- function(
   object,
   new_data = NULL,
   ...,
-  new_levels = "sample",
+  new_levels = c("average", "sample"),
   representative_site = NULL
 ) {
   rlang::check_dots_empty()
   .chk_kb_fit(object)
   .chk_representative_site(object, representative_site)
   res <- data_linpred(object, new_data, new_levels, representative_site)
-  .epred(object, posterior::draws_of(res$linpred))
+  posterior::draws_of(.epred(object, res$linpred))
 }
