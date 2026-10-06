@@ -35,3 +35,14 @@ test_that("nereo posterior_epred is the lognormal mean, above the median", {
   expect_equal(ep, med * exp(sw^2 / 2))
   expect_true(all(ep > med))
 })
+
+test_that("rows naming one new site share its sampled effect", {
+  withr::local_seed(1)
+  y <- density_nereo_fit$meta$year_levels[1]
+  p <- posterior_epred(
+    density_nereo_fit,
+    data.frame(site = c("new", "new", "other"), year = y, area_m2 = 10)
+  )
+  expect_identical(p[, 1], p[, 2])
+  expect_false(identical(p[, 1], p[, 3]))
+})

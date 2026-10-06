@@ -95,3 +95,29 @@ test_that("the bar reporter runs its lifecycle without error", {
     r$finish()
   })
 })
+
+test_that("a prediction record is written whole and read as a fraction", {
+  d <- withr::local_tempdir()
+  expect_null(read_prediction_progress(d))
+  write_prediction_progress(d, 3L, 12L)
+  expect_identical(read_prediction_progress(d), 0.25)
+  expect_identical(list.files(d), "prediction.rds")
+  write_prediction_progress(d, 12L, 12L)
+  expect_identical(read_prediction_progress(d), 1)
+})
+
+test_that("no prediction record is written without a directory", {
+  expect_null(write_prediction_progress(NULL, 1L, 2L))
+})
+
+test_that("the bar reporter takes the task's label", {
+  withr::local_options(cli.dynamic = TRUE, cli.progress_show_after = 0)
+  r <- progress_reporter("bar", "Predicting biomass")
+  expect_s3_class(r, "kb_reporter_bar")
+  expect_no_error({
+    r$start(2)
+    r$update(1)
+    r$update(2)
+    r$finish()
+  })
+})

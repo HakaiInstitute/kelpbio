@@ -1,16 +1,16 @@
-# kb_fit_progress validates progress_dir
+# kb_progress validates progress_dir
 
     Code
-      kb_fit_progress(1)
+      kb_progress(1)
     Condition
-      Error in `kb_fit_progress()`:
+      Error in `kb_progress()`:
       ! `progress_dir` must be a string (non-missing character scalar).
 
 ---
 
     Code
-      kb_fit_progress(c("a", "b"))
+      kb_progress(c("a", "b"))
     Condition
-      Error in `kb_fit_progress()`:
+      Error in `kb_progress()`:
       ! `progress_dir` must be a string (non-missing character scalar).
 

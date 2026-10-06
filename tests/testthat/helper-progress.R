@@ -1,7 +1,7 @@
 # Fixture writer mimicking one rstan sample_file chain CSV: leading comment
 # lines, a header row containing lp__, `n_rows` complete data rows, an optional
 # torn (short) trailing row, and an optional "# Elapsed Time" completion footer.
-# Shared by test-progress.R and test-kb_fit_progress.R.
+# Shared by test-progress.R and test-kb_progress.R.
 write_fake_chain <- function(
   path,
   n_fields = 5L,

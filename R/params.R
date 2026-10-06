@@ -18,7 +18,7 @@
 #' [glance()], or [summary()] in every mode.
 #'
 #' Supply `progress_dir` (an existing directory) to have the fit write a progress
-#' record there, which [kb_fit_progress()] reads to report the completed fraction
+#' record there, which [kb_progress()] reads to report the completed fraction
 #' from another R process (for example, to drive a progress indicator while the fit
 #' runs in the background).
 #'
@@ -56,7 +56,7 @@
 #'   bar), `"verbose"` (rstan's per-iteration output and diagnostic warnings), or
 #'   `"none"` (silent). Controls fit-time console output only.
 #' @param progress_dir A string giving an existing directory in which to write a
-#'   pollable progress artifact (read by [kb_fit_progress()]), or `NULL` (the
+#'   pollable progress artifact (read by [kb_progress()]), or `NULL` (the
 #'   default) to write none.
 #' @param conf_level A number between 0 and 1 giving the compatibility-interval
 #'   level.

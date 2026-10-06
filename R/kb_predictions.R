@@ -3,6 +3,8 @@
 # by kb_plot_predictions() for its defaults. `curve` records whether the rows
 # form an ordered, generated grid over the predictor (ribbon-eligible) rather
 # than scattered supplied rows; it cannot be recovered from the data shape.
+# `conf_level` records the level of `lower` and `upper`, so a prediction passed on
+# as data (the in situ biomass of a cover biomass fit) carries its own level.
 new_kb_predictions <- function(
   x,
   predictor,
@@ -10,7 +12,8 @@ new_kb_predictions <- function(
   response,
   response_units = NA_character_,
   predictor_units = NA_character_,
-  curve = FALSE
+  curve = FALSE,
+  conf_level = NA_real_
 ) {
   x <- tibble::as_tibble(x)
   structure(
@@ -21,6 +24,7 @@ new_kb_predictions <- function(
     kb_group_vars = group_vars,
     kb_response = response,
     kb_response_units = response_units,
-    kb_curve = curve
+    kb_curve = curve,
+    kb_conf_level = conf_level
   )
 }

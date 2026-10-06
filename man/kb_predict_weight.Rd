@@ -126,6 +126,7 @@ Other prediction:
 \code{\link[=kb_predict_carbon]{kb_predict_carbon()}},
 \code{\link[=kb_predict_density]{kb_predict_density()}},
 \code{\link[=kb_predict_density_by]{kb_predict_density_by()}},
+\code{\link[=kb_predict_plot_biomass]{kb_predict_plot_biomass()}},
 \code{\link[=kb_predict_size]{kb_predict_size()}},
 \code{\link[=kb_predict_size_by]{kb_predict_size_by()}},
 \code{\link[=kb_predict_weight_by]{kb_predict_weight_by()}},

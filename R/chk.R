@@ -201,6 +201,37 @@
   .chk_positive_measure(x$area_m2, x_name = kb_xname(x_name, "area_m2"))
 }
 
+# The fits a composition combines must describe one species.
+.chk_same_species <- function(fits, call = rlang::caller_env()) {
+  if (.vld_same_species(fits)) {
+    return(invisible(fits))
+  }
+  species <- vapply(fits, function(f) .species_label(f$meta$species), character(1))
+  cli::cli_abort(
+    c(
+      "The fits must be of one species.",
+      i = "{.arg {names(fits)}} {?is/are} {.val {species}}."
+    ),
+    call = call
+  )
+}
+
+# The fits a composition combines are paired draw by draw, so their draw counts
+# must match.
+.chk_same_ndraws <- function(fits, call = rlang::caller_env()) {
+  if (.vld_same_ndraws(fits)) {
+    return(invisible(fits))
+  }
+  n <- vapply(fits, function(f) posterior::ndraws(f$draws), numeric(1))
+  cli::cli_abort(
+    c(
+      "The fits must have the same number of posterior draws.",
+      i = "{.arg {names(fits)}} {?has/have} {n} draws."
+    ),
+    call = call
+  )
+}
+
 .chk_representative_site <- function(fit, representative_site) {
   if (.vld_representative_site(representative_site, fit$meta$site_levels)) {
     return(invisible(representative_site))
