@@ -103,6 +103,9 @@ summary.kb_fit <- function(
   if (identical(model, "wetdry")) {
     return("Wet/dry")
   }
+  if (identical(model, "cover_biomass")) {
+    return("Cover biomass")
+  }
   .capitalize(model)
 }
 
@@ -189,6 +192,12 @@ summary.kb_fit <- function(
 
 # Carbon, like wet/dry, has no predictor.
 .fit_descriptor.kb_fit_carbon <- function(x) {
+  list(predictor = NA_character_, groups = fit_groups(x))
+}
+
+# Cover has no predictor line: cover is derived from the canopy, plot, and tide
+# columns rather than supplied.
+.fit_descriptor.kb_fit_cover_biomass <- function(x) {
   list(predictor = NA_character_, groups = fit_groups(x))
 }
 

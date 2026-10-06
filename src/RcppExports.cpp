@@ -13,6 +13,7 @@ Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 
 
 RcppExport SEXP _rcpp_module_boot_stan_fit4carbon_mod();
+RcppExport SEXP _rcpp_module_boot_stan_fit4cover_biomass_mod();
 RcppExport SEXP _rcpp_module_boot_stan_fit4density_macro_mod();
 RcppExport SEXP _rcpp_module_boot_stan_fit4density_nereo_mod();
 RcppExport SEXP _rcpp_module_boot_stan_fit4size_macro_mod();
@@ -23,6 +24,7 @@ RcppExport SEXP _rcpp_module_boot_stan_fit4wetdry_mod();
 
 static const R_CallMethodDef CallEntries[] = {
     {"_rcpp_module_boot_stan_fit4carbon_mod", (DL_FUNC) &_rcpp_module_boot_stan_fit4carbon_mod, 0},
+    {"_rcpp_module_boot_stan_fit4cover_biomass_mod", (DL_FUNC) &_rcpp_module_boot_stan_fit4cover_biomass_mod, 0},
     {"_rcpp_module_boot_stan_fit4density_macro_mod", (DL_FUNC) &_rcpp_module_boot_stan_fit4density_macro_mod, 0},
     {"_rcpp_module_boot_stan_fit4density_nereo_mod", (DL_FUNC) &_rcpp_module_boot_stan_fit4density_nereo_mod, 0},
     {"_rcpp_module_boot_stan_fit4size_macro_mod", (DL_FUNC) &_rcpp_module_boot_stan_fit4size_macro_mod, 0},

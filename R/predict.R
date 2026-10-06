@@ -172,3 +172,45 @@ predict.kb_fit_carbon <- function(
     sig_fig = sig_fig
   )
 }
+
+#' Predict Method for a Cover Biomass Model Fit
+#'
+#' A thin wrapper on [kb_predict_cover_biomass()]: predict the expected wet biomass per
+#' m² of plot at the supplied `new_data` rows (or at the observed data when
+#' `new_data = NULL`). For curves over cover by site or year, build the rows with
+#' [kb_new_data()].
+#'
+#' @inheritParams params
+#' @inheritParams kb_predict_cover_biomass
+#' @param object A `kb_fit_cover_biomass` object.
+#' @param ... Unused.
+#'
+#' @return A `kb_predictions` object.
+#' @family generics
+#' @exportS3Method stats::predict
+#' @examples
+#' predict(
+#'   fit_cover_biomass_sim_macro,
+#'   data.frame(canopy_area_m2 = 120, plot_area_m2 = 200, tide_height_m = 0.5)
+#' )
+predict.kb_fit_cover_biomass <- function(
+  object,
+  new_data = NULL,
+  ...,
+  new_levels = c("average", "sample"),
+  representative_site = NULL,
+  conf_level = 0.95,
+  estimate = stats::median,
+  sig_fig = 3
+) {
+  rlang::check_dots_empty()
+  kb_predict_cover_biomass(
+    object,
+    new_data = new_data,
+    new_levels = new_levels,
+    representative_site = representative_site,
+    conf_level = conf_level,
+    estimate = estimate,
+    sig_fig = sig_fig
+  )
+}

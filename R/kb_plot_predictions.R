@@ -182,6 +182,7 @@ kb_axis_label <- function(name) {
     biomass_kg_m2 = "Wet biomass",
     dry_biomass_kg_m2 = "Dry biomass",
     carbon_biomass_g_m2 = "Carbon biomass",
+    cover = "Tide-corrected canopy cover",
     site = "Site",
     year = "Year",
     estimate = "Estimate",

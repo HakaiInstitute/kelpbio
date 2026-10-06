@@ -16,3 +16,11 @@ test_that("predict wraps each model's prediction verb", {
   expect_identical(predict(wetdry_nereo_fit), kb_predict_wetdry(wetdry_nereo_fit))
   expect_identical(predict(carbon_nereo_fit), kb_predict_carbon(carbon_nereo_fit))
 })
+
+test_that("predict wraps kb_predict_cover_biomass", {
+  nd <- data.frame(canopy_area_m2 = c(20, 80), plot_area_m2 = 200, tide_height_m = 0.5)
+  expect_identical(
+    predict(cover_biomass_nereo_fit, new_data = nd),
+    kb_predict_cover_biomass(cover_biomass_nereo_fit, new_data = nd)
+  )
+})

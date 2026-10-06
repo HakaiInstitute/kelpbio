@@ -76,3 +76,11 @@
 .epred.kb_fit_carbon <- function(fit, lp, expectation = TRUE) {
   1 / (1 + exp(-lp))
 }
+
+# Log link: the residual SD is the error of the in situ estimates, not variation
+# in biomass, so the expected biomass is the calibration mean exp(lp) with no
+# lognormal retransformation.
+#' @export
+.epred.kb_fit_cover_biomass <- function(fit, lp, expectation = TRUE) {
+  exp(lp)
+}

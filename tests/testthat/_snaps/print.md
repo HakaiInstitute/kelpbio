@@ -86,6 +86,18 @@
       Converged: TRUE
       See kb_model_describe(fit) for the model equation and priors.
 
+# print.kb_fit shows the cover biomass header without a predictor line
+
+    Code
+      print(cover_biomass_nereo_fit)
+    Output
+      <kb_fit_cover_biomass_nereo>
+      Model:     Cover biomass (Nereocystis luetkeana)
+      Data:      16 observations; groups: site (4), year (4), site:year (16)
+      Draws:     2 chains, 300 post-warmup draws each (thin = 5), 600 total
+      Converged: TRUE
+      See kb_model_describe(fit) for the model equation and priors.
+
 # print.kb_fit shows the density headers without a predictor line
 
     Code

@@ -43,3 +43,12 @@
       Column `wet_mass_g` of `d` has median 4500, which is unusually large for grams.
       i Check that wet_mass_g is in grams.
 
+---
+
+    Code
+      warn_implausible_units(data.frame(tide_height_m = c(50, 120)), "`d`")
+    Condition
+      Warning:
+      Column `tide_height_m` of `d` has median 85, which is unusually large for metres.
+      i Check that tide_height_m is in metres.
+

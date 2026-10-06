@@ -103,7 +103,7 @@
     Condition
       Error:
       ! `wetdry_nereo_fit` is a <kb_fit_wetdry_nereo> object, whose model has no grouping factors.
-      i Grids are built for weight, size, and density fits.
+      i Grids are built for weight, size, density, and cover biomass fits.
 
 # .chk_grid_predictor accepts the fit's predictor and rejects others
 
@@ -199,4 +199,30 @@
       Error:
       ! The fits must have the same number of posterior draws.
       i `weight` and `size` have 600 and 1500 draws.
+
+# .chk_cover_survey errors name the survey column
+
+    Code
+      .chk_cover_survey(good[c("canopy_area_m2", "plot_area_m2")])
+    Condition
+      Error in `.chk_cover_survey()`:
+      ! Good[c("canopy_area_m2", "plot_area_m2")] must include 'tide_height_m'.
+
+---
+
+    Code
+      .chk_cover_survey(bad)
+    Condition
+      Error in `.chk_cover_survey()`:
+      ! Column `canopy_area_m2` of bad must not exceed plot_area_m2.
+      i The canopy is the area delineated within the plot.
+
+# .chk_biomass_limits and .chk_biomass_estimate name the offending limit
+
+    Code
+      .chk_biomass_limits(good["estimate"])
+    Condition
+      Error in `.chk_biomass_limits()`:
+      ! good["estimate"] must have lower and upper columns.
+      i They are the compatibility limits of the in situ biomass estimate, which set its precision.
 

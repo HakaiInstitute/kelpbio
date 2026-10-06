@@ -112,3 +112,32 @@ test_that("carbon posterior_predict draws fractions between 0 and 1", {
   expect_true(all(pp > 0 & pp < 1))
   expect_equal(mean(pp), mean(posterior_epred(carbon_nereo_fit)), tolerance = 0.02)
 })
+
+test_that("cover posterior_predict draws positive estimates with the in situ precision", {
+  withr::local_seed(1)
+  pp <- posterior_predict(cover_biomass_nereo_fit)
+  expect_equal(
+    dim(pp),
+    c(posterior::ndraws(cover_biomass_nereo_fit$draws), nobs(cover_biomass_nereo_fit))
+  )
+  expect_true(all(pp > 0))
+  # The draws are lognormal around the calibration mean, so their log median
+  # is the log of the expected biomass.
+  ep <- posterior_epred(cover_biomass_nereo_fit)
+  expect_equal(
+    stats::median(log(pp) - log(ep)),
+    0,
+    tolerance = 0.05
+  )
+})
+
+test_that("cover posterior_predict needs the in situ limits in new_data", {
+  nd <- data.frame(canopy_area_m2 = 40, plot_area_m2 = 200, tide_height_m = 0.5)
+  expect_snapshot(posterior_predict(cover_biomass_nereo_fit, nd), error = TRUE)
+  withr::local_seed(1)
+  pp <- posterior_predict(
+    cover_biomass_nereo_fit,
+    transform(nd, lower = c(0.5), upper = c(2))
+  )
+  expect_equal(ncol(pp), 1L)
+})

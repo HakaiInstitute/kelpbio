@@ -54,6 +54,21 @@ test_that("weight grids are marked as curves and others are not", {
   expect_false(attr(kb_new_data(size_nereo_fit, by = "site"), "kb_curve"))
 })
 
+test_that("a cover grid is unit-plot surveys over cover from 0 to 1", {
+  grid <- kb_new_data(cover_biomass_nereo_fit, by = "site")
+  expect_named(
+    grid,
+    c("site", "cover", "canopy_area_m2", "plot_area_m2", "tide_height_m")
+  )
+  expect_equal(range(grid$cover), c(0, 1))
+  expect_equal(grid$canopy_area_m2, grid$cover)
+  expect_true(all(grid$plot_area_m2 == 1 & grid$tide_height_m == 0))
+  expect_true(attr(grid, "kb_curve"))
+  expect_error(kb_new_data(cover_biomass_nereo_fit, cover = 1.5), "cover")
+  expect_error(kb_new_data(cover_biomass_nereo_fit, cover = NA_real_), "cover")
+  expect_error(kb_new_data(cover_biomass_nereo_fit, diameter_mm = 30), "cover")
+})
+
 test_that("kb_new_data rejects a bad by, predictor, or model", {
   expect_error(kb_new_data(size_nereo_fit, by = "month"), "Invalid")
   expect_error(kb_new_data(weight_fit, fronds = c(2, 5)), "diameter_mm")

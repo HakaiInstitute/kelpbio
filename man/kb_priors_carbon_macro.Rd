@@ -30,6 +30,8 @@ Other priors:
 \code{\link[=kb_prior_exponential]{kb_prior_exponential()}},
 \code{\link[=kb_prior_normal]{kb_prior_normal()}},
 \code{\link[=kb_priors_carbon_nereo]{kb_priors_carbon_nereo()}},
+\code{\link[=kb_priors_cover_biomass_macro]{kb_priors_cover_biomass_macro()}},
+\code{\link[=kb_priors_cover_biomass_nereo]{kb_priors_cover_biomass_nereo()}},
 \code{\link[=kb_priors_density_macro]{kb_priors_density_macro()}},
 \code{\link[=kb_priors_density_nereo]{kb_priors_density_nereo()}},
 \code{\link[=kb_priors_size_macro]{kb_priors_size_macro()}},

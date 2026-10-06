@@ -33,7 +33,8 @@ test_that(".epred returns an rvar for every model", {
     density_nereo_fit,
     density_macro_fit,
     wetdry_nereo_fit,
-    carbon_nereo_fit
+    carbon_nereo_fit,
+    cover_biomass_nereo_fit
   )
   for (fit in fits) {
     out <- .epred(fit, lp_rvar(fit, c(0.5, 1)))
@@ -81,4 +82,10 @@ test_that("the wet/dry and carbon means are the inverse logit", {
       stats::plogis(posterior::draws_of(lp))
     )
   }
+})
+
+test_that("the cover biomass mean is the inverse log, with no retransformation", {
+  lp <- lp_rvar(cover_biomass_nereo_fit, c(0.1, 0.5))
+  expect_equal(.epred(cover_biomass_nereo_fit, lp), exp(lp))
+  expect_equal(.epred(cover_biomass_nereo_fit, lp, expectation = FALSE), exp(lp))
 })

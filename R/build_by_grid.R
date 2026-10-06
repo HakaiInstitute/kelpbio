@@ -32,10 +32,10 @@ build_by_grid <- function(fit, by, values = NULL) {
 predictor_grid <- function(fit, predictor, values = NULL) {
   if (is.null(values)) {
     observed <- fit$data[[predictor]]
-    rng <- range(observed, na.rm = TRUE)
+    rng <- fit$meta$predictor_range %||% range(observed, na.rm = TRUE)
     values <- seq(rng[1], rng[2], length.out = 30L)
     # A count predictor (fronds) takes whole numbers only.
-    if (all(observed == round(observed), na.rm = TRUE)) {
+    if (!is.null(observed) && all(observed == round(observed), na.rm = TRUE)) {
       values <- unique(round(values))
     }
   }

@@ -24,8 +24,9 @@ median. The likelihoods are Normal on log weight (\emph{Nereocystis} weight), Ga
 on weight (\emph{Macrocystis} weight), Weibull on diameter (\emph{Nereocystis} size),
 zero-truncated negative binomial on frond count (\emph{Macrocystis} size),
 zero-inflated negative binomial on stipe count (\emph{Nereocystis} density),
-negative binomial on plant count (\emph{Macrocystis} density), and Beta on the
-dry:wet mass ratio (wet/dry).
+negative binomial on plant count (\emph{Macrocystis} density), Beta on the
+dry:wet mass ratio (wet/dry) and the carbon fraction (carbon), and Normal on
+the log in situ biomass estimate (cover).
 
 A size residual is zero where the observation equals the value that
 maximises its likelihood with the shape or overdispersion held fixed: the
@@ -50,6 +51,7 @@ Other generics:
 \code{\link[=posterior_linpred.kb_fit]{posterior_linpred.kb_fit()}},
 \code{\link[=posterior_predict.kb_fit]{posterior_predict.kb_fit()}},
 \code{\link[=predict.kb_fit_carbon]{predict.kb_fit_carbon()}},
+\code{\link[=predict.kb_fit_cover_biomass]{predict.kb_fit_cover_biomass()}},
 \code{\link[=predict.kb_fit_density]{predict.kb_fit_density()}},
 \code{\link[=predict.kb_fit_size]{predict.kb_fit_size()}},
 \code{\link[=predict.kb_fit_weight]{predict.kb_fit_weight()}},

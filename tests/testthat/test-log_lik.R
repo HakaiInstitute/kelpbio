@@ -157,3 +157,19 @@ test_that("carbon log_lik matches the Beta density of the fraction computed dire
   ))
   expect_equal(log_lik(carbon_macro_fit), expected, tolerance = 1e-10)
 })
+
+test_that("cover log_lik is the Normal density of the log estimate with its Jacobian", {
+  fit <- cover_biomass_nereo_fit
+  mu <- posterior_linpred(fit)
+  scaling <- as.vector(posterior::draws_of(fit$draws$bScaling))
+  sd_log <- cover_log_sd(fit$data$lower, fit$data$upper, 0.95)
+  y <- fit$data$estimate
+  expected <- t(vapply(
+    seq_len(nrow(mu)),
+    function(d) {
+      stats::dlnorm(y, mu[d, ], scaling[d] * sd_log, log = TRUE)
+    },
+    numeric(length(y))
+  ))
+  expect_equal(log_lik(fit), expected, tolerance = 1e-10, ignore_attr = TRUE)
+})

@@ -14,7 +14,9 @@ fixtures <- list(
   wetdry_nereo_fit,
   wetdry_macro_fit,
   carbon_nereo_fit,
-  carbon_macro_fit
+  carbon_macro_fit,
+  cover_biomass_nereo_fit,
+  cover_biomass_macro_fit
 )
 if (any(vapply(fixtures, is.null, logical(1)))) {
   stop(

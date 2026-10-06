@@ -12,7 +12,7 @@
 
 devtools::load_all(quiet = TRUE)
 
-models <- c("weight", "size", "density", "wetdry", "carbon")
+models <- c("weight", "size", "density", "wetdry", "carbon", "cover_biomass")
 selected <- commandArgs(trailingOnly = TRUE)
 if (!length(selected)) {
   selected <- models
@@ -201,4 +201,34 @@ if ("carbon" %in% selected) {
   )
   saveRDS(carbon_macro_fit, "tests/testthat/fixtures/carbon_macro_fit.rds")
   message("Wrote tests/testthat/fixtures/carbon_macro_fit.rds")
+}
+
+if ("cover_biomass" %in% selected) {
+  # Cover fixtures: the four-site subset of the bundled data_cover_biomass_sim_* and
+  # data_plot_biomass_sim_*, one survey per site-year, as for size and density.
+  cover_biomass_nereo_fit <- kb_fit_cover_biomass_nereo(
+    size_subset(data_cover_biomass_sim_nereo),
+    size_subset(data_plot_biomass_sim_nereo),
+    chains = 2L,
+    niters = 300L,
+    nthin = 5L,
+    cores = 2L,
+    progress = "none",
+    seed = 42L
+  )
+  saveRDS(cover_biomass_nereo_fit, "tests/testthat/fixtures/cover_biomass_nereo_fit.rds")
+  message("Wrote tests/testthat/fixtures/cover_biomass_nereo_fit.rds")
+
+  cover_biomass_macro_fit <- kb_fit_cover_biomass_macro(
+    size_subset(data_cover_biomass_sim_macro),
+    size_subset(data_plot_biomass_sim_macro),
+    chains = 2L,
+    niters = 300L,
+    nthin = 5L,
+    cores = 2L,
+    progress = "none",
+    seed = 42L
+  )
+  saveRDS(cover_biomass_macro_fit, "tests/testthat/fixtures/cover_biomass_macro_fit.rds")
+  message("Wrote tests/testthat/fixtures/cover_biomass_macro_fit.rds")
 }

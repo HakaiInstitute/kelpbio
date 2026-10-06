@@ -4,8 +4,8 @@ Status: accepted (2026-06)
 
 ## Context
 
-kelpbio fits six sub-models (weight, size, density, blade, wetdry, carbon) for
-two species, *Nereocystis luetkeana* (nereo) and *Macrocystis pyrifera* (macro).
+kelpbio fits six sub-models (weight, size, density, blade, wetdry, carbon), and
+a cover-biomass calibration, for two species, *Nereocystis luetkeana* (nereo) and *Macrocystis pyrifera* (macro).
 The package began nereo-only with a `species = "nereocystis"` argument and a
 single `inst/stan/weight.stan`, on the working assumption (recorded in the old
 `config.yaml` rule "Species enters as data, not a variant") that a species is
@@ -25,6 +25,8 @@ data:
   inflation for the annual *Nereocystis*, a plain negative binomial for the
   perennial *Macrocystis*).
 - wetdry / carbon: structurally identical across species.
+- cover_biomass: structurally identical across species; only the default floor and tide
+  priors differ.
 
 A single `kb_fit_weight(data, species)` would force the function's required data
 columns, prior set, and returned parameters to branch on `species`. A mode
@@ -41,7 +43,7 @@ Species is a variant axis, handled uniformly across all six models:
 - Each species gets its own public fit function `kb_fit_<model>_<species>()`
   (e.g. `kb_fit_weight_nereo()`), its own `kb_priors_<model>_<species>()` and
   `kb_check_data_<model>_<species>()`, and its own `inst/stan/<model>_<species>.stan`.
-  A model that is structurally identical across species (wetdry, carbon) has one
+  A model that is structurally identical across species (wetdry, carbon, cover_biomass) has one
   `inst/stan/<model>.stan`, since two identical files would differ in nothing.
 - The species-agnostic mechanics (sampler invocation, control merge, warmup/thin
   math, core resolution, draws-to-rvars extraction, convergence diagnostics) live in one shared internal engine, `fit_stan()`. Each
@@ -58,7 +60,7 @@ Species is a variant axis, handled uniformly across all six models:
     `...` and lose `rlang::check_dots_empty()`.
   - **`kb_fit_<model>`** for methods that do not vary by species, e.g.
     `.epred.kb_fit_weight` (both weight species use a log link; *Nereocystis*
-    overrides it for the lognormal mean). wetdry and carbon,
+    overrides it for the lognormal mean). wetdry, carbon, and cover_biomass,
     being structurally identical across species, will register at this tier
     throughout.
   - **`kb_fit_<model>_<species>`** for methods that do vary: `.linpred`,
@@ -73,11 +75,11 @@ Species is a variant axis, handled uniformly across all six models:
   differ in response type (size is continuous for *Nereocystis*, a count for
   *Macrocystis*), which are genuinely different types, not one type with a family.
 - Uniformity wins over local optimisation: even where a model is structurally
-  identical across species (wetdry, carbon), the species-suffixed function is
+  identical across species (wetdry, carbon, cover_biomass), the species-suffixed function is
   kept so users learn one rule and `meta$species` is always available for the
   biomass composition (which requires all six fits to share a species). The
   species functions then share one internal body and Stan file and differ only in
-  the species they record.
+  the species they record (and, for cover_biomass, their default priors).
 
 This reverses the prior "species enters as data, not a variant" rule in
 `config.yaml`, updated to match.

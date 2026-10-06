@@ -1,9 +1,10 @@
 # Warn when a column's median is implausible in its expected unit. The limits lie
 # well beyond the site-year medians in the reference data (Nereocystis: the
 # coastwide harvest compilation, Alaska to California; Macrocystis weight, stipe
-# density, transect area, and sample masses: Hakai Institute surveys and lab
-# samples) and well inside what a unit mistake (centimetres, grams, stipes per
-# hectare, square centimetres or hectares, milligrams) produces. The median, so
+# density, transect area, sample masses, drone plots, and tide heights:
+# Hakai Institute surveys and lab samples) and well inside what a unit mistake
+# (centimetres, grams, stipes per hectare, square centimetres or hectares,
+# milligrams) produces. Tide heights are chart datum, so can be negative. The median, so
 # a few extreme plants do not trigger it; a warning, so valid but unusual data
 # are never blocked.
 warn_implausible_units <- function(data, x_name) {
@@ -12,6 +13,8 @@ warn_implausible_units <- function(data, x_name) {
     weight_kg = c(-Inf, 100),
     stipes_m2 = c(-Inf, 100),
     area_m2 = c(1, 5000),
+    plot_area_m2 = c(1, 1e6),
+    tide_height_m = c(-1, 5),
     wet_mass_g = c(-Inf, 1000),
     dry_mass_g = c(-Inf, 1000)
   )

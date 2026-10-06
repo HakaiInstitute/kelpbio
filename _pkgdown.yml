@@ -22,6 +22,8 @@ reference:
     - kb_fit_wetdry_macro
     - kb_fit_carbon_nereo
     - kb_fit_carbon_macro
+    - kb_fit_cover_biomass_nereo
+    - kb_fit_cover_biomass_macro
     - kb_progress
 - title: "Priors"
   desc: "Specify priors for model parameters."
@@ -36,6 +38,8 @@ reference:
     - kb_priors_wetdry_macro
     - kb_priors_carbon_nereo
     - kb_priors_carbon_macro
+    - kb_priors_cover_biomass_nereo
+    - kb_priors_cover_biomass_macro
     - kb_prior_normal
     - kb_prior_exponential
 - title: "Data"
@@ -51,6 +55,8 @@ reference:
     - kb_check_data_wetdry_macro
     - kb_check_data_carbon_nereo
     - kb_check_data_carbon_macro
+    - kb_check_data_cover_biomass_nereo
+    - kb_check_data_cover_biomass_macro
     - data_weight_sim_nereo
     - data_weight_sim_macro
     - data_size_sim_nereo
@@ -61,6 +67,10 @@ reference:
     - data_wetdry_sim_macro
     - data_carbon_sim_nereo
     - data_carbon_sim_macro
+    - data_cover_biomass_sim_nereo
+    - data_cover_biomass_sim_macro
+    - data_plot_biomass_sim_nereo
+    - data_plot_biomass_sim_macro
     - fit_weight_sim_nereo
     - fit_weight_sim_macro
     - fit_size_sim_nereo
@@ -71,6 +81,8 @@ reference:
     - fit_wetdry_sim_macro
     - fit_carbon_sim_nereo
     - fit_carbon_sim_macro
+    - fit_cover_biomass_sim_nereo
+    - fit_cover_biomass_sim_macro
 - title: "Predictions and Plotting"
   desc: "Predict and visualise model output."
   contents:
@@ -81,6 +93,7 @@ reference:
     - kb_predict_wetdry
     - kb_predict_carbon
     - kb_predict_plot_biomass
+    - kb_predict_cover_biomass
     - kb_plot_predictions
 - title: "Model Summaries and Diagnostics"
   desc: "Summarise fits, extract coefficients and draws, and assess convergence."
@@ -103,6 +116,7 @@ reference:
     - predict.kb_fit_density
     - predict.kb_fit_wetdry
     - predict.kb_fit_carbon
+    - predict.kb_fit_cover_biomass
     - posterior_epred.kb_fit
     - posterior_linpred.kb_fit
     - posterior_predict.kb_fit

@@ -68,3 +68,11 @@ test_that("carbon residuals are finite Beta deviance residuals", {
     expect_true(all(is.finite(r)))
   }
 })
+
+test_that("cover residuals are the log-scale residuals over the scaled in situ SD", {
+  for (fit in list(cover_biomass_nereo_fit, cover_biomass_macro_fit)) {
+    r <- residuals(fit)
+    expect_length(r, nobs(fit))
+    expect_true(all(is.finite(r)))
+  }
+})

@@ -9,5 +9,8 @@ column_units <- c(
   wet_mass_g = "grams",
   dry_mass_g = "grams",
   sample_mass_mg = "milligrams",
-  carbon_mass_ug = "micrograms"
+  carbon_mass_ug = "micrograms",
+  canopy_area_m2 = "square metres",
+  plot_area_m2 = "square metres",
+  tide_height_m = "metres"
 )

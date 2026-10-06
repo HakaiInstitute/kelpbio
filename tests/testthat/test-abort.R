@@ -77,6 +77,7 @@ test_that("every internal generic has a default, and only display ones are total
       ".chk_new_data",
       ".deviance",
       ".epred",
+      ".grid_columns",
       ".linpred",
       ".log_lik",
       ".plant_sizes"
