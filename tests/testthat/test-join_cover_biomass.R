@@ -22,7 +22,8 @@ test_that("each survey takes its site-year's biomass, keeping survey order", {
 })
 
 test_that("unpaired surveys are dropped silently, one key per survey returned", {
-  expect_no_message(out <- join_cover_biomass(surveys, biomass))
+  expect_no_message(join_cover_biomass(surveys, biomass))
+  out <- join_cover_biomass(surveys, biomass)
   expect_equal(nrow(out$data), 3L)
   expect_identical(out$unmatched, c("c:2021", "c:2021"))
 })
