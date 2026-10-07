@@ -37,7 +37,7 @@ test_that("kb_fit_weight returns a correctly-structured object", {
       "site_year_effect"
     )
   )
-  expect_equal(niters(fit), 100L)
+  expect_equal(niterations(fit), 100L)
 })
 
 test_that("nthin > 1 still keeps exactly niters draws per chain", {
@@ -56,7 +56,7 @@ test_that("nthin > 1 still keeps exactly niters draws per chain", {
     progress = "none",
     seed = 3
   )
-  expect_equal(niters(fit), 50L)
+  expect_equal(niterations(fit), 50L)
   expect_equal(posterior::ndraws(fit$draws), 50L)
 })
 

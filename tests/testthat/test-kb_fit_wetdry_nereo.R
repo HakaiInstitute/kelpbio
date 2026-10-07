@@ -11,7 +11,7 @@ test_that("kb_fit_wetdry_nereo returns a correctly-structured object", {
   expect_s3_class(fit, c("kb_fit_wetdry_nereo", "kb_fit_wetdry", "kb_fit"))
   expect_named(fit, c("draws", "diagnostics", "data", "meta"))
   expect_setequal(posterior::variables(fit$draws), c("intercept", "precision"))
-  expect_equal(niters(fit), 100L)
+  expect_equal(niterations(fit), 100L)
 })
 
 test_that("the fit records the species, a derived response, and no effects", {

@@ -175,7 +175,7 @@ The fit functions SHALL take `chains` (default 4), `niters` (saved post-warmup d
 
 #### Scenario: niters counts saved draws
 - **WHEN** a fit uses `niters = 1000` and `nthin = 2`
-- **THEN** `niters(fit)` is `1000`
+- **THEN** `niterations(fit)` is `1000`
 
 #### Scenario: control is merged over the default
 - **WHEN** a fit is called with `control = list(max_treedepth = 12)`

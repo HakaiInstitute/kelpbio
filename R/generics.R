@@ -10,42 +10,6 @@ generics::glance
 #' @export
 generics::augment
 
-#' @importFrom universals rhat
-#' @export
-universals::rhat
-
-#' @importFrom universals esr
-#' @export
-universals::esr
-
-#' @importFrom universals converged
-#' @export
-universals::converged
-
-#' @importFrom universals estimates
-#' @export
-universals::estimates
-
-#' @importFrom universals npars
-#' @export
-universals::npars
-
-#' @importFrom universals nterms
-#' @export
-universals::nterms
-
-#' @importFrom universals nchains
-#' @export
-universals::nchains
-
-#' @importFrom universals niters
-#' @export
-universals::niters
-
-#' @importFrom universals pars
-#' @export
-universals::pars
-
 #' @importFrom rstantools posterior_epred
 #' @export
 rstantools::posterior_epred
@@ -73,3 +37,23 @@ ggplot2::autoplot
 #' @importFrom posterior as_draws
 #' @export
 posterior::as_draws
+
+#' @importFrom posterior nchains
+#' @export
+posterior::nchains
+
+#' @importFrom posterior niterations
+#' @export
+posterior::niterations
+
+#' @importFrom posterior ndraws
+#' @export
+posterior::ndraws
+
+#' @importFrom posterior nvariables
+#' @export
+posterior::nvariables
+
+#' @importFrom posterior variables
+#' @export
+posterior::variables

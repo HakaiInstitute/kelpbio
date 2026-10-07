@@ -105,7 +105,7 @@ match \code{niters} and the post-warmup phase is thinned by \code{nthin}.
 \code{progress} controls fit-time console output. The default \code{"bar"} shows a
 progress bar; \code{"verbose"} streams rstan's per-iteration output and its
 post-sampling diagnostic warnings; \code{"none"} is silent. \code{progress} changes only
-console output, never the fit; inspect convergence with \code{\link[=converged]{converged()}},
+console output, never the fit; inspect convergence with \code{\link[=kb_converged]{kb_converged()}},
 \code{\link[=glance]{glance()}}, or \code{\link[=summary]{summary()}} in every mode.
 
 Supply \code{progress_dir} (an existing directory) to have the fit write a progress

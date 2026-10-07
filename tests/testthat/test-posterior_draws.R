@@ -24,3 +24,18 @@ test_that("as_draws leaves out an effect the fit omitted", {
 test_that("as_draws is re-exported, so it needs no posterior::", {
   expect_identical(kelpbio::as_draws, posterior::as_draws)
 })
+
+test_that("posterior's draw counts read a fit's draws", {
+  draws <- kb_samples(weight_nereo_fit)
+  expect_identical(nchains(weight_nereo_fit), posterior::nchains(draws))
+  expect_identical(niterations(weight_nereo_fit), posterior::niterations(draws))
+  expect_identical(ndraws(weight_nereo_fit), posterior::ndraws(draws))
+  expect_identical(nvariables(weight_nereo_fit), posterior::nvariables(draws))
+  expect_identical(variables(weight_nereo_fit), posterior::variables(draws))
+})
+
+test_that("summarise_draws reports each parameter's convergence diagnostics", {
+  s <- posterior::summarise_draws(weight_nereo_fit)
+  expect_true(all(c("rhat", "ess_bulk", "ess_tail") %in% names(s)))
+  expect_true("intercept" %in% s$variable)
+})

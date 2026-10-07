@@ -33,7 +33,7 @@ test_that("kb_fit_cover_biomass_macro returns a correctly-structured object", {
       "year_effect"
     )
   )
-  expect_equal(niters(fit), 100L)
+  expect_equal(niterations(fit), 100L)
 })
 
 test_that("the fit records the species, response, predictor, interval level, and no site:year", {

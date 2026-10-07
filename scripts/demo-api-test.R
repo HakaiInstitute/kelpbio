@@ -80,14 +80,14 @@ fit_power <- kb_fit_weight_nereo(
 # print key model info (see other generics including summary() below)
 fit
 
-# --- fit accessors: broom + universals + diagnostics --------------------------
+# --- fit accessors: broom + posterior + diagnostics ---------------------------
 print(fit)
 tidy(fit)
 tidy(fit, include_random_effects = TRUE)
 tidy(fit, conf_level = 0.8, sig_fig = 4)
 coef(fit)
 glance(fit)
-converged(fit)
+kb_converged(fit)
 summary(fit)
 
 # full model in scientific notation, or as a methods paragraph (prose = TRUE);
@@ -96,17 +96,14 @@ kb_model_describe(fit)
 kb_model_describe(fit, prose = TRUE)
 
 nobs(fit)
-niters(fit)
+# posterior's draw counts and names, re-exported
+niterations(fit)
 nchains(fit)
-npars(fit)
-nterms(fit)
-pars(fit)
-# bayesplot (and posterior) export their own rhat() generic, which masks the
-# kelpbio/universals one once attached; namespace it, or read rhat/ESS off
-# glance(fit) / summary(fit), which never collide.
-kelpbio::rhat(fit)
-esr(fit)
-estimates(fit)
+ndraws(fit)
+nvariables(fit)
+variables(fit)
+# per-parameter Rhat and effective sample sizes
+posterior::summarise_draws(fit)
 
 kb_samples(fit)
 # posterior's conversions and summaries accept the fit, as for brms or cmdstanr
@@ -452,11 +449,10 @@ fit_aliased <- kb_fit_weight_nereo(
 )
 fit_aliased$meta$site_year_on # TRUE (retained despite non-identifiability)
 
-# An omitted effect is left out of every summary and of the draws: its draws were
-# sampled from the prior alone. No sd_site_year here:
+# An omitted effect is not stored, so it is left out of every summary and of
+# the draws. No sd_site_year here:
 tidy(fit_one_year)
-pars(fit_one_year)
-"sd_site_year" %in% posterior::variables(kb_samples(fit_one_year)) # FALSE
+"sd_site_year" %in% variables(fit_one_year) # FALSE
 
 # --- functional form ---------------------------------------------------------
 # fit_power (fitted above with form = "power") has no weight_floor; its straight

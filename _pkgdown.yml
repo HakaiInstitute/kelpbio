@@ -108,7 +108,7 @@ reference:
     - glance.kb_fit
     - summary.kb_fit
     - augment.kb_fit
-    - converged.kb_fit
+    - kb_converged
     - kb_sensitivity
     - create_priorsense_data.kb_fit
     - prior_summary.kb_fit

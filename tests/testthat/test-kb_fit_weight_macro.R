@@ -37,7 +37,7 @@ test_that("kb_fit_weight_macro returns a correctly-structured object", {
       "site_year_effect"
     )
   )
-  expect_equal(niters(fit), 100L)
+  expect_equal(niterations(fit), 100L)
 })
 
 test_that("prior_only fit ignores the data", {
