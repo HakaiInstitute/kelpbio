@@ -29,6 +29,6 @@ test_that("fit_cover_biomass_model builds a fit from the species' check and defa
   expect_identical(fit$meta$priors, kb_priors_cover_biomass_nereo())
   expect_identical(
     fit$meta$terms$fixed,
-    c("bCanopy", "bFloor", "bTide", "bScaling", "sSite", "sYear")
+    c("cover_slope", "biomass_floor", "tide_height_slope", "error_scaling", "sd_site", "sd_year")
   )
 })

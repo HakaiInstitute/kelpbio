@@ -5,7 +5,7 @@
 #' @details
 #' The dry:wet mass ratio of each sample, `dry_mass_g / wet_mass_g`, is modelled
 #' with a Beta likelihood parameterised by its mean and precision. The logit mean
-#' ratio (`bDryWet`) and the precision (`bPrecision`) are common to all samples,
+#' ratio (`intercept`) and the precision (`precision`) are common to all samples,
 #' so the model estimates one ratio for the population of samples supplied.
 #'
 #' Samples are pooled over the months, sites, and tissues they come from. To
@@ -52,7 +52,6 @@ kb_fit_wetdry_macro <- function(
     data,
     priors,
     model = "wetdry",
-    intercept = "bDryWet",
     response = "dry_wet_ratio",
     check_data = kb_check_data_wetdry_macro,
     defaults = kb_priors_wetdry_macro(),

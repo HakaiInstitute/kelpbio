@@ -5,8 +5,8 @@
 #' @details
 #' The number of fronds reaching 1 m above the holdfast is modelled with a
 #' zero-truncated negative binomial likelihood, since plants without such a
-#' frond are not recorded. The log mean before truncation (`bFronds`) varies by
-#' site, by year, and by `site:year`; the overdispersion (`bDispersion`) is
+#' frond are not recorded. The log mean before truncation (`intercept`) varies by
+#' site, by year, and by `site:year`; the overdispersion (`dispersion`) is
 #' common to all plants. Predictions report the mean of the truncated
 #' distribution: the expected frond count of a plant with at least one frond at
 #' 1 m.
@@ -80,14 +80,14 @@ kb_fit_size_macro <- function(
     stanmodels$size_macro,
     stan_data,
     param_vars = c(
-      "bFronds",
-      "bDispersion",
-      "sSite",
-      "sYear",
-      "sSiteYear",
-      "bSite",
-      "bYear",
-      "bSiteYear"
+      "intercept",
+      "dispersion",
+      "sd_site",
+      "sd_year",
+      "sd_site_year",
+      "site_effect",
+      "year_effect",
+      "site_year_effect"
     ),
     chains = chains,
     niters = niters,
@@ -110,16 +110,16 @@ kb_fit_size_macro <- function(
     offset = NULL,
     terms = list(
       fixed = c(
-        "bFronds",
-        "bDispersion",
-        "sSite",
-        "sYear",
-        if (site_year$on) "sSiteYear"
+        "intercept",
+        "dispersion",
+        "sd_site",
+        "sd_year",
+        if (site_year$on) "sd_site_year"
       ),
       random = c(
-        "bSite",
-        "bYear",
-        if (site_year$on) "bSiteYear"
+        "site_effect",
+        "year_effect",
+        if (site_year$on) "site_year_effect"
       )
     ),
     prior_only = prior_only,

@@ -12,13 +12,13 @@ test_that("assemble_weight_nereo_data maps data and priors to the Stan data bloc
     prior_only = FALSE
   )
 
-  expect_equal(sd$nObs, 3L)
-  expect_equal(sd$nSite, 2L)
-  expect_equal(sd$nYear, 2L)
+  expect_equal(sd$n_obs, 3L)
+  expect_equal(sd$n_site, 2L)
+  expect_equal(sd$n_year, 2L)
   expect_equal(sd$site, c(1L, 2L, 1L))
   expect_equal(sd$year, c(1L, 1L, 2L))
-  expect_equal(sd$diameter, c(20, 35, 50))
-  expect_equal(sd$weight, c(0.5, 2, 4))
+  expect_equal(sd$diameter_mm, c(20, 35, 50))
+  expect_equal(sd$weight_kg, c(0.5, 2, 4))
   # the supplied diameter reference is passed straight through
   expect_equal(sd$diameter_ref, 42)
   expect_equal(sd$prior_only, 0L)
@@ -53,9 +53,9 @@ test_that("assemble_weight_nereo_data maps every prior hyperparameter to its own
   # Every hyperparameter distinct, so a transposed or dropped wiring cannot pass.
   priors <- list(
     intercept = kb_prior_normal(0.1, 1.1),
-    power = kb_prior_normal(0.2, 1.2),
-    floor = kb_prior_normal(0.3, 1.3),
-    density = kb_prior_normal(0.4, 1.4),
+    diameter_power = kb_prior_normal(0.2, 1.2),
+    weight_floor = kb_prior_normal(0.3, 1.3),
+    density_slope = kb_prior_normal(0.4, 1.4),
     sd_site = kb_prior_exponential(2.1),
     sd_year = kb_prior_exponential(2.2),
     sd_site_year = kb_prior_exponential(2.4),
@@ -67,14 +67,14 @@ test_that("assemble_weight_nereo_data maps every prior hyperparameter to its own
     diameter_ref = 30,
     prior_only = FALSE
   )
-  expect_equal(sd$prior_intercept_mu, 0.1)
+  expect_equal(sd$prior_intercept_mean, 0.1)
   expect_equal(sd$prior_intercept_sd, 1.1)
-  expect_equal(sd$prior_power_mu, 0.2)
-  expect_equal(sd$prior_power_sd, 1.2)
-  expect_equal(sd$prior_floor_mu, 0.3)
-  expect_equal(sd$prior_floor_sd, 1.3)
-  expect_equal(sd$prior_density_mu, 0.4)
-  expect_equal(sd$prior_density_sd, 1.4)
+  expect_equal(sd$prior_diameter_power_mean, 0.2)
+  expect_equal(sd$prior_diameter_power_sd, 1.2)
+  expect_equal(sd$prior_weight_floor_mean, 0.3)
+  expect_equal(sd$prior_weight_floor_sd, 1.3)
+  expect_equal(sd$prior_density_slope_mean, 0.4)
+  expect_equal(sd$prior_density_slope_sd, 1.4)
   expect_equal(sd$prior_sd_site_rate, 2.1)
   expect_equal(sd$prior_sd_year_rate, 2.2)
   expect_equal(sd$prior_sd_site_year_rate, 2.4)
@@ -117,11 +117,11 @@ test_that("assemble_weight_nereo_data accepts zero-row data", {
     diameter_ref = 30,
     prior_only = TRUE
   )
-  expect_equal(sd$nObs, 0L)
-  expect_equal(sd$nSite, 1L)
-  expect_equal(sd$nYear, 1L)
+  expect_equal(sd$n_obs, 0L)
+  expect_equal(sd$n_site, 1L)
+  expect_equal(sd$n_year, 1L)
   expect_length(sd$site, 0)
-  expect_length(sd$diameter, 0)
+  expect_length(sd$diameter_mm, 0)
   expect_equal(sd$prior_only, 1L)
 })
 

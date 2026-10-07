@@ -7,9 +7,9 @@
 kb_priors_weight_nereo()
 }
 \value{
-A named list of prior objects with entries \code{intercept}, \code{power},
-\code{floor}, \code{density}, \code{sd_site}, \code{sd_year}, \code{sd_site_year}, and
-\code{sd_residual}.
+A named list of prior objects with entries \code{intercept},
+\code{diameter_power}, \code{weight_floor}, \code{density_slope}, \code{sd_site}, \code{sd_year},
+\code{sd_site_year}, and \code{sd_residual}.
 }
 \description{
 The default prior list for the \emph{Nereocystis luetkeana} allometric weight
@@ -18,12 +18,14 @@ model. Edit individual entries and pass the list to the \code{priors} argument o
 defaults.
 }
 \details{
-The prior family of each entry is fixed; only the hyperparameters can be
-changed. \code{intercept} is on the log of the weight above the floor at the
-reference diameter, \code{power} is the allometric exponent, and \code{floor} is the
-weight (kg) as diameter approaches zero. \code{power} and \code{floor} are truncated at
-zero. \code{density} is the effect of standardised stipe density on the log scale
-and is used only when the data include density.
+Each entry is named after the parameter it sets, as reported by \code{\link[=tidy]{tidy()}} and
+\code{\link[=kb_model_describe]{kb_model_describe()}}. The prior family of each entry is fixed; only the
+hyperparameters can be changed. \code{intercept} is on the log of the weight above
+the floor at the reference diameter, \code{diameter_power} is the allometric
+exponent, and \code{weight_floor} is the weight (kg) as diameter approaches zero;
+both are truncated at zero. \code{density_slope} is the effect of standardised
+stipe density on the log scale and is used only when the data include
+density. \code{sd_residual} is the residual standard deviation of log weight.
 }
 \examples{
 priors <- kb_priors_weight_nereo()
@@ -32,6 +34,7 @@ priors$sd_site <- kb_prior_exponential(2)
 \seealso{
 Other priors:
 \code{\link[=kb_prior_exponential]{kb_prior_exponential()}},
+\code{\link[=kb_prior_lognormal]{kb_prior_lognormal()}},
 \code{\link[=kb_prior_normal]{kb_prior_normal()}},
 \code{\link[=kb_priors_carbon_macro]{kb_priors_carbon_macro()}},
 \code{\link[=kb_priors_carbon_nereo]{kb_priors_carbon_nereo()}},

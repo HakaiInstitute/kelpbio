@@ -5,9 +5,9 @@
 #' @details
 #' The number of plants on a transect is modelled with a negative binomial
 #' likelihood. The expected count is the transect area times the plant density, so
-#' `area_m2` enters as an offset. The log density (`bPlants`, log plants per m² at
+#' `area_m2` enters as an offset. The log density (`intercept`, log plants per m² at
 #' a typical site and year) varies by site, by year, and by `site:year`; the
-#' overdispersion (`bDispersion`) is common to all transects.
+#' overdispersion (`dispersion`) is common to all transects.
 #'
 #' The site:year effect is set from the data: it is omitted when the data span a
 #' single year and included otherwise. When no site spans more than one year it is
@@ -79,14 +79,14 @@ kb_fit_density_macro <- function(
     stanmodels$density_macro,
     stan_data,
     param_vars = c(
-      "bPlants",
-      "bDispersion",
-      "sSite",
-      "sYear",
-      "sSiteYear",
-      "bSite",
-      "bYear",
-      "bSiteYear"
+      "intercept",
+      "dispersion",
+      "sd_site",
+      "sd_year",
+      "sd_site_year",
+      "site_effect",
+      "year_effect",
+      "site_year_effect"
     ),
     chains = chains,
     niters = niters,
@@ -110,16 +110,16 @@ kb_fit_density_macro <- function(
     offset = "area_m2",
     terms = list(
       fixed = c(
-        "bPlants",
-        "bDispersion",
-        "sSite",
-        "sYear",
-        if (site_year$on) "sSiteYear"
+        "intercept",
+        "dispersion",
+        "sd_site",
+        "sd_year",
+        if (site_year$on) "sd_site_year"
       ),
       random = c(
-        "bSite",
-        "bYear",
-        if (site_year$on) "bSiteYear"
+        "site_effect",
+        "year_effect",
+        if (site_year$on) "site_year_effect"
       )
     ),
     prior_only = prior_only,

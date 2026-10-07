@@ -72,13 +72,13 @@ Log wet weight (kg) is modelled with a Normal likelihood. \code{form} sets expec
 weight as a function of sub-bulb diameter (mm), with \code{x = diameter_mm / d0} and
 \code{d0} the geometric mean diameter of the data:
 \itemize{
-\item \code{"packard_floor"} (the default): \code{bFloor + alpha * x^bPower}, the
+\item \code{"packard_floor"} (the default): \code{weight_floor + alpha * x^diameter_power}, the
 three-parameter power function of Packard (2023). The weight floor
-\code{bFloor} makes the relationship curve on log-log axes: the local allometric
-exponent rises with plant size and levels off toward \code{bPower} as the
+\code{weight_floor} makes the relationship curve on log-log axes: the local allometric
+exponent rises with plant size and levels off toward \code{diameter_power} as the
 floor's share of weight shrinks.
-\item \code{"power"}: \code{alpha * x^bPower}, a power law, which is a straight line on
-log-log axes with the single exponent \code{bPower}.
+\item \code{"power"}: \code{alpha * x^diameter_power}, a power law, which is a straight line on
+log-log axes with the single exponent \code{diameter_power}.
 }
 
 \code{"packard_floor"} is recommended. On a coastwide compilation of \emph{Nereocystis}
@@ -89,7 +89,7 @@ The year, site, and \code{site:year} effects act on \code{alpha}, so they scale 
 size-dependent part of the weight while any floor is common to all groups.
 
 When \code{data} has a \code{stipes_m2} column (stipes per m², a site-year value),
-\code{log(alpha)} also includes \code{bDensity} times density standardised by its mean
+\code{log(alpha)} also includes \code{density_slope} times density standardised by its mean
 and SD over the fitted plants. Site-years without a recorded density take the
 mean. The density term is omitted when fewer than two distinct site-year
 densities are recorded.

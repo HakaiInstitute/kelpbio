@@ -18,7 +18,8 @@ individual entries and pass the list to the \code{priors} argument of
 defaults.
 }
 \details{
-The prior family of each entry is fixed (the intercept is Normal, the
+Each entry is named after the parameter it sets, as reported by \code{\link[=tidy]{tidy()}} and
+\code{\link[=kb_model_describe]{kb_model_describe()}}. The prior family of each entry is fixed (the intercept is Normal, the
 overdispersion and standard deviations are Exponential); only the
 hyperparameters can be changed.
 }
@@ -29,6 +30,7 @@ priors$dispersion <- kb_prior_exponential(2)
 \seealso{
 Other priors:
 \code{\link[=kb_prior_exponential]{kb_prior_exponential()}},
+\code{\link[=kb_prior_lognormal]{kb_prior_lognormal()}},
 \code{\link[=kb_prior_normal]{kb_prior_normal()}},
 \code{\link[=kb_priors_carbon_macro]{kb_priors_carbon_macro()}},
 \code{\link[=kb_priors_carbon_nereo]{kb_priors_carbon_nereo()}},

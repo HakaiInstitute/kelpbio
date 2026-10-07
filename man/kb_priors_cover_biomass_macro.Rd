@@ -7,12 +7,12 @@
 kb_priors_cover_biomass_macro()
 }
 \value{
-A named list of prior objects with entries \code{canopy} (the log of the
-wet biomass per m² of tide-corrected canopy at a typical site and year),
-\code{floor} (the wet biomass per m² at zero cover), \code{tide} (the fractional
-increase in canopy area per metre of tide height), \code{scaling} (the multiplier
-on the log-scale SDs of the in situ biomass estimates), \code{sd_site}, and
-\code{sd_year}.
+A named list of prior objects with entries \code{cover_slope} (the wet
+biomass per m² at full tide-corrected canopy cover, at a typical site and
+year), \code{biomass_floor} (the wet biomass per m² at zero cover),
+\code{tide_height_slope} (the fractional increase in canopy area per metre of
+tide height), \code{error_scaling} (the multiplier on the log-scale SDs of the in
+situ biomass estimates), \code{sd_site}, and \code{sd_year}.
 }
 \description{
 The default prior list for the \emph{Macrocystis pyrifera} cover biomass model. Edit
@@ -21,18 +21,21 @@ individual entries and pass the list to the \code{priors} argument of
 defaults.
 }
 \details{
-The prior family of each entry is fixed (the canopy, floor, tide, and scaling
-priors are Normal, the standard deviations are Exponential); only the
-hyperparameters can be changed. The floor, tide, and scaling priors are
+Each entry is named after the parameter it sets, as reported by \code{\link[=tidy]{tidy()}} and
+\code{\link[=kb_model_describe]{kb_model_describe()}}. The prior family of each entry is fixed (the cover
+slope prior is lognormal, the floor, tide, and error scaling priors are
+Normal, and the standard deviations are Exponential); only the
+hyperparameters can be changed. The floor, tide, and error scaling priors are
 truncated at zero.
 }
 \examples{
 priors <- kb_priors_cover_biomass_macro()
-priors$canopy <- kb_prior_normal(mean = 2, sd = 0.5)
+priors$cover_slope <- kb_prior_lognormal(meanlog = 2, sdlog = 0.5)
 }
 \seealso{
 Other priors:
 \code{\link[=kb_prior_exponential]{kb_prior_exponential()}},
+\code{\link[=kb_prior_lognormal]{kb_prior_lognormal()}},
 \code{\link[=kb_prior_normal]{kb_prior_normal()}},
 \code{\link[=kb_priors_carbon_macro]{kb_priors_carbon_macro()}},
 \code{\link[=kb_priors_carbon_nereo]{kb_priors_carbon_nereo()}},

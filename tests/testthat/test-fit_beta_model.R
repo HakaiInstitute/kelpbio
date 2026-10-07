@@ -15,7 +15,6 @@ test_that("fit_beta_model uses the model, species, and default priors it is give
     priors = NULL,
     model = "wetdry",
     species = "macrocystis",
-    intercept = "bDryWet",
     response = "dry_wet_ratio",
     check_data = kb_check_data_wetdry_macro,
     defaults = defaults,
@@ -32,5 +31,5 @@ test_that("fit_beta_model uses the model, species, and default priors it is give
   expect_s3_class(fit, "kb_fit_wetdry_macro")
   expect_equal(fit$meta$priors$intercept, kb_prior_normal(-2, 1))
   expect_identical(fit$meta$response, "dry_wet_ratio")
-  expect_identical(fit$meta$terms$fixed, c("bDryWet", "bPrecision"))
+  expect_identical(fit$meta$terms$fixed, c("intercept", "precision"))
 })

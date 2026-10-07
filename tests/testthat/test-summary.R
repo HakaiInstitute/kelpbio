@@ -33,10 +33,10 @@ test_that("macro summary carries the term list and year group", {
   expect_equal(s$model, "Weight")
   expect_named(s$groups, c("site", "year", "site:year"))
   expect_true(all(
-    c("bWeight", "bFronds", "bShape", "sSite", "sYear", "sSiteYear") %in%
+    c("intercept", "fronds_slope", "shape", "sd_site", "sd_year", "sd_site_year") %in%
       s$coefficients$term
   ))
-  expect_false(any(grepl("^bYear\\[", s$coefficients$term)))
+  expect_false(any(grepl("^year_effect\\[", s$coefficients$term)))
 })
 
 test_that("print.summary_kb_fit shows the slim header, table, and footer", {

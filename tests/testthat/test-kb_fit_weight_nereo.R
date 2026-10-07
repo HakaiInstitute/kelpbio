@@ -41,17 +41,17 @@ test_that("kb_fit_weight returns a correctly-structured object", {
   expect_setequal(
     posterior::variables(fit$draws),
     c(
-      "bWeight",
-      "bPower",
-      "bFloor",
-      "bDensity",
-      "sSite",
-      "sYear",
-      "sSiteYear",
-      "sWeight",
-      "bSite",
-      "bYear",
-      "bSiteYear"
+      "intercept",
+      "diameter_power",
+      "weight_floor",
+      "density_slope",
+      "sd_site",
+      "sd_year",
+      "sd_site_year",
+      "sd_residual",
+      "site_effect",
+      "year_effect",
+      "site_year_effect"
     )
   )
   # niters = saved post-warmup draws per chain
@@ -175,8 +175,8 @@ test_that("a single-year fit records no site:year terms", {
   d <- droplevels(subset(weight_fit$data, year == "2019"))
   fit <- kb_fit_weight_nereo(d, progress = "none")
   expect_false(fit$meta$site_year_on)
-  expect_false("sSiteYear" %in% fit$meta$terms$fixed)
-  expect_false("bSiteYear" %in% fit$meta$terms$random)
+  expect_false("sd_site_year" %in% fit$meta$terms$fixed)
+  expect_false("site_year_effect" %in% fit$meta$terms$random)
 })
 
 test_that("the fit records the density structure in meta and terms", {
@@ -194,7 +194,7 @@ test_that("the fit records the density structure in meta and terms", {
   levels <- weight_fit$meta$density_levels
   expect_setequal(names(levels), names(per_site_year))
   expect_equal(unname(levels[names(per_site_year)]), as.vector(per_site_year))
-  expect_true("bDensity" %in% weight_fit$meta$terms$fixed)
+  expect_true("density_slope" %in% weight_fit$meta$terms$fixed)
 })
 
 test_that("data without density give a fit with the density term off", {
@@ -203,8 +203,8 @@ test_that("data without density give a fit with the density term off", {
   d$stipes_m2 <- NULL
   fit <- kb_fit_weight_nereo(d, progress = "none")
   expect_false(fit$meta$density_on)
-  expect_false("bDensity" %in% fit$meta$terms$fixed)
-  expect_false("bDensity" %in% tidy(fit)$term)
+  expect_false("density_slope" %in% fit$meta$terms$fixed)
+  expect_false("density_slope" %in% tidy(fit)$term)
 })
 
 test_that("the form defaults to packard_floor and power drops the floor", {
@@ -212,13 +212,13 @@ test_that("the form defaults to packard_floor and power drops the floor", {
   d <- weight_fit$data
   default <- kb_fit_weight_nereo(d, progress = "none")
   expect_identical(default$meta$form, "packard_floor")
-  expect_true("bFloor" %in% default$meta$terms$fixed)
+  expect_true("weight_floor" %in% default$meta$terms$fixed)
 
   power <- kb_fit_weight_nereo(d, form = "power", progress = "none")
   expect_identical(power$meta$form, "power")
-  expect_false("bFloor" %in% power$meta$terms$fixed)
-  expect_false("bFloor" %in% tidy(power)$term)
-  expect_false("bFloor" %in% posterior::variables(samples(power)))
+  expect_false("weight_floor" %in% power$meta$terms$fixed)
+  expect_false("weight_floor" %in% tidy(power)$term)
+  expect_false("weight_floor" %in% posterior::variables(samples(power)))
 })
 
 test_that("an unknown form errors before sampling, naming the forms", {
@@ -245,6 +245,6 @@ test_that("a power-law fit samples and records no floor", {
     seed = 1
   )
   expect_identical(fit$meta$form, "power")
-  expect_false("bFloor" %in% tidy(fit)$term)
+  expect_false("weight_floor" %in% tidy(fit)$term)
   expect_true(all(is.finite(log_lik(fit))))
 })

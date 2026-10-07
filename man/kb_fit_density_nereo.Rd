@@ -67,11 +67,11 @@ Fit a stipe-density model for \emph{Nereocystis luetkeana} via Stan.
 \details{
 The number of stipes on a transect is modelled with a zero-inflated negative
 binomial likelihood. The expected count is the transect area times the stipe
-density, so \code{area_m2} enters as an offset. The log density (\code{bStipes}, log
+density, so \code{area_m2} enters as an offset. The log density (\code{intercept}, log
 stipes per m² at a typical site and year) varies by site, by year, and by
 \code{site:year}. A transect holds no stipes with probability \code{zi}, estimated on the
-logit scale (\code{bZeroInflation}) and common to all transects; the overdispersion
-(\code{bDispersion}) is also common to all transects. Predictions report the
+logit scale (\code{logit_zero_inflation}) and common to all transects; the overdispersion
+(\code{dispersion}) is also common to all transects. Predictions report the
 expected density, which includes the zero-inflation probability.
 
 The site:year effect is set from the data: it is omitted when the data span a

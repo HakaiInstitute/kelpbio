@@ -90,7 +90,7 @@ glance(fit)
 ## Summarising the fit
 
 `tidy()` returns the model terms with a point estimate and compatibility limits.
-`bWeight`, `bPower`, and `bFloor` describe the allometric curve; the
+`intercept`, `diameter_power`, and `weight_floor` describe the allometric curve; the
 `s`-prefixed terms are the random-effect and residual standard deviations.
 
 ```{r}
@@ -164,8 +164,8 @@ fit_macro <- fit_weight_sim_macro
 
 The fit object is the same class as the *Nereocystis* fit, so `glance()`,
 `tidy()`, and the prediction functions work identically. The term table reflects
-the *Macrocystis* structure: a single frond slope (`bFronds`), the Gamma shape
-(`shape`), and a year standard deviation (`sYear`).
+the *Macrocystis* structure: a single frond slope (`fronds_slope`), the Gamma shape
+(`shape`), and a year standard deviation (`sd_year`).
 
 ```{r}
 tidy(fit_macro)

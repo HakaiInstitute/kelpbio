@@ -78,15 +78,15 @@ new_kb_fit <- function(
 }
 
 # Label the per-level effects with their levels, so the draws index by name and
-# flatten to bSite[<site>] and bSiteYear[<site>,<year>]. The levels are in the
+# flatten to site_effect[<site>] and site_year_effect[<site>,<year>]. The levels are in the
 # order of the Stan indices: both come from factor() on the same data. A zero-row
 # prior-only fit samples one placeholder level that has no name, so an effect
 # whose shape does not match the levels is left unlabelled.
 label_levels <- function(draws, site_levels, year_levels) {
   labels <- list(
-    bSite = list(site_levels),
-    bYear = list(year_levels),
-    bSiteYear = list(site_levels, year_levels)
+    site_effect = list(site_levels),
+    year_effect = list(year_levels),
+    site_year_effect = list(site_levels, year_levels)
   )
   for (name in intersect(names(labels), names(draws))) {
     x <- draws[[name]]
@@ -102,7 +102,7 @@ label_levels <- function(draws, site_levels, year_levels) {
   draws
 }
 
-# The element names of a draws_rvars object (bSite[a], not bSite), in the order
+# The element names of a draws_rvars object (site_effect[a], not site_effect), in the order
 # summarise_draws() reports them.
 flat_variables <- function(draws) {
   posterior::variables(posterior::as_draws_df(draws))

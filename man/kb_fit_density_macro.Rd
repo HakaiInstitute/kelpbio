@@ -67,9 +67,9 @@ Fit a plant-density model for \emph{Macrocystis pyrifera} via Stan.
 \details{
 The number of plants on a transect is modelled with a negative binomial
 likelihood. The expected count is the transect area times the plant density, so
-\code{area_m2} enters as an offset. The log density (\code{bPlants}, log plants per m² at
+\code{area_m2} enters as an offset. The log density (\code{intercept}, log plants per m² at
 a typical site and year) varies by site, by year, and by \code{site:year}; the
-overdispersion (\code{bDispersion}) is common to all transects.
+overdispersion (\code{dispersion}) is common to all transects.
 
 The site:year effect is set from the data: it is omitted when the data span a
 single year and included otherwise. When no site spans more than one year it is

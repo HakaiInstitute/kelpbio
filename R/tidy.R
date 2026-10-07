@@ -2,8 +2,8 @@
 #'
 #' Posterior summaries of the model terms: the population-level effects and the
 #' random-effect standard deviations, plus (when `include_random_effects = TRUE`)
-#' the group-level deviations, each named by its level, as in `bSite[otter_cove]`
-#' or `bSiteYear[otter_cove,2020]`. By default the per-level deviations are
+#' the group-level deviations, each named by its level, as in `site_effect[otter_cove]`
+#' or `site_year_effect[otter_cove,2020]`. By default the per-level deviations are
 #' omitted, following the `broom.mixed` convention.
 #'
 #' @inheritParams params

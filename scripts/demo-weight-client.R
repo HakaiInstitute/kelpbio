@@ -222,7 +222,7 @@ bind_rows(
   mutate(coef(fit), priors = "default"),
   mutate(coef(fit_custom), priors = "custom")
 ) |>
-  filter(term == "bDiameter")
+  filter(term == "intercept")
 
 # 7b. Raw posterior draws ----------------------------------------------------
 # Standard rstantools generics work and return the same predictions as the

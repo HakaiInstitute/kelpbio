@@ -4,8 +4,8 @@
 #' `inst/stan/weight_nereo.stan`. `site` and `year` are encoded as integer factor
 #' codes; the raw `diameter_mm` and `weight_kg` vectors are passed through (the Stan
 #' model applies the `log(diameter) - log(diameter_ref)` and `log(weight)`
-#' transforms). Zero-row data is supported (for prior-only fits): `nObs` is `0`
-#' and `nSite` / `nYear` fall back to `1`.
+#' transforms). Zero-row data is supported (for prior-only fits): `n_obs` is `0`
+#' and `n_site` / `n_year` fall back to `1`.
 #'
 #' @inheritParams params
 #' @param priors A list of the resolved named priors (see `resolve_priors()`).
@@ -26,40 +26,31 @@ assemble_weight_nereo_data <- function(
 ) {
   site <- factor(data$site)
   year <- factor(data$year)
-  nObs <- nrow(data)
+  n_obs <- nrow(data)
 
-  list(
-    nObs = nObs,
-    nSite = max(1L, nlevels(site)),
-    nYear = max(1L, nlevels(year)),
-    site = as.integer(site),
-    year = as.integer(year),
-    diameter = as.numeric(data$diameter_mm),
-    weight = as.numeric(data$weight_kg),
-    diameter_ref = diameter_ref,
-    density = standardised_density(
-      data,
-      density$on,
-      density$mean,
-      density$sd,
-      density$levels
+  c(
+    list(
+      n_obs = n_obs,
+      n_site = max(1L, nlevels(site)),
+      n_year = max(1L, nlevels(year)),
+      site = as.integer(site),
+      year = as.integer(year),
+      diameter_mm = as.numeric(data$diameter_mm),
+      weight_kg = as.numeric(data$weight_kg),
+      diameter_ref = diameter_ref,
+      density = standardised_density(
+        data,
+        density$on,
+        density$mean,
+        density$sd,
+        density$levels
+      ),
+      prior_only = as.integer(prior_only),
+      site_year_on = as.integer(site_year_on),
+      density_on = as.integer(density$on),
+      floor_on = as.integer(floor_on)
     ),
-    prior_intercept_mu = priors$intercept$mean,
-    prior_intercept_sd = priors$intercept$sd,
-    prior_power_mu = priors$power$mean,
-    prior_power_sd = priors$power$sd,
-    prior_floor_mu = priors$floor$mean,
-    prior_floor_sd = priors$floor$sd,
-    prior_density_mu = priors$density$mean,
-    prior_density_sd = priors$density$sd,
-    prior_sd_site_rate = priors$sd_site$rate,
-    prior_sd_year_rate = priors$sd_year$rate,
-    prior_sd_site_year_rate = priors$sd_site_year$rate,
-    prior_sd_residual_rate = priors$sd_residual$rate,
-    prior_only = as.integer(prior_only),
-    site_year_on = as.integer(site_year_on),
-    density_on = as.integer(density$on),
-    floor_on = as.integer(floor_on)
+    prior_data(priors)
   )
 }
 

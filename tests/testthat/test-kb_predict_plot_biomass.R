@@ -122,9 +122,9 @@ test_that("nereo plant sizes are increasing quantiles below the upper bound", {
 
 test_that("nereo plant sizes average to the truncated Weibull mean", {
   lp <- log(30)
-  shape <- posterior::draws_of(size_nereo_fit$draws$bShape)[1]
+  shape <- posterior::draws_of(size_nereo_fit$draws$shape)[1]
   fit <- size_nereo_fit
-  fit$draws$bShape <- posterior::rvar(shape)
+  fit$draws$shape <- posterior::rvar(shape)
   scale <- weibull_scale(30, shape)
   upper <- 50
   u <- (seq_len(2000) - 0.5) / 2000

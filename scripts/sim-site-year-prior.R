@@ -223,14 +223,14 @@ fit_one <- function(train, rate, site_year_on, cfg, seed) {
 #                     a fresh effect is drawn per posterior draw.
 elpd_holdout <- function(fit, test, site_year_on, marginal) {
   d <- fit$draws
-  bW <- as.numeric(.draws_of(d$bWeight))
-  bD <- as.numeric(.draws_of(d$bDiameter))
+  bW <- as.numeric(.draws_of(d$intercept))
+  bD <- as.numeric(.draws_of(d$intercept))
   bD2 <- as.numeric(.draws_of(d$bDiameter2))
-  sW <- as.numeric(.draws_of(d$sWeight))
-  sy <- as.numeric(.draws_of(d$sSiteYear))
-  bSite <- .draws_of(d$bSite)
+  sW <- as.numeric(.draws_of(d$sd_residual))
+  sy <- as.numeric(.draws_of(d$sd_site_year))
+  site_effect <- .draws_of(d$site_effect)
   bSiteD <- .draws_of(d$bSiteDiameter)
-  bSY <- if (!marginal) .draws_of(d$bSiteYear) else NULL
+  bSY <- if (!marginal) .draws_of(d$site_year_effect) else NULL
   ndraws <- length(bW)
 
   dref <- fit$meta$diameter_ref
@@ -248,7 +248,7 @@ elpd_holdout <- function(fit, test, site_year_on, marginal) {
     seq_len(nrow(test)),
     function(j) {
       s <- s_idx[j]
-      mu <- bW + bSite[, s] + (bD + bSiteD[, s]) * ld[j] + bD2 * ld[j]^2
+      mu <- bW + site_effect[, s] + (bD + bSiteD[, s]) * ld[j] + bD2 * ld[j]^2
       if (site_year_on) {
         if (marginal) {
           mu <- mu + stats::rnorm(ndraws, 0, sy)
@@ -266,10 +266,10 @@ elpd_holdout <- function(fit, test, site_year_on, marginal) {
 
 extract_metrics <- function(fit, true, sim, site_year_on) {
   d <- fit$draws
-  sy <- as.numeric(.draws_of(d$sSiteYear))
-  ss <- as.numeric(.draws_of(d$sSite))
+  sy <- as.numeric(.draws_of(d$sd_site_year))
+  ss <- as.numeric(.draws_of(d$sd_site))
 
-  # When the term is dropped its SD is structurally 0 (the stored sSiteYear is
+  # When the term is dropped its SD is structurally 0 (the stored sd_site_year is
   # inert prior noise), so report the effective values.
   if (site_year_on) {
     eff_sy_med <- stats::median(sy)

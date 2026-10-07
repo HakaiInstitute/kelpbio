@@ -42,6 +42,7 @@ reference:
     - kb_priors_cover_biomass_macro
     - kb_prior_normal
     - kb_prior_exponential
+    - kb_prior_lognormal
 - title: "Data"
   desc: "Validate and explore input data."
   contents:

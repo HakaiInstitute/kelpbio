@@ -15,93 +15,93 @@ using namespace stan::math;
 stan::math::profile_map profiles__;
 static constexpr std::array<const char*, 61> locations_array__ =
   {" (found before start of program)",
-  " (in 'cover_biomass', line 43, column 2 to column 24)",
-  " (in 'cover_biomass', line 44, column 2 to column 23)",
-  " (in 'cover_biomass', line 45, column 2 to column 22)",
-  " (in 'cover_biomass', line 46, column 2 to column 25)",
-  " (in 'cover_biomass', line 47, column 2 to column 22)",
-  " (in 'cover_biomass', line 48, column 2 to column 22)",
-  " (in 'cover_biomass', line 49, column 2 to column 24)",
-  " (in 'cover_biomass', line 50, column 2 to column 24)",
-  " (in 'cover_biomass', line 53, column 2 to column 40)",
-  " (in 'cover_biomass', line 54, column 2 to column 40)",
-  " (in 'cover_biomass', line 57, column 2 to column 56)",
-  " (in 'cover_biomass', line 58, column 2 to column 50)",
-  " (in 'cover_biomass', line 59, column 2 to column 47)",
-  " (in 'cover_biomass', line 60, column 2 to column 56)",
-  " (in 'cover_biomass', line 61, column 2 to column 42)",
-  " (in 'cover_biomass', line 62, column 2 to column 42)",
-  " (in 'cover_biomass', line 63, column 2 to column 25)",
-  " (in 'cover_biomass', line 64, column 2 to column 25)",
-  " (in 'cover_biomass', line 66, column 11 to column 15)",
-  " (in 'cover_biomass', line 66, column 4 to column 23)",
-  " (in 'cover_biomass', line 68, column 6 to column 76)",
-  " (in 'cover_biomass', line 67, column 22 to line 69, column 5)",
-  " (in 'cover_biomass', line 67, column 4 to line 69, column 5)",
-  " (in 'cover_biomass', line 70, column 11 to column 15)",
-  " (in 'cover_biomass', line 70, column 4 to column 90)",
-  " (in 'cover_biomass', line 71, column 4 to column 60)",
-  " (in 'cover_biomass', line 65, column 23 to line 72, column 3)",
-  " (in 'cover_biomass', line 65, column 2 to line 72, column 3)",
-  " (in 'cover_biomass', line 19, column 2 to column 20)",
-  " (in 'cover_biomass', line 20, column 2 to column 21)",
-  " (in 'cover_biomass', line 21, column 2 to column 21)",
-  " (in 'cover_biomass', line 22, column 8 to column 12)",
-  " (in 'cover_biomass', line 22, column 2 to column 45)",
-  " (in 'cover_biomass', line 23, column 8 to column 12)",
-  " (in 'cover_biomass', line 23, column 2 to column 45)",
-  " (in 'cover_biomass', line 24, column 18 to column 22)",
-  " (in 'cover_biomass', line 24, column 2 to column 31)",
-  " (in 'cover_biomass', line 25, column 18 to column 22)",
-  " (in 'cover_biomass', line 25, column 2 to column 29)",
-  " (in 'cover_biomass', line 26, column 9 to column 13)",
-  " (in 'cover_biomass', line 26, column 2 to column 20)",
-  " (in 'cover_biomass', line 27, column 9 to column 13)",
-  " (in 'cover_biomass', line 27, column 2 to column 27)",
-  " (in 'cover_biomass', line 28, column 18 to column 22)",
-  " (in 'cover_biomass', line 28, column 2 to column 39)",
-  " (in 'cover_biomass', line 30, column 2 to column 23)",
-  " (in 'cover_biomass', line 31, column 2 to column 32)",
-  " (in 'cover_biomass', line 32, column 2 to column 22)",
-  " (in 'cover_biomass', line 33, column 2 to column 31)",
-  " (in 'cover_biomass', line 34, column 2 to column 21)",
-  " (in 'cover_biomass', line 35, column 2 to column 30)",
-  " (in 'cover_biomass', line 36, column 2 to column 24)",
-  " (in 'cover_biomass', line 37, column 2 to column 33)",
-  " (in 'cover_biomass', line 38, column 2 to column 35)",
-  " (in 'cover_biomass', line 39, column 2 to column 35)",
-  " (in 'cover_biomass', line 40, column 2 to column 35)",
-  " (in 'cover_biomass', line 49, column 9 to column 14)",
-  " (in 'cover_biomass', line 50, column 9 to column 14)",
-  " (in 'cover_biomass', line 53, column 9 to column 14)",
-  " (in 'cover_biomass', line 54, column 9 to column 14)"};
+  " (in 'cover_biomass', line 47, column 2 to column 28)",
+  " (in 'cover_biomass', line 48, column 2 to column 30)",
+  " (in 'cover_biomass', line 49, column 2 to column 34)",
+  " (in 'cover_biomass', line 50, column 2 to column 30)",
+  " (in 'cover_biomass', line 51, column 2 to column 24)",
+  " (in 'cover_biomass', line 52, column 2 to column 24)",
+  " (in 'cover_biomass', line 53, column 2 to column 24)",
+  " (in 'cover_biomass', line 54, column 2 to column 24)",
+  " (in 'cover_biomass', line 57, column 2 to column 48)",
+  " (in 'cover_biomass', line 58, column 2 to column 48)",
+  " (in 'cover_biomass', line 61, column 2 to column 78)",
+  " (in 'cover_biomass', line 62, column 2 to column 75)",
+  " (in 'cover_biomass', line 63, column 2 to column 87)",
+  " (in 'cover_biomass', line 64, column 2 to column 75)",
+  " (in 'cover_biomass', line 65, column 2 to column 44)",
+  " (in 'cover_biomass', line 66, column 2 to column 44)",
+  " (in 'cover_biomass', line 67, column 2 to column 24)",
+  " (in 'cover_biomass', line 68, column 2 to column 24)",
+  " (in 'cover_biomass', line 70, column 11 to column 16)",
+  " (in 'cover_biomass', line 70, column 4 to column 24)",
+  " (in 'cover_biomass', line 72, column 6 to line 75, column 26)",
+  " (in 'cover_biomass', line 71, column 23 to line 76, column 5)",
+  " (in 'cover_biomass', line 71, column 4 to line 76, column 5)",
+  " (in 'cover_biomass', line 77, column 11 to column 16)",
+  " (in 'cover_biomass', line 77, column 4 to line 78, column 75)",
+  " (in 'cover_biomass', line 79, column 4 to column 65)",
+  " (in 'cover_biomass', line 69, column 23 to line 80, column 3)",
+  " (in 'cover_biomass', line 69, column 2 to line 80, column 3)",
+  " (in 'cover_biomass', line 23, column 2 to column 21)",
+  " (in 'cover_biomass', line 24, column 2 to column 22)",
+  " (in 'cover_biomass', line 25, column 2 to column 22)",
+  " (in 'cover_biomass', line 26, column 8 to column 13)",
+  " (in 'cover_biomass', line 26, column 2 to column 47)",
+  " (in 'cover_biomass', line 27, column 8 to column 13)",
+  " (in 'cover_biomass', line 27, column 2 to column 47)",
+  " (in 'cover_biomass', line 28, column 18 to column 23)",
+  " (in 'cover_biomass', line 28, column 2 to column 40)",
+  " (in 'cover_biomass', line 29, column 18 to column 23)",
+  " (in 'cover_biomass', line 29, column 2 to column 38)",
+  " (in 'cover_biomass', line 30, column 9 to column 14)",
+  " (in 'cover_biomass', line 30, column 2 to column 30)",
+  " (in 'cover_biomass', line 31, column 9 to column 14)",
+  " (in 'cover_biomass', line 31, column 2 to column 28)",
+  " (in 'cover_biomass', line 32, column 18 to column 23)",
+  " (in 'cover_biomass', line 32, column 2 to column 40)",
+  " (in 'cover_biomass', line 34, column 2 to column 33)",
+  " (in 'cover_biomass', line 35, column 2 to column 40)",
+  " (in 'cover_biomass', line 36, column 2 to column 32)",
+  " (in 'cover_biomass', line 37, column 2 to column 39)",
+  " (in 'cover_biomass', line 38, column 2 to column 36)",
+  " (in 'cover_biomass', line 39, column 2 to column 43)",
+  " (in 'cover_biomass', line 40, column 2 to column 32)",
+  " (in 'cover_biomass', line 41, column 2 to column 39)",
+  " (in 'cover_biomass', line 42, column 2 to column 35)",
+  " (in 'cover_biomass', line 43, column 2 to column 35)",
+  " (in 'cover_biomass', line 44, column 2 to column 35)",
+  " (in 'cover_biomass', line 53, column 9 to column 15)",
+  " (in 'cover_biomass', line 54, column 9 to column 15)",
+  " (in 'cover_biomass', line 57, column 9 to column 15)",
+  " (in 'cover_biomass', line 58, column 9 to column 15)"};
 #include <stan_meta_header.hpp>
 class model_cover_biomass final : public model_base_crtp<model_cover_biomass> {
 private:
-  int nObs;
-  int nSite;
-  int nYear;
+  int n_obs;
+  int n_site;
+  int n_year;
   std::vector<int> site;
   std::vector<int> year;
-  Eigen::Matrix<double,-1,1> canopy_data__;
-  Eigen::Matrix<double,-1,1> plot_data__;
-  Eigen::Matrix<double,-1,1> tide_data__;
+  Eigen::Matrix<double,-1,1> canopy_area_m2_data__;
+  Eigen::Matrix<double,-1,1> plot_area_m2_data__;
+  Eigen::Matrix<double,-1,1> tide_height_m_data__;
   Eigen::Matrix<double,-1,1> log_biomass_data__;
   Eigen::Matrix<double,-1,1> log_biomass_sd_data__;
-  double prior_canopy_mu;
-  double prior_canopy_sd;
-  double prior_floor_mu;
-  double prior_floor_sd;
-  double prior_tide_mu;
-  double prior_tide_sd;
-  double prior_scaling_mu;
-  double prior_scaling_sd;
+  double prior_cover_slope_meanlog;
+  double prior_cover_slope_sdlog;
+  double prior_biomass_floor_mean;
+  double prior_biomass_floor_sd;
+  double prior_tide_height_slope_mean;
+  double prior_tide_height_slope_sd;
+  double prior_error_scaling_mean;
+  double prior_error_scaling_sd;
   double prior_sd_site_rate;
   double prior_sd_year_rate;
   int prior_only;
-  Eigen::Map<Eigen::Matrix<double,-1,1>> canopy{nullptr, 0};
-  Eigen::Map<Eigen::Matrix<double,-1,1>> plot{nullptr, 0};
-  Eigen::Map<Eigen::Matrix<double,-1,1>> tide{nullptr, 0};
+  Eigen::Map<Eigen::Matrix<double,-1,1>> canopy_area_m2{nullptr, 0};
+  Eigen::Map<Eigen::Matrix<double,-1,1>> plot_area_m2{nullptr, 0};
+  Eigen::Map<Eigen::Matrix<double,-1,1>> tide_height_m{nullptr, 0};
   Eigen::Map<Eigen::Matrix<double,-1,1>> log_biomass{nullptr, 0};
   Eigen::Map<Eigen::Matrix<double,-1,1>> log_biomass_sd{nullptr, 0};
 public:
@@ -127,154 +127,163 @@ public:
       int pos__ = std::numeric_limits<int>::min();
       pos__ = 1;
       current_statement__ = 29;
-      context__.validate_dims("data initialization", "nObs", "int",
+      context__.validate_dims("data initialization", "n_obs", "int",
         std::vector<size_t>{});
-      nObs = std::numeric_limits<int>::min();
+      n_obs = std::numeric_limits<int>::min();
       current_statement__ = 29;
-      nObs = context__.vals_i("nObs")[(1 - 1)];
+      n_obs = context__.vals_i("n_obs")[(1 - 1)];
       current_statement__ = 29;
-      stan::math::check_greater_or_equal(function__, "nObs", nObs, 0);
+      stan::math::check_greater_or_equal(function__, "n_obs", n_obs, 0);
       current_statement__ = 30;
-      context__.validate_dims("data initialization", "nSite", "int",
+      context__.validate_dims("data initialization", "n_site", "int",
         std::vector<size_t>{});
-      nSite = std::numeric_limits<int>::min();
+      n_site = std::numeric_limits<int>::min();
       current_statement__ = 30;
-      nSite = context__.vals_i("nSite")[(1 - 1)];
+      n_site = context__.vals_i("n_site")[(1 - 1)];
       current_statement__ = 30;
-      stan::math::check_greater_or_equal(function__, "nSite", nSite, 1);
+      stan::math::check_greater_or_equal(function__, "n_site", n_site, 1);
       current_statement__ = 31;
-      context__.validate_dims("data initialization", "nYear", "int",
+      context__.validate_dims("data initialization", "n_year", "int",
         std::vector<size_t>{});
-      nYear = std::numeric_limits<int>::min();
+      n_year = std::numeric_limits<int>::min();
       current_statement__ = 31;
-      nYear = context__.vals_i("nYear")[(1 - 1)];
+      n_year = context__.vals_i("n_year")[(1 - 1)];
       current_statement__ = 31;
-      stan::math::check_greater_or_equal(function__, "nYear", nYear, 1);
+      stan::math::check_greater_or_equal(function__, "n_year", n_year, 1);
       current_statement__ = 32;
-      stan::math::validate_non_negative_index("site", "nObs", nObs);
+      stan::math::validate_non_negative_index("site", "n_obs", n_obs);
       current_statement__ = 33;
       context__.validate_dims("data initialization", "site", "int",
-        std::vector<size_t>{static_cast<size_t>(nObs)});
-      site = std::vector<int>(nObs, std::numeric_limits<int>::min());
+        std::vector<size_t>{static_cast<size_t>(n_obs)});
+      site = std::vector<int>(n_obs, std::numeric_limits<int>::min());
       current_statement__ = 33;
       site = context__.vals_i("site");
       current_statement__ = 33;
       stan::math::check_greater_or_equal(function__, "site", site, 1);
       current_statement__ = 33;
-      stan::math::check_less_or_equal(function__, "site", site, nSite);
+      stan::math::check_less_or_equal(function__, "site", site, n_site);
       current_statement__ = 34;
-      stan::math::validate_non_negative_index("year", "nObs", nObs);
+      stan::math::validate_non_negative_index("year", "n_obs", n_obs);
       current_statement__ = 35;
       context__.validate_dims("data initialization", "year", "int",
-        std::vector<size_t>{static_cast<size_t>(nObs)});
-      year = std::vector<int>(nObs, std::numeric_limits<int>::min());
+        std::vector<size_t>{static_cast<size_t>(n_obs)});
+      year = std::vector<int>(n_obs, std::numeric_limits<int>::min());
       current_statement__ = 35;
       year = context__.vals_i("year");
       current_statement__ = 35;
       stan::math::check_greater_or_equal(function__, "year", year, 1);
       current_statement__ = 35;
-      stan::math::check_less_or_equal(function__, "year", year, nYear);
+      stan::math::check_less_or_equal(function__, "year", year, n_year);
       current_statement__ = 36;
-      stan::math::validate_non_negative_index("canopy", "nObs", nObs);
+      stan::math::validate_non_negative_index("canopy_area_m2", "n_obs",
+        n_obs);
       current_statement__ = 37;
-      context__.validate_dims("data initialization", "canopy", "double",
-        std::vector<size_t>{static_cast<size_t>(nObs)});
-      canopy_data__ = Eigen::Matrix<double,-1,1>::Constant(nObs,
-                        std::numeric_limits<double>::quiet_NaN());
-      new (&canopy)
-        Eigen::Map<Eigen::Matrix<double,-1,1>>(canopy_data__.data(), nObs);
+      context__.validate_dims("data initialization", "canopy_area_m2",
+        "double", std::vector<size_t>{static_cast<size_t>(n_obs)});
+      canopy_area_m2_data__ = Eigen::Matrix<double,-1,1>::Constant(n_obs,
+                                std::numeric_limits<double>::quiet_NaN());
+      new (&canopy_area_m2)
+        Eigen::Map<Eigen::Matrix<double,-1,1>>(canopy_area_m2_data__.data(),
+        n_obs);
       {
-        std::vector<local_scalar_t__> canopy_flat__;
+        std::vector<local_scalar_t__> canopy_area_m2_flat__;
         current_statement__ = 37;
-        canopy_flat__ = context__.vals_r("canopy");
+        canopy_area_m2_flat__ = context__.vals_r("canopy_area_m2");
         pos__ = 1;
-        for (int sym1__ = 1; sym1__ <= nObs; ++sym1__) {
-          stan::model::assign(canopy, canopy_flat__[(pos__ - 1)],
-            "assigning variable canopy", stan::model::index_uni(sym1__));
+        for (int sym1__ = 1; sym1__ <= n_obs; ++sym1__) {
+          stan::model::assign(canopy_area_m2, canopy_area_m2_flat__[(pos__ -
+            1)], "assigning variable canopy_area_m2",
+            stan::model::index_uni(sym1__));
           pos__ = (pos__ + 1);
         }
       }
       current_statement__ = 37;
-      stan::math::check_greater_or_equal(function__, "canopy", canopy, 0);
+      stan::math::check_greater_or_equal(function__, "canopy_area_m2",
+        canopy_area_m2, 0);
       current_statement__ = 38;
-      stan::math::validate_non_negative_index("plot", "nObs", nObs);
+      stan::math::validate_non_negative_index("plot_area_m2", "n_obs", n_obs);
       current_statement__ = 39;
-      context__.validate_dims("data initialization", "plot", "double",
-        std::vector<size_t>{static_cast<size_t>(nObs)});
-      plot_data__ = Eigen::Matrix<double,-1,1>::Constant(nObs,
-                      std::numeric_limits<double>::quiet_NaN());
-      new (&plot) Eigen::Map<Eigen::Matrix<double,-1,1>>(plot_data__.data(),
-        nObs);
+      context__.validate_dims("data initialization", "plot_area_m2",
+        "double", std::vector<size_t>{static_cast<size_t>(n_obs)});
+      plot_area_m2_data__ = Eigen::Matrix<double,-1,1>::Constant(n_obs,
+                              std::numeric_limits<double>::quiet_NaN());
+      new (&plot_area_m2)
+        Eigen::Map<Eigen::Matrix<double,-1,1>>(plot_area_m2_data__.data(),
+        n_obs);
       {
-        std::vector<local_scalar_t__> plot_flat__;
+        std::vector<local_scalar_t__> plot_area_m2_flat__;
         current_statement__ = 39;
-        plot_flat__ = context__.vals_r("plot");
+        plot_area_m2_flat__ = context__.vals_r("plot_area_m2");
         pos__ = 1;
-        for (int sym1__ = 1; sym1__ <= nObs; ++sym1__) {
-          stan::model::assign(plot, plot_flat__[(pos__ - 1)],
-            "assigning variable plot", stan::model::index_uni(sym1__));
+        for (int sym1__ = 1; sym1__ <= n_obs; ++sym1__) {
+          stan::model::assign(plot_area_m2, plot_area_m2_flat__[(pos__ - 1)],
+            "assigning variable plot_area_m2", stan::model::index_uni(sym1__));
           pos__ = (pos__ + 1);
         }
       }
       current_statement__ = 39;
-      stan::math::check_greater_or_equal(function__, "plot", plot, 0);
+      stan::math::check_greater_or_equal(function__, "plot_area_m2",
+        plot_area_m2, 0);
       current_statement__ = 40;
-      stan::math::validate_non_negative_index("tide", "nObs", nObs);
+      stan::math::validate_non_negative_index("tide_height_m", "n_obs", n_obs);
       current_statement__ = 41;
-      context__.validate_dims("data initialization", "tide", "double",
-        std::vector<size_t>{static_cast<size_t>(nObs)});
-      tide_data__ = Eigen::Matrix<double,-1,1>::Constant(nObs,
-                      std::numeric_limits<double>::quiet_NaN());
-      new (&tide) Eigen::Map<Eigen::Matrix<double,-1,1>>(tide_data__.data(),
-        nObs);
+      context__.validate_dims("data initialization", "tide_height_m",
+        "double", std::vector<size_t>{static_cast<size_t>(n_obs)});
+      tide_height_m_data__ = Eigen::Matrix<double,-1,1>::Constant(n_obs,
+                               std::numeric_limits<double>::quiet_NaN());
+      new (&tide_height_m)
+        Eigen::Map<Eigen::Matrix<double,-1,1>>(tide_height_m_data__.data(),
+        n_obs);
       {
-        std::vector<local_scalar_t__> tide_flat__;
+        std::vector<local_scalar_t__> tide_height_m_flat__;
         current_statement__ = 41;
-        tide_flat__ = context__.vals_r("tide");
+        tide_height_m_flat__ = context__.vals_r("tide_height_m");
         pos__ = 1;
-        for (int sym1__ = 1; sym1__ <= nObs; ++sym1__) {
-          stan::model::assign(tide, tide_flat__[(pos__ - 1)],
-            "assigning variable tide", stan::model::index_uni(sym1__));
+        for (int sym1__ = 1; sym1__ <= n_obs; ++sym1__) {
+          stan::model::assign(tide_height_m, tide_height_m_flat__[(pos__ -
+            1)], "assigning variable tide_height_m",
+            stan::model::index_uni(sym1__));
           pos__ = (pos__ + 1);
         }
       }
       current_statement__ = 42;
-      stan::math::validate_non_negative_index("log_biomass", "nObs", nObs);
+      stan::math::validate_non_negative_index("log_biomass", "n_obs", n_obs);
       current_statement__ = 43;
       context__.validate_dims("data initialization", "log_biomass", "double",
-        std::vector<size_t>{static_cast<size_t>(nObs)});
-      log_biomass_data__ = Eigen::Matrix<double,-1,1>::Constant(nObs,
+        std::vector<size_t>{static_cast<size_t>(n_obs)});
+      log_biomass_data__ = Eigen::Matrix<double,-1,1>::Constant(n_obs,
                              std::numeric_limits<double>::quiet_NaN());
       new (&log_biomass)
         Eigen::Map<Eigen::Matrix<double,-1,1>>(log_biomass_data__.data(),
-        nObs);
+        n_obs);
       {
         std::vector<local_scalar_t__> log_biomass_flat__;
         current_statement__ = 43;
         log_biomass_flat__ = context__.vals_r("log_biomass");
         pos__ = 1;
-        for (int sym1__ = 1; sym1__ <= nObs; ++sym1__) {
+        for (int sym1__ = 1; sym1__ <= n_obs; ++sym1__) {
           stan::model::assign(log_biomass, log_biomass_flat__[(pos__ - 1)],
             "assigning variable log_biomass", stan::model::index_uni(sym1__));
           pos__ = (pos__ + 1);
         }
       }
       current_statement__ = 44;
-      stan::math::validate_non_negative_index("log_biomass_sd", "nObs", nObs);
+      stan::math::validate_non_negative_index("log_biomass_sd", "n_obs",
+        n_obs);
       current_statement__ = 45;
       context__.validate_dims("data initialization", "log_biomass_sd",
-        "double", std::vector<size_t>{static_cast<size_t>(nObs)});
-      log_biomass_sd_data__ = Eigen::Matrix<double,-1,1>::Constant(nObs,
+        "double", std::vector<size_t>{static_cast<size_t>(n_obs)});
+      log_biomass_sd_data__ = Eigen::Matrix<double,-1,1>::Constant(n_obs,
                                 std::numeric_limits<double>::quiet_NaN());
       new (&log_biomass_sd)
         Eigen::Map<Eigen::Matrix<double,-1,1>>(log_biomass_sd_data__.data(),
-        nObs);
+        n_obs);
       {
         std::vector<local_scalar_t__> log_biomass_sd_flat__;
         current_statement__ = 45;
         log_biomass_sd_flat__ = context__.vals_r("log_biomass_sd");
         pos__ = 1;
-        for (int sym1__ = 1; sym1__ <= nObs; ++sym1__) {
+        for (int sym1__ = 1; sym1__ <= n_obs; ++sym1__) {
           stan::model::assign(log_biomass_sd, log_biomass_sd_flat__[(pos__ -
             1)], "assigning variable log_biomass_sd",
             stan::model::index_uni(sym1__));
@@ -285,65 +294,73 @@ public:
       stan::math::check_greater_or_equal(function__, "log_biomass_sd",
         log_biomass_sd, 0);
       current_statement__ = 46;
-      context__.validate_dims("data initialization", "prior_canopy_mu",
-        "double", std::vector<size_t>{});
-      prior_canopy_mu = std::numeric_limits<double>::quiet_NaN();
+      context__.validate_dims("data initialization",
+        "prior_cover_slope_meanlog", "double", std::vector<size_t>{});
+      prior_cover_slope_meanlog = std::numeric_limits<double>::quiet_NaN();
       current_statement__ = 46;
-      prior_canopy_mu = context__.vals_r("prior_canopy_mu")[(1 - 1)];
+      prior_cover_slope_meanlog = context__.vals_r("prior_cover_slope_meanlog")[(1
+        - 1)];
       current_statement__ = 47;
-      context__.validate_dims("data initialization", "prior_canopy_sd",
-        "double", std::vector<size_t>{});
-      prior_canopy_sd = std::numeric_limits<double>::quiet_NaN();
+      context__.validate_dims("data initialization",
+        "prior_cover_slope_sdlog", "double", std::vector<size_t>{});
+      prior_cover_slope_sdlog = std::numeric_limits<double>::quiet_NaN();
       current_statement__ = 47;
-      prior_canopy_sd = context__.vals_r("prior_canopy_sd")[(1 - 1)];
+      prior_cover_slope_sdlog = context__.vals_r("prior_cover_slope_sdlog")[(1
+        - 1)];
       current_statement__ = 47;
-      stan::math::check_greater_or_equal(function__, "prior_canopy_sd",
-        prior_canopy_sd, 0);
+      stan::math::check_greater_or_equal(function__,
+        "prior_cover_slope_sdlog", prior_cover_slope_sdlog, 0);
       current_statement__ = 48;
-      context__.validate_dims("data initialization", "prior_floor_mu",
-        "double", std::vector<size_t>{});
-      prior_floor_mu = std::numeric_limits<double>::quiet_NaN();
+      context__.validate_dims("data initialization",
+        "prior_biomass_floor_mean", "double", std::vector<size_t>{});
+      prior_biomass_floor_mean = std::numeric_limits<double>::quiet_NaN();
       current_statement__ = 48;
-      prior_floor_mu = context__.vals_r("prior_floor_mu")[(1 - 1)];
+      prior_biomass_floor_mean = context__.vals_r("prior_biomass_floor_mean")[(1
+        - 1)];
       current_statement__ = 49;
-      context__.validate_dims("data initialization", "prior_floor_sd",
-        "double", std::vector<size_t>{});
-      prior_floor_sd = std::numeric_limits<double>::quiet_NaN();
+      context__.validate_dims("data initialization",
+        "prior_biomass_floor_sd", "double", std::vector<size_t>{});
+      prior_biomass_floor_sd = std::numeric_limits<double>::quiet_NaN();
       current_statement__ = 49;
-      prior_floor_sd = context__.vals_r("prior_floor_sd")[(1 - 1)];
+      prior_biomass_floor_sd = context__.vals_r("prior_biomass_floor_sd")[(1
+        - 1)];
       current_statement__ = 49;
-      stan::math::check_greater_or_equal(function__, "prior_floor_sd",
-        prior_floor_sd, 0);
+      stan::math::check_greater_or_equal(function__,
+        "prior_biomass_floor_sd", prior_biomass_floor_sd, 0);
       current_statement__ = 50;
-      context__.validate_dims("data initialization", "prior_tide_mu",
-        "double", std::vector<size_t>{});
-      prior_tide_mu = std::numeric_limits<double>::quiet_NaN();
+      context__.validate_dims("data initialization",
+        "prior_tide_height_slope_mean", "double", std::vector<size_t>{});
+      prior_tide_height_slope_mean = std::numeric_limits<double>::quiet_NaN();
       current_statement__ = 50;
-      prior_tide_mu = context__.vals_r("prior_tide_mu")[(1 - 1)];
+      prior_tide_height_slope_mean = context__.vals_r("prior_tide_height_slope_mean")[(1
+        - 1)];
       current_statement__ = 51;
-      context__.validate_dims("data initialization", "prior_tide_sd",
-        "double", std::vector<size_t>{});
-      prior_tide_sd = std::numeric_limits<double>::quiet_NaN();
+      context__.validate_dims("data initialization",
+        "prior_tide_height_slope_sd", "double", std::vector<size_t>{});
+      prior_tide_height_slope_sd = std::numeric_limits<double>::quiet_NaN();
       current_statement__ = 51;
-      prior_tide_sd = context__.vals_r("prior_tide_sd")[(1 - 1)];
+      prior_tide_height_slope_sd = context__.vals_r("prior_tide_height_slope_sd")[(1
+        - 1)];
       current_statement__ = 51;
-      stan::math::check_greater_or_equal(function__, "prior_tide_sd",
-        prior_tide_sd, 0);
+      stan::math::check_greater_or_equal(function__,
+        "prior_tide_height_slope_sd", prior_tide_height_slope_sd, 0);
       current_statement__ = 52;
-      context__.validate_dims("data initialization", "prior_scaling_mu",
-        "double", std::vector<size_t>{});
-      prior_scaling_mu = std::numeric_limits<double>::quiet_NaN();
+      context__.validate_dims("data initialization",
+        "prior_error_scaling_mean", "double", std::vector<size_t>{});
+      prior_error_scaling_mean = std::numeric_limits<double>::quiet_NaN();
       current_statement__ = 52;
-      prior_scaling_mu = context__.vals_r("prior_scaling_mu")[(1 - 1)];
+      prior_error_scaling_mean = context__.vals_r("prior_error_scaling_mean")[(1
+        - 1)];
       current_statement__ = 53;
-      context__.validate_dims("data initialization", "prior_scaling_sd",
-        "double", std::vector<size_t>{});
-      prior_scaling_sd = std::numeric_limits<double>::quiet_NaN();
+      context__.validate_dims("data initialization",
+        "prior_error_scaling_sd", "double", std::vector<size_t>{});
+      prior_error_scaling_sd = std::numeric_limits<double>::quiet_NaN();
       current_statement__ = 53;
-      prior_scaling_sd = context__.vals_r("prior_scaling_sd")[(1 - 1)];
+      prior_error_scaling_sd = context__.vals_r("prior_error_scaling_sd")[(1
+        - 1)];
       current_statement__ = 53;
-      stan::math::check_greater_or_equal(function__, "prior_scaling_sd",
-        prior_scaling_sd, 0);
+      stan::math::check_greater_or_equal(function__,
+        "prior_error_scaling_sd", prior_error_scaling_sd, 0);
       current_statement__ = 54;
       context__.validate_dims("data initialization", "prior_sd_site_rate",
         "double", std::vector<size_t>{});
@@ -374,17 +391,17 @@ public:
       current_statement__ = 56;
       stan::math::check_less_or_equal(function__, "prior_only", prior_only, 1);
       current_statement__ = 57;
-      stan::math::validate_non_negative_index("z_bSite", "nSite", nSite);
+      stan::math::validate_non_negative_index("z_site", "n_site", n_site);
       current_statement__ = 58;
-      stan::math::validate_non_negative_index("z_bYear", "nYear", nYear);
+      stan::math::validate_non_negative_index("z_year", "n_year", n_year);
       current_statement__ = 59;
-      stan::math::validate_non_negative_index("bSite", "nSite", nSite);
+      stan::math::validate_non_negative_index("site_effect", "n_site", n_site);
       current_statement__ = 60;
-      stan::math::validate_non_negative_index("bYear", "nYear", nYear);
+      stan::math::validate_non_negative_index("year_effect", "n_year", n_year);
     } catch (const std::exception& e) {
       stan::lang::rethrow_located(e, locations_array__[current_statement__]);
     }
-    num_params_r__ = 1 + 1 + 1 + 1 + 1 + 1 + nSite + nYear;
+    num_params_r__ = 1 + 1 + 1 + 1 + 1 + 1 + n_site + n_year;
   }
   inline std::string model_name() const final {
     return "model_cover_biomass";
@@ -418,108 +435,113 @@ public:
     (void) function__;
     try {
       current_statement__ = 1;
-      auto bCanopy =
+      auto cover_slope =
         in__.template read_constrain_lb<local_scalar_t__, jacobian__>(0,
           lp__);
       current_statement__ = 2;
-      auto bFloor =
+      auto biomass_floor =
         in__.template read_constrain_lb<local_scalar_t__, jacobian__>(0,
           lp__);
       current_statement__ = 3;
-      auto bTide =
+      auto tide_height_slope =
         in__.template read_constrain_lb<local_scalar_t__, jacobian__>(0,
           lp__);
       current_statement__ = 4;
-      auto bScaling =
+      auto error_scaling =
         in__.template read_constrain_lb<local_scalar_t__, jacobian__>(0,
           lp__);
       current_statement__ = 5;
-      auto sSite =
+      auto sd_site =
         in__.template read_constrain_lb<local_scalar_t__, jacobian__>(0,
           lp__);
       current_statement__ = 6;
-      auto sYear =
+      auto sd_year =
         in__.template read_constrain_lb<local_scalar_t__, jacobian__>(0,
           lp__);
       current_statement__ = 7;
-      auto z_bSite =
-        in__.template read<Eigen::Matrix<local_scalar_t__,-1,1>>(nSite);
+      auto z_site =
+        in__.template read<Eigen::Matrix<local_scalar_t__,-1,1>>(n_site);
       current_statement__ = 8;
-      auto z_bYear =
-        in__.template read<Eigen::Matrix<local_scalar_t__,-1,1>>(nYear);
-      Eigen::Matrix<local_scalar_t__,-1,1> bSite =
-        Eigen::Matrix<local_scalar_t__,-1,1>::Constant(nSite, DUMMY_VAR__);
+      auto z_year =
+        in__.template read<Eigen::Matrix<local_scalar_t__,-1,1>>(n_year);
+      Eigen::Matrix<local_scalar_t__,-1,1> site_effect =
+        Eigen::Matrix<local_scalar_t__,-1,1>::Constant(n_site, DUMMY_VAR__);
       current_statement__ = 9;
-      stan::model::assign(bSite, stan::math::multiply(z_bSite, sSite),
-        "assigning variable bSite");
-      Eigen::Matrix<local_scalar_t__,-1,1> bYear =
-        Eigen::Matrix<local_scalar_t__,-1,1>::Constant(nYear, DUMMY_VAR__);
+      stan::model::assign(site_effect, stan::math::multiply(z_site, sd_site),
+        "assigning variable site_effect");
+      Eigen::Matrix<local_scalar_t__,-1,1> year_effect =
+        Eigen::Matrix<local_scalar_t__,-1,1>::Constant(n_year, DUMMY_VAR__);
       current_statement__ = 10;
-      stan::model::assign(bYear, stan::math::multiply(z_bYear, sYear),
-        "assigning variable bYear");
+      stan::model::assign(year_effect, stan::math::multiply(z_year, sd_year),
+        "assigning variable year_effect");
       {
         current_statement__ = 11;
-        lp_accum__.add(stan::math::lognormal_lpdf<propto__>(bCanopy,
-                         prior_canopy_mu, prior_canopy_sd));
+        lp_accum__.add(stan::math::lognormal_lpdf<propto__>(cover_slope,
+                         prior_cover_slope_meanlog, prior_cover_slope_sdlog));
         current_statement__ = 12;
-        lp_accum__.add(stan::math::normal_lpdf<propto__>(bFloor,
-                         prior_floor_mu, prior_floor_sd));
+        lp_accum__.add(stan::math::normal_lpdf<propto__>(biomass_floor,
+                         prior_biomass_floor_mean, prior_biomass_floor_sd));
         current_statement__ = 13;
-        lp_accum__.add(stan::math::normal_lpdf<propto__>(bTide,
-                         prior_tide_mu, prior_tide_sd));
+        lp_accum__.add(stan::math::normal_lpdf<propto__>(tide_height_slope,
+                         prior_tide_height_slope_mean,
+                         prior_tide_height_slope_sd));
         current_statement__ = 14;
-        lp_accum__.add(stan::math::normal_lpdf<propto__>(bScaling,
-                         prior_scaling_mu, prior_scaling_sd));
+        lp_accum__.add(stan::math::normal_lpdf<propto__>(error_scaling,
+                         prior_error_scaling_mean, prior_error_scaling_sd));
         current_statement__ = 15;
-        lp_accum__.add(stan::math::exponential_lpdf<propto__>(sSite,
+        lp_accum__.add(stan::math::exponential_lpdf<propto__>(sd_site,
                          prior_sd_site_rate));
         current_statement__ = 16;
-        lp_accum__.add(stan::math::exponential_lpdf<propto__>(sYear,
+        lp_accum__.add(stan::math::exponential_lpdf<propto__>(sd_year,
                          prior_sd_year_rate));
         current_statement__ = 17;
-        lp_accum__.add(stan::math::std_normal_lpdf<propto__>(z_bSite));
+        lp_accum__.add(stan::math::std_normal_lpdf<propto__>(z_site));
         current_statement__ = 18;
-        lp_accum__.add(stan::math::std_normal_lpdf<propto__>(z_bYear));
+        lp_accum__.add(stan::math::std_normal_lpdf<propto__>(z_year));
         current_statement__ = 28;
         if (stan::math::logical_eq(prior_only, 0)) {
           current_statement__ = 19;
-          stan::math::validate_non_negative_index("cover", "nObs", nObs);
+          stan::math::validate_non_negative_index("cover", "n_obs", n_obs);
           Eigen::Matrix<local_scalar_t__,-1,1> cover =
-            Eigen::Matrix<local_scalar_t__,-1,1>::Constant(nObs, DUMMY_VAR__);
+            Eigen::Matrix<local_scalar_t__,-1,1>::Constant(n_obs,
+              DUMMY_VAR__);
           current_statement__ = 23;
-          for (int i = 1; i <= nObs; ++i) {
+          for (int i = 1; i <= n_obs; ++i) {
             current_statement__ = 21;
             stan::model::assign(cover,
               (stan::math::fmin(
-                 stan::model::rvalue(plot, "plot", stan::model::index_uni(i)),
-                 (stan::model::rvalue(canopy, "canopy",
-                    stan::model::index_uni(i)) * (1 + (bTide *
-                 stan::model::rvalue(tide, "tide", stan::model::index_uni(i))))))
-              /
-              stan::model::rvalue(plot, "plot", stan::model::index_uni(i))),
-              "assigning variable cover", stan::model::index_uni(i));
+                 stan::model::rvalue(plot_area_m2, "plot_area_m2",
+                   stan::model::index_uni(i)),
+                 (stan::model::rvalue(canopy_area_m2, "canopy_area_m2",
+                    stan::model::index_uni(i)) * (1 + (tide_height_slope *
+                 stan::model::rvalue(tide_height_m, "tide_height_m",
+                   stan::model::index_uni(i)))))) /
+              stan::model::rvalue(plot_area_m2, "plot_area_m2",
+                stan::model::index_uni(i))), "assigning variable cover",
+              stan::model::index_uni(i));
           }
           current_statement__ = 24;
-          stan::math::validate_non_negative_index("log_mu", "nObs", nObs);
+          stan::math::validate_non_negative_index("log_mu", "n_obs", n_obs);
           Eigen::Matrix<local_scalar_t__,-1,1> log_mu =
-            Eigen::Matrix<local_scalar_t__,-1,1>::Constant(nObs, DUMMY_VAR__);
+            Eigen::Matrix<local_scalar_t__,-1,1>::Constant(n_obs,
+              DUMMY_VAR__);
           current_statement__ = 25;
           stan::model::assign(log_mu,
             stan::math::log(
-              stan::math::add(bFloor,
+              stan::math::add(biomass_floor,
                 stan::math::elt_multiply(
-                  stan::math::multiply(bCanopy,
+                  stan::math::multiply(cover_slope,
                     stan::math::exp(
                       stan::math::add(
-                        stan::model::rvalue(bSite, "bSite",
+                        stan::model::rvalue(site_effect, "site_effect",
                           stan::model::index_multi(site)),
-                        stan::model::rvalue(bYear, "bYear",
+                        stan::model::rvalue(year_effect, "year_effect",
                           stan::model::index_multi(year))))), cover))),
             "assigning variable log_mu");
           current_statement__ = 26;
           lp_accum__.add(stan::math::normal_lpdf<propto__>(log_biomass,
                            log_mu,
-                           stan::math::multiply(bScaling, log_biomass_sd)));
+                           stan::math::multiply(error_scaling, log_biomass_sd)));
         }
       }
     } catch (const std::exception& e) {
@@ -553,108 +575,113 @@ public:
     (void) function__;
     try {
       current_statement__ = 1;
-      auto bCanopy =
+      auto cover_slope =
         in__.template read_constrain_lb<local_scalar_t__, jacobian__>(0,
           lp__);
       current_statement__ = 2;
-      auto bFloor =
+      auto biomass_floor =
         in__.template read_constrain_lb<local_scalar_t__, jacobian__>(0,
           lp__);
       current_statement__ = 3;
-      auto bTide =
+      auto tide_height_slope =
         in__.template read_constrain_lb<local_scalar_t__, jacobian__>(0,
           lp__);
       current_statement__ = 4;
-      auto bScaling =
+      auto error_scaling =
         in__.template read_constrain_lb<local_scalar_t__, jacobian__>(0,
           lp__);
       current_statement__ = 5;
-      auto sSite =
+      auto sd_site =
         in__.template read_constrain_lb<local_scalar_t__, jacobian__>(0,
           lp__);
       current_statement__ = 6;
-      auto sYear =
+      auto sd_year =
         in__.template read_constrain_lb<local_scalar_t__, jacobian__>(0,
           lp__);
       current_statement__ = 7;
-      auto z_bSite =
-        in__.template read<Eigen::Matrix<local_scalar_t__,-1,1>>(nSite);
+      auto z_site =
+        in__.template read<Eigen::Matrix<local_scalar_t__,-1,1>>(n_site);
       current_statement__ = 8;
-      auto z_bYear =
-        in__.template read<Eigen::Matrix<local_scalar_t__,-1,1>>(nYear);
-      Eigen::Matrix<local_scalar_t__,-1,1> bSite =
-        Eigen::Matrix<local_scalar_t__,-1,1>::Constant(nSite, DUMMY_VAR__);
+      auto z_year =
+        in__.template read<Eigen::Matrix<local_scalar_t__,-1,1>>(n_year);
+      Eigen::Matrix<local_scalar_t__,-1,1> site_effect =
+        Eigen::Matrix<local_scalar_t__,-1,1>::Constant(n_site, DUMMY_VAR__);
       current_statement__ = 9;
-      stan::model::assign(bSite, stan::math::multiply(z_bSite, sSite),
-        "assigning variable bSite");
-      Eigen::Matrix<local_scalar_t__,-1,1> bYear =
-        Eigen::Matrix<local_scalar_t__,-1,1>::Constant(nYear, DUMMY_VAR__);
+      stan::model::assign(site_effect, stan::math::multiply(z_site, sd_site),
+        "assigning variable site_effect");
+      Eigen::Matrix<local_scalar_t__,-1,1> year_effect =
+        Eigen::Matrix<local_scalar_t__,-1,1>::Constant(n_year, DUMMY_VAR__);
       current_statement__ = 10;
-      stan::model::assign(bYear, stan::math::multiply(z_bYear, sYear),
-        "assigning variable bYear");
+      stan::model::assign(year_effect, stan::math::multiply(z_year, sd_year),
+        "assigning variable year_effect");
       {
         current_statement__ = 11;
-        lp_accum__.add(stan::math::lognormal_lpdf<propto__>(bCanopy,
-                         prior_canopy_mu, prior_canopy_sd));
+        lp_accum__.add(stan::math::lognormal_lpdf<propto__>(cover_slope,
+                         prior_cover_slope_meanlog, prior_cover_slope_sdlog));
         current_statement__ = 12;
-        lp_accum__.add(stan::math::normal_lpdf<propto__>(bFloor,
-                         prior_floor_mu, prior_floor_sd));
+        lp_accum__.add(stan::math::normal_lpdf<propto__>(biomass_floor,
+                         prior_biomass_floor_mean, prior_biomass_floor_sd));
         current_statement__ = 13;
-        lp_accum__.add(stan::math::normal_lpdf<propto__>(bTide,
-                         prior_tide_mu, prior_tide_sd));
+        lp_accum__.add(stan::math::normal_lpdf<propto__>(tide_height_slope,
+                         prior_tide_height_slope_mean,
+                         prior_tide_height_slope_sd));
         current_statement__ = 14;
-        lp_accum__.add(stan::math::normal_lpdf<propto__>(bScaling,
-                         prior_scaling_mu, prior_scaling_sd));
+        lp_accum__.add(stan::math::normal_lpdf<propto__>(error_scaling,
+                         prior_error_scaling_mean, prior_error_scaling_sd));
         current_statement__ = 15;
-        lp_accum__.add(stan::math::exponential_lpdf<propto__>(sSite,
+        lp_accum__.add(stan::math::exponential_lpdf<propto__>(sd_site,
                          prior_sd_site_rate));
         current_statement__ = 16;
-        lp_accum__.add(stan::math::exponential_lpdf<propto__>(sYear,
+        lp_accum__.add(stan::math::exponential_lpdf<propto__>(sd_year,
                          prior_sd_year_rate));
         current_statement__ = 17;
-        lp_accum__.add(stan::math::std_normal_lpdf<propto__>(z_bSite));
+        lp_accum__.add(stan::math::std_normal_lpdf<propto__>(z_site));
         current_statement__ = 18;
-        lp_accum__.add(stan::math::std_normal_lpdf<propto__>(z_bYear));
+        lp_accum__.add(stan::math::std_normal_lpdf<propto__>(z_year));
         current_statement__ = 28;
         if (stan::math::logical_eq(prior_only, 0)) {
           current_statement__ = 19;
-          stan::math::validate_non_negative_index("cover", "nObs", nObs);
+          stan::math::validate_non_negative_index("cover", "n_obs", n_obs);
           Eigen::Matrix<local_scalar_t__,-1,1> cover =
-            Eigen::Matrix<local_scalar_t__,-1,1>::Constant(nObs, DUMMY_VAR__);
+            Eigen::Matrix<local_scalar_t__,-1,1>::Constant(n_obs,
+              DUMMY_VAR__);
           current_statement__ = 23;
-          for (int i = 1; i <= nObs; ++i) {
+          for (int i = 1; i <= n_obs; ++i) {
             current_statement__ = 21;
             stan::model::assign(cover,
               (stan::math::fmin(
-                 stan::model::rvalue(plot, "plot", stan::model::index_uni(i)),
-                 (stan::model::rvalue(canopy, "canopy",
-                    stan::model::index_uni(i)) * (1 + (bTide *
-                 stan::model::rvalue(tide, "tide", stan::model::index_uni(i))))))
-              /
-              stan::model::rvalue(plot, "plot", stan::model::index_uni(i))),
-              "assigning variable cover", stan::model::index_uni(i));
+                 stan::model::rvalue(plot_area_m2, "plot_area_m2",
+                   stan::model::index_uni(i)),
+                 (stan::model::rvalue(canopy_area_m2, "canopy_area_m2",
+                    stan::model::index_uni(i)) * (1 + (tide_height_slope *
+                 stan::model::rvalue(tide_height_m, "tide_height_m",
+                   stan::model::index_uni(i)))))) /
+              stan::model::rvalue(plot_area_m2, "plot_area_m2",
+                stan::model::index_uni(i))), "assigning variable cover",
+              stan::model::index_uni(i));
           }
           current_statement__ = 24;
-          stan::math::validate_non_negative_index("log_mu", "nObs", nObs);
+          stan::math::validate_non_negative_index("log_mu", "n_obs", n_obs);
           Eigen::Matrix<local_scalar_t__,-1,1> log_mu =
-            Eigen::Matrix<local_scalar_t__,-1,1>::Constant(nObs, DUMMY_VAR__);
+            Eigen::Matrix<local_scalar_t__,-1,1>::Constant(n_obs,
+              DUMMY_VAR__);
           current_statement__ = 25;
           stan::model::assign(log_mu,
             stan::math::log(
-              stan::math::add(bFloor,
+              stan::math::add(biomass_floor,
                 stan::math::elt_multiply(
-                  stan::math::multiply(bCanopy,
+                  stan::math::multiply(cover_slope,
                     stan::math::exp(
                       stan::math::add(
-                        stan::model::rvalue(bSite, "bSite",
+                        stan::model::rvalue(site_effect, "site_effect",
                           stan::model::index_multi(site)),
-                        stan::model::rvalue(bYear, "bYear",
+                        stan::model::rvalue(year_effect, "year_effect",
                           stan::model::index_multi(year))))), cover))),
             "assigning variable log_mu");
           current_statement__ = 26;
           lp_accum__.add(stan::math::normal_lpdf<propto__>(log_biomass,
                            log_mu,
-                           stan::math::multiply(bScaling, log_biomass_sd)));
+                           stan::math::multiply(error_scaling, log_biomass_sd)));
         }
       }
     } catch (const std::exception& e) {
@@ -699,63 +726,63 @@ public:
     (void) function__;
     try {
       current_statement__ = 1;
-      auto bCanopy =
+      auto cover_slope =
         in__.template read_constrain_lb<local_scalar_t__, jacobian__>(0,
           lp__);
       current_statement__ = 2;
-      auto bFloor =
+      auto biomass_floor =
         in__.template read_constrain_lb<local_scalar_t__, jacobian__>(0,
           lp__);
       current_statement__ = 3;
-      auto bTide =
+      auto tide_height_slope =
         in__.template read_constrain_lb<local_scalar_t__, jacobian__>(0,
           lp__);
       current_statement__ = 4;
-      auto bScaling =
+      auto error_scaling =
         in__.template read_constrain_lb<local_scalar_t__, jacobian__>(0,
           lp__);
       current_statement__ = 5;
-      auto sSite =
+      auto sd_site =
         in__.template read_constrain_lb<local_scalar_t__, jacobian__>(0,
           lp__);
       current_statement__ = 6;
-      auto sYear =
+      auto sd_year =
         in__.template read_constrain_lb<local_scalar_t__, jacobian__>(0,
           lp__);
       current_statement__ = 7;
-      auto z_bSite =
-        in__.template read<Eigen::Matrix<local_scalar_t__,-1,1>>(nSite);
+      auto z_site =
+        in__.template read<Eigen::Matrix<local_scalar_t__,-1,1>>(n_site);
       current_statement__ = 8;
-      auto z_bYear =
-        in__.template read<Eigen::Matrix<local_scalar_t__,-1,1>>(nYear);
-      Eigen::Matrix<double,-1,1> bSite =
-        Eigen::Matrix<double,-1,1>::Constant(nSite,
+      auto z_year =
+        in__.template read<Eigen::Matrix<local_scalar_t__,-1,1>>(n_year);
+      Eigen::Matrix<double,-1,1> site_effect =
+        Eigen::Matrix<double,-1,1>::Constant(n_site,
           std::numeric_limits<double>::quiet_NaN());
-      Eigen::Matrix<double,-1,1> bYear =
-        Eigen::Matrix<double,-1,1>::Constant(nYear,
+      Eigen::Matrix<double,-1,1> year_effect =
+        Eigen::Matrix<double,-1,1>::Constant(n_year,
           std::numeric_limits<double>::quiet_NaN());
-      out__.write(bCanopy);
-      out__.write(bFloor);
-      out__.write(bTide);
-      out__.write(bScaling);
-      out__.write(sSite);
-      out__.write(sYear);
-      out__.write(z_bSite);
-      out__.write(z_bYear);
+      out__.write(cover_slope);
+      out__.write(biomass_floor);
+      out__.write(tide_height_slope);
+      out__.write(error_scaling);
+      out__.write(sd_site);
+      out__.write(sd_year);
+      out__.write(z_site);
+      out__.write(z_year);
       if (stan::math::logical_negation(
             (stan::math::primitive_value(emit_transformed_parameters__) ||
             stan::math::primitive_value(emit_generated_quantities__)))) {
         return ;
       }
       current_statement__ = 9;
-      stan::model::assign(bSite, stan::math::multiply(z_bSite, sSite),
-        "assigning variable bSite");
+      stan::model::assign(site_effect, stan::math::multiply(z_site, sd_site),
+        "assigning variable site_effect");
       current_statement__ = 10;
-      stan::model::assign(bYear, stan::math::multiply(z_bYear, sYear),
-        "assigning variable bYear");
+      stan::model::assign(year_effect, stan::math::multiply(z_year, sd_year),
+        "assigning variable year_effect");
       if (emit_transformed_parameters__) {
-        out__.write(bSite);
-        out__.write(bYear);
+        out__.write(site_effect);
+        out__.write(year_effect);
       }
       if (stan::math::logical_negation(emit_generated_quantities__)) {
         return ;
@@ -780,44 +807,44 @@ public:
     // suppress unused var warning
     (void) DUMMY_VAR__;
     try {
-      local_scalar_t__ bCanopy = DUMMY_VAR__;
+      local_scalar_t__ cover_slope = DUMMY_VAR__;
       current_statement__ = 1;
-      bCanopy = in__.read<local_scalar_t__>();
-      out__.write_free_lb(0, bCanopy);
-      local_scalar_t__ bFloor = DUMMY_VAR__;
+      cover_slope = in__.read<local_scalar_t__>();
+      out__.write_free_lb(0, cover_slope);
+      local_scalar_t__ biomass_floor = DUMMY_VAR__;
       current_statement__ = 2;
-      bFloor = in__.read<local_scalar_t__>();
-      out__.write_free_lb(0, bFloor);
-      local_scalar_t__ bTide = DUMMY_VAR__;
+      biomass_floor = in__.read<local_scalar_t__>();
+      out__.write_free_lb(0, biomass_floor);
+      local_scalar_t__ tide_height_slope = DUMMY_VAR__;
       current_statement__ = 3;
-      bTide = in__.read<local_scalar_t__>();
-      out__.write_free_lb(0, bTide);
-      local_scalar_t__ bScaling = DUMMY_VAR__;
+      tide_height_slope = in__.read<local_scalar_t__>();
+      out__.write_free_lb(0, tide_height_slope);
+      local_scalar_t__ error_scaling = DUMMY_VAR__;
       current_statement__ = 4;
-      bScaling = in__.read<local_scalar_t__>();
-      out__.write_free_lb(0, bScaling);
-      local_scalar_t__ sSite = DUMMY_VAR__;
+      error_scaling = in__.read<local_scalar_t__>();
+      out__.write_free_lb(0, error_scaling);
+      local_scalar_t__ sd_site = DUMMY_VAR__;
       current_statement__ = 5;
-      sSite = in__.read<local_scalar_t__>();
-      out__.write_free_lb(0, sSite);
-      local_scalar_t__ sYear = DUMMY_VAR__;
+      sd_site = in__.read<local_scalar_t__>();
+      out__.write_free_lb(0, sd_site);
+      local_scalar_t__ sd_year = DUMMY_VAR__;
       current_statement__ = 6;
-      sYear = in__.read<local_scalar_t__>();
-      out__.write_free_lb(0, sYear);
-      Eigen::Matrix<local_scalar_t__,-1,1> z_bSite =
-        Eigen::Matrix<local_scalar_t__,-1,1>::Constant(nSite, DUMMY_VAR__);
+      sd_year = in__.read<local_scalar_t__>();
+      out__.write_free_lb(0, sd_year);
+      Eigen::Matrix<local_scalar_t__,-1,1> z_site =
+        Eigen::Matrix<local_scalar_t__,-1,1>::Constant(n_site, DUMMY_VAR__);
       current_statement__ = 7;
-      stan::model::assign(z_bSite,
-        in__.read<Eigen::Matrix<local_scalar_t__,-1,1>>(nSite),
-        "assigning variable z_bSite");
-      out__.write(z_bSite);
-      Eigen::Matrix<local_scalar_t__,-1,1> z_bYear =
-        Eigen::Matrix<local_scalar_t__,-1,1>::Constant(nYear, DUMMY_VAR__);
+      stan::model::assign(z_site,
+        in__.read<Eigen::Matrix<local_scalar_t__,-1,1>>(n_site),
+        "assigning variable z_site");
+      out__.write(z_site);
+      Eigen::Matrix<local_scalar_t__,-1,1> z_year =
+        Eigen::Matrix<local_scalar_t__,-1,1>::Constant(n_year, DUMMY_VAR__);
       current_statement__ = 8;
-      stan::model::assign(z_bYear,
-        in__.read<Eigen::Matrix<local_scalar_t__,-1,1>>(nYear),
-        "assigning variable z_bYear");
-      out__.write(z_bYear);
+      stan::model::assign(z_year,
+        in__.read<Eigen::Matrix<local_scalar_t__,-1,1>>(n_year),
+        "assigning variable z_year");
+      out__.write(z_year);
     } catch (const std::exception& e) {
       stan::lang::rethrow_located(e, locations_array__[current_statement__]);
     }
@@ -836,83 +863,83 @@ public:
     (void) DUMMY_VAR__;
     try {
       current_statement__ = 1;
-      context__.validate_dims("parameter initialization", "bCanopy",
+      context__.validate_dims("parameter initialization", "cover_slope",
         "double", std::vector<size_t>{});
       current_statement__ = 2;
-      context__.validate_dims("parameter initialization", "bFloor", "double",
-        std::vector<size_t>{});
+      context__.validate_dims("parameter initialization", "biomass_floor",
+        "double", std::vector<size_t>{});
       current_statement__ = 3;
-      context__.validate_dims("parameter initialization", "bTide", "double",
-        std::vector<size_t>{});
+      context__.validate_dims("parameter initialization",
+        "tide_height_slope", "double", std::vector<size_t>{});
       current_statement__ = 4;
-      context__.validate_dims("parameter initialization", "bScaling",
+      context__.validate_dims("parameter initialization", "error_scaling",
         "double", std::vector<size_t>{});
       current_statement__ = 5;
-      context__.validate_dims("parameter initialization", "sSite", "double",
-        std::vector<size_t>{});
+      context__.validate_dims("parameter initialization", "sd_site",
+        "double", std::vector<size_t>{});
       current_statement__ = 6;
-      context__.validate_dims("parameter initialization", "sYear", "double",
-        std::vector<size_t>{});
+      context__.validate_dims("parameter initialization", "sd_year",
+        "double", std::vector<size_t>{});
       current_statement__ = 7;
-      context__.validate_dims("parameter initialization", "z_bSite",
-        "double", std::vector<size_t>{static_cast<size_t>(nSite)});
+      context__.validate_dims("parameter initialization", "z_site", "double",
+        std::vector<size_t>{static_cast<size_t>(n_site)});
       current_statement__ = 8;
-      context__.validate_dims("parameter initialization", "z_bYear",
-        "double", std::vector<size_t>{static_cast<size_t>(nYear)});
+      context__.validate_dims("parameter initialization", "z_year", "double",
+        std::vector<size_t>{static_cast<size_t>(n_year)});
       int pos__ = std::numeric_limits<int>::min();
       pos__ = 1;
-      local_scalar_t__ bCanopy = DUMMY_VAR__;
+      local_scalar_t__ cover_slope = DUMMY_VAR__;
       current_statement__ = 1;
-      bCanopy = context__.vals_r("bCanopy")[(1 - 1)];
-      out__.write_free_lb(0, bCanopy);
-      local_scalar_t__ bFloor = DUMMY_VAR__;
+      cover_slope = context__.vals_r("cover_slope")[(1 - 1)];
+      out__.write_free_lb(0, cover_slope);
+      local_scalar_t__ biomass_floor = DUMMY_VAR__;
       current_statement__ = 2;
-      bFloor = context__.vals_r("bFloor")[(1 - 1)];
-      out__.write_free_lb(0, bFloor);
-      local_scalar_t__ bTide = DUMMY_VAR__;
+      biomass_floor = context__.vals_r("biomass_floor")[(1 - 1)];
+      out__.write_free_lb(0, biomass_floor);
+      local_scalar_t__ tide_height_slope = DUMMY_VAR__;
       current_statement__ = 3;
-      bTide = context__.vals_r("bTide")[(1 - 1)];
-      out__.write_free_lb(0, bTide);
-      local_scalar_t__ bScaling = DUMMY_VAR__;
+      tide_height_slope = context__.vals_r("tide_height_slope")[(1 - 1)];
+      out__.write_free_lb(0, tide_height_slope);
+      local_scalar_t__ error_scaling = DUMMY_VAR__;
       current_statement__ = 4;
-      bScaling = context__.vals_r("bScaling")[(1 - 1)];
-      out__.write_free_lb(0, bScaling);
-      local_scalar_t__ sSite = DUMMY_VAR__;
+      error_scaling = context__.vals_r("error_scaling")[(1 - 1)];
+      out__.write_free_lb(0, error_scaling);
+      local_scalar_t__ sd_site = DUMMY_VAR__;
       current_statement__ = 5;
-      sSite = context__.vals_r("sSite")[(1 - 1)];
-      out__.write_free_lb(0, sSite);
-      local_scalar_t__ sYear = DUMMY_VAR__;
+      sd_site = context__.vals_r("sd_site")[(1 - 1)];
+      out__.write_free_lb(0, sd_site);
+      local_scalar_t__ sd_year = DUMMY_VAR__;
       current_statement__ = 6;
-      sYear = context__.vals_r("sYear")[(1 - 1)];
-      out__.write_free_lb(0, sYear);
-      Eigen::Matrix<local_scalar_t__,-1,1> z_bSite =
-        Eigen::Matrix<local_scalar_t__,-1,1>::Constant(nSite, DUMMY_VAR__);
+      sd_year = context__.vals_r("sd_year")[(1 - 1)];
+      out__.write_free_lb(0, sd_year);
+      Eigen::Matrix<local_scalar_t__,-1,1> z_site =
+        Eigen::Matrix<local_scalar_t__,-1,1>::Constant(n_site, DUMMY_VAR__);
       {
-        std::vector<local_scalar_t__> z_bSite_flat__;
+        std::vector<local_scalar_t__> z_site_flat__;
         current_statement__ = 7;
-        z_bSite_flat__ = context__.vals_r("z_bSite");
+        z_site_flat__ = context__.vals_r("z_site");
         pos__ = 1;
-        for (int sym1__ = 1; sym1__ <= nSite; ++sym1__) {
-          stan::model::assign(z_bSite, z_bSite_flat__[(pos__ - 1)],
-            "assigning variable z_bSite", stan::model::index_uni(sym1__));
+        for (int sym1__ = 1; sym1__ <= n_site; ++sym1__) {
+          stan::model::assign(z_site, z_site_flat__[(pos__ - 1)],
+            "assigning variable z_site", stan::model::index_uni(sym1__));
           pos__ = (pos__ + 1);
         }
       }
-      out__.write(z_bSite);
-      Eigen::Matrix<local_scalar_t__,-1,1> z_bYear =
-        Eigen::Matrix<local_scalar_t__,-1,1>::Constant(nYear, DUMMY_VAR__);
+      out__.write(z_site);
+      Eigen::Matrix<local_scalar_t__,-1,1> z_year =
+        Eigen::Matrix<local_scalar_t__,-1,1>::Constant(n_year, DUMMY_VAR__);
       {
-        std::vector<local_scalar_t__> z_bYear_flat__;
+        std::vector<local_scalar_t__> z_year_flat__;
         current_statement__ = 8;
-        z_bYear_flat__ = context__.vals_r("z_bYear");
+        z_year_flat__ = context__.vals_r("z_year");
         pos__ = 1;
-        for (int sym1__ = 1; sym1__ <= nYear; ++sym1__) {
-          stan::model::assign(z_bYear, z_bYear_flat__[(pos__ - 1)],
-            "assigning variable z_bYear", stan::model::index_uni(sym1__));
+        for (int sym1__ = 1; sym1__ <= n_year; ++sym1__) {
+          stan::model::assign(z_year, z_year_flat__[(pos__ - 1)],
+            "assigning variable z_year", stan::model::index_uni(sym1__));
           pos__ = (pos__ + 1);
         }
       }
-      out__.write(z_bYear);
+      out__.write(z_year);
     } catch (const std::exception& e) {
       stan::lang::rethrow_located(e, locations_array__[current_statement__]);
     }
@@ -921,10 +948,11 @@ public:
   get_param_names(std::vector<std::string>& names__, const bool
                   emit_transformed_parameters__ = true, const bool
                   emit_generated_quantities__ = true) const {
-    names__ = std::vector<std::string>{"bCanopy", "bFloor", "bTide",
-                "bScaling", "sSite", "sYear", "z_bSite", "z_bYear"};
+    names__ = std::vector<std::string>{"cover_slope", "biomass_floor",
+                "tide_height_slope", "error_scaling", "sd_site", "sd_year",
+                "z_site", "z_year"};
     if (emit_transformed_parameters__) {
-      std::vector<std::string> temp{"bSite", "bYear"};
+      std::vector<std::string> temp{"site_effect", "year_effect"};
       names__.reserve(names__.size() + temp.size());
       names__.insert(names__.end(), temp.begin(), temp.end());
     }
@@ -938,12 +966,12 @@ public:
                 std::vector<size_t>{}, std::vector<size_t>{},
                 std::vector<size_t>{}, std::vector<size_t>{},
                 std::vector<size_t>{},
-                std::vector<size_t>{static_cast<size_t>(nSite)},
-                std::vector<size_t>{static_cast<size_t>(nYear)}};
+                std::vector<size_t>{static_cast<size_t>(n_site)},
+                std::vector<size_t>{static_cast<size_t>(n_year)}};
     if (emit_transformed_parameters__) {
       std::vector<std::vector<size_t>>
-        temp{std::vector<size_t>{static_cast<size_t>(nSite)},
-             std::vector<size_t>{static_cast<size_t>(nYear)}};
+        temp{std::vector<size_t>{static_cast<size_t>(n_site)},
+             std::vector<size_t>{static_cast<size_t>(n_year)}};
       dimss__.reserve(dimss__.size() + temp.size());
       dimss__.insert(dimss__.end(), temp.begin(), temp.end());
     }
@@ -953,27 +981,27 @@ public:
   constrained_param_names(std::vector<std::string>& param_names__, bool
                           emit_transformed_parameters__ = true, bool
                           emit_generated_quantities__ = true) const final {
-    param_names__.emplace_back(std::string() + "bCanopy");
-    param_names__.emplace_back(std::string() + "bFloor");
-    param_names__.emplace_back(std::string() + "bTide");
-    param_names__.emplace_back(std::string() + "bScaling");
-    param_names__.emplace_back(std::string() + "sSite");
-    param_names__.emplace_back(std::string() + "sYear");
-    for (int sym1__ = 1; sym1__ <= nSite; ++sym1__) {
-      param_names__.emplace_back(std::string() + "z_bSite" + '.' +
+    param_names__.emplace_back(std::string() + "cover_slope");
+    param_names__.emplace_back(std::string() + "biomass_floor");
+    param_names__.emplace_back(std::string() + "tide_height_slope");
+    param_names__.emplace_back(std::string() + "error_scaling");
+    param_names__.emplace_back(std::string() + "sd_site");
+    param_names__.emplace_back(std::string() + "sd_year");
+    for (int sym1__ = 1; sym1__ <= n_site; ++sym1__) {
+      param_names__.emplace_back(std::string() + "z_site" + '.' +
         std::to_string(sym1__));
     }
-    for (int sym1__ = 1; sym1__ <= nYear; ++sym1__) {
-      param_names__.emplace_back(std::string() + "z_bYear" + '.' +
+    for (int sym1__ = 1; sym1__ <= n_year; ++sym1__) {
+      param_names__.emplace_back(std::string() + "z_year" + '.' +
         std::to_string(sym1__));
     }
     if (emit_transformed_parameters__) {
-      for (int sym1__ = 1; sym1__ <= nSite; ++sym1__) {
-        param_names__.emplace_back(std::string() + "bSite" + '.' +
+      for (int sym1__ = 1; sym1__ <= n_site; ++sym1__) {
+        param_names__.emplace_back(std::string() + "site_effect" + '.' +
           std::to_string(sym1__));
       }
-      for (int sym1__ = 1; sym1__ <= nYear; ++sym1__) {
-        param_names__.emplace_back(std::string() + "bYear" + '.' +
+      for (int sym1__ = 1; sym1__ <= n_year; ++sym1__) {
+        param_names__.emplace_back(std::string() + "year_effect" + '.' +
           std::to_string(sym1__));
       }
     }
@@ -983,37 +1011,37 @@ public:
   unconstrained_param_names(std::vector<std::string>& param_names__, bool
                             emit_transformed_parameters__ = true, bool
                             emit_generated_quantities__ = true) const final {
-    param_names__.emplace_back(std::string() + "bCanopy");
-    param_names__.emplace_back(std::string() + "bFloor");
-    param_names__.emplace_back(std::string() + "bTide");
-    param_names__.emplace_back(std::string() + "bScaling");
-    param_names__.emplace_back(std::string() + "sSite");
-    param_names__.emplace_back(std::string() + "sYear");
-    for (int sym1__ = 1; sym1__ <= nSite; ++sym1__) {
-      param_names__.emplace_back(std::string() + "z_bSite" + '.' +
+    param_names__.emplace_back(std::string() + "cover_slope");
+    param_names__.emplace_back(std::string() + "biomass_floor");
+    param_names__.emplace_back(std::string() + "tide_height_slope");
+    param_names__.emplace_back(std::string() + "error_scaling");
+    param_names__.emplace_back(std::string() + "sd_site");
+    param_names__.emplace_back(std::string() + "sd_year");
+    for (int sym1__ = 1; sym1__ <= n_site; ++sym1__) {
+      param_names__.emplace_back(std::string() + "z_site" + '.' +
         std::to_string(sym1__));
     }
-    for (int sym1__ = 1; sym1__ <= nYear; ++sym1__) {
-      param_names__.emplace_back(std::string() + "z_bYear" + '.' +
+    for (int sym1__ = 1; sym1__ <= n_year; ++sym1__) {
+      param_names__.emplace_back(std::string() + "z_year" + '.' +
         std::to_string(sym1__));
     }
     if (emit_transformed_parameters__) {
-      for (int sym1__ = 1; sym1__ <= nSite; ++sym1__) {
-        param_names__.emplace_back(std::string() + "bSite" + '.' +
+      for (int sym1__ = 1; sym1__ <= n_site; ++sym1__) {
+        param_names__.emplace_back(std::string() + "site_effect" + '.' +
           std::to_string(sym1__));
       }
-      for (int sym1__ = 1; sym1__ <= nYear; ++sym1__) {
-        param_names__.emplace_back(std::string() + "bYear" + '.' +
+      for (int sym1__ = 1; sym1__ <= n_year; ++sym1__) {
+        param_names__.emplace_back(std::string() + "year_effect" + '.' +
           std::to_string(sym1__));
       }
     }
     if (emit_generated_quantities__) {}
   }
   inline std::string get_constrained_sizedtypes() const {
-    return std::string("[{\"name\":\"bCanopy\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"bFloor\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"bTide\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"bScaling\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"sSite\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"sYear\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"z_bSite\",\"type\":{\"name\":\"vector\",\"length\":" + std::to_string(nSite) + "},\"block\":\"parameters\"},{\"name\":\"z_bYear\",\"type\":{\"name\":\"vector\",\"length\":" + std::to_string(nYear) + "},\"block\":\"parameters\"},{\"name\":\"bSite\",\"type\":{\"name\":\"vector\",\"length\":" + std::to_string(nSite) + "},\"block\":\"transformed_parameters\"},{\"name\":\"bYear\",\"type\":{\"name\":\"vector\",\"length\":" + std::to_string(nYear) + "},\"block\":\"transformed_parameters\"}]");
+    return std::string("[{\"name\":\"cover_slope\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"biomass_floor\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"tide_height_slope\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"error_scaling\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"sd_site\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"sd_year\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"z_site\",\"type\":{\"name\":\"vector\",\"length\":" + std::to_string(n_site) + "},\"block\":\"parameters\"},{\"name\":\"z_year\",\"type\":{\"name\":\"vector\",\"length\":" + std::to_string(n_year) + "},\"block\":\"parameters\"},{\"name\":\"site_effect\",\"type\":{\"name\":\"vector\",\"length\":" + std::to_string(n_site) + "},\"block\":\"transformed_parameters\"},{\"name\":\"year_effect\",\"type\":{\"name\":\"vector\",\"length\":" + std::to_string(n_year) + "},\"block\":\"transformed_parameters\"}]");
   }
   inline std::string get_unconstrained_sizedtypes() const {
-    return std::string("[{\"name\":\"bCanopy\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"bFloor\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"bTide\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"bScaling\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"sSite\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"sYear\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"z_bSite\",\"type\":{\"name\":\"vector\",\"length\":" + std::to_string(nSite) + "},\"block\":\"parameters\"},{\"name\":\"z_bYear\",\"type\":{\"name\":\"vector\",\"length\":" + std::to_string(nYear) + "},\"block\":\"parameters\"},{\"name\":\"bSite\",\"type\":{\"name\":\"vector\",\"length\":" + std::to_string(nSite) + "},\"block\":\"transformed_parameters\"},{\"name\":\"bYear\",\"type\":{\"name\":\"vector\",\"length\":" + std::to_string(nYear) + "},\"block\":\"transformed_parameters\"}]");
+    return std::string("[{\"name\":\"cover_slope\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"biomass_floor\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"tide_height_slope\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"error_scaling\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"sd_site\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"sd_year\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"z_site\",\"type\":{\"name\":\"vector\",\"length\":" + std::to_string(n_site) + "},\"block\":\"parameters\"},{\"name\":\"z_year\",\"type\":{\"name\":\"vector\",\"length\":" + std::to_string(n_year) + "},\"block\":\"parameters\"},{\"name\":\"site_effect\",\"type\":{\"name\":\"vector\",\"length\":" + std::to_string(n_site) + "},\"block\":\"transformed_parameters\"},{\"name\":\"year_effect\",\"type\":{\"name\":\"vector\",\"length\":" + std::to_string(n_year) + "},\"block\":\"transformed_parameters\"}]");
   }
   // Begin method overload boilerplate
   template <typename RNG> inline void
@@ -1022,9 +1050,9 @@ public:
               emit_transformed_parameters = true, const bool
               emit_generated_quantities = true, std::ostream*
               pstream = nullptr) const {
-    const size_t num_params__ = 1 + 1 + 1 + 1 + 1 + 1 + nSite + nYear;
-    const size_t num_transformed = emit_transformed_parameters * (nSite +
-      nYear);
+    const size_t num_params__ = 1 + 1 + 1 + 1 + 1 + 1 + n_site + n_year;
+    const size_t num_transformed = emit_transformed_parameters * (n_site +
+      n_year);
     const size_t num_gen_quantities = emit_generated_quantities * (0U);
     const size_t num_to_write = num_params__ + num_transformed +
       num_gen_quantities;
@@ -1040,9 +1068,9 @@ public:
               emit_transformed_parameters = true, bool
               emit_generated_quantities = true, std::ostream*
               pstream = nullptr) const {
-    const size_t num_params__ = 1 + 1 + 1 + 1 + 1 + 1 + nSite + nYear;
-    const size_t num_transformed = emit_transformed_parameters * (nSite +
-      nYear);
+    const size_t num_params__ = 1 + 1 + 1 + 1 + 1 + 1 + n_site + n_year;
+    const size_t num_transformed = emit_transformed_parameters * (n_site +
+      n_year);
     const size_t num_gen_quantities = emit_generated_quantities * (0U);
     const size_t num_to_write = num_params__ + num_transformed +
       num_gen_quantities;

@@ -66,8 +66,8 @@ Fit a carbon-fraction model for \emph{Macrocystis pyrifera} via Stan.
 }
 \details{
 The carbon fraction of each dried sample, \code{carbon_mass_ug / 1000 / sample_mass_mg}, is modelled with a Beta likelihood parameterised by its mean
-and precision. The logit mean fraction (\code{bCarbon})
-and the precision (\code{bPrecision}) are common to all samples, so the model
+and precision. The logit mean fraction (\code{intercept})
+and the precision (\code{precision}) are common to all samples, so the model
 estimates one carbon fraction of dry mass for the population of samples
 supplied.
 

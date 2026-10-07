@@ -83,19 +83,19 @@ site-years.
 
 The in situ wet biomass (kg/m²) is modelled as a floor plus a term
 proportional to the plot's tide-corrected canopy cover:
-\code{mu = bFloor + bCanopy * exp(bSite + bYear) * cover}. \code{bCanopy} is the wet
-biomass per m² of canopy at a typical site and year, and \code{bFloor} the wet
+\code{mu = biomass_floor + cover_slope * exp(site_effect + year_effect) * cover}. \code{cover_slope} is the wet
+biomass per m² of canopy at a typical site and year, and \code{biomass_floor} the wet
 biomass of a plot with no delineated canopy, common to all sites and years.
 The site and year effects act on the canopy term only. Cover is the canopy
-area increased by \code{bTide} per metre of tide height, since less of the canopy
+area increased by \code{tide_height_slope} per metre of tide height, since less of the canopy
 is visible at the surface at higher tides, divided by the plot area and
-capped at 1. The calibration data carry almost no information on \code{bTide}, so
+capped at 1. The calibration data carry almost no information on \code{tide_height_slope}, so
 the tide correction is set by its prior.
 
 The log of the biomass estimate is Normal around \code{log(mu)} with standard
-deviation \code{bScaling} times the log-scale SD implied by its \code{lower} and \code{upper}
+deviation \code{error_scaling} times the log-scale SD implied by its \code{lower} and \code{upper}
 limits, so each survey is weighted by the precision of its in situ estimate,
-and \code{bScaling} calibrates the supplied SDs.
+and \code{error_scaling} calibrates the supplied SDs.
 }
 \section{Sampling}{
 

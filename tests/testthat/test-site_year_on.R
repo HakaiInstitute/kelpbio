@@ -21,7 +21,7 @@ test_that("the prediction engine and the model description agree on the flag", {
     fit$meta["site_year_on"] <- list(flag)
 
     described <- any(grepl(
-      "bSiteYear",
+      "site_year_effect",
       utils::capture.output(kb_model_describe(fit))
     ))
 

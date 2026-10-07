@@ -8,7 +8,7 @@ test_that("a survey's total is the bed biomass per m2 times its canopy area", {
   )
   totals <- site_biomass_draws(fit, grid, "average", NULL)
   d <- fit$draws
-  bed <- d$bFloor + d$bCanopy * exp(d$bSite[1] + d$bYear[1])
+  bed <- d$biomass_floor + d$cover_slope * exp(d$site_effect[1] + d$year_effect[1])
   expect_equal(
     totals[, 1],
     as.vector(posterior::draws_of(bed)) * 250,
@@ -16,7 +16,7 @@ test_that("a survey's total is the bed biomass per m2 times its canopy area", {
   )
 })
 
-test_that("the canopy is tide-corrected with each draw's bTide", {
+test_that("the canopy is tide-corrected with each draw's tide_height_slope", {
   fit <- cover_biomass_nereo_fit
   grid <- tibble::tibble(
     site = fitted_sites(fit),
@@ -25,7 +25,7 @@ test_that("the canopy is tide-corrected with each draw's bTide", {
     tide_height_m = c(0, 1)
   )
   totals <- site_biomass_draws(fit, grid, "average", NULL)
-  tide <- as.vector(posterior::draws_of(fit$draws$bTide))
+  tide <- as.vector(posterior::draws_of(fit$draws$tide_height_slope))
   expect_equal(totals[, 2], totals[, 1] * (1 + tide))
 })
 

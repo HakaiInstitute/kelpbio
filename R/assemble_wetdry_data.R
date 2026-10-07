@@ -10,12 +10,12 @@
 #' @return A named list suitable for `rstan::sampling(stanmodels$wetdry, data = .)`.
 #' @noRd
 assemble_wetdry_data <- function(data, priors, prior_only = FALSE) {
-  list(
-    nObs = nrow(data),
-    ratio = as.numeric(data$dry_mass_g / data$wet_mass_g),
-    prior_intercept_mu = priors$intercept$mean,
-    prior_intercept_sd = priors$intercept$sd,
-    prior_precision_rate = priors$precision$rate,
-    prior_only = as.integer(prior_only)
+  c(
+    list(
+      n_obs = nrow(data),
+      dry_wet_ratio = as.numeric(data$dry_mass_g / data$wet_mass_g),
+      prior_only = as.integer(prior_only)
+    ),
+    prior_data(priors)
   )
 }

@@ -5,7 +5,8 @@
 #' [kb_fit_size_nereo()] to override defaults; unmodified entries keep their
 #' defaults.
 #'
-#' The prior family of each entry is fixed (the intercept is Normal, the Weibull
+#' Each entry is named after the parameter it sets, as reported by [tidy()] and
+#' [kb_model_describe()]. The prior family of each entry is fixed (the intercept is Normal, the Weibull
 #' shape and standard deviations are Exponential); only the hyperparameters can be
 #' changed.
 #'

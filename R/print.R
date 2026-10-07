@@ -22,6 +22,14 @@ print.kb_prior_exponential <- function(x, ...) {
   invisible(x)
 }
 
+#' @export
+print.kb_prior_lognormal <- function(x, ...) {
+  cli::cat_line(cli::format_inline(
+    "lognormal(meanlog = {format(x$meanlog)}, sdlog = {format(x$sdlog)})"
+  ))
+  invisible(x)
+}
+
 # A diagnostic rate for display: 3 significant figures with a "%" suffix, or
 # "unknown" when the rate has no denominator (a fit with no draws).
 .fmt_perc <- function(x) {

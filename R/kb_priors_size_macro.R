@@ -5,7 +5,8 @@
 #' [kb_fit_size_macro()] to override defaults; unmodified entries keep their
 #' defaults.
 #'
-#' The prior family of each entry is fixed (the intercept is Normal, the
+#' Each entry is named after the parameter it sets, as reported by [tidy()] and
+#' [kb_model_describe()]. The prior family of each entry is fixed (the intercept is Normal, the
 #' overdispersion and standard deviations are Exponential); only the
 #' hyperparameters can be changed.
 #'

@@ -21,14 +21,14 @@
 }
 
 # Nereo is Normal on log weight, so exp(lp) is the median and the mean carries
-# the lognormal retransformation exp(sWeight^2 / 2). A total such as biomass
+# the lognormal retransformation exp(sd_residual^2 / 2). A total such as biomass
 # needs the mean.
 #' @export
 .epred.kb_fit_weight_nereo <- function(fit, lp, expectation = TRUE) {
   if (!expectation) {
     return(exp(lp))
   }
-  exp(lp + fit$draws$sWeight^2 / 2)
+  exp(lp + fit$draws$sd_residual^2 / 2)
 }
 
 # Log link for both species. The Nereocystis Weibull is parameterised by its
@@ -45,7 +45,7 @@
   if (!expectation) {
     return(exp(lp))
   }
-  mean_gamma_pois_zt(exp(lp), fit$draws$bDispersion)
+  mean_gamma_pois_zt(exp(lp), fit$draws$dispersion)
 }
 
 # Log link for both species: exp(lp) is the expected count on the row's area
@@ -62,7 +62,7 @@
   if (!expectation) {
     return(exp(lp))
   }
-  exp(lp) / (1 + exp(fit$draws$bZeroInflation))
+  exp(lp) / (1 + exp(fit$draws$logit_zero_inflation))
 }
 
 # Logit link: the inverse is the Beta mean, the expected dry:wet ratio.

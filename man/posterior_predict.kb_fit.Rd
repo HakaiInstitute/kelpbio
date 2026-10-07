@@ -62,7 +62,7 @@ density), negative binomial (\emph{Macrocystis} density), Beta (wet/dry and
 carbon, so every draw lies between 0 and 1), and lognormal (cover). Density
 draws are counts on each row's \code{area_m2}, or on 1 m² when \code{new_data} has no
 \code{area_m2} column. Cover draws are in situ biomass estimates whose log-scale SD
-is \code{bScaling} times that implied by the row's \code{lower} and \code{upper} (at the
+is \code{error_scaling} times that implied by the row's \code{lower} and \code{upper} (at the
 fit's \code{conf_level}), so cover \code{new_data} must carry those columns.
 
 The observation noise is drawn in R, for every \code{new_data} including \code{NULL}, so

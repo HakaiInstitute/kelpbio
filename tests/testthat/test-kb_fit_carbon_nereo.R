@@ -25,7 +25,7 @@ test_that("kb_fit_carbon_nereo returns a correctly-structured object", {
   )
   expect_s3_class(fit, c("kb_fit_carbon_nereo", "kb_fit_carbon", "kb_fit"))
   expect_named(fit, c("draws", "diagnostics", "data", "meta"))
-  expect_setequal(posterior::variables(fit$draws), c("bCarbon", "bPrecision"))
+  expect_setequal(posterior::variables(fit$draws), c("intercept", "precision"))
   expect_equal(niters(fit), 100L)
 })
 
@@ -36,7 +36,7 @@ test_that("the fit records the species, a derived response, and no effects", {
   expect_identical(fit$meta$response, "carbon_fraction")
   expect_null(fit$meta$offset)
   expect_null(fit$meta[["predictor"]])
-  expect_identical(fit$meta$terms$fixed, c("bCarbon", "bPrecision"))
+  expect_identical(fit$meta$terms$fixed, c("intercept", "precision"))
   expect_length(fit$meta$terms$random, 0L)
 })
 

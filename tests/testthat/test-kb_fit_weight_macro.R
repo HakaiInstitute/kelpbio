@@ -27,15 +27,15 @@ test_that("kb_fit_weight_macro returns a correctly-structured object", {
   expect_setequal(
     posterior::variables(fit$draws),
     c(
-      "bWeight",
-      "bFronds",
-      "bShape",
-      "sSite",
-      "sYear",
-      "sSiteYear",
-      "bSite",
-      "bYear",
-      "bSiteYear"
+      "intercept",
+      "fronds_slope",
+      "shape",
+      "sd_site",
+      "sd_year",
+      "sd_site_year",
+      "site_effect",
+      "year_effect",
+      "site_year_effect"
     )
   )
   expect_equal(niters(fit), 100L)

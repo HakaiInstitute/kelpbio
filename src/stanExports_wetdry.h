@@ -15,31 +15,31 @@ using namespace stan::math;
 stan::math::profile_map profiles__;
 static constexpr std::array<const char*, 16> locations_array__ =
   {" (found before start of program)",
-  " (in 'wetdry', line 21, column 2 to column 15)",
-  " (in 'wetdry', line 22, column 2 to column 27)",
-  " (in 'wetdry', line 25, column 2 to column 59)",
-  " (in 'wetdry', line 26, column 2 to column 49)",
-  " (in 'wetdry', line 28, column 4 to column 33)",
-  " (in 'wetdry', line 29, column 4 to column 57)",
+  " (in 'wetdry', line 21, column 2 to column 17)",
+  " (in 'wetdry', line 22, column 2 to column 26)",
+  " (in 'wetdry', line 25, column 2 to column 63)",
+  " (in 'wetdry', line 26, column 2 to column 48)",
+  " (in 'wetdry', line 28, column 4 to column 35)",
+  " (in 'wetdry', line 29, column 4 to column 63)",
   " (in 'wetdry', line 27, column 23 to line 30, column 3)",
   " (in 'wetdry', line 27, column 2 to line 30, column 3)",
-  " (in 'wetdry', line 12, column 2 to column 20)",
-  " (in 'wetdry', line 13, column 27 to column 31)",
-  " (in 'wetdry', line 13, column 2 to column 39)",
-  " (in 'wetdry', line 15, column 2 to column 26)",
+  " (in 'wetdry', line 12, column 2 to column 21)",
+  " (in 'wetdry', line 13, column 27 to column 32)",
+  " (in 'wetdry', line 13, column 2 to column 48)",
+  " (in 'wetdry', line 15, column 2 to column 28)",
   " (in 'wetdry', line 16, column 2 to column 35)",
   " (in 'wetdry', line 17, column 2 to column 37)",
   " (in 'wetdry', line 18, column 2 to column 35)"};
 #include <stan_meta_header.hpp>
 class model_wetdry final : public model_base_crtp<model_wetdry> {
 private:
-  int nObs;
-  Eigen::Matrix<double,-1,1> ratio_data__;
-  double prior_intercept_mu;
+  int n_obs;
+  Eigen::Matrix<double,-1,1> dry_wet_ratio_data__;
+  double prior_intercept_mean;
   double prior_intercept_sd;
   double prior_precision_rate;
   int prior_only;
-  Eigen::Map<Eigen::Matrix<double,-1,1>> ratio{nullptr, 0};
+  Eigen::Map<Eigen::Matrix<double,-1,1>> dry_wet_ratio{nullptr, 0};
 public:
   ~model_wetdry() {}
   model_wetdry(stan::io::var_context& context__, unsigned int
@@ -63,43 +63,48 @@ public:
       int pos__ = std::numeric_limits<int>::min();
       pos__ = 1;
       current_statement__ = 9;
-      context__.validate_dims("data initialization", "nObs", "int",
+      context__.validate_dims("data initialization", "n_obs", "int",
         std::vector<size_t>{});
-      nObs = std::numeric_limits<int>::min();
+      n_obs = std::numeric_limits<int>::min();
       current_statement__ = 9;
-      nObs = context__.vals_i("nObs")[(1 - 1)];
+      n_obs = context__.vals_i("n_obs")[(1 - 1)];
       current_statement__ = 9;
-      stan::math::check_greater_or_equal(function__, "nObs", nObs, 0);
+      stan::math::check_greater_or_equal(function__, "n_obs", n_obs, 0);
       current_statement__ = 10;
-      stan::math::validate_non_negative_index("ratio", "nObs", nObs);
+      stan::math::validate_non_negative_index("dry_wet_ratio", "n_obs", n_obs);
       current_statement__ = 11;
-      context__.validate_dims("data initialization", "ratio", "double",
-        std::vector<size_t>{static_cast<size_t>(nObs)});
-      ratio_data__ = Eigen::Matrix<double,-1,1>::Constant(nObs,
-                       std::numeric_limits<double>::quiet_NaN());
-      new (&ratio)
-        Eigen::Map<Eigen::Matrix<double,-1,1>>(ratio_data__.data(), nObs);
+      context__.validate_dims("data initialization", "dry_wet_ratio",
+        "double", std::vector<size_t>{static_cast<size_t>(n_obs)});
+      dry_wet_ratio_data__ = Eigen::Matrix<double,-1,1>::Constant(n_obs,
+                               std::numeric_limits<double>::quiet_NaN());
+      new (&dry_wet_ratio)
+        Eigen::Map<Eigen::Matrix<double,-1,1>>(dry_wet_ratio_data__.data(),
+        n_obs);
       {
-        std::vector<local_scalar_t__> ratio_flat__;
+        std::vector<local_scalar_t__> dry_wet_ratio_flat__;
         current_statement__ = 11;
-        ratio_flat__ = context__.vals_r("ratio");
+        dry_wet_ratio_flat__ = context__.vals_r("dry_wet_ratio");
         pos__ = 1;
-        for (int sym1__ = 1; sym1__ <= nObs; ++sym1__) {
-          stan::model::assign(ratio, ratio_flat__[(pos__ - 1)],
-            "assigning variable ratio", stan::model::index_uni(sym1__));
+        for (int sym1__ = 1; sym1__ <= n_obs; ++sym1__) {
+          stan::model::assign(dry_wet_ratio, dry_wet_ratio_flat__[(pos__ -
+            1)], "assigning variable dry_wet_ratio",
+            stan::model::index_uni(sym1__));
           pos__ = (pos__ + 1);
         }
       }
       current_statement__ = 11;
-      stan::math::check_greater_or_equal(function__, "ratio", ratio, 0);
+      stan::math::check_greater_or_equal(function__, "dry_wet_ratio",
+        dry_wet_ratio, 0);
       current_statement__ = 11;
-      stan::math::check_less_or_equal(function__, "ratio", ratio, 1);
+      stan::math::check_less_or_equal(function__, "dry_wet_ratio",
+        dry_wet_ratio, 1);
       current_statement__ = 12;
-      context__.validate_dims("data initialization", "prior_intercept_mu",
+      context__.validate_dims("data initialization", "prior_intercept_mean",
         "double", std::vector<size_t>{});
-      prior_intercept_mu = std::numeric_limits<double>::quiet_NaN();
+      prior_intercept_mean = std::numeric_limits<double>::quiet_NaN();
       current_statement__ = 12;
-      prior_intercept_mu = context__.vals_r("prior_intercept_mu")[(1 - 1)];
+      prior_intercept_mean = context__.vals_r("prior_intercept_mean")[(1 -
+        1)];
       current_statement__ = 13;
       context__.validate_dims("data initialization", "prior_intercept_sd",
         "double", std::vector<size_t>{});
@@ -167,26 +172,26 @@ public:
     (void) function__;
     try {
       current_statement__ = 1;
-      auto bDryWet = in__.template read<local_scalar_t__>();
+      auto intercept = in__.template read<local_scalar_t__>();
       current_statement__ = 2;
-      auto bPrecision =
+      auto precision =
         in__.template read_constrain_lb<local_scalar_t__, jacobian__>(0,
           lp__);
       {
         current_statement__ = 3;
-        lp_accum__.add(stan::math::normal_lpdf<propto__>(bDryWet,
-                         prior_intercept_mu, prior_intercept_sd));
+        lp_accum__.add(stan::math::normal_lpdf<propto__>(intercept,
+                         prior_intercept_mean, prior_intercept_sd));
         current_statement__ = 4;
-        lp_accum__.add(stan::math::exponential_lpdf<propto__>(bPrecision,
+        lp_accum__.add(stan::math::exponential_lpdf<propto__>(precision,
                          prior_precision_rate));
         current_statement__ = 8;
         if (stan::math::logical_eq(prior_only, 0)) {
           local_scalar_t__ mu = DUMMY_VAR__;
           current_statement__ = 5;
-          mu = stan::math::inv_logit(bDryWet);
+          mu = stan::math::inv_logit(intercept);
           current_statement__ = 6;
-          lp_accum__.add(stan::math::beta_lpdf<propto__>(ratio, (mu *
-                           bPrecision), ((1 - mu) * bPrecision)));
+          lp_accum__.add(stan::math::beta_lpdf<propto__>(dry_wet_ratio, (mu *
+                           precision), ((1 - mu) * precision)));
         }
       }
     } catch (const std::exception& e) {
@@ -220,26 +225,26 @@ public:
     (void) function__;
     try {
       current_statement__ = 1;
-      auto bDryWet = in__.template read<local_scalar_t__>();
+      auto intercept = in__.template read<local_scalar_t__>();
       current_statement__ = 2;
-      auto bPrecision =
+      auto precision =
         in__.template read_constrain_lb<local_scalar_t__, jacobian__>(0,
           lp__);
       {
         current_statement__ = 3;
-        lp_accum__.add(stan::math::normal_lpdf<propto__>(bDryWet,
-                         prior_intercept_mu, prior_intercept_sd));
+        lp_accum__.add(stan::math::normal_lpdf<propto__>(intercept,
+                         prior_intercept_mean, prior_intercept_sd));
         current_statement__ = 4;
-        lp_accum__.add(stan::math::exponential_lpdf<propto__>(bPrecision,
+        lp_accum__.add(stan::math::exponential_lpdf<propto__>(precision,
                          prior_precision_rate));
         current_statement__ = 8;
         if (stan::math::logical_eq(prior_only, 0)) {
           local_scalar_t__ mu = DUMMY_VAR__;
           current_statement__ = 5;
-          mu = stan::math::inv_logit(bDryWet);
+          mu = stan::math::inv_logit(intercept);
           current_statement__ = 6;
-          lp_accum__.add(stan::math::beta_lpdf<propto__>(ratio, (mu *
-                           bPrecision), ((1 - mu) * bPrecision)));
+          lp_accum__.add(stan::math::beta_lpdf<propto__>(dry_wet_ratio, (mu *
+                           precision), ((1 - mu) * precision)));
         }
       }
     } catch (const std::exception& e) {
@@ -284,13 +289,13 @@ public:
     (void) function__;
     try {
       current_statement__ = 1;
-      auto bDryWet = in__.template read<local_scalar_t__>();
+      auto intercept = in__.template read<local_scalar_t__>();
       current_statement__ = 2;
-      auto bPrecision =
+      auto precision =
         in__.template read_constrain_lb<local_scalar_t__, jacobian__>(0,
           lp__);
-      out__.write(bDryWet);
-      out__.write(bPrecision);
+      out__.write(intercept);
+      out__.write(precision);
       if (stan::math::logical_negation(
             (stan::math::primitive_value(emit_transformed_parameters__) ||
             stan::math::primitive_value(emit_generated_quantities__)))) {
@@ -319,14 +324,14 @@ public:
     // suppress unused var warning
     (void) DUMMY_VAR__;
     try {
-      local_scalar_t__ bDryWet = DUMMY_VAR__;
+      local_scalar_t__ intercept = DUMMY_VAR__;
       current_statement__ = 1;
-      bDryWet = in__.read<local_scalar_t__>();
-      out__.write(bDryWet);
-      local_scalar_t__ bPrecision = DUMMY_VAR__;
+      intercept = in__.read<local_scalar_t__>();
+      out__.write(intercept);
+      local_scalar_t__ precision = DUMMY_VAR__;
       current_statement__ = 2;
-      bPrecision = in__.read<local_scalar_t__>();
-      out__.write_free_lb(0, bPrecision);
+      precision = in__.read<local_scalar_t__>();
+      out__.write_free_lb(0, precision);
     } catch (const std::exception& e) {
       stan::lang::rethrow_located(e, locations_array__[current_statement__]);
     }
@@ -345,19 +350,19 @@ public:
     (void) DUMMY_VAR__;
     try {
       current_statement__ = 1;
-      context__.validate_dims("parameter initialization", "bDryWet",
+      context__.validate_dims("parameter initialization", "intercept",
         "double", std::vector<size_t>{});
       current_statement__ = 2;
-      context__.validate_dims("parameter initialization", "bPrecision",
+      context__.validate_dims("parameter initialization", "precision",
         "double", std::vector<size_t>{});
-      local_scalar_t__ bDryWet = DUMMY_VAR__;
+      local_scalar_t__ intercept = DUMMY_VAR__;
       current_statement__ = 1;
-      bDryWet = context__.vals_r("bDryWet")[(1 - 1)];
-      out__.write(bDryWet);
-      local_scalar_t__ bPrecision = DUMMY_VAR__;
+      intercept = context__.vals_r("intercept")[(1 - 1)];
+      out__.write(intercept);
+      local_scalar_t__ precision = DUMMY_VAR__;
       current_statement__ = 2;
-      bPrecision = context__.vals_r("bPrecision")[(1 - 1)];
-      out__.write_free_lb(0, bPrecision);
+      precision = context__.vals_r("precision")[(1 - 1)];
+      out__.write_free_lb(0, precision);
     } catch (const std::exception& e) {
       stan::lang::rethrow_located(e, locations_array__[current_statement__]);
     }
@@ -366,7 +371,7 @@ public:
   get_param_names(std::vector<std::string>& names__, const bool
                   emit_transformed_parameters__ = true, const bool
                   emit_generated_quantities__ = true) const {
-    names__ = std::vector<std::string>{"bDryWet", "bPrecision"};
+    names__ = std::vector<std::string>{"intercept", "precision"};
     if (emit_transformed_parameters__) {}
     if (emit_generated_quantities__) {}
   }
@@ -383,8 +388,8 @@ public:
   constrained_param_names(std::vector<std::string>& param_names__, bool
                           emit_transformed_parameters__ = true, bool
                           emit_generated_quantities__ = true) const final {
-    param_names__.emplace_back(std::string() + "bDryWet");
-    param_names__.emplace_back(std::string() + "bPrecision");
+    param_names__.emplace_back(std::string() + "intercept");
+    param_names__.emplace_back(std::string() + "precision");
     if (emit_transformed_parameters__) {}
     if (emit_generated_quantities__) {}
   }
@@ -392,16 +397,16 @@ public:
   unconstrained_param_names(std::vector<std::string>& param_names__, bool
                             emit_transformed_parameters__ = true, bool
                             emit_generated_quantities__ = true) const final {
-    param_names__.emplace_back(std::string() + "bDryWet");
-    param_names__.emplace_back(std::string() + "bPrecision");
+    param_names__.emplace_back(std::string() + "intercept");
+    param_names__.emplace_back(std::string() + "precision");
     if (emit_transformed_parameters__) {}
     if (emit_generated_quantities__) {}
   }
   inline std::string get_constrained_sizedtypes() const {
-    return std::string("[{\"name\":\"bDryWet\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"bPrecision\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"}]");
+    return std::string("[{\"name\":\"intercept\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"precision\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"}]");
   }
   inline std::string get_unconstrained_sizedtypes() const {
-    return std::string("[{\"name\":\"bDryWet\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"bPrecision\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"}]");
+    return std::string("[{\"name\":\"intercept\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"precision\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"}]");
   }
   // Begin method overload boilerplate
   template <typename RNG> inline void

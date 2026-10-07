@@ -18,7 +18,7 @@
 #' carbon, so every draw lies between 0 and 1), and lognormal (cover). Density
 #' draws are counts on each row's `area_m2`, or on 1 m² when `new_data` has no
 #' `area_m2` column. Cover draws are in situ biomass estimates whose log-scale SD
-#' is `bScaling` times that implied by the row's `lower` and `upper` (at the
+#' is `error_scaling` times that implied by the row's `lower` and `upper` (at the
 #' fit's `conf_level`), so cover `new_data` must carry those columns.
 #'
 #' The observation noise is drawn in R, for every `new_data` including `NULL`, so

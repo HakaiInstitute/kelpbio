@@ -8,10 +8,10 @@ kb_priors_density_nereo()
 }
 \value{
 A named list of prior objects with entries \code{intercept} (the log stipe
-density per m² on transects holding stipes), \code{zero_inflation} (the
+density per m² on transects holding stipes), \code{logit_zero_inflation} (the
 probability that a transect holds no stipes, on the logit scale),
-\code{dispersion} (the negative binomial overdispersion), \code{sd_site}, \code{sd_year},
-and \code{sd_site_year}.
+\code{dispersion} (the negative binomial overdispersion: a transect's variance is
+\code{mu + dispersion * mu^2}), \code{sd_site}, \code{sd_year}, and \code{sd_site_year}.
 }
 \description{
 The default prior list for the \emph{Nereocystis luetkeana} density model. Edit
@@ -20,17 +20,19 @@ individual entries and pass the list to the \code{priors} argument of
 defaults.
 }
 \details{
-The prior family of each entry is fixed (the intercept and zero inflation are
-Normal, the overdispersion and standard deviations are Exponential); only the
-hyperparameters can be changed.
+Each entry is named after the parameter it sets, as reported by \code{\link[=tidy]{tidy()}} and
+\code{\link[=kb_model_describe]{kb_model_describe()}}. The prior family of each entry is fixed (the intercept
+and zero inflation are Normal, the overdispersion and standard deviations are
+Exponential); only the hyperparameters can be changed.
 }
 \examples{
 priors <- kb_priors_density_nereo()
-priors$zero_inflation <- kb_prior_normal(mean = -1, sd = 1)
+priors$logit_zero_inflation <- kb_prior_normal(mean = -1, sd = 1)
 }
 \seealso{
 Other priors:
 \code{\link[=kb_prior_exponential]{kb_prior_exponential()}},
+\code{\link[=kb_prior_lognormal]{kb_prior_lognormal()}},
 \code{\link[=kb_prior_normal]{kb_prior_normal()}},
 \code{\link[=kb_priors_carbon_macro]{kb_priors_carbon_macro()}},
 \code{\link[=kb_priors_carbon_nereo]{kb_priors_carbon_nereo()}},

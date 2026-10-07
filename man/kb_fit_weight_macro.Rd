@@ -67,7 +67,7 @@ Fit an allometric weight model for \emph{Macrocystis pyrifera} via Stan.
 The response is wet weight, modelled on the natural scale with a Gamma
 likelihood. Expected weight is a log-linear (allometric) function of log frond
 count, centered at its geometric mean so the intercept is the expected weight
-at a typical frond count. The Gamma shape (\code{bShape}) is constant across plants.
+at a typical frond count. The Gamma shape (\code{shape}) is constant across plants.
 The intercept varies by site, by year, and by \code{site:year}.
 
 The site:year effect is set from the data: it is omitted when the data span a

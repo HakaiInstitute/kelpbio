@@ -1,5 +1,5 @@
 # Tide-corrected proportional canopy cover of each grid row, a posterior rvar:
-# the canopy area scaled up by bTide per metre of tide height, capped at the
+# the canopy area scaled up by tide_height_slope per metre of tide height, capped at the
 # plot area, over the plot area. Mirrors inst/stan/cover_biomass.stan. The cap is
 # written as (a + b - |a - b|) / 2, since pmin() does not take an rvar while +, -
 # and abs() do.

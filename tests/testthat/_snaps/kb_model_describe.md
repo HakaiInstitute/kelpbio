@@ -7,30 +7,30 @@
       Response: wet weight (kg); predictor: sub-bulb diameter (mm)
       
       Likelihood
-        log(weight_kg) ~ Normal(log(mu), sWeight)
-        mu = bFloor + alpha * x^bPower
-        log(alpha) = bWeight
-                   + bDensity * density
-                   + bYear[year]
-                   + bSite[site]
-                   + bSiteYear[site, year]
+        log(weight_kg) ~ Normal(log(mu), sd_residual)
+        mu = weight_floor + alpha * x^diameter_power
+        log(alpha) = intercept
+                   + density_slope * density
+                   + year_effect[year]
+                   + site_effect[site]
+                   + site_year_effect[site, year]
         x = diameter_mm / d0,  d0 = 23.4  (geometric mean diameter)
         density = (stipe density - 1.26) / 1.32  (standardised site-year density)
       
       Random effects
-        bYear[year]           ~ Normal(0, sYear)      year effect on log(alpha)
-        bSite[site]           ~ Normal(0, sSite)      site effect on log(alpha)
-        bSiteYear[site, year] ~ Normal(0, sSiteYear)  site:year effect on log(alpha)
+        year_effect[year]            ~ Normal(0, sd_year)       year effect on log(alpha)
+        site_effect[site]            ~ Normal(0, sd_site)       site effect on log(alpha)
+        site_year_effect[site, year] ~ Normal(0, sd_site_year)  site:year effect on log(alpha)
       
       Priors
-        bWeight        ~ Normal(0, 2)
-        bPower         ~ Normal(2, 1) T[0, ]
-        bFloor         ~ Normal(0, 0.5) T[0, ]
-        bDensity       ~ Normal(0, 0.5)
-        sWeight        ~ Exponential(1)
-        sYear          ~ Exponential(1)
-        sSite          ~ Exponential(1)
-        sSiteYear      ~ Exponential(1)
+        intercept      ~ Normal(0, 2)
+        diameter_power ~ Normal(2, 1) T[0, ]
+        weight_floor   ~ Normal(0, 0.5) T[0, ]
+        density_slope  ~ Normal(0, 0.5)
+        sd_residual    ~ Exponential(1)
+        sd_year        ~ Exponential(1)
+        sd_site        ~ Exponential(1)
+        sd_site_year   ~ Exponential(1)
 
 # kb_model_describe renders the macro notation block
 
@@ -41,26 +41,26 @@
       Response: wet weight; predictor: frond count
       
       Likelihood
-        weight_kg ~ Gamma(bShape, bShape / mu)
-        log(mu) = bWeight
-                + bFronds * x
-                + bSite[site]
-                + bYear[year]
-                + bSiteYear[site, year]
+        weight_kg ~ Gamma(shape, shape / mu)
+        log(mu) = intercept
+                + fronds_slope * x
+                + site_effect[site]
+                + year_effect[year]
+                + site_year_effect[site, year]
         x = log(fronds) - log(f0),  f0 = 4.61  (geometric mean frond count)
       
       Random effects
-        bSite[site]           ~ Normal(0, sSite)      site intercept
-        bYear[year]           ~ Normal(0, sYear)      year intercept
-        bSiteYear[site, year] ~ Normal(0, sSiteYear)  site:year intercept
+        site_effect[site]            ~ Normal(0, sd_site)       site intercept
+        year_effect[year]            ~ Normal(0, sd_year)       year intercept
+        site_year_effect[site, year] ~ Normal(0, sd_site_year)  site:year intercept
       
       Priors
-        bWeight        ~ Normal(0, 2)
-        bFronds        ~ Normal(1, 0.5)
-        bShape         ~ Exponential(0.1)
-        sSite          ~ Exponential(1)
-        sYear          ~ Exponential(1)
-        sSiteYear      ~ Exponential(1)
+        intercept      ~ Normal(0, 2)
+        fronds_slope   ~ Normal(1, 0.5)
+        shape          ~ Exponential(0.1)
+        sd_site        ~ Exponential(1)
+        sd_year        ~ Exponential(1)
+        sd_site_year   ~ Exponential(1)
 
 # kb_model_describe renders a methods paragraph with prose = TRUE
 
@@ -70,13 +70,13 @@
       Wet weight was modelled on the log scale with a Normal likelihood as an
       allometric function of sub-bulb diameter. Expected weight followed a
       three-parameter power function (Packard 2023) of diameter relative to the
-      geometric mean diameter (23.4), in which bFloor is the weight as diameter
-      approaches zero, alpha the weight above the floor at the reference
-      diameter, and bPower the allometric exponent. The log of alpha varied by
-      year, by site, and by site-year. The log of alpha also varied linearly with
-      site-year stipe density, standardised by its mean (1.26) and standard
-      deviation (1.32). Regularizing priors were placed on all parameters (see
-      the notation form for the hyperparameters).
+      geometric mean diameter (23.4), in which weight_floor is the weight as
+      diameter approaches zero, alpha the weight above the floor at the reference
+      diameter, and diameter_power the allometric exponent. The log of alpha
+      varied by year, by site, and by site-year. The log of alpha also varied
+      linearly with site-year stipe density, standardised by its mean (1.26) and
+      standard deviation (1.32). Regularizing priors were placed on all
+      parameters (see the notation form for the hyperparameters).
 
 # kb_model_describe renders the size notation blocks
 
@@ -87,23 +87,23 @@
       Response: maximum sub-bulb diameter (mm)
       
       Likelihood
-        diameter_mm ~ Weibull(bShape, mu / gamma(1 + 1 / bShape))
-        log(mu) = bDiameter
-                + bSite[site]
-                + bYear[year]
-                + bSiteYear[site, year]
+        diameter_mm ~ Weibull(shape, mu / gamma(1 + 1 / shape))
+        log(mu) = intercept
+                + site_effect[site]
+                + year_effect[year]
+                + site_year_effect[site, year]
       
       Random effects
-        bSite[site]           ~ Normal(0, sSite)      site effect on log(mu)
-        bYear[year]           ~ Normal(0, sYear)      year effect on log(mu)
-        bSiteYear[site, year] ~ Normal(0, sSiteYear)  site:year effect on log(mu)
+        site_effect[site]            ~ Normal(0, sd_site)       site effect on log(mu)
+        year_effect[year]            ~ Normal(0, sd_year)       year effect on log(mu)
+        site_year_effect[site, year] ~ Normal(0, sd_site_year)  site:year effect on log(mu)
       
       Priors
-        bDiameter      ~ Normal(0, 2)
-        bShape         ~ Exponential(0.1)
-        sSite          ~ Exponential(1)
-        sYear          ~ Exponential(1)
-        sSiteYear      ~ Exponential(1)
+        intercept      ~ Normal(0, 2)
+        shape          ~ Exponential(0.1)
+        sd_site        ~ Exponential(1)
+        sd_year        ~ Exponential(1)
+        sd_site_year   ~ Exponential(1)
 
 ---
 
@@ -114,24 +114,24 @@
       Response: fronds reaching 1 m above the holdfast
       
       Likelihood
-        fronds ~ NegBinomial(mu, 1 / bDispersion) T[1, ]
+        fronds ~ NegBinomial(mu, 1 / dispersion) T[1, ]
         E[fronds] = mu / (1 - P(fronds = 0))
-        log(mu) = bFronds
-                + bSite[site]
-                + bYear[year]
-                + bSiteYear[site, year]
+        log(mu) = intercept
+                + site_effect[site]
+                + year_effect[year]
+                + site_year_effect[site, year]
       
       Random effects
-        bSite[site]           ~ Normal(0, sSite)      site effect on log(mu)
-        bYear[year]           ~ Normal(0, sYear)      year effect on log(mu)
-        bSiteYear[site, year] ~ Normal(0, sSiteYear)  site:year effect on log(mu)
+        site_effect[site]            ~ Normal(0, sd_site)       site effect on log(mu)
+        year_effect[year]            ~ Normal(0, sd_year)       year effect on log(mu)
+        site_year_effect[site, year] ~ Normal(0, sd_site_year)  site:year effect on log(mu)
       
       Priors
-        bFronds        ~ Normal(0, 2)
-        bDispersion    ~ Exponential(1)
-        sSite          ~ Exponential(1)
-        sYear          ~ Exponential(1)
-        sSiteYear      ~ Exponential(1)
+        intercept      ~ Normal(0, 2)
+        dispersion     ~ Exponential(1)
+        sd_site        ~ Exponential(1)
+        sd_year        ~ Exponential(1)
+        sd_site_year   ~ Exponential(1)
 
 ---
 
@@ -153,27 +153,27 @@
       Response: stipes counted on a transect of area_m2 (m²)
       
       Likelihood
-        stipes ~ ZeroInflatedNegBinomial(mu, 1 / bDispersion, zi)
-        zi = inv_logit(bZeroInflation)
+        stipes ~ ZeroInflatedNegBinomial(mu, 1 / dispersion, zi)
+        zi = inv_logit(logit_zero_inflation)
         E[stipes] = (1 - zi) * mu
         log(mu) = log(area_m2)
-                + bStipes
-                + bSite[site]
-                + bYear[year]
-                + bSiteYear[site, year]
+                + intercept
+                + site_effect[site]
+                + year_effect[year]
+                + site_year_effect[site, year]
       
       Random effects
-        bSite[site]           ~ Normal(0, sSite)      site effect on log(mu)
-        bYear[year]           ~ Normal(0, sYear)      year effect on log(mu)
-        bSiteYear[site, year] ~ Normal(0, sSiteYear)  site:year effect on log(mu)
+        site_effect[site]            ~ Normal(0, sd_site)       site effect on log(mu)
+        year_effect[year]            ~ Normal(0, sd_year)       year effect on log(mu)
+        site_year_effect[site, year] ~ Normal(0, sd_site_year)  site:year effect on log(mu)
       
       Priors
-        bStipes        ~ Normal(0, 2)
-        bZeroInflation ~ Normal(0, 2)
-        bDispersion    ~ Exponential(1)
-        sSite          ~ Exponential(1)
-        sYear          ~ Exponential(1)
-        sSiteYear      ~ Exponential(1)
+        intercept            ~ Normal(0, 2)
+        logit_zero_inflation ~ Normal(0, 2)
+        dispersion           ~ Exponential(1)
+        sd_site              ~ Exponential(1)
+        sd_year              ~ Exponential(1)
+        sd_site_year         ~ Exponential(1)
 
 ---
 
@@ -196,24 +196,24 @@
       Response: plants counted on a transect of area_m2 (m²)
       
       Likelihood
-        plants ~ NegBinomial(mu, 1 / bDispersion)
+        plants ~ NegBinomial(mu, 1 / dispersion)
         log(mu) = log(area_m2)
-                + bPlants
-                + bSite[site]
-                + bYear[year]
-                + bSiteYear[site, year]
+                + intercept
+                + site_effect[site]
+                + year_effect[year]
+                + site_year_effect[site, year]
       
       Random effects
-        bSite[site]           ~ Normal(0, sSite)      site effect on log(mu)
-        bYear[year]           ~ Normal(0, sYear)      year effect on log(mu)
-        bSiteYear[site, year] ~ Normal(0, sSiteYear)  site:year effect on log(mu)
+        site_effect[site]            ~ Normal(0, sd_site)       site effect on log(mu)
+        year_effect[year]            ~ Normal(0, sd_year)       year effect on log(mu)
+        site_year_effect[site, year] ~ Normal(0, sd_site_year)  site:year effect on log(mu)
       
       Priors
-        bPlants        ~ Normal(0, 2)
-        bDispersion    ~ Exponential(1)
-        sSite          ~ Exponential(1)
-        sYear          ~ Exponential(1)
-        sSiteYear      ~ Exponential(1)
+        intercept      ~ Normal(0, 2)
+        dispersion     ~ Exponential(1)
+        sd_site        ~ Exponential(1)
+        sd_year        ~ Exponential(1)
+        sd_site_year   ~ Exponential(1)
 
 # kb_model_describe renders the wet/dry model without random effects
 
@@ -224,12 +224,12 @@
       Response: dry_mass_g / wet_mass_g, the dry:wet mass ratio of a sample
       
       Likelihood
-        ratio ~ Beta(mu * bPrecision, (1 - mu) * bPrecision)
-        logit(mu) = bDryWet
+        dry_wet_ratio ~ Beta(mu * precision, (1 - mu) * precision)
+        logit(mu) = intercept
       
       Priors
-        bDryWet        ~ Normal(0, 2)
-        bPrecision     ~ Exponential(0.01)
+        intercept      ~ Normal(0, 2)
+        precision      ~ Exponential(0.01)
 
 ---
 
@@ -251,12 +251,12 @@
       Response: carbon_fraction = carbon_mass_ug / 1000 / sample_mass_mg, the fraction of a dry sample's mass that is carbon
       
       Likelihood
-        carbon_fraction ~ Beta(mu * bPrecision, (1 - mu) * bPrecision)
-        logit(mu) = bCarbon
+        carbon_fraction ~ Beta(mu * precision, (1 - mu) * precision)
+        logit(mu) = intercept
       
       Priors
-        bCarbon        ~ Normal(-0.8, 0.3)
-        bPrecision     ~ Exponential(0.001)
+        intercept      ~ Normal(-0.8, 0.3)
+        precision      ~ Exponential(0.001)
 
 ---
 
@@ -278,23 +278,23 @@
       Response: estimate, the in situ wet biomass of a plot (kg/m²), with compatibility limits lower and upper
       
       Likelihood
-        log(estimate) ~ Normal(log(mu), bScaling * sd)
-        mu = bFloor
-           + bCanopy * exp(bYear[year] + bSite[site]) * cover
-        cover = min(1, canopy_area_m2 * (1 + bTide * tide_height_m) / plot_area_m2)
+        log(estimate) ~ Normal(log(mu), error_scaling * sd)
+        mu = biomass_floor
+           + cover_slope * exp(year_effect[year] + site_effect[site]) * cover
+        cover = min(1, canopy_area_m2 * (1 + tide_height_slope * tide_height_m) / plot_area_m2)
         sd = (log(upper) - log(lower)) / (2 * 1.96)  (log-scale SD of the in situ estimate)
       
       Random effects
-        bYear[year] ~ Normal(0, sYear)  year effect on log(bCanopy)
-        bSite[site] ~ Normal(0, sSite)  site effect on log(bCanopy)
+        year_effect[year] ~ Normal(0, sd_year)  year effect on log(cover_slope)
+        site_effect[site] ~ Normal(0, sd_site)  site effect on log(cover_slope)
       
       Priors
-        log(bCanopy)   ~ Normal(2, 1)
-        bFloor         ~ Normal(0, 0.1) T[0, ]
-        bTide          ~ Normal(0.276, 0.04) T[0, ]
-        bScaling       ~ Normal(1, 0.5) T[0, ]
-        sYear          ~ Exponential(1)
-        sSite          ~ Exponential(1)
+        cover_slope       ~ LogNormal(2, 1)
+        biomass_floor     ~ Normal(0, 0.1) T[0, ]
+        tide_height_slope ~ Normal(0.276, 0.04) T[0, ]
+        error_scaling     ~ Normal(1, 0.5) T[0, ]
+        sd_year           ~ Exponential(1)
+        sd_site           ~ Exponential(1)
 
 ---
 
@@ -305,23 +305,23 @@
       Response: estimate, the in situ wet biomass of a plot (kg/m²), with compatibility limits lower and upper
       
       Likelihood
-        log(estimate) ~ Normal(log(mu), bScaling * sd)
-        mu = bFloor
-           + bCanopy * exp(bYear[year] + bSite[site]) * cover
-        cover = min(1, canopy_area_m2 * (1 + bTide * tide_height_m) / plot_area_m2)
+        log(estimate) ~ Normal(log(mu), error_scaling * sd)
+        mu = biomass_floor
+           + cover_slope * exp(year_effect[year] + site_effect[site]) * cover
+        cover = min(1, canopy_area_m2 * (1 + tide_height_slope * tide_height_m) / plot_area_m2)
         sd = (log(upper) - log(lower)) / (2 * 1.96)  (log-scale SD of the in situ estimate)
       
       Random effects
-        bYear[year] ~ Normal(0, sYear)  year effect on log(bCanopy)
-        bSite[site] ~ Normal(0, sSite)  site effect on log(bCanopy)
+        year_effect[year] ~ Normal(0, sd_year)  year effect on log(cover_slope)
+        site_effect[site] ~ Normal(0, sd_site)  site effect on log(cover_slope)
       
       Priors
-        log(bCanopy)   ~ Normal(2, 1)
-        bFloor         ~ Normal(0.4, 0.3) T[0, ]
-        bTide          ~ Normal(0.227, 0.03) T[0, ]
-        bScaling       ~ Normal(1, 0.5) T[0, ]
-        sYear          ~ Exponential(1)
-        sSite          ~ Exponential(1)
+        cover_slope       ~ LogNormal(2, 1)
+        biomass_floor     ~ Normal(0.4, 0.3) T[0, ]
+        tide_height_slope ~ Normal(0.227, 0.03) T[0, ]
+        error_scaling     ~ Normal(1, 0.5) T[0, ]
+        sd_year           ~ Exponential(1)
+        sd_site           ~ Exponential(1)
 
 ---
 
@@ -347,29 +347,29 @@
       Response: wet weight (kg); predictor: sub-bulb diameter (mm)
       
       Likelihood
-        log(weight_kg) ~ Normal(log(mu), sWeight)
-        mu = alpha * x^bPower
-        log(alpha) = bWeight
-                   + bDensity * density
-                   + bYear[year]
-                   + bSite[site]
-                   + bSiteYear[site, year]
+        log(weight_kg) ~ Normal(log(mu), sd_residual)
+        mu = alpha * x^diameter_power
+        log(alpha) = intercept
+                   + density_slope * density
+                   + year_effect[year]
+                   + site_effect[site]
+                   + site_year_effect[site, year]
         x = diameter_mm / d0,  d0 = 23.4  (geometric mean diameter)
         density = (stipe density - 1.26) / 1.32  (standardised site-year density)
       
       Random effects
-        bYear[year]           ~ Normal(0, sYear)      year effect on log(alpha)
-        bSite[site]           ~ Normal(0, sSite)      site effect on log(alpha)
-        bSiteYear[site, year] ~ Normal(0, sSiteYear)  site:year effect on log(alpha)
+        year_effect[year]            ~ Normal(0, sd_year)       year effect on log(alpha)
+        site_effect[site]            ~ Normal(0, sd_site)       site effect on log(alpha)
+        site_year_effect[site, year] ~ Normal(0, sd_site_year)  site:year effect on log(alpha)
       
       Priors
-        bWeight        ~ Normal(0, 2)
-        bPower         ~ Normal(2, 1) T[0, ]
-        bDensity       ~ Normal(0, 0.5)
-        sWeight        ~ Exponential(1)
-        sYear          ~ Exponential(1)
-        sSite          ~ Exponential(1)
-        sSiteYear      ~ Exponential(1)
+        intercept      ~ Normal(0, 2)
+        diameter_power ~ Normal(2, 1) T[0, ]
+        density_slope  ~ Normal(0, 0.5)
+        sd_residual    ~ Exponential(1)
+        sd_year        ~ Exponential(1)
+        sd_site        ~ Exponential(1)
+        sd_site_year   ~ Exponential(1)
 
 ---
 
@@ -379,10 +379,10 @@
       Wet weight was modelled on the log scale with a Normal likelihood as an
       allometric function of sub-bulb diameter. Expected weight followed a power
       law in diameter relative to the geometric mean diameter (23.4), in which
-      alpha is the weight at the reference diameter and bPower the allometric
-      exponent. The log of alpha varied by year, by site, and by site-year. The
-      log of alpha also varied linearly with site-year stipe density,
-      standardised by its mean (1.26) and standard deviation (1.32). Regularizing
-      priors were placed on all parameters (see the notation form for the
-      hyperparameters).
+      alpha is the weight at the reference diameter and diameter_power the
+      allometric exponent. The log of alpha varied by year, by site, and by
+      site-year. The log of alpha also varied linearly with site-year stipe
+      density, standardised by its mean (1.26) and standard deviation (1.32).
+      Regularizing priors were placed on all parameters (see the notation form
+      for the hyperparameters).
 

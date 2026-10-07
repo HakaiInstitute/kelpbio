@@ -38,14 +38,14 @@ test_that("kb_fit_cover_biomass_macro returns a correctly-structured object", {
   expect_setequal(
     posterior::variables(fit$draws),
     c(
-      "bCanopy",
-      "bFloor",
-      "bTide",
-      "bScaling",
-      "sSite",
-      "sYear",
-      "bSite",
-      "bYear"
+      "cover_slope",
+      "biomass_floor",
+      "tide_height_slope",
+      "error_scaling",
+      "sd_site",
+      "sd_year",
+      "site_effect",
+      "year_effect"
     )
   )
   expect_equal(niters(fit), 100L)
@@ -62,7 +62,7 @@ test_that("the fit records the species, response, predictor, interval level, and
   expect_identical(fit$meta$predictor_range, c(0, 1))
   expect_identical(fit$meta$conf_level, 0.95)
   expect_false(fit$meta$site_year_on)
-  expect_identical(fit$meta$terms$random, c("bSite", "bYear"))
+  expect_identical(fit$meta$terms$random, c("site_effect", "year_effect"))
 })
 
 test_that("the fit stores the surveys paired with their biomass", {
@@ -115,7 +115,7 @@ test_that("invalid data, a missing biomass, and wrong priors error before sampli
   expect_error(kb_fit_cover_biomass_macro(data.frame(site = "a", year = "2020"), biomass()))
   expect_error(kb_fit_cover_biomass_macro(surveys()), "biomass")
   p <- kb_priors_cover_biomass_macro()
-  p$floor <- kb_prior_exponential(1)
+  p$biomass_floor <- kb_prior_exponential(1)
   expect_error(
     kb_fit_cover_biomass_macro(surveys(), biomass(), priors = p, progress = "none"),
     "wrong family"
