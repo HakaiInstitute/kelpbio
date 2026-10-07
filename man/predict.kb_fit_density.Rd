@@ -57,7 +57,7 @@ at the supplied \code{new_data} rows (or at the observed transects when
 \code{\link[=kb_new_data]{kb_new_data()}}.
 }
 \examples{
-predict(fit_density_sim_nereo, data.frame(site = "site1"))
+predict(fit_density_sim_nereo, data.frame(site = "otter_cove"))
 }
 \seealso{
 Other generics:

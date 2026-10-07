@@ -52,5 +52,6 @@ kb_check_data_weight_macro <- function(
   }
 
   warn_implausible_units(data, x_name)
+  warn_group_names(data, x_name)
   invisible(data)
 }

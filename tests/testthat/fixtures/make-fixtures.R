@@ -23,9 +23,9 @@ if (length(unknown)) {
 }
 
 # Size and density fixtures use subsets of the bundled data_size_sim_* and
-# data_density_sim_*, mirroring the weight fixtures.
+# data_density_sim_*, mirroring the weight fixtures: the first four sites.
 size_subset <- function(data) {
-  d <- subset(data, site %in% c("site1", "site2", "site3", "site4"))
+  d <- subset(data, site %in% levels(data$site)[1:4])
   d$site <- droplevels(factor(d$site))
   d$year <- droplevels(factor(d$year))
   d
@@ -40,7 +40,7 @@ if ("weight" %in% selected) {
   # inference, and may not meet the strict converged() thresholds.
   d <- subset(
     data_weight_sim_nereo,
-    site %in% c("site1", "site2", "site3", "site4")
+    site %in% levels(data_weight_sim_nereo$site)[1:4]
   )
   d$site <- droplevels(factor(d$site))
   d$year <- droplevels(factor(d$year))
@@ -67,7 +67,7 @@ if ("weight" %in% selected) {
   dm <- subset(
     data_weight_sim_macro,
     site %in%
-      c("site1", "site2", "site3", "site4") &
+      levels(data_weight_sim_macro$site)[1:4] &
       year %in% c("2019", "2020", "2021")
   )
   dm$site <- droplevels(factor(dm$site))

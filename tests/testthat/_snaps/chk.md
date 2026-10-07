@@ -54,7 +54,7 @@
     Condition
       Error in `.chk_representative_site()`:
       ! Invalid `representative_site` value: "not_a_site".
-      i Available sites: "site1", "site2", "site3", and "site4".
+      i Available sites: "otter_cove", "gull_rock", "cedar_bay", and "heron_reef".
 
 # .chk_new_data_weight_nereo errors on a negative density
 

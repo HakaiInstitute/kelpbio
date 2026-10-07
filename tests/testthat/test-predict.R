@@ -4,7 +4,7 @@ test_that("predict wraps each model's prediction verb", {
     predict(weight_fit, new_data = nd),
     kb_predict_weight(weight_fit, new_data = nd)
   )
-  nd <- data.frame(site = c("site1", "site2"))
+  nd <- data.frame(site = fitted_sites(size_nereo_fit, 2))
   expect_identical(
     predict(size_nereo_fit, new_data = nd),
     kb_predict_size(size_nereo_fit, new_data = nd)

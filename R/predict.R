@@ -51,7 +51,7 @@ predict.kb_fit_weight <- function(
 #' @family generics
 #' @exportS3Method stats::predict
 #' @examples
-#' predict(fit_size_sim_nereo, data.frame(site = "site1"))
+#' predict(fit_size_sim_nereo, data.frame(site = "otter_cove"))
 predict.kb_fit_size <- function(
   object,
   new_data = NULL,
@@ -90,7 +90,7 @@ predict.kb_fit_size <- function(
 #' @family generics
 #' @exportS3Method stats::predict
 #' @examples
-#' predict(fit_density_sim_nereo, data.frame(site = "site1"))
+#' predict(fit_density_sim_nereo, data.frame(site = "otter_cove"))
 predict.kb_fit_density <- function(
   object,
   new_data = NULL,

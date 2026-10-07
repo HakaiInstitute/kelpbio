@@ -4,5 +4,5 @@
       fit <- kb_fit_cover_biomass_macro(surveys(), b)
     Message
       i 1 survey with no in situ biomass is not fitted.
-        Site-year: "site1:2019".
+        Site-year: "seal_ledge:2019".
 

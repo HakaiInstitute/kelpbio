@@ -9,7 +9,7 @@ A data frame with columns:
 \describe{
 \item{diameter_mm}{Sub-bulb diameter (mm), a positive number.}
 \item{weight_kg}{Wet weight (kg), a positive number.}
-\item{site}{Survey site, a factor (10 levels).}
+\item{site}{Survey site, a factor (10 levels, invented names).}
 \item{year}{Survey year, a factor (4 levels).}
 \item{stipes_m2}{Stipe density of the site-year (stipes per m²).}
 }
@@ -19,11 +19,17 @@ data_weight_sim_nereo
 }
 \description{
 A small simulated dataset of sub-bulb diameter, wet weight, and stipe density
-(columns \code{diameter_mm}, \code{weight_kg}, \code{site}, \code{year}, \code{stipes_m2}), for fast tests and
-runnable examples. It is simulated from the weight-model structure (a
-three-parameter power function with year, site, and site:year random effects
-and a stipe density effect, over a wide diameter range), not real survey data,
-and is not intended for inference. Built by \code{data-raw/data_weight_sim_nereo.R}.
+(columns \code{diameter_mm}, \code{weight_kg}, \code{site}, \code{year}, \code{stipes_m2}), one row
+per harvested plant, for fast tests and runnable examples. It is one of five
+\emph{Nereocystis} datasets simulated together from the same ten sites, four
+years, and true site-year values, with parameters near those estimated from
+Hakai Institute surveys, so plot biomass composed from fits to the weight,
+size, and density datasets agrees with \link{data_plot_biomass_sim_nereo}. Plants
+were harvested at about half of the density-surveyed site-years, and three
+sites were never harvested. \code{stipes_m2} is the site-year's stipe density
+observed in \link{data_density_sim_nereo}. The site names are invented. The data
+are not real survey data and are not intended for inference. Built by
+\code{data-raw/data_sim_nereo.R}.
 }
 \seealso{
 \link{fit_weight_sim_nereo} for a fit to this dataset.

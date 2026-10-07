@@ -1,7 +1,7 @@
 test_that("a survey's total is the bed biomass per m2 times its canopy area", {
   fit <- cover_biomass_nereo_fit
   grid <- tibble::tibble(
-    site = "site1",
+    site = fitted_sites(fit),
     year = "2019",
     canopy_area_m2 = 250,
     tide_height_m = 0
@@ -19,7 +19,7 @@ test_that("a survey's total is the bed biomass per m2 times its canopy area", {
 test_that("the canopy is tide-corrected with each draw's bTide", {
   fit <- cover_biomass_nereo_fit
   grid <- tibble::tibble(
-    site = "site1",
+    site = fitted_sites(fit),
     year = "2019",
     canopy_area_m2 = 100,
     tide_height_m = c(0, 1)
@@ -32,7 +32,7 @@ test_that("the canopy is tide-corrected with each draw's bTide", {
 test_that("totals scale with canopy area, and the site area caps the canopy", {
   fit <- cover_biomass_macro_fit
   grid <- tibble::tibble(
-    site = "site2",
+    site = fitted_sites(fit, 2)[2],
     year = "2020",
     canopy_area_m2 = c(100, 300, 300),
     tide_height_m = 1,

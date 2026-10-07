@@ -90,11 +90,12 @@ test_that("site-year curves use each site-year's recorded density", {
     weight_fit,
     kb_new_data(weight_fit, by = c("site", "year"), diameter_mm = 30)
   )
-  row <- curve[curve$site == "site1" & curve$year == "2019", ]
-  recorded <- weight_fit$meta$density_levels[["site1:2019"]]
+  site <- fitted_sites(weight_fit)
+  row <- curve[curve$site == site & curve$year == "2019", ]
+  recorded <- weight_fit$meta$density_levels[[paste0(site, ":2019")]]
   explicit <- kb_predict_weight(
     weight_fit,
-    data.frame(diameter_mm = 30, site = "site1", year = "2019", stipes_m2 = recorded)
+    data.frame(diameter_mm = 30, site = site, year = "2019", stipes_m2 = recorded)
   )
   expect_equal(row$estimate, explicit$estimate)
 })

@@ -14,8 +14,8 @@
                    + bYear[year]
                    + bSite[site]
                    + bSiteYear[site, year]
-        x = diameter_mm / d0,  d0 = 35.8  (geometric mean diameter)
-        density = (stipe density - 4.23) / 1.84  (standardised site-year density)
+        x = diameter_mm / d0,  d0 = 23.4  (geometric mean diameter)
+        density = (stipe density - 1.26) / 1.32  (standardised site-year density)
       
       Random effects
         bYear[year]           ~ Normal(0, sYear)      year effect on log(alpha)
@@ -47,7 +47,7 @@
                 + bSite[site]
                 + bYear[year]
                 + bSiteYear[site, year]
-        x = log(fronds) - log(f0),  f0 = 4.95  (geometric mean frond count)
+        x = log(fronds) - log(f0),  f0 = 4.61  (geometric mean frond count)
       
       Random effects
         bSite[site]           ~ Normal(0, sSite)      site intercept
@@ -70,12 +70,12 @@
       Wet weight was modelled on the log scale with a Normal likelihood as an
       allometric function of sub-bulb diameter. Expected weight followed a
       three-parameter power function (Packard 2023) of diameter relative to the
-      geometric mean diameter (35.8), in which bFloor is the weight as diameter
+      geometric mean diameter (23.4), in which bFloor is the weight as diameter
       approaches zero, alpha the weight above the floor at the reference
       diameter, and bPower the allometric exponent. The log of alpha varied by
       year, by site, and by site-year. The log of alpha also varied linearly with
-      site-year stipe density, standardised by its mean (4.23) and standard
-      deviation (1.84). Regularizing priors were placed on all parameters (see
+      site-year stipe density, standardised by its mean (1.26) and standard
+      deviation (1.32). Regularizing priors were placed on all parameters (see
       the notation form for the hyperparameters).
 
 # kb_model_describe renders the size notation blocks
@@ -354,8 +354,8 @@
                    + bYear[year]
                    + bSite[site]
                    + bSiteYear[site, year]
-        x = diameter_mm / d0,  d0 = 35.8  (geometric mean diameter)
-        density = (stipe density - 4.23) / 1.84  (standardised site-year density)
+        x = diameter_mm / d0,  d0 = 23.4  (geometric mean diameter)
+        density = (stipe density - 1.26) / 1.32  (standardised site-year density)
       
       Random effects
         bYear[year]           ~ Normal(0, sYear)      year effect on log(alpha)
@@ -378,11 +378,11 @@
     Output
       Wet weight was modelled on the log scale with a Normal likelihood as an
       allometric function of sub-bulb diameter. Expected weight followed a power
-      law in diameter relative to the geometric mean diameter (35.8), in which
+      law in diameter relative to the geometric mean diameter (23.4), in which
       alpha is the weight at the reference diameter and bPower the allometric
       exponent. The log of alpha varied by year, by site, and by site-year. The
       log of alpha also varied linearly with site-year stipe density,
-      standardised by its mean (4.23) and standard deviation (1.84). Regularizing
+      standardised by its mean (1.26) and standard deviation (1.32). Regularizing
       priors were placed on all parameters (see the notation form for the
       hyperparameters).
 

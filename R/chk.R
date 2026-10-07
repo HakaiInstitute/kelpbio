@@ -512,6 +512,7 @@
   .chk_cover_survey(data, x_name)
   .chk_group_columns(data, x_name)
   warn_implausible_units(data, x_name)
+  warn_group_names(data, x_name)
   if (!is.null(biomass)) {
     .chk_plot_biomass(biomass, call = call)
   }

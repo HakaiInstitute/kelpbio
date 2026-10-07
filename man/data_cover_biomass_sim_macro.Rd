@@ -7,7 +7,7 @@
 \format{
 A data frame with columns:
 \describe{
-\item{site}{Survey site, a factor (10 levels).}
+\item{site}{Survey site, a factor (10 levels, invented names).}
 \item{year}{Survey year, a factor (4 levels).}
 \item{canopy_area_m2}{Canopy area delineated within the plot (m²), at
 least 0.}
@@ -21,11 +21,15 @@ data_cover_biomass_sim_macro
 \description{
 A small simulated dataset of drone surveys (columns \code{site}, \code{year},
 \code{canopy_area_m2}, \code{plot_area_m2}, \code{tide_height_m}), one row per survey, for
-fast tests and runnable examples. Paired with the in situ biomass in
-\link{data_plot_biomass_sim_macro}. It is simulated from the cover biomass model structure
-(a biomass floor plus a canopy term proportional to tide-corrected cover, with
-site and year effects on the canopy term), not real survey data, and is not
-intended for inference. Built by \code{data-raw/data_cover_biomass_sim_macro.R}.
+fast tests and runnable examples, paired with the in situ biomass in
+\link{data_plot_biomass_sim_macro}. It is one of five \emph{Macrocystis} datasets
+simulated together from the same ten sites, four years, and true site-year
+values, with parameters near those estimated from Hakai Institute surveys, so
+plot biomass composed from fits to the weight, size, and density datasets
+agrees with \link{data_plot_biomass_sim_macro}. Surveys cover about two-thirds of
+the density-surveyed site-years, one survey each. The site names are
+invented. The data are not real survey data and are not intended for
+inference. Built by \code{data-raw/data_sim_macro.R}.
 }
 \seealso{
 \link{fit_cover_biomass_sim_macro} for a fit to this dataset.

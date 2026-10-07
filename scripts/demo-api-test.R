@@ -429,10 +429,10 @@ fit_one_year$meta$site_year_on # FALSE (effect omitted)
 # issued (shown regardless of progress).
 aliased <- data_weight_sim_nereo |>
   filter(
-    (site == "site1" & year == "2019") |
-      (site == "site2" & year == "2020") |
-      (site == "site3" & year == "2021") |
-      (site == "site4" & year == "2022")
+    (site == "otter_cove" & year == "2019") |
+      (site == "gull_rock" & year == "2020") |
+      (site == "cedar_bay" & year == "2021") |
+      (site == "heron_reef" & year == "2022")
   ) |>
   droplevels()
 fit_aliased <- kb_fit_weight_nereo(
@@ -623,21 +623,21 @@ kb_predict_size(fit_sm, kb_new_data(fit_sm, by = "year")) |>
 
 # rows of site/year (no predictor column); a new site is the typical site by
 # default, and "sample" adds the variation between sites
-kb_predict_size(fit_s, new_data = tibble(site = c("site1", "new_reef")))
+kb_predict_size(fit_s, new_data = tibble(site = c("otter_cove", "new_reef")))
 kb_predict_size(
   fit_s,
-  new_data = tibble(site = c("site1", "new_reef")),
+  new_data = tibble(site = c("otter_cove", "new_reef")),
   new_levels = "sample"
 )
 kb_predict_size(
   fit_s,
   new_data = tibble(site = "new_reef"),
-  representative_site = "site1"
+  representative_site = "otter_cove"
 )
 
 # macro: posterior_epred is the truncated mean; linpred(transform = TRUE) is the
 # untruncated mean, which is lower
-nd <- tibble(site = "site1")
+nd <- tibble(site = "otter_cove")
 median(posterior_epred(fit_sm, new_data = nd))
 median(posterior_linpred(fit_sm, transform = TRUE, new_data = nd))
 
@@ -688,23 +688,23 @@ kb_predict_density(fit_d, kb_new_data(fit_d, by = "site")) |>
   coord_flip()
 kb_predict_density(fit_dm, kb_new_data(fit_dm, by = c("site", "year"))) |>
   kb_plot_predictions()
-kb_predict_density(fit_d, new_data = tibble(site = c("site1", "new_reef")))
+kb_predict_density(fit_d, new_data = tibble(site = c("otter_cove", "new_reef")))
 
 # an area_m2 column does not change the estimate: it stays per m^2
-kb_predict_density(fit_d, new_data = tibble(site = "site1", area_m2 = c(20, 40)))
+kb_predict_density(fit_d, new_data = tibble(site = "otter_cove", area_m2 = c(20, 40)))
 # the expected count on a 40 m^2 transect, and its limits, are the density x 40
-kb_predict_density(fit_d, new_data = tibble(site = "site1")) |>
+kb_predict_density(fit_d, new_data = tibble(site = "otter_cove")) |>
   mutate(across(c(estimate, lower, upper), \(x) x * 40))
 
 # transect counts: the draw generics read area_m2 (1 m^2 when absent)
-transects <- tibble(site = "site1", area_m2 = c(20, 40))
+transects <- tibble(site = "otter_cove", area_m2 = c(20, 40))
 apply(posterior_epred(fit_d, new_data = transects), 2, median) # expected counts
 pp_counts <- posterior_predict(fit_d, new_data = transects) # simulated counts
 apply(pp_counts, 2, quantile, probs = c(0.025, 0.5, 0.975))
 
 # nereo: posterior_epred includes the zero-inflation probability;
 # linpred(transform = TRUE) is the mean on a transect holding stipes, so higher
-nd <- tibble(site = "site1")
+nd <- tibble(site = "otter_cove")
 median(posterior_epred(fit_d, new_data = nd))
 median(posterior_linpred(fit_d, transform = TRUE, new_data = nd))
 median(posterior_linpred(fit_d, new_data = nd))
@@ -929,7 +929,7 @@ kb_predict_cover_biomass(fit_cv_e2e, kb_new_data(fit_cv_e2e)) |>
 # Unseen sites and years are sampled by default, so set a seed.
 
 drone <- tibble(
-  site = c("site1", "site1", "site2", "site3", "new_reef"),
+  site = c("otter_cove", "otter_cove", "gull_rock", "cedar_bay", "new_reef"),
   year = c("2019", "2020", "2020", "2020", "2020"),
   canopy_area_m2 = c(1500, 1100, 4800, 2600, 900),
   tide_height_m = c(1.7, 0.7, 0.5, 1.2, 0.9),

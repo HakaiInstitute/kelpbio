@@ -32,16 +32,25 @@ new_kb_fit <- function(
 ) {
   species_tag <- c(nereocystis = "nereo", macrocystis = "macro")[[species]]
 
+  site_levels <- levels(factor(data[["site"]]))
+  year_levels <- levels(factor(data[["year"]]))
+  draws <- label_levels(core$draws, site_levels, year_levels)
+  diagnostics <- core$diagnostics
+  # summarise_draws() rows follow the draws' variables, so relabel them to match.
+  if (!is.null(diagnostics$summary)) {
+    diagnostics$summary$variable <- flat_variables(draws)
+  }
+
   meta <- c(
     list(
       species = species,
       prior_only = prior_only,
       priors = priors,
       stancode = core$stancode,
-      # [[ ]] rather than $: a tibble warns on $ for an absent column, and wet/dry
-      # data carry no site or year.
-      site_levels = levels(factor(data[["site"]])),
-      year_levels = levels(factor(data[["year"]])),
+      # [[ ]] rather than $ above: a tibble warns on $ for an absent column, and
+      # wet/dry data carry no site or year.
+      site_levels = site_levels,
+      year_levels = year_levels,
       # Recorded rather than recomputed from fit$data, so the group counts a fit
       # reports are a pure metadata read. Describes the data's grouping structure,
       # which is what print()/summary() label as "Data:", not the model's effects.
@@ -55,8 +64,8 @@ new_kb_fit <- function(
 
   structure(
     list(
-      draws = core$draws,
-      diagnostics = core$diagnostics,
+      draws = draws,
+      diagnostics = diagnostics,
       data = data,
       meta = meta
     ),
@@ -66,6 +75,37 @@ new_kb_fit <- function(
       "kb_fit"
     )
   )
+}
+
+# Label the per-level effects with their levels, so the draws index by name and
+# flatten to bSite[<site>] and bSiteYear[<site>,<year>]. The levels are in the
+# order of the Stan indices: both come from factor() on the same data. A zero-row
+# prior-only fit samples one placeholder level that has no name, so an effect
+# whose shape does not match the levels is left unlabelled.
+label_levels <- function(draws, site_levels, year_levels) {
+  labels <- list(
+    bSite = list(site_levels),
+    bYear = list(year_levels),
+    bSiteYear = list(site_levels, year_levels)
+  )
+  for (name in intersect(names(labels), names(draws))) {
+    x <- draws[[name]]
+    if (!identical(as.integer(dim(x)), lengths(labels[[name]]))) {
+      next
+    }
+    draws[[name]] <- posterior::rvar(
+      posterior::draws_of(x),
+      dimnames = labels[[name]],
+      nchains = posterior::nchains(x)
+    )
+  }
+  draws
+}
+
+# The element names of a draws_rvars object (bSite[a], not bSite), in the order
+# summarise_draws() reports them.
+flat_variables <- function(draws) {
+  posterior::variables(posterior::as_draws_df(draws))
 }
 
 # Observed site-year combinations, as "site:year" labels. Empty for a model whose

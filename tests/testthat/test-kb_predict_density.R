@@ -16,7 +16,7 @@ test_that("the estimate is per m2 whatever the transect area", {
   for (fit in list(density_nereo_fit, density_macro_fit)) {
     p <- kb_predict_density(
       fit,
-      data.frame(site = "site1", year = "2019", area_m2 = c(10, 20))
+      data.frame(site = fitted_sites(fit), year = "2019", area_m2 = c(10, 20))
     )
     expect_equal(p$estimate[1], p$estimate[2])
     expect_named(p, c("site", "year", "area_m2", "estimate", "lower", "upper"))
@@ -24,7 +24,10 @@ test_that("the estimate is per m2 whatever the transect area", {
 })
 
 test_that("new_data needs no columns, and a grid gives one row per group", {
-  bare <- kb_predict_density(density_nereo_fit, data.frame(site = "site1"))
+  bare <- kb_predict_density(
+    density_nereo_fit,
+    data.frame(site = fitted_sites(density_nereo_fit))
+  )
   expect_named(bare, c("site", "estimate", "lower", "upper"))
 
   site <- kb_predict_density(
@@ -42,7 +45,7 @@ test_that("new_data needs no columns, and a grid gives one row per group", {
 
 test_that("the per-m2 estimate summarises the expected count on 1 m2", {
   for (fit in list(density_nereo_fit, density_macro_fit)) {
-    nd <- data.frame(site = c("site1", "site2"))
+    nd <- data.frame(site = fitted_sites(fit, 2))
     p <- kb_predict_density(fit, nd, sig_fig = 8)
     ep <- posterior_epred(fit, transform(nd, area_m2 = 1))
     expect_equal(p$estimate, signif(apply(ep, 2L, stats::median), 8))
@@ -68,8 +71,9 @@ test_that("a new site is averaged by default, and a representative site stands i
   averaged <- kb_predict_density(density_nereo_fit, nd)
   expect_gte(sampled$upper - sampled$lower, averaged$upper - averaged$lower)
 
-  rep <- kb_predict_density(density_nereo_fit, nd, representative_site = "site1")
-  known <- kb_predict_density(density_nereo_fit, data.frame(site = "site1"))
+  site <- fitted_sites(density_nereo_fit)
+  rep <- kb_predict_density(density_nereo_fit, nd, representative_site = site)
+  known <- kb_predict_density(density_nereo_fit, data.frame(site = site))
   expect_equal(rep$estimate, known$estimate)
 })
 

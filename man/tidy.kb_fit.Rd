@@ -36,8 +36,9 @@ A tibble with one row per term and columns \code{term}, \code{estimate},
 \description{
 Posterior summaries of the model terms: the population-level effects and the
 random-effect standard deviations, plus (when \code{include_random_effects = TRUE})
-the group-level deviations. By default the per-level deviations are omitted,
-following the \code{broom.mixed} convention.
+the group-level deviations, each named by its level, as in \code{bSite[otter_cove]}
+or \code{bSiteYear[otter_cove,2020]}. By default the per-level deviations are
+omitted, following the \code{broom.mixed} convention.
 }
 \examples{
 tidy(fit_weight_sim_nereo)

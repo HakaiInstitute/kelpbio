@@ -24,6 +24,16 @@ test_that("include_random_effects = TRUE adds the group-level deviations", {
   expect_true(any(grepl("^bSite\\[", t$term)))
 })
 
+test_that("group-level terms are named by their levels", {
+  fit <- weight_fit
+  fit$draws <- label_levels(fit$draws, fit$meta$site_levels, fit$meta$year_levels)
+  t <- tidy(fit, include_random_effects = TRUE)
+  expect_identical(
+    t$term[startsWith(t$term, "bSite[")],
+    paste0("bSite[", fit$meta$site_levels, "]")
+  )
+})
+
 test_that("tidy uses the macro term list for a macro fit", {
   t <- tidy(weight_macro_fit)
   expect_named(t, c("term", "estimate", "lower", "upper"))

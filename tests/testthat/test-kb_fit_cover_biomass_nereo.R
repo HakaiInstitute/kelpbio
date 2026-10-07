@@ -21,7 +21,7 @@ test_that("kb_fit_cover_biomass_nereo returns a correctly-structured object", {
   keep <- function(d) {
     droplevels(subset(
       d,
-      site %in% c("site1", "site2", "site3") & year %in% c("2019", "2020")
+      as.integer(site) <= 3 & year %in% c("2019", "2020")
     ))
   }
   fit <- kb_fit_cover_biomass_nereo(

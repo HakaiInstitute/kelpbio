@@ -56,7 +56,7 @@ A thin wrapper on \code{\link[=kb_predict_size]{kb_predict_size()}}: predict exp
 per site or year, build the rows with \code{\link[=kb_new_data]{kb_new_data()}}.
 }
 \examples{
-predict(fit_size_sim_nereo, data.frame(site = "site1"))
+predict(fit_size_sim_nereo, data.frame(site = "otter_cove"))
 }
 \seealso{
 Other generics:

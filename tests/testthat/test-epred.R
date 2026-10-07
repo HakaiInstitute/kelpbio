@@ -49,7 +49,7 @@ test_that("the nereo size mean is the inverse log link", {
 })
 
 test_that("the macro size mean is the truncated mean, above the untruncated one", {
-  nd <- data.frame(site = c("site1", "site2"))
+  nd <- data.frame(site = fitted_sites(size_macro_fit, 2))
   ep <- posterior_epred(size_macro_fit, new_data = nd)
   mu <- posterior_linpred(size_macro_fit, transform = TRUE, new_data = nd)
   theta <- as.vector(posterior::draws_of(size_macro_fit$draws$bDispersion))
@@ -59,7 +59,7 @@ test_that("the macro size mean is the truncated mean, above the untruncated one"
 })
 
 test_that("the nereo density mean carries the zero-inflation probability", {
-  nd <- data.frame(site = c("site1", "site2"), area_m2 = 40)
+  nd <- data.frame(site = fitted_sites(density_nereo_fit, 2), area_m2 = 40)
   ep <- posterior_epred(density_nereo_fit, new_data = nd)
   mu <- posterior_linpred(density_nereo_fit, transform = TRUE, new_data = nd)
   zi <- stats::plogis(

@@ -15,7 +15,7 @@ test_that("kb_predict_cover_biomass at the observed data matches augment", {
 test_that("predictions are returned at the supplied rows", {
   p <- kb_predict_cover_biomass(
     cover_biomass_nereo_fit,
-    cover_rows(site = c("site1", "site2"), year = "2019"),
+    cover_rows(site = fitted_sites(cover_biomass_nereo_fit, 2), year = "2019"),
     new_levels = "average"
   )
   expect_named(
@@ -41,7 +41,7 @@ test_that("zero canopy predicts the floor for every site and year", {
       canopy_area_m2 = 0,
       plot_area_m2 = 200,
       tide_height_m = 0.5,
-      site = c("site1", "site2", "site3"),
+      site = fitted_sites(cover_biomass_nereo_fit, 3),
       year = c("2019", "2020", "2021")
     ),
     sig_fig = 8
@@ -58,7 +58,7 @@ test_that("biomass increases with canopy and with tide height", {
       canopy_area_m2 = c(20, 80, 80),
       plot_area_m2 = 200,
       tide_height_m = c(0, 0, 1.5),
-      site = "site1",
+      site = fitted_sites(cover_biomass_nereo_fit),
       year = "2019"
     ),
     sig_fig = 8
@@ -93,11 +93,11 @@ test_that("a new site is sampled or averaged, and a representative site stands i
     cover_biomass_nereo_fit,
     nd,
     new_levels = "average",
-    representative_site = "site1"
+    representative_site = fitted_sites(cover_biomass_nereo_fit)
   )
   known <- kb_predict_cover_biomass(
     cover_biomass_nereo_fit,
-    cover_rows(site = "site1"),
+    cover_rows(site = fitted_sites(cover_biomass_nereo_fit)),
     new_levels = "average"
   )
   expect_equal(rep$estimate, known$estimate)
