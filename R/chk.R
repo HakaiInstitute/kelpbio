@@ -396,6 +396,22 @@
   )
 }
 
+.chk_sensitivity_fit <- function(fit, call = rlang::caller_env()) {
+  if (.vld_sensitivity_fit(fit)) {
+    return(invisible(fit))
+  }
+  if (isTRUE(fit$meta$prior_only)) {
+    cli::cli_abort(
+      "A prior-only fit has no likelihood, so its prior sensitivity cannot be assessed.",
+      call = call
+    )
+  }
+  cli::cli_abort(
+    "A zero-observation fit has no likelihood, so its prior sensitivity cannot be assessed.",
+    call = call
+  )
+}
+
 
 # Validate new_data's predictor column.
 .chk_new_data <- function(fit, new_data) {

@@ -109,6 +109,11 @@ estimates(fit)
 
 samples(fit)
 prior_summary(fit)
+# prior sensitivity (needs priorsense); each term is also the kb_priors_*()
+# entry to edit, and priorsense's own plots accept the fit
+kb_sensitivity(fit)
+kb_sensitivity(fit, prior_threshold = 0.05)
+priorsense::powerscale_plot_dens(fit)
 cat(kb_stancode(fit))
 dim(log_lik(fit))
 
