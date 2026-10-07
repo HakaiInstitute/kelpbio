@@ -63,9 +63,8 @@ converged.kb_fit <- function(
   chk::chk_gte(max_perc_divergent, value = 0)
   s <- .fitted_diagnostics(x)
   ndraws <- posterior::ndraws(x$draws)
-  # An all-NA Rhat would make all(na.rm = TRUE) pass on no evidence, so require
-  # at least one finite value. Individual NAs are still skipped, since a
-  # legitimately constant parameter must not fail the fit.
+  # An all-NA Rhat must not pass vacuously; single NAs (constant parameters)
+  # are skipped.
   any(is.finite(s$rhat)) &&
     all(s$rhat < rhat, na.rm = TRUE) &&
     all((s$ess_bulk / ndraws) > esr, na.rm = TRUE) &&

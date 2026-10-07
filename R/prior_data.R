@@ -1,7 +1,5 @@
-# The Stan data fields for a resolved prior list: one field per hyperparameter,
-# named `prior_<entry>_<argument>` after the entry and the prior constructor's
-# argument (prior_intercept_mean, prior_sd_site_rate, prior_cover_slope_sdlog).
-# Each Stan program declares the fields for its own entries.
+# One Stan data field per hyperparameter, `prior_<entry>_<argument>` (e.g.
+# prior_sd_site_rate).
 prior_data <- function(priors) {
   fields <- purrr::imap(priors, function(prior, entry) {
     hyper <- unclass(prior)

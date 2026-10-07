@@ -4,7 +4,7 @@ test_that("prior print methods show family and hyperparameters", {
 })
 
 test_that("print.kb_fit shows stable metadata", {
-  expect_snapshot(print(weight_fit))
+  expect_snapshot(print(weight_nereo_fit))
 })
 
 test_that("print.kb_fit shows the macro slim header", {

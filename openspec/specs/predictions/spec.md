@@ -124,7 +124,7 @@ The prediction verbs, `fitted()`, and `augment()` SHALL summarise `posterior_epr
 
 ### Requirement: Values far outside the fitted range are flagged
 
-Prediction SHALL warn when supplied values of the species predictor lie below half the fitted minimum or above twice the fitted maximum, or supplied `stipes_m2` values (for a fit with the density effect) lie above twice the fitted maximum, naming the column, the fitted range, and the column's expected unit where it has one. This applies to any `new_data`, including a grid from `kb_new_data()` with supplied predictor values. The warning SHALL NOT stop the prediction. The message is pinned by `tests/testthat/_snaps/warn_outside_range.md`.
+Prediction SHALL warn when supplied values of the species predictor lie below half the fitted minimum or above twice the fitted maximum, or supplied `stipes_m2` values (for a fit with the density effect) lie above twice the fitted maximum, naming the column, the fitted range, and the column's expected unit where it has one. This applies to any `new_data`, including a grid from `kb_new_data()` with supplied predictor values. The warning SHALL NOT stop the prediction. The message is pinned by `tests/testthat/_snaps/warn.md`.
 
 #### Scenario: Diameter in centimetres at prediction is flagged
 - **WHEN** `new_data` gives `diameter_mm` in centimetres to a fit made in millimetres
@@ -199,8 +199,6 @@ Each model SHALL have one prediction verb, `kb_predict_<model>()`, returning a `
 
 `predict()` on a fit SHALL return the same result as the model's verb with the same arguments.
 
-A verb called with a `by` argument, or with a character vector in place of `new_data`, SHALL error, showing the equivalent call through `kb_new_data()`.
-
 #### Scenario: Predict at the observed data
 - **WHEN** `kb_predict_weight(fit)`, `kb_predict_size(fit)`, or `kb_predict_cover_biomass(fit)` is called
 - **THEN** it returns one prediction per observed row, whose `estimate` equals `augment(fit)$fitted`
@@ -237,17 +235,13 @@ A verb called with a `by` argument, or with a character vector in place of `new_
 - **WHEN** `predict(fit, new_data)` and `kb_predict_<model>(fit, new_data)` are called with the same arguments
 - **THEN** they return identical results
 
-#### Scenario: The old by habit is redirected
-- **WHEN** `kb_predict_density(fit, by = "site")` or `kb_predict_density(fit, "site")` is called
-- **THEN** it errors, showing `kb_predict_density(fit, kb_new_data(fit, by = "site"))`
-
 #### Scenario: A missing predictor errors
 - **WHEN** weight `new_data` lacks the species predictor
 - **THEN** it errors naming the correct column
 
 ### Requirement: Prediction grids
 
-`kb_new_data(fit, by = NULL, ...)` SHALL return a data frame for use as `new_data` with a weight, size, density, or cover biomass fit: one row per level of the factors named in `by` (`NULL` for a single row with no grouping columns, `"site"`, `"year"`, or `c("site", "year")`, the last taking only the combinations in the fitted data), in the fit's level order. For a weight fit the rows SHALL be crossed with values of the species predictor, supplied as a named numeric vector of any length (`diameter_mm` for *Nereocystis*, `fronds` for *Macrocystis*) and defaulting to 30 evenly spaced values over the observed range; the predictor column SHALL take the input column's name. For a cover biomass fit the rows SHALL be crossed with values of tide-corrected cover, supplied as `cover` (proportions from 0 to 1) and defaulting to 30 evenly spaced values from 0 to 1, each row being a unit plot at zero tide height with the `canopy_area_m2`, `plot_area_m2`, and `tide_height_m` columns the prediction reads. The grid SHALL hold no `area_m2` column. It SHALL error, naming the valid values, for an unknown `by` value, a `cover` outside 0 to 1, a predictor argument the fit does not have (the other species' predictor, or any predictor for a size or density fit), or a fit with no grouping factors.
+`kb_new_data(fit, by = NULL, ...)` SHALL return a data frame for use as `new_data` with a weight, size, density, or cover biomass fit: one row per level of the factors named in `by` (`NULL` for a single row with no grouping columns, `"site"`, `"year"`, or `c("site", "year")`, the last taking only the combinations in the fitted data), in the fit's level order. For a weight fit the rows SHALL be crossed with values of the species predictor, supplied as a named numeric vector of any length (`diameter_mm` for *Nereocystis*, `fronds` for *Macrocystis*) and defaulting to 30 evenly spaced values over the observed range, rounded to whole numbers for `fronds`; the predictor column SHALL take the input column's name. For a cover biomass fit the rows SHALL be crossed with values of tide-corrected cover, supplied as `cover` (proportions from 0 to 1) and defaulting to 30 evenly spaced values from 0 to 1, each row being a unit plot at zero tide height with the `canopy_area_m2`, `plot_area_m2`, and `tide_height_m` columns the prediction reads. The grid SHALL hold no `area_m2` column. It SHALL error, naming the valid values, for an unknown `by` value, a `cover` outside 0 to 1, a predictor argument the fit does not have (the other species' predictor, or any predictor for a size or density fit), or a fit with no grouping factors.
 
 #### Scenario: Curves over a named predictor
 - **WHEN** `kb_new_data(fit, by = "site", diameter_mm = c(20, 40))` is called on a *Nereocystis* weight fit

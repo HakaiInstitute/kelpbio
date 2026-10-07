@@ -1,18 +1,17 @@
 test_that("residuals returns a finite deviance-residual vector", {
-  r <- residuals(weight_fit)
+  r <- residuals(weight_nereo_fit)
   expect_type(r, "double")
-  expect_length(r, nobs(weight_fit))
+  expect_length(r, nobs(weight_nereo_fit))
   expect_true(all(is.finite(r)))
 })
 
 test_that("residuals are deviance, not raw response residuals", {
-  a <- augment(weight_fit)
+  a <- augment(weight_nereo_fit)
   expect_false(isTRUE(all.equal(a$residual, a$weight_kg - a$fitted)))
 })
 
-# The posterior median of a residual function evaluated at each draw of the
-# observed linear predictor, computed without the observation family so these
-# tests pin each model's residual independently of it.
+# Computed without .obs_family(), so each model's residual is pinned
+# independently of it.
 median_residual <- function(fit, f) {
   mu <- posterior::draws_of(.linpred_obs(fit))
   per_draw <- t(vapply(
@@ -28,12 +27,12 @@ draw_vec <- function(fit, name) {
 }
 
 test_that("nereo weight residuals are Normal deviance residuals of log weight", {
-  sw <- draw_vec(weight_fit, "sd_residual")
-  y <- log(weight_fit$data$weight_kg)
-  expected <- median_residual(weight_fit, function(mu, d) {
+  sw <- draw_vec(weight_nereo_fit, "sd_residual")
+  y <- log(weight_nereo_fit$data$weight_kg)
+  expected <- median_residual(weight_nereo_fit, function(mu, d) {
     extras::res_norm(y, mu, sd = sw[d])
   })
-  expect_equal(residuals(weight_fit), expected, tolerance = 1e-10)
+  expect_equal(residuals(weight_nereo_fit), expected, tolerance = 1e-10)
 })
 
 test_that("macro weight residuals are Gamma deviance residuals", {
@@ -48,7 +47,7 @@ test_that("macro weight residuals are Gamma deviance residuals", {
 test_that("residuals rejects a non-fit and extra args", {
   expect_error(residuals.kb_fit(1), "must be a <kb_fit> object")
   expect_error(
-    residuals(weight_fit, type = "pearson"),
+    residuals(weight_nereo_fit, type = "pearson"),
     class = "rlib_error_dots_nonempty"
   )
 })

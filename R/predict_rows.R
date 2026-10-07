@@ -1,7 +1,5 @@
-# The body shared by the prediction verbs for models with grouping factors:
-# resolve the rows, evaluate the mean, summarise each row. The verb checks the fit
-# class first. `offset = FALSE` reports a rate model's rate (density per m^2), and
-# `response` then names the rate.
+# Shared body of the grouped prediction verbs, which check the fit class first.
+# `offset = FALSE` reports a rate, and `response` then names it.
 predict_rows <- function(
   fit,
   new_data,
@@ -11,12 +9,20 @@ predict_rows <- function(
   estimate,
   sig_fig,
   offset = TRUE,
-  response = fit$meta$response
+  response = fit$meta$response,
+  call = rlang::caller_env()
 ) {
-  .chk_representative_site(fit, representative_site)
-  .chk_summary_args(conf_level, estimate, sig_fig)
+  .chk_representative_site(fit, representative_site, call = call)
+  .chk_summary_args(conf_level, estimate, sig_fig, call = call)
 
-  res <- data_linpred(fit, new_data, new_levels, representative_site, offset)
+  res <- data_linpred(
+    fit,
+    new_data,
+    new_levels,
+    representative_site,
+    offset,
+    call = call
+  )
   summarise_predictions(
     fit,
     res$grid,

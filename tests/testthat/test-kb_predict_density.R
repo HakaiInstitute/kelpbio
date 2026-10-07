@@ -60,10 +60,6 @@ test_that("an invalid area_m2 or new_data errors", {
   expect_error(kb_predict_density(density_nereo_fit, 1), "must be a data frame")
 })
 
-test_that("a by argument is redirected to kb_new_data()", {
-  expect_snapshot(kb_predict_density(density_nereo_fit, by = "site"), error = TRUE)
-})
-
 test_that("a new site is averaged by default, and a representative site stands in", {
   withr::local_seed(1)
   nd <- data.frame(site = "new_site")
@@ -78,7 +74,7 @@ test_that("a new site is averaged by default, and a representative site stands i
 })
 
 test_that("kb_predict_density errors on other models and a non-fit", {
-  expect_error(kb_predict_density(weight_fit), "must be a <kb_fit_density> object")
+  expect_error(kb_predict_density(weight_nereo_fit), "must be a <kb_fit_density> object")
   expect_error(kb_predict_density(size_nereo_fit), "must be a <kb_fit_density> object")
   expect_error(kb_predict_density(1), "must be a <kb_fit_density> object")
   expect_error(kb_predict_weight(density_nereo_fit), "must be a <kb_fit_weight>")

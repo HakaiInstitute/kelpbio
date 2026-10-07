@@ -4,8 +4,8 @@ Status: accepted (2026-06)
 
 ## Context
 
-kelpbio fits six sub-models (weight, size, density, blade, wetdry, carbon), and
-a cover-biomass calibration, for two species, *Nereocystis luetkeana* (nereo) and *Macrocystis pyrifera* (macro).
+kelpbio fits six models (weight, size, density, wetdry, carbon, and the
+cover-biomass calibration) for two species, *Nereocystis luetkeana* (nereo) and *Macrocystis pyrifera* (macro).
 The package began nereo-only with a `species = "nereocystis"` argument and a
 single `inst/stan/weight.stan`, on the working assumption (recorded in the old
 `config.yaml` rule "Species enters as data, not a variant") that a species is
@@ -60,16 +60,19 @@ Species is a variant axis, handled uniformly across all six models:
     `...` and lose `rlang::check_dots_empty()`.
   - **`kb_fit_<model>`** for methods that do not vary by species, e.g.
     `.epred.kb_fit_weight` (both weight species use a log link; *Nereocystis*
-    overrides it for the lognormal mean). wetdry, carbon, and cover_biomass,
-    being structurally identical across species, will register at this tier
-    throughout.
-  - **`kb_fit_<model>_<species>`** for methods that do vary: `.linpred`,
-    `.obs_family`, `.chk_new_data`.
+    overrides it for the lognormal mean) and `.linpred.kb_fit_size`. wetdry,
+    carbon, and cover_biomass, being structurally identical across species,
+    register at this tier throughout.
+  - **`kb_fit_<model>_<species>`** for methods that do vary, e.g. the weight
+    `.linpred` and `.chk_new_data` methods and the `.obs_family` methods of the
+    weight, size, and density models.
 
   So no method branches on `meta$species` (kept for display/reference), and
   **adding a sub-model registers methods, not public methods**. Each internal generic
-  aborts through its `.default` rather than returning a plausible value, so a
-  sub-model added without its methods fails loudly instead of silently. This uniform rule is applied to
+  that feeds a number aborts through its `.default` rather than returning a
+  plausible value, so a sub-model added without its methods fails loudly instead
+  of silently (`.fit_descriptor`, which supplies only `print()`'s header, is the
+  one exception). This uniform rule is applied to
   every model even where a variant-plus-field scheme would suffice (weight), so
   the design is consistent, and it is required anyway for models whose species
   differ in response type (size is continuous for *Nereocystis*, a count for
@@ -77,7 +80,7 @@ Species is a variant axis, handled uniformly across all six models:
 - Uniformity wins over local optimisation: even where a model is structurally
   identical across species (wetdry, carbon, cover_biomass), the species-suffixed function is
   kept so users learn one rule and `meta$species` is always available for the
-  biomass composition (which requires all six fits to share a species). The
+  biomass compositions (which require their fits to share a species). The
   species functions then share one internal body and Stan file and differ only in
   the species they record (and, for cover_biomass, their default priors).
 
@@ -95,7 +98,8 @@ This reverses the prior "species enters as data, not a variant" rule in
 - API surface grows from six fit functions to six per species. The cost is
   accepted: the functions have honest, fixed data contracts and match how Hakai
   biologists think ("I have nereo data" / "I have macro data").
-- `kb_predict_biomass()` validates that the six fits it composes share
+- The biomass compositions (`kb_predict_plot_biomass()`,
+  `kb_predict_site_biomass()`) validate that the fits they compose share
   `meta$species`.
 - Per-species priors and data validators are independent, so species can carry
   different sensible defaults without conditional logic.

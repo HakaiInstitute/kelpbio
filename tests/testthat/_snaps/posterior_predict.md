@@ -3,7 +3,7 @@
     Code
       posterior_predict(cover_biomass_nereo_fit, nd)
     Condition
-      Error in `.chk_biomass_limits()`:
+      Error in `posterior_predict.kb_fit()`:
       ! `new_data` must have lower and upper columns.
       i They are the compatibility limits of the in situ biomass estimate, which set its precision.
 

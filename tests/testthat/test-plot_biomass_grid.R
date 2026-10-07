@@ -1,5 +1,5 @@
 test_that("the grid has one row per density site-year with its observed density", {
-  grid <- plot_biomass_grid(weight_fit, size_nereo_fit, density_nereo_fit)
+  grid <- plot_biomass_grid(weight_nereo_fit, size_nereo_fit, density_nereo_fit)
   data <- density_nereo_fit$data
   key <- site_year_key(data$site, data$year)
   expect_equal(nrow(grid), length(unique(key)))

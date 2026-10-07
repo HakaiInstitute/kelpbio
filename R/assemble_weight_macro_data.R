@@ -18,17 +18,10 @@ assemble_weight_macro_data <- function(
   prior_only = FALSE,
   site_year_on = TRUE
 ) {
-  site <- factor(data$site)
-  year <- factor(data$year)
-  n_obs <- nrow(data)
-
   c(
+    group_stan_data(data),
     list(
-      n_obs = n_obs,
-      n_site = max(1L, nlevels(site)),
-      n_year = max(1L, nlevels(year)),
-      site = as.integer(site),
-      year = as.integer(year),
+      n_obs = nrow(data),
       fronds = as.numeric(data$fronds),
       weight_kg = as.numeric(data$weight_kg),
       fronds_ref = weight_fronds_ref(data$fronds),
@@ -39,13 +32,11 @@ assemble_weight_macro_data <- function(
   )
 }
 
-# Geometric-mean centering reference for log-fronds (i.e. the value whose log is
-# mean(log(fronds)), so centered log-fronds has mean zero). Computed from the
-# data and stored in the fit meta, so the Stan fit and the R-side predictions
-# share one reference. Falls back to 5 for zero-row (prior-only) data (the
-# analysis-project reference and the macro median frond count).
+# Geometric-mean frond reference, stored in the fit meta so Stan and R-side
+# predictions share it. Falls back to 5 (the macro median frond count) for
+# zero-row (prior-only) data.
 weight_fronds_ref <- function(fronds) {
-  if (length(fronds) == 0L) {
+  if (rlang::is_empty(fronds)) {
     return(5)
   }
   exp(mean(log(fronds)))

@@ -23,8 +23,8 @@ kb_fit_weight_nereo(
 \item{data}{A data frame of weight observations (see
 \code{\link[=kb_check_data_weight_nereo]{kb_check_data_weight_nereo()}} for the required columns).}
 
-\item{priors}{A named list of prior objects (see \code{\link[=kb_priors_weight_nereo]{kb_priors_weight_nereo()}}), or
-\code{NULL} to use the defaults. Supplied entries override the corresponding
+\item{priors}{A named list of prior objects (see \code{\link[=kb_priors_weight_nereo]{kb_priors_weight_nereo()}}),
+or \code{NULL} to use the defaults. Supplied entries override the corresponding
 defaults; unspecified entries keep their defaults.}
 
 \item{form}{A string, one of \code{"packard_floor"} (the default) or \code{"power"},
@@ -39,8 +39,8 @@ giving the mean function of weight in diameter (see Details).}
 
 \item{chains}{A whole number of MCMC chains.}
 
-\item{niters}{A whole number of saved post-warmup draws per chain (warmup
-defaults to match).}
+\item{niters}{A whole number of saved post-warmup draws per chain, at least 2
+(warmup defaults to match).}
 
 \item{nthin}{A whole number giving the thinning interval.}
 

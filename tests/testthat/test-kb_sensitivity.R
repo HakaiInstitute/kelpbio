@@ -1,7 +1,7 @@
 test_that("kb_sensitivity returns one row per paired parameter for every model", {
   skip_if_not_installed("priorsense")
   fits <- list(
-    weight_fit,
+    weight_nereo_fit,
     weight_macro_fit,
     size_nereo_fit,
     size_macro_fit,
@@ -34,7 +34,7 @@ test_that("kb_sensitivity returns one row per paired parameter for every model",
 
 test_that("each term names an entry of the model's default priors", {
   skip_if_not_installed("priorsense")
-  out <- kb_sensitivity(weight_fit)
+  out <- kb_sensitivity(weight_nereo_fit)
   expect_true(all(out$term %in% names(kb_priors_weight_nereo())))
 })
 
@@ -48,12 +48,12 @@ test_that("kb_sensitivity matches priorsense's values", {
 
 test_that("the thresholds set the flags and leave the values unchanged", {
   skip_if_not_installed("priorsense")
-  default <- kb_sensitivity(weight_fit)
+  default <- kb_sensitivity(weight_nereo_fit)
   expect_identical(default$weak_prior, default$prior_cjs < 0.1)
   expect_identical(default$strong_data, default$likelihood_cjs >= 0.05)
 
   strict <- kb_sensitivity(
-    weight_fit,
+    weight_nereo_fit,
     prior_threshold = 1e-6,
     likelihood_threshold = 1e6
   )
@@ -64,7 +64,7 @@ test_that("the thresholds set the flags and leave the values unchanged", {
 
 test_that("an omitted effect has no row", {
   skip_if_not_installed("priorsense")
-  fit <- weight_fit
+  fit <- weight_nereo_fit
   fit$meta$terms$fixed <- setdiff(fit$meta$terms$fixed, "density_slope")
   fit$meta$density_on <- FALSE
   out <- kb_sensitivity(fit)

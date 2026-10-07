@@ -1,7 +1,7 @@
-# .chk_kb_fit_weight passes a fit through invisibly and errors on a non-fit
+# .chk_kb_fit with class kb_fit_weight passes a fit through invisibly and errors on a non-fit
 
     Code
-      .chk_kb_fit_weight(1)
+      .chk_kb_fit(1, "kb_fit_weight")
     Condition
       Error:
       ! `1` must be a <kb_fit_weight> object.
@@ -50,9 +50,9 @@
 # .chk_representative_site passes NULL/known sites and errors on unknown
 
     Code
-      .chk_representative_site(weight_fit, "not_a_site")
+      .chk_representative_site(weight_nereo_fit, "not_a_site")
     Condition
-      Error in `.chk_representative_site()`:
+      Error:
       ! Invalid `representative_site` value: "not_a_site".
       i Available sites: "otter_cove", "gull_rock", "cedar_bay", and "heron_reef".
 
@@ -108,7 +108,7 @@
 # .chk_grid_predictor accepts the fit's predictor and rejects others
 
     Code
-      .chk_grid_predictor(weight_fit, list(fronds = 3))
+      .chk_grid_predictor(weight_nereo_fit, list(fronds = 3))
     Condition
       Error:
       ! `fronds` is not the predictor of a nereocystis fit.
@@ -126,7 +126,7 @@
 ---
 
     Code
-      .chk_grid_predictor(weight_fit, list(30))
+      .chk_grid_predictor(weight_nereo_fit, list(30))
     Condition
       Error:
       ! Predictor values in `...` must be named.
@@ -143,7 +143,7 @@
 ---
 
     Code
-      .chk_grid_predictor(weight_fit, twice)
+      .chk_grid_predictor(weight_nereo_fit, twice)
     Condition
       Error:
       ! Supply `diameter_mm` once.
@@ -151,28 +151,10 @@
 ---
 
     Code
-      .chk_grid_predictor(weight_fit, list(diameter_mm = "a"))
+      .chk_grid_predictor(weight_nereo_fit, list(diameter_mm = "a"))
     Condition
       Error in `.chk_grid_predictor()`:
       ! Diameter_mm must be numeric.
-
-# .chk_by_habit redirects a by argument to kb_new_data()
-
-    Code
-      .chk_by_habit(NULL, by = "site", verb = "kb_predict_density")
-    Condition
-      Error:
-      ! `kb_predict_density()` predicts at the rows of `new_data`; it has no `by` argument.
-      i For predictions by group, use `kb_predict_density(fit, kb_new_data(fit, by = "site"))`.
-
----
-
-    Code
-      .chk_by_habit(c("site", "year"), verb = "kb_predict_size")
-    Condition
-      Error:
-      ! `kb_predict_size()` predicts at the rows of `new_data`; it has no `by` argument.
-      i For predictions by group, use `kb_predict_size(fit, kb_new_data(fit, by = c("site", "year")))`.
 
 # .chk_new_data_density errors name the area column
 
@@ -185,7 +167,7 @@
 # .chk_same_species and .chk_same_ndraws name the fits
 
     Code
-      .chk_same_species(list(weight = weight_fit, size = size_macro_fit))
+      .chk_same_species(list(weight = weight_nereo_fit, size = size_macro_fit))
     Condition
       Error:
       ! The fits must be of one species.
@@ -194,7 +176,7 @@
 ---
 
     Code
-      .chk_same_ndraws(list(weight = weight_fit, size = fit_size_sim_nereo))
+      .chk_same_ndraws(list(weight = weight_nereo_fit, size = fit_size_sim_nereo))
     Condition
       Error:
       ! The fits must have the same number of posterior draws.
@@ -259,4 +241,22 @@
     Condition
       Error:
       ! `sum_by` names column district that `new_data` does not have.
+
+# .chk_sampling_dots rejects sampler arguments kelpbio sets, naming the replacement
+
+    Code
+      .chk_sampling_dots(list(iter = 10, thin = 2))
+    Condition
+      Error:
+      ! `iter` and `thin` cannot be passed to the sampler: kelpbio sets them itself.
+      i Use `niters` and `nthin` instead.
+
+---
+
+    Code
+      .chk_sampling_dots(list(pars = "intercept"))
+    Condition
+      Error:
+      ! `pars` cannot be passed to the sampler: kelpbio sets it itself.
+      i The fit keeps every parameter.
 

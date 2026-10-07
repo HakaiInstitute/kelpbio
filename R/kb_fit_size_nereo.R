@@ -61,7 +61,6 @@ kb_fit_size_nereo <- function(
   )
 
   kb_check_data_size_nereo(data)
-  # The site:year effect is determined from the data
   site_year <- site_year_structure(data)
   notify_site_year(site_year, progress = progress)
 
@@ -73,19 +72,15 @@ kb_fit_size_nereo <- function(
     site_year_on = site_year$on
   )
 
+  parameters <- fit_parameters(
+    priors,
+    GROUP_EFFECTS,
+    off = site_year_off(site_year$on)
+  )
   core <- fit_stan(
     stanmodels$size_nereo,
     stan_data,
-    param_vars = c(
-      "intercept",
-      "shape",
-      "sd_site",
-      "sd_year",
-      "sd_site_year",
-      "site_effect",
-      "year_effect",
-      "site_year_effect"
-    ),
+    param_vars = parameters$sampled,
     chains = chains,
     niters = niters,
     nthin = nthin,
@@ -105,26 +100,12 @@ kb_fit_size_nereo <- function(
     species = "nereocystis",
     # Size is measured per plant, not per unit of survey effort.
     offset = NULL,
-    terms = list(
-      fixed = c(
-        "intercept",
-        "shape",
-        "sd_site",
-        "sd_year",
-        if (site_year$on) "sd_site_year"
-      ),
-      random = c(
-        "site_effect",
-        "year_effect",
-        if (site_year$on) "site_year_effect"
-      )
-    ),
+    terms = parameters[c("fixed", "random")],
     prior_only = prior_only,
     nthin = as.integer(nthin),
     meta_extra = list(
       site_year_on = site_year$on,
-      # No predictor: size is predicted per group, so the grids carry no
-      # predictor sequence.
+      # No predictor: size is predicted per group.
       response = "diameter_mm"
     )
   )

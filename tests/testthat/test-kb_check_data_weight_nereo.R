@@ -37,7 +37,6 @@ test_that("missing, mistyped, and impossible values error", {
     site = factor("a"),
     year = factor("2020")
   )
-  # distinct cli messages (missing column, wrong type, non-positive) snapshotted
   expect_snapshot(
     kb_check_data_weight_nereo(good[c("weight_kg", "site", "year")]),
     error = TRUE
@@ -49,7 +48,6 @@ test_that("missing, mistyped, and impossible values error", {
   bad_value$weight_kg <- -1
   expect_snapshot(kb_check_data_weight_nereo(bad_value), error = TRUE)
 
-  # remaining abort branches (message keyword only)
   na_diameter <- good
   na_diameter$diameter_mm <- NA_real_
   expect_error(kb_check_data_weight_nereo(na_diameter), "missing")

@@ -88,8 +88,6 @@ kb_plot_predictions <- function(
   response <- attr(predictions, "kb_response", exact = TRUE)
   group_vars <- attr(predictions, "kb_group_vars", exact = TRUE)
 
-  # A ribbon needs an ordered, generated grid over a varying predictor; supplied
-  # rows and held/absent predictors render as grouped points instead.
   predictor_varies <- !is.null(predictor) &&
     predictor %in% names(predictions) &&
     length(unique(predictions[[predictor]])) > 1
@@ -98,16 +96,11 @@ kb_plot_predictions <- function(
   } else {
     group_vars[length(group_vars)]
   }
-  # group_vars[length(0)] is character(0); fall through to NULL so the guard
-  # below raises the helpful "supply x" error rather than a cryptic one.
+  # character(0) becomes NULL so the guard below asks for `x`.
   x <- x %||% if (length(inferred)) inferred else NULL
 
-  # Layout follows from x: facet by the remaining grouping variables, never by
-  # the variable on the x-axis.
   facet <- setdiff(group_vars, x)
 
-  # Cap the number of facet panels so a many-group prediction (e.g. site x year
-  # over many sites) stays readable; keep the first `max_facets` groups.
   if (length(facet) && is.finite(max_facets)) {
     keys <- do.call(paste, c(predictions[facet], sep = "\r"))
     groups <- unique(keys)
@@ -127,7 +120,7 @@ kb_plot_predictions <- function(
       i = "Supply {.arg x}."
     ))
   }
-  # Ribbon only for a generated curve over the varying predictor; else pointrange.
+  # kb_curve separates a generated grid from supplied rows with varying values.
   style <- if (
     isTRUE(attr(predictions, "kb_curve", exact = TRUE)) &&
       identical(x, predictor) &&
@@ -158,20 +151,15 @@ kb_plot_predictions <- function(
   if (length(facet)) {
     gg <- gg + ggplot2::facet_wrap(facet)
   }
-  # Every kelpbio response is non-negative, so the y-axis starts at zero and
-  # differences are read against the full scale.
   gg +
     ggplot2::expand_limits(y = 0) +
     ggplot2::labs(
-      x = kb_axis_label(x),
-      y = kb_axis_label(response %||% "estimate")
+      x = axis_label(x),
+      y = axis_label(response %||% "estimate")
     )
 }
 
-# Publication-ready axis title for a prediction column: a descriptive label for
-# the known model variables. Unrecognised columns fall back to their name
-# (sentence-cased).
-kb_axis_label <- function(name) {
+axis_label <- function(name) {
   switch(
     name,
     diameter_mm = "Sub-bulb diameter",

@@ -1,14 +1,12 @@
 test_that("posterior_predict recomputes replicates at the observed data", {
   withr::local_seed(1)
-  yrep <- posterior_predict(weight_fit)
+  yrep <- posterior_predict(weight_nereo_fit)
   expect_true(is.matrix(yrep))
-  expect_equal(ncol(yrep), nrow(weight_fit$data))
-  expect_equal(nrow(yrep), posterior::ndraws(weight_fit$draws))
+  expect_equal(ncol(yrep), nrow(weight_nereo_fit$data))
+  expect_equal(nrow(yrep), posterior::ndraws(weight_nereo_fit$draws))
   expect_true(all(yrep > 0))
-  # Replicates are drawn, so never assert exact values: check they sit around the
-  # median weight, which for a lognormal replicate is exp() of the linear
-  # predictor.
-  med <- posterior_linpred(weight_fit, transform = TRUE)
+  # The median of a lognormal replicate is exp() of the linear predictor.
+  med <- posterior_linpred(weight_nereo_fit, transform = TRUE)
   expect_equal(
     stats::median(apply(yrep, 2, stats::median)),
     stats::median(apply(med, 2, stats::median)),
@@ -17,23 +15,20 @@ test_that("posterior_predict recomputes replicates at the observed data", {
 })
 
 test_that("posterior_predict is reproducible under a seed and not otherwise", {
-  # The observation noise is drawn in R, so the documented contract is that
-  # set.seed() makes it reproducible.
-  a <- withr::with_seed(7, posterior_predict(weight_fit))
-  b <- withr::with_seed(7, posterior_predict(weight_fit))
+  a <- withr::with_seed(7, posterior_predict(weight_nereo_fit))
+  b <- withr::with_seed(7, posterior_predict(weight_nereo_fit))
   expect_identical(a, b)
-  expect_false(identical(a, withr::with_seed(8, posterior_predict(weight_fit))))
+  expect_false(identical(a, withr::with_seed(8, posterior_predict(weight_nereo_fit))))
 })
 
 test_that("posterior_predict aborts at observed data for a zero-observation fit", {
-  fit0 <- weight_fit
+  fit0 <- weight_nereo_fit
   fit0$data <- fit0$data[0, ]
   expect_error(posterior_predict(fit0), "zero-observation fit")
 })
 
 test_that("a zero-observation fit still predicts at supplied new_data", {
-  # The zero-observation guard applies only to new_data = NULL.
-  fit0 <- weight_fit
+  fit0 <- weight_nereo_fit
   fit0$data <- fit0$data[0, ]
   pp <- posterior_predict(
     fit0,
@@ -45,12 +40,11 @@ test_that("a zero-observation fit still predicts at supplied new_data", {
 
 test_that("posterior_predict at new data is wider than posterior_epred", {
   nd <- data.frame(diameter_mm = c(20, 40, 60))
-  pp <- posterior_predict(weight_fit, new_data = nd, new_levels = "average")
-  ep <- posterior_epred(weight_fit, new_data = nd, new_levels = "average")
+  pp <- posterior_predict(weight_nereo_fit, new_data = nd, new_levels = "average")
+  ep <- posterior_epred(weight_nereo_fit, new_data = nd, new_levels = "average")
   expect_equal(dim(pp), dim(ep))
-  # observation noise widens the predictive spread relative to the mean structure
-  # On the log scale the noise adds its variance to every draw's, whereas on the
-  # natural scale a few extreme draws of the expected weight dominate the SD.
+  # On the log scale, as on the natural scale a few extreme draws of the
+  # expected weight dominate the SD.
   expect_true(all(apply(log(pp), 2, stats::sd) > apply(log(ep), 2, stats::sd)))
 })
 
@@ -65,8 +59,8 @@ test_that("macro posterior_predict draws positive Gamma noise, wider than epred"
   ep <- posterior_epred(weight_macro_fit, new_data = nd, new_levels = "average")
   expect_equal(dim(pp), dim(ep))
   expect_true(all(pp > 0)) # Gamma support is strictly positive
-  # On the log scale the noise adds its variance to every draw's, whereas on the
-  # natural scale a few extreme draws of the expected weight dominate the SD.
+  # On the log scale, as on the natural scale a few extreme draws of the
+  # expected weight dominate the SD.
   expect_true(all(apply(log(pp), 2, stats::sd) > apply(log(ep), 2, stats::sd)))
 })
 
@@ -81,7 +75,6 @@ test_that("size posterior_predict draws plant sizes from the size likelihoods", 
   pm <- posterior_predict(size_macro_fit, new_data = nd, new_levels = "average")
   expect_true(all(pm >= 1))
   expect_true(all(pm == round(pm)))
-  # the predictive mean matches the expected (truncated) frond count
   ep <- posterior_epred(size_macro_fit, new_data = nd, new_levels = "average")
   expect_equal(colMeans(pm), colMeans(ep), tolerance = 0.15)
 })
@@ -94,7 +87,6 @@ test_that("density posterior_predict draws transect counts", {
     expect_equal(dim(pp), c(posterior::ndraws(fit$draws), 2L))
     expect_true(all(pp >= 0))
     expect_true(all(pp == round(pp)))
-    # the predictive mean matches the expected count, zero inflation included
     ep <- posterior_epred(fit, new_data = nd, new_levels = "average")
     expect_equal(colMeans(pp), colMeans(ep), tolerance = 0.15)
   }
@@ -127,8 +119,7 @@ test_that("cover posterior_predict draws positive estimates with the in situ pre
     c(posterior::ndraws(cover_biomass_nereo_fit$draws), nobs(cover_biomass_nereo_fit))
   )
   expect_true(all(pp > 0))
-  # The draws are lognormal around the calibration mean, so their log median
-  # is the log of the expected biomass.
+  # Lognormal around the calibration mean, so the log median is log(epred).
   ep <- posterior_epred(cover_biomass_nereo_fit)
   expect_equal(
     stats::median(log(pp) - log(ep)),

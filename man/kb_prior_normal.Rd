@@ -15,8 +15,8 @@ kb_prior_normal(mean = 0, sd = 1)
 A \code{kb_prior_normal} object.
 }
 \description{
-Construct a Normal prior object for use in \code{\link[=kb_priors_weight_nereo]{kb_priors_weight_nereo()}} and the
-\code{priors} argument of the \verb{kb_fit_*()} functions.
+Construct a Normal prior object to replace an entry of a \verb{kb_priors_*()} list
+passed to the \code{priors} argument of the \verb{kb_fit_*()} functions.
 }
 \examples{
 kb_prior_normal(mean = 0, sd = 2)

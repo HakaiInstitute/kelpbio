@@ -1,5 +1,5 @@
 test_that("prior_summary returns the resolved priors", {
-  ps <- prior_summary(weight_fit)
+  ps <- prior_summary(weight_nereo_fit)
   expect_type(ps, "list")
   expect_true(all(
     c(

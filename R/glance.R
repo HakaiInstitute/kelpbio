@@ -36,8 +36,7 @@ glance.kb_fit <- function(
 ) {
   rlang::check_dots_empty()
   s <- .fitted_diagnostics(x)
-  # Evaluate the verdict before tibble(); inside it the bare `rhat` would mask
-  # to the column, not the threshold arg.
+  # Outside tibble(), where `rhat` would resolve to the column.
   is_converged <- converged(
     x,
     rhat = rhat,

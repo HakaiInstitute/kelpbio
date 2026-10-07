@@ -29,27 +29,11 @@ kb_check_data_carbon_nereo <- function(
   data,
   x_name = chk::deparse_backtick_chk(substitute(data))
 ) {
-  chk::chk_data(data, x_name = x_name)
-  chk::chk_superset(
-    names(data),
-    c("sample_mass_mg", "carbon_mass_ug"),
-    x_name = x_name
+  .with_call(
+    {
+      .chk_carbon_data(data, x_name)
+    },
+    rlang::current_env()
   )
-
-  for (col in c("sample_mass_mg", "carbon_mass_ug")) {
-    nm <- kb_xname(x_name, col)
-    chk::chk_numeric(data[[col]], x_name = nm)
-    chk::chk_not_any_na(data[[col]], x_name = nm)
-    chk::chk_gt(data[[col]], value = 0, x_name = nm)
-  }
-  # The carbon fraction must lie in (0, 1) for the Beta likelihood.
-  if (any(carbon_fraction(data) >= 1)) {
-    cli::cli_abort(c(
-      "{kb_xname(x_name, 'carbon_mass_ug')} must be less than the sample mass.",
-      i = "Check that {.field carbon_mass_ug} is in micrograms and {.field sample_mass_mg} in milligrams."
-    ))
-  }
-
-  warn_carbon_fraction(data, x_name)
   invisible(data)
 }

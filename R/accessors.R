@@ -1,5 +1,4 @@
-# Diagnostic and structural accessors for kb_fit, computed from the stored
-# draws and diagnostics of the estimated effects (.fitted_draws()).
+# Computed from the estimated effects only (.fitted_draws()).
 
 #' @exportS3Method universals::esr
 esr.kb_fit <- function(x, ...) {

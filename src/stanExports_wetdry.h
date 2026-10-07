@@ -15,21 +15,21 @@ using namespace stan::math;
 stan::math::profile_map profiles__;
 static constexpr std::array<const char*, 16> locations_array__ =
   {" (found before start of program)",
-  " (in 'wetdry', line 21, column 2 to column 17)",
-  " (in 'wetdry', line 22, column 2 to column 26)",
-  " (in 'wetdry', line 25, column 2 to column 63)",
-  " (in 'wetdry', line 26, column 2 to column 48)",
-  " (in 'wetdry', line 28, column 4 to column 35)",
-  " (in 'wetdry', line 29, column 4 to column 63)",
-  " (in 'wetdry', line 27, column 23 to line 30, column 3)",
-  " (in 'wetdry', line 27, column 2 to line 30, column 3)",
-  " (in 'wetdry', line 12, column 2 to column 21)",
-  " (in 'wetdry', line 13, column 27 to column 32)",
-  " (in 'wetdry', line 13, column 2 to column 48)",
-  " (in 'wetdry', line 15, column 2 to column 28)",
-  " (in 'wetdry', line 16, column 2 to column 35)",
-  " (in 'wetdry', line 17, column 2 to column 37)",
-  " (in 'wetdry', line 18, column 2 to column 35)"};
+  " (in 'wetdry', line 14, column 2 to column 17)",
+  " (in 'wetdry', line 15, column 2 to column 26)",
+  " (in 'wetdry', line 18, column 2 to column 63)",
+  " (in 'wetdry', line 19, column 2 to column 48)",
+  " (in 'wetdry', line 21, column 4 to column 35)",
+  " (in 'wetdry', line 22, column 4 to column 63)",
+  " (in 'wetdry', line 20, column 23 to line 23, column 3)",
+  " (in 'wetdry', line 20, column 2 to line 23, column 3)",
+  " (in 'wetdry', line 6, column 2 to column 21)",
+  " (in 'wetdry', line 7, column 27 to column 32)",
+  " (in 'wetdry', line 7, column 2 to column 48)",
+  " (in 'wetdry', line 8, column 2 to column 28)",
+  " (in 'wetdry', line 9, column 2 to column 35)",
+  " (in 'wetdry', line 10, column 2 to column 37)",
+  " (in 'wetdry', line 11, column 2 to column 35)"};
 #include <stan_meta_header.hpp>
 class model_wetdry final : public model_base_crtp<model_wetdry> {
 private:

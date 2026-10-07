@@ -1,28 +1,21 @@
-# Response scale: `expectation = TRUE` the mean, `FALSE` the inverse link. They
-# differ where the likelihood's mean is not the inverse link of the linear
-# predictor (the Nereocystis lognormal, a mixture); other methods ignore the flag.
-#
-# `lp` is a posterior rvar over grid rows, and so is the result. Write bodies
-# with arithmetic, `1 / (1 + exp(-lp))` rather than plogis(), since Ops and Math
-# group generics work on an rvar while plogis() errors on one.
+# Response scale of rvar `lp`: the mean, or with `expectation = FALSE` the
+# inverse link (they differ only where a method checks the flag). Bodies use
+# arithmetic, not plogis(), which errors on an rvar.
 .epred <- function(fit, lp, expectation = TRUE) {
   UseMethod(".epred")
 }
 
 #' @export
 .epred.default <- function(fit, lp, expectation = TRUE) {
-  .abort_no_method(x = fit, call = NULL)
+  .abort_no_method(fit, call = NULL)
 }
 
-# Log link for both species. For the Macrocystis Gamma, exp(lp) is the mean.
 #' @export
 .epred.kb_fit_weight <- function(fit, lp, expectation = TRUE) {
   exp(lp)
 }
 
-# Nereo is Normal on log weight, so exp(lp) is the median and the mean carries
-# the lognormal retransformation exp(sd_residual^2 / 2). A total such as biomass
-# needs the mean.
+# Normal on log weight: exp(lp) is the median; the mean adds sd_residual^2 / 2.
 #' @export
 .epred.kb_fit_weight_nereo <- function(fit, lp, expectation = TRUE) {
   if (!expectation) {
@@ -31,15 +24,12 @@
   exp(lp + fit$draws$sd_residual^2 / 2)
 }
 
-# Log link for both species. The Nereocystis Weibull is parameterised by its
-# mean, so exp(lp) is the mean.
 #' @export
 .epred.kb_fit_size <- function(fit, lp, expectation = TRUE) {
   exp(lp)
 }
 
-# Macrocystis frond counts are zero-truncated: exp(lp) is the mean before
-# truncation, and the expected count of a recorded plant is the truncated mean.
+# exp(lp) is the untruncated mean.
 #' @export
 .epred.kb_fit_size_macro <- function(fit, lp, expectation = TRUE) {
   if (!expectation) {
@@ -48,15 +38,13 @@
   mean_gamma_pois_zt(exp(lp), fit$draws$dispersion)
 }
 
-# Log link for both species: exp(lp) is the expected count on the row's area
-# (the offset is already in lp). For Macrocystis it is the mean.
+# The offset is already in lp.
 #' @export
 .epred.kb_fit_density <- function(fit, lp, expectation = TRUE) {
   exp(lp)
 }
 
-# Nereocystis counts are zero-inflated: exp(lp) is the mean on a transect holding
-# stipes, and the expected count also carries the probability 1 - zi that it does.
+# Zero-inflated: exp(lp) is the mean given a non-structural-zero transect.
 #' @export
 .epred.kb_fit_density_nereo <- function(fit, lp, expectation = TRUE) {
   if (!expectation) {
@@ -65,21 +53,18 @@
   exp(lp) / (1 + exp(fit$draws$logit_zero_inflation))
 }
 
-# Logit link: the inverse is the Beta mean, the expected dry:wet ratio.
 #' @export
 .epred.kb_fit_wetdry <- function(fit, lp, expectation = TRUE) {
   1 / (1 + exp(-lp))
 }
 
-# Logit link: the inverse is the Beta mean, the expected carbon fraction.
 #' @export
 .epred.kb_fit_carbon <- function(fit, lp, expectation = TRUE) {
   1 / (1 + exp(-lp))
 }
 
-# Log link: the residual SD is the error of the in situ estimates, not variation
-# in biomass, so the expected biomass is the calibration mean exp(lp) with no
-# lognormal retransformation.
+# No lognormal retransformation: the residual SD is error in the in situ
+# estimates, not variation in biomass.
 #' @export
 .epred.kb_fit_cover_biomass <- function(fit, lp, expectation = TRUE) {
   exp(lp)

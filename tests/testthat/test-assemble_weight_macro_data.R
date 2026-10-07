@@ -18,7 +18,6 @@ test_that("assemble_weight_macro_data maps data and priors to the Stan data bloc
   expect_equal(sd$year, c(1L, 1L, 2L))
   expect_equal(sd$fronds, c(3, 8, 5))
   expect_equal(sd$weight_kg, c(0.4, 2, 1))
-  # log-fronds centering reference: geometric mean of the observed frond count
   expect_equal(sd$fronds_ref, exp(mean(log(c(3, 8, 5)))))
   expect_equal(sd$prior_only, 0L)
   expect_equal(sd$site_year_on, 1L)
@@ -31,7 +30,7 @@ test_that("assemble_weight_macro_data maps every prior hyperparameter to its own
     site = factor(c("a", "b", "a")),
     year = factor(c("2020", "2020", "2021"))
   )
-  # Every hyperparameter distinct, so a transposed or dropped wiring cannot pass.
+  # Distinct values, so a transposed or dropped wiring cannot pass.
   priors <- list(
     intercept = kb_prior_normal(0.1, 1.1),
     fronds_slope = kb_prior_normal(0.2, 1.2),
@@ -88,7 +87,6 @@ test_that("assemble_weight_macro_data accepts zero-row data", {
   expect_equal(sd$n_site, 1L)
   expect_equal(sd$n_year, 1L)
   expect_length(sd$fronds, 0)
-  # empty-data reference falls back to 5
   expect_equal(sd$fronds_ref, 5)
   expect_equal(sd$prior_only, 1L)
 })

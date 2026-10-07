@@ -1,5 +1,4 @@
-# Replace the sampler with the stored fixture draws, so the wrapper logic (data
-# checks, structure, terms, meta) is tested without MCMC.
+# Returns the fixture's draws in place of sampling.
 local_wetdry_macro_stub <- function(env = parent.frame()) {
   local_mocked_bindings(
     fit_stan = function(...) {

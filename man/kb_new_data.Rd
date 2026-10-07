@@ -16,7 +16,8 @@ both, giving one row per fitted level (per observed site-year for both), or
 
 \item{...}{For a weight or cover biomass fit, the predictor values as a named
 numeric vector (\code{diameter_mm}, \code{fronds}, or \code{cover}). If omitted, 30 evenly
-spaced values span the observed range for weight, and 0 to 1 for cover.}
+spaced values span the observed range for weight (whole numbers for
+\code{fronds}), and 0 to 1 for cover.}
 }
 \value{
 A tibble with the grouping columns named in \code{by}, the predictor

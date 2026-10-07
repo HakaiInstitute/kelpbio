@@ -1,15 +1,11 @@
 # The Stan model's log-likelihood at random parameter values, with a copy of `fit`
-# whose draws are those values, for checking log_lik() against the Stan model.
-# The Stan data are captured by re-running the fit function on the fit's stored
-# data with sampling mocked out. Stanfits with no chains then evaluate the log
-# density with and without the likelihood (prior_only); the difference is the
-# likelihood, up to the constants that `~` statements drop, and the Jacobian
-# terms cancel. No sampling is run.
+# whose draws are those values. The log density with prior_only = 1 is
+# subtracted, leaving the likelihood up to the constants `~` drops (Jacobian
+# terms cancel).
 stan_log_lik <- function(fit, ndraws = 5L, seed = 1L) {
   captured <- capture_stan_data(fit)
   prior_data <- captured$stan_data
   prior_data$prior_only <- 1L
-  # chains = 0 builds the model without sampling, with a message saying so.
   full <- suppressMessages(rstan::sampling(
     captured$stanmodel,
     data = captured$stan_data,
@@ -68,8 +64,7 @@ capture_stan_data <- function(fit) {
   )
 }
 
-# Replace each stored rvar with the values from a list of constrain_pars()
-# results, one per draw, keeping the rvar's shape and names.
+# One constrain_pars() result per draw.
 draws_from_pars <- function(draws, pars) {
   for (name in names(draws)) {
     shape <- dim(draws[[name]])

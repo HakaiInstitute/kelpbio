@@ -35,6 +35,11 @@
 #'
 #' @inheritSection params Sampling
 #' @inheritParams params
+#' @param data A data frame of weight observations (see
+#'   [kb_check_data_weight_nereo()] for the required columns).
+#' @param priors A named list of prior objects (see [kb_priors_weight_nereo()]),
+#'   or `NULL` to use the defaults. Supplied entries override the corresponding
+#'   defaults; unspecified entries keep their defaults.
 #' @param form A string, one of `"packard_floor"` (the default) or `"power"`,
 #'   giving the mean function of weight in diameter (see Details).
 #' @param ... Additional arguments passed to [rstan::sampling()], including a
@@ -82,7 +87,6 @@ kb_fit_weight_nereo <- function(
   )
 
   kb_check_data_weight_nereo(data)
-  # The site:year effect is determined from the data
   site_year <- site_year_structure(data)
   notify_site_year(site_year, progress = progress)
   density <- density_structure(data)
@@ -101,22 +105,19 @@ kb_fit_weight_nereo <- function(
     floor_on = form == "packard_floor"
   )
 
+  parameters <- fit_parameters(
+    priors,
+    GROUP_EFFECTS,
+    off = c(
+      site_year_off(site_year$on),
+      if (form == "power") "weight_floor",
+      if (!density$on) "density_slope"
+    )
+  )
   core <- fit_stan(
     stanmodels$weight_nereo,
     stan_data,
-    param_vars = c(
-      "intercept",
-      "diameter_power",
-      "weight_floor",
-      "density_slope",
-      "sd_site",
-      "sd_year",
-      "sd_site_year",
-      "sd_residual",
-      "site_effect",
-      "year_effect",
-      "site_year_effect"
-    ),
+    param_vars = parameters$sampled,
     chains = chains,
     niters = niters,
     nthin = nthin,
@@ -136,23 +137,7 @@ kb_fit_weight_nereo <- function(
     species = "nereocystis",
     # Weight is measured per plant, not per unit of survey effort.
     offset = NULL,
-    terms = list(
-      fixed = c(
-        "intercept",
-        "diameter_power",
-        if (form == "packard_floor") "weight_floor",
-        if (density$on) "density_slope",
-        "sd_site",
-        "sd_year",
-        if (site_year$on) "sd_site_year",
-        "sd_residual"
-      ),
-      random = c(
-        "site_effect",
-        "year_effect",
-        if (site_year$on) "site_year_effect"
-      )
-    ),
+    terms = parameters[c("fixed", "random")],
     prior_only = prior_only,
     nthin = as.integer(nthin),
     meta_extra = list(
@@ -163,8 +148,7 @@ kb_fit_weight_nereo <- function(
       density_mean = density$mean,
       density_sd = density$sd,
       density_levels = density$levels,
-      # Predictor/response column names let the model-level prediction and plot
-      # code stay species-agnostic (macro uses "fronds").
+      # Lets the model-level prediction and plot code stay species-agnostic.
       predictor = "diameter_mm",
       response = "weight_kg"
     )

@@ -48,5 +48,6 @@ kb_check_data_cover_biomass_nereo <- function(
   biomass = NULL,
   x_name = chk::deparse_backtick_chk(substitute(data))
 ) {
-  .chk_cover_biomass_data(data, biomass, x_name)
+  .with_call(.chk_cover_biomass_data(data, biomass, x_name), rlang::current_env())
+  invisible(data)
 }

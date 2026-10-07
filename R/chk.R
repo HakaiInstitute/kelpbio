@@ -1,70 +1,20 @@
-# Checkers paired with .vld_ in vld.R: abort via cli on failure, else return the
-# input invisibly. A fit is checked at the head of every function that takes one,
-# since S3 dispatch alone does not catch a non-fit passed in directly.
+# A fit is checked at the head of every function that takes one, since S3
+# dispatch alone does not catch a non-fit passed in directly.
 
 .chk_kb_fit <- function(
   x,
+  class = "kb_fit",
   x_name = deparse(substitute(x)),
   call = rlang::caller_env()
 ) {
-  if (.vld_kb_fit(x)) {
+  if (.vld_kb_fit(x, class)) {
     return(invisible(x))
   }
+  constructors <- paste0(class, "_*()")
   cli::cli_abort(
     c(
-      "{.arg {x_name}} must be a {.cls kb_fit} object.",
-      i = "Supported fits are created by the {.code kb_fit_*()} functions."
-    ),
-    call = call
-  )
-}
-
-.chk_kb_fit_weight <- function(
-  x,
-  x_name = deparse(substitute(x)),
-  call = rlang::caller_env()
-) {
-  if (.vld_kb_fit_weight(x)) {
-    return(invisible(x))
-  }
-  cli::cli_abort(
-    c(
-      "{.arg {x_name}} must be a {.cls kb_fit_weight} object.",
-      i = "Supported fits are created by the {.code kb_fit_weight_*()} functions."
-    ),
-    call = call
-  )
-}
-
-.chk_kb_fit_size <- function(
-  x,
-  x_name = deparse(substitute(x)),
-  call = rlang::caller_env()
-) {
-  if (.vld_kb_fit_size(x)) {
-    return(invisible(x))
-  }
-  cli::cli_abort(
-    c(
-      "{.arg {x_name}} must be a {.cls kb_fit_size} object.",
-      i = "Supported fits are created by the {.code kb_fit_size_*()} functions."
-    ),
-    call = call
-  )
-}
-
-.chk_kb_fit_density <- function(
-  x,
-  x_name = deparse(substitute(x)),
-  call = rlang::caller_env()
-) {
-  if (.vld_kb_fit_density(x)) {
-    return(invisible(x))
-  }
-  cli::cli_abort(
-    c(
-      "{.arg {x_name}} must be a {.cls kb_fit_density} object.",
-      i = "Supported fits are created by the {.code kb_fit_density_*()} functions."
+      "{.arg {x_name}} must be a {.cls {class}} object.",
+      i = "Supported fits are created by the {.code {constructors}} functions."
     ),
     call = call
   )
@@ -88,40 +38,6 @@
   )
 }
 
-.chk_kb_fit_wetdry <- function(
-  x,
-  x_name = deparse(substitute(x)),
-  call = rlang::caller_env()
-) {
-  if (.vld_kb_fit_wetdry(x)) {
-    return(invisible(x))
-  }
-  cli::cli_abort(
-    c(
-      "{.arg {x_name}} must be a {.cls kb_fit_wetdry} object.",
-      i = "Supported fits are created by the {.code kb_fit_wetdry_*()} functions."
-    ),
-    call = call
-  )
-}
-
-.chk_kb_fit_carbon <- function(
-  x,
-  x_name = deparse(substitute(x)),
-  call = rlang::caller_env()
-) {
-  if (.vld_kb_fit_carbon(x)) {
-    return(invisible(x))
-  }
-  cli::cli_abort(
-    c(
-      "{.arg {x_name}} must be a {.cls kb_fit_carbon} object.",
-      i = "Supported fits are created by the {.code kb_fit_carbon_*()} functions."
-    ),
-    call = call
-  )
-}
-
 .chk_new_data_weight_nereo <- function(x, x_name = deparse(substitute(x))) {
   if (.vld_new_data_weight_nereo(x)) {
     return(invisible(x))
@@ -132,8 +48,8 @@
   if (!"diameter_mm" %in% names(x)) {
     cli::cli_abort("{.arg {x_name}} must have a {.field diameter_mm} column.")
   }
-  .chk_positive_measure(x$diameter_mm, x_name = kb_xname(x_name, "diameter_mm"))
-  .chk_density(x$stipes_m2, x_name = kb_xname(x_name, "stipes_m2"))
+  .chk_positive_measure(x$diameter_mm, x_name = column_xname(x_name, "diameter_mm"))
+  .chk_density(x$stipes_m2, x_name = column_xname(x_name, "stipes_m2"))
 }
 
 .chk_positive_measure <- function(x, x_name = deparse(substitute(x))) {
@@ -178,7 +94,7 @@
   })
   bad <- names(n_distinct)[n_distinct > 1L]
   cli::cli_abort(c(
-    "{kb_xname(x_name, 'stipes_m2')} must have one value per site-year.",
+    "{column_xname(x_name, 'stipes_m2')} must have one value per site-year.",
     x = "Conflicting values in site-year{?s} {.val {bad}}."
   ))
 }
@@ -193,7 +109,7 @@
   if (!"fronds" %in% names(x)) {
     cli::cli_abort("{.arg {x_name}} must have a {.field fronds} column.")
   }
-  .chk_frond_count(x$fronds, x_name = kb_xname(x_name, "fronds"))
+  .chk_frond_count(x$fronds, x_name = column_xname(x_name, "fronds"))
 }
 
 .chk_new_data_size <- function(x, x_name = deparse(substitute(x))) {
@@ -210,10 +126,9 @@
   if (!is.data.frame(x)) {
     cli::cli_abort("{.arg {x_name}} must be a data frame.")
   }
-  .chk_positive_measure(x$area_m2, x_name = kb_xname(x_name, "area_m2"))
+  .chk_positive_measure(x$area_m2, x_name = column_xname(x_name, "area_m2"))
 }
 
-# The fits a composition combines must describe one species.
 .chk_same_species <- function(fits, call = rlang::caller_env()) {
   if (.vld_same_species(fits)) {
     return(invisible(fits))
@@ -228,8 +143,7 @@
   )
 }
 
-# The fits a composition combines are paired draw by draw, so their draw counts
-# must match.
+# Composed fits are paired draw by draw.
 .chk_same_ndraws <- function(fits, call = rlang::caller_env()) {
   if (.vld_same_ndraws(fits)) {
     return(invisible(fits))
@@ -244,27 +158,47 @@
   )
 }
 
-.chk_representative_site <- function(fit, representative_site) {
+.chk_representative_site <- function(
+  fit,
+  representative_site,
+  call = rlang::caller_env()
+) {
   if (.vld_representative_site(representative_site, fit$meta$site_levels)) {
     return(invisible(representative_site))
   }
-  chk::chk_character(representative_site)
-  chk::chk_not_empty(representative_site)
+  .with_call(
+    {
+      chk::chk_character(representative_site)
+      chk::chk_not_empty(representative_site)
+    },
+    call
+  )
   bad <- setdiff(representative_site, fit$meta$site_levels)
-  cli::cli_abort(c(
-    "Invalid {.arg representative_site} value{?s}: {.val {bad}}.",
-    i = "Available site{?s}: {.val {fit$meta$site_levels}}."
-  ))
+  cli::cli_abort(
+    c(
+      "Invalid {.arg representative_site} value{?s}: {.val {bad}}.",
+      i = "Available site{?s}: {.val {fit$meta$site_levels}}."
+    ),
+    call = call
+  )
 }
 
-# Shared summary-argument validation for the report-view functions (kb_predict_*,
-# tidy, summary).
-.chk_summary_args <- function(conf_level, estimate, sig_fig) {
-  chk::chk_number(conf_level)
-  chk::chk_range(conf_level)
-  chk::chk_function(estimate)
-  chk::chk_whole_number(sig_fig)
-  chk::chk_gt(sig_fig, value = 0)
+.chk_summary_args <- function(
+  conf_level,
+  estimate,
+  sig_fig,
+  call = rlang::caller_env()
+) {
+  .with_call(
+    {
+      chk::chk_number(conf_level)
+      chk::chk_range(conf_level)
+      chk::chk_function(estimate)
+      chk::chk_whole_number(sig_fig)
+      chk::chk_gt(sig_fig, value = 0)
+    },
+    call
+  )
   invisible(NULL)
 }
 
@@ -292,7 +226,22 @@
   )
 }
 
-# Shared sampler-argument validation for every kb_fit_* wrapper.
+.chk_sampling_dots <- function(x, call = rlang::caller_env()) {
+  if (.vld_sampling_dots(x)) {
+    return(invisible(x))
+  }
+  bad <- intersect(rlang::names2(x), names(SAMPLING_RESERVED))
+  use <- unique(stats::na.omit(SAMPLING_RESERVED[bad]))
+  cli::cli_abort(
+    c(
+      "{.arg {bad}} cannot be passed to the sampler: kelpbio sets {?it/them} itself.",
+      i = if (length(use)) "Use {.arg {use}} instead.",
+      i = if (anyNA(SAMPLING_RESERVED[bad])) "The fit keeps every parameter."
+    ),
+    call = call
+  )
+}
+
 .chk_sampler_args <- function(
   prior_only,
   chains,
@@ -301,31 +250,36 @@
   cores,
   seed = NULL,
   progress,
-  progress_dir = NULL
+  progress_dir = NULL,
+  call = rlang::caller_env()
 ) {
-  chk::chk_flag(prior_only)
-  chk::chk_whole_number(chains)
-  chk::chk_gt(chains, value = 0)
-  chk::chk_whole_number(niters)
-  chk::chk_gt(niters, value = 0)
-  chk::chk_whole_number(nthin)
-  chk::chk_gt(nthin, value = 0)
-  .chk_progress(progress)
-  .chk_progress_dir(progress_dir)
-  if (!is.null(cores)) {
-    chk::chk_whole_number(cores)
-    chk::chk_gt(cores, value = 0)
-  }
-  if (!is.null(seed)) {
-    chk::chk_whole_number(seed)
-  }
+  .with_call(
+    {
+      chk::chk_flag(prior_only)
+      chk::chk_whole_number(chains)
+      chk::chk_gt(chains, value = 0)
+      chk::chk_whole_number(niters)
+      # The sampler diagnostics need at least two draws per chain.
+      chk::chk_gte(niters, value = 2)
+      chk::chk_whole_number(nthin)
+      chk::chk_gt(nthin, value = 0)
+      .chk_progress(progress)
+      .chk_progress_dir(progress_dir)
+      if (!is.null(cores)) {
+        chk::chk_whole_number(cores)
+        chk::chk_gt(cores, value = 0)
+      }
+      if (!is.null(seed)) {
+        chk::chk_whole_number(seed)
+      }
+    },
+    call
+  )
   invisible(NULL)
 }
 
 # The predictor values passed to kb_new_data() through `...`: at most one named
-# argument, naming the fit's predictor (`diameter_mm` for a Nereocystis weight
-# fit, `fronds` for a Macrocystis one), with numeric values. Contextual bundle
-# like .chk_sampler_args(): no single-boolean .vld_ partner.
+# numeric argument, naming the fit's predictor.
 .chk_grid_predictor <- function(fit, dots, call = rlang::caller_env()) {
   predictor <- fit$meta[["predictor"]]
   if (length(dots) && is.null(predictor)) {
@@ -359,39 +313,15 @@
   invisible(fit)
 }
 
-# A prediction verb called the old way, with `by` or with grouping factors in
-# place of new_data, errors with the equivalent kb_new_data() call. Contextual
-# bundle: no .vld_ partner. Other dots are left to rlang::check_dots_empty().
-.chk_by_habit <- function(new_data, ..., verb, call = rlang::caller_env()) {
-  dots <- rlang::list2(...)
-  if ("by" %in% rlang::names2(dots)) {
-    by <- dots$by
-  } else if (is.character(new_data)) {
-    by <- new_data
-  } else {
-    return(invisible(new_data))
-  }
-  by_code <- paste(deparse(by), collapse = "")
-  cli::cli_abort(
-    c(
-      "{.fn {verb}} predicts at the rows of {.arg new_data}; it has no {.arg by} argument.",
-      i = "For predictions by group, use {.code {verb}(fit, kb_new_data(fit, by = {by_code}))}."
-    ),
-    call = call
-  )
-}
-
-# Every path that predicts at the stored data needs rows to predict at. Without
-# this the failure surfaces as a posterior broadcast error from inside .linpred().
-.chk_observed_data <- function(fit, call = rlang::caller_env()) {
+# Without this, predicting at the data of a zero-observation fit fails with a
+# posterior broadcast error inside .linpred(). `hint` is for callers that could
+# have been given new data instead.
+.chk_observed_data <- function(fit, hint = NULL, call = rlang::caller_env()) {
   if (.vld_observed_data(fit)) {
     return(invisible(fit))
   }
   cli::cli_abort(
-    c(
-      "A zero-observation fit has no observed data to predict at.",
-      i = "Supply {.arg new_data}, or fit the model to data."
-    ),
+    c("A zero-observation fit has no observed data.", i = hint),
     call = call
   )
 }
@@ -420,7 +350,7 @@
 
 #' @export
 .chk_new_data.default <- function(fit, new_data) {
-  .abort_no_method(x = fit, call = NULL)
+  .abort_no_method(fit, call = NULL)
 }
 
 #' @export
@@ -439,8 +369,7 @@
   .chk_new_data_size(new_data)
 }
 
-# Wet/dry has no predictor or groups, so, like size, any data frame will do: each
-# row predicts the population ratio.
+# Wet/dry has no predictor or groups, so any data frame will do.
 #' @export
 .chk_new_data.kb_fit_wetdry <- function(fit, new_data) {
   .chk_new_data_size(new_data)
@@ -458,23 +387,6 @@
   .chk_new_data_density(new_data)
 }
 
-.chk_kb_fit_cover_biomass <- function(
-  x,
-  x_name = deparse(substitute(x)),
-  call = rlang::caller_env()
-) {
-  if (.vld_kb_fit_cover_biomass(x)) {
-    return(invisible(x))
-  }
-  cli::cli_abort(
-    c(
-      "{.arg {x_name}} must be a {.cls kb_fit_cover_biomass} object.",
-      i = "Supported fits are created by the {.code kb_fit_cover_biomass_*()} functions."
-    ),
-    call = call
-  )
-}
-
 # `x_name` names the data frame; column messages name the column within it.
 .chk_cover_survey <- function(x, x_name = deparse(substitute(x))) {
   if (.vld_cover_survey(x)) {
@@ -488,24 +400,23 @@
     c("canopy_area_m2", "plot_area_m2", "tide_height_m"),
     x_name = x_name
   )
-  nm <- kb_xname(x_name, "canopy_area_m2")
+  nm <- column_xname(x_name, "canopy_area_m2")
   chk::chk_numeric(x$canopy_area_m2, x_name = nm)
   chk::chk_not_any_na(x$canopy_area_m2, x_name = nm)
   chk::chk_gte(x$canopy_area_m2, value = 0, x_name = nm)
-  .chk_positive_measure(x$plot_area_m2, x_name = kb_xname(x_name, "plot_area_m2"))
+  .chk_positive_measure(x$plot_area_m2, x_name = column_xname(x_name, "plot_area_m2"))
   if (any(x$canopy_area_m2 > x$plot_area_m2)) {
     cli::cli_abort(c(
       "{nm} must not exceed {.field plot_area_m2}.",
       i = "The canopy is the area delineated within the plot."
     ))
   }
-  nm <- kb_xname(x_name, "tide_height_m")
+  nm <- column_xname(x_name, "tide_height_m")
   chk::chk_numeric(x$tide_height_m, x_name = nm)
   chk::chk_not_any_na(x$tide_height_m, x_name = nm)
 }
 
-# The data check shared by both cover species: the survey columns of `data`, and
-# the in situ biomass when supplied.
+# The data check shared by both cover species.
 .chk_cover_biomass_data <- function(data, biomass, x_name, call = rlang::caller_env()) {
   chk::chk_data(data, x_name = x_name)
   chk::chk_superset(
@@ -535,10 +446,69 @@
   invisible(data)
 }
 
-# `site` and `year`: character or factor, with no missing values.
+.chk_measure_columns <- function(x, cols, x_name, count = FALSE, zero = FALSE) {
+  for (col in cols) {
+    nm <- column_xname(x_name, col)
+    chk::chk_numeric(x[[col]], x_name = nm)
+    chk::chk_not_any_na(x[[col]], x_name = nm)
+    if (zero) {
+      chk::chk_gte(x[[col]], value = 0, x_name = nm)
+    } else {
+      chk::chk_gt(x[[col]], value = 0, x_name = nm)
+    }
+    if (count) {
+      chk::chk_whole_numeric(x[[col]], x_name = nm)
+    }
+  }
+  invisible(x)
+}
+
+# The wet/dry data of either species.
+.chk_wetdry_data <- function(data, x_name) {
+  chk::chk_data(data, x_name = x_name)
+  chk::chk_superset(
+    names(data),
+    c("wet_mass_g", "dry_mass_g"),
+    x_name = x_name
+  )
+  .chk_measure_columns(data, c("wet_mass_g", "dry_mass_g"), x_name)
+  # The ratio must lie in (0, 1) for the Beta likelihood.
+  if (any(data$dry_mass_g >= data$wet_mass_g)) {
+    cli::cli_abort(
+      "{column_xname(x_name, 'dry_mass_g')} must be less than {.field wet_mass_g}."
+    )
+  }
+  warn_dry_wet_ratio(data, x_name)
+  warn_implausible_units(data, x_name)
+  invisible(data)
+}
+
+# The carbon data of either species.
+.chk_carbon_data <- function(data, x_name) {
+  chk::chk_data(data, x_name = x_name)
+  chk::chk_superset(
+    names(data),
+    c("sample_mass_mg", "carbon_mass_ug"),
+    x_name = x_name
+  )
+  .chk_measure_columns(data, c("sample_mass_mg", "carbon_mass_ug"), x_name)
+  # The carbon fraction must lie in (0, 1) for the Beta likelihood.
+  if (any(carbon_fraction(data) >= 1)) {
+    cli::cli_abort(c(
+      "{column_xname(x_name, 'carbon_mass_ug')} must be less than the sample mass.",
+      i = "Check that {.field carbon_mass_ug} is in micrograms and {.field sample_mass_mg} in milligrams."
+    ))
+  }
+  warn_carbon_fraction(data, x_name)
+  invisible(data)
+}
+
 .chk_group_columns <- function(x, x_name) {
+  if (all(vapply(x[c("site", "year")], .vld_group_column, logical(1)))) {
+    return(invisible(x))
+  }
   for (col in c("site", "year")) {
-    nm <- kb_xname(x_name, col)
+    nm <- column_xname(x_name, col)
     chk::chk_character_or_factor(x[[col]], x_name = nm)
     chk::chk_not_any_na(x[[col]], x_name = nm)
   }
@@ -583,10 +553,10 @@
       i = "They are the compatibility limits of the in situ biomass estimate, which set its precision."
     ))
   }
-  .chk_positive_measure(x$lower, x_name = kb_xname(x_name, "lower"))
-  .chk_positive_measure(x$upper, x_name = kb_xname(x_name, "upper"))
+  .chk_positive_measure(x$lower, x_name = column_xname(x_name, "lower"))
+  .chk_positive_measure(x$upper, x_name = column_xname(x_name, "upper"))
   cli::cli_abort(
-    "{kb_xname(x_name, 'lower')} must be less than {.field upper}."
+    "{column_xname(x_name, 'lower')} must be less than {.field upper}."
   )
 }
 
@@ -595,14 +565,14 @@
     return(invisible(x))
   }
   .chk_biomass_limits(x, x_name)
-  .chk_positive_measure(x$estimate, x_name = kb_xname(x_name, "estimate"))
+  .chk_positive_measure(x$estimate, x_name = column_xname(x_name, "estimate"))
   if (any(x$lower > x$estimate)) {
     cli::cli_abort(
-      "{kb_xname(x_name, 'lower')} must not exceed {.field estimate}."
+      "{column_xname(x_name, 'lower')} must not exceed {.field estimate}."
     )
   }
   cli::cli_abort(
-    "{kb_xname(x_name, 'upper')} must not be less than {.field estimate}."
+    "{column_xname(x_name, 'upper')} must not be less than {.field estimate}."
   )
 }
 
@@ -625,19 +595,19 @@
     c("canopy_area_m2", "tide_height_m", "site", "year"),
     x_name = x_name
   )
-  nm <- kb_xname(x_name, "canopy_area_m2")
+  nm <- column_xname(x_name, "canopy_area_m2")
   chk::chk_numeric(x$canopy_area_m2, x_name = nm)
   chk::chk_not_any_na(x$canopy_area_m2, x_name = nm)
   chk::chk_gte(x$canopy_area_m2, value = 0, x_name = nm)
-  nm <- kb_xname(x_name, "tide_height_m")
+  nm <- column_xname(x_name, "tide_height_m")
   chk::chk_numeric(x$tide_height_m, x_name = nm)
   chk::chk_not_any_na(x$tide_height_m, x_name = nm)
   .chk_group_columns(x, x_name)
   # Every other column passed, so site_area_m2 is present and either invalid or
   # smaller than the canopy.
-  .chk_positive_measure(x$site_area_m2, x_name = kb_xname(x_name, "site_area_m2"))
+  .chk_positive_measure(x$site_area_m2, x_name = column_xname(x_name, "site_area_m2"))
   cli::cli_abort(c(
-    "{kb_xname(x_name, 'canopy_area_m2')} must not exceed {.field site_area_m2}.",
+    "{column_xname(x_name, 'canopy_area_m2')} must not exceed {.field site_area_m2}.",
     i = "The canopy is the area mapped within the site boundary."
   ))
 }
@@ -665,9 +635,6 @@
   )
 }
 
-# The fits a biomass `measure` needs: a wet/dry fit for dry, and also a carbon fit
-# for carbon, each of its model when supplied. Contextual bundle like
-# .chk_sampler_args(): no single-boolean .vld_ partner.
 .chk_measure_fits <- function(measure, wetdry, carbon, call = rlang::caller_env()) {
   if (measure %in% c("dry", "carbon") && is.null(wetdry)) {
     cli::cli_abort("{.arg wetdry} is required for {measure} biomass.", call = call)
@@ -676,10 +643,10 @@
     cli::cli_abort("{.arg carbon} is required for carbon biomass.", call = call)
   }
   if (!is.null(wetdry)) {
-    .chk_kb_fit_wetdry(wetdry, call = call)
+    .chk_kb_fit(wetdry, "kb_fit_wetdry", call = call)
   }
   if (!is.null(carbon)) {
-    .chk_kb_fit_carbon(carbon, call = call)
+    .chk_kb_fit(carbon, "kb_fit_carbon", call = call)
   }
   invisible(NULL)
 }

@@ -1,24 +1,17 @@
-// Macrocystis size distribution (site-year resolution): the number of fronds
-// reaching 1 m above the holdfast follows a zero-truncated negative binomial,
-// since plants with no such frond are not recorded.
+// Macrocystis size: fronds reaching 1 m are zero-truncated negative binomial,
+// since plants with none are not recorded.
 //   fronds ~ neg_binomial_2(mu, 1 / dispersion) T[1, ]
 //   log(mu) = intercept + site_effect[site] + year_effect[year]
-//             + site_year_effect[site, year]
-// mu is the mean before truncation; the mean frond count of a recorded plant is
-// mu / (1 - P(0)). Random effects: site, year, and site:year, all on log(mu).
-// Priors are passed as data; the prior family is fixed at compile time. The mean
-// is a local in the model block so it is not saved with the draws. The pointwise
-// log-likelihood and posterior-predictive replicates are computed in R from the
-// stored draws, so there are no generated quantities.
+//             + site_year_on * site_year_effect[site, year]
+// mu is the mean before truncation.
 data {
-  int<lower=0> n_obs;                     // 0 allowed: supports prior-only / empty fits
+  int<lower=0> n_obs;
   int<lower=1> n_site;
   int<lower=1> n_year;
   array[n_obs] int<lower=1, upper=n_site> site;
   array[n_obs] int<lower=1, upper=n_year> year;
   array[n_obs] int<lower=1> fronds;
 
-  // priors (hyperparameters passed as data)
   real prior_intercept_mean;
   real<lower=0> prior_intercept_sd;
   real<lower=0> prior_dispersion_rate;
@@ -26,12 +19,11 @@ data {
   real<lower=0> prior_sd_year_rate;
   real<lower=0> prior_sd_site_year_rate;
 
-  int<lower=0, upper=1> prior_only;       // 1 = skip likelihood, sample from priors
-  int<lower=0, upper=1> site_year_on;     // 0 = drop the site:year term
+  int<lower=0, upper=1> prior_only;
+  int<lower=0, upper=1> site_year_on;
 }
 transformed data {
-  // column-major linear index into to_vector(site_year_effect): (site, year) ->
-  // site + (year - 1) * n_site. Lets the site:year term be one vectorised gather.
+  // index of (site, year) in to_vector(site_year_effect)
   array[n_obs] int sy_idx;
   for (i in 1:n_obs) {
     sy_idx[i] = site[i] + (year[i] - 1) * n_site;
@@ -39,13 +31,13 @@ transformed data {
 }
 parameters {
   real intercept;                         // log mean frond count (before truncation)
-  real<lower=0> dispersion;               // overdispersion; phi = 1 / dispersion
-  real<lower=0> sd_site;                  // site SD
-  real<lower=0> sd_year;                  // year SD
-  real<lower=0> sd_site_year;             // site:year SD
-  vector[n_site] z_site;                  // non-centered site effects
-  vector[n_year] z_year;                  // non-centered year effects
-  matrix[n_site, n_year] z_site_year;     // non-centered site:year effects
+  real<lower=0> dispersion;               // variance mu + dispersion * mu^2
+  real<lower=0> sd_site;
+  real<lower=0> sd_year;
+  real<lower=0> sd_site_year;
+  vector[n_site] z_site;
+  vector[n_year] z_year;
+  matrix[n_site, n_year] z_site_year;
 }
 transformed parameters {
   vector[n_site] site_effect = z_site * sd_site;
@@ -62,8 +54,6 @@ model {
   z_year ~ std_normal();
   to_vector(z_site_year) ~ std_normal();
   if (prior_only == 0) {
-    // A local, not a transformed parameter: rstan saves transformed parameters,
-    // and n_obs columns per draw is the largest thing in a stored fit.
     real phi = 1 / dispersion;
     vector[n_obs] log_mu = intercept + site_effect[site] + year_effect[year]
       + site_year_on * to_vector(site_year_effect)[sy_idx];

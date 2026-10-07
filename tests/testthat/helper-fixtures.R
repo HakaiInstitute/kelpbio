@@ -1,19 +1,10 @@
-# Cached fit fixtures, built by fixtures/make-fixtures.R. Downstream method tests
-# read these instead of re-sampling. Rebuild after changing a Stan model or the
-# kb_fit object structure. Reads are guarded with file.exists() so that
-# devtools::load_all() (which sources test helpers) still succeeds while the
-# fixtures are being (re)built by a script that itself calls load_all().
+# NULL when absent, so load_all() works while make-fixtures.R rebuilds them.
 fixture <- function(name) {
   path <- testthat::test_path("fixtures", name)
   if (file.exists(path)) readRDS(path) else NULL
 }
 
-# Nereocystis (lognormal) and Macrocystis (Gamma) weight fits, the Nereocystis
-# (Weibull) and Macrocystis (zero-truncated negative binomial) size fits, and the
-# Nereocystis (zero-inflated negative binomial) and Macrocystis (negative
-# binomial) density fits, the Beta wet/dry and carbon fits, and the cover biomass fits. Fit/check tests use the bundled simulated datasets
-# (data_*_sim_*) directly, so there are no separate simulated-data fixtures.
-weight_fit <- fixture("weight_fit.rds")
+weight_nereo_fit <- fixture("weight_nereo_fit.rds")
 weight_macro_fit <- fixture("weight_macro_fit.rds")
 size_nereo_fit <- fixture("size_nereo_fit.rds")
 size_macro_fit <- fixture("size_macro_fit.rds")
@@ -26,14 +17,12 @@ carbon_macro_fit <- fixture("carbon_macro_fit.rds")
 cover_biomass_nereo_fit <- fixture("cover_biomass_nereo_fit.rds")
 cover_biomass_macro_fit <- fixture("cover_biomass_macro_fit.rds")
 
-# The first `n` fitted sites of a fit, for new_data rows at known sites. The two
-# species' simulated datasets have different site names.
+# The two species' simulated datasets have different site names.
 fitted_sites <- function(fit, n = 1) {
   fit$meta$site_levels[seq_len(n)]
 }
 
-# A cover biomass fit's stored data are its surveys paired with their in situ biomass;
-# these split them back into the two inputs a cover biomass fit takes.
+# Split a cover biomass fit's stored data back into its two inputs.
 cover_surveys <- function(fit) {
   fit$data[setdiff(names(fit$data), c("estimate", "lower", "upper"))]
 }

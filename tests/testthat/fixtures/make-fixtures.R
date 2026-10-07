@@ -1,13 +1,5 @@
-# Build cached test fixtures. NOT run during testing.
-#
-# Requires the compiled package (run `devtools::install()` or
-# `devtools::load_all()` first; `load_all()` does not pick up Stan changes, so
-# reinstall after editing inst/stan/weight_nereo.stan). Re-run this script whenever the
-# Stan model or the kb_fit object structure changes. Reproducibility comes from
-# the sampler `seed`, not `set.seed()`.
-#
-# Run from the package root:  Rscript tests/testthat/fixtures/make-fixtures.R
-# With model names as arguments, only those models' fixtures are rebuilt:
+# Builds the cached test fixtures; not run during testing. From the package
+# root, optionally naming models to rebuild only those:
 #   Rscript tests/testthat/fixtures/make-fixtures.R density wetdry
 
 devtools::load_all(quiet = TRUE)
@@ -22,8 +14,6 @@ if (length(unknown)) {
   stop("Unknown model: ", paste(unknown, collapse = ", "), call. = FALSE)
 }
 
-# Size and density fixtures use subsets of the bundled data_size_sim_* and
-# data_density_sim_*, mirroring the weight fixtures: the first four sites.
 size_subset <- function(data) {
   d <- subset(data, site %in% levels(data$site)[1:4])
   d$site <- droplevels(factor(d$site))
@@ -32,12 +22,8 @@ size_subset <- function(data) {
 }
 
 if ("weight" %in% selected) {
-  # A small slice of the bundled simulated dataset spanning several sites and years
-  # so that by = "site" and by = c("site", "year") predictions are exercised
-  # downstream. Using a subset of data_weight_sim_nereo keeps a single simulation
-  # source (there is no separate test-only simulator). All four years are kept, so
-  # the year SD is less weakly identified. These fixtures test structure, not
-  # inference, and may not meet the strict converged() thresholds.
+  # Several sites and years so by = "site" and c("site", "year") predictions are
+  # exercised.
   d <- subset(
     data_weight_sim_nereo,
     site %in% levels(data_weight_sim_nereo$site)[1:4]
@@ -45,7 +31,7 @@ if ("weight" %in% selected) {
   d$site <- droplevels(factor(d$site))
   d$year <- droplevels(factor(d$year))
 
-  weight_fit <- kb_fit_weight_nereo(
+  weight_nereo_fit <- kb_fit_weight_nereo(
     d,
     chains = 2L,
     niters = 300L,
@@ -53,17 +39,13 @@ if ("weight" %in% selected) {
     cores = 2L,
     progress = "none",
     seed = 42L,
-    # Raised above the 0.95 default so these deliberately small fits still clear
-    # the convergence thresholds without lengthening the chains (and so growing
-    # the stored objects).
+    # Lets these short chains converge without growing the stored objects.
     control = list(adapt_delta = 0.999)
   )
 
-  saveRDS(weight_fit, "tests/testthat/fixtures/weight_fit.rds")
-  message("Wrote tests/testthat/fixtures/weight_fit.rds")
+  saveRDS(weight_nereo_fit, "tests/testthat/fixtures/weight_nereo_fit.rds")
+  message("Wrote tests/testthat/fixtures/weight_nereo_fit.rds")
 
-  # Macrocystis fixture (Gamma weight model): a subset of the bundled
-  # data_weight_sim_macro, mirroring the nereo fixture above (single source).
   dm <- subset(
     data_weight_sim_macro,
     site %in%
@@ -81,9 +63,7 @@ if ("weight" %in% selected) {
     cores = 2L,
     progress = "none",
     seed = 42L,
-    # Raised above the 0.95 default so these deliberately small fits still clear
-    # the convergence thresholds without lengthening the chains (and so growing
-    # the stored objects).
+    # Lets these short chains converge without growing the stored objects.
     control = list(adapt_delta = 0.999)
   )
 
@@ -148,8 +128,7 @@ if ("density" %in% selected) {
 }
 
 if ("wetdry" %in% selected) {
-  # Wet/dry fixtures: the first 80 samples of the bundled data_wetdry_sim_*, which
-  # have no grouping factors to subset by.
+  # No grouping factors to subset by.
   wetdry_nereo_fit <- kb_fit_wetdry_nereo(
     data_wetdry_sim_nereo[1:80, ],
     chains = 2L,
@@ -176,8 +155,7 @@ if ("wetdry" %in% selected) {
 }
 
 if ("carbon" %in% selected) {
-  # Carbon fixtures: the first 80 samples of the bundled data_carbon_sim_*, which
-  # have no grouping factors to subset by.
+  # No grouping factors to subset by.
   carbon_nereo_fit <- kb_fit_carbon_nereo(
     data_carbon_sim_nereo[1:80, ],
     chains = 2L,
@@ -204,8 +182,6 @@ if ("carbon" %in% selected) {
 }
 
 if ("cover_biomass" %in% selected) {
-  # Cover fixtures: the four-site subset of the bundled data_cover_biomass_sim_* and
-  # data_plot_biomass_sim_*, one survey per site-year, as for size and density.
   cover_biomass_nereo_fit <- kb_fit_cover_biomass_nereo(
     size_subset(data_cover_biomass_sim_nereo),
     size_subset(data_plot_biomass_sim_nereo),

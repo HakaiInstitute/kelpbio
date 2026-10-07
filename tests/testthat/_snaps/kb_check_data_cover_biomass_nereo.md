@@ -3,7 +3,7 @@
     Code
       kb_check_data_cover_biomass_nereo(good[setdiff(names(good), "tide_height_m")])
     Condition
-      Error in `.chk_cover_biomass_data()`:
+      Error in `kb_check_data_cover_biomass_nereo()`:
       ! `good[setdiff(names(good), "tide_height_m")]` must include 'tide_height_m'.
 
 ---
@@ -11,7 +11,7 @@
     Code
       kb_check_data_cover_biomass_nereo(bad)
     Condition
-      Error in `.chk_cover_survey()`:
+      Error in `kb_check_data_cover_biomass_nereo()`:
       ! Column `canopy_area_m2` of `bad` must not exceed plot_area_m2.
       i The canopy is the area delineated within the plot.
 
@@ -29,7 +29,7 @@
     Code
       kb_check_data_cover_biomass_nereo(data, bad)
     Condition
-      Error in `.chk_biomass_estimate()`:
+      Error in `kb_check_data_cover_biomass_nereo()`:
       ! Column `lower` of `biomass` must not exceed estimate.
 
 ---

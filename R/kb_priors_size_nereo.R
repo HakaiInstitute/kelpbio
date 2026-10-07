@@ -19,9 +19,8 @@
 #' @examples
 #' priors <- kb_priors_size_nereo()
 #' priors$sd_site <- kb_prior_exponential(2)
-# The analysis project puts Normal(1, 1) on the log shape. kelpbio estimates the
-# shape directly, as the Macrocystis weight model does, with the same weak
-# Exponential(0.1) prior (mean 10); the data dominate it.
+# Unlike the analysis project (Normal(1, 1) on the log shape), the shape is
+# estimated directly with a weak Exponential(0.1) prior.
 kb_priors_size_nereo <- function() {
   list(
     intercept = kb_prior_normal(mean = 0, sd = 2),

@@ -28,8 +28,8 @@ The rules apply even where no name would collide (`diameter_power`, not
 `power`), so a new sub-model's names follow from the rules and the names stay
 predictable. Two of them avoid collisions that the plain role names would
 cause: a slope carries its predictor's name (`density_slope`), because
-`density`, `fronds`, `canopy`, and `tide` are already Stan data fields or input
-columns, and a floor carries its quantity (`weight_floor`, `biomass_floor`),
+`density`, `fronds`, `canopy_area_m2`, and `tide_height_m` are already Stan
+data fields or input columns, and a floor carries its quantity (`weight_floor`, `biomass_floor`),
 because `floor` is a Stan function.
 
 `dispersion` keeps kelpbio's direction (variance `mu + dispersion * mu^2`, zero

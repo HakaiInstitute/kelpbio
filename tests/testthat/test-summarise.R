@@ -1,8 +1,5 @@
-# Direct tests for the shared interval/rounding engine behind tidy()/summary()/
-# coef(). Pure logic over a draws_rvars object; uses the cached fixture's draws.
-
 test_that("summarise_draws_terms returns house columns bracketing the estimate", {
-  out <- summarise_draws_terms(weight_fit$draws, c("intercept", "diameter_power"))
+  out <- summarise_draws_terms(weight_nereo_fit$draws, c("intercept", "diameter_power"))
   expect_s3_class(out, "tbl_df")
   expect_named(out, c("term", "estimate", "lower", "upper"))
   expect_setequal(out$term, c("intercept", "diameter_power"))
@@ -10,9 +7,9 @@ test_that("summarise_draws_terms returns house columns bracketing the estimate",
 })
 
 test_that("summarise_draws_terms widens the interval with conf_level", {
-  wide <- summarise_draws_terms(weight_fit$draws, "intercept", conf_level = 0.99)
+  wide <- summarise_draws_terms(weight_nereo_fit$draws, "intercept", conf_level = 0.99)
   narrow <- summarise_draws_terms(
-    weight_fit$draws,
+    weight_nereo_fit$draws,
     "intercept",
     conf_level = 0.80
   )
@@ -21,16 +18,16 @@ test_that("summarise_draws_terms widens the interval with conf_level", {
 
 test_that("summarise_draws_terms applies the estimate function and sig_fig", {
   mean_est <- summarise_draws_terms(
-    weight_fit$draws,
+    weight_nereo_fit$draws,
     "intercept",
     estimate = mean
   )$estimate
   expect_equal(
     mean_est,
-    signif(mean(posterior::draws_of(weight_fit$draws$intercept)), 3)
+    signif(mean(posterior::draws_of(weight_nereo_fit$draws$intercept)), 3)
   )
   two <- summarise_draws_terms(
-    weight_fit$draws,
+    weight_nereo_fit$draws,
     "intercept",
     sig_fig = 2
   )$estimate

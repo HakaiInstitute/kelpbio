@@ -17,8 +17,8 @@ value) and \code{residual} (deviance residual).
 }
 \description{
 Append the \code{\link[=fitted]{fitted()}} and deviance \code{\link[=residuals]{residuals()}} values to the input data.
-Values are posterior point estimates (median): \code{fitted} of the expected weight,
-\code{residual} of the deviance residual.
+Values are posterior medians: \code{fitted} of the expected response, \code{residual} of
+the deviance residual.
 }
 \examples{
 augment(fit_weight_sim_nereo)

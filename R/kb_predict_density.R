@@ -58,8 +58,7 @@ kb_predict_density <- function(
   estimate = stats::median,
   sig_fig = 3
 ) {
-  .chk_kb_fit_density(fit)
-  .chk_by_habit(new_data, ..., verb = "kb_predict_density")
+  .chk_kb_fit(fit, "kb_fit_density")
   rlang::check_dots_empty()
   predict_rows(
     fit,

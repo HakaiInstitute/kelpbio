@@ -195,7 +195,7 @@ kb_priors_weight_nereo()
 # impose a deliberately strong, off-target prior on the allometric slope:
 priors <- kb_priors_weight_nereo()
 priors$sd_site <- kb_prior_exponential(rate = 3)
-priors$diameter <- kb_prior_normal(mean = 1.5, sd = 0.05)
+priors$diameter_power <- kb_prior_normal(mean = 1.5, sd = 0.05)
 priors
 
 # Prior predictive check: fit from the priors alone (no data) and see whether

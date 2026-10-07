@@ -66,8 +66,7 @@ kb_predict_cover_biomass <- function(
   estimate = stats::median,
   sig_fig = 3
 ) {
-  .chk_kb_fit_cover_biomass(fit)
-  .chk_by_habit(new_data, ..., verb = "kb_predict_cover_biomass")
+  .chk_kb_fit(fit, "kb_fit_cover_biomass")
   rlang::check_dots_empty()
   predict_rows(
     fit,

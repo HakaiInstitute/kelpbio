@@ -17,16 +17,10 @@ assemble_density_macro_data <- function(
   prior_only = FALSE,
   site_year_on = TRUE
 ) {
-  site <- factor(data$site)
-  year <- factor(data$year)
-
   c(
+    group_stan_data(data),
     list(
       n_obs = nrow(data),
-      n_site = max(1L, nlevels(site)),
-      n_year = max(1L, nlevels(year)),
-      site = as.integer(site),
-      year = as.integer(year),
       plants = as.integer(data$plants),
       area_m2 = as.numeric(data$area_m2),
       prior_only = as.integer(prior_only),

@@ -13,7 +13,6 @@ test_that("kb_priors_weight returns the default named prior list matching the an
       "sd_residual"
     )
   )
-  # each expect_equal below also pins the class, so no separate class checks
   expect_equal(p$intercept, kb_prior_normal(0, 2))
   expect_equal(p$diameter_power, kb_prior_normal(2, 1))
   expect_equal(p$weight_floor, kb_prior_normal(0, 0.5))

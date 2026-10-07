@@ -1,6 +1,6 @@
 all_fits <- function() {
   list(
-    weight_nereo = weight_fit,
+    weight_nereo = weight_nereo_fit,
     weight_macro = weight_macro_fit,
     size_nereo = size_nereo_fit,
     size_macro = size_macro_fit,

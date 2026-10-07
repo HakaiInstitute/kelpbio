@@ -193,9 +193,8 @@ kb_new_data(fit, by = "site")
 kb_new_data(fit, by = "site", diameter_mm = 30)
 # by site and year gives only the site-years in the fitted data
 kb_new_data(fit, by = c("site", "year"), diameter_mm = 30)
-# the wrong species' predictor, or a by on the verb, errors with the fix
+# the wrong species' predictor errors with the fix
 try(kb_new_data(fit, fronds = 5))
-try(kb_predict_weight(fit, by = "site"))
 
 # predict at the grid: curves for the typical site and year, and by site
 kb_predict_weight(fit, kb_new_data(fit))

@@ -19,10 +19,9 @@ downstream (summaries, diagnostics, predictions, plots) is `posterior` arithmeti
 over stored draws. Fit objects are therefore small, portable, robust across rstan
 versions, and a pre-fit model is not a special case (`decisions/prediction-engine.md`).
 
-The package will compose six sub-models (weight, size, density, blade fraction,
-wet/dry, carbon) into a biomass estimate by size integration. The weight models for
-*Nereocystis luetkeana* and *Macrocystis pyrifera* set the pattern the others
-follow.
+The package fits weight, size, density, wet/dry, carbon, and cover-biomass
+models for *Nereocystis luetkeana* and *Macrocystis pyrifera*, and composes them
+into plot biomass by size integration and into site totals from drone cover.
 
 ```mermaid
 flowchart LR
@@ -47,7 +46,7 @@ MCMC and makes a pre-fit model behave exactly like a fresh one.
   model structure from the data (which effects are fitted), assembles the Stan data
   list with priors as data, samples through one shared engine, and builds the fit
   object. The structure is decided by pure helpers, so it is tested without MCMC.
-- **Prediction.** Both prediction verbs and the `posterior_*()` generics resolve a
+- **Prediction.** The prediction verbs and the `posterior_*()` generics resolve a
   grid of rows to one linear predictor (per-row random-effect and covariate
   resolution), then map it to the response scale. The mean is defined once per
   model, in R, mirroring the Stan file.

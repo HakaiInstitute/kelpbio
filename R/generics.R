@@ -69,18 +69,3 @@ rstantools::prior_summary
 #' @importFrom ggplot2 autoplot
 #' @export
 ggplot2::autoplot
-
-#' Posterior Draws
-#'
-#' The posterior draws of the effects a fitted model estimated.
-#'
-#' @param fit A fitted model object.
-#' @param ... Unused.
-#' @return A `posterior` draws object.
-#' @family generics
-#' @export
-#' @examples
-#' samples(fit_weight_sim_nereo)
-samples <- function(fit, ...) {
-  UseMethod("samples")
-}

@@ -1,11 +1,11 @@
 test_that("samples returns a draws_rvars object carrying the fit's variables", {
-  s <- samples(weight_fit)
+  s <- samples(weight_nereo_fit)
   expect_true(posterior::is_draws_rvars(s))
   expect_setequal(
     posterior::variables(s),
-    posterior::variables(weight_fit$draws)
+    posterior::variables(weight_nereo_fit$draws)
   )
-  expect_equal(posterior::ndraws(s), posterior::ndraws(weight_fit$draws))
+  expect_equal(posterior::ndraws(s), posterior::ndraws(weight_nereo_fit$draws))
 })
 
 test_that("samples errors on an object that is not a fit", {
@@ -14,7 +14,7 @@ test_that("samples errors on an object that is not a fit", {
 })
 
 test_that("samples excludes effects the fit omitted", {
-  off <- weight_fit
+  off <- weight_nereo_fit
   off$meta$density_on <- FALSE
   off$meta$terms$fixed <- setdiff(off$meta$terms$fixed, "density_slope")
   expect_false("density_slope" %in% posterior::variables(samples(off)))

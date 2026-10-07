@@ -1,7 +1,8 @@
 # a missing conversion fit errors naming it
 
     Code
-      kb_predict_plot_biomass(weight_fit, size_nereo_fit, density_nereo_fit, measure = "dry")
+      kb_predict_plot_biomass(weight_nereo_fit, size_nereo_fit, density_nereo_fit,
+        measure = "dry")
     Condition
       Error in `kb_predict_plot_biomass()`:
       ! `wetdry` is required for dry biomass.
@@ -9,7 +10,7 @@
 # mismatched or wrong fits error
 
     Code
-      kb_predict_plot_biomass(weight_fit, size_macro_fit, density_nereo_fit)
+      kb_predict_plot_biomass(weight_nereo_fit, size_macro_fit, density_nereo_fit)
     Condition
       Error in `kb_predict_plot_biomass()`:
       ! The fits must be of one species.

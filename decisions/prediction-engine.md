@@ -23,8 +23,9 @@ Build the engine on the **`posterior` `rvar` datatype**:
 
 - Per-model prediction is `rvar` arithmetic in one internal generic, `.linpred()`
   (the single R source of truth for the mean; the Stan `model` block is the only
-  other place the mean is defined), with one method per fit
-  subclass in `R/linpred.R`.
+  other place the mean is defined), with one method per model at the class tier
+  where it is invariant, in `R/linpred.R`. The site, year, and site:year effects
+  come from one shared helper, `.group_effects()`.
 - The `rstantools` generics (`posterior_linpred`/`posterior_epred`/
   `posterior_predict`/`log_lik`) are thin faces over that helper, returning
   `D x N` matrices for ecosystem interop (`bayesplot`, `loo`).
@@ -101,6 +102,7 @@ Only the production `rvar` paths are used (native operators, `rvar_rng`, the
   re-implemented.
 - The biomass composition may drop to `posterior::draws_of()` matrices for speed where
   needed; the result is identical and re-wrapped as an `rvar`.
+
 ## Cross-model prediction contract
 
 Every model has one prediction verb, `kb_predict_<model>(fit, new_data)`, meaning
@@ -126,8 +128,8 @@ kb_predict_weight(fit, plants)                             # your own rows
 - The verbs stay model-named rather than one generic `kb_predict()`: when a
   pre-fit model is loaded in a reviewed script, the call names the model in play.
   They are plain functions that check the fit class, not S3 generics.
-- `kb_new_data()` takes the species predictor by its column name through `...`
-  (`diameter_mm` or `fronds`) and checks it against the fit, so no species
+- `kb_new_data()` takes the predictor by its column name through `...`
+  (`diameter_mm`, `fronds`, or `cover`) and checks it against the fit, so no species
   dispatch is needed. It marks its grid as a curve, and the mark travels into the
   `kb_predictions` object so `kb_plot_predictions()` draws a ribbon only for
   curves: observed plants also vary in diameter, so the data alone cannot say.
@@ -147,7 +149,9 @@ Conditioning is resolved **per row, per factor** by level membership, in the
 shared `.linpred()` engine: a row whose grouping level is known is
 conditioned on its estimated random effect; a new level, or an absent grouping
 column, is handled by `new_levels` (`"average"` zeroes it, `"sample"` draws
-`Normal(0, sd)`). Known levels condition regardless of `new_levels`. This makes a
+`Normal(0, sd)`). Known levels condition regardless of `new_levels`. A site:year
+cell is known only when it was observed: a fitted site and a fitted year that
+never occurred together have no estimated site:year effect. This makes a
 mix of observed and new groups resolve in a single call (no bind), and lets the
 `rstantools` generics infer conditioning from the `new_data` columns with no `by`
 argument. `"average"` is the default for every verb and the draw generics: with
@@ -155,4 +159,4 @@ a grid that has no `site` column the typical site is what users usually mean,
 and the result needs no seed. `"sample"` gives a calibrated interval for a
 specific new group and is documented for that case. The biomass composition
 defaults to `"sample"`, since its rows are always specific surveyed site-years,
-and its limits become the measurement error of a cover biomass fit. Later sub-models follow this same contract.
+and its limits become the measurement error of a cover biomass fit.

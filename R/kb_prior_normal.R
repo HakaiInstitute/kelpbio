@@ -1,7 +1,7 @@
 #' Normal Prior
 #'
-#' Construct a Normal prior object for use in [kb_priors_weight_nereo()] and the
-#' `priors` argument of the `kb_fit_*()` functions.
+#' Construct a Normal prior object to replace an entry of a `kb_priors_*()` list
+#' passed to the `priors` argument of the `kb_fit_*()` functions.
 #'
 #' @param mean A number giving the mean.
 #' @param sd A positive number giving the standard deviation.

@@ -1,8 +1,8 @@
 #' Lognormal Prior
 #'
-#' Construct a lognormal prior object for use in [kb_priors_cover_biomass_nereo()]
-#' and the `priors` argument of the `kb_fit_*()` functions. Used for positive
-#' parameters whose plausible values span orders of magnitude.
+#' Construct a lognormal prior object to replace an entry of a `kb_priors_*()`
+#' list passed to the `priors` argument of the `kb_fit_*()` functions. Used for
+#' positive parameters whose plausible values span orders of magnitude.
 #'
 #' @details
 #' The hyperparameters are on the log scale: a lognormal prior with `meanlog` and

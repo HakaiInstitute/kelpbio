@@ -52,12 +52,8 @@ posterior_predict.kb_fit <- function(
   rlang::check_dots_empty()
   .chk_kb_fit(object)
   .chk_representative_site(object, representative_site)
-  if (is.null(new_data) && nrow(object$data) == 0L) {
-    cli::cli_abort(
-      "A zero-observation fit has no posterior-predictive draws at the observed data."
-    )
-  }
   res <- data_linpred(object, new_data, new_levels, representative_site)
   lp <- posterior::draws_of(res$linpred) # D x N, link scale
-  .eval_family(object, lp, res$grid, "ran")
+  # A cover fit checks each row's in situ limits here.
+  .with_call(.eval_family(object, lp, res$grid, "ran"), rlang::current_env())
 }

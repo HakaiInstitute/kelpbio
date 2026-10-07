@@ -20,8 +20,9 @@ defaults.
 Each entry is named after the parameter it sets, as reported by \code{\link[=tidy]{tidy()}} and
 \code{\link[=kb_model_describe]{kb_model_describe()}}. The prior family of each entry is fixed (the
 population-level terms are Normal, the Gamma shape and standard deviations are
-Exponential); only the hyperparameters can be changed. \code{fronds_slope} is the
-slope of log weight on log frond count.
+Exponential); only the hyperparameters can be changed. \code{intercept} is the log
+expected weight at the reference frond count, and \code{fronds_slope} the slope of
+log expected weight on log frond count.
 }
 \examples{
 priors <- kb_priors_weight_macro()

@@ -1,6 +1,4 @@
-# Print methods use cli's cat_*/format_inline (stdout, as print methods must),
-# not the cli_*() condition functions (message stream). format_inline renders the
-# cli markup (e.g. {.cls}).
+# cat_*/format_inline, not cli_*(): print methods write to stdout.
 
 #' @export
 print.kb_stancode <- function(x, ...) {
@@ -30,7 +28,6 @@ print.kb_prior_lognormal <- function(x, ...) {
   invisible(x)
 }
 
-# A diagnostic rate for display: 3 significant figures with a "%" suffix, or
 # "unknown" when the rate has no denominator (a fit with no draws).
 .fmt_perc <- function(x) {
   if (is.na(x)) {
@@ -39,9 +36,8 @@ print.kb_prior_lognormal <- function(x, ...) {
   paste0(format(signif(x, 3)), "%")
 }
 
-# Render the shared fit metadata header (used by print.kb_fit and
-# print.summary_kb_fit). `h` is the field list from .kb_fit_header(); the
-# summary_kb_fit object carries the same fields.
+# Header shared by print.kb_fit and print.summary_kb_fit; `h` is from
+# .kb_fit_header().
 .print_kb_fit_header <- function(h) {
   cli::cat_line("Model:     ", h$model, " (", h$species, ")")
   if (!is.na(h$predictor)) {
@@ -102,8 +98,7 @@ print.summary_kb_fit <- function(x, ...) {
   cli::cat_line(cli::col_grey(
     "ess_bulk, ess_tail: bulk and tail effective sample sizes."
   ))
-  # Rates are rounded here, at the display boundary; the fit stores them
-  # unrounded.
+  # Rounded for display only; the fit stores them unrounded.
   cli::cat_line(cli::col_grey(
     .fmt_perc(x$perc_divergent),
     " divergent transitions; ",
@@ -119,8 +114,6 @@ print.summary_kb_fit <- function(x, ...) {
 print.kb_predictions <- function(x, ...) {
   gv <- attr(x, "kb_group_vars", exact = TRUE)
   by <- if (length(gv)) paste0(" | by: ", paste(gv, collapse = ", ")) else ""
-  # exact = TRUE: a size prediction has no kb_predictor, which would otherwise
-  # partially match kb_predictor_units.
   predictor <- attr(x, "kb_predictor", exact = TRUE)
   predictor <- if (is.null(predictor)) "" else paste0(" predictor: ", predictor, " |")
   cli::cat_line(

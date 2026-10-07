@@ -21,7 +21,7 @@ kb_stancode <- function(fit, ...) {
 #' @export
 kb_stancode.default <- function(fit, ...) {
   .chk_kb_fit(fit, call = rlang::current_env())
-  .abort_no_method("kb_stancode", fit, call = rlang::current_env())
+  .abort_no_method(fit, call = rlang::current_env())
 }
 
 #' @rdname kb_stancode
@@ -34,20 +34,16 @@ kb_stancode.kb_fit <- function(fit, ...) {
   structure(code, class = "kb_stancode")
 }
 
-# Strip Stan comments (`//` line and `/* */` block) for display: comment-only
-# lines are dropped and runs of blank lines collapsed. String-literal contents
-# are not special-cased (the bundled models contain none).
+# String literals are not special-cased (the bundled models contain none).
 .strip_stan_comments <- function(code) {
   code <- gsub("(?s)/\\*.*?\\*/", "", code, perl = TRUE)
   lines <- strsplit(code, "\n", fixed = TRUE)[[1]]
   stripped <- sub("[[:space:]]+$", "", sub("//.*$", "", lines))
-  # drop lines that held only a comment (non-blank before, blank after)
+  # drop comment-only lines
   comment_only <- nzchar(trimws(lines)) & !nzchar(trimws(stripped))
   stripped <- stripped[!comment_only]
-  # collapse consecutive blank lines into one
   blank <- !nzchar(stripped)
   stripped <- stripped[!(blank & c(FALSE, blank[-length(blank)]))]
-  # trim leading and trailing blank lines
   nonblank <- which(nzchar(stripped))
   if (length(nonblank)) {
     stripped <- stripped[seq(min(nonblank), max(nonblank))]

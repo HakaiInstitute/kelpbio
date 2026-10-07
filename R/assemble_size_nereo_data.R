@@ -16,16 +16,10 @@ assemble_size_nereo_data <- function(
   prior_only = FALSE,
   site_year_on = TRUE
 ) {
-  site <- factor(data$site)
-  year <- factor(data$year)
-
   c(
+    group_stan_data(data),
     list(
       n_obs = nrow(data),
-      n_site = max(1L, nlevels(site)),
-      n_year = max(1L, nlevels(year)),
-      site = as.integer(site),
-      year = as.integer(year),
       diameter_mm = as.numeric(data$diameter_mm),
       prior_only = as.integer(prior_only),
       site_year_on = as.integer(site_year_on)
