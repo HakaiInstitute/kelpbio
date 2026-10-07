@@ -1,13 +1,28 @@
 # Seconds between progress polls in the console "bar" path.
 POLL_INTERVAL <- 0.2
 
-# Model-agnostic sampling engine shared by every kb_fit_* function:
-# sample, extract draws as rvars, summarise convergence, discard the live
-# stanfit. warmup = niters, then the post-warmup phase is thinned by nthin to
-# land exactly niters draws/chain.
-#
-# progress: "bar" samples in a callr background process, polling a progress
-# artifact to drive a cli bar; "verbose"/"none" sample in-process.
+# rstan::sampling() arguments fit_stan() sets itself, each with the kelpbio
+# argument that sets it. pars and include have none: they would drop parameters
+# the fit object needs.
+SAMPLING_RESERVED <- c(
+  data = "data",
+  chains = "chains",
+  iter = "niters",
+  warmup = "niters",
+  thin = "nthin",
+  cores = "cores",
+  seed = "seed",
+  refresh = "progress",
+  show_messages = "progress",
+  open_progress = "progress",
+  sample_file = "progress_dir",
+  pars = NA,
+  include = NA
+)
+
+# Sampling engine shared by every kb_fit_* function; the live stanfit is
+# discarded. Post-warmup is thinned by nthin to land exactly niters draws/chain.
+# progress = "bar" samples in a callr background process.
 fit_stan <- function(
   stanmodel,
   stan_data,
@@ -20,13 +35,15 @@ fit_stan <- function(
   progress_dir = NULL,
   stanmodel_name = NULL,
   seed = NULL,
-  ...
+  ...,
+  call = rlang::caller_env()
 ) {
   warmup <- as.integer(niters)
   total_iter <- warmup + as.integer(niters) * as.integer(nthin)
   chains <- as.integer(chains)
 
   dots <- list(...)
+  .chk_sampling_dots(dots, call = call)
   control <- utils::modifyList(
     list(adapt_delta = 0.95),
     dots$control %||% list()
@@ -103,9 +120,8 @@ fit_stan <- function(
   )
 }
 
-# Run-level HMC diagnostics, from rstan's own per-iteration vectors so the rates
-# match rstan's warnings. Computed here because the stanfit is discarded. E-BFMI
-# is per chain, reduced to its minimum: the chain the diagnostic fires on.
+# Computed here because the stanfit is discarded, from rstan's own vectors so
+# the rates match its warnings. E-BFMI is the minimum over chains.
 sampler_diagnostics <- function(stanfit) {
   divergent <- rstan::get_divergent_iterations(stanfit)
   treedepth <- rstan::get_max_treedepth_iterations(stanfit)
@@ -126,9 +142,8 @@ perc_of <- function(n, total) {
   100 * n / total
 }
 
-# Sample in a callr background process, polling the progress artifact to drive a
-# cli bar. The child re-fetches the compiled model by name (its pointer can't
-# cross the process boundary). Bar counts are cosmetic; the stanfit is the fit.
+# The child re-fetches the compiled model by name, since its pointer cannot
+# cross the process boundary.
 sample_with_bar <- function(
   stanmodel_name,
   sampling_args,
@@ -176,8 +191,7 @@ sample_with_bar <- function(
   bg$get_result()
 }
 
-# Advise only when chains would run one at a time despite idle cores, the sole
-# case the user can act on; otherwise stay silent (the bar carries the happy path).
+# Advise only when chains would run one at a time despite idle cores.
 announce_sampling <- function(chains, cores) {
   avail <- parallel::detectCores()
   cores_unused <- !is.na(avail) &&
@@ -192,9 +206,8 @@ announce_sampling <- function(chains, cores) {
   invisible(NULL)
 }
 
-# Muffle rstan's post-sampling HMC diagnostic warnings for "bar"/"none"; let them
-# through for "verbose". converged()/glance()/summary() give the structured
-# summary regardless.
+# Muffle rstan's post-sampling HMC warnings; converged()/glance()/summary()
+# report the diagnostics.
 with_quiet_sampler <- function(expr, muffle) {
   if (!muffle) {
     return(expr)
@@ -218,9 +231,8 @@ with_quiet_sampler <- function(expr, muffle) {
   )
 }
 
-# NULL respects getOption("mc.cores"), falling back to chains, capped at available
-# cores. On Windows, load_all() dev runs should pass cores = 1 (parallel chains
-# load the installed package, not the load_all() session).
+# NULL respects getOption("mc.cores"), falling back to chains. On Windows,
+# load_all() runs need cores = 1: parallel chains load the installed package.
 resolve_cores <- function(cores, chains) {
   if (is.null(cores)) {
     cores <- getOption("mc.cores", chains)

@@ -1,7 +1,3 @@
-# Tests for the shared sampling engine helpers. The fit_stan() orchestration
-# itself is exercised end-to-end through the kb_fit_* tests (it needs a compiled
-# stanmodel and real sampling); the pure helpers are tested directly here.
-
 test_that("resolve_cores respects mc.cores, caps at available, floors at 1", {
   avail <- parallel::detectCores()
   old <- options(mc.cores = 1)
@@ -49,7 +45,6 @@ test_that("with_quiet_sampler passes the value and warnings through when muffle 
 
 test_that("with_quiet_sampler muffles only HMC diagnostics when muffle = TRUE", {
   expect_identical(with_quiet_sampler(42L, muffle = TRUE), 42L)
-  # sampler diagnostic warnings are muffled ...
   expect_no_warning(
     with_quiet_sampler(
       warning("There were 3 divergent transitions"),
@@ -60,7 +55,6 @@ test_that("with_quiet_sampler muffles only HMC diagnostics when muffle = TRUE", 
     warning("R-hat is too high"),
     muffle = TRUE
   ))
-  # ... but genuine warnings from elsewhere still reach the user
   expect_warning(
     with_quiet_sampler(warning("something unrelated"), muffle = TRUE),
     "unrelated"
@@ -68,15 +62,13 @@ test_that("with_quiet_sampler muffles only HMC diagnostics when muffle = TRUE", 
 })
 
 test_that("perc_of returns a percentage, and NA when there is no denominator", {
-  # A percentage, not a proportion: dropping the 100 would make the
-  # max_perc_divergent threshold 100x too lenient.
+  # A proportion would make max_perc_divergent 100x too lenient.
   expect_equal(perc_of(5, 2000), 0.25)
-  # No draws means the rate is unknown, not zero, so it cannot pass a verdict.
   expect_true(is.na(perc_of(0, 0)))
 })
 
 test_that("a fitted object carries the run-level sampler diagnostics", {
-  diag <- weight_fit$diagnostics
+  diag <- weight_nereo_fit$diagnostics
   expect_named(
     diag,
     c(
@@ -87,11 +79,17 @@ test_that("a fitted object carries the run-level sampler diagnostics", {
       "ebfmi"
     )
   )
-  # The rate is the stored count over the retained draws.
   expect_equal(
     diag$perc_divergent,
-    perc_of(diag$ndivergent, posterior::ndraws(weight_fit$draws))
+    perc_of(diag$ndivergent, posterior::ndraws(weight_nereo_fit$draws))
   )
   expect_gte(diag$perc_max_treedepth, 0)
   expect_gt(diag$ebfmi, 0)
+})
+
+test_that("a reserved sampler argument errors in the fit function before sampling", {
+  expect_snapshot(
+    error = TRUE,
+    kb_fit_wetdry_nereo(data_wetdry_sim_nereo, iter = 10, progress = "none")
+  )
 })

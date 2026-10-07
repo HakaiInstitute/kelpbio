@@ -1,10 +1,6 @@
-# Construct a kb_predictions object: a tibble subclass carrying column-role
-# metadata (predictor, grouping variables, response) as attributes, used
-# by kb_plot_predictions() for its defaults. `curve` records whether the rows
-# form an ordered, generated grid over the predictor (ribbon-eligible) rather
-# than scattered supplied rows; it cannot be recovered from the data shape.
-# `conf_level` records the level of `lower` and `upper`, so a prediction passed on
-# as data (the in situ biomass of a cover biomass fit) carries its own level.
+# Column roles are stored as attributes for kb_plot_predictions(). `curve`
+# marks a generated grid over the predictor, which the data shape cannot reveal.
+# `conf_level` travels with a prediction passed on as data (in situ biomass).
 new_kb_predictions <- function(
   x,
   predictor,

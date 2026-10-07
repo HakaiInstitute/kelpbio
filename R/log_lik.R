@@ -20,11 +20,6 @@
 log_lik.kb_fit <- function(object, ...) {
   rlang::check_dots_empty()
   .chk_kb_fit(object)
-  if (nrow(object$data) == 0L) {
-    cli::cli_abort(
-      "A zero-observation fit has no pointwise log-likelihood."
-    )
-  }
   mu <- posterior::draws_of(.linpred_obs(object)) # link scale, D x N
   .eval_family(object, mu, object$data, "log_lik")
 }

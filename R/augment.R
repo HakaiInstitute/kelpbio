@@ -1,8 +1,8 @@
 #' Augment Model Data
 #'
 #' Append the [fitted()] and deviance [residuals()] values to the input data.
-#' Values are posterior point estimates (median): `fitted` of the expected weight,
-#' `residual` of the deviance residual.
+#' Values are posterior medians: `fitted` of the expected response, `residual` of
+#' the deviance residual.
 #'
 #' @param x A `kb_fit` object.
 #' @param ... Unused.
@@ -17,9 +17,7 @@
 augment.kb_fit <- function(x, ...) {
   rlang::check_dots_empty()
   .chk_kb_fit(x)
-  # fitted() and residuals() would each resolve the observed linear predictor
-  # again, so build both from one pass over the draws.
-  .chk_observed_data(x)
+  # One pass over the linear predictor for both columns.
   mu <- .linpred_obs(x)
   out <- tibble::as_tibble(x$data)
   out$fitted <- as.numeric(stats::median(.epred(x, mu)))

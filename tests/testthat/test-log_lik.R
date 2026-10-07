@@ -1,27 +1,24 @@
 test_that("log_lik returns a D x N matrix usable by loo", {
-  ll <- log_lik(weight_fit)
+  ll <- log_lik(weight_nereo_fit)
   expect_true(is.matrix(ll))
-  # Orientation guard: a transposed matrix is accepted by loo::loo() without
-  # complaint and silently reports elpd over draws instead of observations.
-  expect_equal(ncol(ll), nrow(weight_fit$data))
-  expect_equal(nrow(ll), posterior::ndraws(weight_fit$draws))
+  # loo::loo() silently accepts a transposed matrix.
+  expect_equal(ncol(ll), nrow(weight_nereo_fit$data))
+  expect_equal(nrow(ll), posterior::ndraws(weight_nereo_fit$draws))
   skip_if_not_installed("loo")
   expect_s3_class(suppressWarnings(loo::loo(ll)), "loo")
 })
 
 test_that("nereo log_lik is the lognormal density of weight", {
-  # Independent of extras, so this pins the parameterisation (the density is of
-  # weight, the Normal density of log weight minus log weight) as well as the
-  # orientation.
-  mu <- posterior_linpred(weight_fit)
-  sw <- as.vector(posterior::draws_of(weight_fit$draws$sd_residual))
-  y <- weight_fit$data$weight_kg
+  # Lognormal density of weight: Normal density of log weight minus log weight.
+  mu <- posterior_linpred(weight_nereo_fit)
+  sw <- as.vector(posterior::draws_of(weight_nereo_fit$draws$sd_residual))
+  y <- weight_nereo_fit$data$weight_kg
   expected <- t(vapply(
     seq_along(sw),
     function(d) stats::dnorm(log(y), mu[d, ], sw[d], log = TRUE) - log(y),
     numeric(length(y))
   ))
-  expect_equal(log_lik(weight_fit), expected, tolerance = 1e-10)
+  expect_equal(log_lik(weight_nereo_fit), expected, tolerance = 1e-10)
 })
 
 test_that("macro log_lik matches the Gamma density computed directly", {
@@ -44,9 +41,9 @@ test_that("macro log_lik matches the Gamma density computed directly", {
 })
 
 test_that("log_lik aborts for a zero-observation fit", {
-  fit0 <- weight_fit
+  fit0 <- weight_nereo_fit
   fit0$data <- fit0$data[0, ]
-  expect_error(log_lik(fit0), "zero-observation fit")
+  expect_error(log_lik(fit0), "no observed data")
 })
 
 test_that("nereo size log_lik matches the Weibull density computed directly", {
@@ -178,7 +175,7 @@ test_that("cover log_lik is the Normal density of the log estimate with its Jaco
 test_that("log_lik agrees with the Stan model's likelihood for every model", {
   skip_on_cran()
   fits <- list(
-    weight_fit,
+    weight_nereo_fit,
     weight_macro_fit,
     size_nereo_fit,
     size_macro_fit,
@@ -193,7 +190,6 @@ test_that("log_lik agrees with the Stan model's likelihood for every model", {
   )
   for (fit in fits) {
     stan <- stan_log_lik(fit)
-    # Equal up to the constants Stan drops, which do not vary by draw.
     gap <- rowSums(log_lik(stan$fit)) - stan$lp
     expect_equal(gap, rep(gap[1], length(gap)), tolerance = 1e-8, label = class(fit)[1])
   }

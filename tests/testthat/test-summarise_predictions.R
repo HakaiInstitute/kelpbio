@@ -1,8 +1,8 @@
 test_that("summarise_predictions reduces the linpred to estimate/lower/upper", {
-  grid <- build_by_grid(weight_fit, character(0), values = c(20, 40))
-  lp <- .linpred(weight_fit, grid, "average")
+  grid <- build_by_grid(weight_nereo_fit, character(0), values = c(20, 40))
+  lp <- .linpred(weight_nereo_fit, grid, "average")
   out <- summarise_predictions(
-    weight_fit,
+    weight_nereo_fit,
     grid,
     lp,
     group_vars = character(0),
@@ -17,9 +17,7 @@ test_that("summarise_predictions reduces the linpred to estimate/lower/upper", {
 })
 
 test_that("the response and predictor names come from the fit, not a constant", {
-  # The summariser is shared by every sub-model, so it must carry no knowledge of
-  # weight or diameter.
-  for (fit in list(weight_fit, weight_macro_fit)) {
+  for (fit in list(weight_nereo_fit, weight_macro_fit)) {
     values <- range(fit$data[[fit$meta$predictor]])
     grid <- build_by_grid(fit, character(0), values = values)
     out <- summarise_predictions(
@@ -34,18 +32,18 @@ test_that("the response and predictor names come from the fit, not a constant", 
     expect_identical(attr(out, "kb_predictor"), fit$meta$predictor)
     expect_identical(attr(out, "kb_response"), fit$meta$response)
   }
-  # and the two species really do differ in the predictor, so the check bites
+  # The species differ in predictor, so the check bites.
   expect_false(identical(
-    weight_fit$meta$predictor,
+    weight_nereo_fit$meta$predictor,
     weight_macro_fit$meta$predictor
   ))
 })
 
 test_that("summarise_predictions honours conf_level and the curve flag", {
-  grid <- build_by_grid(weight_fit, character(0), values = 30)
-  lp <- .linpred(weight_fit, grid, "average")
+  grid <- build_by_grid(weight_nereo_fit, character(0), values = 30)
+  lp <- .linpred(weight_nereo_fit, grid, "average")
   narrow <- summarise_predictions(
-    weight_fit,
+    weight_nereo_fit,
     grid,
     lp,
     character(0),
@@ -54,7 +52,7 @@ test_that("summarise_predictions honours conf_level and the curve flag", {
     6
   )
   wide <- summarise_predictions(
-    weight_fit,
+    weight_nereo_fit,
     grid,
     lp,
     character(0),
@@ -66,7 +64,7 @@ test_that("summarise_predictions honours conf_level and the curve flag", {
   expect_false(attr(narrow, "kb_curve"))
   expect_true(attr(
     summarise_predictions(
-      weight_fit,
+      weight_nereo_fit,
       grid,
       lp,
       character(0),

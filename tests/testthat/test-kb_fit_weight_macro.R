@@ -1,5 +1,4 @@
 test_that("kb_fit_weight_macro does not expose site_year_on", {
-  # the site:year structure is data-determined, not a user argument
   expect_false("site_year_on" %in% names(formals(kb_fit_weight_macro)))
 })
 

@@ -1,7 +1,5 @@
-# The fit shared by the cover biomass models: the cover-biomass calibration, identical in
-# form across species and differing only in the default priors. The exported
-# kb_fit_cover_biomass_<species>() functions supply the species, their data check, and
-# their default priors (decisions/species-as-variant.md).
+# The fit shared by the cover biomass models, identical across species but for
+# the data check and default priors (decisions/species-as-variant.md).
 fit_cover_biomass_model <- function(
   data,
   biomass,
@@ -18,9 +16,14 @@ fit_cover_biomass_model <- function(
   cores,
   seed,
   progress,
-  progress_dir
+  progress_dir,
+  call = rlang::caller_env()
 ) {
-  progress <- rlang::arg_match(progress, c("bar", "verbose", "none"))
+  progress <- rlang::arg_match(
+    progress,
+    c("bar", "verbose", "none"),
+    error_call = call
+  )
   .chk_sampler_args(
     prior_only = prior_only,
     chains = chains,
@@ -29,12 +32,15 @@ fit_cover_biomass_model <- function(
     cores = cores,
     seed = seed,
     progress = progress,
-    progress_dir = progress_dir
+    progress_dir = progress_dir,
+    call = call
   )
 
   # The species' own check, so its errors name the function users know.
   check_data(data, biomass, x_name = "`data`")
-  conf_level <- cover_conf_level(biomass, conf_level)
+  # The data check accepts a NULL biomass, which a fit cannot.
+  .chk_plot_biomass(biomass, call = call)
+  conf_level <- .with_call(cover_conf_level(biomass, conf_level), call)
   joined <- join_cover_biomass(data, biomass)
   notify_cover_unmatched(joined$unmatched, progress = progress)
   data <- joined$data
@@ -46,11 +52,11 @@ fit_cover_biomass_model <- function(
     prior_only = prior_only
   )
 
-  pars <- c("cover_slope", "biomass_floor", "tide_height_slope", "error_scaling", "sd_site", "sd_year")
+  parameters <- fit_parameters(priors, c("site_effect", "year_effect"))
   core <- fit_stan(
     stanmodels$cover_biomass,
     stan_data,
-    param_vars = c(pars, "site_effect", "year_effect"),
+    param_vars = parameters$sampled,
     chains = chains,
     niters = niters,
     nthin = nthin,
@@ -59,7 +65,8 @@ fit_cover_biomass_model <- function(
     progress = progress,
     progress_dir = progress_dir,
     stanmodel_name = "cover_biomass",
-    ...
+    ...,
+    call = call
   )
 
   new_kb_fit(
@@ -70,12 +77,12 @@ fit_cover_biomass_model <- function(
     species = species,
     # The response is a biomass per m^2, so there is no survey effort.
     offset = NULL,
-    terms = list(fixed = pars, random = c("site_effect", "year_effect")),
+    terms = parameters[c("fixed", "random")],
     prior_only = prior_only,
     nthin = as.integer(nthin),
     meta_extra = list(
       # One survey per site-year is typical, so a site:year effect would be
-      # confounded with the residual; the model never has one.
+      # confounded with the residual.
       site_year_on = FALSE,
       response = "biomass_kg_m2",
       # Curves run over tide-corrected cover, a proportion of the plot, which

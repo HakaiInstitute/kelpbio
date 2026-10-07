@@ -101,9 +101,9 @@ kb_predict_plot_biomass <- function(
   progress <- rlang::arg_match(progress)
   .chk_progress_dir(progress_dir)
   new_levels <- rlang::arg_match(new_levels)
-  .chk_kb_fit_weight(weight)
-  .chk_kb_fit_size(size)
-  .chk_kb_fit_density(density)
+  .chk_kb_fit(weight, "kb_fit_weight")
+  .chk_kb_fit(size, "kb_fit_size")
+  .chk_kb_fit(density, "kb_fit_density")
   if (!.vld_observed_data(density)) {
     cli::cli_abort("{.arg density} has no observed site-years to predict at.")
   }
@@ -127,8 +127,7 @@ kb_predict_plot_biomass <- function(
   grid <- plot_biomass_grid(weight, size, density)
   groups <- grid[c("site", "year")]
 
-  # Expected density per m^2: every row is an observed site-year of the density
-  # fit, so its own effects apply, and the grid holds no area, so no offset.
+  # Per m^2: the grid holds no area column, so no offset.
   density_draws <- posterior::draws_of(.epred(
     density,
     .linpred(density, groups, new_levels)
@@ -137,11 +136,14 @@ kb_predict_plot_biomass <- function(
   size_lp <- posterior::draws_of(
     .linpred(size, groups, new_levels, representative_site)
   )
+  # Resolved once so a new site or year takes one weight effect throughout.
+  weight_effects <- posterior::draws_of(
+    .group_effects(weight, groups, new_levels, representative_site)
+  )
   upper <- max(size$data[[size$meta$response]])
-  # Evenly spaced quantiles: the midpoints of n_plants equal-probability strata.
+  # Midpoints of n_plants equal-probability strata.
   u <- (seq_len(n_plants) - 0.5) / n_plants
 
-  # One step per site-year: the size draws and weight evaluations dominate.
   n_rows <- nrow(grid)
   reporter <- progress_reporter(progress, "Predicting biomass")
   reporter$start(n_rows)
@@ -153,8 +155,7 @@ kb_predict_plot_biomass <- function(
       weight,
       grid[k, ],
       sizes,
-      new_levels,
-      representative_site
+      weight_effects[, k]
     )
     reporter$update(k)
     write_prediction_progress(progress_dir, k, n_rows)
@@ -186,34 +187,28 @@ kb_predict_plot_biomass <- function(
   )
 }
 
-# Plant sizes for one site-year, D x length(u): the size distribution's
-# quantiles at probabilities u, per draw, truncated above at `upper` (the
-# distribution is renormalised below it). `lp` is the site-year's link-scale
-# mean, one value per draw.
+# D x length(u) quantiles of one site-year's size distribution, per draw,
+# truncated above at `upper` and renormalised. `lp` has one value per draw.
 .plant_sizes <- function(fit, lp, upper, u) {
   UseMethod(".plant_sizes")
 }
 
 #' @export
 .plant_sizes.default <- function(fit, lp, upper, u) {
-  .abort_no_method(x = fit, call = NULL)
+  .abort_no_method(fit, call = NULL)
 }
 
-# Weibull with mean exp(lp) and shape shape; diameters in (0, upper].
 #' @export
 .plant_sizes.kb_fit_size_nereo <- function(fit, lp, upper, u) {
   shape <- as.vector(posterior::draws_of(fit$draws$shape))
   scale <- weibull_scale(exp(lp), shape)
-  # shape and scale recycle down each column of the D x n matrix, so element
-  # (d, k) gets draw d's distribution.
+  # shape and scale recycle down columns, so row d gets draw d's distribution.
   p <- outer(stats::pweibull(upper, shape, scale), u)
   matrix(stats::qweibull(p, shape, scale), nrow = length(lp))
 }
 
-# Zero-truncated negative binomial with untruncated mean exp(lp) and
-# overdispersion dispersion; frond counts in [1, upper]. Each draw's quantiles are
-# looked up in its cumulative distribution over 1 to upper, built once, which is
-# several times faster than stats::qnbinom() and gives the same counts.
+# Looks quantiles up in each draw's CDF over 1 to upper, several times faster
+# than stats::qnbinom() with the same counts.
 #' @export
 .plant_sizes.kb_fit_size_macro <- function(fit, lp, upper, u) {
   size <- 1 / as.vector(posterior::draws_of(fit$draws$dispersion))
@@ -226,8 +221,6 @@ kb_predict_plot_biomass <- function(
     numeric(length(mu))
   )
   cdf <- cdf / cdf[, upper]
-  # The smallest count whose cumulative probability reaches u is one more than
-  # the number of counts below u.
   fronds <- vapply(
     seq_along(mu),
     function(d) findInterval(u, cdf[d, ], left.open = TRUE) + 1,

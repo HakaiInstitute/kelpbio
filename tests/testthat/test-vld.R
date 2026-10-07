@@ -1,7 +1,7 @@
 test_that(".vld_ predicates recognise a weight fit", {
-  expect_true(.vld_kb_fit(weight_fit))
-  expect_true(.vld_kb_fit_weight(weight_fit))
-  expect_false(.vld_kb_fit_weight(1))
+  expect_true(.vld_kb_fit(weight_nereo_fit))
+  expect_true(.vld_kb_fit(weight_nereo_fit, "kb_fit_weight"))
+  expect_false(.vld_kb_fit(1, "kb_fit_weight"))
   expect_false(.vld_kb_fit(1))
 })
 
@@ -73,15 +73,15 @@ test_that(".vld_positive_measure and .vld_frond_count check measured values", {
   expect_false(.vld_frond_count(2.5))
 })
 
-test_that(".vld_kb_fit_density recognises a density fit", {
-  expect_true(.vld_kb_fit_density(density_nereo_fit))
-  expect_true(.vld_kb_fit_density(density_macro_fit))
-  expect_false(.vld_kb_fit_density(size_nereo_fit))
-  expect_false(.vld_kb_fit_density(1))
+test_that(".vld_kb_fit with class kb_fit_density recognises a density fit", {
+  expect_true(.vld_kb_fit(density_nereo_fit, "kb_fit_density"))
+  expect_true(.vld_kb_fit(density_macro_fit, "kb_fit_density"))
+  expect_false(.vld_kb_fit(size_nereo_fit, "kb_fit_density"))
+  expect_false(.vld_kb_fit(1, "kb_fit_density"))
 })
 
 test_that(".vld_kb_fit_grouped recognises the models with grouping factors", {
-  expect_true(.vld_kb_fit_grouped(weight_fit))
+  expect_true(.vld_kb_fit_grouped(weight_nereo_fit))
   expect_true(.vld_kb_fit_grouped(size_macro_fit))
   expect_true(.vld_kb_fit_grouped(density_nereo_fit))
   expect_false(.vld_kb_fit_grouped(wetdry_nereo_fit))
@@ -97,28 +97,28 @@ test_that(".vld_new_data_density requires a data frame with any area positive", 
   expect_false(.vld_new_data_density(list(area_m2 = 20)))
 })
 
-test_that(".vld_kb_fit_wetdry recognises a wet/dry fit", {
-  expect_true(.vld_kb_fit_wetdry(wetdry_nereo_fit))
-  expect_false(.vld_kb_fit_wetdry(density_nereo_fit))
-  expect_false(.vld_kb_fit_wetdry(1))
+test_that(".vld_kb_fit with class kb_fit_wetdry recognises a wet/dry fit", {
+  expect_true(.vld_kb_fit(wetdry_nereo_fit, "kb_fit_wetdry"))
+  expect_false(.vld_kb_fit(density_nereo_fit, "kb_fit_wetdry"))
+  expect_false(.vld_kb_fit(1, "kb_fit_wetdry"))
 })
 
-test_that(".vld_kb_fit_carbon recognises a carbon fit", {
-  expect_true(.vld_kb_fit_carbon(carbon_nereo_fit))
-  expect_false(.vld_kb_fit_carbon(wetdry_nereo_fit))
+test_that(".vld_kb_fit with class kb_fit_carbon recognises a carbon fit", {
+  expect_true(.vld_kb_fit(carbon_nereo_fit, "kb_fit_carbon"))
+  expect_false(.vld_kb_fit(wetdry_nereo_fit, "kb_fit_carbon"))
 })
 
 test_that(".vld_same_species and .vld_same_ndraws compare fits", {
-  expect_true(.vld_same_species(list(weight_fit, size_nereo_fit)))
-  expect_false(.vld_same_species(list(weight_fit, size_macro_fit)))
-  expect_true(.vld_same_ndraws(list(weight_fit, size_nereo_fit)))
-  expect_false(.vld_same_ndraws(list(weight_fit, fit_size_sim_nereo)))
+  expect_true(.vld_same_species(list(weight_nereo_fit, size_nereo_fit)))
+  expect_false(.vld_same_species(list(weight_nereo_fit, size_macro_fit)))
+  expect_true(.vld_same_ndraws(list(weight_nereo_fit, size_nereo_fit)))
+  expect_false(.vld_same_ndraws(list(weight_nereo_fit, fit_size_sim_nereo)))
 })
 
 
-test_that(".vld_kb_fit_cover_biomass recognises a cover biomass fit", {
-  expect_true(.vld_kb_fit_cover_biomass(cover_biomass_nereo_fit))
-  expect_false(.vld_kb_fit_cover_biomass(carbon_nereo_fit))
+test_that(".vld_kb_fit with class kb_fit_cover_biomass recognises a cover biomass fit", {
+  expect_true(.vld_kb_fit(cover_biomass_nereo_fit, "kb_fit_cover_biomass"))
+  expect_false(.vld_kb_fit(carbon_nereo_fit, "kb_fit_cover_biomass"))
 })
 
 test_that(".vld_cover_survey accepts zero canopy within the plot", {
@@ -174,4 +174,11 @@ test_that(".vld_sum_by accepts NULL or grouping columns of the data", {
   expect_false(.vld_sum_by("zone", data))
   expect_false(.vld_sum_by("site", data))
   expect_false(.vld_sum_by("missing", data))
+})
+
+test_that(".vld_sampling_dots flags sampler arguments kelpbio sets", {
+  expect_true(.vld_sampling_dots(list()))
+  expect_true(.vld_sampling_dots(list(control = list(adapt_delta = 0.99))))
+  expect_false(.vld_sampling_dots(list(iter = 10)))
+  expect_false(.vld_sampling_dots(list(pars = "intercept")))
 })

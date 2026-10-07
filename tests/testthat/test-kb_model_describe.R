@@ -1,5 +1,5 @@
 test_that("kb_model_describe renders the nereo notation block", {
-  expect_snapshot(kb_model_describe(weight_fit))
+  expect_snapshot(kb_model_describe(weight_nereo_fit))
 })
 
 test_that("kb_model_describe renders the macro notation block", {
@@ -7,7 +7,7 @@ test_that("kb_model_describe renders the macro notation block", {
 })
 
 test_that("kb_model_describe renders a methods paragraph with prose = TRUE", {
-  expect_snapshot(kb_model_describe(weight_fit, prose = TRUE))
+  expect_snapshot(kb_model_describe(weight_nereo_fit, prose = TRUE))
 })
 
 test_that("custom stored priors are reflected", {
@@ -18,16 +18,16 @@ test_that("custom stored priors are reflected", {
 })
 
 test_that("a dropped site:year effect is omitted from the description", {
-  fit <- weight_fit
+  fit <- weight_nereo_fit
   fit$meta$site_year_on <- FALSE
   out <- capture.output(kb_model_describe(fit))
   expect_false(any(grepl("SiteYear", out)))
 })
 
 test_that("prose = TRUE returns the lines invisibly", {
-  expect_invisible(kb_model_describe(weight_fit, prose = TRUE))
+  expect_invisible(kb_model_describe(weight_nereo_fit, prose = TRUE))
   expect_type(
-    withVisible(kb_model_describe(weight_fit))$value,
+    withVisible(kb_model_describe(weight_nereo_fit))$value,
     "character"
   )
 })
@@ -37,12 +37,10 @@ test_that("a weight fit with no species method errors rather than returning", {
     list(),
     class = c("kb_fit_weight_other", "kb_fit_weight", "kb_fit")
   )
-  err <- expect_error(
+  expect_error(
     kb_model_describe(fake),
-    "no method for.*<kb_fit_weight_other>"
+    "no method for a <kb_fit_weight_other>"
   )
-  # the hint names the constructors that do have a method
-  expect_match(conditionMessage(err), "kb_fit_weight_nereo")
 })
 
 test_that("an object that is not a fit errors, attributed to the generic", {
@@ -52,8 +50,7 @@ test_that("an object that is not a fit errors, attributed to the generic", {
 })
 
 test_that("the density term is left out when not fitted", {
-  # the fitted case is pinned by the nereo notation snapshot
-  off <- weight_fit
+  off <- weight_nereo_fit
   off$meta$density_on <- FALSE
   out <- capture.output(kb_model_describe(off))
   expect_false(any(grepl("density", out, ignore.case = TRUE)))
@@ -95,7 +92,7 @@ test_that("a dropped site:year effect is omitted from the size description", {
 })
 
 test_that("kb_model_describe follows the power-law form", {
-  power <- weight_fit
+  power <- weight_nereo_fit
   power$meta$form <- "power"
   expect_snapshot(kb_model_describe(power))
   expect_snapshot(kb_model_describe(power, prose = TRUE))

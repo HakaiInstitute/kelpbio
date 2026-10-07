@@ -35,8 +35,8 @@ defaults; unspecified entries keep their defaults.}
 
 \item{chains}{A whole number of MCMC chains.}
 
-\item{niters}{A whole number of saved post-warmup draws per chain (warmup
-defaults to match).}
+\item{niters}{A whole number of saved post-warmup draws per chain, at least 2
+(warmup defaults to match).}
 
 \item{nthin}{A whole number giving the thinning interval.}
 

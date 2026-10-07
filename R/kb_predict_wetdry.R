@@ -29,11 +29,10 @@ kb_predict_wetdry <- function(
   estimate = stats::median,
   sig_fig = 3
 ) {
-  .chk_kb_fit_wetdry(fit)
+  .chk_kb_fit(fit, "kb_fit_wetdry")
   rlang::check_dots_empty()
   .chk_summary_args(conf_level, estimate, sig_fig)
 
-  # One row with no columns: every row has the same expected value.
   res <- data_linpred(fit, tibble::tibble(.rows = 1L), new_levels = "average")
   summarise_predictions(
     fit,

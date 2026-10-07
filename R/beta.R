@@ -1,19 +1,11 @@
-# Beta deviance residual in the shape1/shape2 parameterisation of stats::dbeta().
-# Named and parameterised as an extras function would be, so a later move to
-# extras is a namespace swap. The wet/dry model is mean-parameterised:
-# alpha = mu * precision, beta = (1 - mu) * precision.
+# Beta deviance residual (shape1/shape2 of stats::dbeta(), extras-style).
 #
-# With the precision phi = alpha + beta fixed, the log-likelihood of one
-# observation x is maximised where the score in the mean m is zero:
-#   digamma(m * phi) - digamma((1 - m) * phi) = log(x) - log(1 - x).
-# The left side increases in m, so the saturated mean is found by vectorised
-# bisection on (0, 1). It is close to, but not exactly, x, so setting the
-# saturated mean to x (as the analysis project's res_beta() does) can give a
-# negative deviance.
-#
-# The deviance is zero for the observation whose saturated mean equals the
-# fitted mean, x0 = plogis(digamma(alpha) - digamma(beta)), so the residual is
-# signed by x - x0 rather than x - mu.
+# With phi = alpha + beta fixed, the saturated mean m solves
+#   digamma(m * phi) - digamma((1 - m) * phi) = log(x) - log(1 - x),
+# whose left side increases in m, so it is found by bisection on (0, 1). m is
+# not exactly x, so taking m = x (as the analysis project's res_beta() does) can
+# give a negative deviance. The deviance is zero at
+# x0 = plogis(digamma(alpha) - digamma(beta)), so the sign is x - x0, not x - mu.
 res_beta <- function(x, alpha, beta) {
   phi <- alpha + beta
   target <- log(x) - log1p(-x)
@@ -35,19 +27,4 @@ res_beta <- function(x, alpha, beta) {
 
 ran_beta <- function(n, alpha, beta) {
   stats::rbeta(n, shape1 = alpha, shape2 = beta)
-}
-
-# Observation family of the mean-parameterised proportion models (wet/dry,
-# carbon): the logit mean and the fit's precision give the Beta shapes.
-# `response` gives the observed proportion, each model's own derived response.
-.obs_family_beta_mean <- function(fit, response) {
-  precision <- .draw_vec(fit, "precision")
-  list(
-    family = "beta",
-    response = response,
-    pars = function(mu_d, d) {
-      m <- stats::plogis(mu_d)
-      list(alpha = m * precision[d], beta = (1 - m) * precision[d])
-    }
-  )
 }

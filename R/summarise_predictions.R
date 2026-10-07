@@ -1,8 +1,5 @@
-# Shared summariser over a link-scale linpred rvar: put it on the response scale,
-# reduce each row to estimate/lower/upper, attach the kb_predictions metadata.
-# Used by every prediction verb so the summary is defined once. `response` names
-# what the estimate measures; it differs from the fit's response only where the
-# grid changes the scale (density per m\u00b2 rather than a transect count).
+# `response` differs from the fit's response only for a rate (density per m^2
+# rather than a transect count).
 summarise_predictions <- function(
   fit,
   grid,
@@ -27,9 +24,7 @@ summarise_predictions <- function(
   )
 }
 
-# Reduce a response-scale rvar over grid rows to estimate/lower/upper and attach
-# the kb_predictions metadata. Shared by summarise_predictions() and the biomass
-# composition, which builds its response-scale draws from several fits.
+# Takes response-scale draws, so the biomass composition can call it directly.
 summarise_draws_rows <- function(
   grid,
   draws,
@@ -44,8 +39,7 @@ summarise_draws_rows <- function(
   a <- (1 - conf_level) / 2
 
   out <- grid
-  # estimate reduces each row's posterior draws to a scalar, the same contract as
-  # in tidy()/summary(): apply it per row over the draws matrix, not to the rvar.
+  # As in tidy(), `estimate` takes a draws vector, so apply it per column.
   out$estimate <- signif(
     apply(posterior::draws_of(draws), 2L, estimate),
     sig_fig

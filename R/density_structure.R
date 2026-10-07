@@ -1,13 +1,7 @@
-# Determine the density covariate structure from the data and notify the user.
-# Density is a site-year value, so a row with NA takes the value recorded for its
-# site-year in another row (kb_check_data_weight_nereo() has already rejected
-# conflicting values within a site-year).
-#
-# Pure: returns list(has_column, on, levels, mean, sd, n_unrecorded). `levels` is
-# the recorded density of each site-year, named by site_year_key(). The mean and
-# SD are over rows, not site-years, so the standardisation matches the analysis
-# model's (plant-weighted). The term needs at least two distinct values, since a
-# single value has no spread to estimate an effect from.
+# Density covariate structure: list(has_column, on, levels, mean, sd,
+# n_unrecorded), `levels` named by site_year_key(). A row with NA takes its
+# site-year's recorded value. Mean and SD are over rows (plant-weighted, as in the
+# analysis model). The term needs at least two distinct values.
 density_structure <- function(data) {
   out <- list(
     has_column = "stipes_m2" %in% names(data),
@@ -38,9 +32,7 @@ density_structure <- function(data) {
   out
 }
 
-# Emit the density notices. Informational, so suppressed when progress = "none";
-# silent when the data have no density column, since fitting without density is
-# the ordinary case.
+# Silent when progress = "none" or the data have no density column.
 notify_density <- function(status, progress = "bar") {
   if (identical(progress, "none") || !status$has_column) {
     return(invisible(status))

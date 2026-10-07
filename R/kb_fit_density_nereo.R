@@ -66,7 +66,6 @@ kb_fit_density_nereo <- function(
   )
 
   kb_check_data_density_nereo(data)
-  # The site:year effect is determined from the data
   site_year <- site_year_structure(data)
   notify_site_year(site_year, progress = progress)
 
@@ -78,20 +77,15 @@ kb_fit_density_nereo <- function(
     site_year_on = site_year$on
   )
 
+  parameters <- fit_parameters(
+    priors,
+    GROUP_EFFECTS,
+    off = site_year_off(site_year$on)
+  )
   core <- fit_stan(
     stanmodels$density_nereo,
     stan_data,
-    param_vars = c(
-      "intercept",
-      "logit_zero_inflation",
-      "dispersion",
-      "sd_site",
-      "sd_year",
-      "sd_site_year",
-      "site_effect",
-      "year_effect",
-      "site_year_effect"
-    ),
+    param_vars = parameters$sampled,
     chains = chains,
     niters = niters,
     nthin = nthin,
@@ -112,27 +106,12 @@ kb_fit_density_nereo <- function(
     # Counts are over the area surveyed, so the expected count is area times
     # density.
     offset = "area_m2",
-    terms = list(
-      fixed = c(
-        "intercept",
-        "logit_zero_inflation",
-        "dispersion",
-        "sd_site",
-        "sd_year",
-        if (site_year$on) "sd_site_year"
-      ),
-      random = c(
-        "site_effect",
-        "year_effect",
-        if (site_year$on) "site_year_effect"
-      )
-    ),
+    terms = parameters[c("fixed", "random")],
     prior_only = prior_only,
     nthin = as.integer(nthin),
     meta_extra = list(
       site_year_on = site_year$on,
-      # No predictor: density is predicted per group, so the grids carry no
-      # predictor sequence.
+      # No predictor: density is predicted per group.
       response = "stipes"
     )
   )

@@ -1,7 +1,5 @@
-# The data a fit has for each site-year, from most to least local: the
-# site-year itself ("site-year"), its site and its year but not together
-# ("site, year"), only its site ("site") or year ("year"), or neither ("none").
-# Says which effects a prediction there takes from the fit and which it borrows.
+# The data a fit has for each site-year, from most to least local: "site-year",
+# "site, year" (both but not together), "site", "year", or "none".
 data_support <- function(fit, site, year) {
   site <- as.character(site)
   year <- as.character(year)
@@ -14,4 +12,12 @@ data_support <- function(fit, site, year) {
     has_year ~ "year",
     .default = "none"
   )
+}
+
+# data_support() without "site-year", since the cover model has no site:year
+# effect.
+cover_support <- function(fit, site, year) {
+  support <- data_support(fit, site, year)
+  support[support == "site-year"] <- "site, year"
+  support
 }

@@ -15,14 +15,14 @@
 # print.kb_fit shows stable metadata
 
     Code
-      print(weight_fit)
+      print(weight_nereo_fit)
     Output
       <kb_fit_weight_nereo>
       Model:     Weight (Nereocystis luetkeana)
       Predictor: diameter_mm, reference 23.4 (geometric mean)
       Data:      240 observations; groups: site (4), year (4), site:year (12)
       Draws:     2 chains, 300 post-warmup draws each (thin = 5), 600 total
-      Converged: FALSE
+      Converged: TRUE
       See kb_model_describe(fit) for the model equation and priors.
 
 # print.kb_fit shows the macro slim header

@@ -1,5 +1,5 @@
 fits <- list(
-  weight_fit,
+  weight_nereo_fit,
   weight_macro_fit,
   size_nereo_fit,
   size_macro_fit,

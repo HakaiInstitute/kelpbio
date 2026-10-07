@@ -31,66 +31,30 @@ kb_model_describe <- function(fit, prose = FALSE) {
 #' @export
 kb_model_describe.default <- function(fit, prose = FALSE) {
   .chk_kb_fit(fit, call = rlang::current_env())
-  .abort_no_method("kb_model_describe", fit, call = rlang::current_env())
+  .abort_no_method(fit, call = rlang::current_env())
+}
+
+#' @rdname kb_model_describe
+#' @export
+kb_model_describe.kb_fit <- function(fit, prose = FALSE) {
+  chk::chk_flag(prose)
+  .render_model(.model_spec(fit), prose)
+}
+
+# ---- model specs -------------------------------------------------------------
+
+# The fields .render_model() lays out, one method per model.
+.model_spec <- function(fit) {
+  UseMethod(".model_spec")
 }
 
 #' @export
-kb_model_describe.kb_fit_weight_nereo <- function(fit, prose = FALSE) {
-  chk::chk_flag(prose)
-  .render_model(.model_spec_nereo(fit), prose)
+.model_spec.default <- function(fit) {
+  .abort_no_method(fit, call = NULL)
 }
 
 #' @export
-kb_model_describe.kb_fit_weight_macro <- function(fit, prose = FALSE) {
-  chk::chk_flag(prose)
-  .render_model(.model_spec_macro(fit), prose)
-}
-
-#' @export
-kb_model_describe.kb_fit_size_nereo <- function(fit, prose = FALSE) {
-  chk::chk_flag(prose)
-  .render_model(.model_spec_size_nereo(fit), prose)
-}
-
-#' @export
-kb_model_describe.kb_fit_size_macro <- function(fit, prose = FALSE) {
-  chk::chk_flag(prose)
-  .render_model(.model_spec_size_macro(fit), prose)
-}
-
-#' @export
-kb_model_describe.kb_fit_density_nereo <- function(fit, prose = FALSE) {
-  chk::chk_flag(prose)
-  .render_model(.model_spec_density_nereo(fit), prose)
-}
-
-#' @export
-kb_model_describe.kb_fit_density_macro <- function(fit, prose = FALSE) {
-  chk::chk_flag(prose)
-  .render_model(.model_spec_density_macro(fit), prose)
-}
-
-#' @export
-kb_model_describe.kb_fit_wetdry <- function(fit, prose = FALSE) {
-  chk::chk_flag(prose)
-  .render_model(.model_spec_wetdry(fit), prose)
-}
-
-#' @export
-kb_model_describe.kb_fit_carbon <- function(fit, prose = FALSE) {
-  chk::chk_flag(prose)
-  .render_model(.model_spec_carbon(fit), prose)
-}
-
-#' @export
-kb_model_describe.kb_fit_cover_biomass <- function(fit, prose = FALSE) {
-  chk::chk_flag(prose)
-  .render_model(.model_spec_cover_biomass(fit), prose)
-}
-
-# ---- species model specs (single source for notation and prose) -------------
-
-.model_spec_nereo <- function(fit) {
+.model_spec.kb_fit_weight_nereo <- function(fit) {
   sy <- .site_year_on(fit)
   dens <- .density_on(fit)
   floor <- .floor_on(fit)
@@ -207,7 +171,8 @@ kb_model_describe.kb_fit_cover_biomass <- function(fit, prose = FALSE) {
   )
 }
 
-.model_spec_macro <- function(fit) {
+#' @export
+.model_spec.kb_fit_weight_macro <- function(fit) {
   sy <- .site_year_on(fit)
   f0 <- signif(fit$meta$predictor_ref, 3)
   pri <- fit$meta$priors
@@ -265,9 +230,8 @@ kb_model_describe.kb_fit_cover_biomass <- function(fit, prose = FALSE) {
   )
 }
 
-# The size and density models share their random-effect structure, so the terms,
-# random effects, and SD priors are assembled once; `intercept` is the species'
-# intercept name.
+# Random-effect structure shared by size and density; `intercept` is the
+# species' intercept name.
 .group_spec_effects <- function(fit, intercept) {
   sy <- .site_year_on(fit)
   pri <- fit$meta$priors
@@ -297,7 +261,8 @@ kb_model_describe.kb_fit_cover_biomass <- function(fit, prose = FALSE) {
   )
 }
 
-.model_spec_size_nereo <- function(fit) {
+#' @export
+.model_spec.kb_fit_size_nereo <- function(fit) {
   pri <- fit$meta$priors
   eff <- .group_spec_effects(fit, "intercept")
   list(
@@ -326,7 +291,8 @@ kb_model_describe.kb_fit_cover_biomass <- function(fit, prose = FALSE) {
   )
 }
 
-.model_spec_size_macro <- function(fit) {
+#' @export
+.model_spec.kb_fit_size_macro <- function(fit) {
   pri <- fit$meta$priors
   eff <- .group_spec_effects(fit, "intercept")
   list(
@@ -358,7 +324,8 @@ kb_model_describe.kb_fit_cover_biomass <- function(fit, prose = FALSE) {
 }
 
 # The area offset leads the mean so the notation reads as area times density.
-.model_spec_density_nereo <- function(fit) {
+#' @export
+.model_spec.kb_fit_density_nereo <- function(fit) {
   pri <- fit$meta$priors
   eff <- .group_spec_effects(fit, "intercept")
   list(
@@ -395,7 +362,8 @@ kb_model_describe.kb_fit_cover_biomass <- function(fit, prose = FALSE) {
   )
 }
 
-.model_spec_density_macro <- function(fit) {
+#' @export
+.model_spec.kb_fit_density_macro <- function(fit) {
   pri <- fit$meta$priors
   eff <- .group_spec_effects(fit, "intercept")
   list(
@@ -423,55 +391,60 @@ kb_model_describe.kb_fit_cover_biomass <- function(fit, prose = FALSE) {
   )
 }
 
-# One model for both species, with no random effects.
-.model_spec_wetdry <- function(fit) {
-  pri <- fit$meta$priors
-  list(
+# Wet/dry and carbon share one Beta model; only the response differs.
+#' @export
+.model_spec.kb_fit_wetdry <- function(fit) {
+  .model_spec_beta(
+    fit,
     title = "Wet/dry ratio",
-    species = .species_label(fit$meta$species),
+    response = "dry_wet_ratio",
     response_desc = "dry_mass_g / wet_mass_g, the dry:wet mass ratio of a sample",
-    likelihood = "dry_wet_ratio ~ Beta(mu * precision, (1 - mu) * precision)",
-    mean_lhs = "logit(mu)",
-    mean_terms = "intercept",
-    random = list(),
-    priors = list(intercept = pri$intercept, precision = pri$precision),
-    prose = paste0(
-      "The dry:wet mass ratio of each sample was modelled with a Beta ",
-      "likelihood parameterised by its mean, mu, and precision, both common to ",
-      "all samples. Samples were pooled over the months, sites, and tissues ",
-      "they came from. Regularizing priors were placed on all parameters (see ",
-      "the notation form for the hyperparameters)."
-    )
+    subject = "The dry:wet mass ratio of each sample"
   )
 }
 
-# One model for both species, with no random effects, as for wet/dry.
-.model_spec_carbon <- function(fit) {
-  pri <- fit$meta$priors
-  list(
+#' @export
+.model_spec.kb_fit_carbon <- function(fit) {
+  .model_spec_beta(
+    fit,
     title = "Carbon fraction",
-    species = .species_label(fit$meta$species),
+    response = "carbon_fraction",
     response_desc = paste0(
       "carbon_fraction = carbon_mass_ug / 1000 / sample_mass_mg, the fraction ",
       "of a dry sample's mass that is carbon"
     ),
-    likelihood = "carbon_fraction ~ Beta(mu * precision, (1 - mu) * precision)",
+    subject = "The carbon fraction of each dried sample"
+  )
+}
+
+.model_spec_beta <- function(fit, title, response, response_desc, subject) {
+  pri <- fit$meta$priors
+  list(
+    title = title,
+    species = .species_label(fit$meta$species),
+    response_desc = response_desc,
+    likelihood = paste0(
+      response,
+      " ~ Beta(mu * precision, (1 - mu) * precision)"
+    ),
     mean_lhs = "logit(mu)",
     mean_terms = "intercept",
     random = list(),
     priors = list(intercept = pri$intercept, precision = pri$precision),
     prose = paste0(
-      "The carbon fraction of each dried sample was modelled with a Beta ",
-      "likelihood parameterised by its mean, mu, and precision, both common to ",
-      "all samples. Samples were pooled over the months, sites, and tissues ",
-      "they came from. Regularizing priors were placed on all parameters (see ",
-      "the notation form for the hyperparameters)."
+      subject,
+      " was modelled with a Beta likelihood parameterised by its mean, mu, ",
+      "and precision, both common to all samples. Samples were pooled over the ",
+      "months, sites, and tissues they came from. Regularizing priors were ",
+      "placed on all parameters (see the notation form for the ",
+      "hyperparameters)."
     )
   )
 }
 
 # One model for both species; the species differ only in their default priors.
-.model_spec_cover_biomass <- function(fit) {
+#' @export
+.model_spec.kb_fit_cover_biomass <- function(fit) {
   pri <- fit$meta$priors
   z <- format(signif(stats::qnorm(1 - (1 - fit$meta$conf_level) / 2), 3))
   list(
@@ -525,7 +498,7 @@ kb_model_describe.kb_fit_cover_biomass <- function(fit, prose = FALSE) {
   formatC(x, width = max(nchar(x)), flag = "-")
 }
 
-# Format a stored prior object as scientific notation for the description.
+# resolve_priors() guarantees one of the three kb_prior classes.
 .describe_prior <- function(p) {
   if (inherits(p, "kb_prior_normal")) {
     sprintf("Normal(%s, %s)", format(p$mean), format(p$sd))
@@ -533,13 +506,10 @@ kb_model_describe.kb_fit_cover_biomass <- function(fit, prose = FALSE) {
     sprintf("Exponential(%s)", format(p$rate))
   } else if (inherits(p, "kb_prior_lognormal")) {
     sprintf("LogNormal(%s, %s)", format(p$meanlog), format(p$sdlog))
-  } else {
-    format(p)
   }
 }
 
-# Render a model spec as notation (prose = FALSE) or a methods paragraph
-# (prose = TRUE); print to stdout and return the lines invisibly.
+# Prints notation or a methods paragraph; returns the lines invisibly.
 .render_model <- function(spec, prose) {
   if (prose) {
     lines <- strwrap(spec$prose, width = 76)
@@ -547,15 +517,13 @@ kb_model_describe.kb_fit_cover_biomass <- function(fit, prose = FALSE) {
     return(invisible(lines))
   }
 
-  # Continuation lines put the "+" under the "=" of the first line, so the
-  # operands stay in one column for either mean_lhs ("mu" or "log(mu)").
+  # Align continuation "+" under the "=" for either mean_lhs.
   mean_lines <- c(
     paste0("  ", spec$mean_lhs, " = ", spec$mean_terms[1]),
     if (length(spec$mean_terms) > 1L) {
       paste0(strrep(" ", nchar(spec$mean_lhs) + 3), "+ ", spec$mean_terms[-1])
     }
   )
-  # Names are padded to the longest, at least 14 characters, so the priors align.
   width <- max(14L, nchar(names(spec$priors)))
   prior_lines <- vapply(
     names(spec$priors),
@@ -572,7 +540,7 @@ kb_model_describe.kb_fit_cover_biomass <- function(fit, prose = FALSE) {
     character(1)
   )
 
-  # A model without a predictor (size) has no predictor or centering line.
+  # Size has no predictor.
   predictor <- if (is.null(spec$predictor_desc)) {
     ""
   } else {
@@ -584,8 +552,7 @@ kb_model_describe.kb_fit_cover_biomass <- function(fit, prose = FALSE) {
     paste0("  ", spec$centering)
   }
 
-  # A model without random effects (wet/dry) has no random-effects block. Pad the
-  # term and distribution columns so the glosses line up.
+  # Wet/dry has no random effects.
   random_block <- if (length(spec$random)) {
     re_lines <- sprintf(
       "  %s ~ %s  %s",

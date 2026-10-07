@@ -1,7 +1,5 @@
-# The grid behind kb_new_data(): the grouping levels named in `by` crossed with
-# the fit's predictor sequence. Either side may be absent, so this covers a curve
-# model (weight) and a grouped-points model with no continuous predictor (density,
-# size).
+# The grid behind kb_new_data(): `by` levels crossed with the predictor
+# sequence; either side may be absent.
 build_by_grid <- function(fit, by, values = NULL) {
   predictor <- fit$meta[["predictor"]]
   preds <- if (is.null(predictor)) {
@@ -12,13 +10,10 @@ build_by_grid <- function(fit, by, values = NULL) {
   groups <- by_grid(fit, by)
 
   if (is.null(groups)) {
-    # No grouping: the predictor sequence alone, or a single population row when
-    # the model has no predictor either.
     preds %||% tibble::tibble(.rows = 1L)
   } else {
     crossed <- if (is.null(preds)) groups else dplyr::cross_join(groups, preds)
-    # Sort by the grouping factors then the predictor, so the row order follows
-    # the fit's level order rather than the (arbitrary) row order of fit$data.
+    # Follow the fit's level order, not the row order of fit$data.
     dplyr::arrange(
       crossed,
       dplyr::pick(dplyr::all_of(c(names(groups), predictor)))
@@ -26,16 +21,13 @@ build_by_grid <- function(fit, by, values = NULL) {
   }
 }
 
-# The predictor sequence, spanning the observed range unless values are supplied.
-# Supplied values are checked against the fitted range when the grid is predicted
-# at, as for any new_data.
+# Supplied values are range-checked later, when the grid is predicted at.
 predictor_grid <- function(fit, predictor, values = NULL) {
   if (is.null(values)) {
     observed <- fit$data[[predictor]]
     rng <- fit$meta$predictor_range %||% range(observed, na.rm = TRUE)
     values <- seq(rng[1], rng[2], length.out = 30L)
-    # A count predictor (fronds) takes whole numbers only.
-    if (!is.null(observed) && all(observed == round(observed), na.rm = TRUE)) {
+    if (identical(predictor, "fronds")) {
       values <- unique(round(values))
     }
   }
@@ -44,9 +36,8 @@ predictor_grid <- function(fit, predictor, values = NULL) {
   out
 }
 
-# The grouping levels to predict at, or NULL when `by` is empty. A single factor
-# takes all its fitted levels; site and year together take only the combinations
-# actually observed, since the unobserved cells carry no site:year effect.
+# Site and year together take only observed combinations, since an unobserved
+# cell has no estimated site:year effect.
 by_grid <- function(fit, by) {
   if (length(by) == 0) {
     return(NULL)

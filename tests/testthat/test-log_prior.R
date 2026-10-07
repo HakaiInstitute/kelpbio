@@ -27,12 +27,12 @@ test_that("log_prior evaluates a lognormal prior on the parameter itself", {
 })
 
 test_that("log_prior leaves out a term the fit omitted", {
-  full <- log_prior(weight_fit)
-  dropped <- weight_fit
+  full <- log_prior(weight_nereo_fit)
+  dropped <- weight_nereo_fit
   dropped$meta$terms$fixed <- setdiff(dropped$meta$terms$fixed, "density_slope")
-  p <- weight_fit$meta$priors$density_slope
+  p <- weight_nereo_fit$meta$priors$density_slope
   density_part <- stats::dnorm(
-    draws_of_term(weight_fit, "density_slope"),
+    draws_of_term(weight_nereo_fit, "density_slope"),
     p$mean,
     p$sd,
     log = TRUE
@@ -49,7 +49,7 @@ test_that("log_prior follows the fit's stored hyperparameters", {
 
 test_that("every fitted term of every model has a prior entry of its name", {
   fits <- list(
-    weight_fit,
+    weight_nereo_fit,
     weight_macro_fit,
     size_nereo_fit,
     size_macro_fit,

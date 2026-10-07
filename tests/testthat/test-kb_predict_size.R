@@ -64,7 +64,7 @@ test_that("the macro estimate is the truncated mean, at least 1", {
 })
 
 test_that("kb_predict_size errors on a weight fit and a non-fit", {
-  expect_error(kb_predict_size(weight_fit), "must be a <kb_fit_size> object")
+  expect_error(kb_predict_size(weight_nereo_fit), "must be a <kb_fit_size> object")
   expect_error(kb_predict_size(1), "must be a <kb_fit_size> object")
   expect_error(kb_predict_weight(size_nereo_fit), "must be a <kb_fit_weight>")
   expect_error(kb_predict_size(size_nereo_fit, 1), "must be a data frame")

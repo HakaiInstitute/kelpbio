@@ -110,7 +110,7 @@ The required columns SHALL be, with `site` and `year` (where required) character
 
 ### Requirement: The data determine which effects are fitted
 
-The site:year effect SHALL be included when the data span more than one year and omitted otherwise, for every model with a site:year effect (weight, size, and density; wet/dry and carbon have no random effects, and cover biomass has site and year effects but never a site:year effect). When no site was sampled in more than one year it SHALL be retained with a warning that the site and site:year effects cannot be interpreted separately.
+The site:year effect SHALL be included when the data span more than one year and omitted otherwise, for every model with a site:year effect (weight, size, and density; wet/dry and carbon have no random effects, and cover biomass has site and year effects but never a site:year effect). When no site was sampled in more than one year, or no year had more than one site sampled, it SHALL be retained with a warning naming the main effect (site, year, or both) from which the site:year effect cannot be separated.
 
 The *Nereocystis* weight model's density effect SHALL be included when at least two distinct site-year values of `stipes_m2` are recorded, with density standardised by its mean and SD over the fitted plants. A row with `NA` takes its site-year's recorded value; site-years with no recorded density take the mean.
 
@@ -122,7 +122,11 @@ An omitted effect SHALL not be fitted, reported, or used in prediction (see summ
 
 #### Scenario: Aliased design warns
 - **WHEN** the data span several years but no site spans more than one
-- **THEN** the site:year effect is retained and a warning is issued
+- **THEN** the site:year effect is retained and a warning names the site effect
+
+#### Scenario: One site over several years warns
+- **WHEN** the data span several years but every year has a single site
+- **THEN** the site:year effect is retained and a warning names the year effect
 
 #### Scenario: Cover biomass never fits site:year
 - **WHEN** a cover biomass model is fitted to data spanning several years
@@ -227,7 +231,7 @@ For each species, the weight, size, density, cover survey, and in situ plot biom
 
 ### Requirement: Implausible units are flagged
 
-The data checks, and so the fit functions, SHALL warn when a column's median is implausible for the unit its name states: `diameter_mm` below 10 or above 200 (millimetres), `weight_kg` above 100 (kilograms), `stipes_m2` above 100 (stipes per m²), `area_m2` below 1 or above 5000 (square metres), `plot_area_m2` below 1 or above 1,000,000 (square metres), `tide_height_m` below -1 or above 5 (metres), or `wet_mass_g` or `dry_mass_g` above 1000 (grams). The warning SHALL name the column, its median, and the expected unit, and SHALL NOT stop the check or the fit. The message is pinned by `tests/testthat/_snaps/warn_implausible_units.md`.
+The data checks, and so the fit functions, SHALL warn when a column's median is implausible for the unit its name states: `diameter_mm` below 10 or above 200 (millimetres), `weight_kg` above 100 (kilograms), `stipes_m2` above 100 (stipes per m²), `area_m2` below 1 or above 5000 (square metres), `plot_area_m2` below 1 or above 1,000,000 (square metres), `tide_height_m` below -1 or above 5 (metres), or `wet_mass_g` or `dry_mass_g` above 1000 (grams). The warning SHALL name the column, its median, and the expected unit, and SHALL NOT stop the check or the fit. The message is pinned by `tests/testthat/_snaps/warn.md`.
 
 #### Scenario: Diameter in centimetres is flagged
 - **WHEN** *Nereocystis* data have `diameter_mm` in centimetres (median about 3)

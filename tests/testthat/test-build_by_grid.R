@@ -1,8 +1,8 @@
 test_that("build_by_grid spans the observed predictor range by default", {
-  grid <- build_by_grid(weight_fit, character(0))
+  grid <- build_by_grid(weight_nereo_fit, character(0))
   expect_named(grid, "diameter_mm")
   expect_equal(nrow(grid), 30L)
-  expect_equal(range(grid$diameter_mm), range(weight_fit$data$diameter_mm))
+  expect_equal(range(grid$diameter_mm), range(weight_nereo_fit$data$diameter_mm))
 })
 
 test_that("build_by_grid names the predictor column from the fit", {
@@ -12,24 +12,20 @@ test_that("build_by_grid names the predictor column from the fit", {
 })
 
 test_that("build_by_grid orders rows by the fit's level order", {
-  # not the (arbitrary) row order of fit$data, so curves are drawn consistently
-  grid <- build_by_grid(weight_fit, "site", values = c(20, 40))
-  expect_identical(levels(grid$site), weight_fit$meta$site_levels)
+  grid <- build_by_grid(weight_nereo_fit, "site", values = c(20, 40))
+  expect_identical(levels(grid$site), weight_nereo_fit$meta$site_levels)
   expect_false(is.unsorted(as.integer(grid$site)))
-  expect_equal(nrow(grid), length(weight_fit$meta$site_levels) * 2L)
+  expect_equal(nrow(grid), length(weight_nereo_fit$meta$site_levels) * 2L)
 })
 
 test_that("build_by_grid crosses only the observed site-year combinations", {
-  grid <- build_by_grid(weight_fit, c("site", "year"), values = 30)
-  observed <- unique(paste(weight_fit$data$site, weight_fit$data$year))
+  grid <- build_by_grid(weight_nereo_fit, c("site", "year"), values = 30)
+  observed <- unique(paste(weight_nereo_fit$data$site, weight_nereo_fit$data$year))
   expect_setequal(unique(paste(grid$site, grid$year)), observed)
 })
 
 test_that("a model with no predictor gets a grid of grouping levels alone", {
-  # density and mean size have no continuous predictor, so the grid is the
-  # grouping factors; the column and row order still follow the fit's levels.
-  fit <- weight_fit
-  # a model with no predictor has no centering reference either
+  fit <- weight_nereo_fit
   fit$meta[c("predictor", "predictor_ref")] <- NULL
   grid <- build_by_grid(fit, "site")
   expect_named(grid, "site")
@@ -42,8 +38,7 @@ test_that("a model with no predictor gets a grid of grouping levels alone", {
 })
 
 test_that("a model with neither predictor nor grouping gets one population row", {
-  # the intercept-only shape (wet/dry, carbon): a single row carrying no columns
-  fit <- weight_fit
+  fit <- weight_nereo_fit
   fit$meta[c("predictor", "predictor_ref")] <- NULL
   grid <- build_by_grid(fit, character(0))
   expect_equal(nrow(grid), 1L)
@@ -51,9 +46,8 @@ test_that("a model with neither predictor nor grouping gets one population row",
 })
 
 test_that("an absent predictor reads as absent, not as predictor_ref", {
-  # `$` on a list falls back to partial matching, so fit$meta$predictor would
-  # return the numeric predictor_ref when no predictor is recorded.
-  fit <- weight_fit
+  # `$` partial matching would return predictor_ref.
+  fit <- weight_nereo_fit
   fit$meta[["predictor"]] <- NULL
   expect_no_error(build_by_grid(fit, "site"))
 })

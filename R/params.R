@@ -32,18 +32,13 @@
 #' control, by passing a `control` list through `...`, e.g.
 #' `control = list(adapt_delta = 0.99)`; only the entries supplied are changed. See
 #' the `control` argument of [rstan::stan()] for the full set of entries.
-#
+#'
 #' @inheritParams rlang::args_dots_empty
-#' @param data A data frame of weight observations (see
-#'   [kb_check_data_weight_nereo()] for the required columns).
-#' @param priors A named list of prior objects (see [kb_priors_weight_nereo()]), or
-#'   `NULL` to use the defaults. Supplied entries override the corresponding
-#'   defaults; unspecified entries keep their defaults.
 #' @param prior_only A flag specifying whether to sample from the priors only
 #'   (the likelihood is switched off), for prior predictive checks.
 #' @param chains A whole number of MCMC chains.
-#' @param niters A whole number of saved post-warmup draws per chain (warmup
-#'   defaults to match).
+#' @param niters A whole number of saved post-warmup draws per chain, at least 2
+#'   (warmup defaults to match).
 #' @param nthin A whole number giving the thinning interval.
 #' @param cores A whole number of cores for parallel chains, or `NULL` to use
 #'   `getOption("mc.cores")` (falling back to `chains`), capped at the available

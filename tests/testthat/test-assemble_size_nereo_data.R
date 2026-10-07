@@ -19,7 +19,7 @@ test_that("assemble_size_nereo_data maps data to the Stan data block", {
 })
 
 test_that("assemble_size_nereo_data maps every prior hyperparameter to its own Stan field", {
-  # Every hyperparameter distinct, so a transposed or dropped wiring cannot pass.
+  # Distinct values, so a transposed or dropped wiring cannot pass.
   priors <- list(
     intercept = kb_prior_normal(0.1, 1.1),
     shape = kb_prior_exponential(1.2),

@@ -1,7 +1,7 @@
 # kb_model_describe renders the nereo notation block
 
     Code
-      kb_model_describe(weight_fit)
+      kb_model_describe(weight_nereo_fit)
     Output
       Weight allometry - Nereocystis luetkeana
       Response: wet weight (kg); predictor: sub-bulb diameter (mm)
@@ -65,7 +65,7 @@
 # kb_model_describe renders a methods paragraph with prose = TRUE
 
     Code
-      kb_model_describe(weight_fit, prose = TRUE)
+      kb_model_describe(weight_nereo_fit, prose = TRUE)
     Output
       Wet weight was modelled on the log scale with a Normal likelihood as an
       allometric function of sub-bulb diameter. Expected weight followed a

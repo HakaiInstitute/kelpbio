@@ -1,6 +1,6 @@
 test_that("one row per density-surveyed site-year, with flags and metadata", {
   withr::local_seed(1)
-  p <- kb_predict_plot_biomass(weight_fit, size_nereo_fit, density_nereo_fit)
+  p <- kb_predict_plot_biomass(weight_nereo_fit, size_nereo_fit, density_nereo_fit)
   expect_s3_class(p, "kb_predictions")
   expect_named(
     p,
@@ -32,7 +32,10 @@ test_that("sampling an unseen year is at least as wide as averaging it", {
     density_macro_fit,
     new_levels = "average"
   )
-  unseen <- sampled$weight_support != "site-year"
+  # A "site, year" row adds only the small site:year effect, within Monte Carlo
+  # error on the fixture's draws.
+  unseen <- sampled$weight_support %in% c("site", "year", "none")
+  expect_true(any(unseen))
   expect_true(all(
     (sampled$upper - sampled$lower)[unseen] >= (averaged$upper - averaged$lower)[unseen]
   ))
@@ -50,7 +53,7 @@ test_that("dry and carbon are per-draw conversions of wet biomass", {
   local_mocked_bindings(population_draws = function(fit) {
     rep(if (inherits(fit, "kb_fit_wetdry")) 0.1 else 0.3, 600)
   })
-  args <- list(weight_fit, size_nereo_fit, density_nereo_fit, wetdry_nereo_fit, carbon_nereo_fit)
+  args <- list(weight_nereo_fit, size_nereo_fit, density_nereo_fit, wetdry_nereo_fit, carbon_nereo_fit)
   wet <- do.call(kb_predict_plot_biomass, c(args, new_levels = "average", sig_fig = 10))
   dry <- do.call(kb_predict_plot_biomass, c(args, measure = "dry", new_levels = "average", sig_fig = 10))
   carbon <- do.call(kb_predict_plot_biomass, c(args, measure = "carbon", new_levels = "average", sig_fig = 10))
@@ -62,12 +65,12 @@ test_that("dry and carbon are per-draw conversions of wet biomass", {
 
 test_that("a missing conversion fit errors naming it", {
   expect_snapshot(
-    kb_predict_plot_biomass(weight_fit, size_nereo_fit, density_nereo_fit, measure = "dry"),
+    kb_predict_plot_biomass(weight_nereo_fit, size_nereo_fit, density_nereo_fit, measure = "dry"),
     error = TRUE
   )
   expect_error(
     kb_predict_plot_biomass(
-      weight_fit,
+      weight_nereo_fit,
       size_nereo_fit,
       density_nereo_fit,
       wetdry_nereo_fit,
@@ -79,7 +82,7 @@ test_that("a missing conversion fit errors naming it", {
 
 test_that("mismatched or wrong fits error", {
   expect_snapshot(
-    kb_predict_plot_biomass(weight_fit, size_macro_fit, density_nereo_fit),
+    kb_predict_plot_biomass(weight_nereo_fit, size_macro_fit, density_nereo_fit),
     error = TRUE
   )
   expect_snapshot(
@@ -91,23 +94,23 @@ test_that("mismatched or wrong fits error", {
     "kb_fit_weight"
   )
   expect_error(
-    kb_predict_plot_biomass(weight_fit, size_nereo_fit, density_nereo_fit, wetdry = carbon_nereo_fit, measure = "dry"),
+    kb_predict_plot_biomass(weight_nereo_fit, size_nereo_fit, density_nereo_fit, wetdry = carbon_nereo_fit, measure = "dry"),
     "kb_fit_wetdry"
   )
 })
 
 test_that("arguments are validated", {
   expect_error(
-    kb_predict_plot_biomass(weight_fit, size_nereo_fit, density_nereo_fit, representative_site = "nowhere"),
+    kb_predict_plot_biomass(weight_nereo_fit, size_nereo_fit, density_nereo_fit, representative_site = "nowhere"),
     "representative_site"
   )
   expect_error(
-    kb_predict_plot_biomass(weight_fit, size_nereo_fit, density_nereo_fit, n_plants = 0)
+    kb_predict_plot_biomass(weight_nereo_fit, size_nereo_fit, density_nereo_fit, n_plants = 0)
   )
   expect_error(
-    kb_predict_plot_biomass(weight_fit, size_nereo_fit, density_nereo_fit, measure = "blade")
+    kb_predict_plot_biomass(weight_nereo_fit, size_nereo_fit, density_nereo_fit, measure = "blade")
   )
-  expect_error(kb_predict_plot_biomass(weight_fit, size_nereo_fit, density_nereo_fit, 1, 2, 3))
+  expect_error(kb_predict_plot_biomass(weight_nereo_fit, size_nereo_fit, density_nereo_fit, 1, 2, 3))
 })
 
 test_that("nereo plant sizes are increasing quantiles below the upper bound", {
@@ -146,14 +149,14 @@ test_that("macro plant sizes are whole frond counts from 1 to the upper bound", 
 })
 
 test_that("the size generic errors for a fit without a method", {
-  expect_error(.plant_sizes(weight_fit, 0, 1, 0.5))
+  expect_error(.plant_sizes(weight_nereo_fit, 0, 1, 0.5))
 })
 
 test_that("progress_dir records a complete prediction for kb_progress", {
   d <- withr::local_tempdir()
   withr::local_seed(1)
   kb_predict_plot_biomass(
-    weight_fit,
+    weight_nereo_fit,
     size_nereo_fit,
     density_nereo_fit,
     progress = "none",
@@ -164,10 +167,10 @@ test_that("progress_dir records a complete prediction for kb_progress", {
 
 test_that("progress arguments are validated", {
   expect_error(
-    kb_predict_plot_biomass(weight_fit, size_nereo_fit, density_nereo_fit, progress = "verbose")
+    kb_predict_plot_biomass(weight_nereo_fit, size_nereo_fit, density_nereo_fit, progress = "verbose")
   )
   expect_error(
-    kb_predict_plot_biomass(weight_fit, size_nereo_fit, density_nereo_fit, progress_dir = "no/such/dir"),
+    kb_predict_plot_biomass(weight_nereo_fit, size_nereo_fit, density_nereo_fit, progress_dir = "no/such/dir"),
     "progress_dir"
   )
 })

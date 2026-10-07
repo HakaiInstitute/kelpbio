@@ -1,8 +1,5 @@
-# Standardised density for each row of a grid, resolved in order: the row's own
-# density value, then the recorded density of its site-year, then the fitted mean
-# (standardised value 0). Shared by fitting (assemble_weight_nereo_data()) and
-# prediction (.linpred.kb_fit_weight_nereo()), so both use one rule. A zero
-# vector when the density term is off.
+# Each row takes its own density, then its site-year's recorded density, then
+# the fitted mean (0). Shared by fitting and prediction so both use one rule.
 standardised_density <- function(grid, on, mean, sd, levels) {
   n <- nrow(grid)
   if (!isTRUE(on)) {

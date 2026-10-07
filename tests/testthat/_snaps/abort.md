@@ -1,22 +1,4 @@
-# .abort_no_method names the generic, the class, and the constructors
-
-    Code
-      .abort_no_method("kb_model_describe", fake)
-    Condition
-      Error:
-      ! `kb_model_describe()` has no method for `fake`, a <kb_fit_weight_other> object.
-      i Supported fits are created by `kb_fit_density_macro()`, `kb_fit_density_nereo()`, `kb_fit_size_macro()`, `kb_fit_size_nereo()`, `kb_fit_weight_macro()`, and `kb_fit_weight_nereo()`.
-
-# .abort_no_method falls back to the name pattern when no constructor applies
-
-    Code
-      .abort_no_method("kb_stancode", structure(list(), class = "kb_fit_other"))
-    Condition
-      Error:
-      ! `kb_stancode()` has no method for `structure(list(), class = "kb_fit_other")`, a <kb_fit_other> object.
-      i Supported fits are created by the `kb_fit_*()` functions.
-
-# the internal-generic form names no generic, argument or constructor
+# .abort_no_method names the unsupported class
 
     Code
       .obs_family(structure(list(), class = c("kb_fit_other", "kb_fit")), 1)

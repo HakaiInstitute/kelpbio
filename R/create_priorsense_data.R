@@ -21,10 +21,8 @@
 create_priorsense_data.kb_fit <- function(x, ...) {
   .chk_kb_fit(x)
   .chk_sensitivity_fit(x)
-  rlang::check_installed("priorsense")
   nchains <- posterior::nchains(x$draws)
-  # The stored draws are chain-major, so a draws-by-anything matrix becomes an
-  # rvar over the same chains.
+  # Stored draws are chain-major, so rows map onto the same chains.
   as_chains <- function(name, values) {
     rvars <- rlang::set_names(
       list(posterior::rvar(values, nchains = nchains)),

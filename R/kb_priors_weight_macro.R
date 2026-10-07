@@ -8,8 +8,9 @@
 #' Each entry is named after the parameter it sets, as reported by [tidy()] and
 #' [kb_model_describe()]. The prior family of each entry is fixed (the
 #' population-level terms are Normal, the Gamma shape and standard deviations are
-#' Exponential); only the hyperparameters can be changed. `fronds_slope` is the
-#' slope of log weight on log frond count.
+#' Exponential); only the hyperparameters can be changed. `intercept` is the log
+#' expected weight at the reference frond count, and `fronds_slope` the slope of
+#' log expected weight on log frond count.
 #'
 #' @return A named list of prior objects with entries `intercept`,
 #'   `fronds_slope`, `shape`, `sd_site`, `sd_year`, and `sd_site_year`.

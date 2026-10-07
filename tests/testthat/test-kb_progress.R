@@ -1,6 +1,3 @@
-# kb_progress() is a thin wrapper over read_progress_fraction() (the fraction
-# logic is tested in test-progress.R). write_fake_chain() is in helper-progress.R.
-
 test_that("kb_progress validates progress_dir", {
   expect_snapshot(error = TRUE, kb_progress(1))
   expect_snapshot(error = TRUE, kb_progress(c("a", "b")))

@@ -56,8 +56,7 @@ kb_predict_size <- function(
   estimate = stats::median,
   sig_fig = 3
 ) {
-  .chk_kb_fit_size(fit)
-  .chk_by_habit(new_data, ..., verb = "kb_predict_size")
+  .chk_kb_fit(fit, "kb_fit_size")
   rlang::check_dots_empty()
   predict_rows(
     fit,

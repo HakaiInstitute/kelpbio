@@ -4,7 +4,7 @@
       kb_predict_cover_biomass(cover_biomass_nereo_fit, data.frame(canopy_area_m2 = 1,
         plot_area_m2 = 2))
     Condition
-      Error in `.chk_cover_survey()`:
+      Error in `kb_predict_cover_biomass()`:
       ! `new_data` must include 'tide_height_m'.
 
 # kb_predict_cover_biomass errors on other models and a non-fit

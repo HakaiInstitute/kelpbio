@@ -24,17 +24,10 @@ assemble_weight_nereo_data <- function(
   site_year_on = TRUE,
   floor_on = TRUE
 ) {
-  site <- factor(data$site)
-  year <- factor(data$year)
-  n_obs <- nrow(data)
-
   c(
+    group_stan_data(data),
     list(
-      n_obs = n_obs,
-      n_site = max(1L, nlevels(site)),
-      n_year = max(1L, nlevels(year)),
-      site = as.integer(site),
-      year = as.integer(year),
+      n_obs = nrow(data),
       diameter_mm = as.numeric(data$diameter_mm),
       weight_kg = as.numeric(data$weight_kg),
       diameter_ref = diameter_ref,
@@ -54,10 +47,8 @@ assemble_weight_nereo_data <- function(
   )
 }
 
-# Geometric-mean diameter reference (the value whose log is mean(log(diameter)),
-# so log(diameter / diameter_ref) has mean zero). Computed from the data and
-# stored in the fit meta, so the Stan fit and the R-side predictions share one
-# reference. Falls back to 30 for zero-row (prior-only) data.
+# Geometric-mean diameter reference, stored in the fit meta so Stan and R-side
+# predictions share it. Falls back to 30 for zero-row (prior-only) data.
 weight_diameter_ref <- function(diameter) {
   if (rlang::is_empty(diameter)) {
     return(30)

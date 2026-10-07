@@ -62,7 +62,6 @@ kb_fit_weight_macro <- function(
   )
 
   kb_check_data_weight_macro(data)
-  # The site:year effect is determined from the data
   site_year <- site_year_structure(data)
   notify_site_year(site_year, progress = progress)
 
@@ -74,20 +73,15 @@ kb_fit_weight_macro <- function(
     site_year_on = site_year$on
   )
 
+  parameters <- fit_parameters(
+    priors,
+    GROUP_EFFECTS,
+    off = site_year_off(site_year$on)
+  )
   core <- fit_stan(
     stanmodels$weight_macro,
     stan_data,
-    param_vars = c(
-      "intercept",
-      "fronds_slope",
-      "shape",
-      "sd_site",
-      "sd_year",
-      "sd_site_year",
-      "site_effect",
-      "year_effect",
-      "site_year_effect"
-    ),
+    param_vars = parameters$sampled,
     chains = chains,
     niters = niters,
     nthin = nthin,
@@ -107,26 +101,12 @@ kb_fit_weight_macro <- function(
     species = "macrocystis",
     # Weight is measured per plant, not per unit of survey effort.
     offset = NULL,
-    terms = list(
-      fixed = c(
-        "intercept",
-        "fronds_slope",
-        "shape",
-        "sd_site",
-        "sd_year",
-        if (site_year$on) "sd_site_year"
-      ),
-      random = c(
-        "site_effect",
-        "year_effect",
-        if (site_year$on) "site_year_effect"
-      )
-    ),
+    terms = parameters[c("fixed", "random")],
     prior_only = prior_only,
     nthin = as.integer(nthin),
     meta_extra = list(
-      # Shared by the Stan fit and R-side predictions so both center identically.
-      predictor_ref = weight_fronds_ref(data$fronds),
+      # The Stan fit's own reference, so R-side predictions center identically.
+      predictor_ref = stan_data$fronds_ref,
       site_year_on = site_year$on,
       predictor = "fronds",
       response = "weight_kg"

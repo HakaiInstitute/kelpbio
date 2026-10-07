@@ -38,7 +38,7 @@ posterior_linpred.kb_fit <- function(
   .chk_representative_site(object, representative_site)
   res <- data_linpred(object, new_data, new_levels, representative_site)
   lp <- res$linpred
-  # transform is contractually the inverse link, not the response mean.
+  # The inverse link, not the response mean.
   if (transform) {
     lp <- .epred(object, lp, expectation = FALSE)
   }

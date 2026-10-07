@@ -1,9 +1,5 @@
-# The joint log prior density per draw (length D), summed over the fitted
-# parameters that carry a prior, each evaluated at its draws under the prior
-# entry of the same name. The standard-normal priors on the non-centred
-# deviates (z_*) are left out: they are fixed by the parameterisation, not a
-# prior a user sets. The renormalisation of priors truncated at zero is the same
-# for every draw and is omitted, so this suits power-scaling, not model
+# Joint log prior density per draw over the user-set priors (z_* excluded).
+# Truncation constants are omitted: valid for power-scaling, not model
 # comparison.
 log_prior <- function(fit) {
   total <- numeric(posterior::ndraws(fit$draws))
@@ -14,7 +10,6 @@ log_prior <- function(fit) {
   total
 }
 
-# Log density of one parameter's draws under its prior.
 log_prior_density <- function(prior, x) {
   UseMethod("log_prior_density")
 }

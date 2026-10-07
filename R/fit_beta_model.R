@@ -1,8 +1,6 @@
-# The fit shared by the proportion models (wet/dry, carbon): a Beta likelihood on
-# one derived proportion per sample, with a logit-mean intercept and a precision,
-# identical across species. The exported kb_fit_<model>_<species>() functions
-# supply the model and species, their data check, default priors, and Stan data
-# assembler (decisions/species-as-variant.md).
+# The fit shared by the proportion models (wet/dry, carbon), identical across
+# species; the exported wrappers supply the species' data check, default priors,
+# and Stan data assembler (decisions/species-as-variant.md).
 fit_beta_model <- function(
   data,
   priors,
@@ -20,9 +18,14 @@ fit_beta_model <- function(
   cores,
   seed,
   progress,
-  progress_dir
+  progress_dir,
+  call = rlang::caller_env()
 ) {
-  progress <- rlang::arg_match(progress, c("bar", "verbose", "none"))
+  progress <- rlang::arg_match(
+    progress,
+    c("bar", "verbose", "none"),
+    error_call = call
+  )
   .chk_sampler_args(
     prior_only = prior_only,
     chains = chains,
@@ -31,7 +34,8 @@ fit_beta_model <- function(
     cores = cores,
     seed = seed,
     progress = progress,
-    progress_dir = progress_dir
+    progress_dir = progress_dir,
+    call = call
   )
 
   # The species' own check, so its errors name the function users know.
@@ -39,10 +43,11 @@ fit_beta_model <- function(
   priors <- resolve_priors(priors, defaults)
   stan_data <- assemble(data, priors, prior_only = prior_only)
 
+  parameters <- fit_parameters(priors)
   core <- fit_stan(
     stanmodels[[model]],
     stan_data,
-    param_vars = c("intercept", "precision"),
+    param_vars = parameters$sampled,
     chains = chains,
     niters = niters,
     nthin = nthin,
@@ -51,7 +56,8 @@ fit_beta_model <- function(
     progress = progress,
     progress_dir = progress_dir,
     stanmodel_name = model,
-    ...
+    ...,
+    call = call
   )
 
   new_kb_fit(
@@ -62,10 +68,9 @@ fit_beta_model <- function(
     species = species,
     # A proportion within one sample, so there is no survey effort.
     offset = NULL,
-    terms = list(fixed = c("intercept", "precision"), random = character(0)),
+    terms = parameters[c("fixed", "random")],
     prior_only = prior_only,
     nthin = as.integer(nthin),
-    # The response is the derived proportion every summary reports.
     meta_extra = list(response = response)
   )
 }

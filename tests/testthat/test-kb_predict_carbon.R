@@ -22,7 +22,7 @@ test_that("kb_predict_carbon honours the summary arguments and takes no new_data
 })
 
 test_that("kb_predict_carbon errors on other models, and the result has no plot", {
-  expect_error(kb_predict_carbon(weight_fit), "must be a <kb_fit_carbon> object")
+  expect_error(kb_predict_carbon(weight_nereo_fit), "must be a <kb_fit_carbon> object")
   expect_error(kb_predict_carbon(1), "must be a <kb_fit_carbon> object")
   expect_error(kb_predict_size(carbon_nereo_fit), "must be a <kb_fit_size>")
   expect_error(

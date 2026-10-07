@@ -120,7 +120,7 @@ test_that("missing, invalid, and mismatched inputs error", {
     kb_predict_site_biomass(fit, surveys(), wetdry_macro_fit, measure = "dry"),
     "one species"
   )
-  expect_error(kb_predict_site_biomass(weight_fit, surveys()), "kb_fit_cover_biomass")
+  expect_error(kb_predict_site_biomass(weight_nereo_fit, surveys()), "kb_fit_cover_biomass")
   expect_error(
     kb_predict_site_biomass(fit, surveys()[c("site", "year", "canopy_area_m2")]),
     "tide_height_m"

@@ -104,11 +104,14 @@ kb_predict_site_biomass <- function(
   sig_fig = 3
 ) {
   rlang::check_dots_empty()
-  .chk_kb_fit_cover_biomass(fit)
+  .chk_kb_fit(fit, "kb_fit_cover_biomass")
   rlang::check_required(new_data)
   measure <- rlang::arg_match(measure)
   new_levels <- rlang::arg_match(new_levels)
-  .chk_site_surveys(new_data, x_name = "`new_data`")
+  .with_call(
+    .chk_site_surveys(new_data, x_name = "`new_data`"),
+    rlang::current_env()
+  )
   warn_implausible_units(new_data, "`new_data`")
   .chk_sum_by(sum_by, new_data)
   .chk_measure_fits(measure, wetdry, carbon)

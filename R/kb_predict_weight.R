@@ -63,8 +63,7 @@ kb_predict_weight <- function(
   estimate = stats::median,
   sig_fig = 3
 ) {
-  .chk_kb_fit_weight(fit)
-  .chk_by_habit(new_data, ..., verb = "kb_predict_weight")
+  .chk_kb_fit(fit, "kb_fit_weight")
   rlang::check_dots_empty()
   predict_rows(
     fit,

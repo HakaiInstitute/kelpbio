@@ -1,9 +1,6 @@
-# The site-years a plot biomass prediction covers: one row per site-year in the
-# density fit's data, in the fit's level order, with the observed density of
-# each (total count over total area surveyed) and the data the weight and size
-# fits have for that site-year (data_support()). `stipes_m2` carries the observed
-# density under the name the Nereocystis weight model's density covariate reads;
-# a weight fit without that covariate ignores it.
+# One row per site-year in the density fit's data. `stipes_m2` is the observed
+# density (total count over total area) under the name the Nereocystis weight
+# model's density covariate reads; other weight fits ignore it.
 plot_biomass_grid <- function(weight, size, density) {
   data <- tibble::as_tibble(density$data)
   key <- site_year_key(data$site, data$year)

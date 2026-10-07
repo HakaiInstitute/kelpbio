@@ -19,7 +19,7 @@
     Code
       kb_predict_site_biomass(fit, surveys(site_area_m2 = 300))
     Condition
-      Error in `.chk_site_surveys()`:
+      Error in `kb_predict_site_biomass()`:
       ! Column `canopy_area_m2` of `new_data` must not exceed site_area_m2.
       i The canopy is the area mapped within the site boundary.
 

@@ -10,8 +10,7 @@ kb_check_data_weight_nereo(
 )
 }
 \arguments{
-\item{data}{A data frame of weight observations (see
-\code{\link[=kb_check_data_weight_nereo]{kb_check_data_weight_nereo()}} for the required columns).}
+\item{data}{A data frame of weight observations, one row per plant.}
 
 \item{x_name}{A string naming \code{data} in error messages.}
 }

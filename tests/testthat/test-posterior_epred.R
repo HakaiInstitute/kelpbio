@@ -1,26 +1,23 @@
 test_that("posterior_epred returns a D x N matrix of positive expected weights", {
   m <- posterior_epred(
-    weight_fit,
+    weight_nereo_fit,
     new_data = data.frame(diameter_mm = c(20, 40, 60))
   )
   expect_true(is.matrix(m))
   expect_equal(ncol(m), 3L)
-  expect_equal(nrow(m), posterior::ndraws(weight_fit$draws))
+  expect_equal(nrow(m), posterior::ndraws(weight_nereo_fit$draws))
   expect_true(all(m > 0))
 })
 
 test_that("new_data = NULL conditions on observed groups, agreeing with augment", {
-  # observed data carries site/year, so each row is conditioned on its random
-  # effects; one column per row, and the median matches augment's fitted
-  m <- posterior_epred(weight_fit)
-  expect_equal(ncol(m), nrow(weight_fit$data))
+  m <- posterior_epred(weight_nereo_fit)
+  expect_equal(ncol(m), nrow(weight_nereo_fit$data))
   med <- apply(m, 2, stats::median)
-  expect_equal(med, augment(weight_fit)$fitted, tolerance = 1e-8)
+  expect_equal(med, augment(weight_nereo_fit)$fitted, tolerance = 1e-8)
 })
 
 test_that("macro posterior_epred agrees with posterior_linpred(transform = TRUE)", {
-  # They coincide by model property, not construction: the Gamma mean is exp()
-  # of the linear predictor.
+  # The Gamma mean is exp() of the linear predictor.
   expect_equal(
     posterior_epred(weight_macro_fit, new_levels = "average"),
     posterior_linpred(weight_macro_fit, transform = TRUE, new_levels = "average")
@@ -29,9 +26,9 @@ test_that("macro posterior_epred agrees with posterior_linpred(transform = TRUE)
 
 test_that("nereo posterior_epred is the lognormal mean, above the median", {
   # Normal on log weight: the mean is the median times exp(sd_residual^2 / 2).
-  ep <- posterior_epred(weight_fit, new_levels = "average")
-  med <- posterior_linpred(weight_fit, transform = TRUE, new_levels = "average")
-  sw <- as.vector(posterior::draws_of(weight_fit$draws$sd_residual))
+  ep <- posterior_epred(weight_nereo_fit, new_levels = "average")
+  med <- posterior_linpred(weight_nereo_fit, transform = TRUE, new_levels = "average")
+  sw <- as.vector(posterior::draws_of(weight_nereo_fit$draws$sd_residual))
   expect_equal(ep, med * exp(sw^2 / 2))
   expect_true(all(ep > med))
 })
@@ -51,8 +48,8 @@ test_that("rows naming one new site share its sampled effect", {
 test_that("the default new_levels is average, so a new site needs no seed", {
   nd <- data.frame(diameter_mm = 40, site = "new_site")
   expect_identical(
-    posterior_epred(weight_fit, nd),
-    posterior_epred(weight_fit, nd, new_levels = "average")
+    posterior_epred(weight_nereo_fit, nd),
+    posterior_epred(weight_nereo_fit, nd, new_levels = "average")
   )
 })
 

@@ -13,73 +13,71 @@ namespace model_weight_macro_namespace {
 using stan::model::model_base_crtp;
 using namespace stan::math;
 stan::math::profile_map profiles__;
-static constexpr std::array<const char*, 66> locations_array__ =
+static constexpr std::array<const char*, 64> locations_array__ =
   {" (found before start of program)",
-  " (in 'weight_macro', line 41, column 2 to column 17)",
-  " (in 'weight_macro', line 42, column 2 to column 20)",
-  " (in 'weight_macro', line 43, column 2 to column 22)",
-  " (in 'weight_macro', line 44, column 2 to column 24)",
-  " (in 'weight_macro', line 45, column 2 to column 24)",
-  " (in 'weight_macro', line 46, column 2 to column 29)",
-  " (in 'weight_macro', line 47, column 2 to column 24)",
-  " (in 'weight_macro', line 48, column 2 to column 24)",
-  " (in 'weight_macro', line 49, column 2 to column 37)",
-  " (in 'weight_macro', line 52, column 2 to column 48)",
-  " (in 'weight_macro', line 53, column 2 to column 48)",
-  " (in 'weight_macro', line 54, column 2 to column 71)",
-  " (in 'weight_macro', line 57, column 2 to column 63)",
-  " (in 'weight_macro', line 58, column 2 to column 72)",
+  " (in 'weight_macro', line 35, column 2 to column 17)",
+  " (in 'weight_macro', line 36, column 2 to column 20)",
+  " (in 'weight_macro', line 37, column 2 to column 22)",
+  " (in 'weight_macro', line 38, column 2 to column 24)",
+  " (in 'weight_macro', line 39, column 2 to column 24)",
+  " (in 'weight_macro', line 40, column 2 to column 29)",
+  " (in 'weight_macro', line 41, column 2 to column 24)",
+  " (in 'weight_macro', line 42, column 2 to column 24)",
+  " (in 'weight_macro', line 43, column 2 to column 37)",
+  " (in 'weight_macro', line 46, column 2 to column 48)",
+  " (in 'weight_macro', line 47, column 2 to column 48)",
+  " (in 'weight_macro', line 48, column 2 to column 71)",
+  " (in 'weight_macro', line 51, column 2 to column 63)",
+  " (in 'weight_macro', line 52, column 2 to column 72)",
+  " (in 'weight_macro', line 53, column 2 to column 40)",
+  " (in 'weight_macro', line 54, column 2 to column 44)",
+  " (in 'weight_macro', line 55, column 2 to column 44)",
+  " (in 'weight_macro', line 56, column 2 to column 54)",
+  " (in 'weight_macro', line 57, column 2 to column 24)",
+  " (in 'weight_macro', line 58, column 2 to column 24)",
   " (in 'weight_macro', line 59, column 2 to column 40)",
-  " (in 'weight_macro', line 60, column 2 to column 44)",
-  " (in 'weight_macro', line 61, column 2 to column 44)",
-  " (in 'weight_macro', line 62, column 2 to column 54)",
-  " (in 'weight_macro', line 63, column 2 to column 24)",
-  " (in 'weight_macro', line 64, column 2 to column 24)",
-  " (in 'weight_macro', line 65, column 2 to column 40)",
-  " (in 'weight_macro', line 70, column 11 to column 16)",
-  " (in 'weight_macro', line 70, column 4 to column 25)",
-  " (in 'weight_macro', line 72, column 6 to line 75, column 60)",
-  " (in 'weight_macro', line 71, column 23 to line 76, column 5)",
-  " (in 'weight_macro', line 71, column 4 to line 76, column 5)",
-  " (in 'weight_macro', line 78, column 6 to column 43)",
-  " (in 'weight_macro', line 79, column 6 to column 42)",
-  " (in 'weight_macro', line 77, column 23 to line 80, column 5)",
-  " (in 'weight_macro', line 77, column 4 to line 80, column 5)",
-  " (in 'weight_macro', line 66, column 23 to line 81, column 3)",
-  " (in 'weight_macro', line 66, column 2 to line 81, column 3)",
-  " (in 'weight_macro', line 16, column 2 to column 21)",
-  " (in 'weight_macro', line 17, column 2 to column 22)",
-  " (in 'weight_macro', line 18, column 2 to column 22)",
-  " (in 'weight_macro', line 19, column 8 to column 13)",
-  " (in 'weight_macro', line 19, column 2 to column 47)",
-  " (in 'weight_macro', line 20, column 8 to column 13)",
-  " (in 'weight_macro', line 20, column 2 to column 47)",
-  " (in 'weight_macro', line 21, column 18 to column 23)",
-  " (in 'weight_macro', line 21, column 2 to column 32)",
-  " (in 'weight_macro', line 22, column 18 to column 23)",
-  " (in 'weight_macro', line 22, column 2 to column 35)",
-  " (in 'weight_macro', line 23, column 2 to column 27)",
-  " (in 'weight_macro', line 25, column 2 to column 28)",
-  " (in 'weight_macro', line 26, column 2 to column 35)",
-  " (in 'weight_macro', line 27, column 2 to column 31)",
-  " (in 'weight_macro', line 28, column 2 to column 38)",
-  " (in 'weight_macro', line 29, column 2 to column 33)",
-  " (in 'weight_macro', line 30, column 2 to column 35)",
-  " (in 'weight_macro', line 31, column 2 to column 35)",
-  " (in 'weight_macro', line 32, column 2 to column 40)",
-  " (in 'weight_macro', line 33, column 2 to column 35)",
-  " (in 'weight_macro', line 34, column 2 to column 37)",
-  " (in 'weight_macro', line 37, column 2 to column 40)",
-  " (in 'weight_macro', line 38, column 9 to column 14)",
-  " (in 'weight_macro', line 38, column 2 to column 58)",
+  " (in 'weight_macro', line 61, column 11 to column 16)",
+  " (in 'weight_macro', line 61, column 4 to line 63, column 59)",
+  " (in 'weight_macro', line 64, column 4 to column 51)",
+  " (in 'weight_macro', line 60, column 23 to line 65, column 3)",
+  " (in 'weight_macro', line 60, column 2 to line 65, column 3)",
+  " (in 'weight_macro', line 7, column 2 to column 21)",
+  " (in 'weight_macro', line 8, column 2 to column 22)",
+  " (in 'weight_macro', line 9, column 2 to column 22)",
+  " (in 'weight_macro', line 10, column 8 to column 13)",
+  " (in 'weight_macro', line 10, column 2 to column 47)",
+  " (in 'weight_macro', line 11, column 8 to column 13)",
+  " (in 'weight_macro', line 11, column 2 to column 47)",
+  " (in 'weight_macro', line 12, column 18 to column 23)",
+  " (in 'weight_macro', line 12, column 2 to column 32)",
+  " (in 'weight_macro', line 13, column 18 to column 23)",
+  " (in 'weight_macro', line 13, column 2 to column 35)",
+  " (in 'weight_macro', line 14, column 2 to column 27)",
+  " (in 'weight_macro', line 15, column 2 to column 28)",
+  " (in 'weight_macro', line 16, column 2 to column 35)",
+  " (in 'weight_macro', line 17, column 2 to column 31)",
+  " (in 'weight_macro', line 18, column 2 to column 38)",
+  " (in 'weight_macro', line 19, column 2 to column 33)",
+  " (in 'weight_macro', line 20, column 2 to column 35)",
+  " (in 'weight_macro', line 21, column 2 to column 35)",
+  " (in 'weight_macro', line 22, column 2 to column 40)",
+  " (in 'weight_macro', line 23, column 2 to column 35)",
+  " (in 'weight_macro', line 24, column 2 to column 37)",
+  " (in 'weight_macro', line 27, column 9 to column 14)",
+  " (in 'weight_macro', line 27, column 2 to column 59)",
+  " (in 'weight_macro', line 29, column 8 to column 13)",
+  " (in 'weight_macro', line 29, column 2 to column 26)",
+  " (in 'weight_macro', line 31, column 4 to column 49)",
+  " (in 'weight_macro', line 30, column 21 to line 32, column 3)",
+  " (in 'weight_macro', line 30, column 2 to line 32, column 3)",
+  " (in 'weight_macro', line 41, column 9 to column 15)",
+  " (in 'weight_macro', line 42, column 9 to column 15)",
+  " (in 'weight_macro', line 43, column 9 to column 15)",
+  " (in 'weight_macro', line 43, column 17 to column 23)",
+  " (in 'weight_macro', line 46, column 9 to column 15)",
   " (in 'weight_macro', line 47, column 9 to column 15)",
   " (in 'weight_macro', line 48, column 9 to column 15)",
-  " (in 'weight_macro', line 49, column 9 to column 15)",
-  " (in 'weight_macro', line 49, column 17 to column 23)",
-  " (in 'weight_macro', line 52, column 9 to column 15)",
-  " (in 'weight_macro', line 53, column 9 to column 15)",
-  " (in 'weight_macro', line 54, column 9 to column 15)",
-  " (in 'weight_macro', line 54, column 17 to column 23)"};
+  " (in 'weight_macro', line 48, column 17 to column 23)"};
 #include <stan_meta_header.hpp>
 class model_weight_macro final : public model_base_crtp<model_weight_macro> {
 private:
@@ -101,8 +99,8 @@ private:
   double prior_sd_site_year_rate;
   int prior_only;
   int site_year_on;
-  double log_fronds_ref;
   Eigen::Matrix<double,-1,1> log_fronds_data__;
+  std::vector<int> sy_idx;
   Eigen::Map<Eigen::Matrix<double,-1,1>> fronds{nullptr, 0};
   Eigen::Map<Eigen::Matrix<double,-1,1>> weight_kg{nullptr, 0};
   Eigen::Map<Eigen::Matrix<double,-1,1>> log_fronds{nullptr, 0};
@@ -128,57 +126,57 @@ public:
     try {
       int pos__ = std::numeric_limits<int>::min();
       pos__ = 1;
-      current_statement__ = 33;
+      current_statement__ = 27;
       context__.validate_dims("data initialization", "n_obs", "int",
         std::vector<size_t>{});
       n_obs = std::numeric_limits<int>::min();
-      current_statement__ = 33;
+      current_statement__ = 27;
       n_obs = context__.vals_i("n_obs")[(1 - 1)];
-      current_statement__ = 33;
+      current_statement__ = 27;
       stan::math::check_greater_or_equal(function__, "n_obs", n_obs, 0);
-      current_statement__ = 34;
+      current_statement__ = 28;
       context__.validate_dims("data initialization", "n_site", "int",
         std::vector<size_t>{});
       n_site = std::numeric_limits<int>::min();
-      current_statement__ = 34;
+      current_statement__ = 28;
       n_site = context__.vals_i("n_site")[(1 - 1)];
-      current_statement__ = 34;
+      current_statement__ = 28;
       stan::math::check_greater_or_equal(function__, "n_site", n_site, 1);
-      current_statement__ = 35;
+      current_statement__ = 29;
       context__.validate_dims("data initialization", "n_year", "int",
         std::vector<size_t>{});
       n_year = std::numeric_limits<int>::min();
-      current_statement__ = 35;
+      current_statement__ = 29;
       n_year = context__.vals_i("n_year")[(1 - 1)];
-      current_statement__ = 35;
+      current_statement__ = 29;
       stan::math::check_greater_or_equal(function__, "n_year", n_year, 1);
-      current_statement__ = 36;
+      current_statement__ = 30;
       stan::math::validate_non_negative_index("site", "n_obs", n_obs);
-      current_statement__ = 37;
+      current_statement__ = 31;
       context__.validate_dims("data initialization", "site", "int",
         std::vector<size_t>{static_cast<size_t>(n_obs)});
       site = std::vector<int>(n_obs, std::numeric_limits<int>::min());
-      current_statement__ = 37;
+      current_statement__ = 31;
       site = context__.vals_i("site");
-      current_statement__ = 37;
+      current_statement__ = 31;
       stan::math::check_greater_or_equal(function__, "site", site, 1);
-      current_statement__ = 37;
+      current_statement__ = 31;
       stan::math::check_less_or_equal(function__, "site", site, n_site);
-      current_statement__ = 38;
+      current_statement__ = 32;
       stan::math::validate_non_negative_index("year", "n_obs", n_obs);
-      current_statement__ = 39;
+      current_statement__ = 33;
       context__.validate_dims("data initialization", "year", "int",
         std::vector<size_t>{static_cast<size_t>(n_obs)});
       year = std::vector<int>(n_obs, std::numeric_limits<int>::min());
-      current_statement__ = 39;
+      current_statement__ = 33;
       year = context__.vals_i("year");
-      current_statement__ = 39;
+      current_statement__ = 33;
       stan::math::check_greater_or_equal(function__, "year", year, 1);
-      current_statement__ = 39;
+      current_statement__ = 33;
       stan::math::check_less_or_equal(function__, "year", year, n_year);
-      current_statement__ = 40;
+      current_statement__ = 34;
       stan::math::validate_non_negative_index("fronds", "n_obs", n_obs);
-      current_statement__ = 41;
+      current_statement__ = 35;
       context__.validate_dims("data initialization", "fronds", "double",
         std::vector<size_t>{static_cast<size_t>(n_obs)});
       fronds_data__ = Eigen::Matrix<double,-1,1>::Constant(n_obs,
@@ -187,7 +185,7 @@ public:
         Eigen::Map<Eigen::Matrix<double,-1,1>>(fronds_data__.data(), n_obs);
       {
         std::vector<local_scalar_t__> fronds_flat__;
-        current_statement__ = 41;
+        current_statement__ = 35;
         fronds_flat__ = context__.vals_r("fronds");
         pos__ = 1;
         for (int sym1__ = 1; sym1__ <= n_obs; ++sym1__) {
@@ -196,11 +194,11 @@ public:
           pos__ = (pos__ + 1);
         }
       }
-      current_statement__ = 41;
+      current_statement__ = 35;
       stan::math::check_greater_or_equal(function__, "fronds", fronds, 0);
-      current_statement__ = 42;
+      current_statement__ = 36;
       stan::math::validate_non_negative_index("weight_kg", "n_obs", n_obs);
-      current_statement__ = 43;
+      current_statement__ = 37;
       context__.validate_dims("data initialization", "weight_kg", "double",
         std::vector<size_t>{static_cast<size_t>(n_obs)});
       weight_kg_data__ = Eigen::Matrix<double,-1,1>::Constant(n_obs,
@@ -210,7 +208,7 @@ public:
         n_obs);
       {
         std::vector<local_scalar_t__> weight_kg_flat__;
-        current_statement__ = 43;
+        current_statement__ = 37;
         weight_kg_flat__ = context__.vals_r("weight_kg");
         pos__ = 1;
         for (int sym1__ = 1; sym1__ <= n_obs; ++sym1__) {
@@ -219,143 +217,151 @@ public:
           pos__ = (pos__ + 1);
         }
       }
-      current_statement__ = 43;
+      current_statement__ = 37;
       stan::math::check_greater_or_equal(function__, "weight_kg", weight_kg,
         0);
-      current_statement__ = 44;
+      current_statement__ = 38;
       context__.validate_dims("data initialization", "fronds_ref", "double",
         std::vector<size_t>{});
       fronds_ref = std::numeric_limits<double>::quiet_NaN();
-      current_statement__ = 44;
+      current_statement__ = 38;
       fronds_ref = context__.vals_r("fronds_ref")[(1 - 1)];
-      current_statement__ = 44;
+      current_statement__ = 38;
       stan::math::check_greater_or_equal(function__, "fronds_ref",
         fronds_ref, 0);
-      current_statement__ = 45;
+      current_statement__ = 39;
       context__.validate_dims("data initialization", "prior_intercept_mean",
         "double", std::vector<size_t>{});
       prior_intercept_mean = std::numeric_limits<double>::quiet_NaN();
-      current_statement__ = 45;
+      current_statement__ = 39;
       prior_intercept_mean = context__.vals_r("prior_intercept_mean")[(1 -
         1)];
-      current_statement__ = 46;
+      current_statement__ = 40;
       context__.validate_dims("data initialization", "prior_intercept_sd",
         "double", std::vector<size_t>{});
       prior_intercept_sd = std::numeric_limits<double>::quiet_NaN();
-      current_statement__ = 46;
+      current_statement__ = 40;
       prior_intercept_sd = context__.vals_r("prior_intercept_sd")[(1 - 1)];
-      current_statement__ = 46;
+      current_statement__ = 40;
       stan::math::check_greater_or_equal(function__, "prior_intercept_sd",
         prior_intercept_sd, 0);
-      current_statement__ = 47;
+      current_statement__ = 41;
       context__.validate_dims("data initialization",
         "prior_fronds_slope_mean", "double", std::vector<size_t>{});
       prior_fronds_slope_mean = std::numeric_limits<double>::quiet_NaN();
-      current_statement__ = 47;
+      current_statement__ = 41;
       prior_fronds_slope_mean = context__.vals_r("prior_fronds_slope_mean")[(1
         - 1)];
-      current_statement__ = 48;
+      current_statement__ = 42;
       context__.validate_dims("data initialization", "prior_fronds_slope_sd",
         "double", std::vector<size_t>{});
       prior_fronds_slope_sd = std::numeric_limits<double>::quiet_NaN();
-      current_statement__ = 48;
+      current_statement__ = 42;
       prior_fronds_slope_sd = context__.vals_r("prior_fronds_slope_sd")[(1 -
         1)];
-      current_statement__ = 48;
+      current_statement__ = 42;
       stan::math::check_greater_or_equal(function__, "prior_fronds_slope_sd",
         prior_fronds_slope_sd, 0);
-      current_statement__ = 49;
+      current_statement__ = 43;
       context__.validate_dims("data initialization", "prior_shape_rate",
         "double", std::vector<size_t>{});
       prior_shape_rate = std::numeric_limits<double>::quiet_NaN();
-      current_statement__ = 49;
+      current_statement__ = 43;
       prior_shape_rate = context__.vals_r("prior_shape_rate")[(1 - 1)];
-      current_statement__ = 49;
+      current_statement__ = 43;
       stan::math::check_greater_or_equal(function__, "prior_shape_rate",
         prior_shape_rate, 0);
-      current_statement__ = 50;
+      current_statement__ = 44;
       context__.validate_dims("data initialization", "prior_sd_site_rate",
         "double", std::vector<size_t>{});
       prior_sd_site_rate = std::numeric_limits<double>::quiet_NaN();
-      current_statement__ = 50;
+      current_statement__ = 44;
       prior_sd_site_rate = context__.vals_r("prior_sd_site_rate")[(1 - 1)];
-      current_statement__ = 50;
+      current_statement__ = 44;
       stan::math::check_greater_or_equal(function__, "prior_sd_site_rate",
         prior_sd_site_rate, 0);
-      current_statement__ = 51;
+      current_statement__ = 45;
       context__.validate_dims("data initialization", "prior_sd_year_rate",
         "double", std::vector<size_t>{});
       prior_sd_year_rate = std::numeric_limits<double>::quiet_NaN();
-      current_statement__ = 51;
+      current_statement__ = 45;
       prior_sd_year_rate = context__.vals_r("prior_sd_year_rate")[(1 - 1)];
-      current_statement__ = 51;
+      current_statement__ = 45;
       stan::math::check_greater_or_equal(function__, "prior_sd_year_rate",
         prior_sd_year_rate, 0);
-      current_statement__ = 52;
+      current_statement__ = 46;
       context__.validate_dims("data initialization",
         "prior_sd_site_year_rate", "double", std::vector<size_t>{});
       prior_sd_site_year_rate = std::numeric_limits<double>::quiet_NaN();
-      current_statement__ = 52;
+      current_statement__ = 46;
       prior_sd_site_year_rate = context__.vals_r("prior_sd_site_year_rate")[(1
         - 1)];
-      current_statement__ = 52;
+      current_statement__ = 46;
       stan::math::check_greater_or_equal(function__,
         "prior_sd_site_year_rate", prior_sd_site_year_rate, 0);
-      current_statement__ = 53;
+      current_statement__ = 47;
       context__.validate_dims("data initialization", "prior_only", "int",
         std::vector<size_t>{});
       prior_only = std::numeric_limits<int>::min();
-      current_statement__ = 53;
+      current_statement__ = 47;
       prior_only = context__.vals_i("prior_only")[(1 - 1)];
-      current_statement__ = 53;
+      current_statement__ = 47;
       stan::math::check_greater_or_equal(function__, "prior_only",
         prior_only, 0);
-      current_statement__ = 53;
+      current_statement__ = 47;
       stan::math::check_less_or_equal(function__, "prior_only", prior_only, 1);
-      current_statement__ = 54;
+      current_statement__ = 48;
       context__.validate_dims("data initialization", "site_year_on", "int",
         std::vector<size_t>{});
       site_year_on = std::numeric_limits<int>::min();
-      current_statement__ = 54;
+      current_statement__ = 48;
       site_year_on = context__.vals_i("site_year_on")[(1 - 1)];
-      current_statement__ = 54;
+      current_statement__ = 48;
       stan::math::check_greater_or_equal(function__, "site_year_on",
         site_year_on, 0);
-      current_statement__ = 54;
+      current_statement__ = 48;
       stan::math::check_less_or_equal(function__, "site_year_on",
         site_year_on, 1);
-      current_statement__ = 55;
-      log_fronds_ref = std::numeric_limits<double>::quiet_NaN();
-      current_statement__ = 55;
-      log_fronds_ref = stan::math::log(fronds_ref);
-      current_statement__ = 56;
+      current_statement__ = 49;
       stan::math::validate_non_negative_index("log_fronds", "n_obs", n_obs);
-      current_statement__ = 57;
+      current_statement__ = 50;
       log_fronds_data__ = Eigen::Matrix<double,-1,1>::Constant(n_obs,
                             std::numeric_limits<double>::quiet_NaN());
       new (&log_fronds)
         Eigen::Map<Eigen::Matrix<double,-1,1>>(log_fronds_data__.data(),
         n_obs);
-      current_statement__ = 57;
+      current_statement__ = 50;
       stan::model::assign(log_fronds,
-        stan::math::subtract(stan::math::log(fronds), log_fronds_ref),
-        "assigning variable log_fronds");
-      current_statement__ = 58;
+        stan::math::subtract(stan::math::log(fronds),
+          stan::math::log(fronds_ref)), "assigning variable log_fronds");
+      current_statement__ = 51;
+      stan::math::validate_non_negative_index("sy_idx", "n_obs", n_obs);
+      current_statement__ = 52;
+      sy_idx = std::vector<int>(n_obs, std::numeric_limits<int>::min());
+      current_statement__ = 55;
+      for (int i = 1; i <= n_obs; ++i) {
+        current_statement__ = 53;
+        stan::model::assign(sy_idx,
+          (stan::model::rvalue(site, "site", stan::model::index_uni(i)) +
+          ((stan::model::rvalue(year, "year", stan::model::index_uni(i)) - 1)
+          * n_site)), "assigning variable sy_idx", stan::model::index_uni(i));
+      }
+      current_statement__ = 56;
       stan::math::validate_non_negative_index("z_site", "n_site", n_site);
-      current_statement__ = 59;
+      current_statement__ = 57;
       stan::math::validate_non_negative_index("z_year", "n_year", n_year);
-      current_statement__ = 60;
+      current_statement__ = 58;
       stan::math::validate_non_negative_index("z_site_year", "n_site", n_site);
-      current_statement__ = 61;
+      current_statement__ = 59;
       stan::math::validate_non_negative_index("z_site_year", "n_year", n_year);
-      current_statement__ = 62;
+      current_statement__ = 60;
       stan::math::validate_non_negative_index("site_effect", "n_site", n_site);
-      current_statement__ = 63;
+      current_statement__ = 61;
       stan::math::validate_non_negative_index("year_effect", "n_year", n_year);
-      current_statement__ = 64;
+      current_statement__ = 62;
       stan::math::validate_non_negative_index("site_year_effect", "n_site",
         n_site);
-      current_statement__ = 65;
+      current_statement__ = 63;
       stan::math::validate_non_negative_index("site_year_effect", "n_year",
         n_year);
     } catch (const std::exception& e) {
@@ -468,47 +474,33 @@ public:
         current_statement__ = 21;
         lp_accum__.add(stan::math::std_normal_lpdf<propto__>(
                          stan::math::to_vector(z_site_year)));
-        current_statement__ = 32;
+        current_statement__ = 26;
         if (stan::math::logical_eq(prior_only, 0)) {
           current_statement__ = 22;
           stan::math::validate_non_negative_index("log_mu", "n_obs", n_obs);
           Eigen::Matrix<local_scalar_t__,-1,1> log_mu =
             Eigen::Matrix<local_scalar_t__,-1,1>::Constant(n_obs,
               DUMMY_VAR__);
-          current_statement__ = 26;
-          for (int i = 1; i <= n_obs; ++i) {
-            current_statement__ = 24;
-            stan::model::assign(log_mu, ((((intercept +
-              stan::model::rvalue(site_effect, "site_effect",
-                stan::model::index_uni(
-                  stan::model::rvalue(site, "site", stan::model::index_uni(i)))))
-              + (fronds_slope *
-              stan::model::rvalue(log_fronds, "log_fronds",
-                stan::model::index_uni(i)))) +
-              stan::model::rvalue(year_effect, "year_effect",
-                stan::model::index_uni(
-                  stan::model::rvalue(year, "year", stan::model::index_uni(i)))))
-              + (site_year_on *
-              stan::model::rvalue(site_year_effect, "site_year_effect",
-                stan::model::index_uni(
-                  stan::model::rvalue(site, "site", stan::model::index_uni(i))),
-                stan::model::index_uni(
-                  stan::model::rvalue(year, "year", stan::model::index_uni(i)))))),
-              "assigning variable log_mu", stan::model::index_uni(i));
-          }
-          current_statement__ = 30;
-          for (int i = 1; i <= n_obs; ++i) {
-            local_scalar_t__ rate_i = DUMMY_VAR__;
-            current_statement__ = 27;
-            rate_i = (shape /
-              stan::math::exp(
-                stan::model::rvalue(log_mu, "log_mu",
-                  stan::model::index_uni(i))));
-            current_statement__ = 28;
-            lp_accum__.add(stan::math::gamma_lpdf<propto__>(
-                             stan::model::rvalue(weight_kg, "weight_kg",
-                               stan::model::index_uni(i)), shape, rate_i));
-          }
+          current_statement__ = 23;
+          stan::model::assign(log_mu,
+            stan::math::add(
+              stan::math::add(
+                stan::math::add(
+                  stan::math::add(intercept,
+                    stan::math::multiply(fronds_slope, log_fronds)),
+                  stan::model::rvalue(site_effect, "site_effect",
+                    stan::model::index_multi(site))),
+                stan::model::rvalue(year_effect, "year_effect",
+                  stan::model::index_multi(year))),
+              stan::math::multiply(static_cast<double>(site_year_on),
+                stan::model::rvalue(stan::math::to_vector(site_year_effect),
+                  "to_vector(site_year_effect)",
+                  stan::model::index_multi(sy_idx)))),
+            "assigning variable log_mu");
+          current_statement__ = 24;
+          lp_accum__.add(stan::math::gamma_lpdf<propto__>(weight_kg, shape,
+                           stan::math::multiply(shape,
+                             stan::math::exp(stan::math::minus(log_mu)))));
         }
       }
     } catch (const std::exception& e) {
@@ -614,47 +606,33 @@ public:
         current_statement__ = 21;
         lp_accum__.add(stan::math::std_normal_lpdf<propto__>(
                          stan::math::to_vector(z_site_year)));
-        current_statement__ = 32;
+        current_statement__ = 26;
         if (stan::math::logical_eq(prior_only, 0)) {
           current_statement__ = 22;
           stan::math::validate_non_negative_index("log_mu", "n_obs", n_obs);
           Eigen::Matrix<local_scalar_t__,-1,1> log_mu =
             Eigen::Matrix<local_scalar_t__,-1,1>::Constant(n_obs,
               DUMMY_VAR__);
-          current_statement__ = 26;
-          for (int i = 1; i <= n_obs; ++i) {
-            current_statement__ = 24;
-            stan::model::assign(log_mu, ((((intercept +
-              stan::model::rvalue(site_effect, "site_effect",
-                stan::model::index_uni(
-                  stan::model::rvalue(site, "site", stan::model::index_uni(i)))))
-              + (fronds_slope *
-              stan::model::rvalue(log_fronds, "log_fronds",
-                stan::model::index_uni(i)))) +
-              stan::model::rvalue(year_effect, "year_effect",
-                stan::model::index_uni(
-                  stan::model::rvalue(year, "year", stan::model::index_uni(i)))))
-              + (site_year_on *
-              stan::model::rvalue(site_year_effect, "site_year_effect",
-                stan::model::index_uni(
-                  stan::model::rvalue(site, "site", stan::model::index_uni(i))),
-                stan::model::index_uni(
-                  stan::model::rvalue(year, "year", stan::model::index_uni(i)))))),
-              "assigning variable log_mu", stan::model::index_uni(i));
-          }
-          current_statement__ = 30;
-          for (int i = 1; i <= n_obs; ++i) {
-            local_scalar_t__ rate_i = DUMMY_VAR__;
-            current_statement__ = 27;
-            rate_i = (shape /
-              stan::math::exp(
-                stan::model::rvalue(log_mu, "log_mu",
-                  stan::model::index_uni(i))));
-            current_statement__ = 28;
-            lp_accum__.add(stan::math::gamma_lpdf<propto__>(
-                             stan::model::rvalue(weight_kg, "weight_kg",
-                               stan::model::index_uni(i)), shape, rate_i));
-          }
+          current_statement__ = 23;
+          stan::model::assign(log_mu,
+            stan::math::add(
+              stan::math::add(
+                stan::math::add(
+                  stan::math::add(intercept,
+                    stan::math::multiply(fronds_slope, log_fronds)),
+                  stan::model::rvalue(site_effect, "site_effect",
+                    stan::model::index_multi(site))),
+                stan::model::rvalue(year_effect, "year_effect",
+                  stan::model::index_multi(year))),
+              stan::math::multiply(static_cast<double>(site_year_on),
+                stan::model::rvalue(stan::math::to_vector(site_year_effect),
+                  "to_vector(site_year_effect)",
+                  stan::model::index_multi(sy_idx)))),
+            "assigning variable log_mu");
+          current_statement__ = 24;
+          lp_accum__.add(stan::math::gamma_lpdf<propto__>(weight_kg, shape,
+                           stan::math::multiply(shape,
+                             stan::math::exp(stan::math::minus(log_mu)))));
         }
       }
     } catch (const std::exception& e) {

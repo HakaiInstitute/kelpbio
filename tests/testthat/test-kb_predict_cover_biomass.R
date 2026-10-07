@@ -139,19 +139,15 @@ test_that("a cover grid agrees with unit-plot surveys at zero tide height", {
   expect_equal(grid$estimate, rows$estimate)
 })
 
-test_that("the default is the typical site, and a by argument is redirected", {
+test_that("the default is the typical site", {
   nd <- cover_rows(site = "new_site")
   expect_identical(
     kb_predict_cover_biomass(cover_biomass_nereo_fit, nd),
     kb_predict_cover_biomass(cover_biomass_nereo_fit, nd, new_levels = "average")
   )
-  expect_error(
-    kb_predict_cover_biomass(cover_biomass_nereo_fit, by = "site"),
-    "kb_new_data"
-  )
 })
 
 test_that("kb_predict_cover_biomass errors on other models and a non-fit", {
-  expect_error(kb_predict_cover_biomass(weight_fit), "must be a <kb_fit_cover_biomass> object")
+  expect_error(kb_predict_cover_biomass(weight_nereo_fit), "must be a <kb_fit_cover_biomass> object")
   expect_snapshot(kb_predict_cover_biomass(1), error = TRUE)
 })

@@ -33,8 +33,7 @@
 #' Population-level coefficients and random-effect standard deviations are always
 #' shown. The group-level deviations are included only when
 #' `include_random_effects = TRUE`, following the convention that `summary`
-#' reports the variance hyperparameters rather than the per-level effects (the
-#' latter are the `tidy()` default).
+#' reports the variance hyperparameters rather than the per-level effects.
 #'
 #' @inheritParams params
 #' @param object A `kb_fit` object.
@@ -59,9 +58,7 @@ summary.kb_fit <- function(
   .chk_summary_args(conf_level, estimate, sig_fig)
   chk::chk_flag(include_random_effects)
 
-  # Term table from the subclass tidy() (subclass-aware term selection), then
-  # the per-term diagnostics from the stored summary (same source as
-  # converged()/glance(), so the numbers agree).
+  # Diagnostics from the stored summary, the same source as converged().
   coefficients <- tidy(
     object,
     conf_level = conf_level,
@@ -90,14 +87,12 @@ summary.kb_fit <- function(
   )
 }
 
-# Model name ("weight") from the class vector: the class before the "kb_fit" root.
+# The class before the "kb_fit" root, e.g. "weight".
 .kb_model <- function(fit) {
   cls <- class(fit)
   sub("^kb_fit_", "", cls[[match("kb_fit", cls) - 1L]])
 }
 
-# Display label for the model: the class name capitalised, except where the class
-# name is not a word (wetdry).
 .model_label <- function(fit) {
   model <- .kb_model(fit)
   if (identical(model, "wetdry")) {
@@ -109,13 +104,11 @@ summary.kb_fit <- function(
   .capitalize(model)
 }
 
-# Upper-case the first letter, for display labels.
 .capitalize <- function(x) {
   paste0(toupper(substr(x, 1L, 1L)), substring(x, 2L))
 }
 
-# Proper scientific name for display; meta$species stores the lowercase genus.
-# Falls back to the capitalized genus for any species without a mapping.
+# meta$species stores the lowercase genus.
 .species_label <- function(species) {
   binomial <- c(
     nereocystis = "Nereocystis luetkeana",
@@ -128,9 +121,8 @@ summary.kb_fit <- function(
   out
 }
 
-# Fit-level metadata header, shared by the summary_kb_fit object and
-# print.kb_fit() so both render the same block (a single source for the fields;
-# .print_kb_fit_header() in print.R is the single source for the rendering).
+# Header fields shared by summary_kb_fit and print.kb_fit(); rendered by
+# .print_kb_fit_header().
 .kb_fit_header <- function(fit) {
   descr <- .fit_descriptor(fit)
   list(
@@ -148,21 +140,20 @@ summary.kb_fit <- function(
   )
 }
 
-# Per-fit header descriptor (predictor centering and group counts); dispatches on
-# the fit subclass, with the default returning NA/empty for models without one.
-# The model's likelihood/effect structure is not here (it is fixed by species and
-# rendered by kb_model_describe()).
+# Predictor and group counts for the print header. Only weight models have a
+# predictor line, so the default serves every other model.
 .fit_descriptor <- function(x) {
   UseMethod(".fit_descriptor")
 }
 
+#' @export
 .fit_descriptor.default <- function(x) {
-  list(predictor = NA_character_, groups = integer(0))
+  list(predictor = NA_character_, groups = fit_groups(x))
 }
 
-# One method for both species: the predictor name and its reference value are
-# stored generically. The wording fits both models, since nereo divides diameter
-# by the reference and macro centres log-fronds on its log.
+# Fits both species: nereo divides diameter by the reference, macro centres
+# log-fronds on its log.
+#' @export
 .fit_descriptor.kb_fit_weight <- function(x) {
   list(
     predictor = paste0(
@@ -175,40 +166,8 @@ summary.kb_fit <- function(
   )
 }
 
-# The size models have no predictor, so the header shows only the group counts.
-.fit_descriptor.kb_fit_size <- function(x) {
-  list(predictor = NA_character_, groups = fit_groups(x))
-}
-
-# Density has no predictor either: area is an offset, not a predictor.
-.fit_descriptor.kb_fit_density <- function(x) {
-  list(predictor = NA_character_, groups = fit_groups(x))
-}
-
-# Wet/dry has no predictor; its groups are reported only if the data carry them.
-.fit_descriptor.kb_fit_wetdry <- function(x) {
-  list(predictor = NA_character_, groups = fit_groups(x))
-}
-
-# Carbon, like wet/dry, has no predictor.
-.fit_descriptor.kb_fit_carbon <- function(x) {
-  list(predictor = NA_character_, groups = fit_groups(x))
-}
-
-# Cover has no predictor line: cover is derived from the canopy, plot, and tide
-# columns rather than supplied.
-.fit_descriptor.kb_fit_cover_biomass <- function(x) {
-  list(predictor = NA_character_, groups = fit_groups(x))
-}
-
-# Level counts for each grouping factor the fit's data carry. Not weight-specific:
-# site and year are .group_vars(), shared by every model, and all three level
-# vectors are recorded at fit time, so this is a pure metadata read.
-#
-# These describe the data, not the model: print() and summary() label the line
-# "Data:", so a site:year count is correct even for a fit whose site:year effect
-# the design forced off. Which effects the model carries is kb_model_describe()'s
-# job. A model with no grouping at all has three empty vectors and reports nothing.
+# Level counts in the data, not the model: a site:year count is reported even
+# when the design switched the site:year effect off.
 fit_groups <- function(fit) {
   counts <- vapply(
     c("site", "year", "site:year"),
@@ -219,7 +178,6 @@ fit_groups <- function(fit) {
     integer(1)
   )
   out <- counts[counts > 0L]
-  # unnamed when empty, matching .fit_descriptor.default()'s integer(0)
   if (!length(out)) integer(0) else out
 }
 

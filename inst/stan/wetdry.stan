@@ -1,27 +1,20 @@
-// Wet/dry mass ratio, shared by both species: the dry:wet mass ratio of a tissue
-// sample follows a Beta distribution parameterised by its mean and precision.
+// Dry:wet mass ratio, both species: Beta in its mean and precision, pooled over
+// samples (no group effects).
 //   dry_wet_ratio ~ beta(mu * precision, (1 - mu) * precision)
 //   logit(mu) = intercept
-// mu is the mean ratio and precision the precision (larger means less spread
-// around mu). There are no random effects: samples are pooled over the months,
-// sites, and tissues they come from. Priors are passed as data; the prior family
-// is fixed at compile time. The pointwise log-likelihood and posterior-predictive
-// replicates are computed in R from the stored draws, so there are no generated
-// quantities.
 data {
-  int<lower=0> n_obs;                     // 0 allowed: supports prior-only / empty fits
+  int<lower=0> n_obs;
   vector<lower=0, upper=1>[n_obs] dry_wet_ratio; // dry mass / wet mass
 
-  // priors (hyperparameters passed as data)
   real prior_intercept_mean;
   real<lower=0> prior_intercept_sd;
   real<lower=0> prior_precision_rate;
 
-  int<lower=0, upper=1> prior_only;       // 1 = skip likelihood, sample from priors
+  int<lower=0, upper=1> prior_only;
 }
 parameters {
   real intercept;                         // logit mean dry:wet ratio
-  real<lower=0> precision;                // Beta precision
+  real<lower=0> precision;
 }
 model {
   intercept ~ normal(prior_intercept_mean, prior_intercept_sd);

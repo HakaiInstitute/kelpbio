@@ -1,8 +1,7 @@
 test_that("tidy returns house columns and omits group-level terms by default", {
-  t <- tidy(weight_fit)
+  t <- tidy(weight_nereo_fit)
   expect_s3_class(t, "tbl_df")
   expect_named(t, c("term", "estimate", "lower", "upper"))
-  # default include_random_effects = FALSE -> per-level deviations absent
   expect_false(any(grepl("^site_effect\\[", t$term)))
   expect_setequal(
     t$term,
@@ -20,12 +19,12 @@ test_that("tidy returns house columns and omits group-level terms by default", {
 })
 
 test_that("include_random_effects = TRUE adds the group-level deviations", {
-  t <- tidy(weight_fit, include_random_effects = TRUE)
+  t <- tidy(weight_nereo_fit, include_random_effects = TRUE)
   expect_true(any(grepl("^site_effect\\[", t$term)))
 })
 
 test_that("group-level terms are named by their levels", {
-  fit <- weight_fit
+  fit <- weight_nereo_fit
   fit$draws <- label_levels(fit$draws, fit$meta$site_levels, fit$meta$year_levels)
   t <- tidy(fit, include_random_effects = TRUE)
   expect_identical(
@@ -41,31 +40,26 @@ test_that("tidy uses the macro term list for a macro fit", {
     t$term,
     c("intercept", "fronds_slope", "shape", "sd_site", "sd_year", "sd_site_year")
   )
-  # the year main effect appears among the per-level deviations
   tr <- tidy(weight_macro_fit, include_random_effects = TRUE)
   expect_true(any(grepl("^year_effect\\[", tr$term)))
 })
 
 test_that("tidy forwards conf_level/estimate/sig_fig to the summariser", {
-  # behaviour is proven in test-summarise.R; here just confirm each arg is passed
-  wide <- tidy(weight_fit, conf_level = 0.99)
-  narrow <- tidy(weight_fit, conf_level = 0.80)
+  wide <- tidy(weight_nereo_fit, conf_level = 0.99)
+  narrow <- tidy(weight_nereo_fit, conf_level = 0.80)
   i <- match("intercept", wide$term)
   expect_gt(wide$upper[i] - wide$lower[i], narrow$upper[i] - narrow$lower[i])
   expect_false(isTRUE(all.equal(
-    tidy(weight_fit, estimate = mean)$estimate,
-    tidy(weight_fit)$estimate
+    tidy(weight_nereo_fit, estimate = mean)$estimate,
+    tidy(weight_nereo_fit)$estimate
   )))
-  t2 <- tidy(weight_fit, sig_fig = 2)
+  t2 <- tidy(weight_nereo_fit, sig_fig = 2)
   expect_equal(t2$estimate, signif(t2$estimate, 2))
 })
 
 test_that("tidy reports exactly the recorded terms, at both levels", {
-  # Which effects a fit has is decided at fit time and recorded in meta$terms, so
-  # an "off" fit is faked the way the constructor builds one: a dropped site:year
-  # effect leaves the flag and the term list agreeing. That the constructor
-  # actually drops it is covered in test-kb_fit_weight_nereo.R.
-  fits <- list(nereo = weight_fit, macro = weight_macro_fit)
+  # Faked as the constructor builds an "off" fit: flag and meta$terms agree.
+  fits <- list(nereo = weight_nereo_fit, macro = weight_macro_fit)
   for (species in names(fits)) {
     fit <- fits[[species]]
     off <- fit
@@ -80,16 +74,14 @@ test_that("tidy reports exactly the recorded terms, at both levels", {
       )),
       info = species
     )
-    # and it is still reported when the fit kept the effect
     expect_true("sd_site_year" %in% tidy(fit)$term, info = species)
   }
 })
 
 test_that("every declared term has draws behind it", {
-  # meta$terms is written alongside the model rather than derived from it, so the
-  # two could drift. Asserting the invariant once here is what earns the right not
-  # to re-check it on every fit: a name with no draws would silently drop a row.
-  for (fit in list(weight_fit, weight_macro_fit)) {
+  # meta$terms is written by hand and could drift; a name with no draws would
+  # silently drop a row.
+  for (fit in list(weight_nereo_fit, weight_macro_fit)) {
     declared <- c(fit$meta$terms$fixed, fit$meta$terms$random)
     expect_length(setdiff(declared, names(fit$draws)), 0L)
     expect_gt(length(declared), 0L)

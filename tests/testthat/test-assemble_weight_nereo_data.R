@@ -19,10 +19,8 @@ test_that("assemble_weight_nereo_data maps data and priors to the Stan data bloc
   expect_equal(sd$year, c(1L, 1L, 2L))
   expect_equal(sd$diameter_mm, c(20, 35, 50))
   expect_equal(sd$weight_kg, c(0.5, 2, 4))
-  # the supplied diameter reference is passed straight through
   expect_equal(sd$diameter_ref, 42)
   expect_equal(sd$prior_only, 0L)
-  # site:year random effect and weight floor included by default
   expect_equal(sd$site_year_on, 1L)
   expect_equal(sd$floor_on, 1L)
 })
@@ -50,7 +48,7 @@ test_that("assemble_weight_nereo_data maps every prior hyperparameter to its own
     site = factor(c("a", "b", "a")),
     year = factor(c("2020", "2020", "2021"))
   )
-  # Every hyperparameter distinct, so a transposed or dropped wiring cannot pass.
+  # Distinct values, so a transposed or dropped wiring cannot pass.
   priors <- list(
     intercept = kb_prior_normal(0.1, 1.1),
     diameter_power = kb_prior_normal(0.2, 1.2),
@@ -146,7 +144,7 @@ test_that("assemble_weight_nereo_data passes standardised density and its flag",
   )
   sd <- assemble_weight_nereo_data(data, kb_priors_weight_nereo(), 30)
   expect_equal(sd$density_on, 1L)
-  # standardised over the recorded rows; unrecorded site-years take the mean
+  # Standardised over the recorded rows; unrecorded site-years take the mean.
   expect_equal(sd$density, c(-1, 1, 0, 0) / sqrt(2))
 })
 

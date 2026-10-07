@@ -22,7 +22,7 @@ test_that("kb_predict_wetdry honours the summary arguments and takes no new_data
 })
 
 test_that("kb_predict_wetdry errors on other models, and the result has no plot", {
-  expect_error(kb_predict_wetdry(weight_fit), "must be a <kb_fit_wetdry> object")
+  expect_error(kb_predict_wetdry(weight_nereo_fit), "must be a <kb_fit_wetdry> object")
   expect_error(kb_predict_wetdry(1), "must be a <kb_fit_wetdry> object")
   expect_error(kb_predict_size(wetdry_nereo_fit), "must be a <kb_fit_size>")
   expect_error(

@@ -1,5 +1,4 @@
-# A link-scale rvar over n rows with the fit's draws and chains, as .linpred()
-# returns.
+# A link-scale rvar shaped as .linpred() returns it.
 lp_rvar <- function(fit, values) {
   nd <- posterior::ndraws(fit$draws)
   posterior::rvar(
@@ -12,21 +11,21 @@ test_that(".epred is the inverse log link for macro and the nereo median", {
   lp <- lp_rvar(weight_macro_fit, c(0, 1))
   expect_equal(.epred(weight_macro_fit, lp), exp(lp))
   expect_equal(.epred(weight_macro_fit, lp, expectation = FALSE), exp(lp))
-  lp <- lp_rvar(weight_fit, c(0, 1))
-  expect_equal(.epred(weight_fit, lp, expectation = FALSE), exp(lp))
+  lp <- lp_rvar(weight_nereo_fit, c(0, 1))
+  expect_equal(.epred(weight_nereo_fit, lp, expectation = FALSE), exp(lp))
 })
 
 test_that("the nereo weight mean carries the lognormal retransformation", {
-  lp <- lp_rvar(weight_fit, c(0, 1))
+  lp <- lp_rvar(weight_nereo_fit, c(0, 1))
   expect_equal(
-    .epred(weight_fit, lp),
-    exp(lp + weight_fit$draws$sd_residual^2 / 2)
+    .epred(weight_nereo_fit, lp),
+    exp(lp + weight_nereo_fit$draws$sd_residual^2 / 2)
   )
 })
 
 test_that(".epred returns an rvar for every model", {
   fits <- list(
-    weight_fit,
+    weight_nereo_fit,
     weight_macro_fit,
     size_nereo_fit,
     size_macro_fit,

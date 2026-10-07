@@ -1,19 +1,5 @@
-# Validity predicates (logical scalars, no messaging); paired with .chk_ in chk.R.
-
-.vld_kb_fit <- function(x) {
-  inherits(x, "kb_fit")
-}
-
-.vld_kb_fit_weight <- function(x) {
-  inherits(x, "kb_fit_weight")
-}
-
-.vld_kb_fit_size <- function(x) {
-  inherits(x, "kb_fit_size")
-}
-
-.vld_kb_fit_density <- function(x) {
-  inherits(x, "kb_fit_density")
+.vld_kb_fit <- function(x, class = "kb_fit") {
+  inherits(x, class)
 }
 
 # The models with grouping factors, which kb_new_data() builds grids for.
@@ -24,20 +10,10 @@
   )
 }
 
-.vld_kb_fit_wetdry <- function(x) {
-  inherits(x, "kb_fit_wetdry")
-}
-
-.vld_kb_fit_carbon <- function(x) {
-  inherits(x, "kb_fit_carbon")
-}
-
-# A list of fits shares one species.
 .vld_same_species <- function(fits) {
   length(unique(vapply(fits, function(f) f$meta$species, character(1)))) == 1L
 }
 
-# A list of fits shares one number of posterior draws.
 .vld_same_ndraws <- function(fits) {
   length(unique(vapply(fits, function(f) posterior::ndraws(f$draws), numeric(1)))) == 1L
 }
@@ -56,22 +32,18 @@
     (!"stipes_m2" %in% names(x) || .vld_density(x$stipes_m2))
 }
 
-# A measured size: numeric, positive, no missing values.
 .vld_positive_measure <- function(x) {
   is.numeric(x) && !anyNA(x) && all(x > 0)
 }
 
-# A frond count: a positive whole number with no missing values.
 .vld_frond_count <- function(x) {
   .vld_positive_measure(x) && all(x == round(x))
 }
 
-# Stipe density: numeric (or all NA) and non-negative where recorded.
 .vld_density <- function(x) {
   all(is.na(x)) || (is.numeric(x) && all(x >= 0, na.rm = TRUE))
 }
 
-# Density is a site-year value: at most one distinct recorded value per site-year.
 .vld_density_site_year <- function(data) {
   recorded <- !is.na(data$stipes_m2)
   key <- site_year_key(data$site, data$year)[recorded]
@@ -85,7 +57,7 @@
   is.data.frame(x) && "fronds" %in% names(x) && .vld_frond_count(x$fronds)
 }
 
-# Size new_data has no predictor: any data frame, with optional site and year.
+# Size new_data has no predictor column.
 .vld_new_data_size <- function(x) {
   is.data.frame(x)
 }
@@ -103,6 +75,10 @@
     x %in% c("bar", "verbose", "none")
 }
 
+.vld_sampling_dots <- function(x) {
+  !any(rlang::names2(x) %in% names(SAMPLING_RESERVED))
+}
+
 .vld_progress_dir <- function(x) {
   is.null(x) ||
     (is.character(x) && length(x) == 1L && !is.na(x) && dir.exists(x))
@@ -112,18 +88,11 @@
   nrow(fit$data) > 0L
 }
 
-# A fit whose sensitivity to its prior and likelihood can be assessed: fitted to
-# data (not prior-only), with at least one observation.
 .vld_sensitivity_fit <- function(fit) {
   !isTRUE(fit$meta$prior_only) && .vld_observed_data(fit)
 }
 
-.vld_kb_fit_cover_biomass <- function(x) {
-  inherits(x, "kb_fit_cover_biomass")
-}
-
-# The survey columns of cover biomass data and new_data: a canopy area within a positive
-# plot area, and the tide height, all numeric with no missing values.
+# The survey columns of cover biomass data and new_data.
 .vld_cover_survey <- function(x) {
   is.data.frame(x) &&
     all(c("canopy_area_m2", "plot_area_m2", "tide_height_m") %in% names(x)) &&
@@ -136,8 +105,7 @@
     !anyNA(x$tide_height_m)
 }
 
-# Compatibility limits of an in situ biomass estimate: positive, with no missing
-# values, and the lower strictly below the upper so the implied SD is positive.
+# lower strictly below upper, so the implied log-scale SD is positive.
 .vld_biomass_limits <- function(x) {
   is.data.frame(x) &&
     all(c("lower", "upper") %in% names(x)) &&
@@ -146,8 +114,6 @@
     all(x$lower < x$upper)
 }
 
-# The in situ biomass of a cover biomass fit: one row per site-year, each a valid
-# estimate within its limits.
 .vld_plot_biomass <- function(x) {
   is.data.frame(x) &&
     all(c("site", "year") %in% names(x)) &&
@@ -159,7 +125,6 @@
     !anyDuplicated(site_year_key(x$site, x$year))
 }
 
-# An in situ biomass estimate: positive, and within its limits.
 .vld_biomass_estimate <- function(x) {
   .vld_biomass_limits(x) &&
     "estimate" %in% names(x) &&
@@ -168,9 +133,7 @@
 }
 
 
-# Drone surveys of sites for site totals: a non-negative canopy area and a tide
-# height, site and year labels, all with no missing values, and an optional site
-# area at least as large as the canopy.
+# Drone surveys of sites for site totals; `site_area_m2` is optional.
 .vld_site_surveys <- function(x) {
   is.data.frame(x) &&
     all(c("canopy_area_m2", "tide_height_m", "site", "year") %in% names(x)) &&
@@ -186,12 +149,10 @@
         all(x$canopy_area_m2 <= x$site_area_m2)))
 }
 
-# A grouping column: character or factor with no missing values.
 .vld_group_column <- function(x) {
   (is.character(x) || is.factor(x)) && !anyNA(x)
 }
 
-# `sum_by`: NULL, or names of grouping columns of `data`.
 .vld_sum_by <- function(sum_by, data) {
   is.null(sum_by) ||
     (is.character(sum_by) &&

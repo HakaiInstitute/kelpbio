@@ -19,16 +19,10 @@ assemble_cover_biomass_data <- function(
   conf_level = 0.95,
   prior_only = FALSE
 ) {
-  site <- factor(data$site)
-  year <- factor(data$year)
-
   c(
+    group_stan_data(data),
     list(
       n_obs = nrow(data),
-      n_site = max(1L, nlevels(site)),
-      n_year = max(1L, nlevels(year)),
-      site = as.integer(site),
-      year = as.integer(year),
       canopy_area_m2 = as.numeric(data$canopy_area_m2),
       plot_area_m2 = as.numeric(data$plot_area_m2),
       tide_height_m = as.numeric(data$tide_height_m),

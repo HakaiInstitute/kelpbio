@@ -1,6 +1,5 @@
-# Expected unit of each data column that has one, keyed by column name. Column
-# names are shared across models, so a sub-model reusing a column reuses its unit.
-# Read by the unit and range warnings.
+# Expected unit of each data column that has one, read by the unit and range
+# warnings. A sub-model reusing a column reuses its unit.
 column_units <- c(
   diameter_mm = "millimetres",
   weight_kg = "kilograms",

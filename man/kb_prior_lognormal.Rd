@@ -16,9 +16,9 @@ parameter.}
 A \code{kb_prior_lognormal} object.
 }
 \description{
-Construct a lognormal prior object for use in \code{\link[=kb_priors_cover_biomass_nereo]{kb_priors_cover_biomass_nereo()}}
-and the \code{priors} argument of the \verb{kb_fit_*()} functions. Used for positive
-parameters whose plausible values span orders of magnitude.
+Construct a lognormal prior object to replace an entry of a \verb{kb_priors_*()}
+list passed to the \code{priors} argument of the \verb{kb_fit_*()} functions. Used for
+positive parameters whose plausible values span orders of magnitude.
 }
 \details{
 The hyperparameters are on the log scale: a lognormal prior with \code{meanlog} and

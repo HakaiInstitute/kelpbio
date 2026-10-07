@@ -1,7 +1,6 @@
-# The level of the in situ limits: a kb_predictions object records its own, a
-# plain data frame takes `conf_level`, and 0.95 (the prediction verbs' default)
-# applies when neither gives one. A supplied level that contradicts the recorded
-# one errors rather than silently rescaling every survey's precision.
+# Level of the in situ limits: recorded on a kb_predictions object, else
+# `conf_level`, else 0.95. A supplied level contradicting the recorded one errors,
+# since it would rescale every survey's precision.
 cover_conf_level <- function(biomass, conf_level) {
   recorded <- attr(biomass, "kb_conf_level", exact = TRUE)
   if (!is.null(recorded) && is.na(recorded)) {

@@ -1,13 +1,13 @@
 test_that(".chk_kb_fit passes a fit through invisibly and errors on a non-fit", {
-  expect_invisible(.chk_kb_fit(weight_fit))
-  expect_identical(.chk_kb_fit(weight_fit), weight_fit)
+  expect_invisible(.chk_kb_fit(weight_nereo_fit))
+  expect_identical(.chk_kb_fit(weight_nereo_fit), weight_nereo_fit)
   expect_error(.chk_kb_fit(1), "must be a <kb_fit> object")
 })
 
-test_that(".chk_kb_fit_weight passes a fit through invisibly and errors on a non-fit", {
-  expect_invisible(.chk_kb_fit_weight(weight_fit))
-  expect_identical(.chk_kb_fit_weight(weight_fit), weight_fit)
-  expect_snapshot(error = TRUE, .chk_kb_fit_weight(1))
+test_that(".chk_kb_fit with class kb_fit_weight passes a fit through invisibly and errors on a non-fit", {
+  expect_invisible(.chk_kb_fit(weight_nereo_fit, "kb_fit_weight"))
+  expect_identical(.chk_kb_fit(weight_nereo_fit, "kb_fit_weight"), weight_nereo_fit)
+  expect_snapshot(error = TRUE, .chk_kb_fit(1, "kb_fit_weight"))
 })
 
 test_that("the fit checkers attribute the error to the supplied call", {
@@ -17,7 +17,7 @@ test_that("the fit checkers attribute the error to the supplied call", {
     quote(caller(1))
   )
   caller_weight <- function(x) {
-    .chk_kb_fit_weight(x, call = rlang::current_env())
+    .chk_kb_fit(x, "kb_fit_weight", call = rlang::current_env())
   }
   expect_equal(
     rlang::catch_cnd(caller_weight(1))$call,
@@ -90,21 +90,21 @@ test_that(".chk_sampler_args validates progress, progress_dir, and the numeric a
 })
 
 test_that(".chk_representative_site passes NULL/known sites and errors on unknown", {
-  expect_invisible(.chk_representative_site(weight_fit, NULL))
-  site1 <- weight_fit$meta$site_levels[1]
-  expect_identical(.chk_representative_site(weight_fit, site1), site1)
+  expect_invisible(.chk_representative_site(weight_nereo_fit, NULL))
+  site1 <- weight_nereo_fit$meta$site_levels[1]
+  expect_identical(.chk_representative_site(weight_nereo_fit, site1), site1)
   expect_snapshot(
     error = TRUE,
-    .chk_representative_site(weight_fit, "not_a_site")
+    .chk_representative_site(weight_nereo_fit, "not_a_site")
   )
 })
 
 test_that(".chk_observed_data rejects a fit with no rows to predict at", {
-  # Without it the failure surfaces as a posterior broadcast error from .linpred().
-  fit0 <- weight_fit
+  # Otherwise .linpred() fails with a posterior broadcast error.
+  fit0 <- weight_nereo_fit
   fit0$data <- fit0$data[0, ]
   expect_error(.chk_observed_data(fit0), "no observed data")
-  expect_invisible(.chk_observed_data(weight_fit))
+  expect_invisible(.chk_observed_data(weight_nereo_fit))
 })
 
 test_that(".chk_new_data_weight_nereo errors on a negative density", {
@@ -119,9 +119,9 @@ test_that(".chk_new_data errors name the invalid predictor column", {
   expect_snapshot(error = TRUE, .chk_new_data_weight_macro(data.frame(fronds = 2.5)))
 })
 
-test_that(".chk_kb_fit_density passes a density fit through and errors otherwise", {
-  expect_invisible(.chk_kb_fit_density(density_nereo_fit))
-  expect_error(.chk_kb_fit_density(weight_fit), "must be a <kb_fit_density> object")
+test_that(".chk_kb_fit with class kb_fit_density passes a density fit through and errors otherwise", {
+  expect_invisible(.chk_kb_fit(density_nereo_fit, "kb_fit_density"))
+  expect_error(.chk_kb_fit(weight_nereo_fit, "kb_fit_density"), "must be a <kb_fit_density> object")
 })
 
 test_that(".chk_kb_fit_grouped errors for a non-fit and a model without groups", {
@@ -131,12 +131,12 @@ test_that(".chk_kb_fit_grouped errors for a non-fit and a model without groups",
 })
 
 test_that(".chk_grid_predictor accepts the fit's predictor and rejects others", {
-  expect_invisible(.chk_grid_predictor(weight_fit, list()))
-  expect_invisible(.chk_grid_predictor(weight_fit, list(diameter_mm = 30)))
+  expect_invisible(.chk_grid_predictor(weight_nereo_fit, list()))
+  expect_invisible(.chk_grid_predictor(weight_nereo_fit, list(diameter_mm = 30)))
   expect_invisible(.chk_grid_predictor(weight_macro_fit, list(fronds = 1:3)))
   expect_snapshot(
     error = TRUE,
-    .chk_grid_predictor(weight_fit, list(fronds = 3))
+    .chk_grid_predictor(weight_nereo_fit, list(fronds = 3))
   )
   expect_snapshot(
     error = TRUE,
@@ -144,34 +144,21 @@ test_that(".chk_grid_predictor accepts the fit's predictor and rejects others", 
   )
   expect_snapshot(
     error = TRUE,
-    .chk_grid_predictor(weight_fit, list(30))
+    .chk_grid_predictor(weight_nereo_fit, list(30))
   )
   expect_snapshot(
     error = TRUE,
     .chk_grid_predictor(size_nereo_fit, list(diameter_mm = 30))
   )
-  # the predictor named twice, as `...` can carry it
+  # `...` can carry the predictor twice.
   twice <- stats::setNames(list(30, 40), c("diameter_mm", "diameter_mm"))
   expect_snapshot(
     error = TRUE,
-    .chk_grid_predictor(weight_fit, twice)
+    .chk_grid_predictor(weight_nereo_fit, twice)
   )
   expect_snapshot(
     error = TRUE,
-    .chk_grid_predictor(weight_fit, list(diameter_mm = "a"))
-  )
-})
-
-test_that(".chk_by_habit redirects a by argument to kb_new_data()", {
-  expect_invisible(.chk_by_habit(NULL, verb = "kb_predict_size"))
-  expect_invisible(.chk_by_habit(data.frame(site = "a"), verb = "kb_predict_size"))
-  expect_snapshot(
-    error = TRUE,
-    .chk_by_habit(NULL, by = "site", verb = "kb_predict_density")
-  )
-  expect_snapshot(
-    error = TRUE,
-    .chk_by_habit(c("site", "year"), verb = "kb_predict_size")
+    .chk_grid_predictor(weight_nereo_fit, list(diameter_mm = "a"))
   )
 })
 
@@ -182,33 +169,33 @@ test_that(".chk_new_data_density errors name the area column", {
   expect_error(.chk_new_data_density(1), "must be a data frame")
 })
 
-test_that(".chk_kb_fit_wetdry passes a wet/dry fit through and errors otherwise", {
-  expect_invisible(.chk_kb_fit_wetdry(wetdry_macro_fit))
-  expect_error(.chk_kb_fit_wetdry(weight_fit), "must be a <kb_fit_wetdry> object")
+test_that(".chk_kb_fit with class kb_fit_wetdry passes a wet/dry fit through and errors otherwise", {
+  expect_invisible(.chk_kb_fit(wetdry_macro_fit, "kb_fit_wetdry"))
+  expect_error(.chk_kb_fit(weight_nereo_fit, "kb_fit_wetdry"), "must be a <kb_fit_wetdry> object")
 })
 
-test_that(".chk_kb_fit_carbon passes a carbon fit through and errors otherwise", {
-  expect_invisible(.chk_kb_fit_carbon(carbon_macro_fit))
-  expect_error(.chk_kb_fit_carbon(wetdry_macro_fit), "must be a <kb_fit_carbon> object")
+test_that(".chk_kb_fit with class kb_fit_carbon passes a carbon fit through and errors otherwise", {
+  expect_invisible(.chk_kb_fit(carbon_macro_fit, "kb_fit_carbon"))
+  expect_error(.chk_kb_fit(wetdry_macro_fit, "kb_fit_carbon"), "must be a <kb_fit_carbon> object")
 })
 
 test_that(".chk_same_species and .chk_same_ndraws name the fits", {
-  expect_invisible(.chk_same_species(list(weight = weight_fit, size = size_nereo_fit)))
+  expect_invisible(.chk_same_species(list(weight = weight_nereo_fit, size = size_nereo_fit)))
   expect_snapshot(
-    .chk_same_species(list(weight = weight_fit, size = size_macro_fit)),
+    .chk_same_species(list(weight = weight_nereo_fit, size = size_macro_fit)),
     error = TRUE
   )
-  expect_invisible(.chk_same_ndraws(list(weight = weight_fit, size = size_nereo_fit)))
+  expect_invisible(.chk_same_ndraws(list(weight = weight_nereo_fit, size = size_nereo_fit)))
   expect_snapshot(
-    .chk_same_ndraws(list(weight = weight_fit, size = fit_size_sim_nereo)),
+    .chk_same_ndraws(list(weight = weight_nereo_fit, size = fit_size_sim_nereo)),
     error = TRUE
   )
 })
 
 
-test_that(".chk_kb_fit_cover_biomass passes a cover biomass fit through and errors otherwise", {
-  expect_invisible(.chk_kb_fit_cover_biomass(cover_biomass_macro_fit))
-  expect_error(.chk_kb_fit_cover_biomass(carbon_macro_fit), "must be a <kb_fit_cover_biomass> object")
+test_that(".chk_kb_fit with class kb_fit_cover_biomass passes a cover biomass fit through and errors otherwise", {
+  expect_invisible(.chk_kb_fit(cover_biomass_macro_fit, "kb_fit_cover_biomass"))
+  expect_error(.chk_kb_fit(carbon_macro_fit, "kb_fit_cover_biomass"), "must be a <kb_fit_cover_biomass> object")
 })
 
 test_that(".chk_cover_survey errors name the survey column", {
@@ -258,4 +245,10 @@ test_that(".chk_measure_fits requires the fits a measure needs", {
   expect_error(.chk_measure_fits("dry", NULL, NULL), "wetdry")
   expect_error(.chk_measure_fits("carbon", wetdry_nereo_fit, NULL), "carbon")
   expect_error(.chk_measure_fits("dry", carbon_nereo_fit, NULL), "kb_fit_wetdry")
+})
+
+test_that(".chk_sampling_dots rejects sampler arguments kelpbio sets, naming the replacement", {
+  expect_invisible(.chk_sampling_dots(list(control = list(), init = 0)))
+  expect_snapshot(error = TRUE, .chk_sampling_dots(list(iter = 10, thin = 2)))
+  expect_snapshot(error = TRUE, .chk_sampling_dots(list(pars = "intercept")))
 })

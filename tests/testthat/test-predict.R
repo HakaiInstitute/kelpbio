@@ -1,8 +1,8 @@
 test_that("predict wraps each model's prediction verb", {
   nd <- data.frame(diameter_mm = c(20, 40))
   expect_identical(
-    predict(weight_fit, new_data = nd),
-    kb_predict_weight(weight_fit, new_data = nd)
+    predict(weight_nereo_fit, new_data = nd),
+    kb_predict_weight(weight_nereo_fit, new_data = nd)
   )
   nd <- data.frame(site = fitted_sites(size_nereo_fit, 2))
   expect_identical(

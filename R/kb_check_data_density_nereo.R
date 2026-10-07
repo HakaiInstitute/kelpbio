@@ -29,31 +29,21 @@ kb_check_data_density_nereo <- function(
   data,
   x_name = chk::deparse_backtick_chk(substitute(data))
 ) {
-  chk::chk_data(data, x_name = x_name)
-  chk::chk_superset(
-    names(data),
-    c("stipes", "area_m2", "site", "year"),
-    x_name = x_name
+  .with_call(
+    {
+      chk::chk_data(data, x_name = x_name)
+      chk::chk_superset(
+        names(data),
+        c("stipes", "area_m2", "site", "year"),
+        x_name = x_name
+      )
+      .chk_measure_columns(data, "stipes", x_name, count = TRUE, zero = TRUE)
+      .chk_measure_columns(data, "area_m2", x_name)
+      .chk_group_columns(data, x_name)
+      warn_implausible_units(data, x_name)
+      warn_group_names(data, x_name)
+    },
+    rlang::current_env()
   )
-
-  nm <- kb_xname(x_name, "stipes")
-  chk::chk_numeric(data$stipes, x_name = nm)
-  chk::chk_not_any_na(data$stipes, x_name = nm)
-  chk::chk_gte(data$stipes, value = 0, x_name = nm)
-  chk::chk_whole_numeric(data$stipes, x_name = nm)
-
-  nm <- kb_xname(x_name, "area_m2")
-  chk::chk_numeric(data$area_m2, x_name = nm)
-  chk::chk_not_any_na(data$area_m2, x_name = nm)
-  chk::chk_gt(data$area_m2, value = 0, x_name = nm)
-
-  for (col in c("site", "year")) {
-    nm <- kb_xname(x_name, col)
-    chk::chk_character_or_factor(data[[col]], x_name = nm)
-    chk::chk_not_any_na(data[[col]], x_name = nm)
-  }
-
-  warn_implausible_units(data, x_name)
-  warn_group_names(data, x_name)
   invisible(data)
 }

@@ -15,21 +15,21 @@ using namespace stan::math;
 stan::math::profile_map profiles__;
 static constexpr std::array<const char*, 16> locations_array__ =
   {" (found before start of program)",
-  " (in 'carbon', line 22, column 2 to column 17)",
-  " (in 'carbon', line 23, column 2 to column 26)",
-  " (in 'carbon', line 26, column 2 to column 63)",
-  " (in 'carbon', line 27, column 2 to column 48)",
-  " (in 'carbon', line 29, column 4 to column 35)",
-  " (in 'carbon', line 30, column 4 to column 65)",
-  " (in 'carbon', line 28, column 23 to line 31, column 3)",
-  " (in 'carbon', line 28, column 2 to line 31, column 3)",
-  " (in 'carbon', line 13, column 2 to column 21)",
-  " (in 'carbon', line 14, column 27 to column 32)",
-  " (in 'carbon', line 14, column 2 to column 50)",
-  " (in 'carbon', line 16, column 2 to column 28)",
-  " (in 'carbon', line 17, column 2 to column 35)",
-  " (in 'carbon', line 18, column 2 to column 37)",
-  " (in 'carbon', line 19, column 2 to column 35)"};
+  " (in 'carbon', line 14, column 2 to column 17)",
+  " (in 'carbon', line 15, column 2 to column 26)",
+  " (in 'carbon', line 18, column 2 to column 63)",
+  " (in 'carbon', line 19, column 2 to column 48)",
+  " (in 'carbon', line 21, column 4 to column 35)",
+  " (in 'carbon', line 22, column 4 to column 65)",
+  " (in 'carbon', line 20, column 23 to line 23, column 3)",
+  " (in 'carbon', line 20, column 2 to line 23, column 3)",
+  " (in 'carbon', line 6, column 2 to column 21)",
+  " (in 'carbon', line 7, column 27 to column 32)",
+  " (in 'carbon', line 7, column 2 to column 50)",
+  " (in 'carbon', line 8, column 2 to column 28)",
+  " (in 'carbon', line 9, column 2 to column 35)",
+  " (in 'carbon', line 10, column 2 to column 37)",
+  " (in 'carbon', line 11, column 2 to column 35)"};
 #include <stan_meta_header.hpp>
 class model_carbon final : public model_base_crtp<model_carbon> {
 private:

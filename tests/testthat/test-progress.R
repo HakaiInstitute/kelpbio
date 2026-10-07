@@ -1,5 +1,3 @@
-# write_fake_chain() is defined in helper-progress.R.
-
 test_that("progress_rows_per_chain counts thinned warmup plus post-warmup draws", {
   expect_identical(progress_rows_per_chain(75L, 75L, 1L), 150L)
   expect_identical(progress_rows_per_chain(40L, 40L, 3L), 54L) # ceil(40/3) + 40
@@ -28,7 +26,7 @@ test_that("chain_is_complete detects the Elapsed Time footer", {
 test_that("read_progress_fraction is 0 with no artifact, partway mid-run, 1 when complete", {
   d <- withr::local_tempdir()
   expect_identical(read_progress_fraction(d), 0) # no manifest yet
-  # warmup = niters = 4, nthin = 1 -> 8 rows/chain, 2 chains -> 16 total
+  # 8 rows per chain, 16 in total.
   write_progress_manifest(d, chains = 2L, warmup = 4L, niters = 4L, nthin = 1L)
   expect_identical(read_progress_fraction(d), 0) # manifest but no CSVs
   write_fake_chain(file.path(d, "samples_1.csv"), n_rows = 8L, complete = TRUE)
@@ -41,7 +39,7 @@ test_that("read_progress_fraction is 0 with no artifact, partway mid-run, 1 when
 test_that("read_progress_fraction caps an over-full chain and never exceeds 1", {
   d <- withr::local_tempdir()
   write_progress_manifest(d, chains = 1L, warmup = 4L, niters = 4L, nthin = 1L)
-  # a single chain has no _1 suffix (see progress_chain_files)
+  # A single chain has no _1 suffix.
   write_fake_chain(file.path(d, "samples.csv"), n_rows = 20L)
   expect_identical(read_progress_fraction(d), 1)
 })
@@ -83,8 +81,8 @@ test_that("the no-op reporter methods run silently", {
 })
 
 test_that("the bar reporter runs its lifecycle without error", {
-  # force cli to actually render, so the format string ({cli::pb_bar}, ...) is
-  # evaluated in the reporter's environment (guards the base-parent env fix).
+  # Force cli to render, so the format string is evaluated in the reporter's
+  # environment.
   withr::local_options(cli.dynamic = TRUE, cli.progress_show_after = 0)
   r <- bar_reporter()
   expect_no_error({

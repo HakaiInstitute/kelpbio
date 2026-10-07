@@ -28,7 +28,6 @@ test_that("a group holding one site-year twice warns", {
     sum_site_totals(twice, matrix(1:4, nrow = 2), "region"),
     "overlap"
   )
-  # in different groups they are separate totals
   apart <- transform(twice, region = c("north", "south"))
   expect_no_warning(sum_site_totals(apart, matrix(1:4, nrow = 2), "region"))
 })
