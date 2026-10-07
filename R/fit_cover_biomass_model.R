@@ -56,7 +56,7 @@ fit_cover_biomass_model <- function(
   core <- fit_stan(
     stanmodels$cover_biomass,
     stan_data,
-    param_vars = parameters$sampled,
+    param_vars = c(parameters$fixed, parameters$random),
     chains = chains,
     niters = niters,
     nthin = nthin,
@@ -77,7 +77,7 @@ fit_cover_biomass_model <- function(
     species = species,
     # The response is a biomass per m^2, so there is no survey effort.
     offset = NULL,
-    terms = parameters[c("fixed", "random")],
+    terms = parameters,
     prior_only = prior_only,
     nthin = as.integer(nthin),
     meta_extra = list(

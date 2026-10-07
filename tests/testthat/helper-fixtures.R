@@ -29,3 +29,32 @@ cover_surveys <- function(fit) {
 cover_biomass <- function(fit) {
   fit$data[c("site", "year", "estimate", "lower", "upper")]
 }
+
+# Keep only `variables` of a fit's stored draws and diagnostics, as fit_stan()
+# stores only the parameters a fit estimates.
+keep_parameters <- function(fit, variables) {
+  fit$draws <- posterior::subset_draws(fit$draws, variable = variables)
+  s <- fit$diagnostics$summary
+  fit$diagnostics$summary <- s[sub("\\[.*$", "", s$variable) %in% variables, ]
+  fit
+}
+
+# A fit as it would be built with `terms` switched off.
+omit_terms <- function(fit, terms) {
+  fit$meta$terms <- lapply(fit$meta$terms, setdiff, terms)
+  if ("density_slope" %in% terms) fit$meta$density_on <- FALSE
+  if ("site_year_effect" %in% terms) fit$meta$site_year_on <- FALSE
+  keep_parameters(fit, unlist(fit$meta$terms, use.names = FALSE))
+}
+
+# Stand in for fit_stan(): return `fit`'s draws for the parameters requested,
+# so a fit function can be tested without sampling.
+local_fit_stan_stub <- function(fit, env = parent.frame()) {
+  testthat::local_mocked_bindings(
+    fit_stan = function(stanmodel, stan_data, param_vars, ...) {
+      core <- keep_parameters(fit, param_vars)
+      list(draws = core$draws, diagnostics = core$diagnostics, stancode = "")
+    },
+    .env = env
+  )
+}

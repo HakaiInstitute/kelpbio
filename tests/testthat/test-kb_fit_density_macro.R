@@ -1,17 +1,3 @@
-# Returns the fixture's draws in place of sampling.
-local_density_macro_stub <- function(env = parent.frame()) {
-  local_mocked_bindings(
-    fit_stan = function(...) {
-      list(
-        draws = density_macro_fit$draws,
-        diagnostics = density_macro_fit$diagnostics,
-        stancode = ""
-      )
-    },
-    .env = env
-  )
-}
-
 test_that("kb_fit_density_macro returns a correctly-structured object", {
   skip_on_cran()
   d <- droplevels(subset(
@@ -45,7 +31,7 @@ test_that("kb_fit_density_macro returns a correctly-structured object", {
 })
 
 test_that("the fit records the species, response, area offset, and no predictor", {
-  local_density_macro_stub()
+  local_fit_stan_stub(density_macro_fit)
   fit <- kb_fit_density_macro(density_macro_fit$data, progress = "none")
   expect_identical(fit$meta$species, "macrocystis")
   expect_identical(fit$meta$response, "plants")
@@ -56,16 +42,17 @@ test_that("the fit records the species, response, area offset, and no predictor"
 })
 
 test_that("single-year data omit the site:year effect with a message", {
-  local_density_macro_stub()
+  local_fit_stan_stub(density_macro_fit)
   d <- droplevels(subset(density_macro_fit$data, year == "2019"))
   expect_message(fit <- kb_fit_density_macro(d), "site:year effect is omitted")
   expect_false(fit$meta$site_year_on)
   expect_false("sd_site_year" %in% fit$meta$terms$fixed)
   expect_false("site_year_effect" %in% fit$meta$terms$random)
+  expect_false(any(c("sd_site_year", "site_year_effect") %in% names(fit$draws)))
 })
 
 test_that("invalid data and priors error before sampling", {
-  local_density_macro_stub()
+  local_fit_stan_stub(density_macro_fit)
   expect_error(kb_fit_density_macro(data.frame(site = "a", year = "2020")))
   p <- kb_priors_density_macro()
   p$sd_site <- kb_prior_normal(0, 1)

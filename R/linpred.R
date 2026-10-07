@@ -45,7 +45,6 @@
     )
     log_alpha <- log_alpha + draws$density_slope * density
   }
-  # Without a floor, the weight_floor draws are prior-only.
   floor <- if (.floor_on(fit)) draws$weight_floor else 0
   log(floor + exp(log_alpha + draws$diameter_power * log_x))
 }
@@ -122,7 +121,7 @@
 }
 
 # Summed link-scale group effects. representative_site borrows only the site
-# effect. Without site:year the effect's draws are prior-only, so it adds 0.
+# effect. A fit without site:year has no such draws, so it adds 0.
 .group_effects <- function(fit, grid, new_levels, representative_site) {
   draws <- fit$draws
   ix <- .grid_indices(fit, grid, representative_site)

@@ -88,15 +88,19 @@ An effect the fit omitted (site:year for single-year data, density when not fitt
 
 ### Requirement: Accessors
 
-`samples(fit)` SHALL return the draws as a `posterior` `draws_rvars` object. `rhat()`, `esr()`, `nobs()`, `nchains()`, `niters()`, `npars()`, `nterms()`, `pars()`, and `estimates()` SHALL return the fit's values, and `kb_stancode(fit)` the Stan source of the fitted model.
+`kb_samples(fit)` and `posterior::as_draws(fit)` SHALL return the draws as a `posterior` `draws_rvars` object, the same object from either. The other `posterior` conversions (`as_draws_df()`, `as_draws_array()`, `as_draws_matrix()`, `as_draws_list()`, `as_draws_rvars()`) and `summarise_draws()` SHALL accept a fit and return what they return for those draws. `rhat()`, `esr()`, `nobs()`, `nchains()`, `niters()`, `npars()`, `nterms()`, `pars()`, and `estimates()` SHALL return the fit's values, and `kb_stancode(fit)` the Stan source of the fitted model.
 
 #### Scenario: Draws interoperate with posterior
-- **WHEN** `samples(fit)` is called
+- **WHEN** `kb_samples(fit)` is called
 - **THEN** it returns a `draws_rvars` object usable with the `posterior` package
+
+#### Scenario: A fit converts like any posterior object
+- **WHEN** `posterior::as_draws(fit)` or `posterior::as_draws_df(fit)` is called
+- **THEN** it returns the draws of `kb_samples(fit)`, in `draws_rvars` or `draws_df` form
 
 ### Requirement: Errors for unsupported objects
 
-A kelpbio function taking a fit (the generics `kb_model_describe()`, `kb_stancode()`, and `samples()`, the prediction verbs `kb_predict_weight()`, `kb_predict_size()`, `kb_predict_density()`, `kb_predict_wetdry()`, `kb_predict_carbon()`, and `kb_predict_cover_biomass()`, the biomass compositions `kb_predict_plot_biomass()` and `kb_predict_site_biomass()`, `kb_new_data()`, and `kb_sensitivity()`) called on an object it does not support SHALL error with a `cli` message naming the argument and the required class (`kb_fit`, or the model class such as `kb_fit_weight`, `kb_fit_size`, `kb_fit_density`, `kb_fit_wetdry`, `kb_fit_carbon`, or `kb_fit_cover_biomass` for the prediction verbs) and pointing to the `kb_fit_*()` functions, attributed to the function the user called. Any method called on a fit whose model has no implementation for it SHALL error naming the object's class rather than return a value. kelpbio SHALL NOT add default methods to generics owned by other packages.
+A kelpbio function taking a fit (`kb_model_describe()`, `kb_stancode()`, and `kb_samples()`, the prediction verbs `kb_predict_weight()`, `kb_predict_size()`, `kb_predict_density()`, `kb_predict_wetdry()`, `kb_predict_carbon()`, and `kb_predict_cover_biomass()`, the biomass compositions `kb_predict_plot_biomass()` and `kb_predict_site_biomass()`, `kb_new_data()`, and `kb_sensitivity()`) called on an object it does not support SHALL error with a `cli` message naming the argument and the required class (`kb_fit`, or the model class such as `kb_fit_weight`, `kb_fit_size`, `kb_fit_density`, `kb_fit_wetdry`, `kb_fit_carbon`, or `kb_fit_cover_biomass` for the prediction verbs) and pointing to the `kb_fit_*()` functions, attributed to the function the user called. Any method called on a fit whose model has no implementation for it SHALL error naming the object's class rather than return a value. kelpbio SHALL NOT add default methods to generics owned by other packages.
 
 #### Scenario: A non-fit errors helpfully
 - **WHEN** `kb_model_describe(1)` or `kb_predict_weight(1)` is called
@@ -112,10 +116,10 @@ A kelpbio function taking a fit (the generics `kb_model_describe()`, `kb_stancod
 
 ### Requirement: Draws, accessors, and convergence cover only estimated effects
 
-`samples()`, `rhat()`, `esr()`, `estimates()`, `npars()`, `nterms()`, `pars()`, `glance()`, `converged()`, and `kb_sensitivity()` SHALL cover only the effects the fit estimated. The draws of an omitted effect SHALL NOT be returned, its diagnostics SHALL NOT affect the convergence verdict, and it SHALL NOT appear in the sensitivity table.
+`kb_samples()`, `as_draws()`, `rhat()`, `esr()`, `estimates()`, `npars()`, `nterms()`, `pars()`, `glance()`, `converged()`, and `kb_sensitivity()` SHALL cover only the effects the fit estimated. The draws of an omitted effect SHALL NOT be returned, its diagnostics SHALL NOT affect the convergence verdict, and it SHALL NOT appear in the sensitivity table.
 
 #### Scenario: An omitted effect is not in the draws
-- **WHEN** `samples(fit)` is called on a fit that omitted the density or site:year effect
+- **WHEN** `kb_samples(fit)` or `posterior::as_draws(fit)` is called on a fit that omitted the density or site:year effect
 - **THEN** the returned draws do not include that effect
 
 #### Scenario: An omitted effect does not affect convergence

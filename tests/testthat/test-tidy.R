@@ -58,14 +58,10 @@ test_that("tidy forwards conf_level/estimate/sig_fig to the summariser", {
 })
 
 test_that("tidy reports exactly the recorded terms, at both levels", {
-  # Faked as the constructor builds an "off" fit: flag and meta$terms agree.
   fits <- list(nereo = weight_nereo_fit, macro = weight_macro_fit)
   for (species in names(fits)) {
     fit <- fits[[species]]
-    off <- fit
-    off$meta$site_year_on <- FALSE
-    off$meta$terms$fixed <- setdiff(off$meta$terms$fixed, "sd_site_year")
-    off$meta$terms$random <- setdiff(off$meta$terms$random, "site_year_effect")
+    off <- omit_terms(fit, site_year_off(FALSE))
     expect_false("sd_site_year" %in% tidy(off)$term, info = species)
     expect_false(
       any(startsWith(

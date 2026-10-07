@@ -1,17 +1,3 @@
-# Returns the fixture's draws in place of sampling.
-local_cover_biomass_macro_stub <- function(env = parent.frame()) {
-  local_mocked_bindings(
-    fit_stan = function(...) {
-      list(
-        draws = cover_biomass_macro_fit$draws,
-        diagnostics = cover_biomass_macro_fit$diagnostics,
-        stancode = ""
-      )
-    },
-    .env = env
-  )
-}
-
 surveys <- function() cover_surveys(cover_biomass_macro_fit)
 biomass <- function() cover_biomass(cover_biomass_macro_fit)
 
@@ -51,7 +37,7 @@ test_that("kb_fit_cover_biomass_macro returns a correctly-structured object", {
 })
 
 test_that("the fit records the species, response, predictor, interval level, and no site:year", {
-  local_cover_biomass_macro_stub()
+  local_fit_stan_stub(cover_biomass_macro_fit)
   fit <- kb_fit_cover_biomass_macro(surveys(), biomass(), progress = "none")
   expect_identical(fit$meta$species, "macrocystis")
   expect_identical(fit$meta$response, "biomass_kg_m2")
@@ -65,13 +51,13 @@ test_that("the fit records the species, response, predictor, interval level, and
 })
 
 test_that("the fit stores the surveys paired with their biomass", {
-  local_cover_biomass_macro_stub()
+  local_fit_stan_stub(cover_biomass_macro_fit)
   fit <- kb_fit_cover_biomass_macro(surveys(), biomass(), progress = "none")
   expect_equal(fit$data, cover_biomass_macro_fit$data, ignore_attr = TRUE)
 })
 
 test_that("surveys without biomass are dropped with a message", {
-  local_cover_biomass_macro_stub()
+  local_fit_stan_stub(cover_biomass_macro_fit)
   b <- biomass()[-1, ]
   expect_snapshot(fit <- kb_fit_cover_biomass_macro(surveys(), b))
   expect_equal(nobs(fit), nrow(surveys()) - 1L)
@@ -83,12 +69,12 @@ test_that("surveys without biomass are dropped with a message", {
 })
 
 test_that("multi-year data fit no site:year effect and raise no site:year message", {
-  local_cover_biomass_macro_stub()
+  local_fit_stan_stub(cover_biomass_macro_fit)
   expect_no_message(kb_fit_cover_biomass_macro(surveys(), biomass()))
 })
 
 test_that("conf_level comes from the biomass, the argument, or 0.95", {
-  local_cover_biomass_macro_stub()
+  local_fit_stan_stub(cover_biomass_macro_fit)
   fit <- kb_fit_cover_biomass_macro(
     surveys(),
     biomass(),
@@ -110,7 +96,7 @@ test_that("conf_level comes from the biomass, the argument, or 0.95", {
 })
 
 test_that("invalid data, a missing biomass, and wrong priors error before sampling", {
-  local_cover_biomass_macro_stub()
+  local_fit_stan_stub(cover_biomass_macro_fit)
   expect_error(kb_fit_cover_biomass_macro(data.frame(site = "a", year = "2020"), biomass()))
   expect_error(kb_fit_cover_biomass_macro(surveys()), "biomass")
   p <- kb_priors_cover_biomass_macro()

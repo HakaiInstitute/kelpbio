@@ -81,7 +81,7 @@ kb_fit_weight_macro <- function(
   core <- fit_stan(
     stanmodels$weight_macro,
     stan_data,
-    param_vars = parameters$sampled,
+    param_vars = c(parameters$fixed, parameters$random),
     chains = chains,
     niters = niters,
     nthin = nthin,
@@ -101,7 +101,7 @@ kb_fit_weight_macro <- function(
     species = "macrocystis",
     # Weight is measured per plant, not per unit of survey effort.
     offset = NULL,
-    terms = parameters[c("fixed", "random")],
+    terms = parameters,
     prior_only = prior_only,
     nthin = as.integer(nthin),
     meta_extra = list(

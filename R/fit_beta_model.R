@@ -47,7 +47,7 @@ fit_beta_model <- function(
   core <- fit_stan(
     stanmodels[[model]],
     stan_data,
-    param_vars = parameters$sampled,
+    param_vars = c(parameters$fixed, parameters$random),
     chains = chains,
     niters = niters,
     nthin = nthin,
@@ -68,7 +68,7 @@ fit_beta_model <- function(
     species = species,
     # A proportion within one sample, so there is no survey effort.
     offset = NULL,
-    terms = parameters[c("fixed", "random")],
+    terms = parameters,
     prior_only = prior_only,
     nthin = as.integer(nthin),
     meta_extra = list(response = response)

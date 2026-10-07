@@ -28,8 +28,7 @@ test_that("log_prior evaluates a lognormal prior on the parameter itself", {
 
 test_that("log_prior leaves out a term the fit omitted", {
   full <- log_prior(weight_nereo_fit)
-  dropped <- weight_nereo_fit
-  dropped$meta$terms$fixed <- setdiff(dropped$meta$terms$fixed, "density_slope")
+  dropped <- omit_terms(weight_nereo_fit, "density_slope")
   p <- weight_nereo_fit$meta$priors$density_slope
   density_part <- stats::dnorm(
     draws_of_term(weight_nereo_fit, "density_slope"),

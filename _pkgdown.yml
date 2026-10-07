@@ -100,7 +100,7 @@ reference:
 - title: "Model Summaries and Diagnostics"
   desc: "Summarise fits, extract coefficients and draws, and assess convergence and prior sensitivity."
   contents:
-    - samples
+    - kb_samples
     - kb_stancode
     - kb_model_describe
     - tidy.kb_fit

@@ -117,7 +117,7 @@ kb_fit_weight_nereo <- function(
   core <- fit_stan(
     stanmodels$weight_nereo,
     stan_data,
-    param_vars = parameters$sampled,
+    param_vars = c(parameters$fixed, parameters$random),
     chains = chains,
     niters = niters,
     nthin = nthin,
@@ -137,7 +137,7 @@ kb_fit_weight_nereo <- function(
     species = "nereocystis",
     # Weight is measured per plant, not per unit of survey effort.
     offset = NULL,
-    terms = parameters[c("fixed", "random")],
+    terms = parameters,
     prior_only = prior_only,
     nthin = as.integer(nthin),
     meta_extra = list(
