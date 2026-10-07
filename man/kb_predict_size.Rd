@@ -84,7 +84,7 @@ kb_predict_size(fit)
 kb_predict_size(fit, kb_new_data(fit, by = "site"))
 
 # At your own rows, including a new site:
-kb_predict_size(fit, data.frame(site = c("site1", "new_site")))
+kb_predict_size(fit, data.frame(site = c("otter_cove", "new_site")))
 }
 \seealso{
 \code{\link[=kb_new_data]{kb_new_data()}} to build rows by site or year, and

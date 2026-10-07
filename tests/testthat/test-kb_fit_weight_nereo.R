@@ -23,7 +23,7 @@ test_that("kb_fit_weight returns a correctly-structured object", {
   skip_on_cran()
   d <- droplevels(subset(
     data_weight_sim_nereo,
-    site %in% c("site1", "site2") & year %in% c("2019", "2020")
+    as.integer(site) <= 2 & year %in% c("2019", "2020")
   ))
   fit <- kb_fit_weight_nereo(
     d,
@@ -62,7 +62,7 @@ test_that("nthin > 1 still keeps exactly niters draws per chain", {
   skip_on_cran()
   d <- droplevels(subset(
     data_weight_sim_nereo,
-    site %in% c("site1", "site2") & year %in% c("2019", "2020")
+    as.integer(site) <= 2 & year %in% c("2019", "2020")
   ))
   # fit_stan sets warmup = niters and total iters = niters + niters * nthin, so
   # the thinned post-warmup phase must land exactly niters draws regardless of
@@ -84,7 +84,7 @@ test_that("prior_only fit ignores the data", {
   skip_on_cran()
   d <- droplevels(subset(
     data_weight_sim_nereo,
-    site %in% c("site1", "site2") & year %in% c("2019", "2020")
+    as.integer(site) <= 2 & year %in% c("2019", "2020")
   ))
   f1 <- kb_fit_weight_nereo(
     d,
@@ -134,7 +134,7 @@ test_that("zero-row data is accepted under prior_only", {
 test_that("progress accepts only the three modes", {
   d <- droplevels(subset(
     data_weight_sim_nereo,
-    site == "site1" & year == "2019"
+    as.integer(site) == 1 & year == "2019"
   ))
   expect_error(kb_fit_weight_nereo(d, progress = "loud"), "must be one of")
 })
@@ -146,7 +146,7 @@ test_that("progress_dir writes an artifact that kb_progress reads as complete", 
   skip_on_cran()
   d <- droplevels(subset(
     data_weight_sim_nereo,
-    site %in% c("site1", "site2") & year %in% c("2019", "2020")
+    as.integer(site) <= 2 & year %in% c("2019", "2020")
   ))
   # "bar" shows fit messages; without density there is none to print
   d$stipes_m2 <- NULL
@@ -233,7 +233,7 @@ test_that("a power-law fit samples and records no floor", {
   skip_on_cran()
   d <- droplevels(subset(
     data_weight_sim_nereo,
-    site %in% c("site1", "site2") & year %in% c("2019", "2020")
+    as.integer(site) <= 2 & year %in% c("2019", "2020")
   ))
   fit <- kb_fit_weight_nereo(
     d,

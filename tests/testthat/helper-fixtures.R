@@ -26,6 +26,12 @@ carbon_macro_fit <- fixture("carbon_macro_fit.rds")
 cover_biomass_nereo_fit <- fixture("cover_biomass_nereo_fit.rds")
 cover_biomass_macro_fit <- fixture("cover_biomass_macro_fit.rds")
 
+# The first `n` fitted sites of a fit, for new_data rows at known sites. The two
+# species' simulated datasets have different site names.
+fitted_sites <- function(fit, n = 1) {
+  fit$meta$site_levels[seq_len(n)]
+}
+
 # A cover biomass fit's stored data are its surveys paired with their in situ biomass;
 # these split them back into the two inputs a cover biomass fit takes.
 cover_surveys <- function(fit) {

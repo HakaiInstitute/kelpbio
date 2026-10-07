@@ -54,5 +54,6 @@ kb_check_data_density_nereo <- function(
   }
 
   warn_implausible_units(data, x_name)
+  warn_group_names(data, x_name)
   invisible(data)
 }

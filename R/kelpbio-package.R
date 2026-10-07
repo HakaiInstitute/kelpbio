@@ -3,6 +3,7 @@
 #' @import Rcpp
 #' @importFrom rstan sampling
 #' @importFrom rstantools rstan_config
+#' @importFrom posterior rvar
 #' @importFrom RcppParallel RcppParallelLibs
 #' @importFrom stats nobs
 #' @importFrom rlang .data %||%

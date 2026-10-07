@@ -17,7 +17,7 @@ test_that("kb_fit_size_nereo returns a correctly-structured object", {
   skip_on_cran()
   d <- droplevels(subset(
     data_size_sim_nereo,
-    site %in% c("site1", "site2") & year %in% c("2019", "2020")
+    as.integer(site) <= 2 & year %in% c("2019", "2020")
   ))
   fit <- kb_fit_size_nereo(
     d,

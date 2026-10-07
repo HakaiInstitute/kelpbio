@@ -118,7 +118,7 @@ test_that("new_data far outside the fitted range warns but still predicts", {
   expect_warning(
     p <- kb_predict_weight(
       weight_fit,
-      data.frame(diameter_mm = 3),
+      data.frame(diameter_mm = min(weight_fit$data$diameter_mm) / 4),
       new_levels = "average"
     ),
     "far outside"
@@ -127,22 +127,23 @@ test_that("new_data far outside the fitted range warns but still predicts", {
 })
 
 test_that("a fitted site-year recorded without density uses the fitted mean", {
-  # site2:2020 is a fitted site-year; dropping its stored density makes it one
-  # recorded as NA
+  # The first fitted site-year; dropping its stored density makes it one recorded
+  # as NA
   fit <- weight_fit
   levels <- fit$meta$density_levels
-  fit$meta$density_levels <- levels[names(levels) != "site2:2020"]
+  site_year <- strsplit(names(levels)[1], ":", fixed = TRUE)[[1]]
+  fit$meta$density_levels <- levels[-1]
   bare <- kb_predict_weight(
     fit,
-    data.frame(diameter_mm = 30, site = "site2", year = "2020"),
+    data.frame(diameter_mm = 30, site = site_year[1], year = site_year[2]),
     new_levels = "average"
   )
   at_mean <- kb_predict_weight(
     fit,
     data.frame(
       diameter_mm = 30,
-      site = "site2",
-      year = "2020",
+      site = site_year[1],
+      year = site_year[2],
       stipes_m2 = fit$meta$density_mean
     ),
     new_levels = "average"

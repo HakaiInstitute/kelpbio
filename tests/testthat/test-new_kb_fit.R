@@ -99,3 +99,59 @@ test_that("new_kb_fit stores the reported parameter set", {
 test_that("new_kb_fit rejects an unknown species", {
   expect_error(build(species = "bogus"))
 })
+
+effects <- function() {
+  posterior::draws_rvars(
+    bSite = posterior::rvar(array(1:8, c(4, 2)), nchains = 2),
+    bYear = posterior::rvar(array(11:18, c(4, 2)), nchains = 2),
+    bSiteYear = posterior::rvar(array(21:36, c(4, 2, 2)), nchains = 2)
+  )
+}
+
+test_that("label_levels names site, year, and site:year effects by level", {
+  draws <- label_levels(effects(), c("a", "b"), c("2020", "2021"))
+  expect_identical(
+    flat_variables(draws),
+    c(
+      "bSite[a]", "bSite[b]", "bYear[2020]", "bYear[2021]",
+      "bSiteYear[a,2020]", "bSiteYear[b,2020]",
+      "bSiteYear[a,2021]", "bSiteYear[b,2021]"
+    )
+  )
+  # Indexing by name and by position give the same draws; chains are kept.
+  expect_identical(
+    posterior::draws_of(draws$bSite[["b"]]),
+    posterior::draws_of(draws$bSite[[2]])
+  )
+  expect_identical(
+    posterior::draws_of(draws$bSiteYear["b", "2021"]),
+    posterior::draws_of(effects()$bSiteYear[2, 2]),
+    ignore_attr = TRUE
+  )
+  expect_identical(posterior::nchains(draws$bSite), 2L)
+})
+
+test_that("label_levels leaves an effect unlabelled when its shape does not match", {
+  # A zero-row prior-only fit samples one placeholder level with no name.
+  draws <- label_levels(effects(), character(0), character(0))
+  expect_identical(draws, effects())
+})
+
+test_that("new_kb_fit labels the effects and the diagnostics summary alike", {
+  core <- core()
+  core$draws <- effects()
+  core$diagnostics$summary <- posterior::summarise_draws(core$draws)
+  fit <- new_kb_fit(
+    core,
+    data = data(),
+    priors = list(),
+    model = "weight",
+    species = "nereocystis",
+    offset = NULL,
+    terms = terms(),
+    prior_only = FALSE,
+    nthin = 1L
+  )
+  expect_identical(fit$diagnostics$summary$variable, flat_variables(fit$draws))
+  expect_true("bSiteYear[b,2021]" %in% fit$diagnostics$summary$variable)
+})

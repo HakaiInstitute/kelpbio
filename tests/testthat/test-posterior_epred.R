@@ -58,7 +58,7 @@ test_that("the default new_levels is average, so a new site needs no seed", {
 
 test_that("density draws scale with area_m2, which defaults to one m2", {
   for (fit in list(density_nereo_fit, density_macro_fit)) {
-    nd <- data.frame(site = "site1", year = "2019", area_m2 = c(10, 20))
+    nd <- data.frame(site = fitted_sites(fit), year = "2019", area_m2 = c(10, 20))
     ep <- posterior_epred(fit, nd)
     expect_equal(ep[, 2], 2 * ep[, 1])
     expect_equal(

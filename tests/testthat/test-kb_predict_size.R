@@ -10,7 +10,7 @@ test_that("kb_predict_size at the observed data matches augment", {
 test_that("new_data needs no columns", {
   site <- kb_predict_size(
     size_nereo_fit,
-    data.frame(site = c("site1", "site2")),
+    data.frame(site = fitted_sites(size_nereo_fit, 2)),
     new_levels = "average"
   )
   expect_equal(nrow(site), 2L)
@@ -48,18 +48,18 @@ test_that("a new site is sampled or averaged, and a representative site stands i
     size_nereo_fit,
     nd,
     new_levels = "average",
-    representative_site = "site1"
+    representative_site = fitted_sites(size_nereo_fit)
   )
   known <- kb_predict_size(
     size_nereo_fit,
-    data.frame(site = "site1"),
+    data.frame(site = fitted_sites(size_nereo_fit)),
     new_levels = "average"
   )
   expect_equal(rep$estimate, known$estimate)
 })
 
 test_that("the macro estimate is the truncated mean, at least 1", {
-  p <- kb_predict_size(size_macro_fit, data.frame(site = "site1"))
+  p <- kb_predict_size(size_macro_fit, data.frame(site = fitted_sites(size_macro_fit)))
   expect_gte(p$lower, 1)
 })
 
@@ -71,7 +71,7 @@ test_that("kb_predict_size errors on a weight fit and a non-fit", {
 })
 
 test_that("predict() wraps kb_predict_size()", {
-  nd <- data.frame(site = "site1")
+  nd <- data.frame(site = fitted_sites(size_nereo_fit))
   expect_equal(
     predict(size_nereo_fit, nd, new_levels = "average"),
     kb_predict_size(size_nereo_fit, nd, new_levels = "average")

@@ -19,10 +19,10 @@
     Output
       <kb_fit_weight_nereo>
       Model:     Weight (Nereocystis luetkeana)
-      Predictor: diameter_mm, reference 35.8 (geometric mean)
-      Data:      320 observations; groups: site (4), year (4), site:year (16)
+      Predictor: diameter_mm, reference 23.4 (geometric mean)
+      Data:      240 observations; groups: site (4), year (4), site:year (12)
       Draws:     2 chains, 300 post-warmup draws each (thin = 5), 600 total
-      Converged: TRUE
+      Converged: FALSE
       See kb_model_describe(fit) for the model equation and priors.
 
 # print.kb_fit shows the macro slim header
@@ -32,10 +32,10 @@
     Output
       <kb_fit_weight_macro>
       Model:     Weight (Macrocystis pyrifera)
-      Predictor: fronds, reference 4.95 (geometric mean)
-      Data:      240 observations; groups: site (4), year (3), site:year (12)
+      Predictor: fronds, reference 4.61 (geometric mean)
+      Data:      180 observations; groups: site (4), year (3), site:year (9)
       Draws:     2 chains, 300 post-warmup draws each (thin = 5), 600 total
-      Converged: FALSE
+      Converged: TRUE
       See kb_model_describe(fit) for the model equation and priors.
 
 # print.kb_fit shows the size headers without a predictor line
@@ -45,7 +45,7 @@
     Output
       <kb_fit_size_nereo>
       Model:     Size (Nereocystis luetkeana)
-      Data:      240 observations; groups: site (4), year (4), site:year (16)
+      Data:      280 observations; groups: site (4), year (4), site:year (14)
       Draws:     2 chains, 300 post-warmup draws each (thin = 5), 600 total
       Converged: TRUE
       See kb_model_describe(fit) for the model equation and priors.
@@ -57,7 +57,7 @@
     Output
       <kb_fit_size_macro>
       Model:     Size (Macrocystis pyrifera)
-      Data:      320 observations; groups: site (4), year (4), site:year (16)
+      Data:      280 observations; groups: site (4), year (4), site:year (14)
       Draws:     2 chains, 300 post-warmup draws each (thin = 5), 600 total
       Converged: TRUE
       See kb_model_describe(fit) for the model equation and priors.
@@ -93,7 +93,7 @@
     Output
       <kb_fit_cover_biomass_nereo>
       Model:     Cover biomass (Nereocystis luetkeana)
-      Data:      16 observations; groups: site (4), year (4), site:year (16)
+      Data:      11 observations; groups: site (4), year (4), site:year (11)
       Draws:     2 chains, 300 post-warmup draws each (thin = 5), 600 total
       Converged: TRUE
       See kb_model_describe(fit) for the model equation and priors.

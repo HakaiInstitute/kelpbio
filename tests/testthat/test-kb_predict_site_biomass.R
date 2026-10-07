@@ -1,6 +1,6 @@
 surveys <- function(...) {
   data.frame(
-    site = c("site1", "site2", "site3"),
+    site = fitted_sites(cover_biomass_nereo_fit, 3),
     year = "2019",
     canopy_area_m2 = c(200, 400, 800),
     tide_height_m = 0.5,
@@ -90,7 +90,10 @@ test_that("an unseen site is sampled by default, wider than averaged", {
 })
 
 test_that("results are reproducible under a seed", {
-  nd <- transform(surveys(), site = c("new1", "new2", "site1"))
+  nd <- transform(
+    surveys(),
+    site = c("new1", "new2", fitted_sites(cover_biomass_nereo_fit))
+  )
   withr::local_seed(3)
   a <- kb_predict_site_biomass(cover_biomass_macro_fit, nd)
   withr::local_seed(3)

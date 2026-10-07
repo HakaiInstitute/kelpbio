@@ -49,10 +49,13 @@ test_that("posterior_predict at new data is wider than posterior_epred", {
   ep <- posterior_epred(weight_fit, new_data = nd, new_levels = "average")
   expect_equal(dim(pp), dim(ep))
   # observation noise widens the predictive spread relative to the mean structure
-  expect_gt(mean(apply(pp, 2, stats::sd)), mean(apply(ep, 2, stats::sd)))
+  # On the log scale the noise adds its variance to every draw's, whereas on the
+  # natural scale a few extreme draws of the expected weight dominate the SD.
+  expect_true(all(apply(log(pp), 2, stats::sd) > apply(log(ep), 2, stats::sd)))
 })
 
 test_that("macro posterior_predict draws positive Gamma noise, wider than epred", {
+  withr::local_seed(1)
   nd <- data.frame(fronds = c(2, 5, 10))
   pp <- posterior_predict(
     weight_macro_fit,
@@ -62,16 +65,19 @@ test_that("macro posterior_predict draws positive Gamma noise, wider than epred"
   ep <- posterior_epred(weight_macro_fit, new_data = nd, new_levels = "average")
   expect_equal(dim(pp), dim(ep))
   expect_true(all(pp > 0)) # Gamma support is strictly positive
-  expect_gt(mean(apply(pp, 2, stats::sd)), mean(apply(ep, 2, stats::sd)))
+  # On the log scale the noise adds its variance to every draw's, whereas on the
+  # natural scale a few extreme draws of the expected weight dominate the SD.
+  expect_true(all(apply(log(pp), 2, stats::sd) > apply(log(ep), 2, stats::sd)))
 })
 
 test_that("size posterior_predict draws plant sizes from the size likelihoods", {
   withr::local_seed(1)
-  nd <- data.frame(site = c("site1", "site2"))
+  nd <- data.frame(site = fitted_sites(size_nereo_fit, 2))
   pp <- posterior_predict(size_nereo_fit, new_data = nd, new_levels = "average")
   expect_equal(dim(pp), c(posterior::ndraws(size_nereo_fit$draws), 2L))
   expect_true(all(pp > 0))
 
+  nd <- data.frame(site = fitted_sites(size_macro_fit, 2))
   pm <- posterior_predict(size_macro_fit, new_data = nd, new_levels = "average")
   expect_true(all(pm >= 1))
   expect_true(all(pm == round(pm)))
@@ -82,8 +88,8 @@ test_that("size posterior_predict draws plant sizes from the size likelihoods", 
 
 test_that("density posterior_predict draws transect counts", {
   withr::local_seed(1)
-  nd <- data.frame(site = c("site1", "site2"), area_m2 = c(40, 80))
   for (fit in list(density_nereo_fit, density_macro_fit)) {
+    nd <- data.frame(site = fitted_sites(fit, 2), area_m2 = c(40, 80))
     pp <- posterior_predict(fit, new_data = nd, new_levels = "average")
     expect_equal(dim(pp), c(posterior::ndraws(fit$draws), 2L))
     expect_true(all(pp >= 0))

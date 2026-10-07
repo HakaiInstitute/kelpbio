@@ -46,24 +46,25 @@ Source builds require a C++ toolchain:
 
 kelpbio fits each biomass component with its own `kb_fit_*()` function.
 The allometric weight model relates wet weight to sub-bulb diameter,
-with random effects for site and site-by-year.
+with random effects for year, site, and site-by-year.
 
-The model is fitted to a data frame of `diameter`, `weight`, `site`, and
-`year`. A small simulated dataset is included with the package:
+The model is fitted to a data frame of `diameter_mm`, `weight_kg`,
+`site`, and `year`, with an optional site-year stipe density,
+`stipes_m2`. A small simulated dataset is included with the package:
 
 ``` r
 library(kelpbio)
 
 head(data_weight_sim_nereo)
-#> # A tibble: 6 × 4
-#>   diameter weight site  year 
-#>      <dbl>  <dbl> <fct> <fct>
-#> 1     53.8  0.491 site1 2019 
-#> 2     38.2  0.105 site1 2019 
-#> 3     25.2  0.049 site1 2019 
-#> 4     54.5  0.35  site1 2019 
-#> 5     25.6  0.061 site1 2019 
-#> 6     49.5  0.376 site1 2019
+#> # A tibble: 6 × 5
+#>   diameter_mm weight_kg site       year  stipes_m2
+#>         <dbl>     <dbl> <fct>      <fct>     <dbl>
+#> 1        26.6     0.661 otter_cove 2019       0.37
+#> 2        11.8     0.134 otter_cove 2019       0.37
+#> 3        22.8     0.715 otter_cove 2019       0.37
+#> 4        37.1     1.94  otter_cove 2019       0.37
+#> 5        36.5     1.52  otter_cove 2019       0.37
+#> 6        25.9     0.271 otter_cove 2019       0.37
 ```
 
 Fit the model with `kb_fit_weight_nereo()`:
@@ -87,23 +88,24 @@ glance(fit)
 #> # A tibble: 1 × 9
 #>       n     K nchains niters nthin   ess  rhat perc_divergent converged
 #>   <int> <int>   <int>  <dbl> <int> <dbl> <dbl>          <dbl> <lgl>    
-#> 1   780    10       3    500     2  670.  1.01              0 TRUE
+#> 1   420    11       3    500     2  641.  1.00              0 TRUE
 
 tidy(fit)
-#> # A tibble: 7 × 4
-#>   term          estimate   lower   upper
-#>   <chr>            <dbl>   <dbl>   <dbl>
-#> 1 bWeight        -1.38   -1.56   -1.21  
-#> 2 bDiameter       2.47    2.27    2.66  
-#> 3 bDiameter2     -0.0143 -0.113   0.0708
-#> 4 sSite           0.25    0.15    0.463 
-#> 5 sSiteDiameter   0.27    0.174   0.514 
-#> 6 sSiteYear       0.1     0.0737  0.139 
-#> 7 sWeight         0.163   0.153   0.174
+#> # A tibble: 8 × 4
+#>   term      estimate    lower  upper
+#>   <chr>        <dbl>    <dbl>  <dbl>
+#> 1 bWeight    -1.02   -1.49    -0.498
+#> 2 bPower      3.25    3.02     3.5  
+#> 3 bFloor      0.125   0.107    0.144
+#> 4 bDensity   -0.0528 -0.219    0.107
+#> 5 sSite       0.106   0.00442  0.385
+#> 6 sYear       0.326   0.0889   1.02 
+#> 7 sSiteYear   0.246   0.131    0.426
+#> 8 sWeight     0.449   0.421    0.485
 ```
 
-Predict the weight-diameter curve for each site at a grid from `kb_new_data()`
-and plot it with `kb_plot_predictions()`:
+Predict the weight-diameter curve for each site at a grid from
+`kb_new_data()` and plot it with `kb_plot_predictions()`:
 
 ``` r
 kb_predict_weight(fit, kb_new_data(fit, by = "site")) |>
@@ -117,19 +119,19 @@ table with a point estimate and `conf_level` compatibility limits for
 each row:
 
 ``` r
-new_data <- data.frame(diameter = c(20, 35, 50, 65, 80), site = "site1")
+new_data <- data.frame(diameter_mm = c(20, 35, 50, 65, 80), site = "otter_cove")
 
 set.seed(1)
 kb_predict_weight(fit, new_data)
-#> <kb_predictions> predictor: diameter | response: weight | by: site
+#> <kb_predictions> predictor: diameter_mm | response: weight_kg | by: site
 #> # A tibble: 5 × 5
-#>   diameter site  estimate  lower  upper
-#>      <dbl> <chr>    <dbl>  <dbl>  <dbl>
-#> 1       20 site1   0.0268 0.0206 0.0345
-#> 2       35 site1   0.128  0.102  0.163 
-#> 3       50 site1   0.348  0.273  0.437 
-#> 4       65 site1   0.718  0.556  0.92  
-#> 5       80 site1   1.28   0.978  1.63
+#>   diameter_mm site       estimate  lower  upper
+#>         <dbl> <chr>         <dbl>  <dbl>  <dbl>
+#> 1          20 otter_cove    0.398  0.295  0.582
+#> 2          35 otter_cove    1.73   1.12   2.85 
+#> 3          50 otter_cove    5.18   3.25   8.94 
+#> 4          65 otter_cove   11.9    7.32  21.6  
+#> 5          80 otter_cove   23.3   13.9   43.2
 ```
 
 The fitted object exposes the standard `rstantools` generics

@@ -50,7 +50,7 @@
 #' kb_predict_cover_biomass(
 #'   fit,
 #'   data.frame(
-#'     site = c("site1", "new_site"),
+#'     site = c("otter_cove", "new_site"),
 #'     canopy_area_m2 = 80,
 #'     plot_area_m2 = 200,
 #'     tide_height_m = 0.5

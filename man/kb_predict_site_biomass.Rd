@@ -102,7 +102,7 @@ both count its mapped canopy, so a group holding them warns.
 \examples{
 fit <- fit_cover_biomass_sim_nereo
 surveys <- data.frame(
-  site = c("site1", "site1", "site2", "new_site"),
+  site = c("otter_cove", "otter_cove", "gull_rock", "new_site"),
   year = c("2019", "2020", "2020", "2020"),
   canopy_area_m2 = c(1500, 1100, 4800, 900),
   tide_height_m = c(1.7, 0.7, 0.5, 0.9),

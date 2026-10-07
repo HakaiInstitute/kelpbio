@@ -46,5 +46,6 @@ kb_check_data_size_macro <- function(
     chk::chk_not_any_na(data[[col]], x_name = nm)
   }
 
+  warn_group_names(data, x_name)
   invisible(data)
 }

@@ -69,7 +69,7 @@ arms_b <- data.frame(
 )
 arm_levels <- arms_b$arm
 
-# True data-generating parameters (scales from data-raw/data_weight_sim_nereo.R).
+# True data-generating parameters (scales from data-raw/data_sim_nereo.R).
 true_base <- list(
   b_weight = log(0.1),
   b_diameter = 2.6,
