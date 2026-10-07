@@ -5,11 +5,11 @@
 #' @details
 #' The number of stipes on a transect is modelled with a zero-inflated negative
 #' binomial likelihood. The expected count is the transect area times the stipe
-#' density, so `area_m2` enters as an offset. The log density (`bStipes`, log
+#' density, so `area_m2` enters as an offset. The log density (`intercept`, log
 #' stipes per m² at a typical site and year) varies by site, by year, and by
 #' `site:year`. A transect holds no stipes with probability `zi`, estimated on the
-#' logit scale (`bZeroInflation`) and common to all transects; the overdispersion
-#' (`bDispersion`) is also common to all transects. Predictions report the
+#' logit scale (`logit_zero_inflation`) and common to all transects; the overdispersion
+#' (`dispersion`) is also common to all transects. Predictions report the
 #' expected density, which includes the zero-inflation probability.
 #'
 #' The site:year effect is set from the data: it is omitted when the data span a
@@ -82,15 +82,15 @@ kb_fit_density_nereo <- function(
     stanmodels$density_nereo,
     stan_data,
     param_vars = c(
-      "bStipes",
-      "bZeroInflation",
-      "bDispersion",
-      "sSite",
-      "sYear",
-      "sSiteYear",
-      "bSite",
-      "bYear",
-      "bSiteYear"
+      "intercept",
+      "logit_zero_inflation",
+      "dispersion",
+      "sd_site",
+      "sd_year",
+      "sd_site_year",
+      "site_effect",
+      "year_effect",
+      "site_year_effect"
     ),
     chains = chains,
     niters = niters,
@@ -114,17 +114,17 @@ kb_fit_density_nereo <- function(
     offset = "area_m2",
     terms = list(
       fixed = c(
-        "bStipes",
-        "bZeroInflation",
-        "bDispersion",
-        "sSite",
-        "sYear",
-        if (site_year$on) "sSiteYear"
+        "intercept",
+        "logit_zero_inflation",
+        "dispersion",
+        "sd_site",
+        "sd_year",
+        if (site_year$on) "sd_site_year"
       ),
       random = c(
-        "bSite",
-        "bYear",
-        if (site_year$on) "bSiteYear"
+        "site_effect",
+        "year_effect",
+        if (site_year$on) "site_year_effect"
       )
     ),
     prior_only = prior_only,

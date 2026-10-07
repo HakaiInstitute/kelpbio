@@ -32,15 +32,15 @@ test_that("kb_fit_density_nereo returns a correctly-structured object", {
   expect_setequal(
     posterior::variables(fit$draws),
     c(
-      "bStipes",
-      "bZeroInflation",
-      "bDispersion",
-      "sSite",
-      "sYear",
-      "sSiteYear",
-      "bSite",
-      "bYear",
-      "bSiteYear"
+      "intercept",
+      "logit_zero_inflation",
+      "dispersion",
+      "sd_site",
+      "sd_year",
+      "sd_site_year",
+      "site_effect",
+      "year_effect",
+      "site_year_effect"
     )
   )
   expect_equal(niters(fit), 100L)
@@ -54,7 +54,7 @@ test_that("the fit records the species, response, area offset, and no predictor"
   expect_identical(fit$meta$offset, "area_m2")
   expect_null(fit$meta[["predictor"]])
   expect_true(fit$meta$site_year_on)
-  expect_true("sSiteYear" %in% fit$meta$terms$fixed)
+  expect_true("sd_site_year" %in% fit$meta$terms$fixed)
 })
 
 test_that("single-year data omit the site:year effect with a message", {
@@ -62,8 +62,8 @@ test_that("single-year data omit the site:year effect with a message", {
   d <- droplevels(subset(density_nereo_fit$data, year == "2019"))
   expect_message(fit <- kb_fit_density_nereo(d), "site:year effect is omitted")
   expect_false(fit$meta$site_year_on)
-  expect_false("sSiteYear" %in% fit$meta$terms$fixed)
-  expect_false("bSiteYear" %in% fit$meta$terms$random)
+  expect_false("sd_site_year" %in% fit$meta$terms$fixed)
+  expect_false("site_year_effect" %in% fit$meta$terms$random)
 })
 
 test_that("invalid data and priors error before sampling", {

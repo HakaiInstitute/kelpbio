@@ -4,7 +4,7 @@ test_that("kb_priors_weight_macro returns the default named prior list matching 
     p,
     c(
       "intercept",
-      "fronds",
+      "fronds_slope",
       "shape",
       "sd_site",
       "sd_year",
@@ -13,7 +13,7 @@ test_that("kb_priors_weight_macro returns the default named prior list matching 
   )
   # each expect_equal below also pins the class, so no separate class checks
   expect_equal(p$intercept, kb_prior_normal(0, 2))
-  expect_equal(p$fronds, kb_prior_normal(1, 0.5))
+  expect_equal(p$fronds_slope, kb_prior_normal(1, 0.5))
   expect_equal(p$shape, kb_prior_exponential(0.1))
   expect_equal(p$sd_site, kb_prior_exponential(1))
   expect_equal(p$sd_year, kb_prior_exponential(1))

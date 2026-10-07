@@ -11,12 +11,12 @@
 #' @return A named list suitable for `rstan::sampling(stanmodels$carbon, data = .)`.
 #' @noRd
 assemble_carbon_data <- function(data, priors, prior_only = FALSE) {
-  list(
-    nObs = nrow(data),
-    carbon_fraction = as.numeric(carbon_fraction(data)),
-    prior_intercept_mu = priors$intercept$mean,
-    prior_intercept_sd = priors$intercept$sd,
-    prior_precision_rate = priors$precision$rate,
-    prior_only = as.integer(prior_only)
+  c(
+    list(
+      n_obs = nrow(data),
+      carbon_fraction = as.numeric(carbon_fraction(data)),
+      prior_only = as.integer(prior_only)
+    ),
+    prior_data(priors)
   )
 }

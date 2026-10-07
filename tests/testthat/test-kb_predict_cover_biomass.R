@@ -47,7 +47,7 @@ test_that("zero canopy predicts the floor for every site and year", {
     sig_fig = 8
   )
   expect_equal(p$estimate, rep(p$estimate[1], 3))
-  floor <- stats::median(posterior::draws_of(cover_biomass_macro_fit$draws$bFloor))
+  floor <- stats::median(posterior::draws_of(cover_biomass_macro_fit$draws$biomass_floor))
   expect_equal(p$estimate[1], floor, tolerance = 1e-6)
 })
 

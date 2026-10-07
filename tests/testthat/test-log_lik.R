@@ -14,7 +14,7 @@ test_that("nereo log_lik is the lognormal density of weight", {
   # weight, the Normal density of log weight minus log weight) as well as the
   # orientation.
   mu <- posterior_linpred(weight_fit)
-  sw <- as.vector(posterior::draws_of(weight_fit$draws$sWeight))
+  sw <- as.vector(posterior::draws_of(weight_fit$draws$sd_residual))
   y <- weight_fit$data$weight_kg
   expected <- t(vapply(
     seq_along(sw),
@@ -26,7 +26,7 @@ test_that("nereo log_lik is the lognormal density of weight", {
 
 test_that("macro log_lik matches the Gamma density computed directly", {
   mu <- posterior_linpred(weight_macro_fit)
-  shape <- as.vector(posterior::draws_of(weight_macro_fit$draws$bShape))
+  shape <- as.vector(posterior::draws_of(weight_macro_fit$draws$shape))
   y <- weight_macro_fit$data$weight_kg
   expected <- t(vapply(
     seq_along(shape),
@@ -51,7 +51,7 @@ test_that("log_lik aborts for a zero-observation fit", {
 
 test_that("nereo size log_lik matches the Weibull density computed directly", {
   mu <- exp(posterior_linpred(size_nereo_fit))
-  shape <- as.vector(posterior::draws_of(size_nereo_fit$draws$bShape))
+  shape <- as.vector(posterior::draws_of(size_nereo_fit$draws$shape))
   y <- size_nereo_fit$data$diameter_mm
   expected <- t(vapply(
     seq_along(shape),
@@ -70,7 +70,7 @@ test_that("nereo size log_lik matches the Weibull density computed directly", {
 
 test_that("macro size log_lik matches the truncated negative binomial computed directly", {
   mu <- exp(posterior_linpred(size_macro_fit))
-  theta <- as.vector(posterior::draws_of(size_macro_fit$draws$bDispersion))
+  theta <- as.vector(posterior::draws_of(size_macro_fit$draws$dispersion))
   y <- size_macro_fit$data$fronds
   expected <- t(vapply(
     seq_along(theta),
@@ -86,9 +86,9 @@ test_that("macro size log_lik matches the truncated negative binomial computed d
 
 test_that("nereo density log_lik matches the zero-inflated negative binomial computed directly", {
   mu <- exp(posterior_linpred(density_nereo_fit))
-  theta <- as.vector(posterior::draws_of(density_nereo_fit$draws$bDispersion))
+  theta <- as.vector(posterior::draws_of(density_nereo_fit$draws$dispersion))
   zi <- stats::plogis(
-    as.vector(posterior::draws_of(density_nereo_fit$draws$bZeroInflation))
+    as.vector(posterior::draws_of(density_nereo_fit$draws$logit_zero_inflation))
   )
   y <- density_nereo_fit$data$stipes
   expected <- t(vapply(
@@ -104,7 +104,7 @@ test_that("nereo density log_lik matches the zero-inflated negative binomial com
 
 test_that("macro density log_lik matches the negative binomial computed directly", {
   mu <- exp(posterior_linpred(density_macro_fit))
-  theta <- as.vector(posterior::draws_of(density_macro_fit$draws$bDispersion))
+  theta <- as.vector(posterior::draws_of(density_macro_fit$draws$dispersion))
   y <- density_macro_fit$data$plants
   expected <- t(vapply(
     seq_len(nrow(mu)),
@@ -123,7 +123,7 @@ test_that("the density log-likelihood uses each transect's area", {
 
 test_that("wet/dry log_lik matches the Beta density of the ratio computed directly", {
   mu <- stats::plogis(posterior_linpred(wetdry_nereo_fit))
-  precision <- as.vector(posterior::draws_of(wetdry_nereo_fit$draws$bPrecision))
+  precision <- as.vector(posterior::draws_of(wetdry_nereo_fit$draws$precision))
   y <- wetdry_nereo_fit$data$dry_mass_g / wetdry_nereo_fit$data$wet_mass_g
   expected <- t(vapply(
     seq_len(nrow(mu)),
@@ -142,7 +142,7 @@ test_that("wet/dry log_lik matches the Beta density of the ratio computed direct
 
 test_that("carbon log_lik matches the Beta density of the fraction computed directly", {
   mu <- stats::plogis(posterior_linpred(carbon_macro_fit))
-  precision <- as.vector(posterior::draws_of(carbon_macro_fit$draws$bPrecision))
+  precision <- as.vector(posterior::draws_of(carbon_macro_fit$draws$precision))
   y <- carbon_fraction(carbon_macro_fit$data)
   expected <- t(vapply(
     seq_len(nrow(mu)),
@@ -162,7 +162,7 @@ test_that("carbon log_lik matches the Beta density of the fraction computed dire
 test_that("cover log_lik is the Normal density of the log estimate with its Jacobian", {
   fit <- cover_biomass_nereo_fit
   mu <- posterior_linpred(fit)
-  scaling <- as.vector(posterior::draws_of(fit$draws$bScaling))
+  scaling <- as.vector(posterior::draws_of(fit$draws$error_scaling))
   sd_log <- cover_log_sd(fit$data$lower, fit$data$upper, 0.95)
   y <- fit$data$estimate
   expected <- t(vapply(

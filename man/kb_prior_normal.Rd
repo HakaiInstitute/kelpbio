@@ -24,6 +24,7 @@ kb_prior_normal(mean = 0, sd = 2)
 \seealso{
 Other priors:
 \code{\link[=kb_prior_exponential]{kb_prior_exponential()}},
+\code{\link[=kb_prior_lognormal]{kb_prior_lognormal()}},
 \code{\link[=kb_priors_carbon_macro]{kb_priors_carbon_macro()}},
 \code{\link[=kb_priors_carbon_nereo]{kb_priors_carbon_nereo()}},
 \code{\link[=kb_priors_cover_biomass_macro]{kb_priors_cover_biomass_macro()}},

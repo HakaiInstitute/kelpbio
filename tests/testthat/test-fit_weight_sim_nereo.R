@@ -13,10 +13,10 @@ test_that("fit_weight_sim_nereo is a kb_fit_weight the accessors operate on", {
 test_that("fit_weight_sim_nereo's group effects are labelled by level", {
   draws <- fit_weight_sim_nereo$draws
   expect_identical(
-    posterior::draws_of(draws$bSite[["otter_cove"]]),
-    posterior::draws_of(draws$bSite[[1]])
+    posterior::draws_of(draws$site_effect[["otter_cove"]]),
+    posterior::draws_of(draws$site_effect[[1]])
   )
   terms <- tidy(fit_weight_sim_nereo, include_random_effects = TRUE)$term
-  expect_true("bSite[otter_cove]" %in% terms)
-  expect_true(any(startsWith(terms, "bSiteYear[otter_cove,")))
+  expect_true("site_effect[otter_cove]" %in% terms)
+  expect_true(any(startsWith(terms, "site_year_effect[otter_cove,")))
 })

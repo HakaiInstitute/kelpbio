@@ -5,7 +5,7 @@
 #' when `new_data = NULL`.
 #'
 #' @details
-#' Each row is tide-corrected with the fitted `bTide` and capped at a cover of 1
+#' Each row is tide-corrected with the fitted `tide_height_slope` and capped at a cover of 1
 #' before the calibration is applied. A row with no canopy predicts the biomass
 #' floor, which is the same for every site and year. For curves over
 #' tide-corrected cover by site or year, build the rows with [kb_new_data()].

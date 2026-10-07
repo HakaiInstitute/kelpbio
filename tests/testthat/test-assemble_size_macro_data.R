@@ -8,9 +8,9 @@ size_macro_data <- function() {
 
 test_that("assemble_size_macro_data maps data to the Stan data block", {
   sd <- assemble_size_macro_data(size_macro_data(), kb_priors_size_macro())
-  expect_equal(sd$nObs, 3L)
-  expect_equal(sd$nSite, 2L)
-  expect_equal(sd$nYear, 2L)
+  expect_equal(sd$n_obs, 3L)
+  expect_equal(sd$n_site, 2L)
+  expect_equal(sd$n_year, 2L)
   expect_equal(sd$site, c(1L, 2L, 1L))
   expect_equal(sd$year, c(1L, 1L, 2L))
   # a Stan integer array
@@ -28,7 +28,7 @@ test_that("assemble_size_macro_data maps every prior hyperparameter to its own S
     sd_site_year = kb_prior_exponential(2.3)
   )
   sd <- assemble_size_macro_data(size_macro_data(), priors)
-  expect_equal(sd$prior_intercept_mu, 0.1)
+  expect_equal(sd$prior_intercept_mean, 0.1)
   expect_equal(sd$prior_intercept_sd, 1.1)
   expect_equal(sd$prior_dispersion_rate, 2.0)
   expect_equal(sd$prior_sd_site_rate, 2.1)
@@ -48,8 +48,8 @@ test_that("assemble_size_macro_data encodes the flags and accepts zero-row data"
     kb_priors_size_macro(),
     prior_only = TRUE
   )
-  expect_equal(sd$nObs, 0L)
-  expect_equal(sd$nSite, 1L)
+  expect_equal(sd$n_obs, 0L)
+  expect_equal(sd$n_site, 1L)
   expect_length(sd$fronds, 0)
   expect_equal(sd$prior_only, 1L)
 })

@@ -1,9 +1,9 @@
 core <- function() {
   list(
     draws = posterior::draws_rvars(
-      bWeight = posterior::rvar(matrix(1:4, 4, 1)),
-      sSite = posterior::rvar(matrix(1:4, 4, 1)),
-      bSite = posterior::rvar(matrix(1:4, 4, 1))
+      intercept = posterior::rvar(matrix(1:4, 4, 1)),
+      sd_site = posterior::rvar(matrix(1:4, 4, 1)),
+      site_effect = posterior::rvar(matrix(1:4, 4, 1))
     ),
     diagnostics = list(summary = NULL),
     stancode = "// stan"
@@ -15,7 +15,7 @@ data <- function() {
 }
 
 terms <- function() {
-  list(fixed = c("bWeight", "sSite"), random = "bSite")
+  list(fixed = c("intercept", "sd_site"), random = "site_effect")
 }
 
 build <- function(...) {
@@ -102,9 +102,9 @@ test_that("new_kb_fit rejects an unknown species", {
 
 effects <- function() {
   posterior::draws_rvars(
-    bSite = posterior::rvar(array(1:8, c(4, 2)), nchains = 2),
-    bYear = posterior::rvar(array(11:18, c(4, 2)), nchains = 2),
-    bSiteYear = posterior::rvar(array(21:36, c(4, 2, 2)), nchains = 2)
+    site_effect = posterior::rvar(array(1:8, c(4, 2)), nchains = 2),
+    year_effect = posterior::rvar(array(11:18, c(4, 2)), nchains = 2),
+    site_year_effect = posterior::rvar(array(21:36, c(4, 2, 2)), nchains = 2)
   )
 }
 
@@ -113,22 +113,22 @@ test_that("label_levels names site, year, and site:year effects by level", {
   expect_identical(
     flat_variables(draws),
     c(
-      "bSite[a]", "bSite[b]", "bYear[2020]", "bYear[2021]",
-      "bSiteYear[a,2020]", "bSiteYear[b,2020]",
-      "bSiteYear[a,2021]", "bSiteYear[b,2021]"
+      "site_effect[a]", "site_effect[b]", "year_effect[2020]", "year_effect[2021]",
+      "site_year_effect[a,2020]", "site_year_effect[b,2020]",
+      "site_year_effect[a,2021]", "site_year_effect[b,2021]"
     )
   )
   # Indexing by name and by position give the same draws; chains are kept.
   expect_identical(
-    posterior::draws_of(draws$bSite[["b"]]),
-    posterior::draws_of(draws$bSite[[2]])
+    posterior::draws_of(draws$site_effect[["b"]]),
+    posterior::draws_of(draws$site_effect[[2]])
   )
   expect_identical(
-    posterior::draws_of(draws$bSiteYear["b", "2021"]),
-    posterior::draws_of(effects()$bSiteYear[2, 2]),
+    posterior::draws_of(draws$site_year_effect["b", "2021"]),
+    posterior::draws_of(effects()$site_year_effect[2, 2]),
     ignore_attr = TRUE
   )
-  expect_identical(posterior::nchains(draws$bSite), 2L)
+  expect_identical(posterior::nchains(draws$site_effect), 2L)
 })
 
 test_that("label_levels leaves an effect unlabelled when its shape does not match", {
@@ -153,5 +153,5 @@ test_that("new_kb_fit labels the effects and the diagnostics summary alike", {
     nthin = 1L
   )
   expect_identical(fit$diagnostics$summary$variable, flat_variables(fit$draws))
-  expect_true("bSiteYear[b,2021]" %in% fit$diagnostics$summary$variable)
+  expect_true("site_year_effect[b,2021]" %in% fit$diagnostics$summary$variable)
 })

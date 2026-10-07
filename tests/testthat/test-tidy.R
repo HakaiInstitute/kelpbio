@@ -3,25 +3,25 @@ test_that("tidy returns house columns and omits group-level terms by default", {
   expect_s3_class(t, "tbl_df")
   expect_named(t, c("term", "estimate", "lower", "upper"))
   # default include_random_effects = FALSE -> per-level deviations absent
-  expect_false(any(grepl("^bSite\\[", t$term)))
+  expect_false(any(grepl("^site_effect\\[", t$term)))
   expect_setequal(
     t$term,
     c(
-      "bWeight",
-      "bPower",
-      "bFloor",
-      "bDensity",
-      "sSite",
-      "sYear",
-      "sSiteYear",
-      "sWeight"
+      "intercept",
+      "diameter_power",
+      "weight_floor",
+      "density_slope",
+      "sd_site",
+      "sd_year",
+      "sd_site_year",
+      "sd_residual"
     )
   )
 })
 
 test_that("include_random_effects = TRUE adds the group-level deviations", {
   t <- tidy(weight_fit, include_random_effects = TRUE)
-  expect_true(any(grepl("^bSite\\[", t$term)))
+  expect_true(any(grepl("^site_effect\\[", t$term)))
 })
 
 test_that("group-level terms are named by their levels", {
@@ -29,8 +29,8 @@ test_that("group-level terms are named by their levels", {
   fit$draws <- label_levels(fit$draws, fit$meta$site_levels, fit$meta$year_levels)
   t <- tidy(fit, include_random_effects = TRUE)
   expect_identical(
-    t$term[startsWith(t$term, "bSite[")],
-    paste0("bSite[", fit$meta$site_levels, "]")
+    t$term[startsWith(t$term, "site_effect[")],
+    paste0("site_effect[", fit$meta$site_levels, "]")
   )
 })
 
@@ -39,18 +39,18 @@ test_that("tidy uses the macro term list for a macro fit", {
   expect_named(t, c("term", "estimate", "lower", "upper"))
   expect_setequal(
     t$term,
-    c("bWeight", "bFronds", "bShape", "sSite", "sYear", "sSiteYear")
+    c("intercept", "fronds_slope", "shape", "sd_site", "sd_year", "sd_site_year")
   )
   # the year main effect appears among the per-level deviations
   tr <- tidy(weight_macro_fit, include_random_effects = TRUE)
-  expect_true(any(grepl("^bYear\\[", tr$term)))
+  expect_true(any(grepl("^year_effect\\[", tr$term)))
 })
 
 test_that("tidy forwards conf_level/estimate/sig_fig to the summariser", {
   # behaviour is proven in test-summarise.R; here just confirm each arg is passed
   wide <- tidy(weight_fit, conf_level = 0.99)
   narrow <- tidy(weight_fit, conf_level = 0.80)
-  i <- match("bWeight", wide$term)
+  i <- match("intercept", wide$term)
   expect_gt(wide$upper[i] - wide$lower[i], narrow$upper[i] - narrow$lower[i])
   expect_false(isTRUE(all.equal(
     tidy(weight_fit, estimate = mean)$estimate,
@@ -70,18 +70,18 @@ test_that("tidy reports exactly the recorded terms, at both levels", {
     fit <- fits[[species]]
     off <- fit
     off$meta$site_year_on <- FALSE
-    off$meta$terms$fixed <- setdiff(off$meta$terms$fixed, "sSiteYear")
-    off$meta$terms$random <- setdiff(off$meta$terms$random, "bSiteYear")
-    expect_false("sSiteYear" %in% tidy(off)$term, info = species)
+    off$meta$terms$fixed <- setdiff(off$meta$terms$fixed, "sd_site_year")
+    off$meta$terms$random <- setdiff(off$meta$terms$random, "site_year_effect")
+    expect_false("sd_site_year" %in% tidy(off)$term, info = species)
     expect_false(
       any(startsWith(
         tidy(off, include_random_effects = TRUE)$term,
-        "bSiteYear"
+        "site_year_effect"
       )),
       info = species
     )
     # and it is still reported when the fit kept the effect
-    expect_true("sSiteYear" %in% tidy(fit)$term, info = species)
+    expect_true("sd_site_year" %in% tidy(fit)$term, info = species)
   }
 })
 

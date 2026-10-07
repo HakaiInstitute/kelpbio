@@ -4,9 +4,9 @@ test_that("prior_summary returns the resolved priors", {
   expect_true(all(
     c(
       "intercept",
-      "power",
-      "floor",
-      "density",
+      "diameter_power",
+      "weight_floor",
+      "density_slope",
       "sd_site",
       "sd_year",
       "sd_site_year",

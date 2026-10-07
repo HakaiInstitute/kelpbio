@@ -5,9 +5,9 @@ test_that("assemble_carbon_data passes the carbon fraction and priors to Stan", 
     precision = kb_prior_exponential(0.002)
   )
   sd <- assemble_carbon_data(data, priors)
-  expect_equal(sd$nObs, 2L)
+  expect_equal(sd$n_obs, 2L)
   expect_equal(sd$carbon_fraction, c(0.26, 0.31))
-  expect_equal(sd$prior_intercept_mu, -0.7)
+  expect_equal(sd$prior_intercept_mean, -0.7)
   expect_equal(sd$prior_intercept_sd, 0.4)
   expect_equal(sd$prior_precision_rate, 0.002)
   expect_equal(sd$prior_only, 0L)
@@ -19,7 +19,7 @@ test_that("assemble_carbon_data accepts zero-row data", {
     kb_priors_carbon_nereo(),
     prior_only = TRUE
   )
-  expect_equal(sd$nObs, 0L)
+  expect_equal(sd$n_obs, 0L)
   expect_length(sd$carbon_fraction, 0)
   expect_equal(sd$prior_only, 1L)
 })

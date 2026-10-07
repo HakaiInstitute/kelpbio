@@ -8,7 +8,6 @@ fit_beta_model <- function(
   priors,
   model,
   species,
-  intercept,
   response,
   check_data,
   defaults,
@@ -43,7 +42,7 @@ fit_beta_model <- function(
   core <- fit_stan(
     stanmodels[[model]],
     stan_data,
-    param_vars = c(intercept, "bPrecision"),
+    param_vars = c("intercept", "precision"),
     chains = chains,
     niters = niters,
     nthin = nthin,
@@ -63,7 +62,7 @@ fit_beta_model <- function(
     species = species,
     # A proportion within one sample, so there is no survey effort.
     offset = NULL,
-    terms = list(fixed = c(intercept, "bPrecision"), random = character(0)),
+    terms = list(fixed = c("intercept", "precision"), random = character(0)),
     prior_only = prior_only,
     nthin = as.integer(nthin),
     # The response is the derived proportion every summary reports.

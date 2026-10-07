@@ -15,27 +15,27 @@ using namespace stan::math;
 stan::math::profile_map profiles__;
 static constexpr std::array<const char*, 16> locations_array__ =
   {" (found before start of program)",
-  " (in 'carbon', line 22, column 2 to column 15)",
-  " (in 'carbon', line 23, column 2 to column 27)",
-  " (in 'carbon', line 26, column 2 to column 59)",
-  " (in 'carbon', line 27, column 2 to column 49)",
-  " (in 'carbon', line 29, column 4 to column 33)",
-  " (in 'carbon', line 30, column 4 to column 67)",
+  " (in 'carbon', line 22, column 2 to column 17)",
+  " (in 'carbon', line 23, column 2 to column 26)",
+  " (in 'carbon', line 26, column 2 to column 63)",
+  " (in 'carbon', line 27, column 2 to column 48)",
+  " (in 'carbon', line 29, column 4 to column 35)",
+  " (in 'carbon', line 30, column 4 to column 65)",
   " (in 'carbon', line 28, column 23 to line 31, column 3)",
   " (in 'carbon', line 28, column 2 to line 31, column 3)",
-  " (in 'carbon', line 13, column 2 to column 20)",
-  " (in 'carbon', line 14, column 27 to column 31)",
-  " (in 'carbon', line 14, column 2 to column 49)",
-  " (in 'carbon', line 16, column 2 to column 26)",
+  " (in 'carbon', line 13, column 2 to column 21)",
+  " (in 'carbon', line 14, column 27 to column 32)",
+  " (in 'carbon', line 14, column 2 to column 50)",
+  " (in 'carbon', line 16, column 2 to column 28)",
   " (in 'carbon', line 17, column 2 to column 35)",
   " (in 'carbon', line 18, column 2 to column 37)",
   " (in 'carbon', line 19, column 2 to column 35)"};
 #include <stan_meta_header.hpp>
 class model_carbon final : public model_base_crtp<model_carbon> {
 private:
-  int nObs;
+  int n_obs;
   Eigen::Matrix<double,-1,1> carbon_fraction_data__;
-  double prior_intercept_mu;
+  double prior_intercept_mean;
   double prior_intercept_sd;
   double prior_precision_rate;
   int prior_only;
@@ -63,29 +63,30 @@ public:
       int pos__ = std::numeric_limits<int>::min();
       pos__ = 1;
       current_statement__ = 9;
-      context__.validate_dims("data initialization", "nObs", "int",
+      context__.validate_dims("data initialization", "n_obs", "int",
         std::vector<size_t>{});
-      nObs = std::numeric_limits<int>::min();
+      n_obs = std::numeric_limits<int>::min();
       current_statement__ = 9;
-      nObs = context__.vals_i("nObs")[(1 - 1)];
+      n_obs = context__.vals_i("n_obs")[(1 - 1)];
       current_statement__ = 9;
-      stan::math::check_greater_or_equal(function__, "nObs", nObs, 0);
+      stan::math::check_greater_or_equal(function__, "n_obs", n_obs, 0);
       current_statement__ = 10;
-      stan::math::validate_non_negative_index("carbon_fraction", "nObs", nObs);
+      stan::math::validate_non_negative_index("carbon_fraction", "n_obs",
+        n_obs);
       current_statement__ = 11;
       context__.validate_dims("data initialization", "carbon_fraction",
-        "double", std::vector<size_t>{static_cast<size_t>(nObs)});
-      carbon_fraction_data__ = Eigen::Matrix<double,-1,1>::Constant(nObs,
+        "double", std::vector<size_t>{static_cast<size_t>(n_obs)});
+      carbon_fraction_data__ = Eigen::Matrix<double,-1,1>::Constant(n_obs,
                                  std::numeric_limits<double>::quiet_NaN());
       new (&carbon_fraction)
         Eigen::Map<Eigen::Matrix<double,-1,1>>(carbon_fraction_data__.data(),
-        nObs);
+        n_obs);
       {
         std::vector<local_scalar_t__> carbon_fraction_flat__;
         current_statement__ = 11;
         carbon_fraction_flat__ = context__.vals_r("carbon_fraction");
         pos__ = 1;
-        for (int sym1__ = 1; sym1__ <= nObs; ++sym1__) {
+        for (int sym1__ = 1; sym1__ <= n_obs; ++sym1__) {
           stan::model::assign(carbon_fraction, carbon_fraction_flat__[(pos__
             - 1)], "assigning variable carbon_fraction",
             stan::model::index_uni(sym1__));
@@ -99,11 +100,12 @@ public:
       stan::math::check_less_or_equal(function__, "carbon_fraction",
         carbon_fraction, 1);
       current_statement__ = 12;
-      context__.validate_dims("data initialization", "prior_intercept_mu",
+      context__.validate_dims("data initialization", "prior_intercept_mean",
         "double", std::vector<size_t>{});
-      prior_intercept_mu = std::numeric_limits<double>::quiet_NaN();
+      prior_intercept_mean = std::numeric_limits<double>::quiet_NaN();
       current_statement__ = 12;
-      prior_intercept_mu = context__.vals_r("prior_intercept_mu")[(1 - 1)];
+      prior_intercept_mean = context__.vals_r("prior_intercept_mean")[(1 -
+        1)];
       current_statement__ = 13;
       context__.validate_dims("data initialization", "prior_intercept_sd",
         "double", std::vector<size_t>{});
@@ -171,26 +173,26 @@ public:
     (void) function__;
     try {
       current_statement__ = 1;
-      auto bCarbon = in__.template read<local_scalar_t__>();
+      auto intercept = in__.template read<local_scalar_t__>();
       current_statement__ = 2;
-      auto bPrecision =
+      auto precision =
         in__.template read_constrain_lb<local_scalar_t__, jacobian__>(0,
           lp__);
       {
         current_statement__ = 3;
-        lp_accum__.add(stan::math::normal_lpdf<propto__>(bCarbon,
-                         prior_intercept_mu, prior_intercept_sd));
+        lp_accum__.add(stan::math::normal_lpdf<propto__>(intercept,
+                         prior_intercept_mean, prior_intercept_sd));
         current_statement__ = 4;
-        lp_accum__.add(stan::math::exponential_lpdf<propto__>(bPrecision,
+        lp_accum__.add(stan::math::exponential_lpdf<propto__>(precision,
                          prior_precision_rate));
         current_statement__ = 8;
         if (stan::math::logical_eq(prior_only, 0)) {
           local_scalar_t__ mu = DUMMY_VAR__;
           current_statement__ = 5;
-          mu = stan::math::inv_logit(bCarbon);
+          mu = stan::math::inv_logit(intercept);
           current_statement__ = 6;
           lp_accum__.add(stan::math::beta_lpdf<propto__>(carbon_fraction, (mu
-                           * bPrecision), ((1 - mu) * bPrecision)));
+                           * precision), ((1 - mu) * precision)));
         }
       }
     } catch (const std::exception& e) {
@@ -224,26 +226,26 @@ public:
     (void) function__;
     try {
       current_statement__ = 1;
-      auto bCarbon = in__.template read<local_scalar_t__>();
+      auto intercept = in__.template read<local_scalar_t__>();
       current_statement__ = 2;
-      auto bPrecision =
+      auto precision =
         in__.template read_constrain_lb<local_scalar_t__, jacobian__>(0,
           lp__);
       {
         current_statement__ = 3;
-        lp_accum__.add(stan::math::normal_lpdf<propto__>(bCarbon,
-                         prior_intercept_mu, prior_intercept_sd));
+        lp_accum__.add(stan::math::normal_lpdf<propto__>(intercept,
+                         prior_intercept_mean, prior_intercept_sd));
         current_statement__ = 4;
-        lp_accum__.add(stan::math::exponential_lpdf<propto__>(bPrecision,
+        lp_accum__.add(stan::math::exponential_lpdf<propto__>(precision,
                          prior_precision_rate));
         current_statement__ = 8;
         if (stan::math::logical_eq(prior_only, 0)) {
           local_scalar_t__ mu = DUMMY_VAR__;
           current_statement__ = 5;
-          mu = stan::math::inv_logit(bCarbon);
+          mu = stan::math::inv_logit(intercept);
           current_statement__ = 6;
           lp_accum__.add(stan::math::beta_lpdf<propto__>(carbon_fraction, (mu
-                           * bPrecision), ((1 - mu) * bPrecision)));
+                           * precision), ((1 - mu) * precision)));
         }
       }
     } catch (const std::exception& e) {
@@ -288,13 +290,13 @@ public:
     (void) function__;
     try {
       current_statement__ = 1;
-      auto bCarbon = in__.template read<local_scalar_t__>();
+      auto intercept = in__.template read<local_scalar_t__>();
       current_statement__ = 2;
-      auto bPrecision =
+      auto precision =
         in__.template read_constrain_lb<local_scalar_t__, jacobian__>(0,
           lp__);
-      out__.write(bCarbon);
-      out__.write(bPrecision);
+      out__.write(intercept);
+      out__.write(precision);
       if (stan::math::logical_negation(
             (stan::math::primitive_value(emit_transformed_parameters__) ||
             stan::math::primitive_value(emit_generated_quantities__)))) {
@@ -323,14 +325,14 @@ public:
     // suppress unused var warning
     (void) DUMMY_VAR__;
     try {
-      local_scalar_t__ bCarbon = DUMMY_VAR__;
+      local_scalar_t__ intercept = DUMMY_VAR__;
       current_statement__ = 1;
-      bCarbon = in__.read<local_scalar_t__>();
-      out__.write(bCarbon);
-      local_scalar_t__ bPrecision = DUMMY_VAR__;
+      intercept = in__.read<local_scalar_t__>();
+      out__.write(intercept);
+      local_scalar_t__ precision = DUMMY_VAR__;
       current_statement__ = 2;
-      bPrecision = in__.read<local_scalar_t__>();
-      out__.write_free_lb(0, bPrecision);
+      precision = in__.read<local_scalar_t__>();
+      out__.write_free_lb(0, precision);
     } catch (const std::exception& e) {
       stan::lang::rethrow_located(e, locations_array__[current_statement__]);
     }
@@ -349,19 +351,19 @@ public:
     (void) DUMMY_VAR__;
     try {
       current_statement__ = 1;
-      context__.validate_dims("parameter initialization", "bCarbon",
+      context__.validate_dims("parameter initialization", "intercept",
         "double", std::vector<size_t>{});
       current_statement__ = 2;
-      context__.validate_dims("parameter initialization", "bPrecision",
+      context__.validate_dims("parameter initialization", "precision",
         "double", std::vector<size_t>{});
-      local_scalar_t__ bCarbon = DUMMY_VAR__;
+      local_scalar_t__ intercept = DUMMY_VAR__;
       current_statement__ = 1;
-      bCarbon = context__.vals_r("bCarbon")[(1 - 1)];
-      out__.write(bCarbon);
-      local_scalar_t__ bPrecision = DUMMY_VAR__;
+      intercept = context__.vals_r("intercept")[(1 - 1)];
+      out__.write(intercept);
+      local_scalar_t__ precision = DUMMY_VAR__;
       current_statement__ = 2;
-      bPrecision = context__.vals_r("bPrecision")[(1 - 1)];
-      out__.write_free_lb(0, bPrecision);
+      precision = context__.vals_r("precision")[(1 - 1)];
+      out__.write_free_lb(0, precision);
     } catch (const std::exception& e) {
       stan::lang::rethrow_located(e, locations_array__[current_statement__]);
     }
@@ -370,7 +372,7 @@ public:
   get_param_names(std::vector<std::string>& names__, const bool
                   emit_transformed_parameters__ = true, const bool
                   emit_generated_quantities__ = true) const {
-    names__ = std::vector<std::string>{"bCarbon", "bPrecision"};
+    names__ = std::vector<std::string>{"intercept", "precision"};
     if (emit_transformed_parameters__) {}
     if (emit_generated_quantities__) {}
   }
@@ -387,8 +389,8 @@ public:
   constrained_param_names(std::vector<std::string>& param_names__, bool
                           emit_transformed_parameters__ = true, bool
                           emit_generated_quantities__ = true) const final {
-    param_names__.emplace_back(std::string() + "bCarbon");
-    param_names__.emplace_back(std::string() + "bPrecision");
+    param_names__.emplace_back(std::string() + "intercept");
+    param_names__.emplace_back(std::string() + "precision");
     if (emit_transformed_parameters__) {}
     if (emit_generated_quantities__) {}
   }
@@ -396,16 +398,16 @@ public:
   unconstrained_param_names(std::vector<std::string>& param_names__, bool
                             emit_transformed_parameters__ = true, bool
                             emit_generated_quantities__ = true) const final {
-    param_names__.emplace_back(std::string() + "bCarbon");
-    param_names__.emplace_back(std::string() + "bPrecision");
+    param_names__.emplace_back(std::string() + "intercept");
+    param_names__.emplace_back(std::string() + "precision");
     if (emit_transformed_parameters__) {}
     if (emit_generated_quantities__) {}
   }
   inline std::string get_constrained_sizedtypes() const {
-    return std::string("[{\"name\":\"bCarbon\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"bPrecision\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"}]");
+    return std::string("[{\"name\":\"intercept\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"precision\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"}]");
   }
   inline std::string get_unconstrained_sizedtypes() const {
-    return std::string("[{\"name\":\"bCarbon\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"bPrecision\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"}]");
+    return std::string("[{\"name\":\"intercept\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"precision\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"}]");
   }
   // Begin method overload boilerplate
   template <typename RNG> inline void

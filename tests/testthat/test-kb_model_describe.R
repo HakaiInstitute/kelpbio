@@ -12,7 +12,7 @@ test_that("kb_model_describe renders a methods paragraph with prose = TRUE", {
 
 test_that("custom stored priors are reflected", {
   fit <- weight_macro_fit
-  fit$meta$priors$fronds <- kb_prior_normal(mean = 1.5, sd = 0.05)
+  fit$meta$priors$fronds_slope <- kb_prior_normal(mean = 1.5, sd = 0.05)
   out <- capture.output(kb_model_describe(fit))
   expect_true(any(grepl("Normal\\(1.5, 0.05\\)", out)))
 })

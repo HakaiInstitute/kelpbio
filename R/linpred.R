@@ -29,18 +29,18 @@
   ix <- .grid_indices(fit, grid, representative_site)
   log_x <- log(grid$diameter_mm) - log(fit$meta$predictor_ref)
 
-  re_site <- resolve_re1(draws$bSite, ix$site, new_levels, draws$sSite, ix$rep)
+  re_site <- resolve_re1(draws$site_effect, ix$site, new_levels, draws$sd_site, ix$rep)
   # representative_site borrows only the site effect, so year follows new_levels.
-  re_year <- resolve_re1(draws$bYear, ix$year, new_levels, draws$sYear)
+  re_year <- resolve_re1(draws$year_effect, ix$year, new_levels, draws$sd_year)
   # When the fit omitted the site:year effect its draws are prior-only noise, so
   # predictions must add nothing rather than reintroduce spurious variation.
   re_sy <- if (.site_year_on(fit)) {
-    resolve_re2(draws$bSiteYear, ix$site, ix$year, new_levels, draws$sSiteYear)
+    resolve_re2(draws$site_year_effect, ix$site, ix$year, new_levels, draws$sd_site_year)
   } else {
     0
   }
 
-  log_alpha <- draws$bWeight + re_site + re_year + re_sy
+  log_alpha <- draws$intercept + re_site + re_year + re_sy
   if (.density_on(fit)) {
     density <- standardised_density(
       grid,
@@ -49,11 +49,11 @@
       fit$meta$density_sd,
       fit$meta$density_levels
     )
-    log_alpha <- log_alpha + draws$bDensity * density
+    log_alpha <- log_alpha + draws$density_slope * density
   }
-  # A power-law fit has no floor; its bFloor draws are prior-only.
-  floor <- if (.floor_on(fit)) draws$bFloor else 0
-  log(floor + exp(log_alpha + draws$bPower * log_x))
+  # A power-law fit has no floor; its weight_floor draws are prior-only.
+  floor <- if (.floor_on(fit)) draws$weight_floor else 0
+  log(floor + exp(log_alpha + draws$diameter_power * log_x))
 }
 
 # Macrocystis mean, returned on the log scale like nereo so the shared faces are
@@ -70,20 +70,20 @@
   ix <- .grid_indices(fit, grid, representative_site)
   log_fc <- log(grid$fronds) - log(fit$meta$predictor_ref)
 
-  re_site <- resolve_re1(draws$bSite, ix$site, new_levels, draws$sSite, ix$rep)
+  re_site <- resolve_re1(draws$site_effect, ix$site, new_levels, draws$sd_site, ix$rep)
   # Year enters as a standalone main effect (unlike nereo). representative_site
   # borrows only the site intercept, so year follows new_levels regardless.
-  re_year <- resolve_re1(draws$bYear, ix$year, new_levels, draws$sYear)
+  re_year <- resolve_re1(draws$year_effect, ix$year, new_levels, draws$sd_year)
   # When the fit omitted the site:year effect its draws are prior-only noise, so
   # predictions must add nothing rather than reintroduce spurious variation.
   re_sy <- if (.site_year_on(fit)) {
-    resolve_re2(draws$bSiteYear, ix$site, ix$year, new_levels, draws$sSiteYear)
+    resolve_re2(draws$site_year_effect, ix$site, ix$year, new_levels, draws$sd_site_year)
   } else {
     0
   }
 
-  draws$bWeight +
-    draws$bFronds * log_fc +
+  draws$intercept +
+    draws$fronds_slope * log_fc +
     re_site +
     re_year +
     re_sy
@@ -92,9 +92,8 @@
 # Size- and density-model means (log scale), posterior rvars over grid rows,
 # mirroring inst/stan/size_*.stan and inst/stan/density_*.stan. Every species
 # shares the structure (an intercept plus site, year, and site:year effects, no
-# predictor) and differs only in the intercept's name, so each method passes its
-# intercept to .linpred_groups(). The density offset is added by the callers, as
-# for every model.
+# predictor), so each method passes its intercept to .linpred_groups(). The
+# density offset is added by the callers, as for every model.
 #' @export
 .linpred.kb_fit_size_nereo <- function(
   fit,
@@ -102,7 +101,7 @@
   new_levels,
   representative_site = NULL
 ) {
-  .linpred_groups(fit, fit$draws$bDiameter, grid, new_levels, representative_site)
+  .linpred_groups(fit, fit$draws$intercept, grid, new_levels, representative_site)
 }
 
 #' @export
@@ -112,7 +111,7 @@
   new_levels,
   representative_site = NULL
 ) {
-  .linpred_groups(fit, fit$draws$bFronds, grid, new_levels, representative_site)
+  .linpred_groups(fit, fit$draws$intercept, grid, new_levels, representative_site)
 }
 
 #' @export
@@ -122,7 +121,7 @@
   new_levels,
   representative_site = NULL
 ) {
-  .linpred_groups(fit, fit$draws$bStipes, grid, new_levels, representative_site)
+  .linpred_groups(fit, fit$draws$intercept, grid, new_levels, representative_site)
 }
 
 #' @export
@@ -132,7 +131,7 @@
   new_levels,
   representative_site = NULL
 ) {
-  .linpred_groups(fit, fit$draws$bPlants, grid, new_levels, representative_site)
+  .linpred_groups(fit, fit$draws$intercept, grid, new_levels, representative_site)
 }
 
 # Wet/dry mean (logit scale): one value for every row, since the model has no
@@ -145,7 +144,7 @@
   new_levels,
   representative_site = NULL
 ) {
-  fit$draws$bDryWet + rep(0, nrow(grid))
+  fit$draws$intercept + rep(0, nrow(grid))
 }
 
 # Carbon mean (logit scale): one value for every row, as for wet/dry.
@@ -156,7 +155,7 @@
   new_levels,
   representative_site = NULL
 ) {
-  fit$draws$bCarbon + rep(0, nrow(grid))
+  fit$draws$intercept + rep(0, nrow(grid))
 }
 
 # Cover-model mean (log scale), mirroring inst/stan/cover_biomass.stan: a floor common to
@@ -172,12 +171,12 @@
   draws <- fit$draws
   ix <- .grid_indices(fit, grid, representative_site)
 
-  re_site <- resolve_re1(draws$bSite, ix$site, new_levels, draws$sSite, ix$rep)
+  re_site <- resolve_re1(draws$site_effect, ix$site, new_levels, draws$sd_site, ix$rep)
   # representative_site borrows only the site effect, so year follows new_levels.
-  re_year <- resolve_re1(draws$bYear, ix$year, new_levels, draws$sYear)
-  cover <- tide_corrected_cover(grid, draws$bTide)
+  re_year <- resolve_re1(draws$year_effect, ix$year, new_levels, draws$sd_year)
+  cover <- tide_corrected_cover(grid, draws$tide_height_slope)
 
-  log(draws$bFloor + draws$bCanopy * exp(re_site + re_year) * cover)
+  log(draws$biomass_floor + draws$cover_slope * exp(re_site + re_year) * cover)
 }
 
 .linpred_groups <- function(
@@ -190,13 +189,13 @@
   draws <- fit$draws
   ix <- .grid_indices(fit, grid, representative_site)
 
-  re_site <- resolve_re1(draws$bSite, ix$site, new_levels, draws$sSite, ix$rep)
+  re_site <- resolve_re1(draws$site_effect, ix$site, new_levels, draws$sd_site, ix$rep)
   # representative_site borrows only the site effect, so year follows new_levels.
-  re_year <- resolve_re1(draws$bYear, ix$year, new_levels, draws$sYear)
+  re_year <- resolve_re1(draws$year_effect, ix$year, new_levels, draws$sd_year)
   # When the fit omitted the site:year effect its draws are prior-only noise, so
   # predictions must add nothing rather than reintroduce spurious variation.
   re_sy <- if (.site_year_on(fit)) {
-    resolve_re2(draws$bSiteYear, ix$site, ix$year, new_levels, draws$sSiteYear)
+    resolve_re2(draws$site_year_effect, ix$site, ix$year, new_levels, draws$sd_site_year)
   } else {
     0
   }

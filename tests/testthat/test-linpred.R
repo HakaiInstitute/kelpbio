@@ -93,11 +93,11 @@ test_that("a dropped site:year effect contributes nothing to the linear predicto
   # removing the term shifts the mean, so the two are not identical
   expect_false(isTRUE(all.equal(e_on, e_off)))
   # site:year acts on log(alpha), so the removed contribution is exactly the
-  # conditioned bSiteYear[s, y] draws on the log of the weight above the floor
-  floor <- as.numeric(posterior::draws_of(weight_fit$draws$bFloor))
+  # conditioned site_year_effect[s, y] draws on the log of the weight above the floor
+  floor <- as.numeric(posterior::draws_of(weight_fit$draws$weight_floor))
   si <- match(s, weight_fit$meta$site_levels)
   yi <- match(y, weight_fit$meta$year_levels)
-  bsy <- posterior::draws_of(weight_fit$draws$bSiteYear)[, si, yi]
+  bsy <- posterior::draws_of(weight_fit$draws$site_year_effect)[, si, yi]
   expect_equal(log(e_on - floor) - log(e_off - floor), as.numeric(bsy))
 })
 
@@ -110,14 +110,14 @@ test_that("a macro fit gets the Macrocystis mean, not the Nereocystis one", {
   log_fc <- log(grid$fronds) - log(weight_macro_fit$meta$predictor_ref)
   expect_equal(
     posterior::draws_of(.linpred(weight_macro_fit, grid, "average")),
-    posterior::draws_of(draws$bWeight + draws$bFronds * log_fc),
+    posterior::draws_of(draws$intercept + draws$fronds_slope * log_fc),
     ignore_attr = TRUE
   )
 })
 
-test_that("a known year contributes its estimated bYear main effect (macro)", {
+test_that("a known year contributes its estimated year_effect main effect (macro)", {
   # macro has a standalone year main effect: conditioning on a known year shifts
-  # the mean by exactly that year's bYear draws (site and site:year absent).
+  # the mean by exactly that year's year_effect draws (site and site:year absent).
   y <- weight_macro_fit$meta$year_levels[1]
   grid_year <- data.frame(fronds = 5, year = y)
   grid_bare <- data.frame(fronds = 5)
@@ -128,7 +128,7 @@ test_that("a known year contributes its estimated bYear main effect (macro)", {
       .linpred(weight_macro_fit, grid_bare, "average")
     )
   yi <- match(y, weight_macro_fit$meta$year_levels)
-  byear <- posterior::draws_of(weight_macro_fit$draws$bYear)[, yi]
+  byear <- posterior::draws_of(weight_macro_fit$draws$year_effect)[, yi]
   expect_equal(as.numeric(diff), as.numeric(byear))
 })
 
@@ -176,14 +176,14 @@ test_that("the observed-data paths reject a zero-observation fit", {
   )
 })
 
-test_that("density shifts log(alpha) by bDensity times standardised density", {
+test_that("density shifts log(alpha) by density_slope times standardised density", {
   grid <- data.frame(diameter_mm = 40, stipes_m2 = 7)
   off <- weight_fit
   off$meta$density_on <- FALSE
   e_on <- exp(as.numeric(posterior::draws_of(.linpred(weight_fit, grid, "average"))))
   e_off <- exp(as.numeric(posterior::draws_of(.linpred(off, grid, "average"))))
-  floor <- as.numeric(posterior::draws_of(weight_fit$draws$bFloor))
-  b_density <- as.numeric(posterior::draws_of(weight_fit$draws$bDensity))
+  floor <- as.numeric(posterior::draws_of(weight_fit$draws$weight_floor))
+  b_density <- as.numeric(posterior::draws_of(weight_fit$draws$density_slope))
   z <- (7 - weight_fit$meta$density_mean) / weight_fit$meta$density_sd
   expect_equal(log(e_on - floor) - log(e_off - floor), b_density * z)
 })
@@ -195,17 +195,17 @@ test_that("new_data predictions work for a model with no continuous predictor", 
   expect_no_error(data_linpred(fit, data.frame(diameter_mm = 30), "average"))
 })
 
-test_that("a power-law fit's mean is log(alpha) + bPower * log(x), with no floor", {
+test_that("a power-law fit's mean is log(alpha) + diameter_power * log(x), with no floor", {
   grid <- data.frame(diameter_mm = c(15, 40), stipes_m2 = 4)
   power <- weight_fit
   power$meta$form <- "power"
   lp_power <- posterior::draws_of(.linpred(power, grid, "average"))
   lp_floor <- posterior::draws_of(.linpred(weight_fit, grid, "average"))
-  floor <- as.numeric(posterior::draws_of(weight_fit$draws$bFloor))
+  floor <- as.numeric(posterior::draws_of(weight_fit$draws$weight_floor))
   # removing the floor from the packard_floor mean gives the power-law mean
   expect_equal(exp(lp_power), exp(lp_floor) - floor, ignore_attr = TRUE)
   # and it is linear in log(diameter)
-  b_power <- as.numeric(posterior::draws_of(weight_fit$draws$bPower))
+  b_power <- as.numeric(posterior::draws_of(weight_fit$draws$diameter_power))
   expect_equal(
     lp_power[, 2] - lp_power[, 1],
     b_power * (log(40) - log(15)),

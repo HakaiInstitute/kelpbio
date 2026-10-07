@@ -46,7 +46,7 @@ Draws of the expected response.
 }
 \details{
 Each draw is the expected response given that draw's parameters, where \code{mu} is
-the linear predictor: for weight, \code{exp(mu + sWeight^2 / 2)} (\emph{Nereocystis}) or
+the linear predictor: for weight, \code{exp(mu + sd_residual^2 / 2)} (\emph{Nereocystis}) or
 \code{exp(mu)} (\emph{Macrocystis}); for size, \code{exp(mu)} (\emph{Nereocystis}) or the mean of
 the zero-truncated distribution (\emph{Macrocystis}); for density, the expected
 count on the row's \code{area_m2} (1 m² when absent), \code{(1 - zi) * exp(mu)} with \code{zi} the

@@ -46,11 +46,11 @@ fit_cover_biomass_model <- function(
     prior_only = prior_only
   )
 
-  pars <- c("bCanopy", "bFloor", "bTide", "bScaling", "sSite", "sYear")
+  pars <- c("cover_slope", "biomass_floor", "tide_height_slope", "error_scaling", "sd_site", "sd_year")
   core <- fit_stan(
     stanmodels$cover_biomass,
     stan_data,
-    param_vars = c(pars, "bSite", "bYear"),
+    param_vars = c(pars, "site_effect", "year_effect"),
     chains = chains,
     niters = niters,
     nthin = nthin,
@@ -70,7 +70,7 @@ fit_cover_biomass_model <- function(
     species = species,
     # The response is a biomass per m^2, so there is no survey effort.
     offset = NULL,
-    terms = list(fixed = pars, random = c("bSite", "bYear")),
+    terms = list(fixed = pars, random = c("site_effect", "year_effect")),
     prior_only = prior_only,
     nthin = as.integer(nthin),
     meta_extra = list(
@@ -79,7 +79,7 @@ fit_cover_biomass_model <- function(
       site_year_on = FALSE,
       response = "biomass_kg_m2",
       # Curves run over tide-corrected cover, a proportion of the plot, which
-      # the data do not hold as a column (it depends on the fitted bTide).
+      # the data do not hold as a column (it depends on the fitted tide_height_slope).
       predictor = "cover",
       predictor_range = c(0, 1),
       # The level of the supplied limits, which sets every row's log-scale SD.

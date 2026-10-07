@@ -60,7 +60,7 @@ area, and tide height, at each row of \code{new_data}, or at the observed survey
 when \code{new_data = NULL}.
 }
 \details{
-Each row is tide-corrected with the fitted \code{bTide} and capped at a cover of 1
+Each row is tide-corrected with the fitted \code{tide_height_slope} and capped at a cover of 1
 before the calibration is applied. A row with no canopy predicts the biomass
 floor, which is the same for every site and year. For curves over
 tide-corrected cover by site or year, build the rows with \code{\link[=kb_new_data]{kb_new_data()}}.

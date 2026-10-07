@@ -65,8 +65,8 @@ Fit a size-distribution model for \emph{Nereocystis luetkeana} via Stan.
 }
 \details{
 Maximum sub-bulb diameter (mm) is modelled with a Weibull likelihood
-parameterised by its mean. The log mean diameter (\code{bDiameter}) varies by site,
-by year, and by \code{site:year}; the Weibull shape (\code{bShape}) is common to
+parameterised by its mean. The log mean diameter (\code{intercept}) varies by site,
+by year, and by \code{site:year}; the Weibull shape (\code{shape}) is common to
 all plants.
 
 The site:year effect is set from the data: it is omitted when the data span a

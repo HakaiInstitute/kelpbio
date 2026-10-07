@@ -5,7 +5,7 @@
 #' codes; the raw `fronds` and `weight_kg` vectors are passed through (the Stan model
 #' applies the `log(fronds) - log(fronds_ref)` transform). `fronds_ref` is the
 #' geometric mean of the observed frond count. Zero-row data is supported (for
-#' prior-only fits): `nObs` is `0` and `nSite` / `nYear` fall back to `1`.
+#' prior-only fits): `n_obs` is `0` and `n_site` / `n_year` fall back to `1`.
 #'
 #' @inheritParams params
 #' @param priors A resolved named prior list (see `resolve_priors()`).
@@ -20,27 +20,22 @@ assemble_weight_macro_data <- function(
 ) {
   site <- factor(data$site)
   year <- factor(data$year)
-  nObs <- nrow(data)
+  n_obs <- nrow(data)
 
-  list(
-    nObs = nObs,
-    nSite = max(1L, nlevels(site)),
-    nYear = max(1L, nlevels(year)),
-    site = as.integer(site),
-    year = as.integer(year),
-    fronds = as.numeric(data$fronds),
-    weight = as.numeric(data$weight_kg),
-    fronds_ref = weight_fronds_ref(data$fronds),
-    prior_intercept_mu = priors$intercept$mean,
-    prior_intercept_sd = priors$intercept$sd,
-    prior_fronds_mu = priors$fronds$mean,
-    prior_fronds_sd = priors$fronds$sd,
-    prior_shape_rate = priors$shape$rate,
-    prior_sd_site_rate = priors$sd_site$rate,
-    prior_sd_year_rate = priors$sd_year$rate,
-    prior_sd_site_year_rate = priors$sd_site_year$rate,
-    prior_only = as.integer(prior_only),
-    site_year_on = as.integer(site_year_on)
+  c(
+    list(
+      n_obs = n_obs,
+      n_site = max(1L, nlevels(site)),
+      n_year = max(1L, nlevels(year)),
+      site = as.integer(site),
+      year = as.integer(year),
+      fronds = as.numeric(data$fronds),
+      weight_kg = as.numeric(data$weight_kg),
+      fronds_ref = weight_fronds_ref(data$fronds),
+      prior_only = as.integer(prior_only),
+      site_year_on = as.integer(site_year_on)
+    ),
+    prior_data(priors)
   )
 }
 

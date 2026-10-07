@@ -67,7 +67,7 @@ Fit a dry:wet mass ratio model for \emph{Nereocystis luetkeana} via Stan.
 \details{
 The dry:wet mass ratio of each sample, \code{dry_mass_g / wet_mass_g}, is modelled
 with a Beta likelihood parameterised by its mean and precision. The logit mean
-ratio (\code{bDryWet}) and the precision (\code{bPrecision}) are common to all samples,
+ratio (\code{intercept}) and the precision (\code{precision}) are common to all samples,
 so the model estimates one ratio for the population of samples supplied.
 
 Samples are pooled over the months, sites, and tissues they come from. To

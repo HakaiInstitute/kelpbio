@@ -1,5 +1,5 @@
 # Summarise a subset of a fit's draws into a tidy tibble: one row per scalar
-# term (e.g. bSite[1]), with the house columns term / estimate / lower / upper
+# term (e.g. site_effect[1]), with the house columns term / estimate / lower / upper
 # computed over draws via posterior (estimate via `estimate`, interval via
 # empirical quantiles), rounded to `sig_fig`. Internal.
 summarise_draws_terms <- function(

@@ -4,8 +4,8 @@
 #'
 #' @details
 #' Maximum sub-bulb diameter (mm) is modelled with a Weibull likelihood
-#' parameterised by its mean. The log mean diameter (`bDiameter`) varies by site,
-#' by year, and by `site:year`; the Weibull shape (`bShape`) is common to
+#' parameterised by its mean. The log mean diameter (`intercept`) varies by site,
+#' by year, and by `site:year`; the Weibull shape (`shape`) is common to
 #' all plants.
 #'
 #' The site:year effect is set from the data: it is omitted when the data span a
@@ -77,14 +77,14 @@ kb_fit_size_nereo <- function(
     stanmodels$size_nereo,
     stan_data,
     param_vars = c(
-      "bDiameter",
-      "bShape",
-      "sSite",
-      "sYear",
-      "sSiteYear",
-      "bSite",
-      "bYear",
-      "bSiteYear"
+      "intercept",
+      "shape",
+      "sd_site",
+      "sd_year",
+      "sd_site_year",
+      "site_effect",
+      "year_effect",
+      "site_year_effect"
     ),
     chains = chains,
     niters = niters,
@@ -107,16 +107,16 @@ kb_fit_size_nereo <- function(
     offset = NULL,
     terms = list(
       fixed = c(
-        "bDiameter",
-        "bShape",
-        "sSite",
-        "sYear",
-        if (site_year$on) "sSiteYear"
+        "intercept",
+        "shape",
+        "sd_site",
+        "sd_year",
+        if (site_year$on) "sd_site_year"
       ),
       random = c(
-        "bSite",
-        "bYear",
-        if (site_year$on) "bSiteYear"
+        "site_effect",
+        "year_effect",
+        if (site_year$on) "site_year_effect"
       )
     ),
     prior_only = prior_only,

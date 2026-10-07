@@ -4,7 +4,7 @@ test_that("kb_priors_density_nereo returns the default named prior list", {
     p,
     c(
       "intercept",
-      "zero_inflation",
+      "logit_zero_inflation",
       "dispersion",
       "sd_site",
       "sd_year",
@@ -12,7 +12,7 @@ test_that("kb_priors_density_nereo returns the default named prior list", {
     )
   )
   expect_equal(p$intercept, kb_prior_normal(0, 2))
-  expect_equal(p$zero_inflation, kb_prior_normal(0, 2))
+  expect_equal(p$logit_zero_inflation, kb_prior_normal(0, 2))
   expect_equal(p$dispersion, kb_prior_exponential(1))
   expect_equal(p$sd_site, kb_prior_exponential(1))
   expect_equal(p$sd_year, kb_prior_exponential(1))

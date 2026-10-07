@@ -4,7 +4,7 @@
 #'
 #' @details
 #' Each draw is the expected response given that draw's parameters, where `mu` is
-#' the linear predictor: for weight, `exp(mu + sWeight^2 / 2)` (*Nereocystis*) or
+#' the linear predictor: for weight, `exp(mu + sd_residual^2 / 2)` (*Nereocystis*) or
 #' `exp(mu)` (*Macrocystis*); for size, `exp(mu)` (*Nereocystis*) or the mean of
 #' the zero-truncated distribution (*Macrocystis*); for density, the expected
 #' count on the row's `area_m2` (1 m² when absent), `(1 - zi) * exp(mu)` with `zi` the

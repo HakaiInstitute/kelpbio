@@ -38,10 +38,10 @@ ran_beta <- function(n, alpha, beta) {
 }
 
 # Observation family of the mean-parameterised proportion models (wet/dry,
-# carbon): the logit mean and the fit's bPrecision give the Beta shapes.
+# carbon): the logit mean and the fit's precision give the Beta shapes.
 # `response` gives the observed proportion, each model's own derived response.
 .obs_family_beta_mean <- function(fit, response) {
-  precision <- .draw_vec(fit, "bPrecision")
+  precision <- .draw_vec(fit, "precision")
   list(
     family = "beta",
     response = response,

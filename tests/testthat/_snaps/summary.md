@@ -11,16 +11,16 @@
       Converged: FALSE
       
       # A tibble: 8 x 7
-        term      estimate   lower  upper  rhat ess_bulk ess_tail
-        <chr>        <dbl>   <dbl>  <dbl> <dbl>    <dbl>    <dbl>
-      1 bWeight <numerics>
-      2 bPower <numerics>
-      3 bFloor <numerics>
-      4 bDensity <numerics>
-      5 sSite <numerics>
-      6 sYear <numerics>
-      7 sSiteYear <numerics>
-      8 sWeight <numerics>
+        term           estimate   lower  upper  rhat ess_bulk ess_tail
+        <chr>             <dbl>   <dbl>  <dbl> <dbl>    <dbl>    <dbl>
+      1 intercept <numerics>
+      2 diameter_power <numerics>
+      3 weight_floor <numerics>
+      4 density_slope <numerics>
+      5 sd_site <numerics>
+      6 sd_year <numerics>
+      7 sd_site_year <numerics>
+      8 sd_residual <numerics>
       
       estimate: posterior point estimate; lower, upper: 95% compatibility limits.
       rhat: potential scale reduction factor (1 at convergence).

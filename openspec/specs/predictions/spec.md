@@ -46,7 +46,7 @@ For a *Nereocystis* fit with the density effect, each row SHALL use its `stipes_
 
 `posterior_epred()`, `posterior_linpred()`, and `posterior_predict()` SHALL return a draws-by-rows matrix for `new_data` (or the observed data), resolving groups and density as above. For a density fit, each row SHALL be a transect of its `area_m2`, or of 1 m² when `new_data` has no `area_m2` column, and the observed data SHALL use their recorded areas. `posterior_epred()` SHALL give the expected response. Where that differs from the inverse link of the linear predictor, `posterior_linpred(transform = TRUE)` SHALL return the inverse link:
 
-- *Nereocystis* weight, whose log weight is Normal: the expected weight is `exp(mu + sWeight^2 / 2)`, above the median `exp(mu)`.
+- *Nereocystis* weight, whose log weight is Normal: the expected weight is `exp(mu + sd_residual^2 / 2)`, above the median `exp(mu)`.
 - *Macrocystis* size, whose frond count is a zero-truncated negative binomial: the expected count is the truncated mean, above the untruncated mean `exp(mu)`.
 - *Nereocystis* density, whose stipe count is a zero-inflated negative binomial: the expected count is `(1 - zi) * exp(mu)`, below the mean of a transect holding stipes, `exp(mu)`, where `zi` is the zero-inflation probability.
 
@@ -56,7 +56,7 @@ The prediction verbs, `fitted()`, and `augment()` SHALL summarise `posterior_epr
 
 #### Scenario: Expected weight exceeds the median for Nereocystis
 - **WHEN** `posterior_epred()` and `posterior_linpred(transform = TRUE)` are called on the same *Nereocystis* weight rows
-- **THEN** each draw of the former equals the latter times `exp(sWeight^2 / 2)`
+- **THEN** each draw of the former equals the latter times `exp(sd_residual^2 / 2)`
 
 #### Scenario: Expected frond count exceeds the untruncated mean
 - **WHEN** `posterior_epred()` and `posterior_linpred(transform = TRUE)` are called on the same *Macrocystis* size rows
@@ -358,3 +358,4 @@ Site and year SHALL be resolved as in the prediction verbs, with name-only `new_
 #### Scenario: Reproducible under a seed
 - **WHEN** it is called twice after the same `set.seed()`
 - **THEN** the results are identical
+

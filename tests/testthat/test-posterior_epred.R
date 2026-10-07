@@ -28,10 +28,10 @@ test_that("macro posterior_epred agrees with posterior_linpred(transform = TRUE)
 })
 
 test_that("nereo posterior_epred is the lognormal mean, above the median", {
-  # Normal on log weight: the mean is the median times exp(sWeight^2 / 2).
+  # Normal on log weight: the mean is the median times exp(sd_residual^2 / 2).
   ep <- posterior_epred(weight_fit, new_levels = "average")
   med <- posterior_linpred(weight_fit, transform = TRUE, new_levels = "average")
-  sw <- as.vector(posterior::draws_of(weight_fit$draws$sWeight))
+  sw <- as.vector(posterior::draws_of(weight_fit$draws$sd_residual))
   expect_equal(ep, med * exp(sw^2 / 2))
   expect_true(all(ep > med))
 })

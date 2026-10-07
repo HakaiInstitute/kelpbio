@@ -17,7 +17,7 @@
 
 #' @export
 .obs_family.kb_fit_weight_nereo <- function(fit, grid) {
-  sw <- .draw_vec(fit, "sWeight")
+  sw <- .draw_vec(fit, "sd_residual")
   list(
     family = "lnorm",
     response = function(data) data$weight_kg,
@@ -28,7 +28,7 @@
 # Constant shape across plants, matching weight_macro.stan.
 #' @export
 .obs_family.kb_fit_weight_macro <- function(fit, grid) {
-  shape <- .draw_vec(fit, "bShape")
+  shape <- .draw_vec(fit, "shape")
   list(
     family = "gamma",
     response = function(data) data$weight_kg,
@@ -39,7 +39,7 @@
 # The size model is mean-parameterised; weibull_scale() converts the mean.
 #' @export
 .obs_family.kb_fit_size_nereo <- function(fit, grid) {
-  shape <- .draw_vec(fit, "bShape")
+  shape <- .draw_vec(fit, "shape")
   list(
     family = "weibull",
     response = function(data) data$diameter_mm,
@@ -51,7 +51,7 @@
 
 #' @export
 .obs_family.kb_fit_size_macro <- function(fit, grid) {
-  theta <- .draw_vec(fit, "bDispersion")
+  theta <- .draw_vec(fit, "dispersion")
   list(
     family = "gamma_pois_zt",
     response = function(data) data$fronds,
@@ -61,8 +61,8 @@
 
 #' @export
 .obs_family.kb_fit_density_nereo <- function(fit, grid) {
-  theta <- .draw_vec(fit, "bDispersion")
-  zi <- stats::plogis(.draw_vec(fit, "bZeroInflation"))
+  theta <- .draw_vec(fit, "dispersion")
+  zi <- stats::plogis(.draw_vec(fit, "logit_zero_inflation"))
   list(
     family = "gamma_pois_zi",
     response = function(data) data$stipes,
@@ -74,7 +74,7 @@
 
 #' @export
 .obs_family.kb_fit_density_macro <- function(fit, grid) {
-  theta <- .draw_vec(fit, "bDispersion")
+  theta <- .draw_vec(fit, "dispersion")
   list(
     family = "gamma_pois",
     response = function(data) data$plants,
@@ -93,12 +93,12 @@
 }
 
 # Lognormal around the calibration mean, with each row's log-scale SD from its in
-# situ limits scaled by bScaling. The rows' limits are needed for replicates at
+# situ limits scaled by error_scaling. The rows' limits are needed for replicates at
 # new data too.
 #' @export
 .obs_family.kb_fit_cover_biomass <- function(fit, grid) {
   .chk_biomass_limits(grid, x_name = "`new_data`")
-  scaling <- .draw_vec(fit, "bScaling")
+  scaling <- .draw_vec(fit, "error_scaling")
   sd_log <- cover_log_sd(grid$lower, grid$upper, fit$meta$conf_level)
   list(
     family = "lnorm",

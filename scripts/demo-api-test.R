@@ -65,9 +65,9 @@ kb_check_data_weight_macro(grams)
 # The model: log weight ~ Normal, with year, site, site:year, and stipe density
 # effects on log(alpha). The simulated data have density recorded for every
 # site-year. form sets expected weight as a function of x = diameter_mm / d0:
-#   "packard_floor" (default): bFloor + alpha * x^bPower, a power law plus a
+#   "packard_floor" (default): weight_floor + alpha * x^diameter_power, a power law plus a
 #     weight floor, so the log-log curve bends (recommended)
-#   "power": alpha * x^bPower, a straight line on log-log axes (no bFloor)
+#   "power": alpha * x^diameter_power, a straight line on log-log axes (no weight_floor)
 fit <- kb_fit_weight_nereo(
   data_weight_sim_nereo,
   form = "packard_floor"
@@ -127,7 +127,7 @@ loo::loo_compare(
 
 # --- fitted / residuals / augment (observed-data diagnostics) -----------------
 # fitted values are expected (mean) weight: for the lognormal model that is the
-# median exp(mu) times exp(sWeight^2 / 2)
+# median exp(mu) times exp(sd_residual^2 / 2)
 head(fitted(fit))
 head(residuals(fit))
 # appends fitted and residuals point estimates
@@ -332,7 +332,7 @@ class(kb_prior_exponential(rate = 1))
 # intercept, power (allometric exponent), floor (weight in kg at diameter -> 0),
 # density, and the SDs; power and floor are truncated at zero by the model
 priors <- kb_priors_weight_nereo()
-priors$power <- kb_prior_normal(mean = 2, sd = 0.05)
+priors$diameter_power <- kb_prior_normal(mean = 2, sd = 0.05)
 priors$sd_site <- kb_prior_exponential(rate = 3)
 priors
 
@@ -343,13 +343,13 @@ fit_custom <- kb_fit_weight_nereo(
   progress = "none"
 )
 
-# a very tight prior on bPower pulls the exponent away from the default-prior
+# a very tight prior on diameter_power pulls the exponent away from the default-prior
 # posterior (about 3)
 bind_rows(
   mutate(coef(fit), priors = "default"),
   mutate(coef(fit_custom), priors = "custom")
 ) |>
-  filter(term == "bPower")
+  filter(term == "diameter_power")
 
 # --- prior_only (prior predictive) --------------------------------------------
 # prior_only ignores observed weights; supplied data informs RE dimensions,
@@ -444,13 +444,13 @@ fit_aliased <- kb_fit_weight_nereo(
 fit_aliased$meta$site_year_on # TRUE (retained despite non-identifiability)
 
 # An omitted effect is left out of every summary and of the draws: its draws were
-# sampled from the prior alone. No sSiteYear here:
+# sampled from the prior alone. No sd_site_year here:
 tidy(fit_one_year)
 pars(fit_one_year)
-"sSiteYear" %in% posterior::variables(samples(fit_one_year)) # FALSE
+"sd_site_year" %in% posterior::variables(samples(fit_one_year)) # FALSE
 
 # --- functional form ---------------------------------------------------------
-# fit_power (fitted above with form = "power") has no bFloor; its straight
+# fit_power (fitted above with form = "power") has no weight_floor; its straight
 # log-log line pivots to fit the small plants, so it sits below the
 # packard_floor curve for the smallest and largest plants and above it between
 tidy(fit_power)
@@ -473,17 +473,17 @@ bind_rows(
 
 # --- fits without density ----------------------------------------------------
 # Without a density column the density effect is omitted, silently: the model is
-# the same allometry without bDensity.
+# the same allometry without density_slope.
 no_density <- select(data_weight_sim_nereo, -stipes_m2)
 fit_no_density <- kb_fit_weight_nereo(no_density, chains = 2, niters = 300)
 fit_no_density$meta$density_on # FALSE
-tidy(fit_no_density) # no bDensity
+tidy(fit_no_density) # no density_slope
 
 # --- raw posterior draws (rstantools generics) --------------------------------
 # users may want more low-level access to the draws to do their own diagnostics/derived quants
 # posterior_epred() is expected (mean) weight; posterior_linpred(transform =
 # TRUE) is exp() of the linear predictor, the median. They differ by
-# exp(sWeight^2 / 2) for nereo:
+# exp(sd_residual^2 / 2) for nereo:
 median(posterior_epred(fit, new_data = nd)[, 1])
 median(posterior_linpred(fit, transform = TRUE, new_data = nd)[, 1])
 class(posterior_epred(fit))
@@ -528,7 +528,7 @@ try(kb_predict_weight(
 # =============================================================================
 # Macrocystis has its own fit function, priors, and data check because the model
 # differs structurally from nereo: the predictor is a frond COUNT (`fronds`) and
-# the response is Gamma with a constant shape (`bShape`). The fit object is the
+# the response is Gamma with a constant shape (`shape`). The fit object is the
 # same class, so every accessor, generic, and prediction/plot function above
 # works unchanged.
 
@@ -555,7 +555,7 @@ fit_m <- kb_fit_weight_macro(
 )
 fit_m # slim header; kb_model_describe(fit_m) shows the Gamma model + structure
 
-# same accessors as nereo; the term list is macro's (bFronds, bShape)
+# same accessors as nereo; the term list is macro's (fronds_slope, shape)
 
 tidy(fit_m)
 glance(fit_m)
@@ -673,7 +673,7 @@ kb_priors_density_macro() # intercept, dispersion, sd_*
 
 fit_d <- kb_fit_density_nereo(data_density_sim_nereo)
 fit_d
-tidy(fit_d) # bStipes: log stipes per m^2; bZeroInflation: logit P(no stipes)
+tidy(fit_d) # intercept: log stipes per m^2; logit_zero_inflation: logit P(no stipes)
 kb_model_describe(fit_d)
 
 fit_dm <- kb_fit_density_macro(data_density_sim_macro)
@@ -744,7 +744,7 @@ kb_priors_wetdry_nereo() # intercept (logit ratio), precision
 
 fit_w <- kb_fit_wetdry_nereo(data_wetdry_sim_nereo)
 fit_w
-tidy(fit_w) # bDryWet: logit mean ratio; bPrecision: Beta precision
+tidy(fit_w) # intercept: logit mean ratio; precision: Beta precision
 kb_model_describe(fit_w)
 
 # the expected dry:wet ratio, one estimate

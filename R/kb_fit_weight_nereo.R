@@ -7,13 +7,13 @@
 #' weight as a function of sub-bulb diameter (mm), with `x = diameter_mm / d0` and
 #' `d0` the geometric mean diameter of the data:
 #'
-#' - `"packard_floor"` (the default): `bFloor + alpha * x^bPower`, the
+#' - `"packard_floor"` (the default): `weight_floor + alpha * x^diameter_power`, the
 #'   three-parameter power function of Packard (2023). The weight floor
-#'   `bFloor` makes the relationship curve on log-log axes: the local allometric
-#'   exponent rises with plant size and levels off toward `bPower` as the
+#'   `weight_floor` makes the relationship curve on log-log axes: the local allometric
+#'   exponent rises with plant size and levels off toward `diameter_power` as the
 #'   floor's share of weight shrinks.
-#' - `"power"`: `alpha * x^bPower`, a power law, which is a straight line on
-#'   log-log axes with the single exponent `bPower`.
+#' - `"power"`: `alpha * x^diameter_power`, a power law, which is a straight line on
+#'   log-log axes with the single exponent `diameter_power`.
 #'
 #' `"packard_floor"` is recommended. On a coastwide compilation of *Nereocystis*
 #' harvests (Alaska to California), the power law fitted worse and
@@ -23,7 +23,7 @@
 #' size-dependent part of the weight while any floor is common to all groups.
 #'
 #' When `data` has a `stipes_m2` column (stipes per m², a site-year value),
-#' `log(alpha)` also includes `bDensity` times density standardised by its mean
+#' `log(alpha)` also includes `density_slope` times density standardised by its mean
 #' and SD over the fitted plants. Site-years without a recorded density take the
 #' mean. The density term is omitted when fewer than two distinct site-year
 #' densities are recorded.
@@ -105,17 +105,17 @@ kb_fit_weight_nereo <- function(
     stanmodels$weight_nereo,
     stan_data,
     param_vars = c(
-      "bWeight",
-      "bPower",
-      "bFloor",
-      "bDensity",
-      "sSite",
-      "sYear",
-      "sSiteYear",
-      "sWeight",
-      "bSite",
-      "bYear",
-      "bSiteYear"
+      "intercept",
+      "diameter_power",
+      "weight_floor",
+      "density_slope",
+      "sd_site",
+      "sd_year",
+      "sd_site_year",
+      "sd_residual",
+      "site_effect",
+      "year_effect",
+      "site_year_effect"
     ),
     chains = chains,
     niters = niters,
@@ -138,19 +138,19 @@ kb_fit_weight_nereo <- function(
     offset = NULL,
     terms = list(
       fixed = c(
-        "bWeight",
-        "bPower",
-        if (form == "packard_floor") "bFloor",
-        if (density$on) "bDensity",
-        "sSite",
-        "sYear",
-        if (site_year$on) "sSiteYear",
-        "sWeight"
+        "intercept",
+        "diameter_power",
+        if (form == "packard_floor") "weight_floor",
+        if (density$on) "density_slope",
+        "sd_site",
+        "sd_year",
+        if (site_year$on) "sd_site_year",
+        "sd_residual"
       ),
       random = c(
-        "bSite",
-        "bYear",
-        if (site_year$on) "bSiteYear"
+        "site_effect",
+        "year_effect",
+        if (site_year$on) "site_year_effect"
       )
     ),
     prior_only = prior_only,

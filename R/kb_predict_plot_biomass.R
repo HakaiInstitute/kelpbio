@@ -199,10 +199,10 @@ kb_predict_plot_biomass <- function(
   .abort_no_method(x = fit, call = NULL)
 }
 
-# Weibull with mean exp(lp) and shape bShape; diameters in (0, upper].
+# Weibull with mean exp(lp) and shape shape; diameters in (0, upper].
 #' @export
 .plant_sizes.kb_fit_size_nereo <- function(fit, lp, upper, u) {
-  shape <- as.vector(posterior::draws_of(fit$draws$bShape))
+  shape <- as.vector(posterior::draws_of(fit$draws$shape))
   scale <- weibull_scale(exp(lp), shape)
   # shape and scale recycle down each column of the D x n matrix, so element
   # (d, k) gets draw d's distribution.
@@ -211,12 +211,12 @@ kb_predict_plot_biomass <- function(
 }
 
 # Zero-truncated negative binomial with untruncated mean exp(lp) and
-# overdispersion bDispersion; frond counts in [1, upper]. Each draw's quantiles are
+# overdispersion dispersion; frond counts in [1, upper]. Each draw's quantiles are
 # looked up in its cumulative distribution over 1 to upper, built once, which is
 # several times faster than stats::qnbinom() and gives the same counts.
 #' @export
 .plant_sizes.kb_fit_size_macro <- function(fit, lp, upper, u) {
-  size <- 1 / as.vector(posterior::draws_of(fit$draws$bDispersion))
+  size <- 1 / as.vector(posterior::draws_of(fit$draws$dispersion))
   mu <- exp(lp)
   p0 <- stats::pnbinom(0, mu = mu, size = size)
   # D x upper: P(X <= f | 1 <= X <= upper) for f = 1, ..., upper.

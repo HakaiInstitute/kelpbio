@@ -1,7 +1,7 @@
 test_that("kb_stancode returns the Stan source with comments stripped", {
   code <- kb_stancode(weight_fit)
   expect_type(code, "character")
-  expect_match(code, "bWeight")
+  expect_match(code, "intercept")
   # comments are stripped; the raw source on the fit keeps them
   expect_false(grepl("//", as.character(code)))
   expect_true(grepl("//", as.character(weight_fit$meta$stancode)))

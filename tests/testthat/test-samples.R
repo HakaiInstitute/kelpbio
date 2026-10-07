@@ -16,6 +16,6 @@ test_that("samples errors on an object that is not a fit", {
 test_that("samples excludes effects the fit omitted", {
   off <- weight_fit
   off$meta$density_on <- FALSE
-  off$meta$terms$fixed <- setdiff(off$meta$terms$fixed, "bDensity")
-  expect_false("bDensity" %in% posterior::variables(samples(off)))
+  off$meta$terms$fixed <- setdiff(off$meta$terms$fixed, "density_slope")
+  expect_false("density_slope" %in% posterior::variables(samples(off)))
 })

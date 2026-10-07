@@ -20,7 +20,7 @@ test_that("the nereo weight mean carries the lognormal retransformation", {
   lp <- lp_rvar(weight_fit, c(0, 1))
   expect_equal(
     .epred(weight_fit, lp),
-    exp(lp + weight_fit$draws$sWeight^2 / 2)
+    exp(lp + weight_fit$draws$sd_residual^2 / 2)
   )
 })
 
@@ -52,7 +52,7 @@ test_that("the macro size mean is the truncated mean, above the untruncated one"
   nd <- data.frame(site = fitted_sites(size_macro_fit, 2))
   ep <- posterior_epred(size_macro_fit, new_data = nd)
   mu <- posterior_linpred(size_macro_fit, transform = TRUE, new_data = nd)
-  theta <- as.vector(posterior::draws_of(size_macro_fit$draws$bDispersion))
+  theta <- as.vector(posterior::draws_of(size_macro_fit$draws$dispersion))
   expect_equal(ep, mu / (1 - (1 + mu * theta)^(-1 / theta)))
   expect_true(all(ep > mu))
   expect_true(all(ep >= 1))
@@ -63,7 +63,7 @@ test_that("the nereo density mean carries the zero-inflation probability", {
   ep <- posterior_epred(density_nereo_fit, new_data = nd)
   mu <- posterior_linpred(density_nereo_fit, transform = TRUE, new_data = nd)
   zi <- stats::plogis(
-    as.vector(posterior::draws_of(density_nereo_fit$draws$bZeroInflation))
+    as.vector(posterior::draws_of(density_nereo_fit$draws$logit_zero_inflation))
   )
   expect_equal(ep, mu * (1 - zi))
   expect_true(all(ep < mu))

@@ -59,7 +59,7 @@ MCMC and makes a pre-fit model behave exactly like a fresh one.
 
 Biomass averages expected weight over the size distribution. Under a Student-t on
 log weight, `E[weight]` does not exist, so the integration would have nothing to
-average. The Normal gives the expected weight `exp(mu + sWeight^2 / 2)`.
+average. The Normal gives the expected weight `exp(mu + sd_residual^2 / 2)`.
 
 ## The observation distribution is stated once in R
 
