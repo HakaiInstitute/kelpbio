@@ -2,12 +2,9 @@
 % Please edit documentation in R/kb_stancode.R
 \name{kb_stancode}
 \alias{kb_stancode}
-\alias{kb_stancode.kb_fit}
 \title{Stan Source for a Model Fit}
 \usage{
 kb_stancode(fit, ...)
-
-\method{kb_stancode}{kb_fit}(fit, ...)
 }
 \arguments{
 \item{fit}{A \code{kb_fit} object.}
@@ -34,6 +31,7 @@ Other generics:
 \code{\link[=create_priorsense_data.kb_fit]{create_priorsense_data.kb_fit()}},
 \code{\link[=fitted.kb_fit]{fitted.kb_fit()}},
 \code{\link[=glance.kb_fit]{glance.kb_fit()}},
+\code{\link[=kb_samples]{kb_samples()}},
 \code{\link[=log_lik.kb_fit]{log_lik.kb_fit()}},
 \code{\link[=posterior_epred.kb_fit]{posterior_epred.kb_fit()}},
 \code{\link[=posterior_linpred.kb_fit]{posterior_linpred.kb_fit()}},
@@ -46,7 +44,6 @@ Other generics:
 \code{\link[=predict.kb_fit_wetdry]{predict.kb_fit_wetdry()}},
 \code{\link[=prior_summary.kb_fit]{prior_summary.kb_fit()}},
 \code{\link[=residuals.kb_fit]{residuals.kb_fit()}},
-\code{\link[=samples]{samples()}},
 \code{\link[=summary.kb_fit]{summary.kb_fit()}},
 \code{\link[=tidy.kb_fit]{tidy.kb_fit()}}
 }

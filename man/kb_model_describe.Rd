@@ -2,12 +2,9 @@
 % Please edit documentation in R/kb_model_describe.R
 \name{kb_model_describe}
 \alias{kb_model_describe}
-\alias{kb_model_describe.kb_fit}
 \title{Describe a Fitted Model}
 \usage{
 kb_model_describe(fit, prose = FALSE)
-
-\method{kb_model_describe}{kb_fit}(fit, prose = FALSE)
 }
 \arguments{
 \item{fit}{A \code{kb_fit} object.}

@@ -25,18 +25,7 @@
 #' kb_model_describe(fit_weight_sim_nereo)
 #' kb_model_describe(fit_weight_sim_macro, prose = TRUE)
 kb_model_describe <- function(fit, prose = FALSE) {
-  UseMethod("kb_model_describe")
-}
-
-#' @export
-kb_model_describe.default <- function(fit, prose = FALSE) {
-  .chk_kb_fit(fit, call = rlang::current_env())
-  .abort_no_method(fit, call = rlang::current_env())
-}
-
-#' @rdname kb_model_describe
-#' @export
-kb_model_describe.kb_fit <- function(fit, prose = FALSE) {
+  .chk_kb_fit(fit)
   chk::chk_flag(prose)
   .render_model(.model_spec(fit), prose)
 }

@@ -1,17 +1,3 @@
-# Returns the fixture's draws in place of sampling.
-local_fit_stan_stub <- function(env = parent.frame()) {
-  local_mocked_bindings(
-    fit_stan = function(...) {
-      list(
-        draws = weight_nereo_fit$draws,
-        diagnostics = weight_nereo_fit$diagnostics,
-        stancode = ""
-      )
-    },
-    .env = env
-  )
-}
-
 test_that("kb_fit_weight_nereo does not expose site_year_on", {
   expect_false("site_year_on" %in% names(formals(kb_fit_weight_nereo)))
 })
@@ -159,12 +145,13 @@ test_that("progress_dir writes an artifact that kb_progress reads as complete", 
 })
 
 test_that("a single-year fit records no site:year terms", {
-  local_fit_stan_stub()
+  local_fit_stan_stub(weight_nereo_fit)
   d <- droplevels(subset(weight_nereo_fit$data, year == "2019"))
   fit <- kb_fit_weight_nereo(d, progress = "none")
   expect_false(fit$meta$site_year_on)
   expect_false("sd_site_year" %in% fit$meta$terms$fixed)
   expect_false("site_year_effect" %in% fit$meta$terms$random)
+  expect_false(any(c("sd_site_year", "site_year_effect") %in% names(fit$draws)))
 })
 
 test_that("the fit records the density structure in meta and terms", {
@@ -185,17 +172,18 @@ test_that("the fit records the density structure in meta and terms", {
 })
 
 test_that("data without density give a fit with the density term off", {
-  local_fit_stan_stub()
+  local_fit_stan_stub(weight_nereo_fit)
   d <- weight_nereo_fit$data
   d$stipes_m2 <- NULL
   fit <- kb_fit_weight_nereo(d, progress = "none")
   expect_false(fit$meta$density_on)
   expect_false("density_slope" %in% fit$meta$terms$fixed)
   expect_false("density_slope" %in% tidy(fit)$term)
+  expect_false("density_slope" %in% names(fit$draws))
 })
 
 test_that("the form defaults to packard_floor and power drops the floor", {
-  local_fit_stan_stub()
+  local_fit_stan_stub(weight_nereo_fit)
   d <- weight_nereo_fit$data
   default <- kb_fit_weight_nereo(d, progress = "none")
   expect_identical(default$meta$form, "packard_floor")
@@ -205,11 +193,11 @@ test_that("the form defaults to packard_floor and power drops the floor", {
   expect_identical(power$meta$form, "power")
   expect_false("weight_floor" %in% power$meta$terms$fixed)
   expect_false("weight_floor" %in% tidy(power)$term)
-  expect_false("weight_floor" %in% posterior::variables(samples(power)))
+  expect_false("weight_floor" %in% posterior::variables(kb_samples(power)))
 })
 
 test_that("an unknown form errors before sampling, naming the forms", {
-  local_fit_stan_stub()
+  local_fit_stan_stub(weight_nereo_fit)
   expect_snapshot(
     kb_fit_weight_nereo(weight_nereo_fit$data, form = "cubic"),
     error = TRUE

@@ -4,7 +4,8 @@
 # Structure: basic functionality first (fit, accessors, predictions, plots),
 # then advanced functionality (priors, custom-prior/prior-only fits, control,
 # progress, site:year edge cases, fits without density, raw posterior draws)
-# further down, then the Macrocystis weight model and the size models.
+# further down, then the Macrocystis weight model, the size, density, wet/dry,
+# and carbon models, and the biomass compositions (plot, cover, site).
 #
 # Orientation: pair this with decisions/architecture.md (the design overview);
 # the behavioural contract lives in openspec/specs/, and the rendered pkgdown
@@ -107,7 +108,10 @@ kelpbio::rhat(fit)
 esr(fit)
 estimates(fit)
 
-samples(fit)
+kb_samples(fit)
+# posterior's conversions and summaries accept the fit, as for brms or cmdstanr
+posterior::as_draws_df(fit)
+posterior::summarise_draws(fit)
 prior_summary(fit)
 # prior sensitivity (needs priorsense); each term is also the kb_priors_*()
 # entry to edit, and priorsense's own plots accept the fit
@@ -333,8 +337,9 @@ kb_prior_exponential(rate = 1)
 # priors are classed
 class(kb_prior_exponential(rate = 1))
 
-# intercept, power (allometric exponent), floor (weight in kg at diameter -> 0),
-# density, and the SDs; power and floor are truncated at zero by the model
+# intercept, diameter_power (allometric exponent), weight_floor (weight in kg
+# at diameter -> 0), density_slope, and the SDs; diameter_power and weight_floor
+# are truncated at zero by the model
 priors <- kb_priors_weight_nereo()
 priors$diameter_power <- kb_prior_normal(mean = 2, sd = 0.05)
 priors$sd_site <- kb_prior_exponential(rate = 3)
@@ -348,7 +353,7 @@ fit_custom <- kb_fit_weight_nereo(
 )
 
 # a very tight prior on diameter_power pulls the exponent away from the default-prior
-# posterior (about 3)
+# posterior (about 3.2)
 bind_rows(
   mutate(coef(fit), priors = "default"),
   mutate(coef(fit_custom), priors = "custom")
@@ -451,7 +456,7 @@ fit_aliased$meta$site_year_on # TRUE (retained despite non-identifiability)
 # sampled from the prior alone. No sd_site_year here:
 tidy(fit_one_year)
 pars(fit_one_year)
-"sd_site_year" %in% posterior::variables(samples(fit_one_year)) # FALSE
+"sd_site_year" %in% posterior::variables(kb_samples(fit_one_year)) # FALSE
 
 # --- functional form ---------------------------------------------------------
 # fit_power (fitted above with form = "power") has no weight_floor; its straight
@@ -548,7 +553,7 @@ bad$fronds[1] <- 5.5
 try(kb_check_data_weight_macro(bad)) # not a whole number
 
 # --- priors (macro-specific parameter set) ------------------------------------
-kb_priors_weight_macro() # intercept, fronds, shape, sd_site/year/site_year
+kb_priors_weight_macro() # intercept, fronds_slope, shape, sd_site/year/site_year
 
 # --- fit ----------------------------------------------------------------------
 fit_m <- kb_fit_weight_macro(
@@ -672,7 +677,7 @@ kb_check_data_density_nereo(mutate(
   area_m2 = area_m2 * 1e4
 ))
 
-kb_priors_density_nereo() # intercept, zero_inflation, dispersion, sd_*
+kb_priors_density_nereo() # intercept, logit_zero_inflation, dispersion, sd_*
 kb_priors_density_macro() # intercept, dispersion, sd_*
 
 fit_d <- kb_fit_density_nereo(data_density_sim_nereo)
@@ -871,7 +876,8 @@ kb_check_data_cover_biomass_nereo(mutate(
   tide_height_m = tide_height_m * 100
 ))
 
-kb_priors_cover_biomass_nereo() # canopy (log), floor, tide, scaling, sd_site, sd_year
+# cover_slope, biomass_floor, tide_height_slope, error_scaling, sd_site, sd_year
+kb_priors_cover_biomass_nereo()
 kb_priors_cover_biomass_macro() # macro differs in the floor and tide priors
 
 fit_cv <- kb_fit_cover_biomass_nereo(data_cover_biomass_sim_nereo, data_plot_biomass_sim_nereo)

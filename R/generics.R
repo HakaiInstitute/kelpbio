@@ -69,3 +69,7 @@ rstantools::prior_summary
 #' @importFrom ggplot2 autoplot
 #' @export
 ggplot2::autoplot
+
+#' @importFrom posterior as_draws
+#' @export
+posterior::as_draws

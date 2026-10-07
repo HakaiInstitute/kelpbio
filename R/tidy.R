@@ -37,3 +37,9 @@ tidy.kb_fit <- function(
     sig_fig = sig_fig
   )
 }
+
+# Names of the estimated parameters, from meta.
+.terms <- function(fit, include_random_effects) {
+  terms <- fit$meta$terms
+  if (include_random_effects) c(terms$fixed, terms$random) else terms$fixed
+}

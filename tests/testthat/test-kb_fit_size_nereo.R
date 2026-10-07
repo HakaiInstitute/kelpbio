@@ -1,17 +1,3 @@
-# Returns the fixture's draws in place of sampling.
-local_size_nereo_stub <- function(env = parent.frame()) {
-  local_mocked_bindings(
-    fit_stan = function(...) {
-      list(
-        draws = size_nereo_fit$draws,
-        diagnostics = size_nereo_fit$diagnostics,
-        stancode = ""
-      )
-    },
-    .env = env
-  )
-}
-
 test_that("kb_fit_size_nereo returns a correctly-structured object", {
   skip_on_cran()
   d <- droplevels(subset(
@@ -36,7 +22,7 @@ test_that("kb_fit_size_nereo returns a correctly-structured object", {
 })
 
 test_that("the fit records the species, response, and no predictor", {
-  local_size_nereo_stub()
+  local_fit_stan_stub(size_nereo_fit)
   fit <- kb_fit_size_nereo(size_nereo_fit$data, progress = "none")
   expect_identical(fit$meta$species, "nereocystis")
   expect_identical(fit$meta$response, "diameter_mm")
@@ -47,16 +33,17 @@ test_that("the fit records the species, response, and no predictor", {
 })
 
 test_that("single-year data omit the site:year effect with a message", {
-  local_size_nereo_stub()
+  local_fit_stan_stub(size_nereo_fit)
   d <- droplevels(subset(size_nereo_fit$data, year == "2019"))
   expect_message(fit <- kb_fit_size_nereo(d), "site:year effect is omitted")
   expect_false(fit$meta$site_year_on)
   expect_false("sd_site_year" %in% fit$meta$terms$fixed)
   expect_false("site_year_effect" %in% fit$meta$terms$random)
+  expect_false(any(c("sd_site_year", "site_year_effect") %in% names(fit$draws)))
 })
 
 test_that("invalid data and priors error before sampling", {
-  local_size_nereo_stub()
+  local_fit_stan_stub(size_nereo_fit)
   expect_error(kb_fit_size_nereo(data.frame(site = "a", year = "2020")))
   p <- kb_priors_size_nereo()
   p$sd_site <- kb_prior_normal(0, 1)

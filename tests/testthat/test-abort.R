@@ -37,6 +37,7 @@ test_that("every internal generic has a default, and only display ones are total
       ".epred",
       ".grid_columns",
       ".linpred",
+      ".log_prior_density",
       ".model_spec",
       ".obs_family",
       ".plant_sizes"
@@ -54,9 +55,10 @@ test_that("every internal generic has a default, and only display ones are total
     )]
     # Through the generic, so the default is what a fit with no method reaches.
     call_args <- c(list(fake), rep(list(1), length(required) - 1L))
+    # .log_prior_density() dispatches on priors and has its own message.
     expect_error(
       do.call(fun, call_args),
-      "no method for a <kb_fit_other>",
+      "no (method|log density) for a <kb_fit_other>",
       info = generic
     )
   }

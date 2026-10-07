@@ -26,9 +26,7 @@ test_that("accessors return expected shapes", {
 })
 
 test_that("accessors exclude an effect the fit omitted", {
-  off <- weight_nereo_fit
-  off$meta$density_on <- FALSE
-  off$meta$terms$fixed <- setdiff(off$meta$terms$fixed, "density_slope")
+  off <- omit_terms(weight_nereo_fit, "density_slope")
   expect_false("density_slope" %in% names(rhat(off)))
   expect_false("density_slope" %in% names(esr(off)))
   expect_false("density_slope" %in% pars(off))

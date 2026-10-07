@@ -64,9 +64,7 @@ test_that("the thresholds set the flags and leave the values unchanged", {
 
 test_that("an omitted effect has no row", {
   skip_if_not_installed("priorsense")
-  fit <- weight_nereo_fit
-  fit$meta$terms$fixed <- setdiff(fit$meta$terms$fixed, "density_slope")
-  fit$meta$density_on <- FALSE
+  fit <- omit_terms(weight_nereo_fit, "density_slope")
   out <- kb_sensitivity(fit)
   expect_false("density_slope" %in% out$term)
 })

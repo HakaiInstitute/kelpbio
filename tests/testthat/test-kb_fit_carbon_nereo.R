@@ -1,17 +1,3 @@
-# Returns the fixture's draws in place of sampling.
-local_carbon_nereo_stub <- function(env = parent.frame()) {
-  local_mocked_bindings(
-    fit_stan = function(...) {
-      list(
-        draws = carbon_nereo_fit$draws,
-        diagnostics = carbon_nereo_fit$diagnostics,
-        stancode = ""
-      )
-    },
-    .env = env
-  )
-}
-
 test_that("kb_fit_carbon_nereo returns a correctly-structured object", {
   skip_on_cran()
   fit <- kb_fit_carbon_nereo(
@@ -29,7 +15,7 @@ test_that("kb_fit_carbon_nereo returns a correctly-structured object", {
 })
 
 test_that("the fit records the species, a derived response, and no effects", {
-  local_carbon_nereo_stub()
+  local_fit_stan_stub(carbon_nereo_fit)
   fit <- kb_fit_carbon_nereo(carbon_nereo_fit$data, progress = "none")
   expect_identical(fit$meta$species, "nereocystis")
   expect_identical(fit$meta$response, "carbon_fraction")
@@ -40,7 +26,7 @@ test_that("the fit records the species, a derived response, and no effects", {
 })
 
 test_that("invalid data and priors error before sampling", {
-  local_carbon_nereo_stub()
+  local_fit_stan_stub(carbon_nereo_fit)
   expect_error(kb_fit_carbon_nereo(data.frame(x = 1)))
   p <- kb_priors_carbon_nereo()
   p$precision <- kb_prior_normal(0, 1)

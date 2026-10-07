@@ -1,8 +1,10 @@
-# The parameters a fit samples and the terms it estimates. `off` parameters are
-# still sampled (from their priors) but are not estimates.
+# The parameters a fit estimates, from its priors: every parameter but the
+# per-level `effects` has a prior entry of its own name
+# (decisions/parameter-naming.md), in the model's order. `off` names the
+# parameters the data or the model form switched off; they are sampled but not
+# stored.
 fit_parameters <- function(priors, effects = character(0), off = character(0)) {
   list(
-    sampled = c(names(priors), effects),
     fixed = setdiff(names(priors), off),
     random = setdiff(effects, off)
   )

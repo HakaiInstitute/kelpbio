@@ -82,7 +82,7 @@ kb_fit_density_macro <- function(
   core <- fit_stan(
     stanmodels$density_macro,
     stan_data,
-    param_vars = parameters$sampled,
+    param_vars = c(parameters$fixed, parameters$random),
     chains = chains,
     niters = niters,
     nthin = nthin,
@@ -103,7 +103,7 @@ kb_fit_density_macro <- function(
     # Counts are over the area surveyed, so the expected count is area times
     # density.
     offset = "area_m2",
-    terms = parameters[c("fixed", "random")],
+    terms = parameters,
     prior_only = prior_only,
     nthin = as.integer(nthin),
     meta_extra = list(

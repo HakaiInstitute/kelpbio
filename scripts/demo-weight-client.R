@@ -231,6 +231,6 @@ prior_summary(fit)
 nd <- data.frame(diameter_mm = c(20, 40, 60))
 dim(posterior_epred(fit, new_data = nd))
 class(posterior_epred(fit, new_data = nd))
-samples(fit) |>
-  posterior::summarise_draws() |>
+# posterior's summaries and conversions accept the fit directly.
+posterior::summarise_draws(fit) |>
   head()

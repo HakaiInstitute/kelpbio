@@ -35,7 +35,7 @@ glance.kb_fit <- function(
   max_perc_divergent = 0.2
 ) {
   rlang::check_dots_empty()
-  s <- .fitted_diagnostics(x)
+  s <- x$diagnostics$summary
   # Outside tibble(), where `rhat` would resolve to the column.
   is_converged <- converged(
     x,
