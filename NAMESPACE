@@ -98,6 +98,7 @@ S3method(universals::npars,kb_fit)
 S3method(universals::nterms,kb_fit)
 S3method(universals::pars,kb_fit)
 S3method(universals::rhat,kb_fit)
+export(as_draws)
 export(augment)
 export(autoplot)
 export(converged)
@@ -179,7 +180,10 @@ importFrom(generics,
   tidy
 )
 importFrom(ggplot2,autoplot)
-importFrom(posterior,rvar)
+importFrom(posterior,
+  as_draws,
+  rvar
+)
 importFrom(rlang,
   "%||%",
   .data

@@ -20,3 +20,7 @@ test_that("as_draws leaves out an effect the fit omitted", {
   vars <- posterior::variables(posterior::as_draws(fit))
   expect_false(any(c("sd_site_year", "site_year_effect") %in% vars))
 })
+
+test_that("as_draws is re-exported, so it needs no posterior::", {
+  expect_identical(kelpbio::as_draws, posterior::as_draws)
+})

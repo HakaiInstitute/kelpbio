@@ -21,6 +21,7 @@
 \alias{log_lik}
 \alias{prior_summary}
 \alias{autoplot}
+\alias{as_draws}
 \title{Objects exported from other packages}
 \keyword{internal}
 \description{
@@ -31,6 +32,8 @@ below to see their documentation.
   \item{generics}{\code{\link[generics:augment]{augment()}}, \code{\link[generics:glance]{glance()}}, \code{\link[generics:tidy]{tidy()}}}
 
   \item{ggplot2}{\code{\link[ggplot2:autoplot]{autoplot()}}}
+
+  \item{posterior}{\code{\link[posterior:as_draws]{as_draws()}}}
 
   \item{rstantools}{\code{\link[rstantools:log_lik]{log_lik()}}, \code{\link[rstantools:posterior_epred]{posterior_epred()}}, \code{\link[rstantools:posterior_linpred]{posterior_linpred()}}, \code{\link[rstantools:posterior_predict]{posterior_predict()}}, \code{\link[rstantools:prior_summary]{prior_summary()}}}
 
