@@ -27,7 +27,7 @@ test_that("kb_fit_density_macro returns a correctly-structured object", {
       "site_year_effect"
     )
   )
-  expect_equal(niters(fit), 100L)
+  expect_equal(niterations(fit), 100L)
 })
 
 test_that("the fit records the species, response, area offset, and no predictor", {

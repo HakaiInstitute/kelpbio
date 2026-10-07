@@ -66,6 +66,11 @@ S3method(generics::glance,kb_fit)
 S3method(generics::tidy,kb_fit)
 S3method(ggplot2::autoplot,kb_predictions)
 S3method(posterior::as_draws,kb_fit)
+S3method(posterior::nchains,kb_fit)
+S3method(posterior::ndraws,kb_fit)
+S3method(posterior::niterations,kb_fit)
+S3method(posterior::nvariables,kb_fit)
+S3method(posterior::variables,kb_fit)
 S3method(print,kb_fit)
 S3method(print,kb_predictions)
 S3method(print,kb_prior_exponential)
@@ -89,21 +94,9 @@ S3method(stats::predict,kb_fit_size)
 S3method(stats::predict,kb_fit_weight)
 S3method(stats::predict,kb_fit_wetdry)
 S3method(stats::residuals,kb_fit)
-S3method(universals::converged,kb_fit)
-S3method(universals::esr,kb_fit)
-S3method(universals::estimates,kb_fit)
-S3method(universals::nchains,kb_fit)
-S3method(universals::niters,kb_fit)
-S3method(universals::npars,kb_fit)
-S3method(universals::nterms,kb_fit)
-S3method(universals::pars,kb_fit)
-S3method(universals::rhat,kb_fit)
 export(as_draws)
 export(augment)
 export(autoplot)
-export(converged)
-export(esr)
-export(estimates)
 export(glance)
 export(kb_check_data_carbon_macro)
 export(kb_check_data_carbon_nereo)
@@ -117,6 +110,7 @@ export(kb_check_data_weight_macro)
 export(kb_check_data_weight_nereo)
 export(kb_check_data_wetdry_macro)
 export(kb_check_data_wetdry_nereo)
+export(kb_converged)
 export(kb_fit_carbon_macro)
 export(kb_fit_carbon_nereo)
 export(kb_fit_cover_biomass_macro)
@@ -161,16 +155,15 @@ export(kb_sensitivity)
 export(kb_stancode)
 export(log_lik)
 export(nchains)
-export(niters)
-export(npars)
-export(nterms)
-export(pars)
+export(ndraws)
+export(niterations)
+export(nvariables)
 export(posterior_epred)
 export(posterior_linpred)
 export(posterior_predict)
 export(prior_summary)
-export(rhat)
 export(tidy)
+export(variables)
 import(Rcpp)
 import(methods)
 importFrom(RcppParallel,RcppParallelLibs)
@@ -182,7 +175,12 @@ importFrom(generics,
 importFrom(ggplot2,autoplot)
 importFrom(posterior,
   as_draws,
-  rvar
+  nchains,
+  ndraws,
+  niterations,
+  nvariables,
+  rvar,
+  variables
 )
 importFrom(rlang,
   "%||%",
@@ -198,15 +196,4 @@ importFrom(rstantools,
   rstan_config
 )
 importFrom(stats,nobs)
-importFrom(universals,
-  converged,
-  esr,
-  estimates,
-  nchains,
-  niters,
-  npars,
-  nterms,
-  pars,
-  rhat
-)
 useDynLib(kelpbio, .registration = TRUE)

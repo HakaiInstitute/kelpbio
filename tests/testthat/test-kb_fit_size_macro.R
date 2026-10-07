@@ -18,7 +18,7 @@ test_that("kb_fit_size_macro returns a correctly-structured object", {
     posterior::variables(fit$draws),
     c("intercept", "dispersion", "sd_site", "sd_year", "sd_site_year", "site_effect", "year_effect", "site_year_effect")
   )
-  expect_equal(niters(fit), 100L)
+  expect_equal(niterations(fit), 100L)
 })
 
 test_that("the fit records the species, response, and no predictor", {

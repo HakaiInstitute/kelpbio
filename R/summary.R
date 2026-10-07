@@ -13,7 +13,7 @@
 #' that ended in a divergent transition, the percentage that saturated the
 #' maximum treedepth, and the minimum E-BFMI across chains. Divergences indicate
 #' the sampler failed to explore part of the posterior and so enter the
-#' [converged()] verdict; treedepth saturation affects efficiency rather than
+#' [kb_converged()] verdict; treedepth saturation affects efficiency rather than
 #' validity, and E-BFMI below 0.2 suggests the model would benefit from
 #' reparameterization.
 #'
@@ -58,7 +58,7 @@ summary.kb_fit <- function(
   .chk_summary_args(conf_level, estimate, sig_fig)
   chk::chk_flag(include_random_effects)
 
-  # Diagnostics from the stored summary, the same source as converged().
+  # Diagnostics from the stored summary, the same source as kb_converged().
   coefficients <- tidy(
     object,
     conf_level = conf_level,
@@ -131,12 +131,12 @@ summary.kb_fit <- function(
     predictor = descr$predictor,
     groups = descr$groups,
     nobs = nobs(fit),
-    nchains = nchains(fit),
-    niters = niters(fit),
+    nchains = posterior::nchains(fit$draws),
+    niters = posterior::niterations(fit$draws),
     nthin = fit$meta$nthin,
     ndraws = posterior::ndraws(fit$draws),
     prior_only = isTRUE(fit$meta$prior_only),
-    converged = converged(fit)
+    converged = kb_converged(fit)
   )
 }
 

@@ -28,10 +28,10 @@ augment(fit_weight_sim_nereo)
 
 Other generics:
 \code{\link[=coef.kb_fit]{coef.kb_fit()}},
-\code{\link[=converged.kb_fit]{converged.kb_fit()}},
 \code{\link[=create_priorsense_data.kb_fit]{create_priorsense_data.kb_fit()}},
 \code{\link[=fitted.kb_fit]{fitted.kb_fit()}},
 \code{\link[=glance.kb_fit]{glance.kb_fit()}},
+\code{\link[=kb_converged]{kb_converged()}},
 \code{\link[=kb_samples]{kb_samples()}},
 \code{\link[=kb_stancode]{kb_stancode()}},
 \code{\link[=log_lik.kb_fit]{log_lik.kb_fit()}},

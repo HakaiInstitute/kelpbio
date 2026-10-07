@@ -48,7 +48,7 @@ The footer reports the sampler diagnostics: the percentage of saved draws
 that ended in a divergent transition, the percentage that saturated the
 maximum treedepth, and the minimum E-BFMI across chains. Divergences indicate
 the sampler failed to explore part of the posterior and so enter the
-\code{\link[=converged]{converged()}} verdict; treedepth saturation affects efficiency rather than
+\code{\link[=kb_converged]{kb_converged()}} verdict; treedepth saturation affects efficiency rather than
 validity, and E-BFMI below 0.2 suggests the model would benefit from
 reparameterization.
 
@@ -77,10 +77,10 @@ summary(fit_weight_sim_nereo)
 Other generics:
 \code{\link[=augment.kb_fit]{augment.kb_fit()}},
 \code{\link[=coef.kb_fit]{coef.kb_fit()}},
-\code{\link[=converged.kb_fit]{converged.kb_fit()}},
 \code{\link[=create_priorsense_data.kb_fit]{create_priorsense_data.kb_fit()}},
 \code{\link[=fitted.kb_fit]{fitted.kb_fit()}},
 \code{\link[=glance.kb_fit]{glance.kb_fit()}},
+\code{\link[=kb_converged]{kb_converged()}},
 \code{\link[=kb_samples]{kb_samples()}},
 \code{\link[=kb_stancode]{kb_stancode()}},
 \code{\link[=log_lik.kb_fit]{log_lik.kb_fit()}},

@@ -2,7 +2,8 @@
 #'
 #' One-row summary of a model fit with convergence diagnostics.
 #'
-#' @inheritParams converged.kb_fit
+#' @inheritParams kb_converged
+#' @param x A `kb_fit` object.
 #'
 #' @section Output:
 #'
@@ -11,18 +12,19 @@
 #' - `rhat` is the potential scale reduction factor for the worst-performing
 #'   parameter: a comparison of between- and within-chain variance, with values
 #'   near 1 indicating convergence.
-#' - `ess` is the bulk effective sample size for the worst-performing parameter:
-#'   the number of independent draws after accounting for autocorrelation.
+#' - `ess_bulk` and `ess_tail` are the bulk and tail effective sample sizes for
+#'   the worst-performing parameter: the number of independent draws worth of
+#'   information about the centre and the tails of its posterior.
 #' - `perc_divergent` is the divergent transition rate: the divergent
 #'   transitions divided by the number of saved draws (i.e., post-thinning),
 #'   expressed as a percentage.
 #'
-#' @inheritSection converged.kb_fit Assessing convergence
-#' @inheritSection converged.kb_fit Resolving convergence failure
-#' @seealso [converged()], which produces the `converged` column.
+#' @inheritSection kb_converged Assessing convergence
+#' @inheritSection kb_converged Resolving convergence failure
+#' @seealso [kb_converged()], which produces the `converged` column.
 #'
-#' @return A one-row tibble with `n`, `K`, `nchains`, `niters`, `nthin`, `ess`,
-#'   `rhat`, `perc_divergent`, and `converged`.
+#' @return A one-row tibble with `n`, `K`, `nchains`, `niters`, `nthin`,
+#'   `ess_bulk`, `ess_tail`, `rhat`, `perc_divergent`, and `converged`.
 #' @family generics
 #' @exportS3Method generics::glance
 #' @examples
@@ -31,32 +33,33 @@ glance.kb_fit <- function(
   x,
   ...,
   rhat = 1.01,
-  esr = 0.1,
+  ess = 100,
   max_perc_divergent = 0.2
 ) {
   rlang::check_dots_empty()
   s <- x$diagnostics$summary
   # Outside tibble(), where `rhat` would resolve to the column.
-  is_converged <- converged(
+  is_converged <- kb_converged(
     x,
     rhat = rhat,
-    esr = esr,
+    ess = ess,
     max_perc_divergent = max_perc_divergent
   )
   tibble::tibble(
     n = nobs(x),
-    K = npars(x),
-    nchains = nchains(x),
-    niters = niters(x),
+    K = posterior::nvariables(x$draws),
+    nchains = posterior::nchains(x$draws),
+    niters = posterior::niterations(x$draws),
     nthin = x$meta$nthin,
-    # min()/max() on an all-NA vector return Inf/-Inf with a base warning.
-    ess = if (any(is.finite(s$ess_bulk))) {
-      min(s$ess_bulk, na.rm = TRUE)
-    } else {
-      NA_real_
-    },
+    ess_bulk = .min_finite(s$ess_bulk),
+    ess_tail = .min_finite(s$ess_tail),
     rhat = if (any(is.finite(s$rhat))) max(s$rhat, na.rm = TRUE) else NA_real_,
     perc_divergent = x$diagnostics$perc_divergent,
     converged = is_converged
   )
+}
+
+# min() on an all-NA vector returns Inf with a base warning.
+.min_finite <- function(x) {
+  if (any(is.finite(x))) min(x, na.rm = TRUE) else NA_real_
 }

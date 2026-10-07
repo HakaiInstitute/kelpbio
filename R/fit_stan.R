@@ -206,7 +206,7 @@ announce_sampling <- function(chains, cores) {
   invisible(NULL)
 }
 
-# Muffle rstan's post-sampling HMC warnings; converged()/glance()/summary()
+# Muffle rstan's post-sampling HMC warnings; kb_converged()/glance()/summary()
 # report the diagnostics.
 with_quiet_sampler <- function(expr, muffle) {
   if (!muffle) {

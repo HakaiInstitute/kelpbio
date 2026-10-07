@@ -14,7 +14,7 @@
 #' `progress` controls fit-time console output. The default `"bar"` shows a
 #' progress bar; `"verbose"` streams rstan's per-iteration output and its
 #' post-sampling diagnostic warnings; `"none"` is silent. `progress` changes only
-#' console output, never the fit; inspect convergence with [converged()],
+#' console output, never the fit; inspect convergence with [kb_converged()],
 #' [glance()], or [summary()] in every mode.
 #'
 #' Supply `progress_dir` (an existing directory) to have the fit write a progress
@@ -61,8 +61,8 @@
 #' @param include_random_effects A flag specifying whether to include the
 #'   group-level random-effect terms in the output.
 #' @param rhat A number giving the maximum acceptable Rhat.
-#' @param esr A number giving the minimum acceptable effective sample rate
-#'   (effective sample size divided by the number of draws).
+#' @param ess A number giving the minimum acceptable bulk and tail effective
+#'   sample size per chain.
 #' @param max_perc_divergent A number giving the maximum acceptable percentage of
 #'   saved draws that ended in a divergent transition. `0` requires a fit with no
 #'   divergent transitions.

@@ -6,15 +6,6 @@
 \alias{tidy}
 \alias{glance}
 \alias{augment}
-\alias{rhat}
-\alias{esr}
-\alias{converged}
-\alias{estimates}
-\alias{npars}
-\alias{nterms}
-\alias{nchains}
-\alias{niters}
-\alias{pars}
 \alias{posterior_epred}
 \alias{posterior_linpred}
 \alias{posterior_predict}
@@ -22,6 +13,11 @@
 \alias{prior_summary}
 \alias{autoplot}
 \alias{as_draws}
+\alias{nchains}
+\alias{niterations}
+\alias{ndraws}
+\alias{nvariables}
+\alias{variables}
 \title{Objects exported from other packages}
 \keyword{internal}
 \description{
@@ -33,10 +29,8 @@ below to see their documentation.
 
   \item{ggplot2}{\code{\link[ggplot2:autoplot]{autoplot()}}}
 
-  \item{posterior}{\code{\link[posterior:as_draws]{as_draws()}}}
+  \item{posterior}{\code{\link[posterior:as_draws]{as_draws()}}, \code{\link[posterior:nchains]{nchains()}}, \code{\link[posterior:ndraws]{ndraws()}}, \code{\link[posterior:niterations]{niterations()}}, \code{\link[posterior:nvariables]{nvariables()}}, \code{\link[posterior:variables]{variables()}}}
 
   \item{rstantools}{\code{\link[rstantools:log_lik]{log_lik()}}, \code{\link[rstantools:posterior_epred]{posterior_epred()}}, \code{\link[rstantools:posterior_linpred]{posterior_linpred()}}, \code{\link[rstantools:posterior_predict]{posterior_predict()}}, \code{\link[rstantools:prior_summary]{prior_summary()}}}
-
-  \item{universals}{\code{\link[universals:converged]{converged()}}, \code{\link[universals:esr]{esr()}}, \code{\link[universals:estimates]{estimates()}}, \code{\link[universals:nchains]{nchains()}}, \code{\link[universals:niters]{niters()}}, \code{\link[universals:npars]{npars()}}, \code{\link[universals:nterms]{nterms()}}, \code{\link[universals:pars]{pars()}}, \code{\link[universals:rhat]{rhat()}}}
 }}
 

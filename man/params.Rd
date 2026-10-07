@@ -49,8 +49,8 @@ group-level random-effect terms in the output.}
 
 \item{rhat}{A number giving the maximum acceptable Rhat.}
 
-\item{esr}{A number giving the minimum acceptable effective sample rate
-(effective sample size divided by the number of draws).}
+\item{ess}{A number giving the minimum acceptable bulk and tail effective
+sample size per chain.}
 
 \item{max_perc_divergent}{A number giving the maximum acceptable percentage of
 saved draws that ended in a divergent transition. \code{0} requires a fit with no
@@ -93,7 +93,7 @@ match \code{niters} and the post-warmup phase is thinned by \code{nthin}.
 \code{progress} controls fit-time console output. The default \code{"bar"} shows a
 progress bar; \code{"verbose"} streams rstan's per-iteration output and its
 post-sampling diagnostic warnings; \code{"none"} is silent. \code{progress} changes only
-console output, never the fit; inspect convergence with \code{\link[=converged]{converged()}},
+console output, never the fit; inspect convergence with \code{\link[=kb_converged]{kb_converged()}},
 \code{\link[=glance]{glance()}}, or \code{\link[=summary]{summary()}} in every mode.
 
 Supply \code{progress_dir} (an existing directory) to have the fit write a progress
