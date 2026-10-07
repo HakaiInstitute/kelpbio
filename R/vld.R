@@ -112,6 +112,12 @@
   nrow(fit$data) > 0L
 }
 
+# A fit whose sensitivity to its prior and likelihood can be assessed: fitted to
+# data (not prior-only), with at least one observation.
+.vld_sensitivity_fit <- function(fit) {
+  !isTRUE(fit$meta$prior_only) && .vld_observed_data(fit)
+}
+
 .vld_kb_fit_cover_biomass <- function(x) {
   inherits(x, "kb_fit_cover_biomass")
 }

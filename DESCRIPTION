@@ -18,6 +18,7 @@ Suggests:
     bayesplot,
     knitr,
     loo,
+    priorsense,
     rmarkdown,
     testthat (>= 3.0.0),
     vdiffr,

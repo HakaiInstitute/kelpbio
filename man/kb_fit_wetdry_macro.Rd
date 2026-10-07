@@ -123,6 +123,7 @@ Other model:
 \code{\link[=kb_fit_weight_macro]{kb_fit_weight_macro()}},
 \code{\link[=kb_fit_weight_nereo]{kb_fit_weight_nereo()}},
 \code{\link[=kb_fit_wetdry_nereo]{kb_fit_wetdry_nereo()}},
-\code{\link[=kb_model_describe]{kb_model_describe()}}
+\code{\link[=kb_model_describe]{kb_model_describe()}},
+\code{\link[=kb_sensitivity]{kb_sensitivity()}}
 }
 \concept{model}
