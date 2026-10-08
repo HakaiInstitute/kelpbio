@@ -18,6 +18,7 @@
 \alias{ndraws}
 \alias{nvariables}
 \alias{variables}
+\alias{pp_check}
 \title{Objects exported from other packages}
 \keyword{internal}
 \description{
@@ -25,6 +26,8 @@ These objects are imported from other packages. Follow the links
 below to see their documentation.
 
 \describe{
+  \item{bayesplot}{\code{\link[bayesplot:pp_check]{pp_check()}}}
+
   \item{generics}{\code{\link[generics:augment]{augment()}}, \code{\link[generics:glance]{glance()}}, \code{\link[generics:tidy]{tidy()}}}
 
   \item{ggplot2}{\code{\link[ggplot2:autoplot]{autoplot()}}}

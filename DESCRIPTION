@@ -15,7 +15,6 @@ BugReports: https://github.com/HakaiInstitute/kelpbio/issues
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 Suggests:
-    bayesplot,
     knitr,
     loo,
     priorsense,
@@ -29,6 +28,7 @@ Biarch: true
 Depends:
     R (>= 4.2.0)
 Imports:
+    bayesplot,
     callr,
     chk,
     cli,

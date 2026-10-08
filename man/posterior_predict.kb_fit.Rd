@@ -50,7 +50,7 @@ Draws from the posterior predictive distribution: replicate responses (weights,
 plant sizes, transect counts, dry:wet ratios, carbon fractions, or in situ
 biomass estimates) carrying both parameter uncertainty and observation noise from
 the model's likelihood. With \code{new_data = NULL} the replicates are at the
-observed data, for use with \code{bayesplot::pp_check()}.
+observed data, as plotted by \link[=pp_check.kb_fit]{pp_check()}.
 }
 \details{
 For supplied \code{new_data}, conditioning is inferred from the grouping columns
@@ -89,6 +89,7 @@ Other generics:
 \code{\link[=log_lik.kb_fit]{log_lik.kb_fit()}},
 \code{\link[=posterior_epred.kb_fit]{posterior_epred.kb_fit()}},
 \code{\link[=posterior_linpred.kb_fit]{posterior_linpred.kb_fit()}},
+\code{\link[=pp_check.kb_fit]{pp_check.kb_fit()}},
 \code{\link[=predict.kb_fit_carbon]{predict.kb_fit_carbon()}},
 \code{\link[=predict.kb_fit_cover_biomass]{predict.kb_fit_cover_biomass()}},
 \code{\link[=predict.kb_fit_density]{predict.kb_fit_density()}},
