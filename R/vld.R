@@ -40,6 +40,10 @@
   .vld_positive_measure(x) && all(x == round(x))
 }
 
+.vld_frond_reaches_1m <- function(x) {
+  all(x >= 1)
+}
+
 .vld_density <- function(x) {
   all(is.na(x)) || (is.numeric(x) && all(x >= 0, na.rm = TRUE))
 }

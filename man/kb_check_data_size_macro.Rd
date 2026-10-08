@@ -27,7 +27,9 @@ and \code{year}, with no missing values.
 
 \code{fronds} is the number of fronds reaching 1 m above the holdfast. The model
 describes plants with at least one such frond, so a count of zero is an
-error; remove those plants before fitting. Other columns are ignored.
+error; remove those plants before fitting. The density data
+(\code{\link[=kb_check_data_density_macro]{kb_check_data_density_macro()}}) must count the same plants, so leave them
+out of the density counts too. Other columns are ignored.
 }
 \examples{
 data <- data.frame(

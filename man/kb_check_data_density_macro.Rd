@@ -26,9 +26,11 @@ Required columns: whole-number \code{plants} (>= 0), numeric \code{area_m2} (m²
 and factor or character \code{site} and \code{year}, with no missing values.
 
 Each row is one transect: \code{plants} is the number of plants counted on it and
-\code{area_m2} the area surveyed. Plants recorded individually should be counted to
-one row per transect before fitting. A count of zero is valid. Other columns
-are ignored.
+\code{area_m2} the area surveyed. Count only plants with at least one frond
+reaching 1 m above the holdfast, the plants the size model
+(\code{\link[=kb_check_data_size_macro]{kb_check_data_size_macro()}}) describes; counting smaller plants overstates
+biomass. Plants recorded individually should be counted to one row per
+transect before fitting. A count of zero is valid. Other columns are ignored.
 }
 \examples{
 data <- data.frame(

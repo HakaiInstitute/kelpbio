@@ -8,9 +8,11 @@
 #'
 #' @details
 #' Each row is one transect: `plants` is the number of plants counted on it and
-#' `area_m2` the area surveyed. Plants recorded individually should be counted to
-#' one row per transect before fitting. A count of zero is valid. Other columns
-#' are ignored.
+#' `area_m2` the area surveyed. Count only plants with at least one frond
+#' reaching 1 m above the holdfast, the plants the size model
+#' ([kb_check_data_size_macro()]) describes; counting smaller plants overstates
+#' biomass. Plants recorded individually should be counted to one row per
+#' transect before fitting. A count of zero is valid. Other columns are ignored.
 #'
 #' @inheritParams kb_check_data_density_nereo
 #'

@@ -7,8 +7,8 @@
 \format{
 A data frame with columns:
 \describe{
-\item{plants}{Number of plants counted on the transect, a whole number of at
-least 0.}
+\item{plants}{Number of plants with at least one frond reaching 1 m above
+the holdfast counted on the transect, a whole number of at least 0.}
 \item{area_m2}{Area surveyed (m²), a positive number.}
 \item{site}{Survey site, a factor (10 levels, invented names).}
 \item{year}{Survey year, a factor (4 levels).}
