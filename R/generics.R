@@ -57,3 +57,7 @@ posterior::nvariables
 #' @importFrom posterior variables
 #' @export
 posterior::variables
+
+#' @importFrom bayesplot pp_check
+#' @export
+bayesplot::pp_check

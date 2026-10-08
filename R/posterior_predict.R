@@ -4,7 +4,7 @@
 #' plant sizes, transect counts, dry:wet ratios, carbon fractions, or in situ
 #' biomass estimates) carrying both parameter uncertainty and observation noise from
 #' the model's likelihood. With `new_data = NULL` the replicates are at the
-#' observed data, for use with `bayesplot::pp_check()`.
+#' observed data, as plotted by [pp_check()][pp_check.kb_fit].
 #'
 #' @details
 #' For supplied `new_data`, conditioning is inferred from the grouping columns
