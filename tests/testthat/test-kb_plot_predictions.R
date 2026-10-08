@@ -13,11 +13,11 @@ test_that("the weight-vs-diameter ribbon plot is visually stable", {
   vdiffr::expect_doppelganger("weight ribbon", kb_plot_predictions(p))
 })
 
-test_that("axis titles are publication-ready descriptive labels", {
+test_that("axis titles are descriptive labels with units", {
   p <- kb_predict_weight(weight_nereo_fit, kb_new_data(weight_nereo_fit))
   gg <- kb_plot_predictions(p)
-  expect_identical(gg$labels$x, "Sub-bulb diameter")
-  expect_identical(gg$labels$y, "Wet weight")
+  expect_identical(gg$labels$x, "Sub-bulb diameter (mm)")
+  expect_identical(gg$labels$y, "Wet weight (kg)")
 })
 
 test_that("a held predictor puts the grouping factor on a descriptive x axis", {
@@ -27,7 +27,7 @@ test_that("a held predictor puts the grouping factor on a descriptive x axis", {
   )
   gg <- kb_plot_predictions(p)
   expect_identical(gg$labels$x, "Site")
-  expect_identical(gg$labels$y, "Wet weight")
+  expect_identical(gg$labels$y, "Wet weight (kg)")
   geoms <- vapply(gg$layers, function(l) class(l$geom)[1], character(1))
   expect_true(any(grepl("GeomPointrange", geoms)))
 })
@@ -61,7 +61,7 @@ test_that("rows not from kb_new_data() render as points, not a ribbon", {
     new_data = data.frame(diameter_mm = c(20, 40, 60))
   )
   gg <- kb_plot_predictions(p)
-  expect_identical(gg$labels$x, "Sub-bulb diameter")
+  expect_identical(gg$labels$x, "Sub-bulb diameter (mm)")
   geoms <- vapply(gg$layers, function(l) class(l$geom)[1], character(1))
   expect_true(any(grepl("GeomPointrange", geoms)))
   expect_false(any(grepl("GeomRibbon", geoms)))
@@ -114,7 +114,7 @@ test_that("size by site plots point ranges with a descriptive y axis", {
   geoms <- vapply(gg$layers, function(l) class(l$geom)[1], character(1))
   expect_true(any(grepl("GeomPointrange", geoms)))
   expect_identical(gg$labels$x, "Site")
-  expect_identical(gg$labels$y, "Sub-bulb diameter")
+  expect_identical(gg$labels$y, "Sub-bulb diameter (mm)")
   expect_equal(min(ggplot2::layer_scales(gg)$y$range$range), 0)
 })
 
@@ -127,7 +127,7 @@ test_that("density by site plots point ranges titled as a density", {
   geoms <- vapply(gg$layers, function(l) class(l$geom)[1], character(1))
   expect_true(any(grepl("GeomPointrange", geoms)))
   expect_identical(gg$labels$x, "Site")
-  expect_identical(gg$labels$y, "Stipe density")
+  expect_identical(gg$labels$y, "Stipe density (stipes/m\u00b2)")
   expect_identical(
     kb_plot_predictions(
       kb_predict_density(
@@ -135,7 +135,7 @@ test_that("density by site plots point ranges titled as a density", {
         kb_new_data(density_macro_fit, by = "site")
       )
     )$labels$y,
-    "Plant density"
+    "Plant density (plants/m\u00b2)"
   )
 })
 
@@ -162,5 +162,5 @@ test_that("a cover curve plots a ribbon over tide-corrected cover", {
   geoms <- vapply(gg$layers, function(l) class(l$geom)[1], character(1))
   expect_true(any(grepl("GeomRibbon", geoms)))
   expect_identical(gg$labels$x, "Tide-corrected canopy cover")
-  expect_identical(gg$labels$y, "Wet biomass")
+  expect_identical(gg$labels$y, "Wet biomass (kg/m\u00b2)")
 })
