@@ -73,6 +73,11 @@ test_that(".vld_positive_measure and .vld_frond_count check measured values", {
   expect_false(.vld_frond_count(2.5))
 })
 
+test_that(".vld_frond_reaches_1m rejects plants with no frond at 1 m", {
+  expect_true(.vld_frond_reaches_1m(c(1, 5)))
+  expect_false(.vld_frond_reaches_1m(c(0, 5)))
+})
+
 test_that(".vld_kb_fit with class kb_fit_density recognises a density fit", {
   expect_true(.vld_kb_fit(density_nereo_fit, "kb_fit_density"))
   expect_true(.vld_kb_fit(density_macro_fit, "kb_fit_density"))

@@ -20,6 +20,8 @@ test_that("missing, fractional, and zero frond counts error", {
   # the model describes plants with at least one frond at 1 m
   bad$fronds <- 0
   expect_snapshot(kb_check_data_size_macro(bad), error = TRUE)
+  bad$fronds <- -1
+  expect_snapshot(kb_check_data_size_macro(bad), error = TRUE)
   bad$fronds <- NA_real_
   expect_error(kb_check_data_size_macro(bad), "missing")
 })

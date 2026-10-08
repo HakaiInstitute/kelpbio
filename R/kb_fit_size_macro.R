@@ -4,8 +4,8 @@
 #'
 #' @details
 #' The number of fronds reaching 1 m above the holdfast is modelled with a
-#' zero-truncated negative binomial likelihood, since plants without such a
-#' frond are not recorded. The log mean before truncation (`intercept`) varies by
+#' zero-truncated negative binomial likelihood, since the model describes plants
+#' with at least one such frond. The log mean before truncation (`intercept`) varies by
 #' site, by year, and by `site:year`; the overdispersion (`dispersion`) is
 #' common to all plants. Predictions report the mean of the truncated
 #' distribution: the expected frond count of a plant with at least one frond at

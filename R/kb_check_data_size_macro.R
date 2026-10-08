@@ -9,7 +9,9 @@
 #' @details
 #' `fronds` is the number of fronds reaching 1 m above the holdfast. The model
 #' describes plants with at least one such frond, so a count of zero is an
-#' error; remove those plants before fitting. Other columns are ignored.
+#' error; remove those plants before fitting. The density data
+#' ([kb_check_data_density_macro()]) must count the same plants, so leave them
+#' out of the density counts too. Other columns are ignored.
 #'
 #' @inheritParams kb_check_data_size_nereo
 #'
@@ -35,7 +37,11 @@ kb_check_data_size_macro <- function(
         c("fronds", "site", "year"),
         x_name = x_name
       )
-      .chk_measure_columns(data, "fronds", x_name, count = TRUE)
+      fronds_name <- column_xname(x_name, "fronds")
+      chk::chk_numeric(data$fronds, x_name = fronds_name)
+      chk::chk_not_any_na(data$fronds, x_name = fronds_name)
+      .chk_frond_reaches_1m(data$fronds, x_name = fronds_name)
+      chk::chk_whole_numeric(data$fronds, x_name = fronds_name)
       .chk_group_columns(data, x_name)
       warn_group_names(data, x_name)
     },

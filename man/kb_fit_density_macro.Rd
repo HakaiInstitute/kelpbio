@@ -66,7 +66,8 @@ Fit a plant-density model for \emph{Macrocystis pyrifera} via Stan.
 }
 \details{
 The number of plants on a transect is modelled with a negative binomial
-likelihood. The expected count is the transect area times the plant density, so
+likelihood. Plants are those with at least one frond reaching 1 m above the
+holdfast, the same plants the size model describes. The expected count is the transect area times the plant density, so
 \code{area_m2} enters as an offset. The log density (\code{intercept}, log plants per m² at
 a typical site and year) varies by site, by year, and by \code{site:year}; the
 overdispersion (\code{dispersion}) is common to all transects.

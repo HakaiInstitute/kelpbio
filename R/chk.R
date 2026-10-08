@@ -73,6 +73,18 @@
   cli::cli_abort("{x_name} must be a whole number.")
 }
 
+# Run after checking x is numeric with no missing values.
+.chk_frond_reaches_1m <- function(x, x_name = deparse(substitute(x))) {
+  if (.vld_frond_reaches_1m(x)) {
+    return(invisible(x))
+  }
+  cli::cli_abort(c(
+    "{x_name} must be at least 1.",
+    i = "The model describes plants with at least one frond reaching 1 m above the holdfast.",
+    i = "Remove plants with 0 fronds, and leave them out of the density counts too."
+  ))
+}
+
 .chk_density <- function(x, x_name = deparse(substitute(x))) {
   if (.vld_density(x)) {
     return(invisible(x))
