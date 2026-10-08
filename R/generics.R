@@ -61,3 +61,11 @@ posterior::variables
 #' @importFrom bayesplot pp_check
 #' @export
 bayesplot::pp_check
+
+#' @importFrom loo loo
+#' @export
+loo::loo
+
+#' @importFrom loo loo_compare
+#' @export
+loo::loo_compare

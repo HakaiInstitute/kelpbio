@@ -19,6 +19,8 @@
 \alias{nvariables}
 \alias{variables}
 \alias{pp_check}
+\alias{loo}
+\alias{loo_compare}
 \title{Objects exported from other packages}
 \keyword{internal}
 \description{
@@ -31,6 +33,8 @@ below to see their documentation.
   \item{generics}{\code{\link[generics:augment]{augment()}}, \code{\link[generics:glance]{glance()}}, \code{\link[generics:tidy]{tidy()}}}
 
   \item{ggplot2}{\code{\link[ggplot2:autoplot]{autoplot()}}}
+
+  \item{loo}{\code{\link[loo:loo]{loo()}}, \code{\link[loo:loo_compare]{loo_compare()}}}
 
   \item{posterior}{\code{\link[posterior:as_draws]{as_draws()}}, \code{\link[posterior:nchains]{nchains()}}, \code{\link[posterior:ndraws]{ndraws()}}, \code{\link[posterior:niterations]{niterations()}}, \code{\link[posterior:nvariables]{nvariables()}}, \code{\link[posterior:variables]{variables()}}}
 

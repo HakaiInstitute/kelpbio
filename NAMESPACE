@@ -66,6 +66,7 @@ S3method(generics::augment,kb_fit)
 S3method(generics::glance,kb_fit)
 S3method(generics::tidy,kb_fit)
 S3method(ggplot2::autoplot,kb_predictions)
+S3method(loo::loo,kb_fit)
 S3method(posterior::as_draws,kb_fit)
 S3method(posterior::nchains,kb_fit)
 S3method(posterior::ndraws,kb_fit)
@@ -124,6 +125,7 @@ export(kb_fit_weight_macro)
 export(kb_fit_weight_nereo)
 export(kb_fit_wetdry_macro)
 export(kb_fit_wetdry_nereo)
+export(kb_influence)
 export(kb_model_describe)
 export(kb_new_data)
 export(kb_plot_predictions)
@@ -155,6 +157,8 @@ export(kb_samples)
 export(kb_sensitivity)
 export(kb_stancode)
 export(log_lik)
+export(loo)
+export(loo_compare)
 export(nchains)
 export(ndraws)
 export(niterations)
@@ -176,6 +180,10 @@ importFrom(generics,
   tidy
 )
 importFrom(ggplot2,autoplot)
+importFrom(loo,
+  loo,
+  loo_compare
+)
 importFrom(posterior,
   as_draws,
   nchains,
