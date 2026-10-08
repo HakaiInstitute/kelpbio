@@ -278,37 +278,58 @@
   invisible(NULL)
 }
 
-# The predictor values passed to kb_new_data() through `...`: at most one named
-# numeric argument, naming the fit's predictor.
-.chk_grid_predictor <- function(fit, dots, call = rlang::caller_env()) {
+# The `...` of kb_new_data(): named values for the fit's predictor and for any
+# grouping factor not in `by`. Contextual bundle like .chk_sampler_args(): no
+# single-boolean .vld_ partner.
+.chk_grid_dots <- function(fit, dots, by, call = rlang::caller_env()) {
   predictor <- fit$meta[["predictor"]]
-  if (length(dots) && is.null(predictor)) {
-    cli::cli_abort(
-      "A {.cls {class(fit)[1]}} fit has no predictor, so {.arg ...} must be empty.",
-      call = call
-    )
+  hint <- if (is.null(predictor)) {
+    "Supply values for {.arg site} or {.arg year}."
+  } else {
+    "Supply the predictor {.arg {predictor}}, or values for {.arg site} or {.arg year}."
   }
   nms <- rlang::names2(dots)
-  hint <- "Use {.arg {predictor}} to supply the predictor values."
   if (any(nms == "")) {
     cli::cli_abort(
-      c("Predictor values in {.arg ...} must be named.", i = hint),
+      c("Values in {.arg ...} must be named.", i = hint),
       call = call
     )
   }
-  bad <- setdiff(nms, predictor)
+  repeated <- unique(nms[duplicated(nms)])
+  if (length(repeated)) {
+    cli::cli_abort("Supply {.arg {repeated}} once.", call = call)
+  }
+  bad <- setdiff(nms, c(predictor, .group_vars()))
   if (length(bad)) {
     cli::cli_abort(
-      c("{.arg {bad}} is not the predictor of a {fit$meta$species} fit.", i = hint),
+      c("A {fit$meta$species} {.cls {class(fit)[2]}} grid has no column {.arg {bad}}.", i = hint),
       call = call
     )
   }
-  if (length(dots) > 1L) {
-    cli::cli_abort("Supply {.arg {predictor}} once.", call = call)
+  both <- intersect(nms, by)
+  if (length(both)) {
+    cli::cli_abort(
+      c(
+        "{.arg {both}} is named in {.arg by} and given values.",
+        i = "{.arg by} takes every fitted level; values in {.arg ...} take the levels supplied."
+      ),
+      call = call
+    )
   }
-  if (length(dots)) {
-    chk::chk_numeric(dots[[1]], x_name = predictor)
-    chk::chk_not_empty(dots[[1]], x_name = predictor)
+  if (!is.null(predictor) && predictor %in% nms) {
+    chk::chk_numeric(dots[[predictor]], x_name = predictor)
+    chk::chk_not_empty(dots[[predictor]], x_name = predictor)
+  }
+  for (group in intersect(.group_vars(), nms)) {
+    x <- dots[[group]]
+    if (!(is.character(x) || is.factor(x) || is.numeric(x))) {
+      cli::cli_abort(
+        "{.arg {group}} must be a character, factor, or numeric vector.",
+        call = call
+      )
+    }
+    chk::chk_not_empty(x, x_name = group)
+    chk::chk_not_any_na(x, x_name = group)
   }
   invisible(fit)
 }

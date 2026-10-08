@@ -8,7 +8,7 @@ generics, plot and site biomass, and plotting predictions.
 ## Requirements
 ### Requirement: Groups are resolved per row
 
-A row whose `site`, `year`, or site-year is a fitted level SHALL be conditioned on that level's estimated effect. A new level or an absent grouping column SHALL be handled by `new_levels`: `"average"` sets it to zero (the typical group), and `"sample"` draws a new effect from its estimated distribution. Rows naming the same new site, year, or site-year SHALL share one sampled effect, since they are one group; rows whose grouping column is absent SHALL each draw their own. The default SHALL be `"average"` for every prediction verb, `predict()`, and the `posterior_*()` generics, and `"sample"` for `kb_predict_plot_biomass()` and `kb_predict_site_biomass()`, whose rows are particular surveyed site-years. A new level SHALL NOT error. `representative_site` SHALL instead give a new or absent site the estimated site effect of the named fitted site(s), averaged per draw when several are named, while site:year still follows `new_levels`; a name not in the fit SHALL error listing the fitted sites. An effect the fit omitted SHALL contribute nothing, under any `new_levels`.
+A row whose `site`, `year`, or site-year is a fitted level SHALL be conditioned on that level's estimated effect. A new level or an absent grouping column SHALL be handled by `new_levels`: `"average"` sets it to zero (the typical group), and `"sample"` draws a new effect from its estimated distribution. Rows naming the same new site, year, or site-year SHALL share one sampled effect, since they are one group; rows whose grouping column is absent SHALL each draw their own. The default SHALL be `"average"` for every prediction verb, `predict()`, and the `posterior_*()` generics, and `"sample"` for `kb_predict_plot_biomass()` and `kb_predict_site_biomass()`, whose rows are particular surveyed site-years. A new level SHALL NOT error. `representative_site` SHALL instead give a new or absent site the estimated site effect of the named fitted site(s), averaged per draw when several are named, and, in a fitted year, their estimated site:year effect for that year, averaged per draw over the named sites observed in that year; a site:year effect none of them has SHALL follow `new_levels`; a name not in the fit SHALL error listing the fitted sites. An effect the fit omitted SHALL contribute nothing, under any `new_levels`.
 
 #### Scenario: New levels are sampled or averaged
 - **WHEN** `new_data` holds a site the fit never saw
@@ -29,6 +29,10 @@ A row whose `site`, `year`, or site-year is a fitted level SHALL be conditioned 
 #### Scenario: An omitted site:year effect adds nothing
 - **WHEN** the fit omitted the site:year effect
 - **THEN** `new_levels = "sample"` adds no site:year variation
+
+#### Scenario: A representative site stands in for a new site in a year it was observed
+- **WHEN** a new site is predicted in year `y` with `representative_site = s`, where site `s` was observed in `y`, with the same `stipes_m2` as site `s` in `y`
+- **THEN** the prediction equals predicting site `s` in year `y`, under either `new_levels`
 
 ### Requirement: Density is resolved per row
 
@@ -241,7 +245,7 @@ Each model SHALL have one prediction verb, `kb_predict_<model>()`, returning a `
 
 ### Requirement: Prediction grids
 
-`kb_new_data(fit, by = NULL, ...)` SHALL return a data frame for use as `new_data` with a weight, size, density, or cover biomass fit: one row per level of the factors named in `by` (`NULL` for a single row with no grouping columns, `"site"`, `"year"`, or `c("site", "year")`, the last taking only the combinations in the fitted data), in the fit's level order. For a weight fit the rows SHALL be crossed with values of the species predictor, supplied as a named numeric vector of any length (`diameter_mm` for *Nereocystis*, `fronds` for *Macrocystis*) and defaulting to 30 evenly spaced values over the observed range, rounded to whole numbers for `fronds`; the predictor column SHALL take the input column's name. For a cover biomass fit the rows SHALL be crossed with values of tide-corrected cover, supplied as `cover` (proportions from 0 to 1) and defaulting to 30 evenly spaced values from 0 to 1, each row being a unit plot at zero tide height with the `canopy_area_m2`, `plot_area_m2`, and `tide_height_m` columns the prediction reads. The grid SHALL hold no `area_m2` column. It SHALL error, naming the valid values, for an unknown `by` value, a `cover` outside 0 to 1, a predictor argument the fit does not have (the other species' predictor, or any predictor for a size or density fit), or a fit with no grouping factors.
+`kb_new_data(fit, by = NULL, ...)` SHALL return a data frame for use as `new_data` with a weight, size, density, or cover biomass fit: one row per level of the factors named in `by` (`NULL` for a single row with no grouping columns, `"site"`, `"year"`, or `c("site", "year")`, the last taking only the combinations in the fitted data), in the fit's level order. Levels of `site` or `year` not named in `by` MAY be supplied by name in `...` (character, factor, or numeric), and each SHALL be crossed with the rest of the grid; a level the fit has not seen SHALL be accepted and resolved at prediction as a new level. For a weight fit the rows SHALL be crossed with values of the species predictor, supplied as a named numeric vector of any length (`diameter_mm` for *Nereocystis*, `fronds` for *Macrocystis*) and defaulting to 30 evenly spaced values over the observed range, rounded to whole numbers for `fronds`; the predictor column SHALL take the input column's name. For a cover biomass fit the rows SHALL be crossed with values of tide-corrected cover, supplied as `cover` (proportions from 0 to 1) and defaulting to 30 evenly spaced values from 0 to 1, each row being a unit plot at zero tide height with the `canopy_area_m2`, `plot_area_m2`, and `tide_height_m` columns the prediction reads. The grid SHALL hold no `area_m2` column. It SHALL error, naming the valid values, for an unknown `by` value, a `cover` outside 0 to 1, an argument in `...` that is neither the fit's predictor nor `site` or `year` (such as the other species' predictor, or any predictor for a size or density fit), a grouping factor both named in `by` and given values, missing grouping values, or a fit with no grouping factors.
 
 #### Scenario: Curves over a named predictor
 - **WHEN** `kb_new_data(fit, by = "site", diameter_mm = c(20, 40))` is called on a *Nereocystis* weight fit
@@ -263,9 +267,13 @@ Each model SHALL have one prediction verb, `kb_predict_<model>()`, returning a `
 - **WHEN** `kb_new_data(fit, by = c("site", "year"))` is called
 - **THEN** it returns one row per site-year in the fitted data
 
+#### Scenario: Supplied levels are crossed into the grid
+- **WHEN** `kb_new_data(fit, by = "site", diameter_mm = 40, year = 2021)` is called on a *Nereocystis* weight fit
+- **THEN** it returns one row per fitted site, each in 2021 at 40 mm
+
 #### Scenario: A wrong predictor argument errors
-- **WHEN** `kb_new_data()` is given `fronds` for a *Nereocystis* weight fit, or any predictor for a size or density fit
-- **THEN** it errors naming the predictor the fit has, or stating it has none
+- **WHEN** `kb_new_data()` is given `fronds` for a *Nereocystis* weight fit, any predictor for a size or density fit, or `year` together with `by = "year"`
+- **THEN** it errors naming the columns the grid can take, or the conflict
 
 #### Scenario: A fit without groups errors
 - **WHEN** `kb_new_data()` is called on a wet/dry or carbon fit

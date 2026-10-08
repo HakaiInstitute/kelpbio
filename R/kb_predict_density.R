@@ -20,8 +20,8 @@
 #' `new_levels`. With the default `"average"`, an unseen site is the typical
 #' site; use `"sample"` for an interval that includes the variation between
 #' sites. For a new site, `representative_site` instead borrows the site effect of
-#' one or more named fitted sites (the per-draw average across several), while
-#' the site:year interaction still follows `new_levels`.
+#' one or more named fitted sites (the per-draw average across several), and
+#' their site:year effect in a fitted year where they were observed.
 #'
 #' @inheritParams params
 #' @param fit A `kb_fit_density` object.

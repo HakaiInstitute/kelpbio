@@ -45,20 +45,29 @@ resolve_re1 <- function(param, idx, new_levels, sd_rvar, rep_idx = NULL) {
 
 # An unobserved cell of a fitted site and year has no likelihood term, so its
 # draws are prior noise and it is treated as a new level.
-resolve_re2 <- function(param, i, j, observed, new_levels, sd_rvar) {
+# `borrow` gives, per row, the site indices whose cells in that row's year an
+# unknown row takes the per-draw mean of (the representative sites observed in
+# that year); a row with none follows new_levels.
+resolve_re2 <- function(param, i, j, observed, new_levels, sd_rvar, borrow = NULL) {
   known <- !is.na(i) & !is.na(j) & observed
+  borrowed <- !known & lengths(borrow %||% vector("list", length(i))) > 0L
   ndraws <- posterior::ndraws(param)
   out <- matrix(0, nrow = ndraws, ncol = length(i))
-  if (any(known)) {
+  if (any(known | borrowed)) {
     param_draws <- posterior::draws_of(param)
+    n_site <- dim(param_draws)[2]
     cells <- matrix(param_draws, nrow = ndraws)
-    out[, known] <- cells[, i[known] + (j[known] - 1L) * dim(param_draws)[2]]
+    out[, known] <- cells[, i[known] + (j[known] - 1L) * n_site]
+    for (r in which(borrowed)) {
+      out[, r] <- rowMeans(cells[, borrow[[r]] + (j[r] - 1L) * n_site, drop = FALSE])
+    }
   }
-  if (!all(known) && new_levels == "sample") {
-    site <- re_labels(i)[!known]
-    year <- re_labels(j)[!known]
+  fresh <- !known & !borrowed
+  if (any(fresh) && new_levels == "sample") {
+    site <- re_labels(i)[fresh]
+    year <- re_labels(j)[fresh]
     keys <- ifelse(is.na(site) | is.na(year), NA_character_, site_year_key(site, year))
-    out[, !known] <- re_draw_shared(keys, sd_rvar)
+    out[, fresh] <- re_draw_shared(keys, sd_rvar)
   }
   posterior::rvar(out)
 }
