@@ -77,6 +77,46 @@ test_that("representative_site borrows a known site's main effects for a new sit
   expect_equal(rep$estimate, known$estimate)
 })
 
+test_that("representative_site borrows the site:year effect where the site was observed", {
+  site_year <- weight_nereo_fit$meta$site_year_levels[1]
+  site <- sub(":.*", "", site_year)
+  year <- sub(".*:", "", site_year)
+  density <- weight_nereo_fit$meta$density_levels[[site_year]]
+  new_row <- data.frame(
+    site = "brand_new_site",
+    year = year,
+    diameter_mm = 40,
+    stipes_m2 = density
+  )
+  averaged <- kb_predict_weight(weight_nereo_fit, new_row, representative_site = site)
+  sampled <- kb_predict_weight(
+    weight_nereo_fit,
+    new_row,
+    representative_site = site,
+    new_levels = "sample"
+  )
+  known <- kb_predict_weight(
+    weight_nereo_fit,
+    data.frame(site = site, year = year, diameter_mm = 40)
+  )
+  expect_equal(averaged$estimate, known$estimate)
+  expect_equal(sampled[c("estimate", "lower", "upper")], averaged[c("estimate", "lower", "upper")])
+})
+
+test_that("in a year the representative site lacks, site:year follows new_levels", {
+  withr::local_seed(1)
+  site <- weight_nereo_fit$meta$site_levels[1]
+  new_row <- data.frame(site = "brand_new_site", year = "2099", diameter_mm = 40)
+  averaged <- kb_predict_weight(weight_nereo_fit, new_row, representative_site = site)
+  sampled <- kb_predict_weight(
+    weight_nereo_fit,
+    new_row,
+    representative_site = site,
+    new_levels = "sample"
+  )
+  expect_gt(sampled$upper - sampled$lower, averaged$upper - averaged$lower)
+})
+
 test_that("representative_site rejects sites not in the fit", {
   nd <- data.frame(diameter_mm = 40, site = "brand_new_site")
   expect_error(

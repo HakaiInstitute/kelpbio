@@ -80,9 +80,11 @@
 #'   `set.seed()` for a reproducible interval.
 #' @param representative_site A character vector of site levels present in the
 #'   fit, or `NULL` (the default). When supplied, a new or absent site takes the
-#'   named reference site's site effect (the per-draw average when several are
-#'   named) instead of the `new_levels` treatment. Any `site:year` interaction
-#'   still follows `new_levels`.
+#'   named sites' site effect (the per-draw average when several are named)
+#'   instead of the `new_levels` treatment, and, in a fitted year, their
+#'   site:year effect for that year (averaged over the named sites observed that
+#'   year). A site:year effect none of them has, such as in a new year, follows
+#'   `new_levels`.
 #' @keywords internal
 #' @aliases parameters arguments args
 #' @usage NULL

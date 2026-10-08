@@ -74,6 +74,29 @@ test_that("resolve_re2 takes each known cell from its own site and year", {
   expect_equal(posterior::draws_of(out)[, 2L], draws[, 2L, 2L], ignore_attr = TRUE)
 })
 
+test_that("resolve_re2 borrows the mean of the listed cells for an unknown row", {
+  param <- posterior::rvar(array(rnorm(100 * 3 * 2), dim = c(100, 3, 2)))
+  sd_rvar <- posterior::rvar(matrix(rep(1, 100), ncol = 1))
+  borrow <- list(c(1L, 3L), integer(0))
+  out <- resolve_re2(
+    param,
+    c(NA, NA),
+    c(2L, 2L),
+    FALSE,
+    "sample",
+    sd_rvar,
+    borrow = borrow
+  )
+  draws <- posterior::draws_of(param)
+  expect_equal(
+    posterior::draws_of(out)[, 1L],
+    rowMeans(draws[, c(1L, 3L), 2L]),
+    ignore_attr = TRUE
+  )
+  # no listed cell: a fresh draw under "sample"
+  expect_false(all(posterior::draws_of(out)[, 2L] == 0))
+})
+
 test_that(".grid_indices matches known levels and NAs the rest", {
   s <- weight_nereo_fit$meta$site_levels[1]
   y <- weight_nereo_fit$meta$year_levels[1]

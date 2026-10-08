@@ -130,38 +130,46 @@ test_that(".chk_kb_fit_grouped errors for a non-fit and a model without groups",
   expect_snapshot(error = TRUE, .chk_kb_fit_grouped(wetdry_nereo_fit))
 })
 
-test_that(".chk_grid_predictor accepts the fit's predictor and rejects others", {
-  expect_invisible(.chk_grid_predictor(weight_nereo_fit, list()))
-  expect_invisible(.chk_grid_predictor(weight_nereo_fit, list(diameter_mm = 30)))
-  expect_invisible(.chk_grid_predictor(weight_macro_fit, list(fronds = 1:3)))
+test_that(".chk_grid_dots accepts the predictor and grouping values and rejects others", {
+  expect_invisible(.chk_grid_dots(weight_nereo_fit, list(), NULL))
+  expect_invisible(.chk_grid_dots(weight_nereo_fit, list(diameter_mm = 30), NULL))
+  expect_invisible(.chk_grid_dots(weight_macro_fit, list(fronds = 1:3), NULL))
+  expect_invisible(.chk_grid_dots(weight_nereo_fit, list(year = 2021), "site"))
+  expect_invisible(.chk_grid_dots(size_nereo_fit, list(site = "a", year = "2020"), NULL))
   expect_snapshot(
     error = TRUE,
-    .chk_grid_predictor(weight_nereo_fit, list(fronds = 3))
+    .chk_grid_dots(weight_nereo_fit, list(fronds = 3), NULL)
   )
   expect_snapshot(
     error = TRUE,
-    .chk_grid_predictor(weight_macro_fit, list(diameter_mm = 30))
+    .chk_grid_dots(weight_nereo_fit, list(30), NULL)
   )
   expect_snapshot(
     error = TRUE,
-    .chk_grid_predictor(weight_nereo_fit, list(30))
+    .chk_grid_dots(size_nereo_fit, list(diameter_mm = 30), NULL)
   )
-  expect_snapshot(
-    error = TRUE,
-    .chk_grid_predictor(size_nereo_fit, list(diameter_mm = 30))
-  )
-  # `...` can carry the predictor twice.
   twice <- stats::setNames(list(30, 40), c("diameter_mm", "diameter_mm"))
   expect_snapshot(
     error = TRUE,
-    .chk_grid_predictor(weight_nereo_fit, twice)
+    .chk_grid_dots(weight_nereo_fit, twice, NULL)
   )
   expect_snapshot(
     error = TRUE,
-    .chk_grid_predictor(weight_nereo_fit, list(diameter_mm = "a"))
+    .chk_grid_dots(weight_nereo_fit, list(diameter_mm = "a"), NULL)
+  )
+  expect_snapshot(
+    error = TRUE,
+    .chk_grid_dots(weight_nereo_fit, list(year = 2021), "year")
+  )
+  expect_snapshot(
+    error = TRUE,
+    .chk_grid_dots(weight_nereo_fit, list(year = TRUE), NULL)
+  )
+  expect_error(
+    .chk_grid_dots(weight_nereo_fit, list(year = NA_character_), NULL),
+    "missing"
   )
 })
-
 test_that(".chk_new_data_density errors name the area column", {
   expect_invisible(.chk_new_data_density(data.frame(area_m2 = 40)))
   expect_invisible(.chk_new_data_density(data.frame(site = "a")))

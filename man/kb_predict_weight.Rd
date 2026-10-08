@@ -37,9 +37,11 @@ particular unsurveyed site. Known levels are always conditioned on.
 
 \item{representative_site}{A character vector of site levels present in the
 fit, or \code{NULL} (the default). When supplied, a new or absent site takes the
-named reference site's site effect (the per-draw average when several are
-named) instead of the \code{new_levels} treatment. Any \code{site:year} interaction
-still follows \code{new_levels}.}
+named sites' site effect (the per-draw average when several are named)
+instead of the \code{new_levels} treatment, and, in a fitted year, their
+site:year effect for that year (averaged over the named sites observed that
+year). A site:year effect none of them has, such as in a new year, follows
+\code{new_levels}.}
 
 \item{conf_level}{A number between 0 and 1 giving the compatibility-interval
 level.}
@@ -64,8 +66,8 @@ conditioned on its estimated effect, and a new or absent site or year follows
 \code{new_levels}. With the default \code{"average"}, an unseen site is the typical
 site; use \code{"sample"} for an interval that includes the variation between
 sites. For a new site, \code{representative_site} instead borrows the site effect of
-one or more named fitted sites (the per-draw average across several), while
-the site:year interaction still follows \code{new_levels}.
+one or more named fitted sites (the per-draw average across several), and
+their site:year effect in a fitted year where they were observed.
 
 For curves by site or year, build the rows with \code{\link[=kb_new_data]{kb_new_data()}}.
 

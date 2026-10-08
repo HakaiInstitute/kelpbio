@@ -120,8 +120,9 @@
   log(draws$biomass_floor + draws$cover_slope * exp(effects) * cover)
 }
 
-# Summed link-scale group effects. representative_site borrows only the site
-# effect. A fit without site:year has no such draws, so it adds 0.
+# Summed link-scale group effects. representative_site stands in for a new or
+# absent site: its site effect, and its site:year effect in a fitted year where
+# it was observed. A fit without site:year has no such draws, so it adds 0.
 .group_effects <- function(fit, grid, new_levels, representative_site) {
   draws <- fit$draws
   ix <- .grid_indices(fit, grid, representative_site)
@@ -136,7 +137,8 @@
       ix$year,
       observed,
       new_levels,
-      draws$sd_site_year
+      draws$sd_site_year,
+      borrow = .representative_cells(fit, ix)
     )
   } else {
     0
@@ -197,4 +199,21 @@ data_linpred <- function(
     linpred = linpred,
     curve = isTRUE(attr(new_data, "kb_curve", exact = TRUE))
   )
+}
+
+# For each row with no fitted site but a fitted year, the representative sites
+# observed in that year (indices into the fit's site levels); NULL without
+# representative sites.
+.representative_cells <- function(fit, ix) {
+  if (is.null(ix$rep)) {
+    return(NULL)
+  }
+  rep_labels <- fit$meta$site_levels[ix$rep]
+  years <- re_labels(ix$year)
+  lapply(seq_along(ix$site), function(r) {
+    if (!is.na(ix$site[r]) || is.na(ix$year[r])) {
+      return(integer(0))
+    }
+    ix$rep[site_year_key(rep_labels, years[r]) %in% fit$meta$site_year_levels]
+  })
 }

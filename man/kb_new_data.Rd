@@ -14,20 +14,21 @@ kb_new_data(fit, by = NULL, ...)
 both, giving one row per fitted level (per observed site-year for both), or
 \code{NULL} for a single row for the typical site and year.}
 
-\item{...}{For a weight or cover biomass fit, the predictor values as a named
-numeric vector (\code{diameter_mm}, \code{fronds}, or \code{cover}). If omitted, 30 evenly
-spaced values span the observed range for weight (whole numbers for
-\code{fronds}), and 0 to 1 for cover.}
+\item{...}{Named values to cross into the grid: for a weight or cover biomass
+fit, the predictor values as a numeric vector (\code{diameter_mm}, \code{fronds}, or
+\code{cover}); and the levels of \code{site} or \code{year} not named in \code{by}. If the
+predictor is omitted, 30 evenly spaced values span the observed range for
+weight (whole numbers for \code{fronds}), and 0 to 1 for cover.}
 }
 \value{
-A tibble with the grouping columns named in \code{by}, the predictor
+A tibble with the grouping columns named in \code{by} or \code{...}, the predictor
 column for a weight or cover biomass fit, and for a cover biomass fit the
 survey columns.
 }
 \description{
 Build a grid of rows to predict at: one row per fitted site, year, or
-observed site-year, crossed for a weight or cover biomass fit with a sequence
-of its predictor.
+observed site-year, or per supplied site or year, crossed for a weight or
+cover biomass fit with a sequence of its predictor.
 }
 \details{
 Pass the result as \code{new_data} to the model's prediction function, for example
@@ -44,6 +45,12 @@ prediction reads. A single value gives one row per group at that value.
 Predictions over a grid with several predictor values are drawn by
 \code{\link[=kb_plot_predictions]{kb_plot_predictions()}} as curves.
 
+To fix a grouping factor at chosen levels, supply them by name in \code{...}, for
+example \code{year = 2021} with \code{by = "site"} for every fitted site in 2021, or
+\verb{site = "otter_cove", year = 2019:2022}. Each value is crossed with the rest
+of the grid. A level the fit has not seen, such as a future year, is a new
+level, resolved at prediction by \code{new_levels}.
+
 \code{by = c("site", "year")} gives only the site-years in the fitted data. The
 result is an ordinary data frame: rows can be filtered and columns added (such
 as \code{stipes_m2} for a \emph{Nereocystis} weight fit with density) before predicting.
@@ -54,6 +61,10 @@ kb_new_data(fit_size_sim_nereo, by = "site")
 # Weight curves by site, and weight at 50 mm by site:
 kb_new_data(fit_weight_sim_nereo, by = "site")
 kb_new_data(fit_weight_sim_nereo, by = "site", diameter_mm = 50)
+
+# Every site in 2021, and one site across years:
+kb_new_data(fit_weight_sim_nereo, by = "site", diameter_mm = 50, year = 2021)
+kb_new_data(fit_size_sim_nereo, site = "otter_cove", year = 2019:2022)
 
 kb_predict_size(fit_size_sim_nereo, kb_new_data(fit_size_sim_nereo, by = "site"))
 }

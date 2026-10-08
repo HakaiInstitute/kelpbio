@@ -105,45 +105,37 @@
       ! `wetdry_nereo_fit` is a <kb_fit_wetdry_nereo> object, whose model has no grouping factors.
       i Grids are built for weight, size, density, and cover biomass fits.
 
-# .chk_grid_predictor accepts the fit's predictor and rejects others
+# .chk_grid_dots accepts the predictor and grouping values and rejects others
 
     Code
-      .chk_grid_predictor(weight_nereo_fit, list(fronds = 3))
+      .chk_grid_dots(weight_nereo_fit, list(fronds = 3), NULL)
     Condition
       Error:
-      ! `fronds` is not the predictor of a nereocystis fit.
-      i Use `diameter_mm` to supply the predictor values.
+      ! A nereocystis <kb_fit_weight> grid has no column `fronds`.
+      i Supply the predictor `diameter_mm`, or values for `site` or `year`.
 
 ---
 
     Code
-      .chk_grid_predictor(weight_macro_fit, list(diameter_mm = 30))
+      .chk_grid_dots(weight_nereo_fit, list(30), NULL)
     Condition
       Error:
-      ! `diameter_mm` is not the predictor of a macrocystis fit.
-      i Use `fronds` to supply the predictor values.
+      ! Values in `...` must be named.
+      i Supply the predictor `diameter_mm`, or values for `site` or `year`.
 
 ---
 
     Code
-      .chk_grid_predictor(weight_nereo_fit, list(30))
+      .chk_grid_dots(size_nereo_fit, list(diameter_mm = 30), NULL)
     Condition
       Error:
-      ! Predictor values in `...` must be named.
-      i Use `diameter_mm` to supply the predictor values.
+      ! A nereocystis <kb_fit_size> grid has no column `diameter_mm`.
+      i Supply values for `site` or `year`.
 
 ---
 
     Code
-      .chk_grid_predictor(size_nereo_fit, list(diameter_mm = 30))
-    Condition
-      Error:
-      ! A <kb_fit_size_nereo> fit has no predictor, so `...` must be empty.
-
----
-
-    Code
-      .chk_grid_predictor(weight_nereo_fit, twice)
+      .chk_grid_dots(weight_nereo_fit, twice, NULL)
     Condition
       Error:
       ! Supply `diameter_mm` once.
@@ -151,10 +143,27 @@
 ---
 
     Code
-      .chk_grid_predictor(weight_nereo_fit, list(diameter_mm = "a"))
+      .chk_grid_dots(weight_nereo_fit, list(diameter_mm = "a"), NULL)
     Condition
-      Error in `.chk_grid_predictor()`:
+      Error in `.chk_grid_dots()`:
       ! Diameter_mm must be numeric.
+
+---
+
+    Code
+      .chk_grid_dots(weight_nereo_fit, list(year = 2021), "year")
+    Condition
+      Error:
+      ! `year` is named in `by` and given values.
+      i `by` takes every fitted level; values in `...` take the levels supplied.
+
+---
+
+    Code
+      .chk_grid_dots(weight_nereo_fit, list(year = TRUE), NULL)
+    Condition
+      Error:
+      ! `year` must be a character, factor, or numeric vector.
 
 # .chk_new_data_density errors name the area column
 
