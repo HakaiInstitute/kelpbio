@@ -1,18 +1,19 @@
 #' Pointwise Log-Likelihood
 #'
-#' The pointwise log-likelihood of the observed data, suitable for `loo::loo()`.
+#' The pointwise log-likelihood of the observed data, suitable for [loo::loo()].
 #'
 #' @details
 #' Computed from the stored draws by evaluating the model's likelihood at the
 #' observed data. Each value is the log density of the response as recorded (for
 #' example weight in kg, not log weight), so models of the same response can be
-#' compared with `loo::loo_compare()`.
+#' compared with [loo::loo_compare()].
 #'
 #' @param object A `kb_fit` object.
 #' @param ... Unused.
 #'
 #' @return A draws-by-observations (`D x N`) matrix.
 #' @family generics
+#' @seealso [loo.kb_fit()] for leave-one-out cross-validation of a fit.
 #' @exportS3Method rstantools::log_lik
 #' @examples
 #' ll <- log_lik(fit_weight_sim_nereo)

@@ -15,19 +15,21 @@
 A draws-by-observations (\verb{D x N}) matrix.
 }
 \description{
-The pointwise log-likelihood of the observed data, suitable for \code{loo::loo()}.
+The pointwise log-likelihood of the observed data, suitable for \code{\link[loo:loo]{loo::loo()}}.
 }
 \details{
 Computed from the stored draws by evaluating the model's likelihood at the
 observed data. Each value is the log density of the response as recorded (for
 example weight in kg, not log weight), so models of the same response can be
-compared with \code{loo::loo_compare()}.
+compared with \code{\link[loo:loo_compare]{loo::loo_compare()}}.
 }
 \examples{
 ll <- log_lik(fit_weight_sim_nereo)
 dim(ll)
 }
 \seealso{
+\code{\link[=loo.kb_fit]{loo.kb_fit()}} for leave-one-out cross-validation of a fit.
+
 Other generics:
 \code{\link[=augment.kb_fit]{augment.kb_fit()}},
 \code{\link[=coef.kb_fit]{coef.kb_fit()}},
@@ -37,6 +39,7 @@ Other generics:
 \code{\link[=kb_converged]{kb_converged()}},
 \code{\link[=kb_samples]{kb_samples()}},
 \code{\link[=kb_stancode]{kb_stancode()}},
+\code{\link[=loo.kb_fit]{loo.kb_fit()}},
 \code{\link[=posterior_epred.kb_fit]{posterior_epred.kb_fit()}},
 \code{\link[=posterior_linpred.kb_fit]{posterior_linpred.kb_fit()}},
 \code{\link[=posterior_predict.kb_fit]{posterior_predict.kb_fit()}},

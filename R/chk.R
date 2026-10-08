@@ -375,6 +375,22 @@
   )
 }
 
+.chk_loo_fit <- function(fit, call = rlang::caller_env()) {
+  if (.vld_loo_fit(fit)) {
+    return(invisible(fit))
+  }
+  if (isTRUE(fit$meta$prior_only)) {
+    cli::cli_abort(
+      "A prior-only fit has no likelihood, so it cannot be cross-validated.",
+      call = call
+    )
+  }
+  cli::cli_abort(
+    "A zero-observation fit has no likelihood, so it cannot be cross-validated.",
+    call = call
+  )
+}
+
 
 # Validate new_data's predictor column.
 .chk_new_data <- function(fit, new_data) {

@@ -98,7 +98,7 @@ reference:
     - kb_predict_site_biomass
     - kb_plot_predictions
 - title: "Model Summaries and Diagnostics"
-  desc: "Summarise fits, extract coefficients and draws, and assess convergence, model fit, and prior sensitivity."
+  desc: "Summarise fits, extract coefficients and draws, and assess convergence, model fit, influential observations, and prior sensitivity."
   contents:
     - kb_samples
     - kb_stancode
@@ -110,9 +110,11 @@ reference:
     - augment.kb_fit
     - kb_converged
     - kb_sensitivity
+    - kb_influence
     - create_priorsense_data.kb_fit
     - prior_summary.kb_fit
     - log_lik.kb_fit
+    - loo.kb_fit
     - fitted.kb_fit
     - residuals.kb_fit
     - predict.kb_fit_weight

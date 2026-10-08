@@ -96,6 +96,10 @@
   !isTRUE(fit$meta$prior_only) && .vld_observed_data(fit)
 }
 
+.vld_loo_fit <- function(fit) {
+  !isTRUE(fit$meta$prior_only) && .vld_observed_data(fit)
+}
+
 # The survey columns of cover biomass data and new_data.
 .vld_cover_survey <- function(x) {
   is.data.frame(x) &&
