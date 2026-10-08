@@ -11,8 +11,8 @@
       Converged: TRUE
       
       # A tibble: 8 x 7
-        term           estimate   lower  upper  rhat ess_bulk ess_tail
-        <chr>             <dbl>   <dbl>  <dbl> <dbl>    <dbl>    <dbl>
+        term           estimate   lower   upper  rhat ess_bulk ess_tail
+        <chr>             <dbl>   <dbl>   <dbl> <dbl>    <dbl>    <dbl>
       1 intercept <numerics>
       2 diameter_power <numerics>
       3 weight_floor <numerics>

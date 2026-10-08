@@ -54,7 +54,9 @@ b_power <- 3.02
 b_floor <- 0.115 # kg
 b_density <- -0.159 # per SD of stipe density
 sd_weight <- 0.46 # residual SD of log weight
-grid$e_weight <- effects(0.3, 0.17, 0.2)
+# Site differences dominate site:year noise, so the site SD is identifiable
+# from the seven harvested sites.
+grid$e_weight <- effects(0.5, 0.17, 0.1)
 
 # Size: Weibull sub-bulb diameter with mean exp(log mean).
 b_diameter <- log(23) # log mean diameter (mm)

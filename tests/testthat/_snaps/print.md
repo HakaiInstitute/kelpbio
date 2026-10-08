@@ -95,7 +95,7 @@
       Model:     Cover biomass (Nereocystis luetkeana)
       Data:      11 observations; groups: site (4), year (4), site:year (11)
       Draws:     2 chains, 300 post-warmup draws each (thin = 5), 600 total
-      Converged: TRUE
+      Converged: FALSE
       See kb_model_describe(fit) for the model equation and priors.
 
 # print.kb_fit shows the density headers without a predictor line
