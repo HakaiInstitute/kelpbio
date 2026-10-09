@@ -38,15 +38,18 @@
   )
 }
 
-.chk_new_data_weight_nereo <- function(x, x_name = deparse(substitute(x))) {
+.chk_new_data_weight_nereo <- function(
+  x,
+  x_name = chk::deparse_backtick_chk(substitute(x))
+) {
   if (.vld_new_data_weight_nereo(x)) {
     return(invisible(x))
   }
   if (!is.data.frame(x)) {
-    cli::cli_abort("{.arg {x_name}} must be a data frame.")
+    cli::cli_abort("{x_name} must be a data frame.")
   }
   if (!"diameter_mm" %in% names(x)) {
-    cli::cli_abort("{.arg {x_name}} must have a {.field diameter_mm} column.")
+    cli::cli_abort("{x_name} must have a {.field diameter_mm} column.")
   }
   .chk_positive_measure(x$diameter_mm, x_name = column_xname(x_name, "diameter_mm"))
   .chk_density(x$stipes_m2, x_name = column_xname(x_name, "stipes_m2"))
@@ -62,7 +65,49 @@
   if (anyNA(x)) {
     cli::cli_abort("{x_name} must not have missing values.")
   }
+  .chk_finite(x, x_name)
   cli::cli_abort("{x_name} must be greater than 0.")
+}
+
+.chk_finite <- function(
+  x,
+  x_name = deparse(substitute(x)),
+  call = rlang::caller_env()
+) {
+  if (.vld_finite(x)) {
+    return(invisible(x))
+  }
+  cli::cli_abort("{x_name} must be finite.", call = call)
+}
+
+.chk_rows <- function(
+  x,
+  x_name = deparse(substitute(x)),
+  call = rlang::caller_env()
+) {
+  if (.vld_rows(x)) {
+    return(invisible(x))
+  }
+  cli::cli_abort("{x_name} must have at least one row.", call = call)
+}
+
+.chk_new_data_groups <- function(
+  x,
+  x_name = "`new_data`",
+  call = rlang::caller_env()
+) {
+  if (.vld_new_data_groups(x)) {
+    return(invisible(x))
+  }
+  groups <- intersect(.group_vars(), names(x))
+  col <- groups[vapply(x[groups], anyNA, logical(1))][1]
+  cli::cli_abort(
+    c(
+      "{column_xname(x_name, col)} must not have missing values.",
+      i = "To predict for a new {col}, give it a name or leave out the {.field {col}} column."
+    ),
+    call = call
+  )
 }
 
 .chk_frond_count <- function(x, x_name = deparse(substitute(x))) {
@@ -92,6 +137,7 @@
   if (!is.numeric(x)) {
     cli::cli_abort("{x_name} must be numeric.")
   }
+  .chk_finite(x, x_name)
   cli::cli_abort("{x_name} must be greater than or equal to 0.")
 }
 
@@ -111,32 +157,41 @@
   ))
 }
 
-.chk_new_data_weight_macro <- function(x, x_name = deparse(substitute(x))) {
+.chk_new_data_weight_macro <- function(
+  x,
+  x_name = chk::deparse_backtick_chk(substitute(x))
+) {
   if (.vld_new_data_weight_macro(x)) {
     return(invisible(x))
   }
   if (!is.data.frame(x)) {
-    cli::cli_abort("{.arg {x_name}} must be a data frame.")
+    cli::cli_abort("{x_name} must be a data frame.")
   }
   if (!"fronds" %in% names(x)) {
-    cli::cli_abort("{.arg {x_name}} must have a {.field fronds} column.")
+    cli::cli_abort("{x_name} must have a {.field fronds} column.")
   }
   .chk_frond_count(x$fronds, x_name = column_xname(x_name, "fronds"))
 }
 
-.chk_new_data_size <- function(x, x_name = deparse(substitute(x))) {
+.chk_new_data_size <- function(
+  x,
+  x_name = chk::deparse_backtick_chk(substitute(x))
+) {
   if (.vld_new_data_size(x)) {
     return(invisible(x))
   }
-  cli::cli_abort("{.arg {x_name}} must be a data frame.")
+  cli::cli_abort("{x_name} must be a data frame.")
 }
 
-.chk_new_data_density <- function(x, x_name = deparse(substitute(x))) {
+.chk_new_data_density <- function(
+  x,
+  x_name = chk::deparse_backtick_chk(substitute(x))
+) {
   if (.vld_new_data_density(x)) {
     return(invisible(x))
   }
   if (!is.data.frame(x)) {
-    cli::cli_abort("{.arg {x_name}} must be a data frame.")
+    cli::cli_abort("{x_name} must be a data frame.")
   }
   .chk_positive_measure(x$area_m2, x_name = column_xname(x_name, "area_m2"))
 }
@@ -208,6 +263,7 @@
       chk::chk_function(estimate)
       chk::chk_whole_number(sig_fig)
       chk::chk_gt(sig_fig, value = 0)
+      .chk_finite(sig_fig, "`sig_fig`")
     },
     call
   )
@@ -270,19 +326,25 @@
       chk::chk_flag(prior_only)
       chk::chk_whole_number(chains)
       chk::chk_gt(chains, value = 0)
+      .chk_finite(chains, "`chains`")
       chk::chk_whole_number(niters)
       # The sampler diagnostics need at least two draws per chain.
       chk::chk_gte(niters, value = 2)
+      .chk_finite(niters, "`niters`")
       chk::chk_whole_number(nthin)
       chk::chk_gt(nthin, value = 0)
+      .chk_finite(nthin, "`nthin`")
       .chk_progress(progress)
       .chk_progress_dir(progress_dir)
       if (!is.null(cores)) {
         chk::chk_whole_number(cores)
         chk::chk_gt(cores, value = 0)
+        .chk_finite(cores, "`cores`")
       }
       if (!is.null(seed)) {
         chk::chk_whole_number(seed)
+        # Passed to Stan as an integer.
+        chk::chk_range(seed, c(-.Machine$integer.max, .Machine$integer.max))
       }
     },
     call
@@ -329,8 +391,17 @@
     )
   }
   if (!is.null(predictor) && predictor %in% nms) {
-    chk::chk_numeric(dots[[predictor]], x_name = predictor)
-    chk::chk_not_empty(dots[[predictor]], x_name = predictor)
+    x_name <- paste0("`", predictor, "`")
+    chk::chk_numeric(dots[[predictor]], x_name = x_name)
+    chk::chk_not_empty(dots[[predictor]], x_name = x_name)
+    chk::chk_not_any_na(dots[[predictor]], x_name = x_name)
+    if (!is.null(fit$meta$predictor_range)) {
+      chk::chk_range(dots[[predictor]], fit$meta$predictor_range, x_name = x_name)
+    } else if (identical(predictor, "fronds")) {
+      .chk_frond_count(dots[[predictor]], x_name)
+    } else {
+      .chk_positive_measure(dots[[predictor]], x_name)
+    }
   }
   for (group in intersect(.group_vars(), nms)) {
     x <- dots[[group]]
@@ -340,8 +411,8 @@
         call = call
       )
     }
-    chk::chk_not_empty(x, x_name = group)
-    chk::chk_not_any_na(x, x_name = group)
+    chk::chk_not_empty(x, x_name = paste0("`", group, "`"))
+    chk::chk_not_any_na(x, x_name = paste0("`", group, "`"))
   }
   invisible(fit)
 }
@@ -349,6 +420,19 @@
 # Without this, predicting at the data of a zero-observation fit fails with a
 # posterior broadcast error inside .linpred(). `hint` is for callers that could
 # have been given new data instead.
+.chk_fit_rows <- function(data, prior_only, call = rlang::caller_env()) {
+  if (.vld_fit_rows(data, prior_only)) {
+    return(invisible(data))
+  }
+  cli::cli_abort(
+    c(
+      "{.arg data} must have at least one row.",
+      i = "Set {.code prior_only = TRUE} to sample from the priors alone."
+    ),
+    call = call
+  )
+}
+
 .chk_observed_data <- function(fit, hint = NULL, call = rlang::caller_env()) {
   if (.vld_observed_data(fit)) {
     return(invisible(fit))
@@ -452,6 +536,7 @@
   nm <- column_xname(x_name, "canopy_area_m2")
   chk::chk_numeric(x$canopy_area_m2, x_name = nm)
   chk::chk_not_any_na(x$canopy_area_m2, x_name = nm)
+  .chk_finite(x$canopy_area_m2, nm)
   chk::chk_gte(x$canopy_area_m2, value = 0, x_name = nm)
   .chk_positive_measure(x$plot_area_m2, x_name = column_xname(x_name, "plot_area_m2"))
   if (any(x$canopy_area_m2 > x$plot_area_m2)) {
@@ -463,6 +548,7 @@
   nm <- column_xname(x_name, "tide_height_m")
   chk::chk_numeric(x$tide_height_m, x_name = nm)
   chk::chk_not_any_na(x$tide_height_m, x_name = nm)
+  .chk_finite(x$tide_height_m, nm)
 }
 
 # The data check shared by both cover species.
@@ -500,6 +586,7 @@
     nm <- column_xname(x_name, col)
     chk::chk_numeric(x[[col]], x_name = nm)
     chk::chk_not_any_na(x[[col]], x_name = nm)
+    .chk_finite(x[[col]], nm)
     if (zero) {
       chk::chk_gte(x[[col]], value = 0, x_name = nm)
     } else {
@@ -580,6 +667,7 @@
   )
   .chk_group_columns(x, x_name)
   .chk_biomass_estimate(x, x_name)
+  .chk_biomass_response(x, x_name, call = call)
   dup <- unique(site_year_key(x$site, x$year)[
     duplicated(site_year_key(x$site, x$year))
   ])
@@ -587,6 +675,23 @@
     c(
       "{x_name} must have one row per site-year.",
       i = "Repeated: {.val {dup}}."
+    ),
+    call = call
+  )
+}
+
+.chk_biomass_response <- function(
+  x,
+  x_name = deparse(substitute(x)),
+  call = rlang::caller_env()
+) {
+  if (.vld_biomass_response(x)) {
+    return(invisible(x))
+  }
+  cli::cli_abort(
+    c(
+      "{x_name} must be wet biomass ({.field biomass_kg_m2}), not {.field {attr(x, 'kb_response')}}.",
+      i = "Predict it with {.code kb_predict_plot_biomass(measure = \"wet\")}."
     ),
     call = call
   )
@@ -647,10 +752,12 @@
   nm <- column_xname(x_name, "canopy_area_m2")
   chk::chk_numeric(x$canopy_area_m2, x_name = nm)
   chk::chk_not_any_na(x$canopy_area_m2, x_name = nm)
+  .chk_finite(x$canopy_area_m2, nm)
   chk::chk_gte(x$canopy_area_m2, value = 0, x_name = nm)
   nm <- column_xname(x_name, "tide_height_m")
   chk::chk_numeric(x$tide_height_m, x_name = nm)
   chk::chk_not_any_na(x$tide_height_m, x_name = nm)
+  .chk_finite(x$tide_height_m, nm)
   .chk_group_columns(x, x_name)
   # Every other column passed, so site_area_m2 is present and either invalid or
   # smaller than the canopy.

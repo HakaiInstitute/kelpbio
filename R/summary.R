@@ -54,9 +54,15 @@ summary.kb_fit <- function(
   sig_fig = 3,
   include_random_effects = FALSE
 ) {
-  rlang::check_dots_empty()
-  .chk_summary_args(conf_level, estimate, sig_fig)
-  chk::chk_flag(include_random_effects)
+  .with_call(
+    {
+      rlang::check_dots_empty()
+      .chk_summary_args(conf_level, estimate, sig_fig)
+      chk::chk_flag(include_random_effects)
+    },
+    # error_call() names the generic, not the method.
+    rlang::error_call(rlang::current_env())
+  )
 
   # Diagnostics from the stored summary, the same source as kb_converged().
   coefficients <- tidy(

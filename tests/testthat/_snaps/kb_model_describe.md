@@ -183,9 +183,9 @@
       The number of stipes on a transect was modelled with a zero-inflated
       negative binomial likelihood, with the transect area as an offset. The
       zero-inflation probability, zi, and the overdispersion were common to all
-      transects. The log stipe density on transects holding stipes varied by
-      site, year, and site-year. Regularizing priors were placed on all
-      parameters (see the notation form for the hyperparameters).
+      transects. The log stipe density on occupied transects varied by site,
+      year, and site-year. Regularizing priors were placed on all parameters (see
+      the notation form for the hyperparameters).
 
 ---
 

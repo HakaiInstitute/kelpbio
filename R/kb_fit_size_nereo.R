@@ -60,7 +60,8 @@ kb_fit_size_nereo <- function(
     progress_dir = progress_dir
   )
 
-  kb_check_data_size_nereo(data)
+  .with_call(kb_check_data_size_nereo(data), rlang::current_env())
+  .chk_fit_rows(data, prior_only)
   site_year <- site_year_structure(data)
   notify_site_year(site_year, progress = progress)
 

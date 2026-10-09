@@ -77,6 +77,32 @@ test_that(".chk_sampler_args validates progress, progress_dir, and the numeric a
     ),
     "progress"
   )
+  expect_error(
+    .chk_sampler_args(
+      prior_only = FALSE,
+      chains = Inf,
+      niters = 1000L,
+      nthin = 1L,
+      cores = NULL,
+      seed = NULL,
+      progress = "bar",
+      progress_dir = NULL
+    ),
+    "finite"
+  )
+  expect_error(
+    .chk_sampler_args(
+      prior_only = FALSE,
+      chains = 4L,
+      niters = 1000L,
+      nthin = 1L,
+      cores = NULL,
+      seed = 3e9,
+      progress = "bar",
+      progress_dir = NULL
+    ),
+    "seed"
+  )
   expect_error(.chk_sampler_args(
     prior_only = FALSE,
     chains = 0L,
@@ -105,6 +131,13 @@ test_that(".chk_observed_data rejects a fit with no rows to predict at", {
   fit0$data <- fit0$data[0, ]
   expect_error(.chk_observed_data(fit0), "no observed data")
   expect_invisible(.chk_observed_data(weight_nereo_fit))
+})
+
+test_that(".chk_fit_rows points zero-row data to prior_only", {
+  data <- data.frame(x = 1)
+  expect_invisible(.chk_fit_rows(data, prior_only = FALSE))
+  expect_invisible(.chk_fit_rows(data[0, , drop = FALSE], prior_only = TRUE))
+  expect_snapshot(error = TRUE, .chk_fit_rows(data[0, , drop = FALSE], prior_only = FALSE))
 })
 
 test_that(".chk_new_data_weight_nereo errors on a negative density", {
@@ -230,6 +263,13 @@ test_that(".chk_biomass_limits and .chk_biomass_estimate name the offending limi
   expect_error(.chk_biomass_estimate(transform(good, estimate = 5)), "upper")
 })
 
+test_that(".chk_biomass_response names the recorded response", {
+  good <- data.frame(site = "a", year = "2020", estimate = 2, lower = 1, upper = 4)
+  expect_invisible(.chk_biomass_response(good))
+  carbon <- new_kb_predictions(good, NULL, c("site", "year"), "carbon_biomass_g_m2")
+  expect_snapshot(error = TRUE, .chk_biomass_response(carbon))
+})
+
 test_that(".chk_site_surveys errors name the survey column", {
   good <- data.frame(site = "a", year = "2020", canopy_area_m2 = 100, tide_height_m = 0.5)
   expect_invisible(.chk_site_surveys(good))
@@ -288,4 +328,22 @@ test_that(".chk_log_axis gives a message per failing axis", {
   expect_error(.chk_log_axis("xy", p, "site"), "numeric x-axis")
   p$upper[1] <- -1
   expect_error(.chk_log_axis("y", p, "cover"), "log y-axis")
+})
+
+test_that(".chk_finite, .chk_rows, and .chk_new_data_groups name the problem", {
+  expect_invisible(.chk_finite(c(1, NA)))
+  expect_invisible(.chk_rows(data.frame(x = 1)))
+  expect_invisible(.chk_new_data_groups(data.frame(site = "a", year = 2020)))
+  expect_snapshot(error = TRUE, .chk_finite(c(1, Inf), "`x`"))
+  expect_snapshot(error = TRUE, .chk_rows(data.frame(x = numeric(0)), "`new_data`"))
+  expect_snapshot(error = TRUE, .chk_new_data_groups(data.frame(site = c("a", NA))))
+})
+
+test_that("measure checks reject infinite values", {
+  expect_error(.chk_positive_measure(c(1, Inf), "`x`"), "finite")
+  expect_error(.chk_density(c(1, Inf), "`x`"), "finite")
+  expect_error(
+    .chk_measure_columns(data.frame(weight_kg = Inf), "weight_kg", "`data`"),
+    "finite"
+  )
 })

@@ -53,7 +53,9 @@ the linear predictor: for weight, \code{exp(mu + sd_residual^2 / 2)} (\emph{Nere
 the zero-truncated distribution (\emph{Macrocystis}); for density, the expected
 count on the row's \code{area_m2} (1 m² when absent), \code{(1 - zi) * exp(mu)} with \code{zi} the
 zero-inflation probability (\emph{Nereocystis}) or \code{exp(mu)} (\emph{Macrocystis}); for
-wet/dry, the mean dry:wet ratio \code{inv_logit(mu)}. For
+wet/dry, the mean dry:wet ratio \code{inv_logit(mu)}; for carbon, the mean carbon
+fraction \code{inv_logit(mu)}; for cover biomass, the wet biomass per m² \code{exp(mu)},
+without the estimation error of the in situ estimate. For
 draws that include observation noise, use \code{\link[=posterior_predict]{posterior_predict()}}.
 
 Conditioning is inferred from the grouping columns present in \code{new_data}: a

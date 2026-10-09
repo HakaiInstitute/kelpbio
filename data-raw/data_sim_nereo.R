@@ -66,8 +66,8 @@ grid$e_size <- effects(0.2, 0.15, 0.12)
 # Density: zero-inflated negative binomial stipe count on a transect of area_m2.
 # The intercept is above the production estimate (log 0.18) so the composed plot
 # biomass spans the production range despite the moderated SDs.
-b_stipes <- log(1.5) # log stipes per m^2 on transects holding stipes
-zero_inflation <- 0.05 # probability a transect holds no stipes
+b_stipes <- log(1.5) # log stipes per m^2 on occupied transects
+zero_inflation <- 0.05 # probability a transect is unoccupied (a structural zero)
 dispersion_density <- 0.45 # variance mu + dispersion * mu^2
 grid$e_density <- effects(0.6, 0.4, 0.5)
 

@@ -108,6 +108,10 @@ test_that("arguments are validated", {
     kb_predict_plot_biomass(weight_nereo_fit, size_nereo_fit, density_nereo_fit, n_plants = 0)
   )
   expect_error(
+    kb_predict_plot_biomass(weight_nereo_fit, size_nereo_fit, density_nereo_fit, n_plants = Inf),
+    "finite"
+  )
+  expect_error(
     kb_predict_plot_biomass(weight_nereo_fit, size_nereo_fit, density_nereo_fit, measure = "blade")
   )
   expect_error(kb_predict_plot_biomass(weight_nereo_fit, size_nereo_fit, density_nereo_fit, 1, 2, 3))
@@ -169,17 +173,24 @@ test_that("progress arguments are validated", {
   expect_error(
     kb_predict_plot_biomass(weight_nereo_fit, size_nereo_fit, density_nereo_fit, progress = "verbose")
   )
-  expect_error(
+  err <- expect_error(
     kb_predict_plot_biomass(weight_nereo_fit, size_nereo_fit, density_nereo_fit, progress_dir = "no/such/dir"),
     "progress_dir"
   )
+  expect_identical(err$call[[1]], quote(kb_predict_plot_biomass))
 })
 
-test_that("a density fit with no observations errors naming density", {
+test_that("a density or size fit with no observations errors naming it", {
   density0 <- density_nereo_fit
   density0$data <- density0$data[0, ]
   expect_error(
     kb_predict_plot_biomass(weight_nereo_fit, size_nereo_fit, density0),
     "`density` must be fitted"
+  )
+  size0 <- size_nereo_fit
+  size0$data <- size0$data[0, ]
+  expect_error(
+    kb_predict_plot_biomass(weight_nereo_fit, size0, density_nereo_fit),
+    "`size` must be fitted"
   )
 })

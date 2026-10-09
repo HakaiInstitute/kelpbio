@@ -12,5 +12,6 @@
 #' @examples
 #' coef(fit_weight_sim_nereo)
 coef.kb_fit <- function(object, ...) {
-  tidy(object, ...)
+  # error_call() names the generic, not tidy().
+  .with_call(tidy(object, ...), rlang::error_call(rlang::current_env()))
 }

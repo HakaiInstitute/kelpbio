@@ -33,7 +33,20 @@
 }
 
 .vld_positive_measure <- function(x) {
-  is.numeric(x) && !anyNA(x) && all(x > 0)
+  is.numeric(x) && !anyNA(x) && .vld_finite(x) && all(x > 0)
+}
+
+.vld_finite <- function(x) {
+  !any(is.infinite(x))
+}
+
+.vld_rows <- function(x) {
+  nrow(x) > 0L
+}
+
+# Any site or year column of new_data. A numeric year names a level.
+.vld_new_data_groups <- function(x) {
+  !anyNA(x[intersect(.group_vars(), names(x))])
 }
 
 .vld_frond_count <- function(x) {
@@ -45,7 +58,7 @@
 }
 
 .vld_density <- function(x) {
-  all(is.na(x)) || (is.numeric(x) && all(x >= 0, na.rm = TRUE))
+  all(is.na(x)) || (is.numeric(x) && .vld_finite(x) && all(x >= 0, na.rm = TRUE))
 }
 
 .vld_density_site_year <- function(data) {
@@ -88,6 +101,11 @@
     (is.character(x) && length(x) == 1L && !is.na(x) && dir.exists(x))
 }
 
+# Zero-row data sample the priors alone, which only prior_only asks for.
+.vld_fit_rows <- function(data, prior_only) {
+  prior_only || nrow(data) > 0L
+}
+
 .vld_observed_data <- function(fit) {
   nrow(fit$data) > 0L
 }
@@ -106,11 +124,13 @@
     all(c("canopy_area_m2", "plot_area_m2", "tide_height_m") %in% names(x)) &&
     is.numeric(x$canopy_area_m2) &&
     !anyNA(x$canopy_area_m2) &&
+    .vld_finite(x$canopy_area_m2) &&
     all(x$canopy_area_m2 >= 0) &&
     .vld_positive_measure(x$plot_area_m2) &&
     all(x$canopy_area_m2 <= x$plot_area_m2) &&
     is.numeric(x$tide_height_m) &&
-    !anyNA(x$tide_height_m)
+    !anyNA(x$tide_height_m) &&
+    .vld_finite(x$tide_height_m)
 }
 
 # lower strictly below upper, so the implied log-scale SD is positive.
@@ -130,7 +150,14 @@
     !anyNA(x$site) &&
     !anyNA(x$year) &&
     .vld_biomass_estimate(x) &&
+    .vld_biomass_response(x) &&
     !anyDuplicated(site_year_key(x$site, x$year))
+}
+
+# A kb_predictions object records its response; the cover fit takes wet biomass.
+.vld_biomass_response <- function(x) {
+  response <- attr(x, "kb_response", exact = TRUE)
+  is.null(response) || identical(response, "biomass_kg_m2")
 }
 
 .vld_biomass_estimate <- function(x) {
@@ -147,9 +174,11 @@
     all(c("canopy_area_m2", "tide_height_m", "site", "year") %in% names(x)) &&
     is.numeric(x$canopy_area_m2) &&
     !anyNA(x$canopy_area_m2) &&
+    .vld_finite(x$canopy_area_m2) &&
     all(x$canopy_area_m2 >= 0) &&
     is.numeric(x$tide_height_m) &&
     !anyNA(x$tide_height_m) &&
+    .vld_finite(x$tide_height_m) &&
     .vld_group_column(x$site) &&
     .vld_group_column(x$year) &&
     (!"site_area_m2" %in% names(x) ||

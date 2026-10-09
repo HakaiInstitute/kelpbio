@@ -36,15 +36,15 @@ fit_cover_biomass_model <- function(
     call = call
   )
 
-  # The species' own check, so its errors name the function users know.
-  check_data(data, biomass, x_name = "`data`")
+  .with_call(check_data(data, biomass, x_name = "`data`"), call)
+  .chk_fit_rows(data, prior_only, call = call)
   # The data check accepts a NULL biomass, which a fit cannot.
   .chk_plot_biomass(biomass, call = call)
   conf_level <- .with_call(cover_conf_level(biomass, conf_level), call)
-  joined <- join_cover_biomass(data, biomass)
+  joined <- join_cover_biomass(data, biomass, call = call)
   notify_cover_unmatched(joined$unmatched, progress = progress)
   data <- joined$data
-  priors <- resolve_priors(priors, defaults)
+  priors <- resolve_priors(priors, defaults, call = call)
   stan_data <- assemble_cover_biomass_data(
     data,
     priors,

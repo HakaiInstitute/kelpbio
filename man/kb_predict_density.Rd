@@ -63,8 +63,8 @@ transects when \code{new_data = NULL}.
 The estimate is always per m²: an \code{area_m2} column is not used. The expected
 count on a transect is the density times its area, and so are its limits. For
 draws of transect counts, use \code{\link[=posterior_predict]{posterior_predict()}} with an \code{area_m2} column.
-For \emph{Nereocystis}, the expected density includes the probability that a
-transect holds no stipes.
+For \emph{Nereocystis}, the expected density is over all transects, including
+unoccupied ones.
 
 \code{new_data} needs no columns: each row is a site, a year, or a site-year, given
 by its optional \code{site} and \code{year} columns. For one row per site or year, build

@@ -16,8 +16,8 @@
 \arguments{
 \item{object}{A \code{kb_fit} object.}
 
-\item{transform}{A flag specifying whether to return the response-scale
-value (\code{exp}).}
+\item{transform}{A flag specifying whether to apply the inverse link (\code{exp},
+or the inverse logit for wet/dry and carbon).}
 
 \item{new_data}{A data frame with the fit's predictor column (and optional
 \code{site}, \code{year}, and \code{stipes_m2} columns; for a density fit, an optional

@@ -63,7 +63,8 @@ kb_fit_density_macro <- function(
     progress_dir = progress_dir
   )
 
-  kb_check_data_density_macro(data)
+  .with_call(kb_check_data_density_macro(data), rlang::current_env())
+  .chk_fit_rows(data, prior_only)
   site_year <- site_year_structure(data)
   notify_site_year(site_year, progress = progress)
 

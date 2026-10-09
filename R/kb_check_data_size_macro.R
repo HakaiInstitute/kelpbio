@@ -40,6 +40,7 @@ kb_check_data_size_macro <- function(
       fronds_name <- column_xname(x_name, "fronds")
       chk::chk_numeric(data$fronds, x_name = fronds_name)
       chk::chk_not_any_na(data$fronds, x_name = fronds_name)
+      .chk_finite(data$fronds, fronds_name)
       .chk_frond_reaches_1m(data$fronds, x_name = fronds_name)
       chk::chk_whole_numeric(data$fronds, x_name = fronds_name)
       .chk_group_columns(data, x_name)

@@ -49,3 +49,28 @@ test_that("zero-row data is accepted under prior_only", {
   )
   expect_s3_class(fit, "kb_fit_carbon_macro")
 })
+
+test_that("zero-row data error unless prior_only", {
+  expect_error(
+    kb_fit_carbon_macro(
+      data_carbon_sim_macro[0, ],
+      progress = "none"
+    ),
+    "prior_only = TRUE"
+  )
+})
+
+test_that("data and prior errors name kb_fit_carbon_macro()", {
+  local_fit_stan_stub(carbon_macro_fit)
+  err <- expect_error(kb_fit_carbon_macro(
+      data.frame(site = "a", year = "2020"),
+      progress = "none"
+  ))
+  expect_identical(err$call[[1]], quote(kb_fit_carbon_macro))
+  err <- expect_error(kb_fit_carbon_macro(
+    data_carbon_sim_macro,
+    priors = list(nope = kb_prior_normal(0, 1)),
+    progress = "none"
+  ))
+  expect_identical(err$call[[1]], quote(kb_fit_carbon_macro))
+})

@@ -56,13 +56,22 @@
       ! Invalid `representative_site` value: "not_a_site".
       i Available sites: "otter_cove", "gull_rock", "cedar_bay", and "heron_reef".
 
+# .chk_fit_rows points zero-row data to prior_only
+
+    Code
+      .chk_fit_rows(data[0, , drop = FALSE], prior_only = FALSE)
+    Condition
+      Error:
+      ! `data` must have at least one row.
+      i Set `prior_only = TRUE` to sample from the priors alone.
+
 # .chk_new_data_weight_nereo errors on a negative density
 
     Code
       .chk_new_data_weight_nereo(d)
     Condition
       Error in `.chk_density()`:
-      ! Column `stipes_m2` of d must be greater than or equal to 0.
+      ! Column `stipes_m2` of `d` must be greater than or equal to 0.
 
 # .chk_new_data errors name the invalid predictor column
 
@@ -70,7 +79,7 @@
       .chk_new_data_weight_nereo(data.frame(diameter_mm = 0))
     Condition
       Error in `.chk_positive_measure()`:
-      ! Column `diameter_mm` of data.frame(diameter_mm = 0) must be greater than 0.
+      ! Column `diameter_mm` of `data.frame(diameter_mm = 0)` must be greater than 0.
 
 ---
 
@@ -78,7 +87,7 @@
       .chk_new_data_weight_nereo(data.frame(diameter_mm = "30"))
     Condition
       Error in `.chk_positive_measure()`:
-      ! Column `diameter_mm` of data.frame(diameter_mm = "30") must be numeric.
+      ! Column `diameter_mm` of `data.frame(diameter_mm = "30")` must be numeric.
 
 ---
 
@@ -86,7 +95,7 @@
       .chk_new_data_weight_nereo(data.frame(diameter_mm = NA_real_))
     Condition
       Error in `.chk_positive_measure()`:
-      ! Column `diameter_mm` of data.frame(diameter_mm = NA_real_) must not have missing values.
+      ! Column `diameter_mm` of `data.frame(diameter_mm = NA_real_)` must not have missing values.
 
 ---
 
@@ -94,7 +103,7 @@
       .chk_new_data_weight_macro(data.frame(fronds = 2.5))
     Condition
       Error in `.chk_frond_count()`:
-      ! Column `fronds` of data.frame(fronds = 2.5) must be a whole number.
+      ! Column `fronds` of `data.frame(fronds = 2.5)` must be a whole number.
 
 # .chk_kb_fit_grouped errors for a non-fit and a model without groups
 
@@ -146,7 +155,7 @@
       .chk_grid_dots(weight_nereo_fit, list(diameter_mm = "a"), NULL)
     Condition
       Error in `.chk_grid_dots()`:
-      ! Diameter_mm must be numeric.
+      ! `diameter_mm` must be numeric.
 
 ---
 
@@ -171,7 +180,7 @@
       .chk_new_data_density(data.frame(area_m2 = -1))
     Condition
       Error in `.chk_positive_measure()`:
-      ! Column `area_m2` of data.frame(area_m2 = -1) must be greater than 0.
+      ! Column `area_m2` of `data.frame(area_m2 = -1)` must be greater than 0.
 
 # .chk_same_species and .chk_same_ndraws name the fits
 
@@ -216,6 +225,15 @@
       Error in `.chk_biomass_limits()`:
       ! good["estimate"] must have lower and upper columns.
       i They are the compatibility limits of the in situ biomass estimate, which set its precision.
+
+# .chk_biomass_response names the recorded response
+
+    Code
+      .chk_biomass_response(carbon)
+    Condition
+      Error:
+      ! carbon must be wet biomass (biomass_kg_m2), not carbon_biomass_g_m2.
+      i Predict it with `kb_predict_plot_biomass(measure = "wet")`.
 
 # .chk_site_surveys errors name the survey column
 
@@ -268,4 +286,29 @@
       Error:
       ! `pars` cannot be passed to the sampler: kelpbio sets it itself.
       i The fit keeps every parameter.
+
+# .chk_finite, .chk_rows, and .chk_new_data_groups name the problem
+
+    Code
+      .chk_finite(c(1, Inf), "`x`")
+    Condition
+      Error:
+      ! `x` must be finite.
+
+---
+
+    Code
+      .chk_rows(data.frame(x = numeric(0)), "`new_data`")
+    Condition
+      Error:
+      ! `new_data` must have at least one row.
+
+---
+
+    Code
+      .chk_new_data_groups(data.frame(site = c("a", NA)))
+    Condition
+      Error:
+      ! Column `site` of `new_data` must not have missing values.
+      i To predict for a new site, give it a name or leave out the site column.
 

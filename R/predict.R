@@ -24,15 +24,21 @@ predict.kb_fit_weight <- function(
   estimate = stats::median,
   sig_fig = 3
 ) {
-  rlang::check_dots_empty()
-  kb_predict_weight(
-    object,
-    new_data = new_data,
-    new_levels = new_levels,
-    representative_site = representative_site,
-    conf_level = conf_level,
-    estimate = estimate,
-    sig_fig = sig_fig
+  # error_call() names the generic, not the wrapped verb.
+  .with_call(
+    {
+      rlang::check_dots_empty()
+      kb_predict_weight(
+        object,
+        new_data = new_data,
+        new_levels = new_levels,
+        representative_site = representative_site,
+        conf_level = conf_level,
+        estimate = estimate,
+        sig_fig = sig_fig
+      )
+    },
+    rlang::error_call(rlang::current_env())
   )
 }
 
@@ -62,15 +68,21 @@ predict.kb_fit_size <- function(
   estimate = stats::median,
   sig_fig = 3
 ) {
-  rlang::check_dots_empty()
-  kb_predict_size(
-    object,
-    new_data = new_data,
-    new_levels = new_levels,
-    representative_site = representative_site,
-    conf_level = conf_level,
-    estimate = estimate,
-    sig_fig = sig_fig
+  # error_call() names the generic, not the wrapped verb.
+  .with_call(
+    {
+      rlang::check_dots_empty()
+      kb_predict_size(
+        object,
+        new_data = new_data,
+        new_levels = new_levels,
+        representative_site = representative_site,
+        conf_level = conf_level,
+        estimate = estimate,
+        sig_fig = sig_fig
+      )
+    },
+    rlang::error_call(rlang::current_env())
   )
 }
 
@@ -101,15 +113,21 @@ predict.kb_fit_density <- function(
   estimate = stats::median,
   sig_fig = 3
 ) {
-  rlang::check_dots_empty()
-  kb_predict_density(
-    object,
-    new_data = new_data,
-    new_levels = new_levels,
-    representative_site = representative_site,
-    conf_level = conf_level,
-    estimate = estimate,
-    sig_fig = sig_fig
+  # error_call() names the generic, not the wrapped verb.
+  .with_call(
+    {
+      rlang::check_dots_empty()
+      kb_predict_density(
+        object,
+        new_data = new_data,
+        new_levels = new_levels,
+        representative_site = representative_site,
+        conf_level = conf_level,
+        estimate = estimate,
+        sig_fig = sig_fig
+      )
+    },
+    rlang::error_call(rlang::current_env())
   )
 }
 
@@ -134,12 +152,18 @@ predict.kb_fit_wetdry <- function(
   estimate = stats::median,
   sig_fig = 3
 ) {
-  rlang::check_dots_empty()
-  kb_predict_wetdry(
-    object,
-    conf_level = conf_level,
-    estimate = estimate,
-    sig_fig = sig_fig
+  # error_call() names the generic, not the wrapped verb.
+  .with_call(
+    {
+      rlang::check_dots_empty()
+      kb_predict_wetdry(
+        object,
+        conf_level = conf_level,
+        estimate = estimate,
+        sig_fig = sig_fig
+      )
+    },
+    rlang::error_call(rlang::current_env())
   )
 }
 
@@ -164,12 +188,18 @@ predict.kb_fit_carbon <- function(
   estimate = stats::median,
   sig_fig = 3
 ) {
-  rlang::check_dots_empty()
-  kb_predict_carbon(
-    object,
-    conf_level = conf_level,
-    estimate = estimate,
-    sig_fig = sig_fig
+  # error_call() names the generic, not the wrapped verb.
+  .with_call(
+    {
+      rlang::check_dots_empty()
+      kb_predict_carbon(
+        object,
+        conf_level = conf_level,
+        estimate = estimate,
+        sig_fig = sig_fig
+      )
+    },
+    rlang::error_call(rlang::current_env())
   )
 }
 
@@ -203,14 +233,20 @@ predict.kb_fit_cover_biomass <- function(
   estimate = stats::median,
   sig_fig = 3
 ) {
-  rlang::check_dots_empty()
-  kb_predict_cover_biomass(
-    object,
-    new_data = new_data,
-    new_levels = new_levels,
-    representative_site = representative_site,
-    conf_level = conf_level,
-    estimate = estimate,
-    sig_fig = sig_fig
+  # error_call() names the generic, not the wrapped verb.
+  .with_call(
+    {
+      rlang::check_dots_empty()
+      kb_predict_cover_biomass(
+        object,
+        new_data = new_data,
+        new_levels = new_levels,
+        representative_site = representative_site,
+        conf_level = conf_level,
+        estimate = estimate,
+        sig_fig = sig_fig
+      )
+    },
+    rlang::error_call(rlang::current_env())
   )
 }

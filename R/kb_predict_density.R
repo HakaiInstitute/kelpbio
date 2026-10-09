@@ -8,8 +8,8 @@
 #' The estimate is always per m²: an `area_m2` column is not used. The expected
 #' count on a transect is the density times its area, and so are its limits. For
 #' draws of transect counts, use [posterior_predict()] with an `area_m2` column.
-#' For *Nereocystis*, the expected density includes the probability that a
-#' transect holds no stipes.
+#' For *Nereocystis*, the expected density is over all transects, including
+#' unoccupied ones.
 #'
 #' `new_data` needs no columns: each row is a site, a year, or a site-year, given
 #' by its optional `site` and `year` columns. For one row per site or year, build
