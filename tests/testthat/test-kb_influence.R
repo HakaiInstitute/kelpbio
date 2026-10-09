@@ -45,7 +45,7 @@ test_that("the threshold sets the flag and leaves the values unchanged", {
 test_that("kb_influence does not warn about high Pareto k", {
   fit <- weight_nereo_fit
   fit$data$weight_kg[1] <- fit$data$weight_kg[1] * 1000
-  expect_no_warning(out <- kb_influence(fit))
+  out <- expect_no_warning(kb_influence(fit))
   expect_true(out$influential[1])
 })
 
