@@ -36,15 +36,21 @@ glance.kb_fit <- function(
   ess = 100,
   max_perc_divergent = 0.2
 ) {
-  rlang::check_dots_empty()
-  s <- x$diagnostics$summary
   # Outside tibble(), where `rhat` would resolve to the column.
-  is_converged <- kb_converged(
-    x,
-    rhat = rhat,
-    ess = ess,
-    max_perc_divergent = max_perc_divergent
+  is_converged <- .with_call(
+    {
+      rlang::check_dots_empty()
+      kb_converged(
+        x,
+        rhat = rhat,
+        ess = ess,
+        max_perc_divergent = max_perc_divergent
+      )
+    },
+    # error_call() names the generic, not the method.
+    rlang::error_call(rlang::current_env())
   )
+  s <- x$diagnostics$summary
   tibble::tibble(
     n = nobs(x),
     K = posterior::nvariables(x$draws),

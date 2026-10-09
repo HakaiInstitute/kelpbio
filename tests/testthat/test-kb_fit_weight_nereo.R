@@ -233,3 +233,18 @@ test_that("a power-law fit samples and records no floor", {
   expect_false("weight_floor" %in% tidy(fit)$term)
   expect_true(all(is.finite(log_lik(fit))))
 })
+
+test_that("data and prior errors name kb_fit_weight_nereo()", {
+  local_fit_stan_stub(weight_nereo_fit)
+  err <- expect_error(kb_fit_weight_nereo(
+      data.frame(site = "a", year = "2020"),
+      progress = "none"
+  ))
+  expect_identical(err$call[[1]], quote(kb_fit_weight_nereo))
+  err <- expect_error(kb_fit_weight_nereo(
+    data_weight_sim_nereo,
+    priors = list(nope = kb_prior_normal(0, 1)),
+    progress = "none"
+  ))
+  expect_identical(err$call[[1]], quote(kb_fit_weight_nereo))
+})

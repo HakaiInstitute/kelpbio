@@ -99,7 +99,7 @@ kb_predict_plot_biomass <- function(
   rlang::check_dots_empty()
   measure <- rlang::arg_match(measure)
   progress <- rlang::arg_match(progress)
-  .chk_progress_dir(progress_dir)
+  .with_call(.chk_progress_dir(progress_dir), rlang::current_env())
   new_levels <- rlang::arg_match(new_levels)
   .chk_kb_fit(weight, "kb_fit_weight")
   .chk_kb_fit(size, "kb_fit_size")

@@ -61,7 +61,7 @@ kb_fit_weight_macro <- function(
     progress_dir = progress_dir
   )
 
-  kb_check_data_weight_macro(data)
+  .with_call(kb_check_data_weight_macro(data), rlang::current_env())
   .chk_fit_rows(data, prior_only)
   site_year <- site_year_structure(data)
   notify_site_year(site_year, progress = progress)

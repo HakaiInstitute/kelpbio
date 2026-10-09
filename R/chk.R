@@ -329,8 +329,13 @@
     )
   }
   if (!is.null(predictor) && predictor %in% nms) {
-    chk::chk_numeric(dots[[predictor]], x_name = predictor)
-    chk::chk_not_empty(dots[[predictor]], x_name = predictor)
+    x_name <- paste0("`", predictor, "`")
+    chk::chk_numeric(dots[[predictor]], x_name = x_name)
+    chk::chk_not_empty(dots[[predictor]], x_name = x_name)
+    chk::chk_not_any_na(dots[[predictor]], x_name = x_name)
+    if (!is.null(fit$meta$predictor_range)) {
+      chk::chk_range(dots[[predictor]], fit$meta$predictor_range, x_name = x_name)
+    }
   }
   for (group in intersect(.group_vars(), nms)) {
     x <- dots[[group]]
@@ -340,8 +345,8 @@
         call = call
       )
     }
-    chk::chk_not_empty(x, x_name = group)
-    chk::chk_not_any_na(x, x_name = group)
+    chk::chk_not_empty(x, x_name = paste0("`", group, "`"))
+    chk::chk_not_any_na(x, x_name = paste0("`", group, "`"))
   }
   invisible(fit)
 }

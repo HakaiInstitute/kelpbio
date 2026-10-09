@@ -49,3 +49,8 @@ test_that("glance reports NA rather than -Inf when no diagnostic is finite", {
   expect_true(is.na(g$ess_bulk))
   expect_true(is.na(g$ess_tail))
 })
+
+test_that("argument errors name glance()", {
+  err <- expect_error(glance(weight_nereo_fit, rhat = "a"))
+  expect_identical(err$call[[1]], quote(glance))
+})

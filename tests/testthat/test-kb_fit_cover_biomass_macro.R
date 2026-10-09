@@ -132,3 +132,20 @@ test_that("zero-row data error unless prior_only", {
     "prior_only = TRUE"
   )
 })
+
+test_that("data and prior errors name kb_fit_cover_biomass_macro()", {
+  local_fit_stan_stub(cover_biomass_macro_fit)
+  err <- expect_error(kb_fit_cover_biomass_macro(
+      data.frame(site = "a", year = "2020"),
+      data_plot_biomass_sim_macro,
+      progress = "none"
+  ))
+  expect_identical(err$call[[1]], quote(kb_fit_cover_biomass_macro))
+  err <- expect_error(kb_fit_cover_biomass_macro(
+    data_cover_biomass_sim_macro,
+    data_plot_biomass_sim_macro,
+    priors = list(nope = kb_prior_normal(0, 1)),
+    progress = "none"
+  ))
+  expect_identical(err$call[[1]], quote(kb_fit_cover_biomass_macro))
+})

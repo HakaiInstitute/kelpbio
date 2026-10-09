@@ -155,7 +155,7 @@
       .chk_grid_dots(weight_nereo_fit, list(diameter_mm = "a"), NULL)
     Condition
       Error in `.chk_grid_dots()`:
-      ! Diameter_mm must be numeric.
+      ! `diameter_mm` must be numeric.
 
 ---
 

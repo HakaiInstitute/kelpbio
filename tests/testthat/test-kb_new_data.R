@@ -124,6 +124,14 @@ test_that("a supplied level the fit has not seen predicts as a new level", {
 })
 
 test_that("errors from ... name kb_new_data()", {
+  expect_identical(
+    expect_error(kb_new_data(size_nereo_fit, by = "month"))$call[[1]],
+    quote(kb_new_data)
+  )
+  expect_identical(
+    expect_error(kb_new_data(cover_biomass_nereo_fit, cover = 1.5))$call[[1]],
+    quote(kb_new_data)
+  )
   expect_snapshot(error = TRUE, kb_new_data(weight_nereo_fit, by = "year", year = 2021))
   expect_snapshot(error = TRUE, kb_new_data(weight_nereo_fit, month = 3))
 })

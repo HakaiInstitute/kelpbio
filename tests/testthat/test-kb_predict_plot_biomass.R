@@ -169,10 +169,11 @@ test_that("progress arguments are validated", {
   expect_error(
     kb_predict_plot_biomass(weight_nereo_fit, size_nereo_fit, density_nereo_fit, progress = "verbose")
   )
-  expect_error(
+  err <- expect_error(
     kb_predict_plot_biomass(weight_nereo_fit, size_nereo_fit, density_nereo_fit, progress_dir = "no/such/dir"),
     "progress_dir"
   )
+  expect_identical(err$call[[1]], quote(kb_predict_plot_biomass))
 })
 
 test_that("a density or size fit with no observations errors naming it", {

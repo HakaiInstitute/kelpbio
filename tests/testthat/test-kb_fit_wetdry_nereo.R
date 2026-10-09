@@ -59,3 +59,18 @@ test_that("zero-row data error unless prior_only", {
     "prior_only = TRUE"
   )
 })
+
+test_that("data and prior errors name kb_fit_wetdry_nereo()", {
+  local_fit_stan_stub(wetdry_nereo_fit)
+  err <- expect_error(kb_fit_wetdry_nereo(
+      data.frame(site = "a", year = "2020"),
+      progress = "none"
+  ))
+  expect_identical(err$call[[1]], quote(kb_fit_wetdry_nereo))
+  err <- expect_error(kb_fit_wetdry_nereo(
+    data_wetdry_sim_nereo,
+    priors = list(nope = kb_prior_normal(0, 1)),
+    progress = "none"
+  ))
+  expect_identical(err$call[[1]], quote(kb_fit_wetdry_nereo))
+})

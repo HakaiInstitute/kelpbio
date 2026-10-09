@@ -32,3 +32,23 @@ test_that("resolve_priors rejects a non-list or unnamed priors", {
   expect_error(resolve_priors(1:3, d))
   expect_error(resolve_priors(list(kb_prior_normal(0, 1)), d))
 })
+
+test_that("resolve_priors rejects repeated prior names", {
+  d <- kb_priors_weight_nereo()
+  p <- list(sd_site = kb_prior_exponential(1), sd_site = kb_prior_exponential(2))
+  expect_error(resolve_priors(p, d), "unique")
+})
+
+test_that("resolve_priors errors name the supplied call", {
+  d <- kb_priors_weight_nereo()
+  call <- quote(kb_fit_weight_nereo())
+  expect_identical(expect_error(resolve_priors(1:3, d, call = call))$call, call)
+  expect_identical(
+    expect_error(resolve_priors(list(nope = kb_prior_normal(0, 1)), d, call = call))$call,
+    call
+  )
+  expect_identical(
+    expect_error(resolve_priors(list(sd_site = kb_prior_normal(0, 1)), d, call = call))$call,
+    call
+  )
+})
