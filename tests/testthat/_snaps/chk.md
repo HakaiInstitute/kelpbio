@@ -287,3 +287,28 @@
       ! `pars` cannot be passed to the sampler: kelpbio sets it itself.
       i The fit keeps every parameter.
 
+# .chk_finite, .chk_rows, and .chk_new_data_groups name the problem
+
+    Code
+      .chk_finite(c(1, Inf), "`x`")
+    Condition
+      Error:
+      ! `x` must be finite.
+
+---
+
+    Code
+      .chk_rows(data.frame(x = numeric(0)), "`new_data`")
+    Condition
+      Error:
+      ! `new_data` must have at least one row.
+
+---
+
+    Code
+      .chk_new_data_groups(data.frame(site = c("a", NA)))
+    Condition
+      Error:
+      ! Column `site` of `new_data` must not have missing values.
+      i To predict for a new site, give it a name or leave out the site column.
+

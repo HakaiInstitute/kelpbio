@@ -108,6 +108,10 @@ test_that("arguments are validated", {
     kb_predict_plot_biomass(weight_nereo_fit, size_nereo_fit, density_nereo_fit, n_plants = 0)
   )
   expect_error(
+    kb_predict_plot_biomass(weight_nereo_fit, size_nereo_fit, density_nereo_fit, n_plants = Inf),
+    "finite"
+  )
+  expect_error(
     kb_predict_plot_biomass(weight_nereo_fit, size_nereo_fit, density_nereo_fit, measure = "blade")
   )
   expect_error(kb_predict_plot_biomass(weight_nereo_fit, size_nereo_fit, density_nereo_fit, 1, 2, 3))

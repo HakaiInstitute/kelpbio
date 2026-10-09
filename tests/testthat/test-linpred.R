@@ -160,6 +160,34 @@ test_that("data_linpred checks new_data and new_levels before computing", {
   expect_equal(res$group_vars, character(0))
 })
 
+test_that("data_linpred rejects empty new_data and missing site or year", {
+  expect_error(
+    data_linpred(weight_nereo_fit, data.frame(diameter_mm = numeric(0)), "average"),
+    "at least one row"
+  )
+  expect_error(
+    data_linpred(weight_nereo_fit, data.frame(diameter_mm = 30, site = NA), "average"),
+    "site"
+  )
+  expect_error(
+    data_linpred(size_nereo_fit, data.frame(year = NA_real_), "average"),
+    "year"
+  )
+  expect_error(
+    data_linpred(weight_nereo_fit, data.frame(diameter_mm = Inf), "average"),
+    "finite"
+  )
+  res <- data_linpred(weight_nereo_fit, data.frame(diameter_mm = 30, year = 2099), "average")
+  expect_equal(res$group_vars, "year")
+})
+
+test_that("new_data errors name the verb the user called", {
+  err <- expect_error(
+    kb_predict_weight(weight_nereo_fit, data.frame(diameter_mm = 30, site = NA))
+  )
+  expect_identical(err$call[[1]], quote(kb_predict_weight))
+})
+
 test_that("the observed-data paths reject a zero-observation fit", {
   fit0 <- weight_nereo_fit
   fit0$data <- fit0$data[0, ]

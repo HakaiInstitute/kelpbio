@@ -62,7 +62,49 @@
   if (anyNA(x)) {
     cli::cli_abort("{x_name} must not have missing values.")
   }
+  .chk_finite(x, x_name)
   cli::cli_abort("{x_name} must be greater than 0.")
+}
+
+.chk_finite <- function(
+  x,
+  x_name = deparse(substitute(x)),
+  call = rlang::caller_env()
+) {
+  if (.vld_finite(x)) {
+    return(invisible(x))
+  }
+  cli::cli_abort("{x_name} must be finite.", call = call)
+}
+
+.chk_rows <- function(
+  x,
+  x_name = deparse(substitute(x)),
+  call = rlang::caller_env()
+) {
+  if (.vld_rows(x)) {
+    return(invisible(x))
+  }
+  cli::cli_abort("{x_name} must have at least one row.", call = call)
+}
+
+.chk_new_data_groups <- function(
+  x,
+  x_name = "`new_data`",
+  call = rlang::caller_env()
+) {
+  if (.vld_new_data_groups(x)) {
+    return(invisible(x))
+  }
+  groups <- intersect(.group_vars(), names(x))
+  col <- groups[vapply(x[groups], anyNA, logical(1))][1]
+  cli::cli_abort(
+    c(
+      "{column_xname(x_name, col)} must not have missing values.",
+      i = "To predict for a new {col}, give it a name or leave out the {.field {col}} column."
+    ),
+    call = call
+  )
 }
 
 .chk_frond_count <- function(x, x_name = deparse(substitute(x))) {
@@ -92,6 +134,7 @@
   if (!is.numeric(x)) {
     cli::cli_abort("{x_name} must be numeric.")
   }
+  .chk_finite(x, x_name)
   cli::cli_abort("{x_name} must be greater than or equal to 0.")
 }
 
@@ -208,6 +251,7 @@
       chk::chk_function(estimate)
       chk::chk_whole_number(sig_fig)
       chk::chk_gt(sig_fig, value = 0)
+      .chk_finite(sig_fig, "`sig_fig`")
     },
     call
   )
@@ -270,19 +314,25 @@
       chk::chk_flag(prior_only)
       chk::chk_whole_number(chains)
       chk::chk_gt(chains, value = 0)
+      .chk_finite(chains, "`chains`")
       chk::chk_whole_number(niters)
       # The sampler diagnostics need at least two draws per chain.
       chk::chk_gte(niters, value = 2)
+      .chk_finite(niters, "`niters`")
       chk::chk_whole_number(nthin)
       chk::chk_gt(nthin, value = 0)
+      .chk_finite(nthin, "`nthin`")
       .chk_progress(progress)
       .chk_progress_dir(progress_dir)
       if (!is.null(cores)) {
         chk::chk_whole_number(cores)
         chk::chk_gt(cores, value = 0)
+        .chk_finite(cores, "`cores`")
       }
       if (!is.null(seed)) {
         chk::chk_whole_number(seed)
+        # Passed to Stan as an integer.
+        chk::chk_range(seed, c(-.Machine$integer.max, .Machine$integer.max))
       }
     },
     call
@@ -470,6 +520,7 @@
   nm <- column_xname(x_name, "canopy_area_m2")
   chk::chk_numeric(x$canopy_area_m2, x_name = nm)
   chk::chk_not_any_na(x$canopy_area_m2, x_name = nm)
+  .chk_finite(x$canopy_area_m2, nm)
   chk::chk_gte(x$canopy_area_m2, value = 0, x_name = nm)
   .chk_positive_measure(x$plot_area_m2, x_name = column_xname(x_name, "plot_area_m2"))
   if (any(x$canopy_area_m2 > x$plot_area_m2)) {
@@ -481,6 +532,7 @@
   nm <- column_xname(x_name, "tide_height_m")
   chk::chk_numeric(x$tide_height_m, x_name = nm)
   chk::chk_not_any_na(x$tide_height_m, x_name = nm)
+  .chk_finite(x$tide_height_m, nm)
 }
 
 # The data check shared by both cover species.
@@ -518,6 +570,7 @@
     nm <- column_xname(x_name, col)
     chk::chk_numeric(x[[col]], x_name = nm)
     chk::chk_not_any_na(x[[col]], x_name = nm)
+    .chk_finite(x[[col]], nm)
     if (zero) {
       chk::chk_gte(x[[col]], value = 0, x_name = nm)
     } else {
@@ -683,10 +736,12 @@
   nm <- column_xname(x_name, "canopy_area_m2")
   chk::chk_numeric(x$canopy_area_m2, x_name = nm)
   chk::chk_not_any_na(x$canopy_area_m2, x_name = nm)
+  .chk_finite(x$canopy_area_m2, nm)
   chk::chk_gte(x$canopy_area_m2, value = 0, x_name = nm)
   nm <- column_xname(x_name, "tide_height_m")
   chk::chk_numeric(x$tide_height_m, x_name = nm)
   chk::chk_not_any_na(x$tide_height_m, x_name = nm)
+  .chk_finite(x$tide_height_m, nm)
   .chk_group_columns(x, x_name)
   # Every other column passed, so site_area_m2 is present and either invalid or
   # smaller than the canopy.

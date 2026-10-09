@@ -33,7 +33,20 @@
 }
 
 .vld_positive_measure <- function(x) {
-  is.numeric(x) && !anyNA(x) && all(x > 0)
+  is.numeric(x) && !anyNA(x) && .vld_finite(x) && all(x > 0)
+}
+
+.vld_finite <- function(x) {
+  !any(is.infinite(x))
+}
+
+.vld_rows <- function(x) {
+  nrow(x) > 0L
+}
+
+# Any site or year column of new_data. A numeric year names a level.
+.vld_new_data_groups <- function(x) {
+  !anyNA(x[intersect(.group_vars(), names(x))])
 }
 
 .vld_frond_count <- function(x) {
@@ -45,7 +58,7 @@
 }
 
 .vld_density <- function(x) {
-  all(is.na(x)) || (is.numeric(x) && all(x >= 0, na.rm = TRUE))
+  all(is.na(x)) || (is.numeric(x) && .vld_finite(x) && all(x >= 0, na.rm = TRUE))
 }
 
 .vld_density_site_year <- function(data) {
@@ -111,11 +124,13 @@
     all(c("canopy_area_m2", "plot_area_m2", "tide_height_m") %in% names(x)) &&
     is.numeric(x$canopy_area_m2) &&
     !anyNA(x$canopy_area_m2) &&
+    .vld_finite(x$canopy_area_m2) &&
     all(x$canopy_area_m2 >= 0) &&
     .vld_positive_measure(x$plot_area_m2) &&
     all(x$canopy_area_m2 <= x$plot_area_m2) &&
     is.numeric(x$tide_height_m) &&
-    !anyNA(x$tide_height_m)
+    !anyNA(x$tide_height_m) &&
+    .vld_finite(x$tide_height_m)
 }
 
 # lower strictly below upper, so the implied log-scale SD is positive.
@@ -159,9 +174,11 @@
     all(c("canopy_area_m2", "tide_height_m", "site", "year") %in% names(x)) &&
     is.numeric(x$canopy_area_m2) &&
     !anyNA(x$canopy_area_m2) &&
+    .vld_finite(x$canopy_area_m2) &&
     all(x$canopy_area_m2 >= 0) &&
     is.numeric(x$tide_height_m) &&
     !anyNA(x$tide_height_m) &&
+    .vld_finite(x$tide_height_m) &&
     .vld_group_column(x$site) &&
     .vld_group_column(x$year) &&
     (!"site_area_m2" %in% names(x) ||

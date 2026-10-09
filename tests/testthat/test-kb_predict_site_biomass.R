@@ -125,4 +125,6 @@ test_that("missing, invalid, and mismatched inputs error", {
     kb_predict_site_biomass(fit, surveys()[c("site", "year", "canopy_area_m2")]),
     "tide_height_m"
   )
+  expect_error(kb_predict_site_biomass(fit, surveys()[0, ]), "at least one row")
+  expect_error(kb_predict_site_biomass(fit, transform(surveys(), tide_height_m = Inf)), "finite")
 })

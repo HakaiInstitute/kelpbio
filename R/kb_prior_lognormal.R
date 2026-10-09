@@ -23,6 +23,8 @@ kb_prior_lognormal <- function(meanlog = 0, sdlog = 1) {
   chk::chk_number(meanlog)
   chk::chk_number(sdlog)
   chk::chk_gt(sdlog, value = 0)
+  .chk_finite(meanlog, "`meanlog`")
+  .chk_finite(sdlog, "`sdlog`")
   structure(
     list(meanlog = meanlog, sdlog = sdlog),
     class = c("kb_prior_lognormal", "kb_prior")

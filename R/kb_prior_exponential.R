@@ -15,6 +15,7 @@
 kb_prior_exponential <- function(rate = 1) {
   chk::chk_number(rate)
   chk::chk_gt(rate, value = 0)
+  .chk_finite(rate, "`rate`")
   structure(
     list(rate = rate),
     class = c("kb_prior_exponential", "kb_prior")

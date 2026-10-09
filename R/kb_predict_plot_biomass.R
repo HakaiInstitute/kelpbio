@@ -128,6 +128,7 @@ kb_predict_plot_biomass <- function(
   .chk_representative_site(size, representative_site)
   chk::chk_whole_number(n_plants)
   chk::chk_gte(n_plants, value = 1)
+  .chk_finite(n_plants, "`n_plants`")
   .chk_summary_args(conf_level, estimate, sig_fig)
 
   grid <- plot_biomass_grid(weight, size, density)

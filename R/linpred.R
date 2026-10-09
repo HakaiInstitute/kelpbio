@@ -178,7 +178,14 @@ data_linpred <- function(
     )
     grid <- tibble::as_tibble(fit$data)
   } else {
-    .with_call(.chk_new_data(fit, new_data), call)
+    .with_call(
+      {
+        .chk_new_data(fit, new_data)
+        .chk_rows(new_data, "`new_data`")
+        .chk_new_data_groups(new_data)
+      },
+      call
+    )
     grid <- tibble::as_tibble(new_data)
     # Excludes cover, which is derived rather than a data column.
     predictor <- intersect(fit$meta[["predictor"]], names(fit$data))

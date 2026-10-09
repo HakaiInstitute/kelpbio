@@ -22,7 +22,7 @@ priors) is the one `kb_model_describe()` reports, pinned by
 
 ### Requirement: Input data
 
-The required columns SHALL be, with `site` and `year` (where required) character or factor and no missing values in any required column. A column measured in a unit SHALL name the unit as a suffix (`_mm`, `_kg`, `_m2`); counts and grouping columns carry no suffix.
+The required columns SHALL be, with `site` and `year` (where required) character or factor and no missing or infinite values in any required column. A column measured in a unit SHALL name the unit as a suffix (`_mm`, `_kg`, `_m2`); counts and grouping columns carry no suffix.
 
 - *Nereocystis* weight: `diameter_mm` (sub-bulb diameter, mm, > 0), `weight_kg` (kg, > 0), `site`, and `year`.
 - *Macrocystis* weight: `fronds` (a positive whole number), `weight_kg` (kg, > 0), `site`, and `year`.

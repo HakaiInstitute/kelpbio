@@ -77,6 +77,32 @@ test_that(".chk_sampler_args validates progress, progress_dir, and the numeric a
     ),
     "progress"
   )
+  expect_error(
+    .chk_sampler_args(
+      prior_only = FALSE,
+      chains = Inf,
+      niters = 1000L,
+      nthin = 1L,
+      cores = NULL,
+      seed = NULL,
+      progress = "bar",
+      progress_dir = NULL
+    ),
+    "finite"
+  )
+  expect_error(
+    .chk_sampler_args(
+      prior_only = FALSE,
+      chains = 4L,
+      niters = 1000L,
+      nthin = 1L,
+      cores = NULL,
+      seed = 3e9,
+      progress = "bar",
+      progress_dir = NULL
+    ),
+    "seed"
+  )
   expect_error(.chk_sampler_args(
     prior_only = FALSE,
     chains = 0L,
@@ -302,4 +328,22 @@ test_that(".chk_log_axis gives a message per failing axis", {
   expect_error(.chk_log_axis("xy", p, "site"), "numeric x-axis")
   p$upper[1] <- -1
   expect_error(.chk_log_axis("y", p, "cover"), "log y-axis")
+})
+
+test_that(".chk_finite, .chk_rows, and .chk_new_data_groups name the problem", {
+  expect_invisible(.chk_finite(c(1, NA)))
+  expect_invisible(.chk_rows(data.frame(x = 1)))
+  expect_invisible(.chk_new_data_groups(data.frame(site = "a", year = 2020)))
+  expect_snapshot(error = TRUE, .chk_finite(c(1, Inf), "`x`"))
+  expect_snapshot(error = TRUE, .chk_rows(data.frame(x = numeric(0)), "`new_data`"))
+  expect_snapshot(error = TRUE, .chk_new_data_groups(data.frame(site = c("a", NA))))
+})
+
+test_that("measure checks reject infinite values", {
+  expect_error(.chk_positive_measure(c(1, Inf), "`x`"), "finite")
+  expect_error(.chk_density(c(1, Inf), "`x`"), "finite")
+  expect_error(
+    .chk_measure_columns(data.frame(weight_kg = Inf), "weight_kg", "`data`"),
+    "finite"
+  )
 })

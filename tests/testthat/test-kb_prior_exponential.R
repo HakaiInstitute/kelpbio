@@ -8,4 +8,5 @@ test_that("kb_prior_exponential constructs a family-tagged object", {
 test_that("kb_prior_exponential validates the rate", {
   expect_error(kb_prior_exponential(rate = 0), class = "chk_error")
   expect_error(kb_prior_exponential(rate = -1), class = "chk_error")
+  expect_error(kb_prior_exponential(rate = Inf), "finite")
 })

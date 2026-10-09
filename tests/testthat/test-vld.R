@@ -55,6 +55,7 @@ test_that(".vld_density accepts non-negative numbers and all-NA", {
   expect_true(.vld_density(NA))
   expect_false(.vld_density(c(1, -1)))
   expect_false(.vld_density("1"))
+  expect_false(.vld_density(c(1, Inf, NA)))
 })
 
 test_that(".vld_density_site_year allows one recorded value per site-year", {
@@ -69,6 +70,7 @@ test_that(".vld_positive_measure and .vld_frond_count check measured values", {
   expect_false(.vld_positive_measure(c(1, 0)))
   expect_false(.vld_positive_measure(c(1, NA)))
   expect_false(.vld_positive_measure("30"))
+  expect_false(.vld_positive_measure(c(1, Inf)))
   expect_true(.vld_frond_count(c(1, 5)))
   expect_false(.vld_frond_count(2.5))
 })
@@ -132,6 +134,7 @@ test_that(".vld_cover_survey accepts zero canopy within the plot", {
   expect_false(.vld_cover_survey(transform(good, canopy_area_m2 = 300)))
   expect_false(.vld_cover_survey(transform(good, plot_area_m2 = 0)))
   expect_false(.vld_cover_survey(transform(good, tide_height_m = NA)))
+  expect_false(.vld_cover_survey(transform(good, tide_height_m = -Inf)))
   expect_false(.vld_cover_survey(good[c("canopy_area_m2", "plot_area_m2")]))
 })
 
@@ -177,6 +180,7 @@ test_that(".vld_site_surveys needs canopy, tide, site, and year, and a large eno
   expect_false(.vld_site_surveys(transform(good, site_area_m2 = 50)))
   expect_false(.vld_site_surveys(transform(good, canopy_area_m2 = -1)))
   expect_false(.vld_site_surveys(transform(good, site = NA)))
+  expect_false(.vld_site_surveys(transform(good, tide_height_m = Inf)))
   expect_false(.vld_site_surveys(good[c("site", "year", "canopy_area_m2")]))
   expect_false(.vld_site_surveys(list(good)))
 })
@@ -240,4 +244,21 @@ test_that(".vld_fit_rows needs rows unless prior_only", {
   expect_true(.vld_fit_rows(data.frame(x = 1), prior_only = FALSE))
   expect_true(.vld_fit_rows(data.frame(x = 1)[0, , drop = FALSE], prior_only = TRUE))
   expect_false(.vld_fit_rows(data.frame(x = 1)[0, , drop = FALSE], prior_only = FALSE))
+})
+
+test_that(".vld_finite rejects infinite values but not NA", {
+  expect_true(.vld_finite(c(1, NA)))
+  expect_false(.vld_finite(c(1, -Inf)))
+})
+
+test_that(".vld_rows needs at least one row", {
+  expect_true(.vld_rows(data.frame(x = 1)))
+  expect_false(.vld_rows(data.frame(x = numeric(0))))
+})
+
+test_that(".vld_new_data_groups rejects NA in any site or year column", {
+  expect_true(.vld_new_data_groups(data.frame(diameter_mm = 30)))
+  expect_true(.vld_new_data_groups(data.frame(site = "a", year = 2020)))
+  expect_false(.vld_new_data_groups(data.frame(site = NA, year = "2020")))
+  expect_false(.vld_new_data_groups(data.frame(year = NA_real_)))
 })
