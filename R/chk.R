@@ -38,15 +38,18 @@
   )
 }
 
-.chk_new_data_weight_nereo <- function(x, x_name = deparse(substitute(x))) {
+.chk_new_data_weight_nereo <- function(
+  x,
+  x_name = chk::deparse_backtick_chk(substitute(x))
+) {
   if (.vld_new_data_weight_nereo(x)) {
     return(invisible(x))
   }
   if (!is.data.frame(x)) {
-    cli::cli_abort("{.arg {x_name}} must be a data frame.")
+    cli::cli_abort("{x_name} must be a data frame.")
   }
   if (!"diameter_mm" %in% names(x)) {
-    cli::cli_abort("{.arg {x_name}} must have a {.field diameter_mm} column.")
+    cli::cli_abort("{x_name} must have a {.field diameter_mm} column.")
   }
   .chk_positive_measure(x$diameter_mm, x_name = column_xname(x_name, "diameter_mm"))
   .chk_density(x$stipes_m2, x_name = column_xname(x_name, "stipes_m2"))
@@ -154,32 +157,41 @@
   ))
 }
 
-.chk_new_data_weight_macro <- function(x, x_name = deparse(substitute(x))) {
+.chk_new_data_weight_macro <- function(
+  x,
+  x_name = chk::deparse_backtick_chk(substitute(x))
+) {
   if (.vld_new_data_weight_macro(x)) {
     return(invisible(x))
   }
   if (!is.data.frame(x)) {
-    cli::cli_abort("{.arg {x_name}} must be a data frame.")
+    cli::cli_abort("{x_name} must be a data frame.")
   }
   if (!"fronds" %in% names(x)) {
-    cli::cli_abort("{.arg {x_name}} must have a {.field fronds} column.")
+    cli::cli_abort("{x_name} must have a {.field fronds} column.")
   }
   .chk_frond_count(x$fronds, x_name = column_xname(x_name, "fronds"))
 }
 
-.chk_new_data_size <- function(x, x_name = deparse(substitute(x))) {
+.chk_new_data_size <- function(
+  x,
+  x_name = chk::deparse_backtick_chk(substitute(x))
+) {
   if (.vld_new_data_size(x)) {
     return(invisible(x))
   }
-  cli::cli_abort("{.arg {x_name}} must be a data frame.")
+  cli::cli_abort("{x_name} must be a data frame.")
 }
 
-.chk_new_data_density <- function(x, x_name = deparse(substitute(x))) {
+.chk_new_data_density <- function(
+  x,
+  x_name = chk::deparse_backtick_chk(substitute(x))
+) {
   if (.vld_new_data_density(x)) {
     return(invisible(x))
   }
   if (!is.data.frame(x)) {
-    cli::cli_abort("{.arg {x_name}} must be a data frame.")
+    cli::cli_abort("{x_name} must be a data frame.")
   }
   .chk_positive_measure(x$area_m2, x_name = column_xname(x_name, "area_m2"))
 }
@@ -385,6 +397,10 @@
     chk::chk_not_any_na(dots[[predictor]], x_name = x_name)
     if (!is.null(fit$meta$predictor_range)) {
       chk::chk_range(dots[[predictor]], fit$meta$predictor_range, x_name = x_name)
+    } else if (identical(predictor, "fronds")) {
+      .chk_frond_count(dots[[predictor]], x_name)
+    } else {
+      .chk_positive_measure(dots[[predictor]], x_name)
     }
   }
   for (group in intersect(.group_vars(), nms)) {

@@ -64,3 +64,10 @@ test_that("density draws scale with area_m2, which defaults to one m2", {
     )
   }
 })
+
+test_that("errors name posterior_epred()", {
+  err <- expect_error(posterior_epred(weight_nereo_fit, data.frame(diameter_mm = -1)))
+  expect_identical(err$call[[1]], quote(posterior_epred))
+  err <- expect_error(posterior_epred(weight_nereo_fit, NULL, 1))
+  expect_identical(err$call[[1]], quote(posterior_epred))
+})
