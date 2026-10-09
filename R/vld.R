@@ -130,7 +130,14 @@
     !anyNA(x$site) &&
     !anyNA(x$year) &&
     .vld_biomass_estimate(x) &&
+    .vld_biomass_response(x) &&
     !anyDuplicated(site_year_key(x$site, x$year))
+}
+
+# A kb_predictions object records its response; the cover fit takes wet biomass.
+.vld_biomass_response <- function(x) {
+  response <- attr(x, "kb_response", exact = TRUE)
+  is.null(response) || identical(response, "biomass_kg_m2")
 }
 
 .vld_biomass_estimate <- function(x) {

@@ -160,6 +160,16 @@ test_that(".vld_plot_biomass needs one valid row per site-year", {
   expect_false(.vld_plot_biomass(transform(good, lower = 3)))
 })
 
+test_that(".vld_biomass_response accepts wet biomass or an unlabelled frame", {
+  good <- data.frame(site = "a", year = "2020", estimate = 2, lower = 1, upper = 4)
+  wet <- new_kb_predictions(good, NULL, c("site", "year"), "biomass_kg_m2")
+  dry <- new_kb_predictions(good, NULL, c("site", "year"), "dry_biomass_kg_m2")
+  expect_true(.vld_biomass_response(good))
+  expect_true(.vld_biomass_response(wet))
+  expect_false(.vld_biomass_response(dry))
+  expect_false(.vld_plot_biomass(dry))
+})
+
 test_that(".vld_site_surveys needs canopy, tide, site, and year, and a large enough site", {
   good <- data.frame(site = "a", year = "2020", canopy_area_m2 = 100, tide_height_m = 0.5)
   expect_true(.vld_site_surveys(good))

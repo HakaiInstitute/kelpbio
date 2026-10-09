@@ -217,6 +217,15 @@
       ! good["estimate"] must have lower and upper columns.
       i They are the compatibility limits of the in situ biomass estimate, which set its precision.
 
+# .chk_biomass_response names the recorded response
+
+    Code
+      .chk_biomass_response(carbon)
+    Condition
+      Error:
+      ! carbon must be wet biomass (biomass_kg_m2), not carbon_biomass_g_m2.
+      i Predict it with `kb_predict_plot_biomass(measure = "wet")`.
+
 # .chk_site_surveys errors name the survey column
 
     Code

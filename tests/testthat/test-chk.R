@@ -230,6 +230,13 @@ test_that(".chk_biomass_limits and .chk_biomass_estimate name the offending limi
   expect_error(.chk_biomass_estimate(transform(good, estimate = 5)), "upper")
 })
 
+test_that(".chk_biomass_response names the recorded response", {
+  good <- data.frame(site = "a", year = "2020", estimate = 2, lower = 1, upper = 4)
+  expect_invisible(.chk_biomass_response(good))
+  carbon <- new_kb_predictions(good, NULL, c("site", "year"), "carbon_biomass_g_m2")
+  expect_snapshot(error = TRUE, .chk_biomass_response(carbon))
+})
+
 test_that(".chk_site_surveys errors name the survey column", {
   good <- data.frame(site = "a", year = "2020", canopy_area_m2 = 100, tide_height_m = 0.5)
   expect_invisible(.chk_site_surveys(good))

@@ -580,6 +580,7 @@
   )
   .chk_group_columns(x, x_name)
   .chk_biomass_estimate(x, x_name)
+  .chk_biomass_response(x, x_name, call = call)
   dup <- unique(site_year_key(x$site, x$year)[
     duplicated(site_year_key(x$site, x$year))
   ])
@@ -587,6 +588,23 @@
     c(
       "{x_name} must have one row per site-year.",
       i = "Repeated: {.val {dup}}."
+    ),
+    call = call
+  )
+}
+
+.chk_biomass_response <- function(
+  x,
+  x_name = deparse(substitute(x)),
+  call = rlang::caller_env()
+) {
+  if (.vld_biomass_response(x)) {
+    return(invisible(x))
+  }
+  cli::cli_abort(
+    c(
+      "{x_name} must be wet biomass ({.field biomass_kg_m2}), not {.field {attr(x, 'kb_response')}}.",
+      i = "Predict it with {.code kb_predict_plot_biomass(measure = \"wet\")}."
     ),
     call = call
   )
