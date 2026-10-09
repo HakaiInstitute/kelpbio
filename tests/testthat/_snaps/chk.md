@@ -56,6 +56,15 @@
       ! Invalid `representative_site` value: "not_a_site".
       i Available sites: "otter_cove", "gull_rock", "cedar_bay", and "heron_reef".
 
+# .chk_fit_rows points zero-row data to prior_only
+
+    Code
+      .chk_fit_rows(data[0, , drop = FALSE], prior_only = FALSE)
+    Condition
+      Error:
+      ! `data` must have at least one row.
+      i Set `prior_only = TRUE` to sample from the priors alone.
+
 # .chk_new_data_weight_nereo errors on a negative density
 
     Code

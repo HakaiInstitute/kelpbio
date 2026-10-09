@@ -49,3 +49,13 @@ test_that("zero-row data is accepted under prior_only", {
   )
   expect_s3_class(fit, "kb_fit_wetdry_macro")
 })
+
+test_that("zero-row data error unless prior_only", {
+  expect_error(
+    kb_fit_wetdry_macro(
+      data_wetdry_sim_macro[0, ],
+      progress = "none"
+    ),
+    "prior_only = TRUE"
+  )
+})

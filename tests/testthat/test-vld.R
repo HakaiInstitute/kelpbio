@@ -235,3 +235,9 @@ test_that(".vld_log_axis needs positive values on each log axis", {
   expect_true(.vld_log_axis("none", p, "cover"))
   expect_false(.vld_log_axis("y", p, "cover"))
 })
+
+test_that(".vld_fit_rows needs rows unless prior_only", {
+  expect_true(.vld_fit_rows(data.frame(x = 1), prior_only = FALSE))
+  expect_true(.vld_fit_rows(data.frame(x = 1)[0, , drop = FALSE], prior_only = TRUE))
+  expect_false(.vld_fit_rows(data.frame(x = 1)[0, , drop = FALSE], prior_only = FALSE))
+})

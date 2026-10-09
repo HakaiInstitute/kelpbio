@@ -76,3 +76,13 @@ test_that("zero-row data is accepted under prior_only", {
   )
   expect_s3_class(fit, "kb_fit_density_nereo")
 })
+
+test_that("zero-row data error unless prior_only", {
+  expect_error(
+    kb_fit_density_nereo(
+      data_density_sim_nereo[0, ],
+      progress = "none"
+    ),
+    "prior_only = TRUE"
+  )
+})

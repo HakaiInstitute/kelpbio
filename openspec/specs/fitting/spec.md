@@ -195,7 +195,7 @@ The fit functions SHALL take `chains` (default 4), `niters` (saved post-warmup d
 
 ### Requirement: The fit object
 
-A fit SHALL store posterior draws, sampler diagnostics, the input data, and the fit's settings, and SHALL NOT keep the `stanfit` or any per-observation quantity, so its size depends on the number of draws, not observations. Every summary, diagnostic, and prediction SHALL work from a stored fit. A fit with `prior_only = TRUE` SHALL sample from the priors alone and accept zero-row data. A diagnostic rate with no draws behind it SHALL be `NA`, not zero.
+A fit SHALL store posterior draws, sampler diagnostics, the input data, and the fit's settings, and SHALL NOT keep the `stanfit` or any per-observation quantity, so its size depends on the number of draws, not observations. Every summary, diagnostic, and prediction SHALL work from a stored fit. A fit with `prior_only = TRUE` SHALL sample from the priors alone and accept zero-row data; with `prior_only = FALSE`, zero-row data SHALL error before sampling. A diagnostic rate with no draws behind it SHALL be `NA`, not zero.
 
 The draws SHALL be a `posterior` `draws_rvars` object that works with `posterior` and the tools built on it as soon as kelpbio is attached, including for a bundled pre-fit or a fit read back in a new session. Per-level group effects SHALL be labelled by their levels: site effects by site, year effects by year, and site:year effects by site and year, so they can be indexed by name as well as by position.
 
@@ -206,6 +206,10 @@ The draws SHALL be a `posterior` `draws_rvars` object that works with `posterior
 #### Scenario: Prior-only fits ignore the data
 - **WHEN** `prior_only = TRUE`, including with zero-row data
 - **THEN** the draws reflect the priors only
+
+#### Scenario: Zero-row data need prior_only
+- **WHEN** a fit function is called with zero-row data and `prior_only = FALSE`
+- **THEN** it errors before sampling, pointing to `prior_only = TRUE`
 
 #### Scenario: Draws work on load
 - **WHEN** kelpbio is attached in a new session and a bundled pre-fit's draws are printed before any other kelpbio function is called

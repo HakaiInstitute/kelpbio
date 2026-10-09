@@ -349,6 +349,19 @@
 # Without this, predicting at the data of a zero-observation fit fails with a
 # posterior broadcast error inside .linpred(). `hint` is for callers that could
 # have been given new data instead.
+.chk_fit_rows <- function(data, prior_only, call = rlang::caller_env()) {
+  if (.vld_fit_rows(data, prior_only)) {
+    return(invisible(data))
+  }
+  cli::cli_abort(
+    c(
+      "{.arg data} must have at least one row.",
+      i = "Set {.code prior_only = TRUE} to sample from the priors alone."
+    ),
+    call = call
+  )
+}
+
 .chk_observed_data <- function(fit, hint = NULL, call = rlang::caller_env()) {
   if (.vld_observed_data(fit)) {
     return(invisible(fit))

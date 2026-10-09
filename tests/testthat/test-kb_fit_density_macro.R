@@ -75,3 +75,13 @@ test_that("zero-row data is accepted under prior_only", {
   )
   expect_s3_class(fit, "kb_fit_density_macro")
 })
+
+test_that("zero-row data error unless prior_only", {
+  expect_error(
+    kb_fit_density_macro(
+      data_density_sim_macro[0, ],
+      progress = "none"
+    ),
+    "prior_only = TRUE"
+  )
+})

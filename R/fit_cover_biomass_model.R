@@ -38,6 +38,7 @@ fit_cover_biomass_model <- function(
 
   # The species' own check, so its errors name the function users know.
   check_data(data, biomass, x_name = "`data`")
+  .chk_fit_rows(data, prior_only, call = call)
   # The data check accepts a NULL biomass, which a fit cannot.
   .chk_plot_biomass(biomass, call = call)
   conf_level <- .with_call(cover_conf_level(biomass, conf_level), call)

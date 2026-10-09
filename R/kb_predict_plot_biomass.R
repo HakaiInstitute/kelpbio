@@ -108,6 +108,11 @@ kb_predict_plot_biomass <- function(
     density,
     hint = "{.arg density} must be fitted to observed site-years."
   )
+  # The size distribution is truncated at the largest observed size.
+  .chk_observed_data(
+    size,
+    hint = "{.arg size} must be fitted to observed plant sizes."
+  )
   .chk_measure_fits(measure, wetdry, carbon)
   fits <- list(
     weight = weight,

@@ -40,6 +40,7 @@ fit_beta_model <- function(
 
   # The species' own check, so its errors name the function users know.
   check_data(data, x_name = "`data`")
+  .chk_fit_rows(data, prior_only, call = call)
   priors <- resolve_priors(priors, defaults)
   stan_data <- assemble(data, priors, prior_only = prior_only)
 

@@ -88,6 +88,11 @@
     (is.character(x) && length(x) == 1L && !is.na(x) && dir.exists(x))
 }
 
+# Zero-row data sample the priors alone, which only prior_only asks for.
+.vld_fit_rows <- function(data, prior_only) {
+  prior_only || nrow(data) > 0L
+}
+
 .vld_observed_data <- function(fit) {
   nrow(fit$data) > 0L
 }

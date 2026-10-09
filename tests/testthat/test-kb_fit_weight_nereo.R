@@ -110,6 +110,16 @@ test_that("zero-row data is accepted under prior_only", {
   expect_s3_class(fit, "kb_fit_weight")
 })
 
+test_that("zero-row data error unless prior_only", {
+  expect_error(
+    kb_fit_weight_nereo(
+      data_weight_sim_nereo[0, ],
+      progress = "none"
+    ),
+    "prior_only = TRUE"
+  )
+})
+
 test_that("progress accepts only the three modes", {
   d <- droplevels(subset(
     data_weight_sim_nereo,

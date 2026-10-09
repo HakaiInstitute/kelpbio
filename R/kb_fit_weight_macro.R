@@ -62,6 +62,7 @@ kb_fit_weight_macro <- function(
   )
 
   kb_check_data_weight_macro(data)
+  .chk_fit_rows(data, prior_only)
   site_year <- site_year_structure(data)
   notify_site_year(site_year, progress = progress)
 

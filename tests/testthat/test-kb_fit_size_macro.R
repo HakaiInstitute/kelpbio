@@ -66,3 +66,13 @@ test_that("zero-row data is accepted under prior_only", {
   )
   expect_s3_class(fit, "kb_fit_size_macro")
 })
+
+test_that("zero-row data error unless prior_only", {
+  expect_error(
+    kb_fit_size_macro(
+      data_size_sim_macro[0, ],
+      progress = "none"
+    ),
+    "prior_only = TRUE"
+  )
+})

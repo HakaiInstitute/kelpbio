@@ -121,3 +121,14 @@ test_that("zero-row data is accepted under prior_only", {
   )
   expect_s3_class(fit, "kb_fit_cover_biomass_nereo")
 })
+
+test_that("zero-row data error unless prior_only", {
+  expect_error(
+    kb_fit_cover_biomass_nereo(
+      data_cover_biomass_sim_nereo[0, ],
+      data_plot_biomass_sim_nereo,
+      progress = "none"
+    ),
+    "prior_only = TRUE"
+  )
+})

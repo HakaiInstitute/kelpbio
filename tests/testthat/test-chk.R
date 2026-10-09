@@ -107,6 +107,13 @@ test_that(".chk_observed_data rejects a fit with no rows to predict at", {
   expect_invisible(.chk_observed_data(weight_nereo_fit))
 })
 
+test_that(".chk_fit_rows points zero-row data to prior_only", {
+  data <- data.frame(x = 1)
+  expect_invisible(.chk_fit_rows(data, prior_only = FALSE))
+  expect_invisible(.chk_fit_rows(data[0, , drop = FALSE], prior_only = TRUE))
+  expect_snapshot(error = TRUE, .chk_fit_rows(data[0, , drop = FALSE], prior_only = FALSE))
+})
+
 test_that(".chk_new_data_weight_nereo errors on a negative density", {
   d <- data.frame(diameter_mm = 30, stipes_m2 = -2)
   expect_snapshot(error = TRUE, .chk_new_data_weight_nereo(d))

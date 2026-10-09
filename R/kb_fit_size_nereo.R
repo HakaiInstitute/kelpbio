@@ -61,6 +61,7 @@ kb_fit_size_nereo <- function(
   )
 
   kb_check_data_size_nereo(data)
+  .chk_fit_rows(data, prior_only)
   site_year <- site_year_structure(data)
   notify_site_year(site_year, progress = progress)
 

@@ -175,11 +175,17 @@ test_that("progress arguments are validated", {
   )
 })
 
-test_that("a density fit with no observations errors naming density", {
+test_that("a density or size fit with no observations errors naming it", {
   density0 <- density_nereo_fit
   density0$data <- density0$data[0, ]
   expect_error(
     kb_predict_plot_biomass(weight_nereo_fit, size_nereo_fit, density0),
     "`density` must be fitted"
+  )
+  size0 <- size_nereo_fit
+  size0$data <- size0$data[0, ]
+  expect_error(
+    kb_predict_plot_biomass(weight_nereo_fit, size0, density_nereo_fit),
+    "`size` must be fitted"
   )
 })
