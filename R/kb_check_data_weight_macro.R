@@ -3,8 +3,9 @@
 #' Check that `data` contains the columns required to fit the *Macrocystis
 #' pyrifera* weight model, with appropriate types and values.
 #'
-#' Required columns: whole-number `fronds` (> 0), numeric `weight_kg` (kg, > 0), and
-#' factor or character `site` and `year`, with no missing values.
+#' Required columns: whole-number `fronds` (> 0), numeric `weight_kg` (kg, > 0),
+#' factor or character `site`, and factor, character, or whole-number `year`,
+#' with no missing values.
 #'
 #' @details
 #' `fronds` is the frond count used as the size predictor (in the Hakai surveys,
@@ -20,7 +21,7 @@
 #' @examples
 #' data <- data.frame(
 #'   fronds = c(3, 8), weight_kg = c(0.4, 1.7),
-#'   site = factor(c("a", "b")), year = factor(c("2020", "2021"))
+#'   site = factor(c("a", "b")), year = c(2020, 2021)
 #' )
 #' kb_check_data_weight_macro(data)
 kb_check_data_weight_macro <- function(

@@ -22,8 +22,8 @@ Check that \code{data} contains the columns required to fit the \emph{Macrocysti
 pyrifera} size model, with appropriate types and values.
 }
 \details{
-Required columns: whole-number \code{fronds} (> 0), and factor or character \code{site}
-and \code{year}, with no missing values.
+Required columns: whole-number \code{fronds} (> 0), factor or character \code{site}, and
+factor, character, or whole-number \code{year}, with no missing values.
 
 \code{fronds} is the number of fronds reaching 1 m above the holdfast. The model
 describes plants with at least one such frond, so a count of zero is an
@@ -34,7 +34,7 @@ out of the density counts too. Other columns are ignored.
 \examples{
 data <- data.frame(
   fronds = c(3, 12), site = factor(c("a", "b")),
-  year = factor(c("2020", "2021"))
+  year = c(2020, 2021)
 )
 kb_check_data_size_macro(data)
 }

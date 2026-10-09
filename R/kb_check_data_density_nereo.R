@@ -4,7 +4,8 @@
 #' luetkeana* density model, with appropriate types and values.
 #'
 #' Required columns: whole-number `stipes` (>= 0), numeric `area_m2` (m², > 0),
-#' and factor or character `site` and `year`, with no missing values.
+#' factor or character `site`, and factor, character, or whole-number `year`,
+#' with no missing values.
 #'
 #' @details
 #' Each row is one transect: `stipes` is the number of stipes counted on it and
@@ -22,7 +23,7 @@
 #' @examples
 #' data <- data.frame(
 #'   stipes = c(12, 0), area_m2 = c(40, 20), site = factor(c("a", "b")),
-#'   year = factor(c("2020", "2021"))
+#'   year = c(2020, 2021)
 #' )
 #' kb_check_data_density_nereo(data)
 kb_check_data_density_nereo <- function(

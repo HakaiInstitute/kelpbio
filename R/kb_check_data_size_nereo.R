@@ -3,8 +3,8 @@
 #' Check that `data` contains the columns required to fit the *Nereocystis
 #' luetkeana* size model, with appropriate types and values.
 #'
-#' Required columns: numeric `diameter_mm` (mm, > 0), and factor or character
-#' `site` and `year`, with no missing values.
+#' Required columns: numeric `diameter_mm` (mm, > 0), factor or character `site`,
+#' and factor, character, or whole-number `year`, with no missing values.
 #'
 #' @details
 #' `diameter_mm` is the maximum sub-bulb diameter of each plant, the same
@@ -21,7 +21,7 @@
 #' @examples
 #' data <- data.frame(
 #'   diameter_mm = c(22, 41), site = factor(c("a", "b")),
-#'   year = factor(c("2020", "2021"))
+#'   year = c(2020, 2021)
 #' )
 #' kb_check_data_size_nereo(data)
 kb_check_data_size_nereo <- function(

@@ -23,7 +23,8 @@ luetkeana} density model, with appropriate types and values.
 }
 \details{
 Required columns: whole-number \code{stipes} (>= 0), numeric \code{area_m2} (m², > 0),
-and factor or character \code{site} and \code{year}, with no missing values.
+factor or character \code{site}, and factor, character, or whole-number \code{year},
+with no missing values.
 
 Each row is one transect: \code{stipes} is the number of stipes counted on it and
 \code{area_m2} the area surveyed. Counts recorded in bins along a transect should be
@@ -33,7 +34,7 @@ zero is valid. Other columns are ignored.
 \examples{
 data <- data.frame(
   stipes = c(12, 0), area_m2 = c(40, 20), site = factor(c("a", "b")),
-  year = factor(c("2020", "2021"))
+  year = c(2020, 2021)
 )
 kb_check_data_density_nereo(data)
 }

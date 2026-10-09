@@ -100,3 +100,14 @@ test_that("data and prior errors name kb_fit_density_macro()", {
   ))
   expect_identical(err$call[[1]], quote(kb_fit_density_macro))
 })
+
+test_that("a numeric year is fitted as a factor with the same levels", {
+  local_fit_stan_stub(density_macro_fit)
+  d <- density_macro_fit$data
+  d$year <- as.numeric(as.character(d$year))
+  fit <- kb_fit_density_macro(d, progress = "none")
+  expect_s3_class(fit$data$year, "factor")
+  expect_identical(as.character(fit$data$year), as.character(density_macro_fit$data$year))
+  expect_identical(fit$meta$year_levels, density_macro_fit$meta$year_levels)
+  expect_identical(fit$meta$site_year_levels, density_macro_fit$meta$site_year_levels)
+})

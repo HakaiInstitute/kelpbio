@@ -33,7 +33,8 @@
 #'   `site`, `year`, `canopy_area_m2` (the canopy mapped within the site, m²),
 #'   and `tide_height_m` (tide height at the survey, m), and optionally
 #'   `site_area_m2` (the area within the site boundary, m²), which caps the
-#'   tide-corrected canopy. Other columns are kept, and can be named in `sum_by`.
+#'   tide-corrected canopy. A numeric `year` is converted to a factor. Other
+#'   columns are kept, and can be named in `sum_by`.
 #' @param wetdry A `kb_fit_wetdry` object, required for dry and carbon biomass,
 #'   or `NULL`.
 #' @param carbon A `kb_fit_carbon` object, required for carbon biomass, or
@@ -116,6 +117,7 @@ kb_predict_site_biomass <- function(
     rlang::current_env()
   )
   warn_implausible_units(new_data, "`new_data`")
+  new_data <- year_as_factor(new_data)
   .chk_sum_by(sum_by, new_data)
   .chk_measure_fits(measure, wetdry, carbon)
   fits <- list(fit = fit, wetdry = wetdry, carbon = carbon)

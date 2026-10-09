@@ -4,7 +4,8 @@
 #' luetkeana* weight model, with appropriate types and values.
 #'
 #' Required columns: numeric `diameter_mm` (mm, > 0), numeric `weight_kg` (kg, > 0),
-#' and factor or character `site` and `year`, with no missing values.
+#' factor or character `site`, and factor, character, or whole-number `year`,
+#' with no missing values.
 #'
 #' Optional column: numeric `stipes_m2`, the stipe density (stipes per m²) of the
 #' plant's site-year, `>= 0` with `NA` where not recorded. Rows from the same
@@ -20,7 +21,7 @@
 #' @examples
 #' data <- data.frame(
 #'   diameter_mm = c(20, 35), weight_kg = c(0.5, 2.1),
-#'   site = factor(c("a", "b")), year = factor(c("2020", "2021"))
+#'   site = factor(c("a", "b")), year = c(2020, 2021)
 #' )
 #' kb_check_data_weight_nereo(data)
 kb_check_data_weight_nereo <- function(

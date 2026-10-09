@@ -25,6 +25,16 @@ test_that("valid nereo cover biomass data passes invisibly, including zero canop
   expect_identical(kb_check_data_cover_biomass_nereo(data, cover_biomass()), data)
 })
 
+test_that("a whole-number year is accepted in the surveys and the biomass", {
+  data <- transform(cover_data(), year = c(2020, 2021))
+  biomass <- transform(cover_biomass(), year = c(2020, 2021))
+  expect_silent(kb_check_data_cover_biomass_nereo(data, biomass))
+  expect_error(
+    kb_check_data_cover_biomass_nereo(data, transform(biomass, year = 2020.5)),
+    "whole numbers"
+  )
+})
+
 test_that("extra columns of the surveys and of a prediction frame are ignored", {
   data <- cover_data()
   data$month <- c("July", "August")

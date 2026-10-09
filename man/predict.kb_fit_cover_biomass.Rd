@@ -21,7 +21,8 @@
 \item{new_data}{A data frame with \code{canopy_area_m2} (canopy area in the plot,
 m²), \code{plot_area_m2} (plot area, m²), and \code{tide_height_m} (tide height, m)
 columns and optional \code{site} and \code{year} columns, one row per prediction, or
-\code{NULL} to predict at the observed surveys.}
+\code{NULL} to predict at the observed surveys. A numeric \code{year} is converted to
+a factor.}
 
 \item{...}{Unused.}
 

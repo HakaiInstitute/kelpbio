@@ -31,6 +31,34 @@ test_that("kb_predict_site_biomass gives one total per survey", {
   expect_identical(attr(p, "kb_conf_level"), 0.95)
 })
 
+test_that("a numeric year names the fitted level and is returned as a factor", {
+  withr::local_seed(1)
+  numeric <- kb_predict_site_biomass(
+    cover_biomass_nereo_fit,
+    transform(surveys(), year = 2019),
+    new_levels = "average"
+  )
+  character <- kb_predict_site_biomass(
+    cover_biomass_nereo_fit,
+    surveys(),
+    new_levels = "average"
+  )
+  expect_identical(numeric$year, factor(rep("2019", 3)))
+  expect_identical(numeric$estimate, character$estimate)
+  expect_identical(numeric$cover_support, character$cover_support)
+  summed <- kb_predict_site_biomass(
+    cover_biomass_nereo_fit,
+    transform(surveys(), year = 2019),
+    sum_by = "year",
+    new_levels = "average"
+  )
+  expect_identical(summed$year, factor("2019"))
+  expect_error(
+    kb_predict_site_biomass(cover_biomass_nereo_fit, transform(surveys(), year = 2019.5)),
+    "whole numbers"
+  )
+})
+
 test_that("dry and carbon are per-draw conversions of wet", {
   args <- list(
     cover_biomass_nereo_fit,

@@ -26,7 +26,8 @@
 #' @param new_data A data frame with `canopy_area_m2` (canopy area in the plot,
 #'   m²), `plot_area_m2` (plot area, m²), and `tide_height_m` (tide height, m)
 #'   columns and optional `site` and `year` columns, one row per prediction, or
-#'   `NULL` to predict at the observed surveys.
+#'   `NULL` to predict at the observed surveys. A numeric `year` is converted to
+#'   a factor.
 #' @param ... Unused.
 #'
 #' @return A `kb_predictions` object: the rows of `new_data` with added

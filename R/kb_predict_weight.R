@@ -23,7 +23,8 @@
 #' @param new_data A data frame with the fit's predictor column (`diameter_mm` in
 #'   millimetres for *Nereocystis*, `fronds` for *Macrocystis*) and optional
 #'   `site` and `year` columns (and, for *Nereocystis*, an optional `stipes_m2`
-#'   column in stipes per m²), or `NULL` to predict at the observed data.
+#'   column in stipes per m²), or `NULL` to predict at the observed data. A
+#'   numeric `year` is converted to a factor.
 #' @param ... Unused.
 #'
 #' @return A `kb_predictions` object: the rows of `new_data` with added
