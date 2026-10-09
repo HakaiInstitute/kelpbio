@@ -721,9 +721,15 @@
 }
 
 # `x` is NULL when it could not be inferred from the prediction's metadata.
-.chk_plot_x <- function(x, predictions, call = rlang::caller_env()) {
+.chk_plot_x <- function(x, predictions, supplied, call = rlang::caller_env()) {
   if (.vld_plot_x(x, predictions)) {
     return(invisible(x))
+  }
+  if (supplied) {
+    cli::cli_abort(
+      "{.arg x} must name a column of {.arg predictions}, not {.val {x}}.",
+      call = call
+    )
   }
   cli::cli_abort(
     c(
@@ -738,8 +744,7 @@
   if (.vld_log_axis(log_axis, predictions, x)) {
     return(invisible(log_axis))
   }
-  shown <- c(predictions$estimate, predictions$lower, predictions$upper)
-  if (any(shown <= 0, na.rm = TRUE)) {
+  if (!.vld_log_y(predictions)) {
     cli::cli_abort(
       c(
         "A log y-axis needs positive {.field estimate}, {.field lower}, and {.field upper} values.",

@@ -11,7 +11,7 @@ and gave a warning.
 - `kb_plot_predictions()` gains a name-only `log_axis` argument, one of
   `"none"` (default), `"y"`, or `"xy"`. With `"y"` the y-axis is log-scaled and
   no longer extends to zero; `"xy"` also log-scales a numeric x-axis.
-- Log-scaled tick labels are plain numbers (`0.1`, `1`, `10`).
+- Log-scaled tick labels are plain numbers (`0.1`, `1`, `10`), and a log axis adds "log scale" to its title.
 - A log axis errors when the values it would show are not all positive, and
   `"xy"` errors when the x-axis is not numeric.
 

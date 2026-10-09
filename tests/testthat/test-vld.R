@@ -202,6 +202,14 @@ test_that(".vld_plot_x needs a column of the predictions", {
   expect_false(.vld_plot_x("site", p))
 })
 
+test_that(".vld_log_y and .vld_log_x need positive values", {
+  p <- data.frame(cover = c(0, 1), estimate = 1, lower = 0.5, upper = 2)
+  expect_true(.vld_log_y(p))
+  expect_false(.vld_log_x(p, "cover"))
+  p$lower[1] <- 0
+  expect_false(.vld_log_y(p))
+})
+
 test_that(".vld_log_axis needs positive values on each log axis", {
   p <- data.frame(
     cover = c(0, 1),

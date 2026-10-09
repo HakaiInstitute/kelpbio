@@ -185,7 +185,8 @@ test_that("log_axis = 'y' log-scales the y-axis without a zero floor", {
   expect_null(gg$scales$get_scales("x"))
   expect_gt(min(ggplot2::layer_scales(gg)$y$range$range), -Inf)
   expect_no_warning(ggplot2::ggplot_build(gg))
-  expect_identical(gg$labels$y, "Stipe density (stipes/m²)")
+  expect_identical(gg$labels$y, "Stipe density (stipes/m\u00b2, log scale)")
+  expect_identical(gg$labels$x, "Site")
 })
 
 test_that("log_axis = 'xy' log-scales both axes of a curve", {
@@ -193,7 +194,19 @@ test_that("log_axis = 'xy' log-scales both axes of a curve", {
   gg <- kb_plot_predictions(p, log_axis = "xy")
   expect_identical(gg$scales$get_scales("x")$trans$name, "log-10")
   expect_identical(gg$scales$get_scales("y")$trans$name, "log-10")
-  expect_identical(gg$labels$x, "Sub-bulb diameter (mm)")
+  expect_identical(gg$labels$x, "Sub-bulb diameter (mm, log scale)")
+  expect_identical(gg$labels$y, "Wet weight (kg, log scale)")
+})
+
+test_that("a log axis without a unit is titled as log scale", {
+  expect_identical(axis_label("fronds", log = TRUE), "Fronds (log scale)")
+  expect_identical(axis_label("fronds"), "Fronds")
+})
+
+test_that("a supplied x that is not one column errors helpfully", {
+  p <- kb_predict_weight(weight_nereo_fit, kb_new_data(weight_nereo_fit))
+  expect_error(kb_plot_predictions(p, x = c("diameter_mm", "site")), "string")
+  expect_error(kb_plot_predictions(p, x = "nope"), "must name a column")
 })
 
 test_that("the log-log weight curve is visually stable", {

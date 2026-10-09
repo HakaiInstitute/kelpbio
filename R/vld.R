@@ -177,13 +177,18 @@
   !is.null(x) && x %in% names(predictions)
 }
 
+.vld_log_y <- function(predictions) {
+  !any(
+    c(predictions$estimate, predictions$lower, predictions$upper) <= 0,
+    na.rm = TRUE
+  )
+}
+
+.vld_log_x <- function(predictions, x) {
+  is.numeric(predictions[[x]]) && !any(predictions[[x]] <= 0, na.rm = TRUE)
+}
+
 .vld_log_axis <- function(log_axis, predictions, x) {
-  y_ok <- log_axis == "none" ||
-    !any(
-      c(predictions$estimate, predictions$lower, predictions$upper) <= 0,
-      na.rm = TRUE
-    )
-  x_ok <- log_axis != "xy" ||
-    (is.numeric(predictions[[x]]) && !any(predictions[[x]] <= 0, na.rm = TRUE))
-  y_ok && x_ok
+  (log_axis == "none" || .vld_log_y(predictions)) &&
+    (log_axis != "xy" || .vld_log_x(predictions, x))
 }

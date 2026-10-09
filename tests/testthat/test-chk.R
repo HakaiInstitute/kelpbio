@@ -270,8 +270,9 @@ test_that(".chk_predictions names the missing structure", {
 
 test_that(".chk_plot_x asks for x when it cannot be inferred", {
   p <- data.frame(diameter_mm = 1, estimate = 1)
-  expect_invisible(.chk_plot_x("diameter_mm", p))
-  expect_error(.chk_plot_x(NULL, p), "Supply")
+  expect_invisible(.chk_plot_x("diameter_mm", p, supplied = TRUE))
+  expect_error(.chk_plot_x(NULL, p, supplied = FALSE), "Supply")
+  expect_error(.chk_plot_x("site", p, supplied = TRUE), "must name a column")
 })
 
 test_that(".chk_log_axis gives a message per failing axis", {

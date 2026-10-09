@@ -49,7 +49,8 @@ x-axis with \code{x}.
 Axes are linear by default, with the y-axis extended to zero. Weights,
 densities, and biomass often span orders of magnitude; \code{log_axis = "y"} shows
 them on a log scale, and \code{log_axis = "xy"} also log-scales a numeric x-axis,
-as for a weight curve. Every value on a log axis must be positive, so a cover
+as for a weight curve. A log axis says so in its title. Every value on a log
+axis must be positive, so a cover
 curve on log-log axes needs a grid of positive cover values (see the
 examples).
 

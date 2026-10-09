@@ -18,7 +18,8 @@
 #' Axes are linear by default, with the y-axis extended to zero. Weights,
 #' densities, and biomass often span orders of magnitude; `log_axis = "y"` shows
 #' them on a log scale, and `log_axis = "xy"` also log-scales a numeric x-axis,
-#' as for a weight curve. Every value on a log axis must be positive, so a cover
+#' as for a weight curve. A log axis says so in its title. Every value on a log
+#' axis must be positive, so a cover
 #' curve on log-log axes needs a grid of positive cover values (see the
 #' examples).
 #'
@@ -90,6 +91,7 @@ kb_plot_predictions <- function(
   max_facets = 12L
 ) {
   rlang::check_dots_empty()
+  chk::chk_null_or(x, vld = chk::vld_string)
   log_axis <- rlang::arg_match(log_axis)
   chk::chk_number(max_facets)
   chk::chk_gt(max_facets, value = 0)
@@ -110,6 +112,7 @@ kb_plot_predictions <- function(
   } else {
     group_vars[length(group_vars)]
   }
+  x_supplied <- !is.null(x)
   # character(0) becomes NULL so the guard below asks for `x`.
   x <- x %||% if (length(inferred)) inferred else NULL
 
@@ -128,7 +131,7 @@ kb_plot_predictions <- function(
     }
   }
 
-  .chk_plot_x(x, predictions)
+  .chk_plot_x(x, predictions, x_supplied)
   .chk_log_axis(log_axis, predictions, x)
   # kb_curve separates a generated grid from supplied rows with varying values.
   style <- if (
@@ -171,8 +174,8 @@ kb_plot_predictions <- function(
   )
   gg +
     ggplot2::labs(
-      x = axis_label(x),
-      y = axis_label(response %||% "estimate")
+      x = axis_label(x, log = log_axis == "xy"),
+      y = axis_label(response %||% "estimate", log = log_axis != "none")
     )
 }
 
@@ -187,7 +190,20 @@ log_labels <- function(breaks) {
   )
 }
 
-axis_label <- function(name) {
+# "Wet weight (kg)" becomes "Wet weight (kg, log scale)"; "Fronds" becomes
+# "Fronds (log scale)".
+axis_label <- function(name, log = FALSE) {
+  label <- base_axis_label(name)
+  if (!log) {
+    return(label)
+  }
+  if (endsWith(label, ")")) {
+    return(sub("\\)$", ", log scale)", label))
+  }
+  paste0(label, " (log scale)")
+}
+
+base_axis_label <- function(name) {
   switch(
     name,
     diameter_mm = "Sub-bulb diameter (mm)",
