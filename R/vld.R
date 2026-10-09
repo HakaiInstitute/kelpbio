@@ -46,7 +46,8 @@
 
 # Any site or year column of new_data. A numeric year names a level.
 .vld_new_data_groups <- function(x) {
-  !anyNA(x[intersect(.group_vars(), names(x))])
+  !anyNA(x[intersect(.group_vars(), names(x))]) &&
+    (!"year" %in% names(x) || .vld_year_column(x$year))
 }
 
 .vld_frond_count <- function(x) {
@@ -145,10 +146,8 @@
 .vld_plot_biomass <- function(x) {
   is.data.frame(x) &&
     all(c("site", "year") %in% names(x)) &&
-    (is.character(x$site) || is.factor(x$site)) &&
-    (is.character(x$year) || is.factor(x$year)) &&
-    !anyNA(x$site) &&
-    !anyNA(x$year) &&
+    .vld_group_column(x$site) &&
+    .vld_year_column(x$year) &&
     .vld_biomass_estimate(x) &&
     .vld_biomass_response(x) &&
     !anyDuplicated(site_year_key(x$site, x$year))
@@ -180,7 +179,7 @@
     !anyNA(x$tide_height_m) &&
     .vld_finite(x$tide_height_m) &&
     .vld_group_column(x$site) &&
-    .vld_group_column(x$year) &&
+    .vld_year_column(x$year) &&
     (!"site_area_m2" %in% names(x) ||
       (.vld_positive_measure(x$site_area_m2) &&
         all(x$canopy_area_m2 <= x$site_area_m2)))
@@ -188,6 +187,12 @@
 
 .vld_group_column <- function(x) {
   (is.character(x) || is.factor(x)) && !anyNA(x)
+}
+
+# A numeric year names a level, so it must be a whole number.
+.vld_year_column <- function(x) {
+  .vld_group_column(x) ||
+    (is.numeric(x) && !anyNA(x) && .vld_finite(x) && all(x == round(x)))
 }
 
 .vld_sum_by <- function(sum_by, data) {

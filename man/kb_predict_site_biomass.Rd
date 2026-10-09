@@ -26,7 +26,8 @@ kb_predict_site_biomass(
 \code{site}, \code{year}, \code{canopy_area_m2} (the canopy mapped within the site, m²),
 and \code{tide_height_m} (tide height at the survey, m), and optionally
 \code{site_area_m2} (the area within the site boundary, m²), which caps the
-tide-corrected canopy. Other columns are kept, and can be named in \code{sum_by}.}
+tide-corrected canopy. A numeric \code{year} is converted to a factor. Other
+columns are kept, and can be named in \code{sum_by}.}
 
 \item{wetdry}{A \code{kb_fit_wetdry} object, required for dry and carbon biomass,
 or \code{NULL}.}

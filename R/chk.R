@@ -100,7 +100,11 @@
     return(invisible(x))
   }
   groups <- intersect(.group_vars(), names(x))
-  col <- groups[vapply(x[groups], anyNA, logical(1))][1]
+  missing <- groups[vapply(x[groups], anyNA, logical(1))]
+  if (!length(missing)) {
+    .chk_year_column(x$year, column_xname(x_name, "year"), call = call)
+  }
+  col <- missing[1]
   cli::cli_abort(
     c(
       "{column_xname(x_name, col)} must not have missing values.",
@@ -414,6 +418,9 @@
     chk::chk_not_empty(x, x_name = paste0("`", group, "`"))
     chk::chk_not_any_na(x, x_name = paste0("`", group, "`"))
   }
+  if ("year" %in% nms) {
+    .chk_year_column(dots$year, "`year`", call = call)
+  }
   invisible(fit)
 }
 
@@ -640,15 +647,35 @@
 }
 
 .chk_group_columns <- function(x, x_name) {
-  if (all(vapply(x[c("site", "year")], .vld_group_column, logical(1)))) {
+  if (.vld_group_column(x$site) && .vld_year_column(x$year)) {
     return(invisible(x))
   }
-  for (col in c("site", "year")) {
-    nm <- column_xname(x_name, col)
-    chk::chk_character_or_factor(x[[col]], x_name = nm)
-    chk::chk_not_any_na(x[[col]], x_name = nm)
+  nm <- column_xname(x_name, "site")
+  chk::chk_character_or_factor(x$site, x_name = nm)
+  chk::chk_not_any_na(x$site, x_name = nm)
+  .chk_year_column(x$year, column_xname(x_name, "year"))
+}
+
+.chk_year_column <- function(
+  x,
+  x_name = deparse(substitute(x)),
+  call = rlang::caller_env()
+) {
+  if (.vld_year_column(x)) {
+    return(invisible(x))
   }
-  invisible(x)
+  if (!(is.character(x) || is.factor(x) || is.numeric(x))) {
+    cli::cli_abort("{x_name} must be character, factor, or numeric.", call = call)
+  }
+  .with_call(chk::chk_not_any_na(x, x_name = x_name), call)
+  .chk_finite(x, x_name, call = call)
+  cli::cli_abort(
+    c(
+      "{x_name} must hold only whole numbers.",
+      i = "A numeric year names a level, such as 2020."
+    ),
+    call = call
+  )
 }
 
 .chk_plot_biomass <- function(

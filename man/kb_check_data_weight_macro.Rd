@@ -22,8 +22,9 @@ Check that \code{data} contains the columns required to fit the \emph{Macrocysti
 pyrifera} weight model, with appropriate types and values.
 }
 \details{
-Required columns: whole-number \code{fronds} (> 0), numeric \code{weight_kg} (kg, > 0), and
-factor or character \code{site} and \code{year}, with no missing values.
+Required columns: whole-number \code{fronds} (> 0), numeric \code{weight_kg} (kg, > 0),
+factor or character \code{site}, and factor, character, or whole-number \code{year},
+with no missing values.
 
 \code{fronds} is the frond count used as the size predictor (in the Hakai surveys,
 the number of fronds at least 1 m long with recorded biomass).
@@ -31,7 +32,7 @@ the number of fronds at least 1 m long with recorded biomass).
 \examples{
 data <- data.frame(
   fronds = c(3, 8), weight_kg = c(0.4, 1.7),
-  site = factor(c("a", "b")), year = factor(c("2020", "2021"))
+  site = factor(c("a", "b")), year = c(2020, 2021)
 )
 kb_check_data_weight_macro(data)
 }

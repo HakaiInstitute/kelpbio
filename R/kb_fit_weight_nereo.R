@@ -88,6 +88,7 @@ kb_fit_weight_nereo <- function(
 
   .with_call(kb_check_data_weight_nereo(data), rlang::current_env())
   .chk_fit_rows(data, prior_only)
+  data <- year_as_factor(data)
   site_year <- site_year_structure(data)
   notify_site_year(site_year, progress = progress)
   density <- density_structure(data)

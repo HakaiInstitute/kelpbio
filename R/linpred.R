@@ -186,7 +186,7 @@ data_linpred <- function(
       },
       call
     )
-    grid <- tibble::as_tibble(new_data)
+    grid <- year_as_factor(tibble::as_tibble(new_data))
     # Excludes cover, which is derived rather than a data column.
     predictor <- intersect(fit$meta[["predictor"]], names(fit$data))
     if (length(predictor)) {

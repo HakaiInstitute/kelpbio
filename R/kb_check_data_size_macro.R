@@ -3,8 +3,8 @@
 #' Check that `data` contains the columns required to fit the *Macrocystis
 #' pyrifera* size model, with appropriate types and values.
 #'
-#' Required columns: whole-number `fronds` (> 0), and factor or character `site`
-#' and `year`, with no missing values.
+#' Required columns: whole-number `fronds` (> 0), factor or character `site`, and
+#' factor, character, or whole-number `year`, with no missing values.
 #'
 #' @details
 #' `fronds` is the number of fronds reaching 1 m above the holdfast. The model
@@ -22,7 +22,7 @@
 #' @examples
 #' data <- data.frame(
 #'   fronds = c(3, 12), site = factor(c("a", "b")),
-#'   year = factor(c("2020", "2021"))
+#'   year = c(2020, 2021)
 #' )
 #' kb_check_data_size_macro(data)
 kb_check_data_size_macro <- function(

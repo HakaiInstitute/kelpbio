@@ -158,7 +158,8 @@ test_that(".vld_plot_biomass needs one valid row per site-year", {
   )
   expect_true(.vld_plot_biomass(good))
   expect_false(.vld_plot_biomass(rbind(good, good[1, ])))
-  expect_false(.vld_plot_biomass(transform(good, year = 2020)))
+  expect_true(.vld_plot_biomass(transform(good, year = 2020)))
+  expect_false(.vld_plot_biomass(transform(good, year = 2020.5)))
   expect_false(.vld_plot_biomass(good[c("site", "estimate", "lower", "upper")]))
   expect_false(.vld_plot_biomass(transform(good, lower = 3)))
 })
@@ -175,6 +176,8 @@ test_that(".vld_biomass_response accepts wet biomass or an unlabelled frame", {
 
 test_that(".vld_site_surveys needs canopy, tide, site, and year, and a large enough site", {
   good <- data.frame(site = "a", year = "2020", canopy_area_m2 = 100, tide_height_m = 0.5)
+  expect_true(.vld_site_surveys(transform(good, year = 2020)))
+  expect_false(.vld_site_surveys(transform(good, year = 2020.5)))
   expect_true(.vld_site_surveys(good))
   expect_true(.vld_site_surveys(transform(good, site_area_m2 = 1e4)))
   expect_false(.vld_site_surveys(transform(good, site_area_m2 = 50)))
@@ -261,4 +264,16 @@ test_that(".vld_new_data_groups rejects NA in any site or year column", {
   expect_true(.vld_new_data_groups(data.frame(site = "a", year = 2020)))
   expect_false(.vld_new_data_groups(data.frame(site = NA, year = "2020")))
   expect_false(.vld_new_data_groups(data.frame(year = NA_real_)))
+  expect_false(.vld_new_data_groups(data.frame(year = 2020.5)))
+})
+
+test_that(".vld_year_column takes levels and whole-number years", {
+  expect_true(.vld_year_column(c("2020", "2021")))
+  expect_true(.vld_year_column(factor(2020)))
+  expect_true(.vld_year_column(c(2020, 2021)))
+  expect_true(.vld_year_column(2020L))
+  expect_false(.vld_year_column(2020.5))
+  expect_false(.vld_year_column(c(2020, NA)))
+  expect_false(.vld_year_column(Inf))
+  expect_false(.vld_year_column(TRUE))
 })

@@ -65,6 +65,7 @@ kb_fit_size_macro <- function(
 
   .with_call(kb_check_data_size_macro(data), rlang::current_env())
   .chk_fit_rows(data, prior_only)
+  data <- year_as_factor(data)
   site_year <- site_year_structure(data)
   notify_site_year(site_year, progress = progress)
 

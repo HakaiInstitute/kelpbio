@@ -21,7 +21,8 @@
 \item{new_data}{A data frame with the fit's predictor column (\code{diameter_mm} in
 millimetres for \emph{Nereocystis}, \code{fronds} for \emph{Macrocystis}) and optional
 \code{site} and \code{year} columns (and, for \emph{Nereocystis}, an optional \code{stipes_m2}
-column in stipes per m²), or \code{NULL} to predict at the observed data.}
+column in stipes per m²), or \code{NULL} to predict at the observed data. A
+numeric \code{year} is converted to a factor.}
 
 \item{...}{Unused.}
 

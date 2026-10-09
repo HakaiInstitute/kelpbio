@@ -312,3 +312,29 @@
       ! Column `site` of `new_data` must not have missing values.
       i To predict for a new site, give it a name or leave out the site column.
 
+---
+
+    Code
+      .chk_new_data_groups(data.frame(year = 2020.5))
+    Condition
+      Error:
+      ! Column `year` of `new_data` must hold only whole numbers.
+      i A numeric year names a level, such as 2020.
+
+# .chk_year_column and .chk_group_columns accept a whole-number year
+
+    Code
+      .chk_year_column(2020.5, "`year`")
+    Condition
+      Error:
+      ! `year` must hold only whole numbers.
+      i A numeric year names a level, such as 2020.
+
+---
+
+    Code
+      .chk_year_column(TRUE, "`year`")
+    Condition
+      Error:
+      ! `year` must be character, factor, or numeric.
+
