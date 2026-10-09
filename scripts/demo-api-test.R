@@ -678,7 +678,7 @@ kb_priors_density_macro() # intercept, dispersion, sd_*
 
 fit_d <- kb_fit_density_nereo(data_density_sim_nereo)
 fit_d
-tidy(fit_d) # intercept: log stipes per m^2; logit_zero_inflation: logit P(no stipes)
+tidy(fit_d) # intercept: log stipes per m^2; logit_zero_inflation: logit P(transect unoccupied)
 kb_model_describe(fit_d)
 
 fit_dm <- kb_fit_density_macro(data_density_sim_macro)
@@ -708,7 +708,7 @@ pp_counts <- posterior_predict(fit_d, new_data = transects) # simulated counts
 apply(pp_counts, 2, quantile, probs = c(0.025, 0.5, 0.975))
 
 # nereo: posterior_epred includes the zero-inflation probability;
-# linpred(transform = TRUE) is the mean on a transect holding stipes, so higher
+# linpred(transform = TRUE) is the mean on an occupied transect, so higher
 nd <- tibble(site = "otter_cove")
 median(posterior_epred(fit_d, new_data = nd))
 median(posterior_linpred(fit_d, transform = TRUE, new_data = nd))

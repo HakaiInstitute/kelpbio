@@ -10,8 +10,8 @@
 #'
 #' @inheritParams params
 #' @param object A `kb_fit` object.
-#' @param transform A flag specifying whether to return the response-scale
-#'   value (`exp`).
+#' @param transform A flag specifying whether to apply the inverse link (`exp`,
+#'   or the inverse logit for wet/dry and carbon).
 #' @param new_data A data frame with the fit's predictor column (and optional
 #'   `site`, `year`, and `stipes_m2` columns; for a density fit, an optional
 #'   `area_m2` column giving each transect's area, 1 m² when absent), or

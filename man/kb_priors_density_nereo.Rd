@@ -8,8 +8,8 @@ kb_priors_density_nereo()
 }
 \value{
 A named list of prior objects with entries \code{intercept} (the log stipe
-density per m² on transects holding stipes), \code{logit_zero_inflation} (the
-probability that a transect holds no stipes, on the logit scale),
+density per m² on occupied transects), \code{logit_zero_inflation} (the
+probability that a transect is unoccupied, on the logit scale),
 \code{dispersion} (the negative binomial overdispersion: a transect's variance is
 \code{mu + dispersion * mu^2}), \code{sd_site}, \code{sd_year}, and \code{sd_site_year}.
 }

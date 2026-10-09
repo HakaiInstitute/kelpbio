@@ -9,7 +9,9 @@
 #' the zero-truncated distribution (*Macrocystis*); for density, the expected
 #' count on the row's `area_m2` (1 m² when absent), `(1 - zi) * exp(mu)` with `zi` the
 #' zero-inflation probability (*Nereocystis*) or `exp(mu)` (*Macrocystis*); for
-#' wet/dry, the mean dry:wet ratio `inv_logit(mu)`. For
+#' wet/dry, the mean dry:wet ratio `inv_logit(mu)`; for carbon, the mean carbon
+#' fraction `inv_logit(mu)`; for cover biomass, the wet biomass per m² `exp(mu)`,
+#' without the estimation error of the in situ estimate. For
 #' draws that include observation noise, use [posterior_predict()].
 #'
 #' Conditioning is inferred from the grouping columns present in `new_data`: a
