@@ -43,7 +43,7 @@ fit_cover_biomass_model <- function(
   conf_level <- .with_call(cover_conf_level(biomass, conf_level), call)
   joined <- join_cover_biomass(data, biomass, call = call)
   notify_cover_unmatched(joined$unmatched, progress = progress)
-  data <- joined$data
+  data <- year_as_factor(joined$data)
   priors <- resolve_priors(priors, defaults, call = call)
   stan_data <- assemble_cover_biomass_data(
     data,

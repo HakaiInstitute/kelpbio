@@ -149,3 +149,13 @@ test_that("data and prior errors name kb_fit_cover_biomass_nereo()", {
   ))
   expect_identical(err$call[[1]], quote(kb_fit_cover_biomass_nereo))
 })
+
+test_that("a numeric year in the surveys pairs with the biomass and is fitted as a factor", {
+  local_fit_stan_stub(cover_biomass_nereo_fit)
+  d <- surveys()
+  d$year <- as.numeric(as.character(d$year))
+  fit <- kb_fit_cover_biomass_nereo(d, biomass(), progress = "none")
+  expect_s3_class(fit$data$year, "factor")
+  expect_equal(fit$data, cover_biomass_nereo_fit$data, ignore_attr = TRUE)
+  expect_identical(fit$meta$year_levels, cover_biomass_nereo_fit$meta$year_levels)
+})

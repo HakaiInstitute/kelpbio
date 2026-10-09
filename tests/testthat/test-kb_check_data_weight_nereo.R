@@ -20,6 +20,13 @@ test_that("character site/year is accepted", {
   expect_silent(kb_check_data_weight_nereo(data))
 })
 
+test_that("a whole-number year is accepted and a fractional one errors", {
+  data <- data.frame(diameter_mm = 20, weight_kg = 0.5, site = "a", year = 2020)
+  expect_silent(kb_check_data_weight_nereo(data))
+  data$year <- 2020.5
+  expect_error(kb_check_data_weight_nereo(data), "whole numbers")
+})
+
 test_that("unsuffixed column names error naming the suffixed column", {
   data <- data.frame(
     diameter = 20,

@@ -202,6 +202,10 @@ test_that(".chk_grid_dots accepts the predictor and grouping values and rejects 
     .chk_grid_dots(weight_nereo_fit, list(year = NA_character_), NULL),
     "missing"
   )
+  expect_error(
+    .chk_grid_dots(weight_nereo_fit, list(year = 2020.5), NULL),
+    "whole numbers"
+  )
 })
 test_that(".chk_new_data_density errors name the area column", {
   expect_invisible(.chk_new_data_density(data.frame(area_m2 = 40)))
@@ -337,6 +341,20 @@ test_that(".chk_finite, .chk_rows, and .chk_new_data_groups name the problem", {
   expect_snapshot(error = TRUE, .chk_finite(c(1, Inf), "`x`"))
   expect_snapshot(error = TRUE, .chk_rows(data.frame(x = numeric(0)), "`new_data`"))
   expect_snapshot(error = TRUE, .chk_new_data_groups(data.frame(site = c("a", NA))))
+  expect_snapshot(error = TRUE, .chk_new_data_groups(data.frame(year = 2020.5)))
+})
+
+test_that(".chk_year_column and .chk_group_columns accept a whole-number year", {
+  expect_invisible(.chk_year_column(c(2020, 2021)))
+  expect_invisible(.chk_group_columns(data.frame(site = "a", year = 2020), "`data`"))
+  expect_snapshot(error = TRUE, .chk_year_column(2020.5, "`year`"))
+  expect_snapshot(error = TRUE, .chk_year_column(TRUE, "`year`"))
+  expect_error(.chk_year_column(c(2020, NA), "`year`"), "missing")
+  expect_error(.chk_year_column(Inf, "`year`"), "finite")
+  expect_error(
+    .chk_group_columns(data.frame(site = 1, year = 2020), "`data`"),
+    "site"
+  )
 })
 
 test_that("measure checks reject infinite values", {

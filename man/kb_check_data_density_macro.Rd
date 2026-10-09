@@ -23,7 +23,8 @@ pyrifera} density model, with appropriate types and values.
 }
 \details{
 Required columns: whole-number \code{plants} (>= 0), numeric \code{area_m2} (m², > 0),
-and factor or character \code{site} and \code{year}, with no missing values.
+factor or character \code{site}, and factor, character, or whole-number \code{year},
+with no missing values.
 
 Each row is one transect: \code{plants} is the number of plants counted on it and
 \code{area_m2} the area surveyed. Count only plants with at least one frond
@@ -35,7 +36,7 @@ transect before fitting. A count of zero is valid. Other columns are ignored.
 \examples{
 data <- data.frame(
   plants = c(15, 3), area_m2 = c(40, 60), site = factor(c("a", "b")),
-  year = factor(c("2020", "2021"))
+  year = c(2020, 2021)
 )
 kb_check_data_density_macro(data)
 }

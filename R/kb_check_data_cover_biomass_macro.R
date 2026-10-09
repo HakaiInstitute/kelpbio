@@ -5,12 +5,14 @@
 #' in situ biomass to pair with it.
 #'
 #' Required columns of `data`: numeric `canopy_area_m2` (m², >= 0),
-#' `plot_area_m2` (m², > 0 and at least `canopy_area_m2`), and `tide_height_m`
-#' (m), and factor or character `site` and `year`, with no missing values.
+#' `plot_area_m2` (m², > 0 and at least `canopy_area_m2`), `tide_height_m`
+#' (m), factor or character `site`, and factor, character, or whole-number
+#' `year`, with no missing values.
 #'
-#' Required columns of `biomass`: factor or character `site` and `year`, one row
-#' per site-year, and numeric `estimate`, `lower`, and `upper` (kg/m², > 0, with
-#' `lower <= estimate <= upper` and `lower < upper`), with no missing values.
+#' Required columns of `biomass`: factor or character `site` and factor,
+#' character, or whole-number `year`, one row per site-year, and numeric
+#' `estimate`, `lower`, and `upper` (kg/m², > 0, with `lower <= estimate <= upper`
+#' and `lower < upper`), with no missing values.
 #'
 #' @details
 #' Each row of `data` is one drone survey of a plot. `canopy_area_m2` is the
