@@ -187,3 +187,33 @@ test_that(".vld_sampling_dots flags sampler arguments kelpbio sets", {
   expect_false(.vld_sampling_dots(list(iter = 10)))
   expect_false(.vld_sampling_dots(list(pars = "intercept")))
 })
+
+test_that(".vld_predictions needs a data frame with estimate and limits", {
+  ok <- data.frame(estimate = 1, lower = 0.5, upper = 2)
+  expect_true(.vld_predictions(ok))
+  expect_false(.vld_predictions(list(estimate = 1, lower = 0.5, upper = 2)))
+  expect_false(.vld_predictions(ok[c("estimate", "lower")]))
+})
+
+test_that(".vld_plot_x needs a column of the predictions", {
+  p <- data.frame(diameter_mm = 1, estimate = 1)
+  expect_true(.vld_plot_x("diameter_mm", p))
+  expect_false(.vld_plot_x(NULL, p))
+  expect_false(.vld_plot_x("site", p))
+})
+
+test_that(".vld_log_axis needs positive values on each log axis", {
+  p <- data.frame(
+    cover = c(0, 1),
+    site = c("a", "b"),
+    estimate = c(1, 2),
+    lower = c(0.5, 1),
+    upper = c(2, 3)
+  )
+  expect_true(.vld_log_axis("y", p, "cover"))
+  expect_false(.vld_log_axis("xy", p, "cover"))
+  expect_false(.vld_log_axis("xy", p, "site"))
+  p$lower[1] <- 0
+  expect_true(.vld_log_axis("none", p, "cover"))
+  expect_false(.vld_log_axis("y", p, "cover"))
+})
