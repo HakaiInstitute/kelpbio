@@ -168,3 +168,27 @@
       all(sum_by %in% names(data)) &&
       all(vapply(data[sum_by], .vld_group_column, logical(1))))
 }
+
+.vld_predictions <- function(x) {
+  is.data.frame(x) && all(c("estimate", "lower", "upper") %in% names(x))
+}
+
+.vld_plot_x <- function(x, predictions) {
+  !is.null(x) && x %in% names(predictions)
+}
+
+.vld_log_y <- function(predictions) {
+  !any(
+    c(predictions$estimate, predictions$lower, predictions$upper) <= 0,
+    na.rm = TRUE
+  )
+}
+
+.vld_log_x <- function(predictions, x) {
+  is.numeric(predictions[[x]]) && !any(predictions[[x]] <= 0, na.rm = TRUE)
+}
+
+.vld_log_axis <- function(log_axis, predictions, x) {
+  (log_axis == "none" || .vld_log_y(predictions)) &&
+    (log_axis != "xy" || .vld_log_x(predictions, x))
+}

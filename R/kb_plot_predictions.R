@@ -12,8 +12,16 @@
 #' The geometry is chosen automatically, not set by an argument: a line with a
 #' compatibility-interval ribbon for predictions at a [kb_new_data()] grid over
 #' several predictor values (weight curves), and `geom_pointrange` otherwise (for
-#' example size by site, or weight at the observed plants). The y-axis extends to
-#' zero. Override the inferred x-axis with `x`.
+#' example size by site, or weight at the observed plants). Override the inferred
+#' x-axis with `x`.
+#'
+#' Axes are linear by default, with the y-axis extended to zero. Weights,
+#' densities, and biomass often span orders of magnitude; `log_axis = "y"` shows
+#' them on a log scale, and `log_axis = "xy"` also log-scales a numeric x-axis,
+#' as for a weight curve. A log axis says so in its title. Every value on a log
+#' axis must be positive, so a cover
+#' curve on log-log axes needs a grid of positive cover values (see the
+#' examples).
 #'
 #' Only the predictions are drawn. They hold the effects not in the prediction at
 #' their typical values, while each raw observation carries its own site, year,
@@ -25,6 +33,8 @@
 #' @param predictions A `kb_predictions` object.
 #' @param x A string naming the x-axis column, or `NULL` to infer it from the
 #'   metadata.
+#' @param log_axis A string, one of `"none"` (linear axes), `"y"` (log-scaled
+#'   y-axis), or `"xy"` (log-scaled x- and y-axes).
 #' @param max_facets A whole number capping the facet panels drawn; if the
 #'   grouping has more groups, the first `max_facets` are shown with a warning.
 #'   Use `Inf` to disable.
@@ -61,28 +71,34 @@
 #' kb_predict_weight(fit, kb_new_data(fit, by = "site", diameter_mm = 30)) |>
 #'   kb_plot_predictions() +
 #'   ggplot2::coord_flip()
+#'
+#' # Allometric curve on log-log axes:
+#' kb_predict_weight(fit, kb_new_data(fit)) |>
+#'   kb_plot_predictions(log_axis = "xy")
+#'
+#' # Cover curve on log-log axes, over positive cover values:
+#' cover_fit <- fit_cover_biomass_sim_nereo
+#' kb_predict_cover_biomass(
+#'   cover_fit,
+#'   kb_new_data(cover_fit, cover = 10^seq(-3, 0, length.out = 30))
+#' ) |>
+#'   kb_plot_predictions(log_axis = "xy")
 kb_plot_predictions <- function(
   predictions,
   ...,
   x = NULL,
+  log_axis = c("none", "y", "xy"),
   max_facets = 12L
 ) {
   rlang::check_dots_empty()
+  chk::chk_null_or(x, vld = chk::vld_string)
+  log_axis <- rlang::arg_match(log_axis)
   chk::chk_number(max_facets)
   chk::chk_gt(max_facets, value = 0)
   if (is.finite(max_facets)) {
     chk::chk_whole_number(max_facets)
   }
-  if (!is.data.frame(predictions)) {
-    cli::cli_abort(
-      "{.arg predictions} must be a {.cls kb_predictions} data frame."
-    )
-  }
-  if (!all(c("estimate", "lower", "upper") %in% names(predictions))) {
-    cli::cli_abort(
-      "{.arg predictions} must have {.field estimate}, {.field lower}, and {.field upper} columns."
-    )
-  }
+  .chk_predictions(predictions)
 
   predictor <- attr(predictions, "kb_predictor", exact = TRUE)
   response <- attr(predictions, "kb_response", exact = TRUE)
@@ -96,6 +112,7 @@ kb_plot_predictions <- function(
   } else {
     group_vars[length(group_vars)]
   }
+  x_supplied <- !is.null(x)
   # character(0) becomes NULL so the guard below asks for `x`.
   x <- x %||% if (length(inferred)) inferred else NULL
 
@@ -114,12 +131,8 @@ kb_plot_predictions <- function(
     }
   }
 
-  if (is.null(x) || !x %in% names(predictions)) {
-    cli::cli_abort(c(
-      "Cannot infer the x-axis column from {.arg predictions}.",
-      i = "Supply {.arg x}."
-    ))
-  }
+  .chk_plot_x(x, predictions, x_supplied)
+  .chk_log_axis(log_axis, predictions, x)
   # kb_curve separates a generated grid from supplied rows with varying values.
   style <- if (
     isTRUE(attr(predictions, "kb_curve", exact = TRUE)) &&
@@ -151,15 +164,46 @@ kb_plot_predictions <- function(
   if (length(facet)) {
     gg <- gg + ggplot2::facet_wrap(facet)
   }
+  gg <- switch(
+    log_axis,
+    none = gg + ggplot2::expand_limits(y = 0),
+    y = gg + ggplot2::scale_y_log10(labels = log_labels),
+    xy = gg +
+      ggplot2::scale_x_log10(labels = log_labels) +
+      ggplot2::scale_y_log10(labels = log_labels)
+  )
   gg +
-    ggplot2::expand_limits(y = 0) +
     ggplot2::labs(
-      x = axis_label(x),
-      y = axis_label(response %||% "estimate")
+      x = axis_label(x, log = log_axis == "xy"),
+      y = axis_label(response %||% "estimate", log = log_axis != "none")
     )
 }
 
-axis_label <- function(name) {
+# Plain numbers (0.1, 1, 10) in place of the default 1e-01 style.
+log_labels <- function(breaks) {
+  format(
+    breaks,
+    big.mark = ",",
+    scientific = FALSE,
+    trim = TRUE,
+    drop0trailing = TRUE
+  )
+}
+
+# "Wet weight (kg)" becomes "Wet weight (kg, log scale)"; "Fronds" becomes
+# "Fronds (log scale)".
+axis_label <- function(name, log = FALSE) {
+  label <- base_axis_label(name)
+  if (!log) {
+    return(label)
+  }
+  if (endsWith(label, ")")) {
+    return(sub("\\)$", ", log scale)", label))
+  }
+  paste0(label, " (log scale)")
+}
+
+base_axis_label <- function(name) {
   switch(
     name,
     diameter_mm = "Sub-bulb diameter (mm)",

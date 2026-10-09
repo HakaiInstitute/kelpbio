@@ -164,3 +164,87 @@ test_that("a cover curve plots a ribbon over tide-corrected cover", {
   expect_identical(gg$labels$x, "Tide-corrected canopy cover")
   expect_identical(gg$labels$y, "Wet biomass (kg/m\u00b2)")
 })
+
+test_that("log_axis defaults to linear axes with the y-axis from zero", {
+  p <- kb_predict_density(
+    density_nereo_fit,
+    kb_new_data(density_nereo_fit, by = "site")
+  )
+  gg <- kb_plot_predictions(p)
+  expect_identical(gg$scales$get_scales("y"), NULL)
+  expect_equal(min(ggplot2::layer_scales(gg)$y$range$range), 0)
+})
+
+test_that("log_axis = 'y' log-scales the y-axis without a zero floor", {
+  p <- kb_predict_density(
+    density_nereo_fit,
+    kb_new_data(density_nereo_fit, by = "site")
+  )
+  gg <- kb_plot_predictions(p, log_axis = "y")
+  expect_identical(gg$scales$get_scales("y")$trans$name, "log-10")
+  expect_null(gg$scales$get_scales("x"))
+  expect_gt(min(ggplot2::layer_scales(gg)$y$range$range), -Inf)
+  expect_no_warning(ggplot2::ggplot_build(gg))
+  expect_identical(gg$labels$y, "Stipe density (stipes/m\u00b2, log scale)")
+  expect_identical(gg$labels$x, "Site")
+})
+
+test_that("log_axis = 'xy' log-scales both axes of a curve", {
+  p <- kb_predict_weight(weight_nereo_fit, kb_new_data(weight_nereo_fit))
+  gg <- kb_plot_predictions(p, log_axis = "xy")
+  expect_identical(gg$scales$get_scales("x")$trans$name, "log-10")
+  expect_identical(gg$scales$get_scales("y")$trans$name, "log-10")
+  expect_identical(gg$labels$x, "Sub-bulb diameter (mm, log scale)")
+  expect_identical(gg$labels$y, "Wet weight (kg, log scale)")
+})
+
+test_that("a log axis without a unit is titled as log scale", {
+  expect_identical(axis_label("fronds", log = TRUE), "Fronds (log scale)")
+  expect_identical(axis_label("fronds"), "Fronds")
+})
+
+test_that("a supplied x that is not one column errors helpfully", {
+  p <- kb_predict_weight(weight_nereo_fit, kb_new_data(weight_nereo_fit))
+  expect_error(kb_plot_predictions(p, x = c("diameter_mm", "site")), "string")
+  expect_error(kb_plot_predictions(p, x = "nope"), "must name a column")
+})
+
+test_that("the log-log weight curve is visually stable", {
+  skip_if_not_installed("vdiffr")
+  p <- kb_predict_weight(weight_nereo_fit, kb_new_data(weight_nereo_fit))
+  vdiffr::expect_doppelganger(
+    "weight ribbon log-log",
+    kb_plot_predictions(p, log_axis = "xy")
+  )
+})
+
+test_that("log tick labels are plain numbers", {
+  expect_identical(
+    log_labels(c(0.001, 0.1, 1, 10, 1e5)),
+    c("0.001", "0.1", "1", "10", "100,000")
+  )
+})
+
+test_that("a log x-axis errors over zero cover and over groups", {
+  fit <- cover_biomass_nereo_fit
+  p <- kb_predict_cover_biomass(fit, kb_new_data(fit))
+  expect_error(kb_plot_predictions(p, log_axis = "xy"), "positive cover")
+  expect_no_error(kb_plot_predictions(p, log_axis = "y"))
+  positive <- kb_predict_cover_biomass(
+    fit,
+    kb_new_data(fit, cover = 10^seq(-3, 0, length.out = 5))
+  )
+  expect_no_error(kb_plot_predictions(positive, log_axis = "xy"))
+  by_site <- kb_predict_density(
+    density_nereo_fit,
+    kb_new_data(density_nereo_fit, by = "site")
+  )
+  expect_error(kb_plot_predictions(by_site, log_axis = "xy"), "numeric x-axis")
+})
+
+test_that("a log y-axis errors over non-positive values", {
+  p <- kb_predict_weight(weight_nereo_fit, kb_new_data(weight_nereo_fit))
+  p$lower[1] <- 0
+  expect_error(kb_plot_predictions(p, log_axis = "y"), "positive")
+  expect_error(kb_plot_predictions(p, log_axis = "nope"), "must be one of")
+})

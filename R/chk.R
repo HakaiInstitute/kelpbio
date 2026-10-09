@@ -699,3 +699,74 @@
   }
   invisible(NULL)
 }
+
+.chk_predictions <- function(
+  x,
+  x_name = deparse(substitute(x)),
+  call = rlang::caller_env()
+) {
+  if (.vld_predictions(x)) {
+    return(invisible(x))
+  }
+  if (!is.data.frame(x)) {
+    cli::cli_abort(
+      "{.arg {x_name}} must be a {.cls kb_predictions} data frame.",
+      call = call
+    )
+  }
+  cli::cli_abort(
+    "{.arg {x_name}} must have {.field estimate}, {.field lower}, and {.field upper} columns.",
+    call = call
+  )
+}
+
+# `x` is NULL when it could not be inferred from the prediction's metadata.
+.chk_plot_x <- function(x, predictions, supplied, call = rlang::caller_env()) {
+  if (.vld_plot_x(x, predictions)) {
+    return(invisible(x))
+  }
+  if (supplied) {
+    cli::cli_abort(
+      "{.arg x} must name a column of {.arg predictions}, not {.val {x}}.",
+      call = call
+    )
+  }
+  cli::cli_abort(
+    c(
+      "Cannot infer the x-axis column from {.arg predictions}.",
+      i = "Supply {.arg x}."
+    ),
+    call = call
+  )
+}
+
+.chk_log_axis <- function(log_axis, predictions, x, call = rlang::caller_env()) {
+  if (.vld_log_axis(log_axis, predictions, x)) {
+    return(invisible(log_axis))
+  }
+  if (!.vld_log_y(predictions)) {
+    cli::cli_abort(
+      c(
+        "A log y-axis needs positive {.field estimate}, {.field lower}, and {.field upper} values.",
+        i = "Use {.code log_axis = \"none\"}."
+      ),
+      call = call
+    )
+  }
+  if (!is.numeric(predictions[[x]])) {
+    cli::cli_abort(
+      c(
+        "A log x-axis needs a numeric x-axis, not {.field {x}}.",
+        i = "Use {.code log_axis = \"y\"}."
+      ),
+      call = call
+    )
+  }
+  cli::cli_abort(
+    c(
+      "A log x-axis needs positive {.field {x}} values.",
+      i = "Predict at positive {.field {x}} values, for example with {.fn kb_new_data}."
+    ),
+    call = call
+  )
+}

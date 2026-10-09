@@ -5,7 +5,7 @@
 #' prediction data frame, never on a fit.
 #'
 #' @param object A `kb_predictions` object.
-#' @param ... Passed to [kb_plot_predictions()] (e.g. `x`, `max_facets`).
+#' @param ... Passed to [kb_plot_predictions()] (e.g. `x`, `log_axis`, `max_facets`).
 #'
 #' @return A `ggplot` object.
 #' @family prediction

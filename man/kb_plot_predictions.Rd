@@ -4,7 +4,13 @@
 \alias{kb_plot_predictions}
 \title{Plot Model Predictions}
 \usage{
-kb_plot_predictions(predictions, ..., x = NULL, max_facets = 12L)
+kb_plot_predictions(
+  predictions,
+  ...,
+  x = NULL,
+  log_axis = c("none", "y", "xy"),
+  max_facets = 12L
+)
 }
 \arguments{
 \item{predictions}{A \code{kb_predictions} object.}
@@ -13,6 +19,9 @@ kb_plot_predictions(predictions, ..., x = NULL, max_facets = 12L)
 
 \item{x}{A string naming the x-axis column, or \code{NULL} to infer it from the
 metadata.}
+
+\item{log_axis}{A string, one of \code{"none"} (linear axes), \code{"y"} (log-scaled
+y-axis), or \code{"xy"} (log-scaled x- and y-axes).}
 
 \item{max_facets}{A whole number capping the facet panels drawn; if the
 grouping has more groups, the first \code{max_facets} are shown with a warning.
@@ -34,8 +43,16 @@ is a standard \code{ggplot} that can be refined with \code{+} (scales, labels, t
 The geometry is chosen automatically, not set by an argument: a line with a
 compatibility-interval ribbon for predictions at a \code{\link[=kb_new_data]{kb_new_data()}} grid over
 several predictor values (weight curves), and \code{geom_pointrange} otherwise (for
-example size by site, or weight at the observed plants). The y-axis extends to
-zero. Override the inferred x-axis with \code{x}.
+example size by site, or weight at the observed plants). Override the inferred
+x-axis with \code{x}.
+
+Axes are linear by default, with the y-axis extended to zero. Weights,
+densities, and biomass often span orders of magnitude; \code{log_axis = "y"} shows
+them on a log scale, and \code{log_axis = "xy"} also log-scales a numeric x-axis,
+as for a weight curve. A log axis says so in its title. Every value on a log
+axis must be positive, so a cover
+curve on log-log axes needs a grid of positive cover values (see the
+examples).
 
 Only the predictions are drawn. They hold the effects not in the prediction at
 their typical values, while each raw observation carries its own site, year,
@@ -71,6 +88,18 @@ kb_predict_size(
 kb_predict_weight(fit, kb_new_data(fit, by = "site", diameter_mm = 30)) |>
   kb_plot_predictions() +
   ggplot2::coord_flip()
+
+# Allometric curve on log-log axes:
+kb_predict_weight(fit, kb_new_data(fit)) |>
+  kb_plot_predictions(log_axis = "xy")
+
+# Cover curve on log-log axes, over positive cover values:
+cover_fit <- fit_cover_biomass_sim_nereo
+kb_predict_cover_biomass(
+  cover_fit,
+  kb_new_data(cover_fit, cover = 10^seq(-3, 0, length.out = 30))
+) |>
+  kb_plot_predictions(log_axis = "xy")
 }
 \seealso{
 Other prediction:

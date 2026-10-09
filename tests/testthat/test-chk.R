@@ -260,3 +260,32 @@ test_that(".chk_sampling_dots rejects sampler arguments kelpbio sets, naming the
   expect_snapshot(error = TRUE, .chk_sampling_dots(list(iter = 10, thin = 2)))
   expect_snapshot(error = TRUE, .chk_sampling_dots(list(pars = "intercept")))
 })
+
+test_that(".chk_predictions names the missing structure", {
+  ok <- data.frame(estimate = 1, lower = 0.5, upper = 2)
+  expect_invisible(.chk_predictions(ok))
+  expect_error(.chk_predictions(list()), "data frame")
+  expect_error(.chk_predictions(ok["estimate"]), "columns")
+})
+
+test_that(".chk_plot_x asks for x when it cannot be inferred", {
+  p <- data.frame(diameter_mm = 1, estimate = 1)
+  expect_invisible(.chk_plot_x("diameter_mm", p, supplied = TRUE))
+  expect_error(.chk_plot_x(NULL, p, supplied = FALSE), "Supply")
+  expect_error(.chk_plot_x("site", p, supplied = TRUE), "must name a column")
+})
+
+test_that(".chk_log_axis gives a message per failing axis", {
+  p <- data.frame(
+    cover = c(0, 1),
+    site = c("a", "b"),
+    estimate = c(1, 2),
+    lower = c(0.5, 1),
+    upper = c(2, 3)
+  )
+  expect_invisible(.chk_log_axis("y", p, "cover"))
+  expect_error(.chk_log_axis("xy", p, "cover"), "positive cover")
+  expect_error(.chk_log_axis("xy", p, "site"), "numeric x-axis")
+  p$upper[1] <- -1
+  expect_error(.chk_log_axis("y", p, "cover"), "log y-axis")
+})
