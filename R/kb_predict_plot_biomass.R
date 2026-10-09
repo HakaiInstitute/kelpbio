@@ -104,9 +104,10 @@ kb_predict_plot_biomass <- function(
   .chk_kb_fit(weight, "kb_fit_weight")
   .chk_kb_fit(size, "kb_fit_size")
   .chk_kb_fit(density, "kb_fit_density")
-  if (!.vld_observed_data(density)) {
-    cli::cli_abort("{.arg density} has no observed site-years to predict at.")
-  }
+  .chk_observed_data(
+    density,
+    hint = "{.arg density} must be fitted to observed site-years."
+  )
   .chk_measure_fits(measure, wetdry, carbon)
   fits <- list(
     weight = weight,
