@@ -8,11 +8,13 @@ site_biomass_draws <- function(fit, grid, new_levels, representative_site) {
   bed$tide_height_m <- 0
   density <- .epred(fit, .linpred(fit, bed, new_levels, representative_site))
 
-  canopy <- grid$canopy_area_m2 * (1 + fit$draws$tide_height_slope * grid$tide_height_m)
+  canopy <- tide_corrected_canopy(
+    grid$canopy_area_m2,
+    grid$tide_height_m,
+    fit$draws$tide_height_slope
+  )
   if ("site_area_m2" %in% names(grid)) {
-    # pmin() as arithmetic, since it does not take an rvar.
-    site <- grid$site_area_m2
-    canopy <- (site + canopy - abs(site - canopy)) / 2
+    canopy <- rvar_pmin(canopy, grid$site_area_m2)
   }
   posterior::draws_of(density * canopy)
 }

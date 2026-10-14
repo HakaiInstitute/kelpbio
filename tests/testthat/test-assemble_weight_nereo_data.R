@@ -123,17 +123,6 @@ test_that("assemble_weight_nereo_data accepts zero-row data", {
   expect_equal(sd$prior_only, 1L)
 })
 
-test_that("weight_diameter_ref returns the geometric mean of the observed diameter", {
-  expect_equal(
-    weight_diameter_ref(c(20, 35, 50)),
-    exp(mean(log(c(20, 35, 50))))
-  )
-})
-
-test_that("weight_diameter_ref falls back to 30 for zero-row data", {
-  expect_equal(weight_diameter_ref(numeric(0)), 30)
-})
-
 test_that("assemble_weight_nereo_data passes standardised density and its flag", {
   data <- data.frame(
     diameter_mm = c(20, 35, 50, 40),

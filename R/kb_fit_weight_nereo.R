@@ -94,7 +94,8 @@ kb_fit_weight_nereo <- function(
 
   priors <- resolve_priors(priors, kb_priors_weight_nereo())
   # Shared by the Stan fit and R-side predictions (stored in meta below).
-  diameter_ref <- weight_diameter_ref(data$diameter_mm)
+  # 30 mm for zero-row data.
+  diameter_ref <- geometric_ref(data$diameter_mm, fallback = 30)
   stan_data <- assemble_weight_nereo_data(
     data,
     priors,

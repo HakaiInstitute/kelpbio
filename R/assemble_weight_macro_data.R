@@ -24,20 +24,11 @@ assemble_weight_macro_data <- function(
       n_obs = nrow(data),
       fronds = as.numeric(data$fronds),
       weight_kg = as.numeric(data$weight_kg),
-      fronds_ref = weight_fronds_ref(data$fronds),
+      # 5 fronds, the Macrocystis median, for zero-row data.
+      fronds_ref = geometric_ref(data$fronds, fallback = 5),
       prior_only = as.integer(prior_only),
       site_year_on = as.integer(site_year_on)
     ),
     prior_data(priors)
   )
-}
-
-# Geometric-mean frond reference, stored in the fit meta so Stan and R-side
-# predictions share it. Falls back to 5 (the macro median frond count) for
-# zero-row (prior-only) data.
-weight_fronds_ref <- function(fronds) {
-  if (rlang::is_empty(fronds)) {
-    return(5)
-  }
-  exp(mean(log(fronds)))
 }
