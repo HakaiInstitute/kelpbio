@@ -18,8 +18,8 @@
 
 \item{...}{Unused.}
 
-\item{conf_level}{A number between 0 and 1 giving the compatibility-interval
-level.}
+\item{conf_level}{A number greater than 0 and less than 1 giving the
+compatibility-interval level.}
 
 \item{estimate}{A function that reduces a numeric vector of posterior draws to
 a scalar point estimate (e.g. \code{median} or \code{mean}).}

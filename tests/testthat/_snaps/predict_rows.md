@@ -9,7 +9,7 @@
       kb_predict_weight(weight_nereo_fit, conf_level = 2)
     Condition
       Error in `kb_predict_weight()`:
-      ! `conf_level` must be between 0 and 1, not 2.
+      ! `conf_level` must be between 0 and 1 exclusive, not 2.
     Code
       kb_predict_size(size_nereo_fit, new_levels = "bogus")
     Condition

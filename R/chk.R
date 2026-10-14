@@ -259,7 +259,7 @@
   .with_call(
     {
       chk::chk_number(conf_level)
-      chk::chk_range(conf_level)
+      chk::chk_range(conf_level, inclusive = FALSE)
       chk::chk_function(estimate)
       chk::chk_whole_number(sig_fig)
       chk::chk_gt(sig_fig, value = 0)

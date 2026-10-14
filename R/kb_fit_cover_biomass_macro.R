@@ -34,7 +34,7 @@
 #' @param priors A named list of prior objects (see [kb_priors_cover_biomass_macro()]),
 #'   or `NULL` to use the defaults. Supplied entries override the corresponding
 #'   defaults; unspecified entries keep their defaults.
-#' @param conf_level A number between 0 and 1 giving the level of the
+#' @param conf_level A number greater than 0 and less than 1 giving the level of the
 #'   compatibility limits in `biomass`, or `NULL` to use the level a
 #'   `kb_predictions` object records, else 0.95.
 #' @param ... Additional arguments passed to [rstan::sampling()], including a

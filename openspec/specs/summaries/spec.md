@@ -8,7 +8,7 @@ description, accessors, and the errors raised for unsupported objects.
 ## Requirements
 ### Requirement: Parameter summaries
 
-`tidy()` and `coef()` SHALL return a tibble with columns `term`, `estimate`, `lower`, and `upper`, one row per population-level term and standard deviation of the fitted model, with `conf_level` (default 0.95) compatibility limits, `estimate` (default `median`), and `sig_fig` (default 3). `include_random_effects = TRUE` (default `FALSE`) SHALL add the per-level group effects, each term naming its level, as in `site_effect[<site>]`, `year_effect[<year>]`, and `site_year_effect[<site>,<year>]`. `coef()` SHALL return what `tidy()` returns.
+`tidy()` and `coef()` SHALL return a tibble with columns `term`, `estimate`, `lower`, and `upper`, one row per population-level term and standard deviation of the fitted model, with `conf_level` (default 0.95) compatibility limits, `estimate` (default `median`), and `sig_fig` (default 3). Wherever a summary takes `conf_level`, it SHALL be greater than 0 and less than 1. `include_random_effects = TRUE` (default `FALSE`) SHALL add the per-level group effects, each term naming its level, as in `site_effect[<site>]`, `year_effect[<year>]`, and `site_year_effect[<site>,<year>]`. `coef()` SHALL return what `tidy()` returns.
 
 #### Scenario: Default rows
 - **WHEN** `tidy(fit)` is called
@@ -226,7 +226,7 @@ priorsense's functions SHALL accept a `kb_fit` directly, giving the same sensiti
 
 ### Requirement: Influential observations
 
-`kb_influence(fit, ..., threshold = 0.7)` SHALL return the fitted data as a tibble, one row per observation in the fitted order, with added columns `elpd_loo` and `pareto_k` (the pointwise values of `loo(fit)`) and `influential` (`pareto_k` greater than `threshold`). The result SHALL be computed from the stored fit, without refitting, and SHALL NOT warn about high Pareto k values, which the `influential` column reports. `threshold` SHALL be a number greater than 0, and `...` SHALL be empty. A fit made with `prior_only = TRUE` or with no observations SHALL error.
+`kb_influence(fit, ..., threshold = NULL)` SHALL return the fitted data as a tibble, one row per observation in the fitted order, with added columns `elpd_loo` and `pareto_k` (the pointwise values of `loo(fit)`) and `influential` (`pareto_k` greater than `threshold`). The result SHALL be computed from the stored fit, without refitting, and SHALL NOT warn about high Pareto k values, which the `influential` column reports. `threshold` SHALL be a number greater than 0, or `NULL` for the threshold `loo()` reports, `min(1 - 1 / log10(S), 0.7)` for `S` posterior draws, and `...` SHALL be empty. A fit made with `prior_only = TRUE` or with no observations SHALL error.
 
 #### Scenario: One row per observation
 - **WHEN** `kb_influence(fit)` is called
@@ -235,6 +235,10 @@ priorsense's functions SHALL accept a `kb_fit` directly, giving the same sensiti
 #### Scenario: Values match loo
 - **WHEN** `kb_influence(fit)` is called
 - **THEN** `elpd_loo` and `pareto_k` equal the pointwise values of `loo(fit)`
+
+#### Scenario: The default threshold follows loo
+- **WHEN** `kb_influence(fit)` is called on a fit with 1,500 draws
+- **THEN** observations with `pareto_k` above `1 - 1 / log10(1500)` (about 0.69) are influential
 
 #### Scenario: The threshold sets the flag
 - **WHEN** `threshold` is changed

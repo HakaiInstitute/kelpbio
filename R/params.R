@@ -53,8 +53,8 @@
 #' @param progress_dir A string giving an existing directory in which to write a
 #'   pollable progress artifact (read by [kb_progress()]), or `NULL` (the
 #'   default) to write none.
-#' @param conf_level A number between 0 and 1 giving the compatibility-interval
-#'   level.
+#' @param conf_level A number greater than 0 and less than 1 giving the
+#'   compatibility-interval level.
 #' @param estimate A function that reduces a numeric vector of posterior draws to
 #'   a scalar point estimate (e.g. `median` or `mean`).
 #' @param sig_fig A whole number of significant figures for summary output.

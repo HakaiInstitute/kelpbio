@@ -4,10 +4,12 @@
 \alias{kb_model_describe}
 \title{Describe a Fitted Model}
 \usage{
-kb_model_describe(fit, prose = FALSE)
+kb_model_describe(fit, ..., prose = FALSE)
 }
 \arguments{
 \item{fit}{A \code{kb_fit} object.}
+
+\item{...}{Unused.}
 
 \item{prose}{A flag specifying whether to render a methods-section paragraph
 instead of the notation block.}

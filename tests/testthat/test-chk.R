@@ -347,3 +347,9 @@ test_that("measure checks reject infinite values", {
     "finite"
   )
 })
+
+test_that(".chk_summary_args excludes the conf_level endpoints", {
+  expect_null(.chk_summary_args(0.95, stats::median, 3))
+  expect_error(.chk_summary_args(0, stats::median, 3), "exclusive")
+  expect_error(.chk_summary_args(1, stats::median, 3), "exclusive")
+})

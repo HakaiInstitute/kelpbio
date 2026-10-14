@@ -4,7 +4,7 @@
 \alias{kb_influence}
 \title{Influential Observations}
 \usage{
-kb_influence(fit, ..., threshold = 0.7)
+kb_influence(fit, ..., threshold = NULL)
 }
 \arguments{
 \item{fit}{A \code{kb_fit} object.}
@@ -12,7 +12,8 @@ kb_influence(fit, ..., threshold = 0.7)
 \item{...}{Unused.}
 
 \item{threshold}{A number greater than 0: an observation with \code{pareto_k}
-above it is influential.}
+above it is influential. \code{NULL} (the default) uses the threshold of
+\code{\link[loo:loo]{loo::loo()}}, \code{min(1 - 1 / log10(S), 0.7)} for \code{S} posterior draws.}
 }
 \value{
 The fitted data as a tibble, one row per observation, with added
@@ -27,7 +28,8 @@ poorly, by Pareto-smoothed importance-sampling leave-one-out cross-validation
 Each observation gets two values:
 \itemize{
 \item \code{pareto_k} measures how much the fit changes when the observation is left
-out. Values above about 0.7 mark an influential observation.
+out. Values above 0.7 mark an influential observation (a lower threshold
+for fits with fewer than about 2,200 draws).
 \item \code{elpd_loo} is the log density of the observation under a fit that left it
 out. Lower values mark observations the model predicts poorly. Its scale
 depends on the response's units, so compare values within a fit.

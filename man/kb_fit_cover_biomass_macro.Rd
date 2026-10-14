@@ -36,7 +36,7 @@ defaults; unspecified entries keep their defaults.}
 \code{control} list (merged over the \code{adapt_delta = 0.95} default); see the
 \code{control} argument of \code{\link[rstan:stan]{rstan::stan()}} for the available entries.}
 
-\item{conf_level}{A number between 0 and 1 giving the level of the
+\item{conf_level}{A number greater than 0 and less than 1 giving the level of the
 compatibility limits in \code{biomass}, or \code{NULL} to use the level a
 \code{kb_predictions} object records, else 0.95.}
 

@@ -13,6 +13,7 @@
 #' random-effect list. Priors marked `T[0, ]` are truncated at zero.
 #'
 #' @param fit A `kb_fit` object.
+#' @param ... Unused.
 #' @param prose A flag specifying whether to render a methods-section paragraph
 #'   instead of the notation block.
 #'
@@ -24,7 +25,8 @@
 #' @examples
 #' kb_model_describe(fit_weight_sim_nereo)
 #' kb_model_describe(fit_weight_sim_macro, prose = TRUE)
-kb_model_describe <- function(fit, prose = FALSE) {
+kb_model_describe <- function(fit, ..., prose = FALSE) {
+  rlang::check_dots_empty()
   .chk_kb_fit(fit)
   chk::chk_flag(prose)
   .render_model(.model_spec(fit), prose)
