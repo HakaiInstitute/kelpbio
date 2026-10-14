@@ -100,7 +100,11 @@
 
 .vld_progress_dir <- function(x) {
   is.null(x) ||
-    (is.character(x) && length(x) == 1L && !is.na(x) && dir.exists(x))
+    (is.character(x) &&
+      length(x) == 1L &&
+      !is.na(x) &&
+      dir.exists(x) &&
+      file.access(x, mode = 2L) == 0L)
 }
 
 # Zero-row data sample the priors alone, which only prior_only asks for.

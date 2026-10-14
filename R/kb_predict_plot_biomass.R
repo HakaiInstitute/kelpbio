@@ -132,6 +132,9 @@ kb_predict_plot_biomass <- function(
   .chk_summary_args(conf_level, estimate, sig_fig)
 
   grid <- plot_biomass_grid(weight, size, density)
+  if (.density_on(weight)) {
+    warn_outside_range(weight, grid$stipes_m2, "stipes_m2", lower = FALSE)
+  }
   groups <- grid[c("site", "year")]
 
   # Per m^2: the grid holds no area column, so no offset.

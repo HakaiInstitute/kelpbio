@@ -50,6 +50,15 @@ test_that(".vld_progress_dir accepts NULL or an existing directory", {
   expect_false(.vld_progress_dir(1))
 })
 
+test_that(".vld_progress_dir rejects a directory that cannot be written to", {
+  skip_on_os("windows")
+  d <- withr::local_tempdir()
+  Sys.chmod(d, "0555")
+  withr::defer(Sys.chmod(d, "0755"))
+  skip_if(file.access(d, mode = 2L) == 0L, "running with write access to every directory")
+  expect_false(.vld_progress_dir(d))
+})
+
 test_that(".vld_density accepts non-negative numbers and all-NA", {
   expect_true(.vld_density(c(0, 2.5, NA)))
   expect_true(.vld_density(NA))

@@ -30,3 +30,7 @@ test_that("an implausible dry:wet ratio warns and the data still pass", {
   )
   expect_identical(out, data)
 })
+
+test_that("x_name must be a string", {
+  expect_error(kb_check_data_wetdry_macro(data.frame(), x_name = 1), "x_name")
+})

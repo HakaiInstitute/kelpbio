@@ -41,3 +41,7 @@ test_that("an area in the wrong unit warns", {
   )
   expect_warning(kb_check_data_density_macro(data), "area_m2")
 })
+
+test_that("x_name must be a string", {
+  expect_error(kb_check_data_density_macro(data.frame(), x_name = 1), "x_name")
+})

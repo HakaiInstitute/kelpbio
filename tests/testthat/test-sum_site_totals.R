@@ -22,6 +22,16 @@ test_that("character groups are ordered alphabetically", {
   expect_identical(res$groups$region, c("north", "south"))
 })
 
+test_that("character groups sort alphabetically regardless of case", {
+  mixed <- tibble::tibble(
+    site = c("a", "b", "c", "d"),
+    year = "2020",
+    region = c("north", "South", "alpha", "Beta")
+  )
+  res <- sum_site_totals(mixed, matrix(1:8, nrow = 2), "region")
+  expect_identical(res$groups$region, c("alpha", "Beta", "north", "South"))
+})
+
 test_that("a group holding one site-year twice warns", {
   twice <- tibble::tibble(site = c("a", "a"), year = "2020", region = "north")
   expect_warning(

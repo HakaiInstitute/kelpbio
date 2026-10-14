@@ -90,3 +90,7 @@ test_that("data in the wrong unit warn but still pass", {
   expect_warning(out <- kb_check_data_weight_nereo(data), "millimetres")
   expect_identical(out, data)
 })
+
+test_that("x_name must be a string", {
+  expect_error(kb_check_data_weight_nereo(data.frame(), x_name = 1), "x_name")
+})

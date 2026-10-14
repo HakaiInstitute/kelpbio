@@ -281,17 +281,17 @@
 
 .chk_progress_dir <- function(x, x_name = deparse(substitute(x))) {
   if (.vld_progress_dir(x)) {
-    if (is.null(x) || file.access(x, mode = 2L) == 0L) {
-      return(invisible(x))
-    }
-    cli::cli_abort("{.arg {x_name}} must be a writable directory.")
+    return(invisible(x))
   }
   if (!is.character(x) || length(x) != 1L || is.na(x)) {
     cli::cli_abort("{.arg {x_name}} must be a directory path or {.code NULL}.")
   }
-  cli::cli_abort(
-    "{.arg {x_name}} must be a path to an existing directory, or {.code NULL}."
-  )
+  if (!dir.exists(x)) {
+    cli::cli_abort(
+      "{.arg {x_name}} must be a path to an existing directory, or {.code NULL}."
+    )
+  }
+  cli::cli_abort("{.arg {x_name}} must be a writable directory.")
 }
 
 .chk_sampling_dots <- function(x, call = rlang::caller_env()) {

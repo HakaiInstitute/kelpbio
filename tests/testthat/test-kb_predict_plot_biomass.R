@@ -194,3 +194,12 @@ test_that("a density or size fit with no observations errors naming it", {
     "`size` must be fitted"
   )
 })
+
+test_that("site-year densities far beyond the weight fit's warn", {
+  dense <- density_nereo_fit
+  dense$data$stipes <- dense$data$stipes * 100L
+  expect_warning(
+    kb_predict_plot_biomass(weight_nereo_fit, size_nereo_fit, dense, n_plants = 5, progress = "none"),
+    "stipes_m2"
+  )
+})

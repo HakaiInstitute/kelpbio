@@ -30,3 +30,7 @@ test_that("diameter in centimetres warns but still passes", {
   expect_warning(out <- kb_check_data_size_nereo(data), "millimetres")
   expect_identical(out, data)
 })
+
+test_that("x_name must be a string", {
+  expect_error(kb_check_data_size_nereo(data.frame(), x_name = 1), "x_name")
+})

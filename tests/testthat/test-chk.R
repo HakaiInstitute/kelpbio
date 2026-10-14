@@ -53,6 +53,15 @@ test_that(".chk_progress_dir accepts NULL/an existing directory and errors other
   expect_snapshot(error = TRUE, .chk_progress_dir(1))
 })
 
+test_that(".chk_progress_dir errors on a directory that cannot be written to", {
+  skip_on_os("windows")
+  d <- withr::local_tempdir()
+  Sys.chmod(d, "0555")
+  withr::defer(Sys.chmod(d, "0755"))
+  skip_if(file.access(d, mode = 2L) == 0L, "running with write access to every directory")
+  expect_error(.chk_progress_dir(d), "writable")
+})
+
 test_that(".chk_sampler_args validates progress, progress_dir, and the numeric args", {
   expect_null(.chk_sampler_args(
     prior_only = FALSE,

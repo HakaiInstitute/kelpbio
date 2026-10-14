@@ -31,6 +31,7 @@ kb_check_data_carbon_nereo <- function(
 ) {
   .with_call(
     {
+      chk::chk_string(x_name)
       .chk_carbon_data(data, x_name)
     },
     rlang::current_env()

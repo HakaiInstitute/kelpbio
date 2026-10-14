@@ -100,3 +100,7 @@ test_that("a tide height in centimetres warns", {
   data$tide_height_m <- c(50, 120)
   expect_warning(kb_check_data_cover_biomass_macro(data), "tide_height_m")
 })
+
+test_that("x_name must be a string", {
+  expect_error(kb_check_data_cover_biomass_macro(data.frame(), x_name = 1), "x_name")
+})

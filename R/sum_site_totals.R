@@ -4,10 +4,14 @@
 sum_site_totals <- function(grid, totals, sum_by) {
   keys <- tibble::as_tibble(grid)[sum_by]
   if (length(sum_by)) {
-    groups <- dplyr::arrange(
-      dplyr::distinct(keys),
-      dplyr::pick(dplyr::everything())
-    )
+    groups <- dplyr::distinct(keys)
+    # Character groups sort alphabetically ignoring case, then by case, the
+    # same on every machine; factors keep their level order.
+    sort_keys <- lapply(groups, function(x) {
+      if (is.character(x)) list(tolower(x), x) else list(x)
+    })
+    ord <- do.call(order, c(unlist(sort_keys, recursive = FALSE), method = "radix"))
+    groups <- groups[ord, , drop = FALSE]
     id <- match(do.call(paste, c(keys, sep = "\r")), do.call(paste, c(groups, sep = "\r")))
   } else {
     groups <- tibble::tibble(.rows = 1L)
