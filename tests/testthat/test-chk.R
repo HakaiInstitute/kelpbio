@@ -354,3 +354,35 @@ test_that(".chk_summary_args excludes the conf_level endpoints", {
   expect_error(.chk_summary_args(0, stats::median, 3), "exclusive")
   expect_error(.chk_summary_args(1, stats::median, 3), "exclusive")
 })
+
+test_that(".chk_fit_inputs checks sampler arguments, data, then rows, naming the call", {
+  call <- quote(kb_fit_size_nereo())
+  check <- function(data, x_name) {
+    chk::chk_superset(names(data), "x", x_name = x_name)
+    invisible(data)
+  }
+  inputs <- function(data, prior_only = FALSE, chains = 4L) {
+    .chk_fit_inputs(
+      data,
+      check,
+      prior_only = prior_only,
+      chains = chains,
+      niters = 1000L,
+      nthin = 1L,
+      cores = NULL,
+      seed = NULL,
+      progress = "none",
+      progress_dir = NULL,
+      call = call
+    )
+  }
+  data <- data.frame(x = 1)
+  expect_invisible(inputs(data))
+  expect_invisible(inputs(data[0, , drop = FALSE], prior_only = TRUE))
+  err <- expect_error(inputs(data, chains = 0L), "chains")
+  expect_identical(err$call, call)
+  err <- expect_error(inputs(data.frame(y = 1)), "x")
+  expect_identical(err$call, call)
+  err <- expect_error(inputs(data[0, , drop = FALSE]), "prior_only")
+  expect_identical(err$call, call)
+})

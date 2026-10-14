@@ -319,6 +319,38 @@
   )
 }
 
+# The checks every fit runs before assembling Stan data, in order: sampler
+# arguments, the model's data check, then rows. Errors name `call`, the fit the
+# user called. A multi-argument bundle like .chk_sampler_args(): no .vld_ partner.
+.chk_fit_inputs <- function(
+  data,
+  check_data,
+  prior_only,
+  chains,
+  niters,
+  nthin,
+  cores,
+  seed,
+  progress,
+  progress_dir,
+  call = rlang::caller_env()
+) {
+  .chk_sampler_args(
+    prior_only = prior_only,
+    chains = chains,
+    niters = niters,
+    nthin = nthin,
+    cores = cores,
+    seed = seed,
+    progress = progress,
+    progress_dir = progress_dir,
+    call = call
+  )
+  .with_call(check_data(data, x_name = "`data`"), call)
+  .chk_fit_rows(data, prior_only, call = call)
+  invisible(data)
+}
+
 .chk_sampler_args <- function(
   prior_only,
   chains,

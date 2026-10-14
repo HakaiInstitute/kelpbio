@@ -49,7 +49,9 @@ kb_fit_size_nereo <- function(
   progress_dir = NULL
 ) {
   progress <- rlang::arg_match(progress)
-  .chk_sampler_args(
+  .chk_fit_inputs(
+    data,
+    kb_check_data_size_nereo,
     prior_only = prior_only,
     chains = chains,
     niters = niters,
@@ -59,9 +61,6 @@ kb_fit_size_nereo <- function(
     progress = progress,
     progress_dir = progress_dir
   )
-
-  .with_call(kb_check_data_size_nereo(data), rlang::current_env())
-  .chk_fit_rows(data, prior_only)
   site_year <- site_year_structure(data)
   notify_site_year(site_year, progress = progress)
 

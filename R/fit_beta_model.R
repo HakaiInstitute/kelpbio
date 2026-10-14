@@ -26,7 +26,9 @@ fit_beta_model <- function(
     c("bar", "verbose", "none"),
     error_call = call
   )
-  .chk_sampler_args(
+  .chk_fit_inputs(
+    data,
+    check_data,
     prior_only = prior_only,
     chains = chains,
     niters = niters,
@@ -37,10 +39,6 @@ fit_beta_model <- function(
     progress_dir = progress_dir,
     call = call
   )
-
-  # The species' own check, so its errors name the function users know.
-  .with_call(check_data(data, x_name = "`data`"), call)
-  .chk_fit_rows(data, prior_only, call = call)
   priors <- resolve_priors(priors, defaults, call = call)
   stan_data <- assemble(data, priors, prior_only = prior_only)
 

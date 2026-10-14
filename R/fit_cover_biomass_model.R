@@ -24,7 +24,9 @@ fit_cover_biomass_model <- function(
     c("bar", "verbose", "none"),
     error_call = call
   )
-  .chk_sampler_args(
+  .chk_fit_inputs(
+    data,
+    function(data, x_name) check_data(data, biomass, x_name = x_name),
     prior_only = prior_only,
     chains = chains,
     niters = niters,
@@ -35,9 +37,6 @@ fit_cover_biomass_model <- function(
     progress_dir = progress_dir,
     call = call
   )
-
-  .with_call(check_data(data, biomass, x_name = "`data`"), call)
-  .chk_fit_rows(data, prior_only, call = call)
   # The data check accepts a NULL biomass, which a fit cannot.
   .chk_plot_biomass(biomass, call = call)
   conf_level <- .with_call(cover_conf_level(biomass, conf_level), call)
