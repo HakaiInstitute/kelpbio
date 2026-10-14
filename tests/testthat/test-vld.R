@@ -200,6 +200,8 @@ test_that(".vld_sampling_dots flags sampler arguments kelpbio sets", {
   expect_true(.vld_sampling_dots(list(control = list(adapt_delta = 0.99))))
   expect_false(.vld_sampling_dots(list(iter = 10)))
   expect_false(.vld_sampling_dots(list(pars = "intercept")))
+  expect_false(.vld_sampling_dots(list("power")))
+  expect_false(.vld_sampling_dots(list(control = list(), 0)))
 })
 
 test_that(".vld_predictions needs a data frame with estimate and limits", {

@@ -287,6 +287,15 @@
       ! `pars` cannot be passed to the sampler: kelpbio sets it itself.
       i The fit keeps every parameter.
 
+---
+
+    Code
+      .chk_sampling_dots(list("power"))
+    Condition
+      Error:
+      ! Arguments in `...` must be named.
+      i They are passed to the sampler, e.g. `control = list(adapt_delta = 0.99)`.
+
 # .chk_finite, .chk_rows, and .chk_new_data_groups name the problem
 
     Code

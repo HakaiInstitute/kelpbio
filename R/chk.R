@@ -298,6 +298,15 @@
   if (.vld_sampling_dots(x)) {
     return(invisible(x))
   }
+  if (any(rlang::names2(x) == "")) {
+    cli::cli_abort(
+      c(
+        "Arguments in {.arg ...} must be named.",
+        i = "They are passed to the sampler, e.g. {.code control = list(adapt_delta = 0.99)}."
+      ),
+      call = call
+    )
+  }
   bad <- intersect(rlang::names2(x), names(SAMPLING_RESERVED))
   use <- unique(stats::na.omit(SAMPLING_RESERVED[bad]))
   cli::cli_abort(

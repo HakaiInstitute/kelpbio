@@ -299,6 +299,7 @@ test_that(".chk_sampling_dots rejects sampler arguments kelpbio sets, naming the
   expect_invisible(.chk_sampling_dots(list(control = list(), init = 0)))
   expect_snapshot(error = TRUE, .chk_sampling_dots(list(iter = 10, thin = 2)))
   expect_snapshot(error = TRUE, .chk_sampling_dots(list(pars = "intercept")))
+  expect_snapshot(error = TRUE, .chk_sampling_dots(list("power")))
 })
 
 test_that(".chk_predictions names the missing structure", {

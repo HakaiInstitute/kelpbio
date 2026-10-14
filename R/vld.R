@@ -92,8 +92,10 @@
     x %in% c("bar", "verbose", "none")
 }
 
+# Unnamed arguments would bind to sampling()'s first free formal, `pars`.
 .vld_sampling_dots <- function(x) {
-  !any(rlang::names2(x) %in% names(SAMPLING_RESERVED))
+  all(rlang::names2(x) != "") &&
+    !any(rlang::names2(x) %in% names(SAMPLING_RESERVED))
 }
 
 .vld_progress_dir <- function(x) {
