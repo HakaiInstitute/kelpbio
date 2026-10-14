@@ -35,7 +35,7 @@ test_that("resolve_priors rejects a non-list or unnamed priors", {
 
 test_that("resolve_priors rejects repeated prior names", {
   d <- kb_priors_weight_nereo()
-  p <- list(sd_site = kb_prior_exponential(1), sd_site = kb_prior_exponential(2))
+  p <- c(list(sd_site = kb_prior_exponential(1)), list(sd_site = kb_prior_exponential(2)))
   expect_error(resolve_priors(p, d), "unique")
 })
 
