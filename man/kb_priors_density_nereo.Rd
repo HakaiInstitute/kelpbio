@@ -2,7 +2,7 @@
 % Please edit documentation in R/kb_priors_density_nereo.R
 \name{kb_priors_density_nereo}
 \alias{kb_priors_density_nereo}
-\title{Default Priors for the Nereocystis Density Model}
+\title{Default priors for the Nereocystis density model}
 \usage{
 kb_priors_density_nereo()
 }
@@ -26,13 +26,13 @@ Exponential); only the hyperparameters can be changed.
 }
 \examples{
 kb_priors_density_nereo()
+\dontshow{if (interactive()) withAutoprint(\{ # examplesIf}
 # Change one prior; the others keep their defaults:
-if (interactive()) {
-  kb_fit_density_nereo(
-    data_density_sim_nereo,
-    priors = list(logit_zero_inflation = kb_prior_normal(mean = -1, sd = 1))
-  )
-}
+kb_fit_density_nereo(
+  data_density_sim_nereo,
+  priors = list(logit_zero_inflation = kb_prior_normal(mean = -1, sd = 1))
+)
+\dontshow{\}) # examplesIf}
 }
 \seealso{
 Other priors:

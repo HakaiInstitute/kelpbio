@@ -1,4 +1,4 @@
-#' Validate Nereocystis Cover Biomass Model Data
+#' Check Nereocystis cover biomass data
 #'
 #' Check that `data` contains the drone-survey columns required to fit the
 #' *Nereocystis luetkeana* cover biomass model, and that `biomass`, when supplied, is valid
@@ -24,13 +24,13 @@
 #' compatibility limits, such as wet biomass from [kb_predict_plot_biomass()].
 #' Other columns of either data frame are ignored.
 #'
+#' @inheritParams params
 #' @param data A data frame of drone surveys, one row per survey.
 #' @param biomass A data frame of in situ wet biomass, one row per site-year, or
 #'   `NULL` to check `data` only.
-#' @param x_name A string naming `data` in error messages.
 #'
-#' @return `data`, invisibly.
-#' @family data
+#' @returns `data`, invisibly.
+#' @family data checks
 #' @export
 #'
 #' @examples

@@ -2,7 +2,7 @@
 % Please edit documentation in R/kb_priors_cover_biomass_macro.R
 \name{kb_priors_cover_biomass_macro}
 \alias{kb_priors_cover_biomass_macro}
-\title{Default Priors for the Macrocystis Cover Biomass Model}
+\title{Default priors for the Macrocystis cover biomass model}
 \usage{
 kb_priors_cover_biomass_macro()
 }
@@ -29,14 +29,14 @@ truncated at zero.
 }
 \examples{
 kb_priors_cover_biomass_macro()
+\dontshow{if (interactive()) withAutoprint(\{ # examplesIf}
 # Change one prior; the others keep their defaults:
-if (interactive()) {
-  kb_fit_cover_biomass_macro(
-    data_cover_biomass_sim_macro,
-    data_plot_biomass_sim_macro,
-    priors = list(cover_slope = kb_prior_lognormal(meanlog = 2, sdlog = 0.5))
-  )
-}
+kb_fit_cover_biomass_macro(
+  data_cover_biomass_sim_macro,
+  data_plot_biomass_sim_macro,
+  priors = list(cover_slope = kb_prior_lognormal(meanlog = 2, sdlog = 0.5))
+)
+\dontshow{\}) # examplesIf}
 }
 \seealso{
 Other priors:

@@ -3,7 +3,7 @@
 \docType{data}
 \name{data_density_sim_macro}
 \alias{data_density_sim_macro}
-\title{Simulated Macrocystis Density Dataset}
+\title{Simulated Macrocystis density data}
 \format{
 A data frame with columns:
 \describe{
@@ -26,7 +26,7 @@ plot biomass (see \code{\link[=kb_predict_plot_biomass]{kb_predict_plot_biomass(
 \seealso{
 \link{fit_density_sim_macro} for a fit to this dataset.
 
-Other data:
+Other example datasets:
 \code{\link{data_carbon_sim_macro}},
 \code{\link{data_carbon_sim_nereo}},
 \code{\link{data_cover_biomass_sim_macro}},
@@ -39,31 +39,7 @@ Other data:
 \code{\link{data_weight_sim_macro}},
 \code{\link{data_weight_sim_nereo}},
 \code{\link{data_wetdry_sim_macro}},
-\code{\link{data_wetdry_sim_nereo}},
-\code{\link{fit_carbon_sim_macro}},
-\code{\link{fit_carbon_sim_nereo}},
-\code{\link{fit_cover_biomass_sim_macro}},
-\code{\link{fit_cover_biomass_sim_nereo}},
-\code{\link{fit_density_sim_macro}},
-\code{\link{fit_density_sim_nereo}},
-\code{\link{fit_size_sim_macro}},
-\code{\link{fit_size_sim_nereo}},
-\code{\link{fit_weight_sim_macro}},
-\code{\link{fit_weight_sim_nereo}},
-\code{\link{fit_wetdry_sim_macro}},
-\code{\link{fit_wetdry_sim_nereo}},
-\code{\link[=kb_check_data_carbon_macro]{kb_check_data_carbon_macro()}},
-\code{\link[=kb_check_data_carbon_nereo]{kb_check_data_carbon_nereo()}},
-\code{\link[=kb_check_data_cover_biomass_macro]{kb_check_data_cover_biomass_macro()}},
-\code{\link[=kb_check_data_cover_biomass_nereo]{kb_check_data_cover_biomass_nereo()}},
-\code{\link[=kb_check_data_density_macro]{kb_check_data_density_macro()}},
-\code{\link[=kb_check_data_density_nereo]{kb_check_data_density_nereo()}},
-\code{\link[=kb_check_data_size_macro]{kb_check_data_size_macro()}},
-\code{\link[=kb_check_data_size_nereo]{kb_check_data_size_nereo()}},
-\code{\link[=kb_check_data_weight_macro]{kb_check_data_weight_macro()}},
-\code{\link[=kb_check_data_weight_nereo]{kb_check_data_weight_nereo()}},
-\code{\link[=kb_check_data_wetdry_macro]{kb_check_data_wetdry_macro()}},
-\code{\link[=kb_check_data_wetdry_nereo]{kb_check_data_wetdry_nereo()}}
+\code{\link{data_wetdry_sim_nereo}}
 }
-\concept{data}
+\concept{example datasets}
 \keyword{datasets}

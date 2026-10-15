@@ -2,14 +2,14 @@
 % Please edit documentation in R/kb_converged.R
 \name{kb_converged}
 \alias{kb_converged}
-\title{Convergence of a Model Fit}
+\title{Whether a fit has converged}
 \usage{
 kb_converged(fit, ..., rhat = 1.01, ess = 100, max_perc_divergent = 0.2)
 }
 \arguments{
 \item{fit}{A \code{kb_fit} object.}
 
-\item{...}{Unused.}
+\item{...}{These dots are for future extensions and must be empty.}
 
 \item{rhat}{A number giving the maximum acceptable Rhat.}
 
@@ -79,24 +79,11 @@ Stan Development Team. Runtime warnings and convergence problems.
 \url{https://mc-stan.org/learn-stan/diagnostics-warnings.html}
 }
 \seealso{
-Other model:
-\code{\link[=kb_fit_carbon_macro]{kb_fit_carbon_macro()}},
-\code{\link[=kb_fit_carbon_nereo]{kb_fit_carbon_nereo()}},
-\code{\link[=kb_fit_cover_biomass_macro]{kb_fit_cover_biomass_macro()}},
-\code{\link[=kb_fit_cover_biomass_nereo]{kb_fit_cover_biomass_nereo()}},
-\code{\link[=kb_fit_density_macro]{kb_fit_density_macro()}},
-\code{\link[=kb_fit_density_nereo]{kb_fit_density_nereo()}},
-\code{\link[=kb_fit_size_macro]{kb_fit_size_macro()}},
-\code{\link[=kb_fit_size_nereo]{kb_fit_size_nereo()}},
-\code{\link[=kb_fit_weight_macro]{kb_fit_weight_macro()}},
-\code{\link[=kb_fit_weight_nereo]{kb_fit_weight_nereo()}},
-\code{\link[=kb_fit_wetdry_macro]{kb_fit_wetdry_macro()}},
-\code{\link[=kb_fit_wetdry_nereo]{kb_fit_wetdry_nereo()}},
+Other diagnostics:
+\code{\link[=create_priorsense_data.kb_fit]{create_priorsense_data.kb_fit()}},
 \code{\link[=kb_influence]{kb_influence()}},
-\code{\link[=kb_model_describe]{kb_model_describe()}},
-\code{\link[=kb_progress]{kb_progress()}},
-\code{\link[=kb_samples]{kb_samples()}},
 \code{\link[=kb_sensitivity]{kb_sensitivity()}},
-\code{\link[=kb_stancode]{kb_stancode()}}
+\code{\link[=loo.kb_fit]{loo.kb_fit()}},
+\code{\link[=pp_check.kb_fit]{pp_check.kb_fit()}}
 }
-\concept{model}
+\concept{diagnostics}

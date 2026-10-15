@@ -1,4 +1,4 @@
-#' Pointwise Log-Likelihood
+#' Pointwise log-likelihood
 #'
 #' The pointwise log-likelihood of the observed data, suitable for [loo::loo()].
 #'
@@ -7,11 +7,10 @@
 #' weight in kg, not log weight), so models of the same response can be
 #' compared with [loo::loo_compare()].
 #'
-#' @param object A `kb_fit` object.
-#' @param ... Unused.
 #'
-#' @return A draws-by-observations (`D x N`) matrix.
-#' @family generics
+#' @inheritParams params
+#' @returns A draws-by-observations (`D x N`) matrix.
+#' @family fit methods
 #' @seealso [loo.kb_fit()] for leave-one-out cross-validation of a fit.
 #' @exportS3Method rstantools::log_lik
 #' @examples

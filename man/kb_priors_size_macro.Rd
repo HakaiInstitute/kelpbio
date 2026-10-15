@@ -2,7 +2,7 @@
 % Please edit documentation in R/kb_priors_size_macro.R
 \name{kb_priors_size_macro}
 \alias{kb_priors_size_macro}
-\title{Default Priors for the Macrocystis Size Model}
+\title{Default priors for the Macrocystis size model}
 \usage{
 kb_priors_size_macro()
 }
@@ -24,13 +24,13 @@ hyperparameters can be changed.
 }
 \examples{
 kb_priors_size_macro()
+\dontshow{if (interactive()) withAutoprint(\{ # examplesIf}
 # Change one prior; the others keep their defaults:
-if (interactive()) {
-  kb_fit_size_macro(
-    data_size_sim_macro,
-    priors = list(dispersion = kb_prior_exponential(rate = 2))
-  )
-}
+kb_fit_size_macro(
+  data_size_sim_macro,
+  priors = list(dispersion = kb_prior_exponential(rate = 2))
+)
+\dontshow{\}) # examplesIf}
 }
 \seealso{
 Other priors:

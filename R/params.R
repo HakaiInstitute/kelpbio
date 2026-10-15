@@ -27,6 +27,10 @@
 #' from the site or year effect.
 #'
 #' @inheritParams rlang::args_dots_empty
+#' @param fit A `kb_fit` object.
+#' @param object A `kb_fit` object.
+#' @param x A `kb_fit` object.
+#' @param x_name A string naming `data` in error messages.
 #' @param prior_only A flag specifying whether to sample from the priors only
 #'   (the likelihood is switched off), for prior predictive checks.
 #' @param chains A whole number of MCMC chains.

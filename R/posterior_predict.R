@@ -1,4 +1,4 @@
-#' Posterior-Predictive Draws
+#' Posterior predictive draws
 #'
 #' Draws from the posterior predictive distribution: replicate responses
 #' (weights, plant sizes, transect counts, dry:wet ratios, carbon fractions, or
@@ -22,17 +22,15 @@
 #' Repeated calls return different draws; use `set.seed()` to reproduce them.
 #'
 #' @inheritParams params
-#' @param object A `kb_fit` object.
 #' @param new_data A data frame with the fit's predictor column (and optional
 #'   `site`, `year`, and `stipes_m2` columns; for a density fit, an optional
 #'   `area_m2` column giving each transect's area, 1 m² when absent;
 #'   `canopy_area_m2`, `plot_area_m2`, `tide_height_m`, `lower`, and `upper` for
 #'   a cover fit), or
 #'   `NULL` to predict at the observed data.
-#' @param ... Unused.
 #'
-#' @return A draws-by-observations (`D x N`) matrix.
-#' @family generics
+#' @returns A draws-by-observations (`D x N`) matrix.
+#' @family fit methods
 #' @exportS3Method rstantools::posterior_predict
 #' @examples
 #' set.seed(1)

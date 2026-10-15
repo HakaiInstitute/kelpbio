@@ -1,4 +1,4 @@
-#' Fit a Nereocystis Carbon Model
+#' Fit a Nereocystis carbon model
 #'
 #' Fit a carbon-fraction model for *Nereocystis luetkeana* via Stan.
 #'
@@ -15,26 +15,24 @@
 #' samples only.
 #'
 #' @inheritSection params Sampling
+#' @inheritParams kb_fit_weight_nereo
 #' @inheritParams params
 #' @param data A data frame of carbon observations, one row per sample (see
 #'   [kb_check_data_carbon_nereo()] for the required columns).
 #' @param priors A named list of prior objects (see [kb_priors_carbon_nereo()]),
 #'   or `NULL` to use the defaults. Entries not supplied keep their defaults.
-#' @param ... Additional arguments passed to [rstan::sampling()], such as
-#'   `control`.
 #'
-#' @return An object of class
+#' @returns An object of class
 #'   `c("kb_fit_carbon_nereo", "kb_fit_carbon", "kb_fit")`.
-#' @family model
+#' @family fit functions
 #' @export
 #'
 #' @examples
-#' if (interactive()) {
-#'   fit <- kb_fit_carbon_nereo(data_carbon_sim_nereo)
-#'   tidy(fit)
-#' }
 #' # A pre-fit example model is included with the package:
 #' tidy(fit_carbon_sim_nereo)
+#' @examplesIf interactive()
+#' fit <- kb_fit_carbon_nereo(data_carbon_sim_nereo)
+#' tidy(fit)
 kb_fit_carbon_nereo <- function(
   data,
   priors = NULL,

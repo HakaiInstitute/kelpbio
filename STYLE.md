@@ -42,7 +42,7 @@ Each description is a sentence: it starts with a capital and ends with a full st
 | Function | "A function that <does what>, such as `median`." |
 | List | "A named list of <what> (see [fun()])." |
 | `NULL` option | "..., or `NULL` to <behaviour>." |
-| `...` (empty) | "Unused." |
+| `...` (empty) | Inherited from `params.R`: "These dots are for future extensions and must be empty." |
 | `...` (passed on) | "Additional arguments passed to [pkg::fun()]." |
 
 Units: give the unit once, in parentheses after the quantity, as a symbol: "(mm)", "(kg)", "(kg/m²)", "(g C/m²)", "(m)". Column names already carry the suffix, so do not restate units in words ("in millimetres").

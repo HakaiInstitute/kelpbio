@@ -1,13 +1,13 @@
-#' Coefficients of a Model Fit
+#' Coefficients
 #'
 #' Posterior summaries of the model terms, as returned by [tidy()].
 #'
-#' @param object A `kb_fit` object.
+#' @inheritParams params
 #' @param ... Passed to [tidy()].
 #'
-#' @return A tibble with one row per term and columns `term`, `estimate`,
+#' @returns A tibble with one row per term and columns `term`, `estimate`,
 #'   `lower`, and `upper`.
-#' @family generics
+#' @family fit methods
 #' @exportS3Method stats::coef
 #' @examples
 #' coef(fit_weight_sim_nereo)

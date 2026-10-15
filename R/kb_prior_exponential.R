@@ -1,4 +1,4 @@
-#' Exponential Prior
+#' Exponential prior
 #'
 #' Construct an Exponential prior object to replace an entry of a `kb_priors_*()` list
 #' passed to the `priors` argument of the `kb_fit_*()` functions. Used for
@@ -7,7 +7,7 @@
 #'
 #' @param rate A positive number giving the rate.
 #'
-#' @return A `kb_prior_exponential` object.
+#' @returns A `kb_prior_exponential` object.
 #' @family priors
 #' @export
 #'

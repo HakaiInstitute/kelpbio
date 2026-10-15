@@ -1,4 +1,4 @@
-#' Tidy a Model Fit
+#' Summaries of the model terms
 #'
 #' Posterior summaries of the model terms.
 #'
@@ -9,12 +9,10 @@
 #' `site_year_effect[otter_cove,2020]`.
 #'
 #' @inheritParams params
-#' @param x A `kb_fit` object.
-#' @param ... Unused.
 #'
-#' @return A tibble with one row per term and columns `term`, `estimate`,
+#' @returns A tibble with one row per term and columns `term`, `estimate`,
 #'   `lower`, `upper`.
-#' @family generics
+#' @family fit methods
 #' @exportS3Method generics::tidy
 #' @examples
 #' tidy(fit_weight_sim_nereo)

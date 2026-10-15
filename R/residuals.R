@@ -1,4 +1,4 @@
-#' Deviance Residuals
+#' Deviance residuals
 #'
 #' Posterior point estimates of the deviance residual at each observed row, from
 #' the fitted likelihood, matching [augment()]'s `residual` column.
@@ -13,11 +13,10 @@
 #' dry:wet mass ratio (wet/dry) and the carbon fraction (carbon), and Normal on
 #' the log in situ biomass estimate (cover).
 #'
-#' @param object A `kb_fit` object.
-#' @param ... Unused.
 #'
-#' @return A numeric vector of deviance residuals, length `nobs(object)`.
-#' @family generics
+#' @inheritParams params
+#' @returns A numeric vector of deviance residuals, length `nobs(object)`.
+#' @family fit methods
 #' @seealso [fitted()] for fitted values, and [augment()].
 #' @exportS3Method stats::residuals
 #' @examples

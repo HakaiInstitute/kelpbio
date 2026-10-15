@@ -1,4 +1,4 @@
-#' Predict Plot Biomass from the Component Models
+#' Predict plot biomass
 #'
 #' Combine weight, size, and density fits into the expected biomass per m² of
 #' each site-year surveyed for density, as wet, dry, or carbon biomass.
@@ -36,7 +36,6 @@
 #'   or `NULL`.
 #' @param carbon A `kb_fit_carbon` object, required for carbon biomass, or
 #'   `NULL`.
-#' @param ... Unused.
 #' @param measure A string, one of `"wet"` (kg/m²), `"dry"` (kg/m²), or
 #'   `"carbon"` (g C/m²), giving the biomass to predict.
 #' @param new_levels A string, one of `"sample"` (the default) or `"average"`,
@@ -55,11 +54,11 @@
 #' @param progress_dir A string giving an existing directory in which to record
 #'   progress for [kb_progress()], or `NULL` (the default) to record none.
 #'
-#' @return A `kb_predictions` object with one row per site-year in `density`'s
+#' @returns A `kb_predictions` object with one row per site-year in `density`'s
 #'   data and columns `site`, `year`, `weight_support`, `size_support`, and
 #'   `estimate`, `lower`, and `upper` summarising the posterior distribution of
 #'   the expected biomass.
-#' @family prediction
+#' @family prediction functions
 #' @export
 #'
 #' @examples

@@ -2,7 +2,7 @@
 % Please edit documentation in R/kb_fit_weight_macro.R
 \name{kb_fit_weight_macro}
 \alias{kb_fit_weight_macro}
-\title{Fit a Macrocystis Weight Model}
+\title{Fit a Macrocystis weight model}
 \usage{
 kb_fit_weight_macro(
   data,
@@ -62,7 +62,7 @@ Fit an allometric weight model for \emph{Macrocystis pyrifera} via Stan.
 \details{
 The response is wet weight, modelled on the natural scale with a Gamma
 likelihood. Expected weight is a log-linear (allometric) function of log frond
-count, centered at its geometric mean so the intercept is the expected weight
+count, centred at its geometric mean so the intercept is the expected weight
 at a typical frond count. The Gamma shape (\code{shape}) is constant across plants.
 The intercept varies by site, by year, and by \code{site:year}.
 }
@@ -90,16 +90,15 @@ from the site or year effect.
 }
 
 \examples{
-if (interactive()) {
-  fit <- kb_fit_weight_macro(data_weight_sim_macro)
-  tidy(fit)
-}
 # A pre-fit example model ships with the package:
 tidy(fit_weight_sim_macro)
+\dontshow{if (interactive()) withAutoprint(\{ # examplesIf}
+fit <- kb_fit_weight_macro(data_weight_sim_macro)
+tidy(fit)
+\dontshow{\}) # examplesIf}
 }
 \seealso{
-Other model:
-\code{\link[=kb_converged]{kb_converged()}},
+Other fit functions:
 \code{\link[=kb_fit_carbon_macro]{kb_fit_carbon_macro()}},
 \code{\link[=kb_fit_carbon_nereo]{kb_fit_carbon_nereo()}},
 \code{\link[=kb_fit_cover_biomass_macro]{kb_fit_cover_biomass_macro()}},
@@ -111,11 +110,6 @@ Other model:
 \code{\link[=kb_fit_weight_nereo]{kb_fit_weight_nereo()}},
 \code{\link[=kb_fit_wetdry_macro]{kb_fit_wetdry_macro()}},
 \code{\link[=kb_fit_wetdry_nereo]{kb_fit_wetdry_nereo()}},
-\code{\link[=kb_influence]{kb_influence()}},
-\code{\link[=kb_model_describe]{kb_model_describe()}},
-\code{\link[=kb_progress]{kb_progress()}},
-\code{\link[=kb_samples]{kb_samples()}},
-\code{\link[=kb_sensitivity]{kb_sensitivity()}},
-\code{\link[=kb_stancode]{kb_stancode()}}
+\code{\link[=kb_progress]{kb_progress()}}
 }
-\concept{model}
+\concept{fit functions}

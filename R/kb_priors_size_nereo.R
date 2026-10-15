@@ -1,4 +1,4 @@
-#' Default Priors for the Nereocystis Size Model
+#' Default priors for the Nereocystis size model
 #'
 #' The default priors for the *Nereocystis luetkeana* size model. To change a
 #' prior, pass a list of the entries to change to the `priors` argument of
@@ -9,7 +9,7 @@
 #' shape and standard deviations are Exponential); only the hyperparameters can be
 #' changed.
 #'
-#' @return A named list of prior objects with entries `intercept` (the log mean
+#' @returns A named list of prior objects with entries `intercept` (the log mean
 #'   diameter), `shape` (the Weibull shape), `sd_site`, `sd_year`, and
 #'   `sd_site_year`.
 #' @family priors
@@ -17,13 +17,12 @@
 #'
 #' @examples
 #' kb_priors_size_nereo()
+#' @examplesIf interactive()
 #' # Change one prior; the others keep their defaults:
-#' if (interactive()) {
-#'   kb_fit_size_nereo(
-#'     data_size_sim_nereo,
-#'     priors = list(sd_site = kb_prior_exponential(rate = 2))
-#'   )
-#' }
+#' kb_fit_size_nereo(
+#'   data_size_sim_nereo,
+#'   priors = list(sd_site = kb_prior_exponential(rate = 2))
+#' )
 # Unlike the analysis project (Normal(1, 1) on the log shape), the shape is
 # estimated directly with a weak Exponential(0.1) prior, as the Macrocystis
 # weight shape is; the data dominate it.

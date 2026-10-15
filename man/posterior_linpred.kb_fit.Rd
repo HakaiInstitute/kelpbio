@@ -2,7 +2,7 @@
 % Please edit documentation in R/posterior_linpred.R
 \name{posterior_linpred.kb_fit}
 \alias{posterior_linpred.kb_fit}
-\title{Linear-Predictor Posterior Draws}
+\title{Draws of the linear predictor}
 \usage{
 \method{posterior_linpred}{kb_fit}(
   object,
@@ -24,7 +24,7 @@ or the inverse logit for wet/dry and carbon).}
 \code{area_m2} column giving each transect's area, 1 m² when absent), or
 \code{NULL} for the observed data.}
 
-\item{...}{Unused.}
+\item{...}{These dots are for future extensions and must be empty.}
 
 \item{new_levels}{A string, one of \code{"average"} (the default) or \code{"sample"},
 giving how a site or year that is new or absent from \code{new_data} is
@@ -53,26 +53,20 @@ lp <- posterior_linpred(fit_weight_sim_nereo)
 dim(lp)
 }
 \seealso{
-Other generics:
+Other fit methods:
 \code{\link[=augment.kb_fit]{augment.kb_fit()}},
 \code{\link[=coef.kb_fit]{coef.kb_fit()}},
-\code{\link[=create_priorsense_data.kb_fit]{create_priorsense_data.kb_fit()}},
 \code{\link[=fitted.kb_fit]{fitted.kb_fit()}},
 \code{\link[=glance.kb_fit]{glance.kb_fit()}},
+\code{\link[=kb_model_describe]{kb_model_describe()}},
+\code{\link[=kb_samples]{kb_samples()}},
+\code{\link[=kb_stancode]{kb_stancode()}},
 \code{\link[=log_lik.kb_fit]{log_lik.kb_fit()}},
-\code{\link[=loo.kb_fit]{loo.kb_fit()}},
 \code{\link[=posterior_epred.kb_fit]{posterior_epred.kb_fit()}},
 \code{\link[=posterior_predict.kb_fit]{posterior_predict.kb_fit()}},
-\code{\link[=pp_check.kb_fit]{pp_check.kb_fit()}},
-\code{\link[=predict.kb_fit_carbon]{predict.kb_fit_carbon()}},
-\code{\link[=predict.kb_fit_cover_biomass]{predict.kb_fit_cover_biomass()}},
-\code{\link[=predict.kb_fit_density]{predict.kb_fit_density()}},
-\code{\link[=predict.kb_fit_size]{predict.kb_fit_size()}},
-\code{\link[=predict.kb_fit_weight]{predict.kb_fit_weight()}},
-\code{\link[=predict.kb_fit_wetdry]{predict.kb_fit_wetdry()}},
 \code{\link[=prior_summary.kb_fit]{prior_summary.kb_fit()}},
 \code{\link[=residuals.kb_fit]{residuals.kb_fit()}},
 \code{\link[=summary.kb_fit]{summary.kb_fit()}},
 \code{\link[=tidy.kb_fit]{tidy.kb_fit()}}
 }
-\concept{generics}
+\concept{fit methods}

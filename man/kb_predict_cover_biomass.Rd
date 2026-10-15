@@ -2,7 +2,7 @@
 % Please edit documentation in R/kb_predict_cover_biomass.R
 \name{kb_predict_cover_biomass}
 \alias{kb_predict_cover_biomass}
-\title{Predict Cover-Model Biomass}
+\title{Predict biomass from canopy cover}
 \usage{
 kb_predict_cover_biomass(
   fit,
@@ -23,7 +23,7 @@ m²), \code{plot_area_m2} (plot area, m²), and \code{tide_height_m} (tide heigh
 columns and optional \code{site} and \code{year} columns, one row per prediction, or
 \code{NULL} to predict at the observed surveys.}
 
-\item{...}{Unused.}
+\item{...}{These dots are for future extensions and must be empty.}
 
 \item{new_levels}{A string, one of \code{"average"} (the default) or \code{"sample"},
 giving how a site or year that is new or absent from \code{new_data} is
@@ -85,7 +85,7 @@ kb_predict_cover_biomass(
 \code{\link[=kb_new_data]{kb_new_data()}} to build rows by site or year over tide-corrected
 cover.
 
-Other prediction:
+Other prediction functions:
 \code{\link[=autoplot.kb_predictions]{autoplot.kb_predictions()}},
 \code{\link[=kb_new_data]{kb_new_data()}},
 \code{\link[=kb_plot_predictions]{kb_plot_predictions()}},
@@ -95,6 +95,12 @@ Other prediction:
 \code{\link[=kb_predict_site_biomass]{kb_predict_site_biomass()}},
 \code{\link[=kb_predict_size]{kb_predict_size()}},
 \code{\link[=kb_predict_weight]{kb_predict_weight()}},
-\code{\link[=kb_predict_wetdry]{kb_predict_wetdry()}}
+\code{\link[=kb_predict_wetdry]{kb_predict_wetdry()}},
+\code{\link[=predict.kb_fit_carbon]{predict.kb_fit_carbon()}},
+\code{\link[=predict.kb_fit_cover_biomass]{predict.kb_fit_cover_biomass()}},
+\code{\link[=predict.kb_fit_density]{predict.kb_fit_density()}},
+\code{\link[=predict.kb_fit_size]{predict.kb_fit_size()}},
+\code{\link[=predict.kb_fit_weight]{predict.kb_fit_weight()}},
+\code{\link[=predict.kb_fit_wetdry]{predict.kb_fit_wetdry()}}
 }
-\concept{prediction}
+\concept{prediction functions}

@@ -2,7 +2,7 @@
 % Please edit documentation in R/kb_prior_lognormal.R
 \name{kb_prior_lognormal}
 \alias{kb_prior_lognormal}
-\title{Lognormal Prior}
+\title{Lognormal prior}
 \usage{
 kb_prior_lognormal(meanlog = 0, sdlog = 1)
 }

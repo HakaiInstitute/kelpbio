@@ -1,4 +1,4 @@
-#' Validate Macrocystis Cover Biomass Model Data
+#' Check Macrocystis cover biomass data
 #'
 #' Check that `data` contains the drone-survey columns required to fit the
 #' *Macrocystis pyrifera* cover biomass model, and that `biomass`, when supplied, is valid
@@ -24,13 +24,11 @@
 #' compatibility limits, such as wet biomass from [kb_predict_plot_biomass()].
 #' Other columns of either data frame are ignored.
 #'
-#' @param data A data frame of drone surveys, one row per survey.
-#' @param biomass A data frame of in situ wet biomass, one row per site-year, or
-#'   `NULL` to check `data` only.
-#' @param x_name A string naming `data` in error messages.
 #'
-#' @return `data`, invisibly.
-#' @family data
+#' @inheritParams kb_check_data_cover_biomass_nereo
+#' @inheritParams params
+#' @returns `data`, invisibly.
+#' @family data checks
 #' @export
 #'
 #' @examples

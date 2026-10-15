@@ -1,4 +1,4 @@
-#' Fit a Nereocystis Cover Biomass Model
+#' Fit a Nereocystis cover biomass model
 #'
 #' Fit a cover-biomass calibration for *Nereocystis luetkeana* via Stan.
 #'
@@ -26,6 +26,7 @@
 #' limits, so each survey is weighted by the precision of its in situ estimate.
 #'
 #' @inheritSection params Sampling
+#' @inheritParams kb_fit_weight_nereo
 #' @inheritParams params
 #' @param data A data frame of drone surveys, one row per survey (see
 #'   [kb_check_data_cover_biomass_nereo()] for the required columns).
@@ -38,22 +39,19 @@
 #' @param conf_level A number greater than 0 and less than 1 giving the level
 #'   of the compatibility limits in `biomass`, or `NULL` to use the level
 #'   stored in a `kb_predictions` object, or 0.95 for any other data frame.
-#' @param ... Additional arguments passed to [rstan::sampling()], such as
-#'   `control`.
 #'
-#' @return An object of class
+#' @returns An object of class
 #'   `c("kb_fit_cover_biomass_nereo", "kb_fit_cover_biomass", "kb_fit")`. Its `data` holds the
 #'   fitted surveys with the paired `estimate`, `lower`, and `upper` columns.
-#' @family model
+#' @family fit functions
 #' @export
 #'
 #' @examples
-#' if (interactive()) {
-#'   fit <- kb_fit_cover_biomass_nereo(data_cover_biomass_sim_nereo, data_plot_biomass_sim_nereo)
-#'   tidy(fit)
-#' }
 #' # A pre-fit example model is included with the package:
 #' tidy(fit_cover_biomass_sim_nereo)
+#' @examplesIf interactive()
+#' fit <- kb_fit_cover_biomass_nereo(data_cover_biomass_sim_nereo, data_plot_biomass_sim_nereo)
+#' tidy(fit)
 kb_fit_cover_biomass_nereo <- function(
   data,
   biomass,

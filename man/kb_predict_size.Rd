@@ -2,7 +2,7 @@
 % Please edit documentation in R/kb_predict_size.R
 \name{kb_predict_size}
 \alias{kb_predict_size}
-\title{Predict Size}
+\title{Predict size}
 \usage{
 kb_predict_size(
   fit,
@@ -21,7 +21,7 @@ kb_predict_size(
 \item{new_data}{A data frame with optional \code{site} and \code{year} columns, one row
 per prediction, or \code{NULL} to predict at the observed data.}
 
-\item{...}{Unused.}
+\item{...}{These dots are for future extensions and must be empty.}
 
 \item{new_levels}{A string, one of \code{"average"} (the default) or \code{"sample"},
 giving how a site or year that is new or absent from \code{new_data} is
@@ -80,7 +80,7 @@ kb_predict_size(fit, data.frame(site = c("otter_cove", "new_site")))
 \code{\link[=kb_new_data]{kb_new_data()}} to build rows by site or year, and
 \code{\link[=posterior_predict]{posterior_predict()}} for draws of individual plant sizes.
 
-Other prediction:
+Other prediction functions:
 \code{\link[=autoplot.kb_predictions]{autoplot.kb_predictions()}},
 \code{\link[=kb_new_data]{kb_new_data()}},
 \code{\link[=kb_plot_predictions]{kb_plot_predictions()}},
@@ -90,6 +90,12 @@ Other prediction:
 \code{\link[=kb_predict_plot_biomass]{kb_predict_plot_biomass()}},
 \code{\link[=kb_predict_site_biomass]{kb_predict_site_biomass()}},
 \code{\link[=kb_predict_weight]{kb_predict_weight()}},
-\code{\link[=kb_predict_wetdry]{kb_predict_wetdry()}}
+\code{\link[=kb_predict_wetdry]{kb_predict_wetdry()}},
+\code{\link[=predict.kb_fit_carbon]{predict.kb_fit_carbon()}},
+\code{\link[=predict.kb_fit_cover_biomass]{predict.kb_fit_cover_biomass()}},
+\code{\link[=predict.kb_fit_density]{predict.kb_fit_density()}},
+\code{\link[=predict.kb_fit_size]{predict.kb_fit_size()}},
+\code{\link[=predict.kb_fit_weight]{predict.kb_fit_weight()}},
+\code{\link[=predict.kb_fit_wetdry]{predict.kb_fit_wetdry()}}
 }
-\concept{prediction}
+\concept{prediction functions}

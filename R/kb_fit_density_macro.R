@@ -1,4 +1,4 @@
-#' Fit a Macrocystis Density Model
+#' Fit a Macrocystis density model
 #'
 #' Fit a plant-density model for *Macrocystis pyrifera* via Stan.
 #'
@@ -12,27 +12,25 @@
 #'
 #' @inheritSection params Sampling
 #' @inheritSection params Site and year interaction
+#' @inheritParams kb_fit_weight_nereo
 #' @inheritParams params
 #' @param data A data frame of density observations, one row per transect (see
 #'   [kb_check_data_density_macro()] for the required columns).
 #' @param priors A named list of prior objects (see
 #'   [kb_priors_density_macro()]), or `NULL` to use the defaults. Entries not
 #'   supplied keep their defaults.
-#' @param ... Additional arguments passed to [rstan::sampling()], such as
-#'   `control`.
 #'
-#' @return An object of class
+#' @returns An object of class
 #'   `c("kb_fit_density_macro", "kb_fit_density", "kb_fit")`.
-#' @family model
+#' @family fit functions
 #' @export
 #'
 #' @examples
-#' if (interactive()) {
-#'   fit <- kb_fit_density_macro(data_density_sim_macro)
-#'   tidy(fit)
-#' }
 #' # A pre-fit example model is included with the package:
 #' tidy(fit_density_sim_macro)
+#' @examplesIf interactive()
+#' fit <- kb_fit_density_macro(data_density_sim_macro)
+#' tidy(fit)
 kb_fit_density_macro <- function(
   data,
   priors = NULL,

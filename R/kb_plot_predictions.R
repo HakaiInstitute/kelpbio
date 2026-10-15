@@ -1,4 +1,4 @@
-#' Plot Model Predictions
+#' Plot predictions
 #'
 #' Render a `ggplot` from a `kb_predictions` object (the output of a
 #' `kb_predict_*()` function).
@@ -21,6 +21,7 @@
 #'
 #' Only the predictions are drawn; add raw data as a ggplot2 layer.
 #'
+#' @inheritParams params
 #' @param predictions A `kb_predictions` object.
 #' @param x A string naming the x-axis column, or `NULL` to choose it from the
 #'   predictions.
@@ -29,10 +30,9 @@
 #' @param max_facets A whole number capping the facet panels drawn; if the
 #'   grouping has more groups, the first `max_facets` are shown with a warning.
 #'   Use `Inf` to disable.
-#' @param ... Unused.
 #'
-#' @return A `ggplot` object.
-#' @family prediction
+#' @returns A `ggplot` object.
+#' @family prediction functions
 #' @export
 #'
 #' @examples

@@ -1,4 +1,4 @@
-#' Predict Weight
+#' Predict weight
 #'
 #' Predict the expected wet weight (kg) of a plant at each row of `new_data`, or
 #' at the observed data when `new_data = NULL`.
@@ -17,12 +17,11 @@
 #'   millimetres for *Nereocystis*, `fronds` for *Macrocystis*) and optional
 #'   `site` and `year` columns (and, for *Nereocystis*, an optional `stipes_m2`
 #'   column in stipes per m²), or `NULL` to predict at the observed data.
-#' @param ... Unused.
 #'
-#' @return A `kb_predictions` object: the rows of `new_data` with added
+#' @returns A `kb_predictions` object: the rows of `new_data` with added
 #'   `estimate`, `lower`, and `upper` columns summarising the posterior
 #'   distribution of expected weight.
-#' @family prediction
+#' @family prediction functions
 #' @seealso [kb_new_data()] to build rows by site or year over a predictor
 #'   sequence, and [posterior_predict()] for draws of individual plant weights.
 #' @export

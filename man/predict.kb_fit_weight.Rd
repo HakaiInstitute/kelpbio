@@ -2,7 +2,7 @@
 % Please edit documentation in R/predict.R
 \name{predict.kb_fit_weight}
 \alias{predict.kb_fit_weight}
-\title{Predict Method for a Weight Model Fit}
+\title{Predict method for weight fits}
 \usage{
 \method{predict}{kb_fit_weight}(
   object,
@@ -23,7 +23,7 @@ millimetres for \emph{Nereocystis}, \code{fronds} for \emph{Macrocystis}) and op
 \code{site} and \code{year} columns (and, for \emph{Nereocystis}, an optional \code{stipes_m2}
 column in stipes per m²), or \code{NULL} to predict at the observed data.}
 
-\item{...}{Unused.}
+\item{...}{These dots are for future extensions and must be empty.}
 
 \item{new_levels}{A string, one of \code{"average"} (the default) or \code{"sample"},
 giving how a site or year that is new or absent from \code{new_data} is
@@ -55,26 +55,22 @@ data when \code{new_data = NULL}. Equivalent to \code{\link[=kb_predict_weight]{
 predict(fit_weight_sim_nereo, data.frame(diameter_mm = c(20, 40)))
 }
 \seealso{
-Other generics:
-\code{\link[=augment.kb_fit]{augment.kb_fit()}},
-\code{\link[=coef.kb_fit]{coef.kb_fit()}},
-\code{\link[=create_priorsense_data.kb_fit]{create_priorsense_data.kb_fit()}},
-\code{\link[=fitted.kb_fit]{fitted.kb_fit()}},
-\code{\link[=glance.kb_fit]{glance.kb_fit()}},
-\code{\link[=log_lik.kb_fit]{log_lik.kb_fit()}},
-\code{\link[=loo.kb_fit]{loo.kb_fit()}},
-\code{\link[=posterior_epred.kb_fit]{posterior_epred.kb_fit()}},
-\code{\link[=posterior_linpred.kb_fit]{posterior_linpred.kb_fit()}},
-\code{\link[=posterior_predict.kb_fit]{posterior_predict.kb_fit()}},
-\code{\link[=pp_check.kb_fit]{pp_check.kb_fit()}},
+Other prediction functions:
+\code{\link[=autoplot.kb_predictions]{autoplot.kb_predictions()}},
+\code{\link[=kb_new_data]{kb_new_data()}},
+\code{\link[=kb_plot_predictions]{kb_plot_predictions()}},
+\code{\link[=kb_predict_carbon]{kb_predict_carbon()}},
+\code{\link[=kb_predict_cover_biomass]{kb_predict_cover_biomass()}},
+\code{\link[=kb_predict_density]{kb_predict_density()}},
+\code{\link[=kb_predict_plot_biomass]{kb_predict_plot_biomass()}},
+\code{\link[=kb_predict_site_biomass]{kb_predict_site_biomass()}},
+\code{\link[=kb_predict_size]{kb_predict_size()}},
+\code{\link[=kb_predict_weight]{kb_predict_weight()}},
+\code{\link[=kb_predict_wetdry]{kb_predict_wetdry()}},
 \code{\link[=predict.kb_fit_carbon]{predict.kb_fit_carbon()}},
 \code{\link[=predict.kb_fit_cover_biomass]{predict.kb_fit_cover_biomass()}},
 \code{\link[=predict.kb_fit_density]{predict.kb_fit_density()}},
 \code{\link[=predict.kb_fit_size]{predict.kb_fit_size()}},
-\code{\link[=predict.kb_fit_wetdry]{predict.kb_fit_wetdry()}},
-\code{\link[=prior_summary.kb_fit]{prior_summary.kb_fit()}},
-\code{\link[=residuals.kb_fit]{residuals.kb_fit()}},
-\code{\link[=summary.kb_fit]{summary.kb_fit()}},
-\code{\link[=tidy.kb_fit]{tidy.kb_fit()}}
+\code{\link[=predict.kb_fit_wetdry]{predict.kb_fit_wetdry()}}
 }
-\concept{generics}
+\concept{prediction functions}

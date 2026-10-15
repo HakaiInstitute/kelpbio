@@ -1,11 +1,9 @@
-#' Convergence of a Model Fit
+#' Whether a fit has converged
 #'
 #' Whether a model fit has converged, from the Rhat and effective sample sizes
 #' of its parameters and its rate of divergent transitions.
 #'
 #' @inheritParams params
-#' @param fit A `kb_fit` object.
-#' @param ... Unused.
 #'
 #' @section Assessing convergence:
 #'
@@ -46,8 +44,8 @@
 #' Stan Development Team. Runtime warnings and convergence problems.
 #' <https://mc-stan.org/learn-stan/diagnostics-warnings.html>
 #'
-#' @return A flag: `TRUE` if all three conditions are met, otherwise `FALSE`.
-#' @family model
+#' @returns A flag: `TRUE` if all three conditions are met, otherwise `FALSE`.
+#' @family diagnostics
 #' @export
 #' @examples
 #' kb_converged(fit_weight_sim_nereo)

@@ -2,7 +2,7 @@
 % Please edit documentation in R/kb_fit_carbon_nereo.R
 \name{kb_fit_carbon_nereo}
 \alias{kb_fit_carbon_nereo}
-\title{Fit a Nereocystis Carbon Model}
+\title{Fit a Nereocystis carbon model}
 \usage{
 kb_fit_carbon_nereo(
   data,
@@ -87,16 +87,15 @@ Check convergence with \code{\link[=kb_converged]{kb_converged()}}, \code{\link[
 }
 
 \examples{
-if (interactive()) {
-  fit <- kb_fit_carbon_nereo(data_carbon_sim_nereo)
-  tidy(fit)
-}
 # A pre-fit example model is included with the package:
 tidy(fit_carbon_sim_nereo)
+\dontshow{if (interactive()) withAutoprint(\{ # examplesIf}
+fit <- kb_fit_carbon_nereo(data_carbon_sim_nereo)
+tidy(fit)
+\dontshow{\}) # examplesIf}
 }
 \seealso{
-Other model:
-\code{\link[=kb_converged]{kb_converged()}},
+Other fit functions:
 \code{\link[=kb_fit_carbon_macro]{kb_fit_carbon_macro()}},
 \code{\link[=kb_fit_cover_biomass_macro]{kb_fit_cover_biomass_macro()}},
 \code{\link[=kb_fit_cover_biomass_nereo]{kb_fit_cover_biomass_nereo()}},
@@ -108,11 +107,6 @@ Other model:
 \code{\link[=kb_fit_weight_nereo]{kb_fit_weight_nereo()}},
 \code{\link[=kb_fit_wetdry_macro]{kb_fit_wetdry_macro()}},
 \code{\link[=kb_fit_wetdry_nereo]{kb_fit_wetdry_nereo()}},
-\code{\link[=kb_influence]{kb_influence()}},
-\code{\link[=kb_model_describe]{kb_model_describe()}},
-\code{\link[=kb_progress]{kb_progress()}},
-\code{\link[=kb_samples]{kb_samples()}},
-\code{\link[=kb_sensitivity]{kb_sensitivity()}},
-\code{\link[=kb_stancode]{kb_stancode()}}
+\code{\link[=kb_progress]{kb_progress()}}
 }
-\concept{model}
+\concept{fit functions}

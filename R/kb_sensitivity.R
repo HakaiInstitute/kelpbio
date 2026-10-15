@@ -1,4 +1,4 @@
-#' Prior Sensitivity of a Model Fit
+#' Prior sensitivity
 #'
 #' Assess how much each parameter's posterior depends on its prior and on the
 #' data, by power-scaling (Kallioinen et al. 2024).
@@ -29,14 +29,13 @@
 #' Requires the priorsense package. Its functions, such as
 #' `priorsense::powerscale_plot_dens()`, also accept a fit directly.
 #'
-#' @param fit A `kb_fit` object.
-#' @param ... Unused.
+#' @inheritParams params
 #' @param prior_threshold A number greater than 0: a parameter with `prior_cjs`
 #'   below it has a weak prior.
 #' @param likelihood_threshold A number greater than 0: a parameter with
 #'   `likelihood_cjs` at or above it has strong data.
 #'
-#' @return A tibble with one row per parameter that has a prior and columns
+#' @returns A tibble with one row per parameter that has a prior and columns
 #'   `term` (the parameter, which is also its prior entry), `prior_cjs` and
 #'   `likelihood_cjs` (the sensitivity to the prior and to the likelihood),
 #'   `weak_prior`, and `strong_data`.
@@ -44,7 +43,7 @@
 #' Kallioinen, N., Paananen, T., Bürkner, P.-C., and Vehtari, A. (2024).
 #' Detecting and diagnosing prior and likelihood sensitivity with power-scaling.
 #' Statistics and Computing, 34, 57.
-#' @family model
+#' @family diagnostics
 #' @export
 #'
 #' @examplesIf rlang::is_installed("priorsense")

@@ -2,7 +2,7 @@
 % Please edit documentation in R/kb_priors_size_nereo.R
 \name{kb_priors_size_nereo}
 \alias{kb_priors_size_nereo}
-\title{Default Priors for the Nereocystis Size Model}
+\title{Default priors for the Nereocystis size model}
 \usage{
 kb_priors_size_nereo()
 }
@@ -24,13 +24,13 @@ changed.
 }
 \examples{
 kb_priors_size_nereo()
+\dontshow{if (interactive()) withAutoprint(\{ # examplesIf}
 # Change one prior; the others keep their defaults:
-if (interactive()) {
-  kb_fit_size_nereo(
-    data_size_sim_nereo,
-    priors = list(sd_site = kb_prior_exponential(rate = 2))
-  )
-}
+kb_fit_size_nereo(
+  data_size_sim_nereo,
+  priors = list(sd_site = kb_prior_exponential(rate = 2))
+)
+\dontshow{\}) # examplesIf}
 }
 \seealso{
 Other priors:

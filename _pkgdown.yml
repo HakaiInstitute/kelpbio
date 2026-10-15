@@ -9,7 +9,7 @@ template:
     navbar-dark: true
 
 reference:
-- title: "Fitting Models"
+- title: "Fitting models"
   desc: "Fit Bayesian Stan models."
   contents:
     - kb_fit_weight_nereo
@@ -43,8 +43,8 @@ reference:
     - kb_prior_normal
     - kb_prior_exponential
     - kb_prior_lognormal
-- title: "Data"
-  desc: "Validate and explore input data."
+- title: "Data checks"
+  desc: "Check input data before fitting."
   contents:
     - kb_check_data_weight_nereo
     - kb_check_data_weight_macro
@@ -58,6 +58,9 @@ reference:
     - kb_check_data_carbon_macro
     - kb_check_data_cover_biomass_nereo
     - kb_check_data_cover_biomass_macro
+- title: "Example data and fits"
+  desc: "Simulated datasets and pre-fit models for examples."
+  contents:
     - data_weight_sim_nereo
     - data_weight_sim_macro
     - data_size_sim_nereo
@@ -84,7 +87,7 @@ reference:
     - fit_carbon_sim_macro
     - fit_cover_biomass_sim_nereo
     - fit_cover_biomass_sim_macro
-- title: "Predictions and Plotting"
+- title: "Predictions and plotting"
   desc: "Predict and visualise model output."
   contents:
     - kb_new_data
@@ -97,8 +100,8 @@ reference:
     - kb_predict_cover_biomass
     - kb_predict_site_biomass
     - kb_plot_predictions
-- title: "Model Summaries and Diagnostics"
-  desc: "Summarise fits, extract coefficients and draws, and assess convergence, model fit, influential observations, and prior sensitivity."
+- title: "Fit summaries and diagnostics"
+  desc: "Summarise fits and check convergence, model fit, and prior sensitivity."
   contents:
     - kb_samples
     - kb_stancode

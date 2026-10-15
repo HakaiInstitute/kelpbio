@@ -2,14 +2,14 @@
 % Please edit documentation in R/kb_model_describe.R
 \name{kb_model_describe}
 \alias{kb_model_describe}
-\title{Describe a Fitted Model}
+\title{Describe a fitted model}
 \usage{
 kb_model_describe(fit, ..., prose = FALSE)
 }
 \arguments{
 \item{fit}{A \code{kb_fit} object.}
 
-\item{...}{Unused.}
+\item{...}{These dots are for future extensions and must be empty.}
 
 \item{prose}{A flag specifying whether to render a methods-section paragraph
 instead of the notation block.}
@@ -34,24 +34,20 @@ kb_model_describe(fit_weight_sim_nereo)
 kb_model_describe(fit_weight_sim_macro, prose = TRUE)
 }
 \seealso{
-Other model:
-\code{\link[=kb_converged]{kb_converged()}},
-\code{\link[=kb_fit_carbon_macro]{kb_fit_carbon_macro()}},
-\code{\link[=kb_fit_carbon_nereo]{kb_fit_carbon_nereo()}},
-\code{\link[=kb_fit_cover_biomass_macro]{kb_fit_cover_biomass_macro()}},
-\code{\link[=kb_fit_cover_biomass_nereo]{kb_fit_cover_biomass_nereo()}},
-\code{\link[=kb_fit_density_macro]{kb_fit_density_macro()}},
-\code{\link[=kb_fit_density_nereo]{kb_fit_density_nereo()}},
-\code{\link[=kb_fit_size_macro]{kb_fit_size_macro()}},
-\code{\link[=kb_fit_size_nereo]{kb_fit_size_nereo()}},
-\code{\link[=kb_fit_weight_macro]{kb_fit_weight_macro()}},
-\code{\link[=kb_fit_weight_nereo]{kb_fit_weight_nereo()}},
-\code{\link[=kb_fit_wetdry_macro]{kb_fit_wetdry_macro()}},
-\code{\link[=kb_fit_wetdry_nereo]{kb_fit_wetdry_nereo()}},
-\code{\link[=kb_influence]{kb_influence()}},
-\code{\link[=kb_progress]{kb_progress()}},
+Other fit methods:
+\code{\link[=augment.kb_fit]{augment.kb_fit()}},
+\code{\link[=coef.kb_fit]{coef.kb_fit()}},
+\code{\link[=fitted.kb_fit]{fitted.kb_fit()}},
+\code{\link[=glance.kb_fit]{glance.kb_fit()}},
 \code{\link[=kb_samples]{kb_samples()}},
-\code{\link[=kb_sensitivity]{kb_sensitivity()}},
-\code{\link[=kb_stancode]{kb_stancode()}}
+\code{\link[=kb_stancode]{kb_stancode()}},
+\code{\link[=log_lik.kb_fit]{log_lik.kb_fit()}},
+\code{\link[=posterior_epred.kb_fit]{posterior_epred.kb_fit()}},
+\code{\link[=posterior_linpred.kb_fit]{posterior_linpred.kb_fit()}},
+\code{\link[=posterior_predict.kb_fit]{posterior_predict.kb_fit()}},
+\code{\link[=prior_summary.kb_fit]{prior_summary.kb_fit()}},
+\code{\link[=residuals.kb_fit]{residuals.kb_fit()}},
+\code{\link[=summary.kb_fit]{summary.kb_fit()}},
+\code{\link[=tidy.kb_fit]{tidy.kb_fit()}}
 }
-\concept{model}
+\concept{fit methods}

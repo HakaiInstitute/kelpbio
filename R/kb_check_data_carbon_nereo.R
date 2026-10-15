@@ -1,4 +1,4 @@
-#' Validate Nereocystis Carbon Model Data
+#' Check Nereocystis carbon data
 #'
 #' Check that `data` contains the columns required to fit the
 #' *Nereocystis luetkeana* carbon model, with appropriate types and values.
@@ -15,11 +15,11 @@
 #' whose carbon fraction falls outside 0.10 to 0.50, the plausible range for kelp
 #' tissue; they are kept, not removed. Other columns are ignored.
 #'
+#' @inheritParams params
 #' @param data A data frame of carbon observations, one row per sample.
-#' @param x_name A string naming `data` in error messages.
 #'
-#' @return `data`, invisibly.
-#' @family data
+#' @returns `data`, invisibly.
+#' @family data checks
 #' @export
 #'
 #' @examples

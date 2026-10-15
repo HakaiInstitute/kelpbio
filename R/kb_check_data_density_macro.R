@@ -1,4 +1,4 @@
-#' Validate Macrocystis Density Model Data
+#' Check Macrocystis density data
 #'
 #' Check that `data` contains the columns required to fit the *Macrocystis
 #' pyrifera* density model, with appropriate types and values.
@@ -16,8 +16,8 @@
 #'
 #' @inheritParams kb_check_data_density_nereo
 #'
-#' @return `data`, invisibly.
-#' @family data
+#' @returns `data`, invisibly.
+#' @family data checks
 #' @export
 #'
 #' @examples

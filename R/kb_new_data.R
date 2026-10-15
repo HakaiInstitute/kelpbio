@@ -1,4 +1,4 @@
-#' Build New Data for Prediction
+#' Build new data to predict at
 #'
 #' Build a grid of rows to predict at: one row per fitted site, year, or
 #' observed site-year, or per supplied site or year, crossed for a weight or
@@ -34,10 +34,10 @@
 #'   predictor is omitted, 30 evenly spaced values span the observed range for
 #'   weight (whole numbers for `fronds`), and 0 to 1 for cover.
 #'
-#' @return A tibble with the grouping columns named in `by` or `...`, the predictor
+#' @returns A tibble with the grouping columns named in `by` or `...`, the predictor
 #'   column for a weight or cover biomass fit, and for a cover biomass fit the
 #'   survey columns.
-#' @family prediction
+#' @family prediction functions
 #' @export
 #'
 #' @examples

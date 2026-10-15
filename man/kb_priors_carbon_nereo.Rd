@@ -2,7 +2,7 @@
 % Please edit documentation in R/kb_priors_carbon_nereo.R
 \name{kb_priors_carbon_nereo}
 \alias{kb_priors_carbon_nereo}
-\title{Default Priors for the Nereocystis Carbon Model}
+\title{Default priors for the Nereocystis carbon model}
 \usage{
 kb_priors_carbon_nereo()
 }
@@ -23,13 +23,13 @@ precision is Exponential); only the hyperparameters can be changed.
 }
 \examples{
 kb_priors_carbon_nereo()
+\dontshow{if (interactive()) withAutoprint(\{ # examplesIf}
 # Change one prior; the others keep their defaults:
-if (interactive()) {
-  kb_fit_carbon_nereo(
-    data_carbon_sim_nereo,
-    priors = list(intercept = kb_prior_normal(mean = -1, sd = 0.5))
-  )
-}
+kb_fit_carbon_nereo(
+  data_carbon_sim_nereo,
+  priors = list(intercept = kb_prior_normal(mean = -1, sd = 0.5))
+)
+\dontshow{\}) # examplesIf}
 }
 \seealso{
 Other priors:

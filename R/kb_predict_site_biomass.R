@@ -1,4 +1,4 @@
-#' Predict Site Biomass
+#' Predict site biomass
 #'
 #' Predict the total biomass of each drone survey of a site from a cover
 #' biomass fit: wet or dry (kg) or carbon (kg C), optionally summed over groups
@@ -20,18 +20,14 @@
 #' per-survey estimates or limits. Sum at most one survey per site-year; a group
 #' with more warns.
 #'
+#' @inheritParams kb_predict_cover_biomass
+#' @inheritParams kb_predict_plot_biomass
 #' @inheritParams params
-#' @param fit A `kb_fit_cover_biomass` object.
 #' @param new_data A data frame with one row per drone survey of a site:
 #'   `site`, `year`, `canopy_area_m2` (the canopy mapped within the site, m²),
 #'   and `tide_height_m` (tide height at the survey, m), and optionally
 #'   `site_area_m2` (the area within the site boundary, m²), which caps the
 #'   tide-corrected canopy. Other columns are kept, and can be named in `sum_by`.
-#' @param wetdry A `kb_fit_wetdry` object, required for dry and carbon biomass,
-#'   or `NULL`.
-#' @param carbon A `kb_fit_carbon` object, required for carbon biomass, or
-#'   `NULL`.
-#' @param ... Unused.
 #' @param measure A string, one of `"wet"` (kg), `"dry"` (kg), or `"carbon"`
 #'   (kg C), giving the biomass to predict.
 #' @param sum_by A character vector naming character or factor columns of
@@ -43,12 +39,12 @@
 #'   years; `"average"` uses the typical site or year. `"sample"` gives a
 #'   different interval on each call; use `set.seed()` to reproduce it.
 #'
-#' @return A `kb_predictions` object. Without `sum_by`, the rows of `new_data`
+#' @returns A `kb_predictions` object. Without `sum_by`, the rows of `new_data`
 #'   with added `cover_support` (`"site, year"`, `"site"`, `"year"`, or `"none"`:
 #'   the data the cover fit has for the survey's site and year), `estimate`,
 #'   `lower`, and `upper` columns; with `sum_by`, one row per group with its
 #'   `sum_by` columns, `estimate`, `lower`, and `upper`.
-#' @family prediction
+#' @family prediction functions
 #' @seealso [kb_predict_cover_biomass()] for biomass per m² of a surveyed plot,
 #'   and [kb_predict_plot_biomass()] for in situ biomass per m².
 #' @export

@@ -1,4 +1,4 @@
-#' Fit a Macrocystis Cover Biomass Model
+#' Fit a Macrocystis cover biomass model
 #'
 #' Fit a cover-biomass calibration for *Macrocystis pyrifera* via Stan.
 #'
@@ -26,34 +26,27 @@
 #' limits, so each survey is weighted by the precision of its in situ estimate.
 #'
 #' @inheritSection params Sampling
+#' @inheritParams kb_fit_cover_biomass_nereo
+#' @inheritParams kb_fit_weight_nereo
 #' @inheritParams params
 #' @param data A data frame of drone surveys, one row per survey (see
 #'   [kb_check_data_cover_biomass_macro()] for the required columns).
-#' @param biomass A data frame of in situ wet biomass (kg/m²), one row per
-#'   site-year, with `site`, `year`, `estimate`, `lower`, and `upper` columns,
-#'   such as wet biomass from [kb_predict_plot_biomass()].
 #' @param priors A named list of prior objects (see
 #'   [kb_priors_cover_biomass_macro()]), or `NULL` to use the defaults. Entries
 #'   not supplied keep their defaults.
-#' @param conf_level A number greater than 0 and less than 1 giving the level
-#'   of the compatibility limits in `biomass`, or `NULL` to use the level
-#'   stored in a `kb_predictions` object, or 0.95 for any other data frame.
-#' @param ... Additional arguments passed to [rstan::sampling()], such as
-#'   `control`.
 #'
-#' @return An object of class
+#' @returns An object of class
 #'   `c("kb_fit_cover_biomass_macro", "kb_fit_cover_biomass", "kb_fit")`. Its `data` holds the
 #'   fitted surveys with the paired `estimate`, `lower`, and `upper` columns.
-#' @family model
+#' @family fit functions
 #' @export
 #'
 #' @examples
-#' if (interactive()) {
-#'   fit <- kb_fit_cover_biomass_macro(data_cover_biomass_sim_macro, data_plot_biomass_sim_macro)
-#'   tidy(fit)
-#' }
 #' # A pre-fit example model is included with the package:
 #' tidy(fit_cover_biomass_sim_macro)
+#' @examplesIf interactive()
+#' fit <- kb_fit_cover_biomass_macro(data_cover_biomass_sim_macro, data_plot_biomass_sim_macro)
+#' tidy(fit)
 kb_fit_cover_biomass_macro <- function(
   data,
   biomass,

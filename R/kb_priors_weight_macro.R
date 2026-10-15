@@ -1,4 +1,4 @@
-#' Default Priors for the Macrocystis Weight Model
+#' Default priors for the Macrocystis weight model
 #'
 #' The default priors for the *Macrocystis pyrifera* allometric weight model. To
 #' change a prior, pass a list of the entries to change to the `priors` argument
@@ -11,20 +11,19 @@
 #' expected weight at the geometric mean frond count, and `fronds_slope` the
 #' slope of log expected weight on log frond count.
 #'
-#' @return A named list of prior objects with entries `intercept`,
+#' @returns A named list of prior objects with entries `intercept`,
 #'   `fronds_slope`, `shape`, `sd_site`, `sd_year`, and `sd_site_year`.
 #' @family priors
 #' @export
 #'
 #' @examples
 #' kb_priors_weight_macro()
+#' @examplesIf interactive()
 #' # Change one prior; the others keep their defaults:
-#' if (interactive()) {
-#'   kb_fit_weight_macro(
-#'     data_weight_sim_macro,
-#'     priors = list(sd_site = kb_prior_exponential(rate = 2))
-#'   )
-#' }
+#' kb_fit_weight_macro(
+#'   data_weight_sim_macro,
+#'   priors = list(sd_site = kb_prior_exponential(rate = 2))
+#' )
 kb_priors_weight_macro <- function() {
   list(
     intercept = kb_prior_normal(mean = 0, sd = 2),

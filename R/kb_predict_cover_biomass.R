@@ -1,4 +1,4 @@
-#' Predict Cover-Model Biomass
+#' Predict biomass from canopy cover
 #'
 #' Predict the expected wet biomass (kg/m²) of a plot from its canopy area, plot
 #' area, and tide height, at each row of `new_data`, or at the observed surveys
@@ -17,12 +17,11 @@
 #'   m²), `plot_area_m2` (plot area, m²), and `tide_height_m` (tide height, m)
 #'   columns and optional `site` and `year` columns, one row per prediction, or
 #'   `NULL` to predict at the observed surveys.
-#' @param ... Unused.
 #'
-#' @return A `kb_predictions` object: the rows of `new_data` with added
+#' @returns A `kb_predictions` object: the rows of `new_data` with added
 #'   `estimate`, `lower`, and `upper` columns summarising the posterior
 #'   distribution of the expected wet biomass per m² of plot.
-#' @family prediction
+#' @family prediction functions
 #' @seealso [kb_new_data()] to build rows by site or year over tide-corrected
 #'   cover.
 #' @export

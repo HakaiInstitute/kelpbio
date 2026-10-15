@@ -2,7 +2,7 @@
 % Please edit documentation in R/kb_priors_carbon_macro.R
 \name{kb_priors_carbon_macro}
 \alias{kb_priors_carbon_macro}
-\title{Default Priors for the Macrocystis Carbon Model}
+\title{Default priors for the Macrocystis carbon model}
 \usage{
 kb_priors_carbon_macro()
 }
@@ -23,13 +23,13 @@ precision is Exponential); only the hyperparameters can be changed.
 }
 \examples{
 kb_priors_carbon_macro()
+\dontshow{if (interactive()) withAutoprint(\{ # examplesIf}
 # Change one prior; the others keep their defaults:
-if (interactive()) {
-  kb_fit_carbon_macro(
-    data_carbon_sim_macro,
-    priors = list(intercept = kb_prior_normal(mean = -1, sd = 0.5))
-  )
-}
+kb_fit_carbon_macro(
+  data_carbon_sim_macro,
+  priors = list(intercept = kb_prior_normal(mean = -1, sd = 0.5))
+)
+\dontshow{\}) # examplesIf}
 }
 \seealso{
 Other priors:

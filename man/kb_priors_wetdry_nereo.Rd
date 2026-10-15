@@ -2,7 +2,7 @@
 % Please edit documentation in R/kb_priors_wetdry_nereo.R
 \name{kb_priors_wetdry_nereo}
 \alias{kb_priors_wetdry_nereo}
-\title{Default Priors for the Nereocystis Wet/Dry Model}
+\title{Default priors for the Nereocystis wet/dry model}
 \usage{
 kb_priors_wetdry_nereo()
 }
@@ -23,13 +23,13 @@ precision is Exponential); only the hyperparameters can be changed.
 }
 \examples{
 kb_priors_wetdry_nereo()
+\dontshow{if (interactive()) withAutoprint(\{ # examplesIf}
 # Change one prior; the others keep their defaults:
-if (interactive()) {
-  kb_fit_wetdry_nereo(
-    data_wetdry_sim_nereo,
-    priors = list(intercept = kb_prior_normal(mean = -2.4, sd = 0.5))
-  )
-}
+kb_fit_wetdry_nereo(
+  data_wetdry_sim_nereo,
+  priors = list(intercept = kb_prior_normal(mean = -2.4, sd = 0.5))
+)
+\dontshow{\}) # examplesIf}
 }
 \seealso{
 Other priors:

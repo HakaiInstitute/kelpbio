@@ -1,4 +1,4 @@
-#' Completed Fraction of a Running Task
+#' Completed fraction of a running task
 #'
 #' The proportion completed by a fit or [kb_predict_plot_biomass()] writing to
 #' `progress_dir`, as a number from 0 to 1.
@@ -13,8 +13,8 @@
 #'
 #' @param progress_dir A string giving the directory passed as `progress_dir` to
 #'   the task.
-#' @return A number between 0 and 1.
-#' @family model
+#' @returns A number between 0 and 1.
+#' @family fit functions
 #' @export
 #' @examples
 #' progress_dir <- tempfile()

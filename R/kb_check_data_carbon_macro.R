@@ -1,4 +1,4 @@
-#' Validate Macrocystis Carbon Model Data
+#' Check Macrocystis carbon data
 #'
 #' Check that `data` contains the columns required to fit the
 #' *Macrocystis pyrifera* carbon model, with appropriate types and values.
@@ -17,8 +17,8 @@
 #'
 #' @inheritParams kb_check_data_carbon_nereo
 #'
-#' @return `data`, invisibly.
-#' @family data
+#' @returns `data`, invisibly.
+#' @family data checks
 #' @export
 #'
 #' @examples

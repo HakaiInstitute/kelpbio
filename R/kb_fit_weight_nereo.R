@@ -1,4 +1,4 @@
-#' Fit a Nereocystis Weight Model
+#' Fit a Nereocystis weight model
 #'
 #' Fit an allometric weight model for *Nereocystis luetkeana* via Stan.
 #'
@@ -40,19 +40,18 @@
 #' @param ... Additional arguments passed to [rstan::sampling()], such as
 #'   `control`.
 #'
-#' @return An object of class `c("kb_fit_weight_nereo", "kb_fit_weight", "kb_fit")`.
+#' @returns An object of class `c("kb_fit_weight_nereo", "kb_fit_weight", "kb_fit")`.
 #' @references Packard, G. C. (2023). What is complex allometry? *Biology Open*,
 #'   12, bio060148. \doi{10.1242/bio.060148}
-#' @family model
+#' @family fit functions
 #' @export
 #'
 #' @examples
-#' if (interactive()) {
-#'   fit <- kb_fit_weight_nereo(data_weight_sim_nereo)
-#'   tidy(fit)
-#' }
 #' # A pre-fit example model is included with the package:
 #' tidy(fit_weight_sim_nereo)
+#' @examplesIf interactive()
+#' fit <- kb_fit_weight_nereo(data_weight_sim_nereo)
+#' tidy(fit)
 kb_fit_weight_nereo <- function(
   data,
   priors = NULL,

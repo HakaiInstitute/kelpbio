@@ -2,7 +2,7 @@
 % Please edit documentation in R/kb_predict_site_biomass.R
 \name{kb_predict_site_biomass}
 \alias{kb_predict_site_biomass}
-\title{Predict Site Biomass}
+\title{Predict site biomass}
 \usage{
 kb_predict_site_biomass(
   fit,
@@ -34,7 +34,7 @@ or \code{NULL}.}
 \item{carbon}{A \code{kb_fit_carbon} object, required for carbon biomass, or
 \code{NULL}.}
 
-\item{...}{Unused.}
+\item{...}{These dots are for future extensions and must be empty.}
 
 \item{measure}{A string, one of \code{"wet"} (kg), \code{"dry"} (kg), or \code{"carbon"}
 (kg C), giving the biomass to predict.}
@@ -122,7 +122,7 @@ kb_predict_site_biomass(
 \code{\link[=kb_predict_cover_biomass]{kb_predict_cover_biomass()}} for biomass per m² of a surveyed plot,
 and \code{\link[=kb_predict_plot_biomass]{kb_predict_plot_biomass()}} for in situ biomass per m².
 
-Other prediction:
+Other prediction functions:
 \code{\link[=autoplot.kb_predictions]{autoplot.kb_predictions()}},
 \code{\link[=kb_new_data]{kb_new_data()}},
 \code{\link[=kb_plot_predictions]{kb_plot_predictions()}},
@@ -132,6 +132,12 @@ Other prediction:
 \code{\link[=kb_predict_plot_biomass]{kb_predict_plot_biomass()}},
 \code{\link[=kb_predict_size]{kb_predict_size()}},
 \code{\link[=kb_predict_weight]{kb_predict_weight()}},
-\code{\link[=kb_predict_wetdry]{kb_predict_wetdry()}}
+\code{\link[=kb_predict_wetdry]{kb_predict_wetdry()}},
+\code{\link[=predict.kb_fit_carbon]{predict.kb_fit_carbon()}},
+\code{\link[=predict.kb_fit_cover_biomass]{predict.kb_fit_cover_biomass()}},
+\code{\link[=predict.kb_fit_density]{predict.kb_fit_density()}},
+\code{\link[=predict.kb_fit_size]{predict.kb_fit_size()}},
+\code{\link[=predict.kb_fit_weight]{predict.kb_fit_weight()}},
+\code{\link[=predict.kb_fit_wetdry]{predict.kb_fit_wetdry()}}
 }
-\concept{prediction}
+\concept{prediction functions}

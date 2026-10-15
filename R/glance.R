@@ -1,9 +1,9 @@
-#' Model Fit Diagnostic Summary
+#' One-row summary of a fit
 #'
 #' One-row summary of a model fit with convergence diagnostics.
 #'
+#' @inheritParams params
 #' @inheritParams kb_converged
-#' @param x A `kb_fit` object.
 #'
 #' @section Output:
 #'
@@ -23,11 +23,11 @@
 #' @inheritSection kb_converged Resolving convergence failure
 #' @seealso [kb_converged()]
 #'
-#' @return A one-row tibble with `n` (the number of observations), `K` (the
+#' @returns A one-row tibble with `n` (the number of observations), `K` (the
 #'   number of terms [tidy()] reports, excluding the per-level group effects),
 #'   `nchains`, `niters`, `nthin`, `ess_bulk`, `ess_tail`, `rhat`,
 #'   `perc_divergent`, and `converged` (from [kb_converged()]).
-#' @family generics
+#' @family fit methods
 #' @exportS3Method generics::glance
 #' @examples
 #' glance(fit_weight_sim_nereo)

@@ -1,4 +1,4 @@
-#' Fit a Macrocystis Wet/Dry Model
+#' Fit a Macrocystis wet/dry model
 #'
 #' Fit a dry:wet mass ratio model for *Macrocystis pyrifera* via Stan.
 #'
@@ -13,26 +13,24 @@
 #' samples only.
 #'
 #' @inheritSection params Sampling
+#' @inheritParams kb_fit_weight_nereo
 #' @inheritParams params
 #' @param data A data frame of wet/dry observations, one row per sample (see
 #'   [kb_check_data_wetdry_macro()] for the required columns).
 #' @param priors A named list of prior objects (see [kb_priors_wetdry_macro()]),
 #'   or `NULL` to use the defaults. Entries not supplied keep their defaults.
-#' @param ... Additional arguments passed to [rstan::sampling()], such as
-#'   `control`.
 #'
-#' @return An object of class
+#' @returns An object of class
 #'   `c("kb_fit_wetdry_macro", "kb_fit_wetdry", "kb_fit")`.
-#' @family model
+#' @family fit functions
 #' @export
 #'
 #' @examples
-#' if (interactive()) {
-#'   fit <- kb_fit_wetdry_macro(data_wetdry_sim_macro)
-#'   tidy(fit)
-#' }
 #' # A pre-fit example model is included with the package:
 #' tidy(fit_wetdry_sim_macro)
+#' @examplesIf interactive()
+#' fit <- kb_fit_wetdry_macro(data_wetdry_sim_macro)
+#' tidy(fit)
 kb_fit_wetdry_macro <- function(
   data,
   priors = NULL,

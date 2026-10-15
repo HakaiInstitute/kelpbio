@@ -1,4 +1,4 @@
-#' Default Priors for the Nereocystis Weight Model
+#' Default priors for the Nereocystis weight model
 #'
 #' The default priors for the *Nereocystis luetkeana* allometric weight model.
 #' To change a prior, pass a list of the entries to change to the `priors`
@@ -15,7 +15,7 @@
 #' when the density term is fitted (see [kb_fit_weight_nereo()]). `sd_residual`
 #' is the residual standard deviation of log weight.
 #'
-#' @return A named list of prior objects with entries `intercept`,
+#' @returns A named list of prior objects with entries `intercept`,
 #'   `diameter_power`, `weight_floor`, `density_slope`, `sd_site`, `sd_year`,
 #'   `sd_site_year`, and `sd_residual`.
 #' @family priors
@@ -23,13 +23,12 @@
 #'
 #' @examples
 #' kb_priors_weight_nereo()
+#' @examplesIf interactive()
 #' # Change one prior; the others keep their defaults:
-#' if (interactive()) {
-#'   kb_fit_weight_nereo(
-#'     data_weight_sim_nereo,
-#'     priors = list(sd_site = kb_prior_exponential(rate = 2))
-#'   )
-#' }
+#' kb_fit_weight_nereo(
+#'   data_weight_sim_nereo,
+#'   priors = list(sd_site = kb_prior_exponential(rate = 2))
+#' )
 kb_priors_weight_nereo <- function() {
   list(
     intercept = kb_prior_normal(mean = 0, sd = 2),

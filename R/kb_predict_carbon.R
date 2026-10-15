@@ -1,4 +1,4 @@
-#' Predict the Carbon Fraction
+#' Predict the carbon fraction
 #'
 #' Summarise the expected carbon fraction of dry mass for the population of
 #' samples the model was fitted to.
@@ -10,12 +10,11 @@
 #'
 #' @inheritParams params
 #' @param fit A `kb_fit_carbon` object.
-#' @param ... Unused.
 #'
-#' @return A `kb_predictions` object: a one-row tibble with `estimate`, `lower`,
+#' @returns A `kb_predictions` object: a one-row tibble with `estimate`, `lower`,
 #'   and `upper` columns summarising the posterior distribution of the expected
 #'   carbon fraction.
-#' @family prediction
+#' @family prediction functions
 #' @seealso [posterior_predict()] for draws of individual sample fractions.
 #' @export
 #'

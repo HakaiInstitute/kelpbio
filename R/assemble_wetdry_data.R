@@ -7,7 +7,7 @@
 #' @inheritParams params
 #' @param priors A list of the resolved named priors (see `resolve_priors()`).
 #'
-#' @return A named list suitable for `rstan::sampling(stanmodels$wetdry, data = .)`.
+#' @returns A named list suitable for `rstan::sampling(stanmodels$wetdry, data = .)`.
 #' @noRd
 assemble_wetdry_data <- function(data, priors, prior_only = FALSE) {
   c(

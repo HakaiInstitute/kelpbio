@@ -11,7 +11,7 @@
 #' @param priors A list of the resolved named priors (see `resolve_priors()`).
 #' @param conf_level The level of the compatibility limits `lower` and `upper`.
 #'
-#' @return A named list suitable for `rstan::sampling(stanmodels$cover_biomass, data = .)`.
+#' @returns A named list suitable for `rstan::sampling(stanmodels$cover_biomass, data = .)`.
 #' @noRd
 assemble_cover_biomass_data <- function(
   data,

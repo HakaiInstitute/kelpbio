@@ -2,7 +2,7 @@
 % Please edit documentation in R/kb_prior_exponential.R
 \name{kb_prior_exponential}
 \alias{kb_prior_exponential}
-\title{Exponential Prior}
+\title{Exponential prior}
 \usage{
 kb_prior_exponential(rate = 1)
 }

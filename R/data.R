@@ -1,5 +1,5 @@
 # Built by data-raw/data_carbon_sim_macro.R.
-#' Simulated Macrocystis Carbon Dataset
+#' Simulated Macrocystis carbon data
 #'
 #' A small simulated dataset of sample and carbon masses, one row per dried
 #' tissue sample, for runnable examples.
@@ -12,11 +12,11 @@
 #'     less than the sample mass.}
 #' }
 #' @seealso [fit_carbon_sim_macro] for a fit to this dataset.
-#' @family data
+#' @family example datasets
 "data_carbon_sim_macro"
 
 # Built by data-raw/data_carbon_sim_nereo.R.
-#' Simulated Nereocystis Carbon Dataset
+#' Simulated Nereocystis carbon data
 #'
 #' A small simulated dataset of sample and carbon masses, one row per dried
 #' tissue sample, for runnable examples.
@@ -29,11 +29,11 @@
 #'     less than the sample mass.}
 #' }
 #' @seealso [fit_carbon_sim_nereo] for a fit to this dataset.
-#' @family data
+#' @family example datasets
 "data_carbon_sim_nereo"
 
 # Built by data-raw/data_sim_macro.R.
-#' Simulated Macrocystis Cover Dataset
+#' Simulated Macrocystis drone survey data
 #'
 #' A small simulated dataset of drone surveys, one row per survey, for runnable
 #' examples, paired with the in situ biomass in [data_plot_biomass_sim_macro]
@@ -50,11 +50,11 @@
 #'   \item{tide_height_m}{Tide height at the survey (m, chart datum).}
 #' }
 #' @seealso [fit_cover_biomass_sim_macro] for a fit to this dataset.
-#' @family data
+#' @family example datasets
 "data_cover_biomass_sim_macro"
 
 # Built by data-raw/data_sim_nereo.R.
-#' Simulated Nereocystis Cover Dataset
+#' Simulated Nereocystis drone survey data
 #'
 #' A small simulated dataset of drone surveys, one row per survey, for runnable
 #' examples, paired with the in situ biomass in [data_plot_biomass_sim_nereo]
@@ -71,11 +71,11 @@
 #'   \item{tide_height_m}{Tide height at the survey (m, chart datum).}
 #' }
 #' @seealso [fit_cover_biomass_sim_nereo] for a fit to this dataset.
-#' @family data
+#' @family example datasets
 "data_cover_biomass_sim_nereo"
 
 # Built by data-raw/data_sim_macro.R.
-#' Simulated Macrocystis Density Dataset
+#' Simulated Macrocystis density data
 #'
 #' A small simulated dataset of plant counts on transects, one row per
 #' transect, for runnable examples. One of five simulated *Macrocystis*
@@ -91,11 +91,11 @@
 #'   \item{year}{Survey year, a factor (4 levels).}
 #' }
 #' @seealso [fit_density_sim_macro] for a fit to this dataset.
-#' @family data
+#' @family example datasets
 "data_density_sim_macro"
 
 # Built by data-raw/data_sim_nereo.R.
-#' Simulated Nereocystis Density Dataset
+#' Simulated Nereocystis density data
 #'
 #' A small simulated dataset of stipe counts on transects, one row per
 #' transect, for runnable examples. One of five simulated *Nereocystis*
@@ -111,11 +111,11 @@
 #'   \item{year}{Survey year, a factor (4 levels).}
 #' }
 #' @seealso [fit_density_sim_nereo] for a fit to this dataset.
-#' @family data
+#' @family example datasets
 "data_density_sim_nereo"
 
 # Built by data-raw/data_sim_macro.R.
-#' Simulated Macrocystis In Situ Biomass for the Cover Biomass Model
+#' Simulated Macrocystis plot biomass data
 #'
 #' A small simulated dataset of the in situ wet biomass of each site-year in
 #' [data_cover_biomass_sim_macro], one row per site-year, in the format
@@ -131,11 +131,11 @@
 #'     `estimate` (kg/m²).}
 #' }
 #' @seealso [fit_cover_biomass_sim_macro] for a fit to this dataset.
-#' @family data
+#' @family example datasets
 "data_plot_biomass_sim_macro"
 
 # Built by data-raw/data_sim_nereo.R.
-#' Simulated Nereocystis In Situ Biomass for the Cover Biomass Model
+#' Simulated Nereocystis plot biomass data
 #'
 #' A small simulated dataset of the in situ wet biomass of each site-year in
 #' [data_cover_biomass_sim_nereo], one row per site-year, in the format
@@ -151,11 +151,11 @@
 #'     `estimate` (kg/m²).}
 #' }
 #' @seealso [fit_cover_biomass_sim_nereo] for a fit to this dataset.
-#' @family data
+#' @family example datasets
 "data_plot_biomass_sim_nereo"
 
 # Built by data-raw/data_sim_macro.R.
-#' Simulated Macrocystis Size Dataset
+#' Simulated Macrocystis size data
 #'
 #' A small simulated dataset of frond counts, one row per plant, for runnable
 #' examples. One of five simulated *Macrocystis* datasets with shared sites and
@@ -170,11 +170,11 @@
 #'   \item{year}{Survey year, a factor (4 levels).}
 #' }
 #' @seealso [fit_size_sim_macro] for a fit to this dataset.
-#' @family data
+#' @family example datasets
 "data_size_sim_macro"
 
 # Built by data-raw/data_sim_nereo.R.
-#' Simulated Nereocystis Size Dataset
+#' Simulated Nereocystis size data
 #'
 #' A small simulated dataset of maximum sub-bulb diameter, one row per plant,
 #' for runnable examples. One of five simulated *Nereocystis* datasets with
@@ -188,11 +188,11 @@
 #'   \item{year}{Survey year, a factor (4 levels).}
 #' }
 #' @seealso [fit_size_sim_nereo] for a fit to this dataset.
-#' @family data
+#' @family example datasets
 "data_size_sim_nereo"
 
 # Built by data-raw/data_sim_macro.R.
-#' Simulated Macrocystis Weight Dataset
+#' Simulated Macrocystis weight data
 #'
 #' A small simulated dataset of frond count and wet weight, one row per
 #' harvested plant, for runnable examples. One of five simulated *Macrocystis*
@@ -208,11 +208,11 @@
 #'   \item{year}{Survey year, a factor (4 levels).}
 #' }
 #' @seealso [fit_weight_sim_macro] for a fit to this dataset.
-#' @family data
+#' @family example datasets
 "data_weight_sim_macro"
 
 # Built by data-raw/data_sim_nereo.R.
-#' Simulated Nereocystis Weight Dataset
+#' Simulated Nereocystis weight data
 #'
 #' A small simulated dataset of sub-bulb diameter, wet weight, and stipe
 #' density, one row per harvested plant, for runnable examples. One of five
@@ -230,11 +230,11 @@
 #'     observed in [data_density_sim_nereo].}
 #' }
 #' @seealso [fit_weight_sim_nereo] for a fit to this dataset.
-#' @family data
+#' @family example datasets
 "data_weight_sim_nereo"
 
 # Built by data-raw/data_wetdry_sim_macro.R.
-#' Simulated Macrocystis Wet/Dry Dataset
+#' Simulated Macrocystis wet/dry data
 #'
 #' A small simulated dataset of sample wet and dry masses, one row per tissue
 #' sample, for runnable examples.
@@ -246,11 +246,11 @@
 #'     `wet_mass_g`.}
 #' }
 #' @seealso [fit_wetdry_sim_macro] for a fit to this dataset.
-#' @family data
+#' @family example datasets
 "data_wetdry_sim_macro"
 
 # Built by data-raw/data_wetdry_sim_nereo.R.
-#' Simulated Nereocystis Wet/Dry Dataset
+#' Simulated Nereocystis wet/dry data
 #'
 #' A small simulated dataset of sample wet and dry masses, one row per tissue
 #' sample, for runnable examples.
@@ -262,5 +262,5 @@
 #'     `wet_mass_g`.}
 #' }
 #' @seealso [fit_wetdry_sim_nereo] for a fit to this dataset.
-#' @family data
+#' @family example datasets
 "data_wetdry_sim_nereo"

@@ -1,4 +1,4 @@
-#' Default Priors for the Macrocystis Wet/Dry Model
+#' Default priors for the Macrocystis wet/dry model
 #'
 #' The default priors for the *Macrocystis pyrifera* wet/dry model. To change a
 #' prior, pass a list of the entries to change to the `priors` argument of
@@ -8,7 +8,7 @@
 #' [kb_model_describe()]. The prior family of each entry is fixed (the intercept is Normal, the
 #' precision is Exponential); only the hyperparameters can be changed.
 #'
-#' @return A named list of prior objects with entries `intercept` (the dry:wet
+#' @returns A named list of prior objects with entries `intercept` (the dry:wet
 #'   mass ratio on the logit scale) and `precision` (the Beta precision; larger
 #'   values mean less spread around the mean ratio).
 #' @family priors
@@ -16,13 +16,12 @@
 #'
 #' @examples
 #' kb_priors_wetdry_macro()
+#' @examplesIf interactive()
 #' # Change one prior; the others keep their defaults:
-#' if (interactive()) {
-#'   kb_fit_wetdry_macro(
-#'     data_wetdry_sim_macro,
-#'     priors = list(intercept = kb_prior_normal(mean = -2.4, sd = 0.5))
-#'   )
-#' }
+#' kb_fit_wetdry_macro(
+#'   data_wetdry_sim_macro,
+#'   priors = list(intercept = kb_prior_normal(mean = -2.4, sd = 0.5))
+#' )
 kb_priors_wetdry_macro <- function() {
   list(
     intercept = kb_prior_normal(mean = 0, sd = 2),

@@ -1,4 +1,4 @@
-#' Describe a Fitted Model
+#' Describe a fitted model
 #'
 #' Render the complete fitted model in scientific notation (the default) or as a
 #' report-ready methods paragraph (`prose = TRUE`). The notation uses the
@@ -10,14 +10,13 @@
 #' not fitted (such as the site:year effect for single-year data) is omitted.
 #' Priors marked `T[0, ]` are truncated at zero.
 #'
-#' @param fit A `kb_fit` object.
-#' @param ... Unused.
+#' @inheritParams params
 #' @param prose A flag specifying whether to render a methods-section paragraph
 #'   instead of the notation block.
 #'
-#' @return The rendered lines, invisibly (a character vector). Called for the
+#' @returns The rendered lines, invisibly (a character vector). Called for the
 #'   printed description.
-#' @family model
+#' @family fit methods
 #' @export
 #'
 #' @examples

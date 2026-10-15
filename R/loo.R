@@ -1,4 +1,4 @@
-#' Leave-One-Out Cross-Validation
+#' Leave-one-out cross-validation
 #'
 #' Estimate how well a fit predicts each observation when that observation is
 #' left out, by Pareto-smoothed importance-sampling leave-one-out
@@ -15,27 +15,25 @@
 #'
 #' Use [loo::loo_compare()] to compare fits to the same data.
 #'
-#' @param x A `kb_fit` object.
+#' @inheritParams params
 #' @param ... Passed to `loo::loo()`, for example `cores`.
 #'
-#' @return A `psis_loo` object from `loo::loo()`.
+#' @returns A `psis_loo` object from `loo::loo()`.
 #' @references
 #' Vehtari, A., Gelman, A., and Gabry, J. (2017). Practical Bayesian model
 #' evaluation using leave-one-out cross-validation and WAIC. Statistics and
 #' Computing, 27, 1413-1432.
-#' @family generics
+#' @family diagnostics
 #' @seealso [log_lik()] for the pointwise log-likelihood.
 #' @exportS3Method loo::loo
 #' @examples
 #' loo_weight <- loo(fit_weight_sim_nereo)
 #' loo_weight
 #' loo::pareto_k_values(loo_weight)
-#'
+#' @examplesIf interactive()
 #' # Compare the two forms of the Nereocystis weight model on the same data:
-#' if (interactive()) {
-#'   fit_power <- kb_fit_weight_nereo(data_weight_sim_nereo, form = "power")
-#'   loo_compare(loo(fit_weight_sim_nereo), loo(fit_power))
-#' }
+#' fit_power <- kb_fit_weight_nereo(data_weight_sim_nereo, form = "power")
+#' loo_compare(loo(fit_weight_sim_nereo), loo(fit_power))
 loo.kb_fit <- function(x, ...) {
   .chk_kb_fit(x)
   # error_call() names the generic, not the method.

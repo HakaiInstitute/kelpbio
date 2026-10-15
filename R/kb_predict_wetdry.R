@@ -1,4 +1,4 @@
-#' Predict the Dry:Wet Mass Ratio
+#' Predict the dry:wet ratio
 #'
 #' Summarise the expected dry:wet mass ratio for the population of samples the
 #' model was fitted to.
@@ -10,12 +10,11 @@
 #'
 #' @inheritParams params
 #' @param fit A `kb_fit_wetdry` object.
-#' @param ... Unused.
 #'
-#' @return A `kb_predictions` object: a one-row tibble with `estimate`, `lower`,
+#' @returns A `kb_predictions` object: a one-row tibble with `estimate`, `lower`,
 #'   and `upper` columns summarising the posterior distribution of the expected
 #'   dry:wet ratio.
-#' @family prediction
+#' @family prediction functions
 #' @seealso [posterior_predict()] for draws of individual sample ratios.
 #' @export
 #'

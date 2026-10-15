@@ -1,4 +1,4 @@
-#' Fit a Nereocystis Density Model
+#' Fit a Nereocystis density model
 #'
 #' Fit a stipe-density model for *Nereocystis luetkeana* via Stan.
 #'
@@ -15,27 +15,25 @@
 #'
 #' @inheritSection params Sampling
 #' @inheritSection params Site and year interaction
+#' @inheritParams kb_fit_weight_nereo
 #' @inheritParams params
 #' @param data A data frame of density observations, one row per transect (see
 #'   [kb_check_data_density_nereo()] for the required columns).
 #' @param priors A named list of prior objects (see
 #'   [kb_priors_density_nereo()]), or `NULL` to use the defaults. Entries not
 #'   supplied keep their defaults.
-#' @param ... Additional arguments passed to [rstan::sampling()], such as
-#'   `control`.
 #'
-#' @return An object of class
+#' @returns An object of class
 #'   `c("kb_fit_density_nereo", "kb_fit_density", "kb_fit")`.
-#' @family model
+#' @family fit functions
 #' @export
 #'
 #' @examples
-#' if (interactive()) {
-#'   fit <- kb_fit_density_nereo(data_density_sim_nereo)
-#'   tidy(fit)
-#' }
 #' # A pre-fit example model is included with the package:
 #' tidy(fit_density_sim_nereo)
+#' @examplesIf interactive()
+#' fit <- kb_fit_density_nereo(data_density_sim_nereo)
+#' tidy(fit)
 kb_fit_density_nereo <- function(
   data,
   priors = NULL,

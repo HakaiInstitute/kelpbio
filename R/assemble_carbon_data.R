@@ -8,7 +8,7 @@
 #' @inheritParams params
 #' @param priors A list of the resolved named priors (see `resolve_priors()`).
 #'
-#' @return A named list suitable for `rstan::sampling(stanmodels$carbon, data = .)`.
+#' @returns A named list suitable for `rstan::sampling(stanmodels$carbon, data = .)`.
 #' @noRd
 assemble_carbon_data <- function(data, priors, prior_only = FALSE) {
   c(

@@ -2,7 +2,7 @@
 % Please edit documentation in R/kb_priors_weight_macro.R
 \name{kb_priors_weight_macro}
 \alias{kb_priors_weight_macro}
-\title{Default Priors for the Macrocystis Weight Model}
+\title{Default priors for the Macrocystis weight model}
 \usage{
 kb_priors_weight_macro()
 }
@@ -25,13 +25,13 @@ slope of log expected weight on log frond count.
 }
 \examples{
 kb_priors_weight_macro()
+\dontshow{if (interactive()) withAutoprint(\{ # examplesIf}
 # Change one prior; the others keep their defaults:
-if (interactive()) {
-  kb_fit_weight_macro(
-    data_weight_sim_macro,
-    priors = list(sd_site = kb_prior_exponential(rate = 2))
-  )
-}
+kb_fit_weight_macro(
+  data_weight_sim_macro,
+  priors = list(sd_site = kb_prior_exponential(rate = 2))
+)
+\dontshow{\}) # examplesIf}
 }
 \seealso{
 Other priors:

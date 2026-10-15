@@ -1,4 +1,4 @@
-#' Validate Nereocystis Weight Model Data
+#' Check Nereocystis weight data
 #'
 #' Check that `data` contains the columns required to fit the *Nereocystis
 #' luetkeana* weight model, with appropriate types and values.
@@ -10,11 +10,11 @@
 #' plant's site-year, `>= 0` with `NA` where not recorded. Rows from the same
 #' site-year must not have different values.
 #'
+#' @inheritParams params
 #' @param data A data frame of weight observations, one row per plant.
-#' @param x_name A string naming `data` in error messages.
 #'
-#' @return `data`, invisibly.
-#' @family data
+#' @returns `data`, invisibly.
+#' @family data checks
 #' @export
 #'
 #' @examples

@@ -1,4 +1,4 @@
-#' Predict Density
+#' Predict density
 #'
 #' Predict the expected density, stipes (*Nereocystis*) or plants
 #' (*Macrocystis*) per m², at each row of `new_data`, or at the observed
@@ -19,12 +19,11 @@
 #' @param fit A `kb_fit_density` object.
 #' @param new_data A data frame with optional `site` and `year` columns, one row
 #'   per prediction, or `NULL` to predict at the observed transects.
-#' @param ... Unused.
 #'
-#' @return A `kb_predictions` object: the rows of `new_data` with added
+#' @returns A `kb_predictions` object: the rows of `new_data` with added
 #'   `estimate`, `lower`, and `upper` columns summarising the posterior
 #'   distribution of expected density per m².
-#' @family prediction
+#' @family prediction functions
 #' @seealso [kb_new_data()] to build rows by site or year, and
 #'   [posterior_predict()] for draws of transect counts.
 #' @export

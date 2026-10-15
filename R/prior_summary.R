@@ -1,13 +1,12 @@
-#' Prior Summary
+#' Priors of a fit
 #'
 #' The priors used to fit the model.
 #'
-#' @param object A `kb_fit` object.
-#' @param ... Unused.
 #'
-#' @return The named list of prior objects (see the model's `kb_priors_*()`
+#' @inheritParams params
+#' @returns The named list of prior objects (see the model's `kb_priors_*()`
 #'   function).
-#' @family generics
+#' @family fit methods
 #' @exportS3Method rstantools::prior_summary
 #' @examples
 #' prior_summary(fit_weight_sim_nereo)

@@ -1,35 +1,33 @@
-#' Fit a Macrocystis Weight Model
+#' Fit a Macrocystis weight model
 #'
 #' Fit an allometric weight model for *Macrocystis pyrifera* via Stan.
 #'
 #' @details
 #' The response is wet weight, modelled on the natural scale with a Gamma
 #' likelihood. Expected weight is a log-linear (allometric) function of log frond
-#' count, centered at its geometric mean so the intercept is the expected weight
+#' count, centred at its geometric mean so the intercept is the expected weight
 #' at a typical frond count. The Gamma shape (`shape`) is constant across plants.
 #' The intercept varies by site, by year, and by `site:year`.
 #'
 #' @inheritSection params Sampling
 #' @inheritSection params Site and year interaction
+#' @inheritParams kb_fit_weight_nereo
 #' @inheritParams params
 #' @param data A data frame of weight observations (see
 #'   [kb_check_data_weight_macro()] for the required columns).
 #' @param priors A named list of prior objects (see [kb_priors_weight_macro()]),
 #'   or `NULL` to use the defaults. Entries not supplied keep their defaults.
-#' @param ... Additional arguments passed to [rstan::sampling()], such as
-#'   `control`.
 #'
-#' @return An object of class `c("kb_fit_weight_macro", "kb_fit_weight", "kb_fit")`.
-#' @family model
+#' @returns An object of class `c("kb_fit_weight_macro", "kb_fit_weight", "kb_fit")`.
+#' @family fit functions
 #' @export
 #'
 #' @examples
-#' if (interactive()) {
-#'   fit <- kb_fit_weight_macro(data_weight_sim_macro)
-#'   tidy(fit)
-#' }
 #' # A pre-fit example model ships with the package:
 #' tidy(fit_weight_sim_macro)
+#' @examplesIf interactive()
+#' fit <- kb_fit_weight_macro(data_weight_sim_macro)
+#' tidy(fit)
 kb_fit_weight_macro <- function(
   data,
   priors = NULL,

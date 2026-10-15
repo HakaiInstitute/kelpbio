@@ -1,4 +1,4 @@
-#' Lognormal Prior
+#' Lognormal prior
 #'
 #' Construct a lognormal prior object to replace an entry of a `kb_priors_*()`
 #' list passed to the `priors` argument of the `kb_fit_*()` functions. Used for
@@ -13,7 +13,7 @@
 #' @param sdlog A positive number giving the standard deviation of the log of the
 #'   parameter.
 #'
-#' @return A `kb_prior_lognormal` object.
+#' @returns A `kb_prior_lognormal` object.
 #' @family priors
 #' @export
 #'

@@ -9,6 +9,14 @@
 \arguments{
 \item{...}{These dots are for future extensions and must be empty.}
 
+\item{fit}{A \code{kb_fit} object.}
+
+\item{object}{A \code{kb_fit} object.}
+
+\item{x}{A \code{kb_fit} object.}
+
+\item{x_name}{A string naming \code{data} in error messages.}
+
 \item{prior_only}{A flag specifying whether to sample from the priors only
 (the likelihood is switched off), for prior predictive checks.}
 

@@ -2,7 +2,7 @@
 % Please edit documentation in R/kb_priors_cover_biomass_nereo.R
 \name{kb_priors_cover_biomass_nereo}
 \alias{kb_priors_cover_biomass_nereo}
-\title{Default Priors for the Nereocystis Cover Biomass Model}
+\title{Default priors for the Nereocystis cover biomass model}
 \usage{
 kb_priors_cover_biomass_nereo()
 }
@@ -29,14 +29,14 @@ truncated at zero.
 }
 \examples{
 kb_priors_cover_biomass_nereo()
+\dontshow{if (interactive()) withAutoprint(\{ # examplesIf}
 # Change one prior; the others keep their defaults:
-if (interactive()) {
-  kb_fit_cover_biomass_nereo(
-    data_cover_biomass_sim_nereo,
-    data_plot_biomass_sim_nereo,
-    priors = list(cover_slope = kb_prior_lognormal(meanlog = 2, sdlog = 0.5))
-  )
-}
+kb_fit_cover_biomass_nereo(
+  data_cover_biomass_sim_nereo,
+  data_plot_biomass_sim_nereo,
+  priors = list(cover_slope = kb_prior_lognormal(meanlog = 2, sdlog = 0.5))
+)
+\dontshow{\}) # examplesIf}
 }
 \seealso{
 Other priors:

@@ -1,4 +1,4 @@
-#' Response-Scale Posterior Draws
+#' Draws of the expected response
 #'
 #' Draws of the expected response.
 #'
@@ -23,15 +23,13 @@
 #' is used, with its sites and years.
 #'
 #' @inheritParams params
-#' @param object A `kb_fit` object.
 #' @param new_data A data frame with the fit's predictor column (and optional
 #'   `site`, `year`, and `stipes_m2` columns; for a density fit, an optional
 #'   `area_m2` column giving each transect's area, 1 m² when absent), or
 #'   `NULL` for the observed data.
-#' @param ... Unused.
 #'
-#' @return A draws-by-observations (`D x N`) matrix.
-#' @family generics
+#' @returns A draws-by-observations (`D x N`) matrix.
+#' @family fit methods
 #' @seealso [kb_predict_weight()], which summarises these draws.
 #' @exportS3Method rstantools::posterior_epred
 #' @examples

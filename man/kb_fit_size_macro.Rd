@@ -2,7 +2,7 @@
 % Please edit documentation in R/kb_fit_size_macro.R
 \name{kb_fit_size_macro}
 \alias{kb_fit_size_macro}
-\title{Fit a Macrocystis Size Model}
+\title{Fit a Macrocystis size model}
 \usage{
 kb_fit_size_macro(
   data,
@@ -91,16 +91,15 @@ from the site or year effect.
 }
 
 \examples{
-if (interactive()) {
-  fit <- kb_fit_size_macro(data_size_sim_macro)
-  tidy(fit)
-}
 # A pre-fit example model is included with the package:
 tidy(fit_size_sim_macro)
+\dontshow{if (interactive()) withAutoprint(\{ # examplesIf}
+fit <- kb_fit_size_macro(data_size_sim_macro)
+tidy(fit)
+\dontshow{\}) # examplesIf}
 }
 \seealso{
-Other model:
-\code{\link[=kb_converged]{kb_converged()}},
+Other fit functions:
 \code{\link[=kb_fit_carbon_macro]{kb_fit_carbon_macro()}},
 \code{\link[=kb_fit_carbon_nereo]{kb_fit_carbon_nereo()}},
 \code{\link[=kb_fit_cover_biomass_macro]{kb_fit_cover_biomass_macro()}},
@@ -112,11 +111,6 @@ Other model:
 \code{\link[=kb_fit_weight_nereo]{kb_fit_weight_nereo()}},
 \code{\link[=kb_fit_wetdry_macro]{kb_fit_wetdry_macro()}},
 \code{\link[=kb_fit_wetdry_nereo]{kb_fit_wetdry_nereo()}},
-\code{\link[=kb_influence]{kb_influence()}},
-\code{\link[=kb_model_describe]{kb_model_describe()}},
-\code{\link[=kb_progress]{kb_progress()}},
-\code{\link[=kb_samples]{kb_samples()}},
-\code{\link[=kb_sensitivity]{kb_sensitivity()}},
-\code{\link[=kb_stancode]{kb_stancode()}}
+\code{\link[=kb_progress]{kb_progress()}}
 }
-\concept{model}
+\concept{fit functions}

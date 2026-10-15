@@ -1,4 +1,4 @@
-#' Default Priors for the Nereocystis Carbon Model
+#' Default priors for the Nereocystis carbon model
 #'
 #' The default priors for the *Nereocystis luetkeana* carbon model. To change a
 #' prior, pass a list of the entries to change to the `priors` argument of
@@ -8,7 +8,7 @@
 #' [kb_model_describe()]. The prior family of each entry is fixed (the intercept is Normal, the
 #' precision is Exponential); only the hyperparameters can be changed.
 #'
-#' @return A named list of prior objects with entries `intercept` (the carbon
+#' @returns A named list of prior objects with entries `intercept` (the carbon
 #'   fraction of dry mass on the logit scale) and `precision` (the Beta
 #'   precision; larger values mean less spread around the mean fraction).
 #' @family priors
@@ -16,13 +16,12 @@
 #'
 #' @examples
 #' kb_priors_carbon_nereo()
+#' @examplesIf interactive()
 #' # Change one prior; the others keep their defaults:
-#' if (interactive()) {
-#'   kb_fit_carbon_nereo(
-#'     data_carbon_sim_nereo,
-#'     priors = list(intercept = kb_prior_normal(mean = -1, sd = 0.5))
-#'   )
-#' }
+#' kb_fit_carbon_nereo(
+#'   data_carbon_sim_nereo,
+#'   priors = list(intercept = kb_prior_normal(mean = -1, sd = 0.5))
+#' )
 kb_priors_carbon_nereo <- function() {
   list(
     intercept = kb_prior_normal(mean = -0.8, sd = 0.3),

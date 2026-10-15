@@ -2,7 +2,7 @@
 % Please edit documentation in R/kb_check_data_cover_biomass_nereo.R
 \name{kb_check_data_cover_biomass_nereo}
 \alias{kb_check_data_cover_biomass_nereo}
-\title{Validate Nereocystis Cover Biomass Model Data}
+\title{Check Nereocystis cover biomass data}
 \usage{
 kb_check_data_cover_biomass_nereo(
   data,
@@ -58,33 +58,7 @@ biomass <- data.frame(
 kb_check_data_cover_biomass_nereo(data, biomass)
 }
 \seealso{
-Other data:
-\code{\link{data_carbon_sim_macro}},
-\code{\link{data_carbon_sim_nereo}},
-\code{\link{data_cover_biomass_sim_macro}},
-\code{\link{data_cover_biomass_sim_nereo}},
-\code{\link{data_density_sim_macro}},
-\code{\link{data_density_sim_nereo}},
-\code{\link{data_plot_biomass_sim_macro}},
-\code{\link{data_plot_biomass_sim_nereo}},
-\code{\link{data_size_sim_macro}},
-\code{\link{data_size_sim_nereo}},
-\code{\link{data_weight_sim_macro}},
-\code{\link{data_weight_sim_nereo}},
-\code{\link{data_wetdry_sim_macro}},
-\code{\link{data_wetdry_sim_nereo}},
-\code{\link{fit_carbon_sim_macro}},
-\code{\link{fit_carbon_sim_nereo}},
-\code{\link{fit_cover_biomass_sim_macro}},
-\code{\link{fit_cover_biomass_sim_nereo}},
-\code{\link{fit_density_sim_macro}},
-\code{\link{fit_density_sim_nereo}},
-\code{\link{fit_size_sim_macro}},
-\code{\link{fit_size_sim_nereo}},
-\code{\link{fit_weight_sim_macro}},
-\code{\link{fit_weight_sim_nereo}},
-\code{\link{fit_wetdry_sim_macro}},
-\code{\link{fit_wetdry_sim_nereo}},
+Other data checks:
 \code{\link[=kb_check_data_carbon_macro]{kb_check_data_carbon_macro()}},
 \code{\link[=kb_check_data_carbon_nereo]{kb_check_data_carbon_nereo()}},
 \code{\link[=kb_check_data_cover_biomass_macro]{kb_check_data_cover_biomass_macro()}},
@@ -97,4 +71,4 @@ Other data:
 \code{\link[=kb_check_data_wetdry_macro]{kb_check_data_wetdry_macro()}},
 \code{\link[=kb_check_data_wetdry_nereo]{kb_check_data_wetdry_nereo()}}
 }
-\concept{data}
+\concept{data checks}

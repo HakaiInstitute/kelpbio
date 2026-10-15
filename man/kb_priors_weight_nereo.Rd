@@ -2,7 +2,7 @@
 % Please edit documentation in R/kb_priors_weight_nereo.R
 \name{kb_priors_weight_nereo}
 \alias{kb_priors_weight_nereo}
-\title{Default Priors for the Nereocystis Weight Model}
+\title{Default priors for the Nereocystis weight model}
 \usage{
 kb_priors_weight_nereo()
 }
@@ -30,13 +30,13 @@ is the residual standard deviation of log weight.
 }
 \examples{
 kb_priors_weight_nereo()
+\dontshow{if (interactive()) withAutoprint(\{ # examplesIf}
 # Change one prior; the others keep their defaults:
-if (interactive()) {
-  kb_fit_weight_nereo(
-    data_weight_sim_nereo,
-    priors = list(sd_site = kb_prior_exponential(rate = 2))
-  )
-}
+kb_fit_weight_nereo(
+  data_weight_sim_nereo,
+  priors = list(sd_site = kb_prior_exponential(rate = 2))
+)
+\dontshow{\}) # examplesIf}
 }
 \seealso{
 Other priors:

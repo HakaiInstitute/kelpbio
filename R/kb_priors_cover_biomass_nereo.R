@@ -1,4 +1,4 @@
-#' Default Priors for the Nereocystis Cover Biomass Model
+#' Default priors for the Nereocystis cover biomass model
 #'
 #' The default priors for the *Nereocystis luetkeana* cover biomass model. To
 #' change a prior, pass a list of the entries to change to the `priors` argument
@@ -11,7 +11,7 @@
 #' hyperparameters can be changed. The floor, tide, and error scaling priors are
 #' truncated at zero.
 #'
-#' @return A named list of prior objects with entries `cover_slope` (the wet
+#' @returns A named list of prior objects with entries `cover_slope` (the wet
 #'   biomass per m² at full tide-corrected canopy cover, at a typical site and
 #'   year), `biomass_floor` (the wet biomass per m² at zero cover),
 #'   `tide_height_slope` (the fractional increase in canopy area per metre of
@@ -22,14 +22,13 @@
 #'
 #' @examples
 #' kb_priors_cover_biomass_nereo()
+#' @examplesIf interactive()
 #' # Change one prior; the others keep their defaults:
-#' if (interactive()) {
-#'   kb_fit_cover_biomass_nereo(
-#'     data_cover_biomass_sim_nereo,
-#'     data_plot_biomass_sim_nereo,
-#'     priors = list(cover_slope = kb_prior_lognormal(meanlog = 2, sdlog = 0.5))
-#'   )
-#' }
+#' kb_fit_cover_biomass_nereo(
+#'   data_cover_biomass_sim_nereo,
+#'   data_plot_biomass_sim_nereo,
+#'   priors = list(cover_slope = kb_prior_lognormal(meanlog = 2, sdlog = 0.5))
+#' )
 kb_priors_cover_biomass_nereo <- function() {
   list(
     cover_slope = kb_prior_lognormal(meanlog = 2, sdlog = 1),

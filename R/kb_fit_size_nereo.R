@@ -1,4 +1,4 @@
-#' Fit a Nereocystis Size Model
+#' Fit a Nereocystis size model
 #'
 #' Fit a size-distribution model for *Nereocystis luetkeana* via Stan.
 #'
@@ -10,25 +10,23 @@
 #'
 #' @inheritSection params Sampling
 #' @inheritSection params Site and year interaction
+#' @inheritParams kb_fit_weight_nereo
 #' @inheritParams params
 #' @param data A data frame of size observations, one row per plant (see
 #'   [kb_check_data_size_nereo()] for the required columns).
 #' @param priors A named list of prior objects (see [kb_priors_size_nereo()]),
 #'   or `NULL` to use the defaults. Entries not supplied keep their defaults.
-#' @param ... Additional arguments passed to [rstan::sampling()], such as
-#'   `control`.
 #'
-#' @return An object of class `c("kb_fit_size_nereo", "kb_fit_size", "kb_fit")`.
-#' @family model
+#' @returns An object of class `c("kb_fit_size_nereo", "kb_fit_size", "kb_fit")`.
+#' @family fit functions
 #' @export
 #'
 #' @examples
-#' if (interactive()) {
-#'   fit <- kb_fit_size_nereo(data_size_sim_nereo)
-#'   tidy(fit)
-#' }
 #' # A pre-fit example model is included with the package:
 #' tidy(fit_size_sim_nereo)
+#' @examplesIf interactive()
+#' fit <- kb_fit_size_nereo(data_size_sim_nereo)
+#' tidy(fit)
 kb_fit_size_nereo <- function(
   data,
   priors = NULL,

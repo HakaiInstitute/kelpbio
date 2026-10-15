@@ -1,4 +1,4 @@
-#' Predict Size
+#' Predict size
 #'
 #' Predict the expected plant size at each row of `new_data`, or at the observed
 #' data when `new_data = NULL`.
@@ -20,12 +20,11 @@
 #' @param fit A `kb_fit_size` object.
 #' @param new_data A data frame with optional `site` and `year` columns, one row
 #'   per prediction, or `NULL` to predict at the observed data.
-#' @param ... Unused.
 #'
-#' @return A `kb_predictions` object: the rows of `new_data` with added
+#' @returns A `kb_predictions` object: the rows of `new_data` with added
 #'   `estimate`, `lower`, and `upper` columns summarising the posterior
 #'   distribution of expected size.
-#' @family prediction
+#' @family prediction functions
 #' @seealso [kb_new_data()] to build rows by site or year, and
 #'   [posterior_predict()] for draws of individual plant sizes.
 #' @export

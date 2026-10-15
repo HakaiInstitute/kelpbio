@@ -1,4 +1,4 @@
-#' Fitted Values
+#' Fitted values
 #'
 #' Posterior medians of the expected response at each observed row, matching
 #' [augment()]'s `fitted` column: wet weight (kg) for weight fits, sub-bulb
@@ -7,12 +7,11 @@
 #' fraction of dry mass for carbon fits, and wet biomass (kg/m²) for cover
 #' biomass fits. For the full posterior, use [posterior_epred()].
 #'
-#' @param object A `kb_fit` object.
-#' @param ... Unused.
 #'
-#' @return A numeric vector of fitted values on the response scale, length
+#' @inheritParams params
+#' @returns A numeric vector of fitted values on the response scale, length
 #'   `nobs(object)`.
-#' @family generics
+#' @family fit methods
 #' @seealso [residuals()] for deviance residuals, [augment()], and
 #'   [posterior_epred()] for the full posterior.
 #' @exportS3Method stats::fitted
