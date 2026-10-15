@@ -7,6 +7,6 @@ test_that("draw counts and names exclude an effect the fit omitted", {
   off <- omit_terms(weight_nereo_fit, "density_slope")
   expect_false("density_slope" %in% variables(off))
   expect_equal(nvariables(off), nvariables(weight_nereo_fit) - 1L)
-  expect_equal(glance(off)$K, nvariables(off))
+  expect_equal(glance(off)$K, nrow(tidy(off)))
   expect_false("density_slope" %in% posterior::summarise_draws(off)$variable)
 })
