@@ -18,14 +18,14 @@ data_size_sim_macro
 }
 \description{
 A small simulated dataset of frond counts (columns \code{fronds}, \code{site}, \code{year}),
-one row per plant, for fast tests and runnable examples. It is one of five
-\emph{Macrocystis} datasets simulated together from the same ten sites, four
-years, and true site-year values, with parameters near those estimated from
-Hakai Institute surveys, so plot biomass composed from fits to the weight,
-size, and density datasets agrees with \link{data_plot_biomass_sim_macro}. Plants
-were measured at most density-surveyed site-years; a few have no size data.
-The site names are invented. The data are not real survey data and are not
-intended for inference. Built by \code{data-raw/data_sim_macro.R}.
+one row per plant, for runnable examples. It is one of five \emph{Macrocystis}
+datasets simulated together from the same ten sites, four years, and true
+site-year values, with parameters near those estimated from Hakai Institute
+surveys, so plot biomass composed from fits to the weight, size, and density
+datasets agrees with \link{data_plot_biomass_sim_macro}. Plants were measured at
+most density-surveyed site-years; a few have no size data. The site names are
+invented. The data are not real survey data and are not intended for
+inference.
 }
 \seealso{
 \link{fit_size_sim_macro} for a fit to this dataset.

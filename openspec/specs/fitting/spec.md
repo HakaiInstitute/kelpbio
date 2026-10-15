@@ -239,7 +239,7 @@ For each species, the weight, size, density, cover survey, and in situ plot biom
 
 ### Requirement: Implausible units are flagged
 
-The data checks, and so the fit functions, SHALL warn when a column's median is implausible for the unit its name states: `diameter_mm` below 10 or above 200 (millimetres), `weight_kg` above 100 (kilograms), `stipes_m2` above 100 (stipes per m²), `area_m2` below 1 or above 5000 (square metres), `plot_area_m2` below 1 or above 1,000,000 (square metres), `tide_height_m` below -1 or above 5 (metres), or `wet_mass_g` or `dry_mass_g` above 1000 (grams). The warning SHALL name the column, its median, and the expected unit, and SHALL NOT stop the check or the fit. The message is pinned by `tests/testthat/_snaps/warn.md`.
+The data checks, and so the fit functions, and `kb_predict_site_biomass()` on its `new_data`, SHALL warn when a column's median is implausible for the unit its name states: `diameter_mm` below 10 or above 200 (millimetres), `weight_kg` above 100 (kilograms), `stipes_m2` above 100 (stipes per m²), `area_m2` below 1 or above 5000 (square metres), `plot_area_m2` below 1 or above 1,000,000 (square metres), `site_area_m2` below 10 or above 1,000,000,000 (square metres), `tide_height_m` below -1 or above 5 (metres), or `wet_mass_g` or `dry_mass_g` above 1000 (grams). The warning SHALL name the column, its median, and the expected unit, and SHALL NOT stop the check or the fit. The message is pinned by `tests/testthat/_snaps/warn.md`.
 
 #### Scenario: Diameter in centimetres is flagged
 - **WHEN** *Nereocystis* data have `diameter_mm` in centimetres (median about 3)

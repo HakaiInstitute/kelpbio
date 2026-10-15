@@ -11,6 +11,10 @@
 #' in the data. The check reuses the data the model was fitted to, so it shows
 #' gross misfit rather than fine differences.
 #'
+#' For a fit made with `prior_only = TRUE`, the replicates come from the prior,
+#' so the plot is a prior predictive check: whether the priors allow data like
+#' those observed.
+#'
 #' For a density model, the observed and replicate counts are divided by their
 #' transect's area, so differences in transect length do not dominate the plot
 #' and the axis is a density per m².

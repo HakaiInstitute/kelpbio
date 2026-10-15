@@ -21,15 +21,15 @@ data_plot_biomass_sim_macro
 A small simulated dataset of the in situ wet biomass of each site-year in
 \link{data_cover_biomass_sim_macro} (columns \code{site}, \code{year}, \code{estimate}, \code{lower},
 \code{upper}), one row per site-year, standing in for the output of
-\code{\link[=kb_predict_plot_biomass]{kb_predict_plot_biomass()}}, for fast tests and runnable examples. It is one
-of five \emph{Macrocystis} datasets simulated together from the same ten sites,
-four years, and true site-year values, with parameters near those estimated
-from Hakai Institute surveys, so plot biomass composed from fits to the
-weight, size, and density datasets agrees with these estimates. Each estimate
-is the true plot biomass of its site-year with lognormal estimation error,
-which its limits understate slightly, as the cover biomass model allows for.
-The site names are invented. The data are not real survey data and are not
-intended for inference. Built by \code{data-raw/data_sim_macro.R}.
+\code{\link[=kb_predict_plot_biomass]{kb_predict_plot_biomass()}}, for runnable examples. It is one of five
+\emph{Macrocystis} datasets simulated together from the same ten sites, four
+years, and true site-year values, with parameters near those estimated from
+Hakai Institute surveys, so plot biomass composed from fits to the weight,
+size, and density datasets agrees with these estimates. Each estimate is the
+true plot biomass of its site-year with lognormal estimation error, which its
+limits understate slightly, as the cover biomass model allows for. The site
+names are invented. The data are not real survey data and are not intended
+for inference.
 }
 \seealso{
 \link{fit_cover_biomass_sim_macro} for a fit to this dataset.

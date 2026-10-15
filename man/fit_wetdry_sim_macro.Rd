@@ -14,9 +14,8 @@ fit_wetdry_sim_macro
 \description{
 A slim pre-fit wet/dry model, the result of \code{\link[=kb_fit_wetdry_macro]{kb_fit_wetdry_macro()}} on
 \link{data_wetdry_sim_macro} with a reduced number of draws. Provided so the
-examples and tests for the fit accessors, S3 methods, and prediction functions
-run quickly. It is fit to simulated data and is not intended for inference.
-Built by \code{data-raw/fit_wetdry_sim_macro.R}.
+examples for the fit accessors, S3 methods, and prediction functions run
+quickly. It is fit to simulated data and is not intended for inference.
 }
 \seealso{
 \code{\link[=kb_fit_wetdry_macro]{kb_fit_wetdry_macro()}} and \link{data_wetdry_sim_macro}.

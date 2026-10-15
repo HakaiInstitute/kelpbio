@@ -135,6 +135,7 @@ tidy(fit_cover_biomass_sim_macro)
 }
 \seealso{
 Other model:
+\code{\link[=kb_converged]{kb_converged()}},
 \code{\link[=kb_fit_carbon_macro]{kb_fit_carbon_macro()}},
 \code{\link[=kb_fit_carbon_nereo]{kb_fit_carbon_nereo()}},
 \code{\link[=kb_fit_cover_biomass_nereo]{kb_fit_cover_biomass_nereo()}},
@@ -148,6 +149,9 @@ Other model:
 \code{\link[=kb_fit_wetdry_nereo]{kb_fit_wetdry_nereo()}},
 \code{\link[=kb_influence]{kb_influence()}},
 \code{\link[=kb_model_describe]{kb_model_describe()}},
-\code{\link[=kb_sensitivity]{kb_sensitivity()}}
+\code{\link[=kb_progress]{kb_progress()}},
+\code{\link[=kb_samples]{kb_samples()}},
+\code{\link[=kb_sensitivity]{kb_sensitivity()}},
+\code{\link[=kb_stancode]{kb_stancode()}}
 }
 \concept{model}

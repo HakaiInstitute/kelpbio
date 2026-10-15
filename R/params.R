@@ -68,7 +68,7 @@
 #'   divergent transitions.
 #' @param by A character vector of grouping factors, `"site"`, `"year"`, or
 #'   both, giving one row per fitted level (per observed site-year for both), or
-#'   `NULL` for a single row for the typical site and year.
+#'   `NULL` for no grouping columns (the typical site and year).
 #' @param new_levels A string, one of `"average"` (the default) or `"sample"`,
 #'   controlling how random effects that are not conditioned on are treated
 #'   (factors absent from the rows, and any new level not seen in the fit).

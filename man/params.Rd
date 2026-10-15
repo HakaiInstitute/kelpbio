@@ -58,7 +58,7 @@ divergent transitions.}
 
 \item{by}{A character vector of grouping factors, \code{"site"}, \code{"year"}, or
 both, giving one row per fitted level (per observed site-year for both), or
-\code{NULL} for a single row for the typical site and year.}
+\code{NULL} for no grouping columns (the typical site and year).}
 
 \item{new_levels}{A string, one of \code{"average"} (the default) or \code{"sample"},
 controlling how random effects that are not conditioned on are treated

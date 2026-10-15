@@ -23,8 +23,10 @@
 #' @inheritSection kb_converged Resolving convergence failure
 #' @seealso [kb_converged()], which produces the `converged` column.
 #'
-#' @return A one-row tibble with `n`, `K`, `nchains`, `niters`, `nthin`,
-#'   `ess_bulk`, `ess_tail`, `rhat`, `perc_divergent`, and `converged`.
+#' @return A one-row tibble with `n` (the number of observations), `K` (the
+#'   number of terms [tidy()] reports, excluding the per-level group effects),
+#'   `nchains`, `niters`, `nthin`, `ess_bulk`, `ess_tail`, `rhat`,
+#'   `perc_divergent`, and `converged`.
 #' @family generics
 #' @exportS3Method generics::glance
 #' @examples
@@ -53,7 +55,7 @@ glance.kb_fit <- function(
   s <- x$diagnostics$summary
   tibble::tibble(
     n = nobs(x),
-    K = posterior::nvariables(x$draws),
+    K = length(x$meta$terms$fixed),
     nchains = posterior::nchains(x$draws),
     niters = posterior::niterations(x$draws),
     nthin = x$meta$nthin,

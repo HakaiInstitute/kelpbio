@@ -18,7 +18,7 @@ test_that("glance returns a one-row summary with the reportable core columns", {
   )
   expect_type(g$converged, "logical")
   expect_equal(g$n, nobs(weight_nereo_fit))
-  expect_equal(g$K, nvariables(weight_nereo_fit))
+  expect_equal(g$K, nrow(tidy(weight_nereo_fit)))
 })
 
 test_that("glance's converged column agrees with kb_converged()", {

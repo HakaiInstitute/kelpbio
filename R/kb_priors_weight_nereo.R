@@ -8,9 +8,10 @@
 #' Each entry is named after the parameter it sets, as reported by [tidy()] and
 #' [kb_model_describe()]. The prior family of each entry is fixed; only the
 #' hyperparameters can be changed. `intercept` is on the log of the weight above
-#' the floor at the reference diameter, `diameter_power` is the allometric
-#' exponent, and `weight_floor` is the weight (kg) as diameter approaches zero;
-#' both are truncated at zero. `density_slope` is the effect of standardised
+#' the floor at the reference diameter (the geometric mean diameter of the
+#' data), `diameter_power` is the allometric exponent, and `weight_floor` is the
+#' weight (kg) as diameter approaches zero, used only by `form =
+#' "packard_floor"`; both are truncated at zero. `density_slope` is the effect of standardised
 #' stipe density on the log scale and is used only when the data include
 #' density. `sd_residual` is the residual standard deviation of log weight.
 #'
