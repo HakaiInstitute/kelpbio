@@ -12,12 +12,11 @@ An object of class
 fit_cover_biomass_sim_macro
 }
 \description{
-A slim pre-fit cover biomass model, the result of \code{\link[=kb_fit_cover_biomass_macro]{kb_fit_cover_biomass_macro()}} on
-\link{data_cover_biomass_sim_macro} and \link{data_plot_biomass_sim_macro} with a reduced
-number of draws. Provided so the
-examples and tests for the fit accessors, S3 methods, and prediction functions
-run quickly. It is fit to simulated data and is not intended for inference.
-Built by \code{data-raw/fit_cover_biomass_sim_macro.R}.
+A slim pre-fit cover biomass model, the result of
+\code{\link[=kb_fit_cover_biomass_macro]{kb_fit_cover_biomass_macro()}} on \link{data_cover_biomass_sim_macro} and
+\link{data_plot_biomass_sim_macro} with a reduced number of draws. Provided so the
+examples for the fit accessors, S3 methods, and prediction functions run
+quickly. It is fit to simulated data and is not intended for inference.
 }
 \seealso{
 \code{\link[=kb_fit_cover_biomass_macro]{kb_fit_cover_biomass_macro()}}, \link{data_cover_biomass_sim_macro}, and

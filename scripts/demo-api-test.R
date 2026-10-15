@@ -118,18 +118,22 @@ priorsense::powerscale_plot_dens(fit)
 cat(kb_stancode(fit))
 dim(log_lik(fit))
 
-# log_lik is the pointwise matrix loo expects, so model comparison / influence
-# diagnostics work directly off the fit.
-loo::loo(log_lik(fit))
+# leave-one-out cross-validation straight from the fit (loo is re-exported)
+loo(fit)
 
 # compare the two functional forms: elpd_diff is relative to the better form,
 # with se_diff its standard error
-loo::loo_compare(
-  list(
-    packard_floor = loo::loo(log_lik(fit)),
-    power = loo::loo(log_lik(fit_power))
-  )
-)
+loo_compare(list(packard_floor = loo(fit), power = loo(fit_power)))
+
+# influential or poorly predicted plants: worth checking for recording errors
+influence <- kb_influence(fit)
+influence[influence$influential, ]
+influence |> arrange(elpd_loo) |> head()
+
+# posterior predictive checks (bayesplot): replicated data against the observed
+# weights, and the same for deviance residuals
+pp_check(fit)
+pp_check(fit, "residual", ndraws = 20)
 
 # --- fitted / residuals / augment (observed-data diagnostics) -----------------
 # fitted values are expected (mean) weight: for the lognormal model that is the
@@ -196,6 +200,11 @@ kb_new_data(fit, by = "site", diameter_mm = 30)
 kb_new_data(fit, by = c("site", "year"), diameter_mm = 30)
 # the wrong species' predictor errors with the fix
 try(kb_new_data(fit, fronds = 5))
+# site or year levels by name: every site in 2021, or one site across years;
+# a level the fit has not seen is predicted as a new level
+kb_new_data(fit, by = "site", diameter_mm = 30, year = 2021)
+kb_new_data(fit, site = sites[1], year = 2019:2022, diameter_mm = 30)
+kb_new_data(fit, site = "new_reef", diameter_mm = 30)
 
 # predict at the grid: curves for the typical site and year, and by site
 kb_predict_weight(fit, kb_new_data(fit))
@@ -306,6 +315,11 @@ autoplot(pop)
 # note the default is to cap facets - user can set max_facets or pre-filter (see warning)
 kb_predict_weight(fit, kb_new_data(fit, by = "site")) |>
   kb_plot_predictions()
+
+# log axes: "y" or "xy" (the default is "none"); the axis titles say log scale
+kb_plot_predictions(pop, log_axis = "xy")
+kb_predict_weight(fit, kb_new_data(fit, by = "site")) |>
+  kb_plot_predictions(log_axis = "y")
 
 # when only one predictor value per group, plot function knows to plot pointrange instead of line/ribbon
 kb_predict_weight(fit, kb_new_data(fit, by = "site", diameter_mm = 30)) |>
@@ -678,7 +692,7 @@ kb_priors_density_macro() # intercept, dispersion, sd_*
 
 fit_d <- kb_fit_density_nereo(data_density_sim_nereo)
 fit_d
-tidy(fit_d) # intercept: log stipes per m^2; logit_zero_inflation: logit P(no stipes)
+tidy(fit_d) # intercept: log stipes per m^2; logit_zero_inflation: logit P(transect unoccupied)
 kb_model_describe(fit_d)
 
 fit_dm <- kb_fit_density_macro(data_density_sim_macro)
@@ -708,7 +722,7 @@ pp_counts <- posterior_predict(fit_d, new_data = transects) # simulated counts
 apply(pp_counts, 2, quantile, probs = c(0.025, 0.5, 0.975))
 
 # nereo: posterior_epred includes the zero-inflation probability;
-# linpred(transform = TRUE) is the mean on a transect holding stipes, so higher
+# linpred(transform = TRUE) is the mean on an occupied transect, so higher
 nd <- tibble(site = "otter_cove")
 median(posterior_epred(fit_d, new_data = nd))
 median(posterior_linpred(fit_d, transform = TRUE, new_data = nd))

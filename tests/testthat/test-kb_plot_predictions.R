@@ -228,23 +228,26 @@ test_that("log tick labels are plain numbers", {
 test_that("a log x-axis errors over zero cover and over groups", {
   fit <- cover_biomass_nereo_fit
   p <- kb_predict_cover_biomass(fit, kb_new_data(fit))
-  expect_error(kb_plot_predictions(p, log_axis = "xy"), "positive cover")
-  expect_no_error(kb_plot_predictions(p, log_axis = "y"))
+  expect_snapshot(kb_plot_predictions(p, log_axis = "xy"), error = TRUE)
+  gg <- kb_plot_predictions(p, log_axis = "y")
+  expect_identical(gg$scales$get_scales("y")$get_transformation()$name, "log-10")
   positive <- kb_predict_cover_biomass(
     fit,
     kb_new_data(fit, cover = 10^seq(-3, 0, length.out = 5))
   )
-  expect_no_error(kb_plot_predictions(positive, log_axis = "xy"))
+  gg <- kb_plot_predictions(positive, log_axis = "xy")
+  expect_identical(gg$scales$get_scales("x")$get_transformation()$name, "log-10")
+  expect_identical(gg$scales$get_scales("y")$get_transformation()$name, "log-10")
   by_site <- kb_predict_density(
     density_nereo_fit,
     kb_new_data(density_nereo_fit, by = "site")
   )
-  expect_error(kb_plot_predictions(by_site, log_axis = "xy"), "numeric x-axis")
+  expect_snapshot(kb_plot_predictions(by_site, log_axis = "xy"), error = TRUE)
 })
 
 test_that("a log y-axis errors over non-positive values", {
   p <- kb_predict_weight(weight_nereo_fit, kb_new_data(weight_nereo_fit))
   p$lower[1] <- 0
-  expect_error(kb_plot_predictions(p, log_axis = "y"), "positive")
+  expect_snapshot(kb_plot_predictions(p, log_axis = "y"), error = TRUE)
   expect_error(kb_plot_predictions(p, log_axis = "nope"), "must be one of")
 })

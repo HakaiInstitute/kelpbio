@@ -61,7 +61,7 @@
 #' @return A flag: `TRUE` if every Rhat is below `rhat`, every bulk and tail
 #'   effective sample size is at least `ess` times the number of chains, and
 #'   the divergence rate is at or below `max_perc_divergent`.
-#' @family generics
+#' @family model
 #' @export
 #' @examples
 #' kb_converged(fit_weight_sim_nereo)

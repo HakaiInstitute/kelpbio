@@ -16,9 +16,12 @@ A numeric vector of fitted values on the response scale, length
 \code{nobs(object)}.
 }
 \description{
-Posterior point estimates (median) of the expected weight at each observed row,
-matching \code{\link[=augment]{augment()}}'s \code{fitted} column. For the full posterior, use
-\code{\link[=posterior_epred]{posterior_epred()}}.
+Posterior medians of the expected response at each observed row, matching
+\code{\link[=augment]{augment()}}'s \code{fitted} column: wet weight (kg) for weight fits, sub-bulb
+diameter (mm) or fronds for size fits, the stipe or plant count on the
+transect for density fits, the dry:wet ratio for wet/dry fits, the carbon
+fraction of dry mass for carbon fits, and wet biomass (kg/m²) for cover
+biomass fits. For the full posterior, use \code{\link[=posterior_epred]{posterior_epred()}}.
 }
 \examples{
 fitted(fit_weight_sim_nereo)
@@ -32,9 +35,6 @@ Other generics:
 \code{\link[=coef.kb_fit]{coef.kb_fit()}},
 \code{\link[=create_priorsense_data.kb_fit]{create_priorsense_data.kb_fit()}},
 \code{\link[=glance.kb_fit]{glance.kb_fit()}},
-\code{\link[=kb_converged]{kb_converged()}},
-\code{\link[=kb_samples]{kb_samples()}},
-\code{\link[=kb_stancode]{kb_stancode()}},
 \code{\link[=log_lik.kb_fit]{log_lik.kb_fit()}},
 \code{\link[=loo.kb_fit]{loo.kb_fit()}},
 \code{\link[=posterior_epred.kb_fit]{posterior_epred.kb_fit()}},

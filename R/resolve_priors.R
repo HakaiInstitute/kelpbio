@@ -8,22 +8,29 @@
 #'
 #' @param priors A named list of prior objects, or `NULL` for the defaults.
 #' @param defaults The default named prior list (e.g. from [kb_priors_weight_nereo()]).
+#' @param call The call named in errors: the fit function the user called.
 #'
 #' @return A named list of prior objects with the same names as `defaults`.
 #' @noRd
-resolve_priors <- function(priors, defaults) {
+resolve_priors <- function(priors, defaults, call = rlang::caller_env()) {
   if (is.null(priors)) {
     return(defaults)
   }
-  chk::chk_list(priors)
-  chk::chk_named(priors)
+  .with_call(
+    {
+      chk::chk_list(priors)
+      chk::chk_named(priors)
+      chk::chk_unique(names(priors), x_name = "Names of `priors`")
+    },
+    call
+  )
 
   extra <- setdiff(names(priors), names(defaults))
   if (length(extra)) {
     cli::cli_abort(c(
       "Unknown prior{?s} in {.arg priors}: {.field {extra}}.",
       i = "Valid entries are {.field {names(defaults)}}."
-    ))
+    ), call = call)
   }
 
   out <- defaults
@@ -35,7 +42,7 @@ resolve_priors <- function(priors, defaults) {
         "Prior {.field {nm}} has the wrong family.",
         i = "Expected {.cls {family}}, not {.cls {class(prior)[1]}}.",
         i = "The prior family is fixed; a family change needs a different model."
-      ))
+      ), call = call)
     }
     out[[nm]] <- prior
   }

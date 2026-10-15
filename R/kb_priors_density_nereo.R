@@ -11,8 +11,8 @@
 #' Exponential); only the hyperparameters can be changed.
 #'
 #' @return A named list of prior objects with entries `intercept` (the log stipe
-#'   density per m² on transects holding stipes), `logit_zero_inflation` (the
-#'   probability that a transect holds no stipes, on the logit scale),
+#'   density per m² on occupied transects), `logit_zero_inflation` (the
+#'   probability that a transect is unoccupied, on the logit scale),
 #'   `dispersion` (the negative binomial overdispersion: a transect's variance is
 #'   `mu + dispersion * mu^2`), `sd_site`, `sd_year`, and `sd_site_year`.
 #' @family priors

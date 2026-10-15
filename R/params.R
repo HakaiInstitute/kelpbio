@@ -53,8 +53,8 @@
 #' @param progress_dir A string giving an existing directory in which to write a
 #'   pollable progress artifact (read by [kb_progress()]), or `NULL` (the
 #'   default) to write none.
-#' @param conf_level A number between 0 and 1 giving the compatibility-interval
-#'   level.
+#' @param conf_level A number greater than 0 and less than 1 giving the
+#'   compatibility-interval level.
 #' @param estimate A function that reduces a numeric vector of posterior draws to
 #'   a scalar point estimate (e.g. `median` or `mean`).
 #' @param sig_fig A whole number of significant figures for summary output.
@@ -68,7 +68,7 @@
 #'   divergent transitions.
 #' @param by A character vector of grouping factors, `"site"`, `"year"`, or
 #'   both, giving one row per fitted level (per observed site-year for both), or
-#'   `NULL` for a single row for the typical site and year.
+#'   `NULL` for no grouping columns (the typical site and year).
 #' @param new_levels A string, one of `"average"` (the default) or `"sample"`,
 #'   controlling how random effects that are not conditioned on are treated
 #'   (factors absent from the rows, and any new level not seen in the fit).

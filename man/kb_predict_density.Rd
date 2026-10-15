@@ -41,8 +41,8 @@ site:year effect for that year (averaged over the named sites observed that
 year). A site:year effect none of them has, such as in a new year, follows
 \code{new_levels}.}
 
-\item{conf_level}{A number between 0 and 1 giving the compatibility-interval
-level.}
+\item{conf_level}{A number greater than 0 and less than 1 giving the
+compatibility-interval level.}
 
 \item{estimate}{A function that reduces a numeric vector of posterior draws to
 a scalar point estimate (e.g. \code{median} or \code{mean}).}
@@ -63,8 +63,8 @@ transects when \code{new_data = NULL}.
 The estimate is always per m²: an \code{area_m2} column is not used. The expected
 count on a transect is the density times its area, and so are its limits. For
 draws of transect counts, use \code{\link[=posterior_predict]{posterior_predict()}} with an \code{area_m2} column.
-For \emph{Nereocystis}, the expected density includes the probability that a
-transect holds no stipes.
+For \emph{Nereocystis}, the expected density is over all transects, including
+unoccupied ones.
 
 \code{new_data} needs no columns: each row is a site, a year, or a site-year, given
 by its optional \code{site} and \code{year} columns. For one row per site or year, build

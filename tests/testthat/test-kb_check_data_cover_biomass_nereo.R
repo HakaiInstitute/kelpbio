@@ -84,8 +84,23 @@ test_that("bad biomass limits and repeated site-years error", {
   expect_error(kb_check_data_cover_biomass_nereo(data, good[c("site", "estimate")]), "year")
 })
 
+test_that("a dry or carbon biomass prediction errors", {
+  data <- cover_data()
+  dry <- new_kb_predictions(
+    cover_biomass(),
+    predictor = NULL,
+    group_vars = c("site", "year"),
+    response = "dry_biomass_kg_m2"
+  )
+  expect_snapshot(kb_check_data_cover_biomass_nereo(data, dry), error = TRUE)
+})
+
 test_that("a tide height in centimetres warns", {
   data <- cover_data()
   data$tide_height_m <- c(50, 120)
   expect_warning(kb_check_data_cover_biomass_nereo(data), "tide_height_m")
+})
+
+test_that("x_name must be a string", {
+  expect_error(kb_check_data_cover_biomass_nereo(data.frame(), x_name = 1), "x_name")
 })

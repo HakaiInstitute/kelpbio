@@ -129,8 +129,8 @@ kb_predict_weight(fit, plants)                             # your own rows
   pre-fit model is loaded in a reviewed script, the call names the model in play.
   They are plain functions that check the fit class, not S3 generics.
 - `kb_new_data()` takes the predictor by its column name through `...`
-  (`diameter_mm`, `fronds`, or `cover`) and checks it against the fit, so no species
-  dispatch is needed. It marks its grid as a curve, and the mark travels into the
+  (`diameter_mm`, `fronds`, or `cover`), and levels of `site` or `year`, and
+  checks them against the fit, so no species dispatch is needed. It marks its grid as a curve, and the mark travels into the
   `kb_predictions` object so `kb_plot_predictions()` draws a ribbon only for
   curves: observed plants also vary in diameter, so the data alone cannot say.
 - Density reports per m² everywhere it is summarised (see the offset above);

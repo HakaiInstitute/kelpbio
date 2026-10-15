@@ -6,16 +6,18 @@
 #' The number of stipes on a transect is modelled with a zero-inflated negative
 #' binomial likelihood. The expected count is the transect area times the stipe
 #' density, so `area_m2` enters as an offset. The log density (`intercept`, log
-#' stipes per m² at a typical site and year) varies by site, by year, and by
-#' `site:year`. A transect holds no stipes with probability `zi`, estimated on the
-#' logit scale (`logit_zero_inflation`) and common to all transects; the overdispersion
-#' (`dispersion`) is also common to all transects. Predictions report the
-#' expected density, which includes the zero-inflation probability.
+#' stipes per m² on occupied transects at a typical site and year) varies by
+#' site, by year, and by `site:year`. A transect is unoccupied (a structural zero)
+#' with probability `zi`, estimated on the logit scale (`logit_zero_inflation`) and
+#' common to all transects; an occupied transect can still count no stipes. The
+#' overdispersion (`dispersion`) is also common to all transects. Predictions
+#' report the expected density over all transects, occupied or not.
 #'
 #' The site:year effect is set from the data: it is omitted when the data span a
-#' single year and included otherwise. When no site spans more than one year it is
-#' kept with a warning, since the site and site:year effects cannot then be
-#' interpreted separately.
+#' single year and included otherwise. When no site spans more than one year, or
+#' no year has more than one site, it is kept with a warning, since the
+#' site:year effect cannot then be interpreted separately from the site or year
+#' effect.
 #'
 #' @inheritSection params Sampling
 #' @inheritParams params
@@ -54,7 +56,9 @@ kb_fit_density_nereo <- function(
   progress_dir = NULL
 ) {
   progress <- rlang::arg_match(progress)
-  .chk_sampler_args(
+  .chk_fit_inputs(
+    data,
+    kb_check_data_density_nereo,
     prior_only = prior_only,
     chains = chains,
     niters = niters,
@@ -64,8 +68,6 @@ kb_fit_density_nereo <- function(
     progress = progress,
     progress_dir = progress_dir
   )
-
-  kb_check_data_density_nereo(data)
   site_year <- site_year_structure(data)
   notify_site_year(site_year, progress = progress)
 

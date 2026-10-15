@@ -33,3 +33,25 @@ dir.create(progress_dir)
 # Before a task has written anything, progress is 0.
 kb_progress(progress_dir)
 }
+\seealso{
+Other model:
+\code{\link[=kb_converged]{kb_converged()}},
+\code{\link[=kb_fit_carbon_macro]{kb_fit_carbon_macro()}},
+\code{\link[=kb_fit_carbon_nereo]{kb_fit_carbon_nereo()}},
+\code{\link[=kb_fit_cover_biomass_macro]{kb_fit_cover_biomass_macro()}},
+\code{\link[=kb_fit_cover_biomass_nereo]{kb_fit_cover_biomass_nereo()}},
+\code{\link[=kb_fit_density_macro]{kb_fit_density_macro()}},
+\code{\link[=kb_fit_density_nereo]{kb_fit_density_nereo()}},
+\code{\link[=kb_fit_size_macro]{kb_fit_size_macro()}},
+\code{\link[=kb_fit_size_nereo]{kb_fit_size_nereo()}},
+\code{\link[=kb_fit_weight_macro]{kb_fit_weight_macro()}},
+\code{\link[=kb_fit_weight_nereo]{kb_fit_weight_nereo()}},
+\code{\link[=kb_fit_wetdry_macro]{kb_fit_wetdry_macro()}},
+\code{\link[=kb_fit_wetdry_nereo]{kb_fit_wetdry_nereo()}},
+\code{\link[=kb_influence]{kb_influence()}},
+\code{\link[=kb_model_describe]{kb_model_describe()}},
+\code{\link[=kb_samples]{kb_samples()}},
+\code{\link[=kb_sensitivity]{kb_sensitivity()}},
+\code{\link[=kb_stancode]{kb_stancode()}}
+}
+\concept{model}

@@ -13,10 +13,9 @@ fit_weight_sim_macro
 }
 \description{
 A slim pre-fit weight model, the result of \code{\link[=kb_fit_weight_macro]{kb_fit_weight_macro()}} on
-\link{data_weight_sim_macro} with a reduced number of draws. Provided so
-the examples and tests for the fit accessors, S3 methods, and prediction
-functions run quickly. It is fit to simulated data and is not intended for
-inference. Built by \code{data-raw/fit_weight_sim_macro.R}.
+\link{data_weight_sim_macro} with a reduced number of draws. Provided so the
+examples for the fit accessors, S3 methods, and prediction functions run
+quickly. It is fit to simulated data and is not intended for inference.
 }
 \seealso{
 \code{\link[=kb_fit_weight_macro]{kb_fit_weight_macro()}} and \link{data_weight_sim_macro}.

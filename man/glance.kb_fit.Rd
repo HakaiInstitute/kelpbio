@@ -21,8 +21,10 @@ saved draws that ended in a divergent transition. \code{0} requires a fit with n
 divergent transitions.}
 }
 \value{
-A one-row tibble with \code{n}, \code{K}, \code{nchains}, \code{niters}, \code{nthin},
-\code{ess_bulk}, \code{ess_tail}, \code{rhat}, \code{perc_divergent}, and \code{converged}.
+A one-row tibble with \code{n} (the number of observations), \code{K} (the
+number of terms \code{\link[=tidy]{tidy()}} reports, excluding the per-level group effects),
+\code{nchains}, \code{niters}, \code{nthin}, \code{ess_bulk}, \code{ess_tail}, \code{rhat},
+\code{perc_divergent}, and \code{converged}.
 }
 \description{
 One-row summary of a model fit with convergence diagnostics.
@@ -104,9 +106,6 @@ Other generics:
 \code{\link[=coef.kb_fit]{coef.kb_fit()}},
 \code{\link[=create_priorsense_data.kb_fit]{create_priorsense_data.kb_fit()}},
 \code{\link[=fitted.kb_fit]{fitted.kb_fit()}},
-\code{\link[=kb_converged]{kb_converged()}},
-\code{\link[=kb_samples]{kb_samples()}},
-\code{\link[=kb_stancode]{kb_stancode()}},
 \code{\link[=log_lik.kb_fit]{log_lik.kb_fit()}},
 \code{\link[=loo.kb_fit]{loo.kb_fit()}},
 \code{\link[=posterior_epred.kb_fit]{posterior_epred.kb_fit()}},

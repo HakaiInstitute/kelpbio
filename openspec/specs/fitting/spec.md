@@ -22,7 +22,7 @@ priors) is the one `kb_model_describe()` reports, pinned by
 
 ### Requirement: Input data
 
-The required columns SHALL be, with `site` and `year` (where required) character or factor and no missing values in any required column. A column measured in a unit SHALL name the unit as a suffix (`_mm`, `_kg`, `_m2`); counts and grouping columns carry no suffix.
+The required columns SHALL be, with `site` and `year` (where required) character or factor and no missing or infinite values in any required column. A column measured in a unit SHALL name the unit as a suffix (`_mm`, `_kg`, `_m2`); counts and grouping columns carry no suffix.
 
 - *Nereocystis* weight: `diameter_mm` (sub-bulb diameter, mm, > 0), `weight_kg` (kg, > 0), `site`, and `year`.
 - *Macrocystis* weight: `fronds` (a positive whole number), `weight_kg` (kg, > 0), `site`, and `year`.
@@ -32,7 +32,7 @@ The required columns SHALL be, with `site` and `year` (where required) character
 - *Macrocystis* density: `plants` (plants counted on a transect, a whole number `>= 0`), `area_m2` (area surveyed, m², > 0), `site`, and `year`.
 - Wet/dry, both species: `wet_mass_g` (wet mass of a sample, g, > 0) and `dry_mass_g` (its dry mass, g, > 0 and less than `wet_mass_g`). A warning SHALL give the number of samples whose dry:wet ratio lies outside 0.02 to 0.5, the plausible range for kelp tissue, and those samples SHALL be kept.
 - Carbon, both species: `sample_mass_mg` (mass of a dried sample, mg, > 0) and `carbon_mass_ug` (carbon measured in it, µg, > 0), the carbon fraction `carbon_mass_ug / 1000 / sample_mass_mg` being less than 1. A warning SHALL give the number of samples whose carbon fraction lies outside 0.10 to 0.50, the plausible range for kelp tissue, and those samples SHALL be kept.
-- Cover biomass, both species: `data` holds the drone surveys, `canopy_area_m2` (canopy delineated in the plot, m², `>= 0`), `plot_area_m2` (plot area, m², > 0 and at least `canopy_area_m2`), `tide_height_m` (tide height at the survey, m, chart datum), `site`, and `year`, and no `estimate`, `lower`, or `upper` column. The in situ wet biomass (kg/m²) is a separate data frame, the fit functions' required second argument `biomass` (before `priors`): `site` and `year`, one row per site-year, and `estimate` (> 0) with its compatibility limits `lower` and `upper` (`0 < lower <= estimate <= upper`, `lower < upper`), the columns of a `kb_predictions` object, so a biomass prediction passes in unchanged. Each survey SHALL be paired with the biomass of its site-year. Surveys with none SHALL be dropped with a message giving their number and site-years (suppressed by `progress = "none"`), and the fit SHALL error when no survey is paired. The level of the limits SHALL be the one a `kb_predictions` object records, else the name-only `conf_level`, else 0.95; a `conf_level` that contradicts the recorded level SHALL error.
+- Cover biomass, both species: `data` holds the drone surveys, `canopy_area_m2` (canopy delineated in the plot, m², `>= 0`), `plot_area_m2` (plot area, m², > 0 and at least `canopy_area_m2`), `tide_height_m` (tide height at the survey, m, chart datum), `site`, and `year`, and no `estimate`, `lower`, or `upper` column. The in situ wet biomass (kg/m²) is a separate data frame, the fit functions' required second argument `biomass` (before `priors`): `site` and `year`, one row per site-year, and `estimate` (> 0) with its compatibility limits `lower` and `upper` (`0 < lower <= estimate <= upper`, `lower < upper`), the columns of a `kb_predictions` object, so a biomass prediction passes in unchanged. Each survey SHALL be paired with the biomass of its site-year. Surveys with none SHALL be dropped with a message giving their number and site-years (suppressed by `progress = "none"`), and the fit SHALL error when no survey is paired. The level of the limits SHALL be the one a `kb_predictions` object records, else the name-only `conf_level`, else 0.95; a `conf_level` that contradicts the recorded level SHALL error. A `kb_predictions` object recording a response other than wet biomass (`biomass_kg_m2`) SHALL error.
 
 *Nereocystis* weight data MAY include `stipes_m2`, the stipe density (stipes per m²) of the plant's site-year: numeric, `>= 0`, `NA` where not recorded, and at most one distinct value per site-year. Other columns SHALL be ignored. `kb_check_data_weight_nereo()`, `kb_check_data_weight_macro()`, `kb_check_data_size_nereo()`, `kb_check_data_size_macro()`, `kb_check_data_density_nereo()`, `kb_check_data_density_macro()`, `kb_check_data_wetdry_nereo()`, `kb_check_data_wetdry_macro()`, `kb_check_data_carbon_nereo()`, `kb_check_data_carbon_macro()`, `kb_check_data_cover_biomass_nereo()`, and `kb_check_data_cover_biomass_macro()` SHALL apply these checks, returning the data invisibly, and the fit functions SHALL apply them at entry. The cover biomass checks SHALL also check `biomass` when it is supplied.
 
@@ -96,6 +96,10 @@ The required columns SHALL be, with `site` and `year` (where required) character
 - **WHEN** `biomass` is a `kb_predictions` object with `site` and `year` columns
 - **THEN** the fit pairs it with the surveys and uses the interval level it records
 
+#### Scenario: A dry or carbon biomass prediction errors
+- **WHEN** `biomass` is a `kb_predictions` object of dry or carbon plot biomass
+- **THEN** it errors naming the recorded response and pointing to wet biomass
+
 #### Scenario: Surveys without biomass are dropped
 - **WHEN** some surveys' site-years have no row in `biomass`
 - **THEN** those surveys are not fitted, and a message gives their number and site-years
@@ -114,7 +118,7 @@ The site:year effect SHALL be included when the data span more than one year and
 
 The *Nereocystis* weight model's density effect SHALL be included when at least two distinct site-year values of `stipes_m2` are recorded, with density standardised by its mean and SD over the fitted plants. A row with `NA` takes its site-year's recorded value; site-years with no recorded density take the mean.
 
-An omitted effect SHALL not be fitted, reported, or used in prediction (see summaries and predictions). Informational messages SHALL report an omitted site:year effect, a `stipes_m2` column that yields no density effect, and the number of site-years without recorded density; none is issued when there is no `stipes_m2` column, and all are suppressed by `progress = "none"`.
+An omitted effect SHALL not be reported or used in prediction (see summaries and predictions). Informational messages SHALL report an omitted site:year effect, a `stipes_m2` column that yields no density effect, and the number of site-years without recorded density; none is issued when there is no `stipes_m2` column, and all are suppressed by `progress = "none"`.
 
 #### Scenario: Single-year data omit site:year
 - **WHEN** the data contain one year
@@ -142,7 +146,7 @@ An omitted effect SHALL not be fitted, reported, or used in prediction (see summ
 
 ### Requirement: Priors
 
-`kb_priors_weight_nereo()`, `kb_priors_weight_macro()`, `kb_priors_size_nereo()`, `kb_priors_size_macro()`, `kb_priors_density_nereo()`, `kb_priors_density_macro()`, `kb_priors_wetdry_nereo()`, `kb_priors_wetdry_macro()`, `kb_priors_carbon_nereo()`, `kb_priors_carbon_macro()`, `kb_priors_cover_biomass_nereo()`, and `kb_priors_cover_biomass_macro()` SHALL return a named list of prior objects, the defaults pinned by `tests/testthat/test-kb_priors_*.R`. The weight, size, wet/dry, carbon, and cover defaults match the analysis-project models; the density defaults are weakly informative round values. Each entry SHALL be named after the parameter it sets, the same name that parameter has in `tidy()`, `coef()`, `summary()`, and `kb_model_describe()`. The entries are:
+`kb_priors_weight_nereo()`, `kb_priors_weight_macro()`, `kb_priors_size_nereo()`, `kb_priors_size_macro()`, `kb_priors_density_nereo()`, `kb_priors_density_macro()`, `kb_priors_wetdry_nereo()`, `kb_priors_wetdry_macro()`, `kb_priors_carbon_nereo()`, `kb_priors_carbon_macro()`, `kb_priors_cover_biomass_nereo()`, and `kb_priors_cover_biomass_macro()` SHALL return a named list of prior objects, the defaults pinned by `tests/testthat/test-kb_priors_*.R`. Each entry SHALL be named after the parameter it sets, the same name that parameter has in `tidy()`, `coef()`, `summary()`, and `kb_model_describe()`. The entries are:
 
 - *Nereocystis* weight: `intercept`, `diameter_power`, `weight_floor`, `density_slope`, `sd_site`, `sd_year`, `sd_site_year`, and `sd_residual`.
 - *Macrocystis* weight: `intercept`, `fronds_slope`, `shape`, `sd_site`, `sd_year`, and `sd_site_year`.
@@ -169,7 +173,7 @@ A list passed to `priors` SHALL override only the entries it contains. `kb_prior
 
 ### Requirement: Sampler control and progress
 
-The fit functions SHALL take `chains` (default 4), `niters` (saved post-warmup draws per chain, default 1000; warmup matches), `nthin` (default 1), `cores`, `seed`, `progress`, and `progress_dir`, passing other arguments to `rstan::sampling()`. The sampler SHALL use `adapt_delta = 0.95` unless a `control` list overrides it; a supplied `control` is merged over the default. `cores = NULL` SHALL use `getOption("mc.cores")`, falling back to `chains`, capped at the available cores. A fit SHALL be reproducible from `seed`, or from a preceding `set.seed()` when `seed` is `NULL`. No HTML viewer SHALL open.
+The fit functions SHALL take `chains` (default 4), `niters` (saved post-warmup draws per chain, default 1000; warmup matches), `nthin` (default 1), `cores`, `seed`, `progress`, and `progress_dir`, passing other named arguments to `rstan::sampling()`; an unnamed argument SHALL error. The sampler SHALL use `adapt_delta = 0.95` unless a `control` list overrides it; a supplied `control` is merged over the default. `cores = NULL` SHALL use `getOption("mc.cores")`, falling back to `chains`, capped at the available cores. A fit SHALL be reproducible from `seed`, or from a preceding `set.seed()` when `seed` is `NULL`. No HTML viewer SHALL open.
 
 `progress` SHALL be one of `"bar"` (default, a progress bar with rstan's output suppressed), `"verbose"` (rstan's per-iteration output and warnings), or `"none"` (silent). It SHALL change only console output, never the draws. When `progress_dir` names an existing directory, the fit SHALL write a progress record there under any `progress` mode, and `kb_progress(progress_dir)` SHALL return the completed fraction in `[0, 1]` from another R process: `0` before sampling starts, `1` once complete, and no error mid-write. kelpbio SHALL NOT delete a caller's `progress_dir`.
 
@@ -191,7 +195,7 @@ The fit functions SHALL take `chains` (default 4), `niters` (saved post-warmup d
 
 ### Requirement: The fit object
 
-A fit SHALL store posterior draws, sampler diagnostics, the input data, and the fit's settings, and SHALL NOT keep the `stanfit` or any per-observation quantity, so its size depends on the number of draws, not observations. Every summary, diagnostic, and prediction SHALL work from a stored fit. A fit with `prior_only = TRUE` SHALL sample from the priors alone and accept zero-row data. A diagnostic rate with no draws behind it SHALL be `NA`, not zero.
+A fit SHALL store posterior draws, sampler diagnostics, the input data, and the fit's settings, and SHALL NOT keep the `stanfit` or any per-observation quantity, so its size depends on the number of draws, not observations. Every summary, diagnostic, and prediction SHALL work from a stored fit. A fit with `prior_only = TRUE` SHALL sample from the priors alone and accept zero-row data; with `prior_only = FALSE`, zero-row data SHALL error before sampling. A diagnostic rate with no draws behind it SHALL be `NA`, not zero.
 
 The draws SHALL be a `posterior` `draws_rvars` object that works with `posterior` and the tools built on it as soon as kelpbio is attached, including for a bundled pre-fit or a fit read back in a new session. Per-level group effects SHALL be labelled by their levels: site effects by site, year effects by year, and site:year effects by site and year, so they can be indexed by name as well as by position.
 
@@ -202,6 +206,10 @@ The draws SHALL be a `posterior` `draws_rvars` object that works with `posterior
 #### Scenario: Prior-only fits ignore the data
 - **WHEN** `prior_only = TRUE`, including with zero-row data
 - **THEN** the draws reflect the priors only
+
+#### Scenario: Zero-row data need prior_only
+- **WHEN** a fit function is called with zero-row data and `prior_only = FALSE`
+- **THEN** it errors before sampling, pointing to `prior_only = TRUE`
 
 #### Scenario: Draws work on load
 - **WHEN** kelpbio is attached in a new session and a bundled pre-fit's draws are printed before any other kelpbio function is called
@@ -231,7 +239,7 @@ For each species, the weight, size, density, cover survey, and in situ plot biom
 
 ### Requirement: Implausible units are flagged
 
-The data checks, and so the fit functions, SHALL warn when a column's median is implausible for the unit its name states: `diameter_mm` below 10 or above 200 (millimetres), `weight_kg` above 100 (kilograms), `stipes_m2` above 100 (stipes per m²), `area_m2` below 1 or above 5000 (square metres), `plot_area_m2` below 1 or above 1,000,000 (square metres), `tide_height_m` below -1 or above 5 (metres), or `wet_mass_g` or `dry_mass_g` above 1000 (grams). The warning SHALL name the column, its median, and the expected unit, and SHALL NOT stop the check or the fit. The message is pinned by `tests/testthat/_snaps/warn.md`.
+The data checks, and so the fit functions, and `kb_predict_site_biomass()` on its `new_data`, SHALL warn when a column's median is implausible for the unit its name states: `diameter_mm` below 10 or above 200 (millimetres), `weight_kg` above 100 (kilograms), `stipes_m2` above 100 (stipes per m²), `area_m2` below 1 or above 5000 (square metres), `plot_area_m2` below 1 or above 1,000,000 (square metres), `site_area_m2` below 10 or above 1,000,000,000 (square metres), `tide_height_m` below -1 or above 5 (metres), or `wet_mass_g` or `dry_mass_g` above 1000 (grams). The warning SHALL name the column, its median, and the expected unit, and SHALL NOT stop the check or the fit. The message is pinned by `tests/testthat/_snaps/warn.md`.
 
 #### Scenario: Diameter in centimetres is flagged
 - **WHEN** *Nereocystis* data have `diameter_mm` in centimetres (median about 3)

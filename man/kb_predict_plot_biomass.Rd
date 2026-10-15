@@ -56,8 +56,8 @@ named) instead of the \code{new_levels} treatment.}
 \item{n_plants}{A whole number of plants averaged per draw to compute the mean
 plant weight.}
 
-\item{conf_level}{A number between 0 and 1 giving the compatibility-interval
-level.}
+\item{conf_level}{A number greater than 0 and less than 1 giving the
+compatibility-interval level.}
 
 \item{estimate}{A function that reduces a numeric vector of posterior draws to
 a scalar point estimate (e.g. \code{median} or \code{mean}).}

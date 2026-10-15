@@ -8,7 +8,8 @@
 #' Each observation gets two values:
 #'
 #' - `pareto_k` measures how much the fit changes when the observation is left
-#'   out. Values above about 0.7 mark an influential observation.
+#'   out. Values above 0.7 mark an influential observation (a lower threshold
+#'   for fits with fewer than about 2,200 draws).
 #' - `elpd_loo` is the log density of the observation under a fit that left it
 #'   out. Lower values mark observations the model predicts poorly. Its scale
 #'   depends on the response's units, so compare values within a fit.
@@ -31,7 +32,8 @@
 #' @param fit A `kb_fit` object.
 #' @param ... Unused.
 #' @param threshold A number greater than 0: an observation with `pareto_k`
-#'   above it is influential.
+#'   above it is influential. `NULL` (the default) uses the threshold of
+#'   [loo::loo()], `min(1 - 1 / log10(S), 0.7)` for `S` posterior draws.
 #'
 #' @return The fitted data as a tibble, one row per observation, with added
 #'   columns `elpd_loo`, `pareto_k`, and `influential`.
@@ -46,12 +48,16 @@
 #' @examples
 #' influence <- kb_influence(fit_weight_sim_nereo)
 #' influence[influence$influential, ]
-kb_influence <- function(fit, ..., threshold = 0.7) {
+kb_influence <- function(fit, ..., threshold = NULL) {
   rlang::check_dots_empty()
   .chk_kb_fit(fit)
-  chk::chk_number(threshold)
-  chk::chk_gt(threshold)
+  if (!is.null(threshold)) {
+    chk::chk_number(threshold)
+    chk::chk_gt(threshold)
+  }
   .chk_loo_fit(fit)
+  # loo's sample-size-dependent threshold, which loo does not export.
+  threshold <- threshold %||% min(1 - 1 / log10(posterior::ndraws(fit$draws)), 0.7)
 
   # The influential column reports high Pareto k, so loo's warning is redundant.
   psis <- withCallingHandlers(

@@ -83,3 +83,8 @@ test_that("every declared term has draws behind it", {
     expect_gt(length(declared), 0L)
   }
 })
+
+test_that("argument errors name tidy()", {
+  err <- expect_error(tidy(weight_nereo_fit, conf_level = 2))
+  expect_identical(err$call[[1]], quote(tidy))
+})

@@ -1,15 +1,14 @@
 #' Stan Source for a Model Fit
 #'
 #' The Stan source code of the fitted model, with comments stripped for a clean
-#' read. The raw source (comments included) is stored on the fit in
-#' `fit$meta$stancode`.
+#' read.
 #'
 #' @param fit A `kb_fit` object.
 #' @param ... Unused.
 #'
 #' @return A `kb_stancode` object: the comment-stripped Stan source string, which
 #'   prints as readable code. Use [as.character()] for the plain string.
-#' @family generics
+#' @family model
 #' @export
 #'
 #' @examples

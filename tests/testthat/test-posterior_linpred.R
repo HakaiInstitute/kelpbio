@@ -17,3 +17,10 @@ test_that("transform = TRUE is exp of the log-scale linear predictor", {
   expect_equal(lpt, exp(lp))
   expect_false(isTRUE(all.equal(lp, lpt)))
 })
+
+test_that("errors name posterior_linpred()", {
+  err <- expect_error(posterior_linpred(weight_nereo_fit, data.frame(diameter_mm = -1)))
+  expect_identical(err$call[[1]], quote(posterior_linpred))
+  err <- expect_error(posterior_linpred(weight_nereo_fit, NULL, 1))
+  expect_identical(err$call[[1]], quote(posterior_linpred))
+})

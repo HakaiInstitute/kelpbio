@@ -68,16 +68,18 @@ Fit a stipe-density model for \emph{Nereocystis luetkeana} via Stan.
 The number of stipes on a transect is modelled with a zero-inflated negative
 binomial likelihood. The expected count is the transect area times the stipe
 density, so \code{area_m2} enters as an offset. The log density (\code{intercept}, log
-stipes per m² at a typical site and year) varies by site, by year, and by
-\code{site:year}. A transect holds no stipes with probability \code{zi}, estimated on the
-logit scale (\code{logit_zero_inflation}) and common to all transects; the overdispersion
-(\code{dispersion}) is also common to all transects. Predictions report the
-expected density, which includes the zero-inflation probability.
+stipes per m² on occupied transects at a typical site and year) varies by
+site, by year, and by \code{site:year}. A transect is unoccupied (a structural zero)
+with probability \code{zi}, estimated on the logit scale (\code{logit_zero_inflation}) and
+common to all transects; an occupied transect can still count no stipes. The
+overdispersion (\code{dispersion}) is also common to all transects. Predictions
+report the expected density over all transects, occupied or not.
 
 The site:year effect is set from the data: it is omitted when the data span a
-single year and included otherwise. When no site spans more than one year it is
-kept with a warning, since the site and site:year effects cannot then be
-interpreted separately.
+single year and included otherwise. When no site spans more than one year, or
+no year has more than one site, it is kept with a warning, since the
+site:year effect cannot then be interpreted separately from the site or year
+effect.
 }
 \section{Sampling}{
 
@@ -117,6 +119,7 @@ tidy(fit_density_sim_nereo)
 }
 \seealso{
 Other model:
+\code{\link[=kb_converged]{kb_converged()}},
 \code{\link[=kb_fit_carbon_macro]{kb_fit_carbon_macro()}},
 \code{\link[=kb_fit_carbon_nereo]{kb_fit_carbon_nereo()}},
 \code{\link[=kb_fit_cover_biomass_macro]{kb_fit_cover_biomass_macro()}},
@@ -130,6 +133,9 @@ Other model:
 \code{\link[=kb_fit_wetdry_nereo]{kb_fit_wetdry_nereo()}},
 \code{\link[=kb_influence]{kb_influence()}},
 \code{\link[=kb_model_describe]{kb_model_describe()}},
-\code{\link[=kb_sensitivity]{kb_sensitivity()}}
+\code{\link[=kb_progress]{kb_progress()}},
+\code{\link[=kb_samples]{kb_samples()}},
+\code{\link[=kb_sensitivity]{kb_sensitivity()}},
+\code{\link[=kb_stancode]{kb_stancode()}}
 }
 \concept{model}

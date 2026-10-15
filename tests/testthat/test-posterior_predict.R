@@ -138,3 +138,10 @@ test_that("cover posterior_predict needs the in situ limits in new_data", {
   )
   expect_equal(ncol(pp), 1L)
 })
+
+test_that("errors name posterior_predict()", {
+  err <- expect_error(posterior_predict(weight_nereo_fit, data.frame(diameter_mm = -1)))
+  expect_identical(err$call[[1]], quote(posterior_predict))
+  err <- expect_error(posterior_predict(weight_nereo_fit, NULL, 1))
+  expect_identical(err$call[[1]], quote(posterior_predict))
+})

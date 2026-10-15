@@ -1,7 +1,7 @@
 # Pair each drone survey with its site-year's in situ biomass. Returns
 # list(data, unmatched): surveys with no biomass are dropped and their site-year
 # keys returned, one per dropped survey. Errors when no survey is paired.
-join_cover_biomass <- function(data, biomass) {
+join_cover_biomass <- function(data, biomass, call = rlang::caller_env()) {
   data_key <- site_year_key(data$site, data$year)
   idx <- match(data_key, site_year_key(biomass$site, biomass$year))
   unmatched <- is.na(idx)
@@ -10,7 +10,7 @@ join_cover_biomass <- function(data, biomass) {
     cli::cli_abort(c(
       "No survey in {.arg data} has a site-year in {.arg biomass}.",
       i = "Surveys are paired with the in situ biomass by {.field site} and {.field year}."
-    ))
+    ), call = call)
   }
 
   out <- tibble::as_tibble(data)[!unmatched, , drop = FALSE]

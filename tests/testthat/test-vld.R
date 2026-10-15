@@ -50,11 +50,21 @@ test_that(".vld_progress_dir accepts NULL or an existing directory", {
   expect_false(.vld_progress_dir(1))
 })
 
+test_that(".vld_progress_dir rejects a directory that cannot be written to", {
+  skip_on_os("windows")
+  d <- withr::local_tempdir()
+  Sys.chmod(d, "0555")
+  withr::defer(Sys.chmod(d, "0755"))
+  skip_if(file.access(d, mode = 2L) == 0L, "running with write access to every directory")
+  expect_false(.vld_progress_dir(d))
+})
+
 test_that(".vld_density accepts non-negative numbers and all-NA", {
   expect_true(.vld_density(c(0, 2.5, NA)))
   expect_true(.vld_density(NA))
   expect_false(.vld_density(c(1, -1)))
   expect_false(.vld_density("1"))
+  expect_false(.vld_density(c(1, Inf, NA)))
 })
 
 test_that(".vld_density_site_year allows one recorded value per site-year", {
@@ -69,6 +79,7 @@ test_that(".vld_positive_measure and .vld_frond_count check measured values", {
   expect_false(.vld_positive_measure(c(1, 0)))
   expect_false(.vld_positive_measure(c(1, NA)))
   expect_false(.vld_positive_measure("30"))
+  expect_false(.vld_positive_measure(c(1, Inf)))
   expect_true(.vld_frond_count(c(1, 5)))
   expect_false(.vld_frond_count(2.5))
 })
@@ -132,6 +143,7 @@ test_that(".vld_cover_survey accepts zero canopy within the plot", {
   expect_false(.vld_cover_survey(transform(good, canopy_area_m2 = 300)))
   expect_false(.vld_cover_survey(transform(good, plot_area_m2 = 0)))
   expect_false(.vld_cover_survey(transform(good, tide_height_m = NA)))
+  expect_false(.vld_cover_survey(transform(good, tide_height_m = -Inf)))
   expect_false(.vld_cover_survey(good[c("canopy_area_m2", "plot_area_m2")]))
 })
 
@@ -160,6 +172,16 @@ test_that(".vld_plot_biomass needs one valid row per site-year", {
   expect_false(.vld_plot_biomass(transform(good, lower = 3)))
 })
 
+test_that(".vld_biomass_response accepts wet biomass or an unlabelled frame", {
+  good <- data.frame(site = "a", year = "2020", estimate = 2, lower = 1, upper = 4)
+  wet <- new_kb_predictions(good, NULL, c("site", "year"), "biomass_kg_m2")
+  dry <- new_kb_predictions(good, NULL, c("site", "year"), "dry_biomass_kg_m2")
+  expect_true(.vld_biomass_response(good))
+  expect_true(.vld_biomass_response(wet))
+  expect_false(.vld_biomass_response(dry))
+  expect_false(.vld_plot_biomass(dry))
+})
+
 test_that(".vld_site_surveys needs canopy, tide, site, and year, and a large enough site", {
   good <- data.frame(site = "a", year = "2020", canopy_area_m2 = 100, tide_height_m = 0.5)
   expect_true(.vld_site_surveys(good))
@@ -167,6 +189,7 @@ test_that(".vld_site_surveys needs canopy, tide, site, and year, and a large eno
   expect_false(.vld_site_surveys(transform(good, site_area_m2 = 50)))
   expect_false(.vld_site_surveys(transform(good, canopy_area_m2 = -1)))
   expect_false(.vld_site_surveys(transform(good, site = NA)))
+  expect_false(.vld_site_surveys(transform(good, tide_height_m = Inf)))
   expect_false(.vld_site_surveys(good[c("site", "year", "canopy_area_m2")]))
   expect_false(.vld_site_surveys(list(good)))
 })
@@ -186,6 +209,8 @@ test_that(".vld_sampling_dots flags sampler arguments kelpbio sets", {
   expect_true(.vld_sampling_dots(list(control = list(adapt_delta = 0.99))))
   expect_false(.vld_sampling_dots(list(iter = 10)))
   expect_false(.vld_sampling_dots(list(pars = "intercept")))
+  expect_false(.vld_sampling_dots(list("power")))
+  expect_false(.vld_sampling_dots(list(control = list(), 0)))
 })
 
 test_that(".vld_predictions needs a data frame with estimate and limits", {
@@ -224,4 +249,27 @@ test_that(".vld_log_axis needs positive values on each log axis", {
   p$lower[1] <- 0
   expect_true(.vld_log_axis("none", p, "cover"))
   expect_false(.vld_log_axis("y", p, "cover"))
+})
+
+test_that(".vld_fit_rows needs rows unless prior_only", {
+  expect_true(.vld_fit_rows(data.frame(x = 1), prior_only = FALSE))
+  expect_true(.vld_fit_rows(data.frame(x = 1)[0, , drop = FALSE], prior_only = TRUE))
+  expect_false(.vld_fit_rows(data.frame(x = 1)[0, , drop = FALSE], prior_only = FALSE))
+})
+
+test_that(".vld_finite rejects infinite values but not NA", {
+  expect_true(.vld_finite(c(1, NA)))
+  expect_false(.vld_finite(c(1, -Inf)))
+})
+
+test_that(".vld_rows needs at least one row", {
+  expect_true(.vld_rows(data.frame(x = 1)))
+  expect_false(.vld_rows(data.frame(x = numeric(0))))
+})
+
+test_that(".vld_new_data_groups rejects NA in any site or year column", {
+  expect_true(.vld_new_data_groups(data.frame(diameter_mm = 30)))
+  expect_true(.vld_new_data_groups(data.frame(site = "a", year = 2020)))
+  expect_false(.vld_new_data_groups(data.frame(site = NA, year = "2020")))
+  expect_false(.vld_new_data_groups(data.frame(year = NA_real_)))
 })

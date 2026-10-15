@@ -34,7 +34,8 @@ test_that("kb_influence matches loo's pointwise values", {
 
 test_that("the threshold sets the flag and leaves the values unchanged", {
   default <- kb_influence(weight_nereo_fit)
-  expect_identical(default$influential, default$pareto_k > 0.7)
+  s <- posterior::ndraws(weight_nereo_fit$draws)
+  expect_identical(default$influential, default$pareto_k > min(1 - 1 / log10(s), 0.7))
 
   strict <- kb_influence(weight_nereo_fit, threshold = 1e6)
   expect_equal(strict$pareto_k, default$pareto_k)
@@ -63,4 +64,13 @@ test_that("kb_influence validates its arguments", {
   expect_snapshot(kb_influence(1), error = TRUE)
   expect_snapshot(kb_influence(wetdry_nereo_fit, threshold = 0), error = TRUE)
   expect_snapshot(kb_influence(wetdry_nereo_fit, 0.7), error = TRUE)
+})
+
+test_that("the default threshold is loo's: lower than 0.7 below about 2,200 draws", {
+  fit <- weight_nereo_fit
+  out <- kb_influence(fit)
+  k <- out$pareto_k
+  threshold <- 1 - 1 / log10(posterior::ndraws(fit$draws))
+  expect_lt(threshold, 0.7)
+  expect_identical(out$influential, k > threshold)
 })

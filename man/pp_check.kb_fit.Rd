@@ -32,6 +32,10 @@ the replicates have few, points to a mismatch in shape or scale or to errors
 in the data. The check reuses the data the model was fitted to, so it shows
 gross misfit rather than fine differences.
 
+For a fit made with \code{prior_only = TRUE}, the replicates come from the prior,
+so the plot is a prior predictive check: whether the priors allow data like
+those observed.
+
 For a density model, the observed and replicate counts are divided by their
 transect's area, so differences in transect length do not dominate the plot
 and the axis is a density per m².
@@ -58,9 +62,6 @@ Other generics:
 \code{\link[=create_priorsense_data.kb_fit]{create_priorsense_data.kb_fit()}},
 \code{\link[=fitted.kb_fit]{fitted.kb_fit()}},
 \code{\link[=glance.kb_fit]{glance.kb_fit()}},
-\code{\link[=kb_converged]{kb_converged()}},
-\code{\link[=kb_samples]{kb_samples()}},
-\code{\link[=kb_stancode]{kb_stancode()}},
 \code{\link[=log_lik.kb_fit]{log_lik.kb_fit()}},
 \code{\link[=loo.kb_fit]{loo.kb_fit()}},
 \code{\link[=posterior_epred.kb_fit]{posterior_epred.kb_fit()}},

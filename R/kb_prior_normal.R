@@ -16,6 +16,8 @@ kb_prior_normal <- function(mean = 0, sd = 1) {
   chk::chk_number(mean)
   chk::chk_number(sd)
   chk::chk_gt(sd, value = 0)
+  .chk_finite(mean, "`mean`")
+  .chk_finite(sd, "`sd`")
   structure(
     list(mean = mean, sd = sd),
     class = c("kb_prior_normal", "kb_prior")

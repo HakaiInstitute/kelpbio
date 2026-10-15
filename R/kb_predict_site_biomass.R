@@ -109,7 +109,10 @@ kb_predict_site_biomass <- function(
   measure <- rlang::arg_match(measure)
   new_levels <- rlang::arg_match(new_levels)
   .with_call(
-    .chk_site_surveys(new_data, x_name = "`new_data`"),
+    {
+      .chk_site_surveys(new_data, x_name = "`new_data`")
+      .chk_rows(new_data, "`new_data`")
+    },
     rlang::current_env()
   )
   warn_implausible_units(new_data, "`new_data`")

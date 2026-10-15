@@ -29,9 +29,10 @@
 #' densities are recorded.
 #'
 #' The site:year effect is set from the data: it is omitted when the data span a
-#' single year and included otherwise. When no site spans more than one year it is
-#' kept with a warning, since the site and site:year effects cannot then be
-#' interpreted separately.
+#' single year and included otherwise. When no site spans more than one year, or
+#' no year has more than one site, it is kept with a warning, since the
+#' site:year effect cannot then be interpreted separately from the site or year
+#' effect.
 #'
 #' @inheritSection params Sampling
 #' @inheritParams params
@@ -75,7 +76,9 @@ kb_fit_weight_nereo <- function(
 ) {
   form <- rlang::arg_match(form)
   progress <- rlang::arg_match(progress)
-  .chk_sampler_args(
+  .chk_fit_inputs(
+    data,
+    kb_check_data_weight_nereo,
     prior_only = prior_only,
     chains = chains,
     niters = niters,
@@ -85,8 +88,6 @@ kb_fit_weight_nereo <- function(
     progress = progress,
     progress_dir = progress_dir
   )
-
-  kb_check_data_weight_nereo(data)
   site_year <- site_year_structure(data)
   notify_site_year(site_year, progress = progress)
   density <- density_structure(data)
@@ -94,7 +95,8 @@ kb_fit_weight_nereo <- function(
 
   priors <- resolve_priors(priors, kb_priors_weight_nereo())
   # Shared by the Stan fit and R-side predictions (stored in meta below).
-  diameter_ref <- weight_diameter_ref(data$diameter_mm)
+  # 30 mm for zero-row data.
+  diameter_ref <- geometric_ref(data$diameter_mm, fallback = 30)
   stan_data <- assemble_weight_nereo_data(
     data,
     priors,

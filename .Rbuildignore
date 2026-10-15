@@ -22,3 +22,4 @@
 ^\.vscode$
 ^decisions$
 ^figure$
+^tests/testthat/_problems$

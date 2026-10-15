@@ -16,6 +16,7 @@
 #' @param progress_dir A string giving the directory passed as `progress_dir` to
 #'   the task.
 #' @return A number between 0 and 1.
+#' @family model
 #' @export
 #' @examples
 #' progress_dir <- tempfile()

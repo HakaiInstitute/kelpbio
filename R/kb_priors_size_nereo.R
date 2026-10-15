@@ -20,7 +20,8 @@
 #' priors <- kb_priors_size_nereo()
 #' priors$sd_site <- kb_prior_exponential(2)
 # Unlike the analysis project (Normal(1, 1) on the log shape), the shape is
-# estimated directly with a weak Exponential(0.1) prior.
+# estimated directly with a weak Exponential(0.1) prior, as the Macrocystis
+# weight shape is; the data dominate it.
 kb_priors_size_nereo <- function() {
   list(
     intercept = kb_prior_normal(mean = 0, sd = 2),

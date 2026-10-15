@@ -8,7 +8,7 @@
 \description{
 \if{html}{\figure{logo.png}{options: style='float: right' alt='logo' width='120'}}
 
-Fit a Bayesian hierarchical Stan model via 'rstan' to estimate the allometric relationship between kelp weight and size from in-situ observations.
+Estimate kelp biomass from field and drone surveys with Bayesian hierarchical models fitted by 'rstan'. Models of plant weight, plant size, stipe or plant density, dry:wet ratio, carbon content, and drone canopy cover for Nereocystis luetkeana and Macrocystis pyrifera are combined into plot and site biomass (wet, dry, or carbon) with compatibility intervals. The Stan models are pre-compiled, so no Stan installation is needed.
 }
 \seealso{
 Useful links:

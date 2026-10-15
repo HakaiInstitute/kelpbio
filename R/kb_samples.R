@@ -11,7 +11,7 @@
 #' @param fit A `kb_fit` object.
 #' @param ... Unused.
 #' @return A `posterior` `draws_rvars` object.
-#' @family generics
+#' @family model
 #' @export
 #' @examples
 #' kb_samples(fit_weight_sim_nereo)

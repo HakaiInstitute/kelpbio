@@ -97,3 +97,7 @@ test_that("kb_model_describe follows the power-law form", {
   expect_snapshot(kb_model_describe(power))
   expect_snapshot(kb_model_describe(power, prose = TRUE))
 })
+
+test_that("prose must be named", {
+  expect_error(kb_model_describe(weight_nereo_fit, TRUE), "must be empty")
+})

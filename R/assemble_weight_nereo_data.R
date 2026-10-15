@@ -10,7 +10,7 @@
 #' @inheritParams params
 #' @param priors A list of the resolved named priors (see `resolve_priors()`).
 #' @param diameter_ref A number of the diameter reference, from
-#'   `weight_diameter_ref()`.
+#'   `geometric_ref()`.
 #' @param density A list from `density_structure()`.
 #'
 #' @return A named list suitable for `rstan::sampling(stanmodels$weight_nereo, data = .)`.
@@ -47,11 +47,3 @@ assemble_weight_nereo_data <- function(
   )
 }
 
-# Geometric-mean diameter reference, stored in the fit meta so Stan and R-side
-# predictions share it. Falls back to 30 for zero-row (prior-only) data.
-weight_diameter_ref <- function(diameter) {
-  if (rlang::is_empty(diameter)) {
-    return(30)
-  }
-  exp(mean(log(diameter)))
-}

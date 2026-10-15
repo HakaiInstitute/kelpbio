@@ -32,6 +32,7 @@ kb_check_data_density_macro <- function(
 ) {
   .with_call(
     {
+      chk::chk_string(x_name)
       chk::chk_data(data, x_name = x_name)
       chk::chk_superset(
         names(data),

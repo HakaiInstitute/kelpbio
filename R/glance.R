@@ -23,8 +23,10 @@
 #' @inheritSection kb_converged Resolving convergence failure
 #' @seealso [kb_converged()], which produces the `converged` column.
 #'
-#' @return A one-row tibble with `n`, `K`, `nchains`, `niters`, `nthin`,
-#'   `ess_bulk`, `ess_tail`, `rhat`, `perc_divergent`, and `converged`.
+#' @return A one-row tibble with `n` (the number of observations), `K` (the
+#'   number of terms [tidy()] reports, excluding the per-level group effects),
+#'   `nchains`, `niters`, `nthin`, `ess_bulk`, `ess_tail`, `rhat`,
+#'   `perc_divergent`, and `converged`.
 #' @family generics
 #' @exportS3Method generics::glance
 #' @examples
@@ -36,18 +38,24 @@ glance.kb_fit <- function(
   ess = 100,
   max_perc_divergent = 0.2
 ) {
-  rlang::check_dots_empty()
-  s <- x$diagnostics$summary
   # Outside tibble(), where `rhat` would resolve to the column.
-  is_converged <- kb_converged(
-    x,
-    rhat = rhat,
-    ess = ess,
-    max_perc_divergent = max_perc_divergent
+  is_converged <- .with_call(
+    {
+      rlang::check_dots_empty()
+      kb_converged(
+        x,
+        rhat = rhat,
+        ess = ess,
+        max_perc_divergent = max_perc_divergent
+      )
+    },
+    # error_call() names the generic, not the method.
+    rlang::error_call(rlang::current_env())
   )
+  s <- x$diagnostics$summary
   tibble::tibble(
     n = nobs(x),
-    K = posterior::nvariables(x$draws),
+    K = length(x$meta$terms$fixed),
     nchains = posterior::nchains(x$draws),
     niters = posterior::niterations(x$draws),
     nthin = x$meta$nthin,

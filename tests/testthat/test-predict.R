@@ -24,3 +24,10 @@ test_that("predict wraps kb_predict_cover_biomass", {
     kb_predict_cover_biomass(cover_biomass_nereo_fit, new_data = nd)
   )
 })
+
+test_that("errors name predict(), not the wrapped verb", {
+  err <- expect_error(predict(weight_nereo_fit, data.frame(diameter_mm = -1)))
+  expect_identical(err$call[[1]], quote(predict))
+  err <- expect_error(predict(density_nereo_fit, data.frame(area_m2 = -1)))
+  expect_identical(err$call[[1]], quote(predict))
+})

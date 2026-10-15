@@ -18,8 +18,8 @@
 
 \item{...}{Unused.}
 
-\item{conf_level}{A number between 0 and 1 giving the compatibility-interval
-level.}
+\item{conf_level}{A number greater than 0 and less than 1 giving the
+compatibility-interval level.}
 
 \item{estimate}{A function that reduces a numeric vector of posterior draws to
 a scalar point estimate (e.g. \code{median} or \code{mean}).}
@@ -80,9 +80,6 @@ Other generics:
 \code{\link[=create_priorsense_data.kb_fit]{create_priorsense_data.kb_fit()}},
 \code{\link[=fitted.kb_fit]{fitted.kb_fit()}},
 \code{\link[=glance.kb_fit]{glance.kb_fit()}},
-\code{\link[=kb_converged]{kb_converged()}},
-\code{\link[=kb_samples]{kb_samples()}},
-\code{\link[=kb_stancode]{kb_stancode()}},
 \code{\link[=log_lik.kb_fit]{log_lik.kb_fit()}},
 \code{\link[=loo.kb_fit]{loo.kb_fit()}},
 \code{\link[=posterior_epred.kb_fit]{posterior_epred.kb_fit()}},

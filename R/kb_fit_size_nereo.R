@@ -9,9 +9,10 @@
 #' all plants.
 #'
 #' The site:year effect is set from the data: it is omitted when the data span a
-#' single year and included otherwise. When no site spans more than one year it is
-#' kept with a warning, since the site and site:year effects cannot then be
-#' interpreted separately.
+#' single year and included otherwise. When no site spans more than one year, or
+#' no year has more than one site, it is kept with a warning, since the
+#' site:year effect cannot then be interpreted separately from the site or year
+#' effect.
 #'
 #' @inheritSection params Sampling
 #' @inheritParams params
@@ -49,7 +50,9 @@ kb_fit_size_nereo <- function(
   progress_dir = NULL
 ) {
   progress <- rlang::arg_match(progress)
-  .chk_sampler_args(
+  .chk_fit_inputs(
+    data,
+    kb_check_data_size_nereo,
     prior_only = prior_only,
     chains = chains,
     niters = niters,
@@ -59,8 +62,6 @@ kb_fit_size_nereo <- function(
     progress = progress,
     progress_dir = progress_dir
   )
-
-  kb_check_data_size_nereo(data)
   site_year <- site_year_structure(data)
   notify_site_year(site_year, progress = progress)
 

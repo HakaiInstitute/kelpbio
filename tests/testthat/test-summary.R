@@ -77,3 +77,8 @@ test_that("fit_groups is empty for data with no grouping", {
   )
   expect_identical(fit_groups(fit), integer(0))
 })
+
+test_that("argument errors name summary()", {
+  err <- expect_error(summary(weight_nereo_fit, conf_level = 2))
+  expect_identical(err$call[[1]], quote(summary))
+})

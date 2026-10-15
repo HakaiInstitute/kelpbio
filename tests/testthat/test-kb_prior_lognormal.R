@@ -10,6 +10,7 @@ test_that("kb_prior_lognormal validates hyperparameters", {
   expect_error(kb_prior_lognormal(0, sdlog = -1), class = "chk_error")
   expect_error(kb_prior_lognormal(0, sdlog = 0), class = "chk_error")
   expect_error(kb_prior_lognormal(meanlog = "a", sdlog = 1), class = "chk_error")
+  expect_error(kb_prior_lognormal(0, sdlog = Inf), "finite")
 })
 
 test_that("kb_prior_lognormal prints its family and hyperparameters", {

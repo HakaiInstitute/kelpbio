@@ -9,7 +9,9 @@
 #' the zero-truncated distribution (*Macrocystis*); for density, the expected
 #' count on the row's `area_m2` (1 m² when absent), `(1 - zi) * exp(mu)` with `zi` the
 #' zero-inflation probability (*Nereocystis*) or `exp(mu)` (*Macrocystis*); for
-#' wet/dry, the mean dry:wet ratio `inv_logit(mu)`. For
+#' wet/dry, the mean dry:wet ratio `inv_logit(mu)`; for carbon, the mean carbon
+#' fraction `inv_logit(mu)`; for cover biomass, the wet biomass per m² `exp(mu)`,
+#' without the estimation error of the in situ estimate. For
 #' draws that include observation noise, use [posterior_predict()].
 #'
 #' Conditioning is inferred from the grouping columns present in `new_data`: a
@@ -40,9 +42,16 @@ posterior_epred.kb_fit <- function(
   new_levels = c("average", "sample"),
   representative_site = NULL
 ) {
-  rlang::check_dots_empty()
-  .chk_kb_fit(object)
-  .chk_representative_site(object, representative_site)
-  res <- data_linpred(object, new_data, new_levels, representative_site)
+  # error_call() names the generic, not the method.
+  call <- rlang::error_call(rlang::current_env())
+  .with_call(
+    {
+      rlang::check_dots_empty()
+      .chk_kb_fit(object)
+      .chk_representative_site(object, representative_site)
+    },
+    call
+  )
+  res <- data_linpred(object, new_data, new_levels, representative_site, call = call)
   posterior::draws_of(.epred(object, res$linpred))
 }

@@ -10,8 +10,8 @@
 #'
 #' @inheritParams params
 #' @param object A `kb_fit` object.
-#' @param transform A flag specifying whether to return the response-scale
-#'   value (`exp`).
+#' @param transform A flag specifying whether to apply the inverse link (`exp`,
+#'   or the inverse logit for wet/dry and carbon).
 #' @param new_data A data frame with the fit's predictor column (and optional
 #'   `site`, `year`, and `stipes_m2` columns; for a density fit, an optional
 #'   `area_m2` column giving each transect's area, 1 m² when absent), or
@@ -32,11 +32,18 @@ posterior_linpred.kb_fit <- function(
   new_levels = c("average", "sample"),
   representative_site = NULL
 ) {
-  rlang::check_dots_empty()
-  chk::chk_flag(transform)
-  .chk_kb_fit(object)
-  .chk_representative_site(object, representative_site)
-  res <- data_linpred(object, new_data, new_levels, representative_site)
+  # error_call() names the generic, not the method.
+  call <- rlang::error_call(rlang::current_env())
+  .with_call(
+    {
+      rlang::check_dots_empty()
+      chk::chk_flag(transform)
+      .chk_kb_fit(object)
+      .chk_representative_site(object, representative_site)
+    },
+    call
+  )
+  res <- data_linpred(object, new_data, new_levels, representative_site, call = call)
   lp <- res$linpred
   # The inverse link, not the response mean.
   if (transform) {

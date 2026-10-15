@@ -8,7 +8,7 @@ description, accessors, and the errors raised for unsupported objects.
 ## Requirements
 ### Requirement: Parameter summaries
 
-`tidy()` and `coef()` SHALL return a tibble with columns `term`, `estimate`, `lower`, and `upper`, one row per population-level term and standard deviation of the fitted model, with `conf_level` (default 0.95) compatibility limits, `estimate` (default `median`), and `sig_fig` (default 3). `include_random_effects = TRUE` (default `FALSE`) SHALL add the per-level group effects, each term naming its level, as in `site_effect[<site>]`, `year_effect[<year>]`, and `site_year_effect[<site>,<year>]`. `coef()` SHALL return what `tidy()` returns.
+`tidy()` and `coef()` SHALL return a tibble with columns `term`, `estimate`, `lower`, and `upper`, one row per population-level term and standard deviation of the fitted model, with `conf_level` (default 0.95) compatibility limits, `estimate` (default `median`), and `sig_fig` (default 3). Wherever a summary takes `conf_level`, it SHALL be greater than 0 and less than 1. `include_random_effects = TRUE` (default `FALSE`) SHALL add the per-level group effects, each term naming its level, as in `site_effect[<site>]`, `year_effect[<year>]`, and `site_year_effect[<site>,<year>]`. `coef()` SHALL return what `tidy()` returns.
 
 #### Scenario: Default rows
 - **WHEN** `tidy(fit)` is called
@@ -32,7 +32,7 @@ An effect the fit omitted (site:year for single-year data, density when not fitt
 
 ### Requirement: Convergence
 
-`glance()` SHALL return a one-row tibble with `n`, `K`, `nchains`, `niters`, `nthin`, `ess_bulk`, `ess_tail`, `rhat`, `perc_divergent`, and `converged`, the effective sample sizes being the smallest and Rhat the largest over the estimated parameters. `kb_converged()` SHALL return `TRUE` only when every rank-normalized split Rhat is below `rhat` (default 1.01), every bulk and tail effective sample size is at least `ess` times the number of chains (default 100), and the divergence percentage is at or below `max_perc_divergent` (default 0.2), and SHALL return `FALSE` when no Rhat is available. Its documentation SHALL cite the source of each threshold. Per-parameter Rhat and effective sample sizes SHALL be available from `summarise_draws(fit)`. Treedepth saturation and E-BFMI SHALL be reported by `print(summary(fit))`, not used in the verdict.
+`glance()` SHALL return a one-row tibble with `n` (the number of observations), `K` (the number of terms `tidy()` reports, excluding the per-level group effects), `nchains`, `niters`, `nthin`, `ess_bulk`, `ess_tail`, `rhat`, `perc_divergent`, and `converged`, the effective sample sizes being the smallest and Rhat the largest over the estimated parameters. `kb_converged()` SHALL return `TRUE` only when every rank-normalized split Rhat is below `rhat` (default 1.01), every bulk and tail effective sample size is at least `ess` times the number of chains (default 100), and the divergence percentage is at or below `max_perc_divergent` (default 0.2), and SHALL return `FALSE` when no Rhat is available. Its documentation SHALL cite the source of each threshold. Per-parameter Rhat and effective sample sizes SHALL be available from `summarise_draws(fit)`. Treedepth saturation and E-BFMI SHALL be reported by `print(summary(fit))`, not used in the verdict.
 
 #### Scenario: Divergences fail a well-mixed fit
 - **WHEN** a fit has acceptable Rhat and ESS but a divergence rate above `max_perc_divergent`
@@ -112,7 +112,7 @@ An effect the fit omitted (site:year for single-year data, density when not fitt
 
 ### Requirement: Errors for unsupported objects
 
-A kelpbio function taking a fit (`kb_model_describe()`, `kb_stancode()`, and `kb_samples()`, the prediction verbs `kb_predict_weight()`, `kb_predict_size()`, `kb_predict_density()`, `kb_predict_wetdry()`, `kb_predict_carbon()`, and `kb_predict_cover_biomass()`, the biomass compositions `kb_predict_plot_biomass()` and `kb_predict_site_biomass()`, `kb_new_data()`, and `kb_sensitivity()`) called on an object it does not support SHALL error with a `cli` message naming the argument and the required class (`kb_fit`, or the model class such as `kb_fit_weight`, `kb_fit_size`, `kb_fit_density`, `kb_fit_wetdry`, `kb_fit_carbon`, or `kb_fit_cover_biomass` for the prediction verbs) and pointing to the `kb_fit_*()` functions, attributed to the function the user called. Any method called on a fit whose model has no implementation for it SHALL error naming the object's class rather than return a value. kelpbio SHALL NOT add default methods to generics owned by other packages.
+A kelpbio function taking a fit (`kb_model_describe()`, `kb_stancode()`, `kb_samples()`, `kb_converged()`, and `kb_influence()`, the prediction verbs `kb_predict_weight()`, `kb_predict_size()`, `kb_predict_density()`, `kb_predict_wetdry()`, `kb_predict_carbon()`, and `kb_predict_cover_biomass()`, the biomass compositions `kb_predict_plot_biomass()` and `kb_predict_site_biomass()`, `kb_new_data()`, and `kb_sensitivity()`) called on an object it does not support SHALL error with a `cli` message naming the argument and the required class (`kb_fit`, or the model class such as `kb_fit_weight`, `kb_fit_size`, `kb_fit_density`, `kb_fit_wetdry`, `kb_fit_carbon`, or `kb_fit_cover_biomass` for the prediction verbs) and pointing to the `kb_fit_*()` functions, attributed to the function the user called. Any method called on a fit whose model has no implementation for it SHALL error naming the object's class rather than return a value. kelpbio SHALL NOT add default methods to generics owned by other packages.
 
 #### Scenario: A non-fit errors helpfully
 - **WHEN** `kb_model_describe(1)` or `kb_predict_weight(1)` is called
@@ -226,7 +226,7 @@ priorsense's functions SHALL accept a `kb_fit` directly, giving the same sensiti
 
 ### Requirement: Influential observations
 
-`kb_influence(fit, ..., threshold = 0.7)` SHALL return the fitted data as a tibble, one row per observation in the fitted order, with added columns `elpd_loo` and `pareto_k` (the pointwise values of `loo(fit)`) and `influential` (`pareto_k` greater than `threshold`). The result SHALL be computed from the stored fit, without refitting, and SHALL NOT warn about high Pareto k values, which the `influential` column reports. `threshold` SHALL be a number greater than 0, and `...` SHALL be empty. A fit made with `prior_only = TRUE` or with no observations SHALL error.
+`kb_influence(fit, ..., threshold = NULL)` SHALL return the fitted data as a tibble, one row per observation in the fitted order, with added columns `elpd_loo` and `pareto_k` (the pointwise values of `loo(fit)`) and `influential` (`pareto_k` greater than `threshold`). The result SHALL be computed from the stored fit, without refitting, and SHALL NOT warn about high Pareto k values, which the `influential` column reports. `threshold` SHALL be a number greater than 0, or `NULL` for the threshold `loo()` reports, `min(1 - 1 / log10(S), 0.7)` for `S` posterior draws, and `...` SHALL be empty. A fit made with `prior_only = TRUE` or with no observations SHALL error.
 
 #### Scenario: One row per observation
 - **WHEN** `kb_influence(fit)` is called
@@ -235,6 +235,10 @@ priorsense's functions SHALL accept a `kb_fit` directly, giving the same sensiti
 #### Scenario: Values match loo
 - **WHEN** `kb_influence(fit)` is called
 - **THEN** `elpd_loo` and `pareto_k` equal the pointwise values of `loo(fit)`
+
+#### Scenario: The default threshold follows loo
+- **WHEN** `kb_influence(fit)` is called on a fit with 1,500 draws
+- **THEN** observations with `pareto_k` above `1 - 1 / log10(1500)` (about 0.69) are influential
 
 #### Scenario: The threshold sets the flag
 - **WHEN** `threshold` is changed

@@ -36,7 +36,7 @@ defaults; unspecified entries keep their defaults.}
 \code{control} list (merged over the \code{adapt_delta = 0.95} default); see the
 \code{control} argument of \code{\link[rstan:stan]{rstan::stan()}} for the available entries.}
 
-\item{conf_level}{A number between 0 and 1 giving the level of the
+\item{conf_level}{A number greater than 0 and less than 1 giving the level of the
 compatibility limits in \code{biomass}, or \code{NULL} to use the level a
 \code{kb_predictions} object records, else 0.95.}
 
@@ -135,6 +135,7 @@ tidy(fit_cover_biomass_sim_macro)
 }
 \seealso{
 Other model:
+\code{\link[=kb_converged]{kb_converged()}},
 \code{\link[=kb_fit_carbon_macro]{kb_fit_carbon_macro()}},
 \code{\link[=kb_fit_carbon_nereo]{kb_fit_carbon_nereo()}},
 \code{\link[=kb_fit_cover_biomass_nereo]{kb_fit_cover_biomass_nereo()}},
@@ -148,6 +149,9 @@ Other model:
 \code{\link[=kb_fit_wetdry_nereo]{kb_fit_wetdry_nereo()}},
 \code{\link[=kb_influence]{kb_influence()}},
 \code{\link[=kb_model_describe]{kb_model_describe()}},
-\code{\link[=kb_sensitivity]{kb_sensitivity()}}
+\code{\link[=kb_progress]{kb_progress()}},
+\code{\link[=kb_samples]{kb_samples()}},
+\code{\link[=kb_sensitivity]{kb_sensitivity()}},
+\code{\link[=kb_stancode]{kb_stancode()}}
 }
 \concept{model}

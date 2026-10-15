@@ -25,3 +25,7 @@ test_that("missing, fractional, and zero frond counts error", {
   bad$fronds <- NA_real_
   expect_error(kb_check_data_size_macro(bad), "missing")
 })
+
+test_that("x_name must be a string", {
+  expect_error(kb_check_data_size_macro(data.frame(), x_name = 1), "x_name")
+})

@@ -58,7 +58,7 @@
 #' kb_predict_size(fit_size_sim_nereo, kb_new_data(fit_size_sim_nereo, by = "site"))
 kb_new_data <- function(fit, by = NULL, ...) {
   .chk_kb_fit_grouped(fit)
-  by <- validate_by(by)
+  by <- .with_call(validate_by(by), rlang::current_env())
   dots <- rlang::list2(...)
   .with_call(.chk_grid_dots(fit, dots, by), rlang::current_env())
 
@@ -105,8 +105,6 @@ kb_new_data <- function(fit, by = NULL, ...) {
 # correction and the cap leave it unchanged.
 #' @export
 .grid_columns.kb_fit_cover_biomass <- function(fit, grid) {
-  chk::chk_not_any_na(grid$cover, x_name = "`cover`")
-  chk::chk_range(grid$cover, x_name = "`cover`")
   grid$canopy_area_m2 <- grid$cover
   grid$plot_area_m2 <- 1
   grid$tide_height_m <- 0

@@ -49,11 +49,18 @@ posterior_predict.kb_fit <- function(
   new_levels = c("average", "sample"),
   representative_site = NULL
 ) {
-  rlang::check_dots_empty()
-  .chk_kb_fit(object)
-  .chk_representative_site(object, representative_site)
-  res <- data_linpred(object, new_data, new_levels, representative_site)
+  # error_call() names the generic, not the method.
+  call <- rlang::error_call(rlang::current_env())
+  .with_call(
+    {
+      rlang::check_dots_empty()
+      .chk_kb_fit(object)
+      .chk_representative_site(object, representative_site)
+    },
+    call
+  )
+  res <- data_linpred(object, new_data, new_levels, representative_site, call = call)
   lp <- posterior::draws_of(res$linpred) # D x N, link scale
   # A cover fit checks each row's in situ limits here.
-  .with_call(.eval_family(object, lp, res$grid, "ran"), rlang::current_env())
+  .with_call(.eval_family(object, lp, res$grid, "ran"), call)
 }

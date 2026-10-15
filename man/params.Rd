@@ -36,8 +36,8 @@ bar), \code{"verbose"} (rstan's per-iteration output and diagnostic warnings), o
 pollable progress artifact (read by \code{\link[=kb_progress]{kb_progress()}}), or \code{NULL} (the
 default) to write none.}
 
-\item{conf_level}{A number between 0 and 1 giving the compatibility-interval
-level.}
+\item{conf_level}{A number greater than 0 and less than 1 giving the
+compatibility-interval level.}
 
 \item{estimate}{A function that reduces a numeric vector of posterior draws to
 a scalar point estimate (e.g. \code{median} or \code{mean}).}
@@ -58,7 +58,7 @@ divergent transitions.}
 
 \item{by}{A character vector of grouping factors, \code{"site"}, \code{"year"}, or
 both, giving one row per fitted level (per observed site-year for both), or
-\code{NULL} for a single row for the typical site and year.}
+\code{NULL} for no grouping columns (the typical site and year).}
 
 \item{new_levels}{A string, one of \code{"average"} (the default) or \code{"sample"},
 controlling how random effects that are not conditioned on are treated

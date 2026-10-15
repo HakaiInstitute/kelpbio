@@ -27,6 +27,7 @@ kb_check_data_wetdry_macro <- function(
 ) {
   .with_call(
     {
+      chk::chk_string(x_name)
       .chk_wetdry_data(data, x_name)
     },
     rlang::current_env()

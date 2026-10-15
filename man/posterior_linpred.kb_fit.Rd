@@ -16,8 +16,8 @@
 \arguments{
 \item{object}{A \code{kb_fit} object.}
 
-\item{transform}{A flag specifying whether to return the response-scale
-value (\code{exp}).}
+\item{transform}{A flag specifying whether to apply the inverse link (\code{exp},
+or the inverse logit for wet/dry and carbon).}
 
 \item{new_data}{A data frame with the fit's predictor column (and optional
 \code{site}, \code{year}, and \code{stipes_m2} columns; for a density fit, an optional
@@ -67,9 +67,6 @@ Other generics:
 \code{\link[=create_priorsense_data.kb_fit]{create_priorsense_data.kb_fit()}},
 \code{\link[=fitted.kb_fit]{fitted.kb_fit()}},
 \code{\link[=glance.kb_fit]{glance.kb_fit()}},
-\code{\link[=kb_converged]{kb_converged()}},
-\code{\link[=kb_samples]{kb_samples()}},
-\code{\link[=kb_stancode]{kb_stancode()}},
 \code{\link[=log_lik.kb_fit]{log_lik.kb_fit()}},
 \code{\link[=loo.kb_fit]{loo.kb_fit()}},
 \code{\link[=posterior_epred.kb_fit]{posterior_epred.kb_fit()}},

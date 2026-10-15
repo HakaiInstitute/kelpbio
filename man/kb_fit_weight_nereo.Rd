@@ -95,9 +95,10 @@ mean. The density term is omitted when fewer than two distinct site-year
 densities are recorded.
 
 The site:year effect is set from the data: it is omitted when the data span a
-single year and included otherwise. When no site spans more than one year it is
-kept with a warning, since the site and site:year effects cannot then be
-interpreted separately.
+single year and included otherwise. When no site spans more than one year, or
+no year has more than one site, it is kept with a warning, since the
+site:year effect cannot then be interpreted separately from the site or year
+effect.
 }
 \section{Sampling}{
 
@@ -141,6 +142,7 @@ Packard, G. C. (2023). What is complex allometry? \emph{Biology Open},
 }
 \seealso{
 Other model:
+\code{\link[=kb_converged]{kb_converged()}},
 \code{\link[=kb_fit_carbon_macro]{kb_fit_carbon_macro()}},
 \code{\link[=kb_fit_carbon_nereo]{kb_fit_carbon_nereo()}},
 \code{\link[=kb_fit_cover_biomass_macro]{kb_fit_cover_biomass_macro()}},
@@ -154,6 +156,9 @@ Other model:
 \code{\link[=kb_fit_wetdry_nereo]{kb_fit_wetdry_nereo()}},
 \code{\link[=kb_influence]{kb_influence()}},
 \code{\link[=kb_model_describe]{kb_model_describe()}},
-\code{\link[=kb_sensitivity]{kb_sensitivity()}}
+\code{\link[=kb_progress]{kb_progress()}},
+\code{\link[=kb_samples]{kb_samples()}},
+\code{\link[=kb_sensitivity]{kb_sensitivity()}},
+\code{\link[=kb_stancode]{kb_stancode()}}
 }
 \concept{model}
