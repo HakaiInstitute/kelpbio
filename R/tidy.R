@@ -1,10 +1,12 @@
 #' Tidy a Model Fit
 #'
-#' Posterior summaries of the model terms: the population-level effects and the
-#' random-effect standard deviations, plus (when `include_random_effects = TRUE`)
-#' the group-level deviations, each named by its level, as in `site_effect[otter_cove]`
-#' or `site_year_effect[otter_cove,2020]`. By default the per-level deviations are
-#' omitted, following the `broom.mixed` convention.
+#' Posterior summaries of the model terms.
+#'
+#' @details
+#' The terms are the population-level effects and the random-effect standard
+#' deviations. With `include_random_effects = TRUE`, the group-level deviations
+#' are added, each named by its level, as in `site_effect[otter_cove]` or
+#' `site_year_effect[otter_cove,2020]`.
 #'
 #' @inheritParams params
 #' @param x A `kb_fit` object.

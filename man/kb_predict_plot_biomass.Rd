@@ -27,8 +27,7 @@ kb_predict_plot_biomass(
 
 \item{size}{A \code{kb_fit_size} object.}
 
-\item{density}{A \code{kb_fit_density} object. Its site-years are the rows of the
-result.}
+\item{density}{A \code{kb_fit_density} object.}
 
 \item{wetdry}{A \code{kb_fit_wetdry} object, required for dry and carbon biomass,
 or \code{NULL}.}
@@ -42,19 +41,18 @@ or \code{NULL}.}
 \code{"carbon"} (g C/m²), giving the biomass to predict.}
 
 \item{new_levels}{A string, one of \code{"sample"} (the default) or \code{"average"},
-controlling how a site or year the weight or size fit never saw is treated:
-\code{"sample"} draws its effect from the fitted distribution, so the interval
-includes the variation between sites or years, as suits an estimate for that
-particular site-year; \code{"average"} holds it at zero (the typical site or
-year).}
+giving how a site or year not in the weight or size fit is treated:
+\code{"sample"} draws a new effect, so the interval includes the variation
+between sites or years; \code{"average"} uses the typical site or year.
+\code{"sample"} gives a different interval on each call; use \code{set.seed()} to
+reproduce it.}
 
-\item{representative_site}{A character vector of sites fitted in both
-\code{weight} and \code{size}, or \code{NULL}. When supplied, a site either fit never saw
-takes the named sites' effects (the per-draw average when several are
-named) instead of the \code{new_levels} treatment.}
+\item{representative_site}{A character vector of sites in both the \code{weight}
+and \code{size} fits whose effects a new site takes (averaged when several are
+named), or \code{NULL} (the default) to follow \code{new_levels}.}
 
-\item{n_plants}{A whole number of plants averaged per draw to compute the mean
-plant weight.}
+\item{n_plants}{A whole number of sizes averaged per draw to compute the
+mean plant weight; larger values are more precise and slower.}
 
 \item{conf_level}{A number greater than 0 and less than 1 giving the
 compatibility-interval level.}
@@ -83,36 +81,27 @@ each site-year surveyed for density, as wet, dry, or carbon biomass.
 \details{
 For each posterior draw, wet biomass is the site-year's expected density per
 m² times its mean plant weight: the expected weight at size averaged over the
-site-year's size distribution. The size distribution is truncated above at the
-largest size in the size fit's data, since plant size has a ceiling the
-distribution cannot represent; above the largest weighed size, the weight
-allometry is extrapolated. \code{n_plants} sizes are taken at evenly spaced
-quantiles of the distribution, so the average is accurate to well under 1\% at
-the default.
+site-year's size distribution. The size distribution is truncated above at
+the largest size in the size fit's data; above the largest weighed size, the
+weight allometry is extrapolated.
 
-Dry biomass is wet biomass times the expected dry:wet ratio from \code{wetdry}, and
-carbon biomass is dry biomass times the expected carbon fraction from
-\code{carbon}, in grams. Both ratios are pooled over the samples their fits were
-given, so for a season-specific ratio fit them to that season's samples.
+Dry biomass is wet biomass times the expected dry:wet ratio from \code{wetdry},
+and carbon biomass is dry biomass times the expected carbon fraction from
+\code{carbon}, in grams. Both ratios are pooled over their fits' samples (see
+\code{\link[=kb_predict_wetdry]{kb_predict_wetdry()}}).
 
-A site-year that the weight or size fit did not observe uses that fit's site
-and year effects where it has them, and otherwise follows \code{new_levels} or
-\code{representative_site}, as in \code{\link[=kb_predict_weight]{kb_predict_weight()}}. \code{weight_support} and
-\code{size_support} show what each fit has for the site-year, from most to least
-local: \code{"site-year"} (that site-year's own data), \code{"site, year"} (its site and
-its year, but not together), \code{"site"}, \code{"year"}, or \code{"none"}; the less local,
-the more the estimate borrows from other site-years. With \code{new_levels = "sample"}
-the results vary between calls; set a seed with \code{set.seed()} for reproducible
-intervals. For a \emph{Nereocystis} weight fit with a density effect, each
-site-year uses the stipe density observed in \code{density}'s data.
+A site-year not in the weight or size fit uses that fit's site and year
+effects where it has them, and otherwise follows \code{new_levels} or
+\code{representative_site}. \code{weight_support} and \code{size_support} show what each fit
+has for the site-year, from most to least local: \code{"site-year"} (that
+site-year's own data), \code{"site, year"} (its site and its year, but not
+together), \code{"site"}, \code{"year"}, or \code{"none"}; the less local, the more the
+estimate borrows from other site-years. For a \emph{Nereocystis} weight fit with a
+density effect, each site-year uses the stipe density observed in \code{density}'s
+data.
 
 The fits must be of the same species and have the same number of posterior
 draws.
-
-The work grows with the number of site-years and draws, so \code{progress = "bar"}
-shows a console progress bar, and \code{progress_dir} records progress for
-\code{\link[=kb_progress]{kb_progress()}} to read from another R process, such as a Shiny app running
-the prediction in the background.
 }
 \examples{
 kb_predict_plot_biomass(

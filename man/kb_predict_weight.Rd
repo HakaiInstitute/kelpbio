@@ -26,22 +26,15 @@ column in stipes per m²), or \code{NULL} to predict at the observed data.}
 \item{...}{Unused.}
 
 \item{new_levels}{A string, one of \code{"average"} (the default) or \code{"sample"},
-controlling how random effects that are not conditioned on are treated
-(factors absent from the rows, and any new level not seen in the fit).
-\code{"average"} holds them at zero, giving the typical (median) group;
-\code{"sample"} draws a new random effect from \code{Normal(0, sd)}, widening the
-interval to include between-group variation, as suits a prediction for a
-particular unsurveyed site. Known levels are always conditioned on.
-\code{"sample"} draws fresh randomness on each call, so set a seed with
-\code{set.seed()} for a reproducible interval.}
+giving how a site or year that is new or absent from \code{new_data} is
+treated (sites and years in the fit use their estimated effects):
+\code{"average"} uses the typical site or year; \code{"sample"} draws a new effect,
+so the interval includes the variation between sites or years. \code{"sample"}
+gives a different interval on each call; use \code{set.seed()} to reproduce it.}
 
-\item{representative_site}{A character vector of site levels present in the
-fit, or \code{NULL} (the default). When supplied, a new or absent site takes the
-named sites' site effect (the per-draw average when several are named)
-instead of the \code{new_levels} treatment, and, in a fitted year, their
-site:year effect for that year (averaged over the named sites observed that
-year). A site:year effect none of them has, such as in a new year, follows
-\code{new_levels}.}
+\item{representative_site}{A character vector of sites in the fit whose
+effects a new site takes (averaged when several are named), or \code{NULL} (the
+default) to follow \code{new_levels}.}
 
 \item{conf_level}{A number greater than 0 and less than 1 giving the
 compatibility-interval level.}
@@ -61,15 +54,8 @@ Predict the expected wet weight (kg) of a plant at each row of \code{new_data}, 
 at the observed data when \code{new_data = NULL}.
 }
 \details{
-Each row is resolved on its own: a \code{site} or \code{year} the model has seen is
-conditioned on its estimated effect, and a new or absent site or year follows
-\code{new_levels}. With the default \code{"average"}, an unseen site is the typical
-site; use \code{"sample"} for an interval that includes the variation between
-sites. For a new site, \code{representative_site} instead borrows the site effect of
-one or more named fitted sites (the per-draw average across several), and
-their site:year effect in a fitted year where they were observed.
-
-For curves by site or year, build the rows with \code{\link[=kb_new_data]{kb_new_data()}}.
+With \code{representative_site}, a new site also takes the named sites'
+site:year effect in a year in which they were surveyed.
 
 For a \emph{Nereocystis} fit that includes density, each row uses its \code{stipes_m2}
 value if present, otherwise the recorded density of its site-year in the
@@ -84,7 +70,7 @@ kb_predict_weight(fit)
 # Curves by site:
 kb_predict_weight(fit, kb_new_data(fit, by = "site"))
 
-# At your own measurements:
+# At new measurements:
 kb_predict_weight(fit, data.frame(diameter_mm = c(20, 40, 60)))
 
 # A new site, with between-site variation:

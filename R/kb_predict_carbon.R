@@ -4,10 +4,9 @@
 #' samples the model was fitted to.
 #'
 #' @details
-#' The model has no grouping factors or predictor, so the prediction is a single
-#' estimate: the mean of the fitted Beta distribution. It describes the samples
-#' as supplied, pooled over the months, sites, and tissues they come from; for a
-#' particular season, fit the model to that season's samples.
+#' A single estimate, pooled over the months, sites, and tissues of the samples
+#' supplied to the fit; to estimate for one season, fit the model to that
+#' season's samples.
 #'
 #' @inheritParams params
 #' @param fit A `kb_fit_carbon` object.

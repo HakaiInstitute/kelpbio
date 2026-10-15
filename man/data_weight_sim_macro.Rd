@@ -9,7 +9,7 @@ A data frame with columns:
 \describe{
 \item{fronds}{Frond count, a positive whole number.}
 \item{weight_kg}{Wet weight (kg), a positive number.}
-\item{site}{Survey site, a factor (10 levels, invented names).}
+\item{site}{Survey site, a factor (10 levels).}
 \item{year}{Survey year, a factor (4 levels).}
 }
 }
@@ -17,16 +17,11 @@ A data frame with columns:
 data_weight_sim_macro
 }
 \description{
-A small simulated dataset of frond count and wet weight (columns \code{fronds},
-\code{weight_kg}, \code{site}, \code{year}), one row per harvested plant, for runnable
-examples. It is one of five \emph{Macrocystis} datasets simulated together from
-the same ten sites, four years, and true site-year values, with parameters
-near those estimated from Hakai Institute surveys, so plot biomass composed
-from fits to the weight, size, and density datasets agrees with
-\link{data_plot_biomass_sim_macro}. Plants were harvested at about half of the
-density-surveyed site-years, and three sites were never harvested. The site
-names are invented. The data are not real survey data and are not intended
-for inference.
+A small simulated dataset of frond count and wet weight, one row per
+harvested plant, for runnable examples. One of five simulated \emph{Macrocystis}
+datasets with shared sites and years, so their fits can be combined into
+plot biomass (see \code{\link[=kb_predict_plot_biomass]{kb_predict_plot_biomass()}}). Some site-years have no
+weight data.
 }
 \seealso{
 \link{fit_weight_sim_macro} for a fit to this dataset.

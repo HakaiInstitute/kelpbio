@@ -6,8 +6,7 @@
 #' @details
 #' Power-scaling raises the prior, or the likelihood, to a power slightly above
 #' and below 1 and measures how far each parameter's posterior moves, as a
-#' cumulative Jensen-Shannon (CJS) distance. It uses the stored draws, so the
-#' model is not refitted.
+#' cumulative Jensen-Shannon (CJS) distance.
 #'
 #' Each parameter falls into one of four cases:
 #'
@@ -23,9 +22,9 @@
 #'
 #' Each `term` is also the name of its prior's entry in the list from the
 #' model's `kb_priors_*()` function, so to change a flagged prior, edit that
-#' entry and refit. Random-effect levels are not
-#' assessed; their standard deviations (`sd_site`, `sd_year`, `sd_site_year`) carry the
-#' sensitivity of each random effect.
+#' entry and refit. Random-effect levels are not assessed; their standard
+#' deviations (`sd_site`, `sd_year`, `sd_site_year`) carry the sensitivity of
+#' each random effect.
 #'
 #' Requires the priorsense package. Its functions, such as
 #' `priorsense::powerscale_plot_dens()`, also accept a fit directly.

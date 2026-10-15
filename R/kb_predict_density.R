@@ -5,23 +5,15 @@
 #' transects when `new_data = NULL`.
 #'
 #' @details
-#' The estimate is always per m²: an `area_m2` column is not used. The expected
-#' count on a transect is the density times its area, and so are its limits. For
-#' draws of transect counts, use [posterior_predict()] with an `area_m2` column.
-#' For *Nereocystis*, the expected density is over all transects, including
-#' unoccupied ones.
+#' An `area_m2` column is ignored; use [posterior_predict()] for counts on a
+#' transect. For *Nereocystis*, the expected density includes unoccupied
+#' transects.
 #'
 #' `new_data` needs no columns: each row is a site, a year, or a site-year, given
-#' by its optional `site` and `year` columns. For one row per site or year, build
-#' the rows with [kb_new_data()].
+#' by its optional `site` and `year` columns.
 #'
-#' Each row is resolved on its own: a `site` or `year` the model has seen is
-#' conditioned on its estimated effect, and a new or absent site or year follows
-#' `new_levels`. With the default `"average"`, an unseen site is the typical
-#' site; use `"sample"` for an interval that includes the variation between
-#' sites. For a new site, `representative_site` instead borrows the site effect of
-#' one or more named fitted sites (the per-draw average across several), and
-#' their site:year effect in a fitted year where they were observed.
+#' With `representative_site`, a new site also takes the named sites'
+#' site:year effect in a year in which they were surveyed.
 #'
 #' @inheritParams params
 #' @param fit A `kb_fit_density` object.
@@ -46,7 +38,7 @@
 #' # By site:
 #' kb_predict_density(fit, kb_new_data(fit, by = "site"))
 #'
-#' # At your own rows, including a new site:
+#' # At new rows, including a new site:
 #' kb_predict_density(fit, data.frame(site = c("otter_cove", "new_site")))
 kb_predict_density <- function(
   fit,

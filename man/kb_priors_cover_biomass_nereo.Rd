@@ -15,10 +15,9 @@ tide height), \code{error_scaling} (the multiplier on the log-scale SDs of the i
 situ biomass estimates), \code{sd_site}, and \code{sd_year}.
 }
 \description{
-The default prior list for the \emph{Nereocystis luetkeana} cover biomass model. Edit
-individual entries and pass the list to the \code{priors} argument of
-\code{\link[=kb_fit_cover_biomass_nereo]{kb_fit_cover_biomass_nereo()}} to override defaults; unmodified entries keep their
-defaults.
+The default priors for the \emph{Nereocystis luetkeana} cover biomass model. To
+change a prior, pass a list of the entries to change to the \code{priors} argument
+of \code{\link[=kb_fit_cover_biomass_nereo]{kb_fit_cover_biomass_nereo()}}; the other entries keep their defaults.
 }
 \details{
 Each entry is named after the parameter it sets, as reported by \code{\link[=tidy]{tidy()}} and
@@ -29,8 +28,15 @@ hyperparameters can be changed. The floor, tide, and error scaling priors are
 truncated at zero.
 }
 \examples{
-priors <- kb_priors_cover_biomass_nereo()
-priors$cover_slope <- kb_prior_lognormal(meanlog = 2, sdlog = 0.5)
+kb_priors_cover_biomass_nereo()
+# Change one prior; the others keep their defaults:
+if (interactive()) {
+  kb_fit_cover_biomass_nereo(
+    data_cover_biomass_sim_nereo,
+    data_plot_biomass_sim_nereo,
+    priors = list(cover_slope = kb_prior_lognormal(meanlog = 2, sdlog = 0.5))
+  )
+}
 }
 \seealso{
 Other priors:

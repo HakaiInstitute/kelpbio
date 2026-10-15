@@ -12,10 +12,9 @@ mass ratio on the logit scale) and \code{precision} (the Beta precision; larger
 values mean less spread around the mean ratio).
 }
 \description{
-The default prior list for the \emph{Nereocystis luetkeana} wet/dry model. Edit
-individual entries and pass the list to the \code{priors} argument of
-\code{\link[=kb_fit_wetdry_nereo]{kb_fit_wetdry_nereo()}} to override defaults; unmodified entries keep their
-defaults.
+The default priors for the \emph{Nereocystis luetkeana} wet/dry model. To change a
+prior, pass a list of the entries to change to the \code{priors} argument of
+\code{\link[=kb_fit_wetdry_nereo]{kb_fit_wetdry_nereo()}}; the other entries keep their defaults.
 }
 \details{
 Each entry is named after the parameter it sets, as reported by \code{\link[=tidy]{tidy()}} and
@@ -23,8 +22,14 @@ Each entry is named after the parameter it sets, as reported by \code{\link[=tid
 precision is Exponential); only the hyperparameters can be changed.
 }
 \examples{
-priors <- kb_priors_wetdry_nereo()
-priors$intercept <- kb_prior_normal(mean = -2.4, sd = 0.5)
+kb_priors_wetdry_nereo()
+# Change one prior; the others keep their defaults:
+if (interactive()) {
+  kb_fit_wetdry_nereo(
+    data_wetdry_sim_nereo,
+    priors = list(intercept = kb_prior_normal(mean = -2.4, sd = 0.5))
+  )
+}
 }
 \seealso{
 Other priors:

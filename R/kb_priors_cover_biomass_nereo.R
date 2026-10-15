@@ -1,9 +1,8 @@
 #' Default Priors for the Nereocystis Cover Biomass Model
 #'
-#' The default prior list for the *Nereocystis luetkeana* cover biomass model. Edit
-#' individual entries and pass the list to the `priors` argument of
-#' [kb_fit_cover_biomass_nereo()] to override defaults; unmodified entries keep their
-#' defaults.
+#' The default priors for the *Nereocystis luetkeana* cover biomass model. To
+#' change a prior, pass a list of the entries to change to the `priors` argument
+#' of [kb_fit_cover_biomass_nereo()]; the other entries keep their defaults.
 #'
 #' Each entry is named after the parameter it sets, as reported by [tidy()] and
 #' [kb_model_describe()]. The prior family of each entry is fixed (the cover
@@ -22,8 +21,15 @@
 #' @export
 #'
 #' @examples
-#' priors <- kb_priors_cover_biomass_nereo()
-#' priors$cover_slope <- kb_prior_lognormal(meanlog = 2, sdlog = 0.5)
+#' kb_priors_cover_biomass_nereo()
+#' # Change one prior; the others keep their defaults:
+#' if (interactive()) {
+#'   kb_fit_cover_biomass_nereo(
+#'     data_cover_biomass_sim_nereo,
+#'     data_plot_biomass_sim_nereo,
+#'     priors = list(cover_slope = kb_prior_lognormal(meanlog = 2, sdlog = 0.5))
+#'   )
+#' }
 kb_priors_cover_biomass_nereo <- function() {
   list(
     cover_slope = kb_prior_lognormal(meanlog = 2, sdlog = 1),

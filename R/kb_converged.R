@@ -14,40 +14,28 @@
 #' - every parameter's rank-normalized split Rhat below `rhat` (default 1.01;
 #'   Vehtari et al. 2021, Section 2);
 #' - every parameter's bulk and tail effective sample size at least `ess` times
-#'   the number of chains (default 100, so 400 for four chains). Vehtari et al.
-#'   (2021, Section 2) and the Stan diagnostics guide recommend this for the
-#'   bulk effective sample size, so that Rhat and the effective sample size are
-#'   themselves reliable; it is applied to the tail effective sample size too,
-#'   as rstan's sampler warnings do, because compatibility limits are tail
-#'   quantiles;
+#'   the number of chains (default 100, so 400 for four chains; Vehtari et al.
+#'   2021);
 #' - the percentage of divergent transitions at or below `max_perc_divergent`
-#'   (default 0.2% of saved draws). This tolerance is kelpbio's: the Stan
-#'   diagnostics guide sets no threshold and advises that even a few divergences
-#'   cannot be safely ignored when completely reliable inference is needed.
-#'   Set `max_perc_divergent = 0` to require none.
+#'   (default 0.2% of saved draws). Set `max_perc_divergent = 0` to require
+#'   none.
 #'
-#' The effective sample sizes are judged in absolute terms, not as a share of
-#' the draws: a slowly mixing sampler run long enough gives reliable estimates.
 #' Rhat and the effective sample sizes are those of [posterior::rhat()],
 #' [posterior::ess_bulk()], and [posterior::ess_tail()], reported for each
 #' parameter by `posterior::summarise_draws(fit)`.
-#'
-#' Treedepth saturation and E-BFMI are additionally reported in
-#' `print(summary(fit))`, although these do not affect convergence. The former
-#' indicates issues with efficiency and the latter is a per-chain signal that in
-#' practice accompanies divergences.
 #'
 #' @section Resolving convergence failure:
 #'
 #' In order, try the following:
 #' 1. Increase `adapt_delta` through the `control` argument of the `kb_fit_*()`
 #'    functions (e.g., `kb_fit_*(df, control = list(adapt_delta = 0.99))`). The
-#'    default `adapt_delta` value is 0.95. Higher `adapt_delta` values will
-#'    increase model runtime. This should reduce divergent transitions and can
-#'    also resolve Rhat and effective sample size issues.
+#'    default `adapt_delta` value is 0.95. Higher values reduce divergent
+#'    transitions and can also resolve Rhat and effective sample size issues,
+#'    at the cost of a longer runtime.
 #' 2. Run longer: increase `niters`, or `nthin` to run more iterations while
 #'    saving the same number of draws. Both raise the effective sample sizes.
-#' 3. Tighten the SD priors.
+#' 3. Narrow the priors on the random-effect standard deviations (`sd_site`,
+#'    `sd_year`, `sd_site_year`) through the `priors` argument.
 #'
 #' @references
 #' Vehtari, A., Gelman, A., Simpson, D., Carpenter, B., and Bürkner, P.-C.
@@ -58,9 +46,7 @@
 #' Stan Development Team. Runtime warnings and convergence problems.
 #' <https://mc-stan.org/learn-stan/diagnostics-warnings.html>
 #'
-#' @return A flag: `TRUE` if every Rhat is below `rhat`, every bulk and tail
-#'   effective sample size is at least `ess` times the number of chains, and
-#'   the divergence rate is at or below `max_perc_divergent`.
+#' @return A flag: `TRUE` if all three conditions are met, otherwise `FALSE`.
 #' @family model
 #' @export
 #' @examples

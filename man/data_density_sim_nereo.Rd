@@ -8,10 +8,9 @@
 A data frame with columns:
 \describe{
 \item{stipes}{Number of stipes counted on the transect, a whole number of
-at
-least 0.}
+at least 0.}
 \item{area_m2}{Area surveyed (m²), a positive number.}
-\item{site}{Survey site, a factor (10 levels, invented names).}
+\item{site}{Survey site, a factor (10 levels).}
 \item{year}{Survey year, a factor (4 levels).}
 }
 }
@@ -19,15 +18,10 @@ least 0.}
 data_density_sim_nereo
 }
 \description{
-A small simulated dataset of stipe counts on transects (columns \code{stipes},
-\code{area_m2}, \code{site}, \code{year}), one row per transect, for runnable examples. It
-is one of five \emph{Nereocystis} datasets simulated together from the same ten
-sites, four years, and true site-year values, with parameters near those
-estimated from Hakai Institute surveys, so plot biomass composed from fits to
-the weight, size, and density datasets agrees with
-\link{data_plot_biomass_sim_nereo}. Transects were surveyed at every site-year but
-two. The site names are invented. The data are not real survey data and are
-not intended for inference.
+A small simulated dataset of stipe counts on transects, one row per
+transect, for runnable examples. One of five simulated \emph{Nereocystis}
+datasets with shared sites and years, so their fits can be combined into
+plot biomass (see \code{\link[=kb_predict_plot_biomass]{kb_predict_plot_biomass()}}).
 }
 \seealso{
 \link{fit_density_sim_nereo} for a fit to this dataset.

@@ -36,24 +36,20 @@ Pass the result as \code{new_data} to the model's prediction function, for examp
 named in \code{by} are absent from the grid, so the prediction treats them as set
 by \code{new_levels}: with the default \code{"average"}, the typical site or year.
 
-For a weight fit, supply the predictor values by the predictor's column name:
-\code{diameter_mm} for \emph{Nereocystis}, \code{fronds} for \emph{Macrocystis}. For a cover
-biomass fit, supply \code{cover}, the tide-corrected proportion of the plot
-covered by canopy (0 to 1); each row is then a unit plot at zero tide height,
-with the \code{canopy_area_m2}, \code{plot_area_m2}, and \code{tide_height_m} columns the
-prediction reads. A single value gives one row per group at that value.
-Predictions over a grid with several predictor values are drawn by
-\code{\link[=kb_plot_predictions]{kb_plot_predictions()}} as curves.
+For a cover biomass fit, the predictor \code{cover} is the tide-corrected
+proportion of the plot covered by canopy (0 to 1); each row is then a unit
+plot at zero tide height, with the survey columns that give that cover. A
+single predictor value gives one row per group at that value.
 
 To fix a grouping factor at chosen levels, supply them by name in \code{...}, for
 example \code{year = 2021} with \code{by = "site"} for every fitted site in 2021, or
 \verb{site = "otter_cove", year = 2019:2022}. Each value is crossed with the rest
-of the grid. A level the fit has not seen, such as a future year, is a new
-level, resolved at prediction by \code{new_levels}.
+of the grid. A level not in the fit, such as a future year, is a new level,
+treated as set by \code{new_levels}.
 
 \code{by = c("site", "year")} gives only the site-years in the fitted data. The
-result is an ordinary data frame: rows can be filtered and columns added (such
-as \code{stipes_m2} for a \emph{Nereocystis} weight fit with density) before predicting.
+result is a tibble; rows can be filtered and columns added (such as
+\code{stipes_m2} for a \emph{Nereocystis} weight fit with density) before predicting.
 }
 \examples{
 kb_new_data(fit_size_sim_nereo, by = "site")

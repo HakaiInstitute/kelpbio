@@ -18,9 +18,8 @@ A draws-by-observations (\verb{D x N}) matrix.
 The pointwise log-likelihood of the observed data, suitable for \code{\link[loo:loo]{loo::loo()}}.
 }
 \details{
-Computed from the stored draws by evaluating the model's likelihood at the
-observed data. Each value is the log density of the response as recorded (for
-example weight in kg, not log weight), so models of the same response can be
+Each value is the log density of the response as recorded (for example
+weight in kg, not log weight), so models of the same response can be
 compared with \code{\link[loo:loo_compare]{loo::loo_compare()}}.
 }
 \examples{

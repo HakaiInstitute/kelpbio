@@ -2,11 +2,10 @@
 #'
 #' The posterior draws of the effects a fitted model estimated.
 #'
-#' `kb_samples(fit)` is `as_draws(fit)`, so the other `posterior` conversions,
-#' such as `as_draws_df()`, and `summarise_draws()` accept a fit directly, as
-#' they do a brms or cmdstanr fit. `summarise_draws(fit)` reports each
-#' parameter's Rhat and effective sample size, and `nchains()`, `niterations()`,
-#' `ndraws()`, `nvariables()`, and `variables()` return those of the draws.
+#' The `posterior` functions, such as `as_draws_df()`, `summarise_draws()`,
+#' `nchains()`, `ndraws()`, and `variables()`, also accept a fit.
+#' `summarise_draws(fit)` reports each parameter's Rhat and effective sample
+#' size.
 #'
 #' @param fit A `kb_fit` object.
 #' @param ... Unused.

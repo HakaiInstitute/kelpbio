@@ -21,8 +21,8 @@
 #' `biomass`.
 #'
 #' `biomass` holds the in situ wet biomass (kg per m²) of each site-year and its
-#' compatibility limits, such as the output of a biomass prediction. Other
-#' columns of either data frame are ignored.
+#' compatibility limits, such as wet biomass from [kb_predict_plot_biomass()].
+#' Other columns of either data frame are ignored.
 #'
 #' @param data A data frame of drone surveys, one row per survey.
 #' @param biomass A data frame of in situ wet biomass, one row per site-year, or

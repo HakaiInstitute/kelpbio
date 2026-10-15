@@ -26,7 +26,7 @@ Required columns: numeric \code{sample_mass_mg} (mg, > 0) and \code{carbon_mass_
 (µg, > 0), with no missing values and the carbon mass less than the sample
 mass.
 
-Each row is one dried tissue sample, as reported by the isotope lab:
+Each row is one dried tissue sample:
 \code{sample_mass_mg} is the mass of the sample analysed and \code{carbon_mass_ug} the
 carbon measured in it. The model's response is the carbon fraction,
 \code{carbon_mass_ug / 1000 / sample_mass_mg}. A warning gives the number of samples

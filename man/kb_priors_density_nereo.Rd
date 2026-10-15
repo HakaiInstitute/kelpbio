@@ -14,10 +14,9 @@ probability that a transect is unoccupied, on the logit scale),
 \code{mu + dispersion * mu^2}), \code{sd_site}, \code{sd_year}, and \code{sd_site_year}.
 }
 \description{
-The default prior list for the \emph{Nereocystis luetkeana} density model. Edit
-individual entries and pass the list to the \code{priors} argument of
-\code{\link[=kb_fit_density_nereo]{kb_fit_density_nereo()}} to override defaults; unmodified entries keep their
-defaults.
+The default priors for the \emph{Nereocystis luetkeana} density model. To change a
+prior, pass a list of the entries to change to the \code{priors} argument of
+\code{\link[=kb_fit_density_nereo]{kb_fit_density_nereo()}}; the other entries keep their defaults.
 }
 \details{
 Each entry is named after the parameter it sets, as reported by \code{\link[=tidy]{tidy()}} and
@@ -26,8 +25,14 @@ and zero inflation are Normal, the overdispersion and standard deviations are
 Exponential); only the hyperparameters can be changed.
 }
 \examples{
-priors <- kb_priors_density_nereo()
-priors$logit_zero_inflation <- kb_prior_normal(mean = -1, sd = 1)
+kb_priors_density_nereo()
+# Change one prior; the others keep their defaults:
+if (interactive()) {
+  kb_fit_density_nereo(
+    data_density_sim_nereo,
+    priors = list(logit_zero_inflation = kb_prior_normal(mean = -1, sd = 1))
+  )
+}
 }
 \seealso{
 Other priors:

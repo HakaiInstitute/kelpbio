@@ -24,22 +24,15 @@ per prediction, or \code{NULL} to predict at the observed data.}
 \item{...}{Unused.}
 
 \item{new_levels}{A string, one of \code{"average"} (the default) or \code{"sample"},
-controlling how random effects that are not conditioned on are treated
-(factors absent from the rows, and any new level not seen in the fit).
-\code{"average"} holds them at zero, giving the typical (median) group;
-\code{"sample"} draws a new random effect from \code{Normal(0, sd)}, widening the
-interval to include between-group variation, as suits a prediction for a
-particular unsurveyed site. Known levels are always conditioned on.
-\code{"sample"} draws fresh randomness on each call, so set a seed with
-\code{set.seed()} for a reproducible interval.}
+giving how a site or year that is new or absent from \code{new_data} is
+treated (sites and years in the fit use their estimated effects):
+\code{"average"} uses the typical site or year; \code{"sample"} draws a new effect,
+so the interval includes the variation between sites or years. \code{"sample"}
+gives a different interval on each call; use \code{set.seed()} to reproduce it.}
 
-\item{representative_site}{A character vector of site levels present in the
-fit, or \code{NULL} (the default). When supplied, a new or absent site takes the
-named sites' site effect (the per-draw average when several are named)
-instead of the \code{new_levels} treatment, and, in a fitted year, their
-site:year effect for that year (averaged over the named sites observed that
-year). A site:year effect none of them has, such as in a new year, follows
-\code{new_levels}.}
+\item{representative_site}{A character vector of sites in the fit whose
+effects a new site takes (averaged when several are named), or \code{NULL} (the
+default) to follow \code{new_levels}.}
 
 \item{conf_level}{A number greater than 0 and less than 1 giving the
 compatibility-interval level.}
@@ -53,9 +46,8 @@ a scalar point estimate (e.g. \code{median} or \code{mean}).}
 A \code{kb_predictions} object.
 }
 \description{
-A thin wrapper on \code{\link[=kb_predict_size]{kb_predict_size()}}: predict expected size at the supplied
-\code{new_data} rows (or the observed data when \code{new_data = NULL}). For one estimate
-per site or year, build the rows with \code{\link[=kb_new_data]{kb_new_data()}}.
+Predict the expected size at the rows of \code{new_data}, or at the observed data
+when \code{new_data = NULL}. Equivalent to \code{\link[=kb_predict_size]{kb_predict_size()}}.
 }
 \examples{
 predict(fit_size_sim_nereo, data.frame(site = "otter_cove"))

@@ -12,24 +12,31 @@ A named list of prior objects with entries \code{intercept},
 \code{sd_site_year}, and \code{sd_residual}.
 }
 \description{
-The default prior list for the \emph{Nereocystis luetkeana} allometric weight
-model. Edit individual entries and pass the list to the \code{priors} argument of
-\code{\link[=kb_fit_weight_nereo]{kb_fit_weight_nereo()}} to override defaults; unmodified entries keep their
-defaults.
+The default priors for the \emph{Nereocystis luetkeana} allometric weight model.
+To change a prior, pass a list of the entries to change to the \code{priors}
+argument of \code{\link[=kb_fit_weight_nereo]{kb_fit_weight_nereo()}}; the other entries keep their defaults.
 }
 \details{
 Each entry is named after the parameter it sets, as reported by \code{\link[=tidy]{tidy()}} and
 \code{\link[=kb_model_describe]{kb_model_describe()}}. The prior family of each entry is fixed; only the
 hyperparameters can be changed. \code{intercept} is on the log of the weight above
-the floor at the reference diameter (the geometric mean diameter of the
-data), \code{diameter_power} is the allometric exponent, and \code{weight_floor} is the
-weight (kg) as diameter approaches zero, used only by \code{form = "packard_floor"}; both are truncated at zero. \code{density_slope} is the effect of standardised
-stipe density on the log scale and is used only when the data include
-density. \code{sd_residual} is the residual standard deviation of log weight.
+the floor at the geometric mean diameter of the data, \code{diameter_power} is the
+allometric exponent, and \code{weight_floor} is the weight (kg) as diameter
+approaches zero, used only by \code{form = "packard_floor"}. The priors on
+\code{diameter_power} and \code{weight_floor} are truncated at zero. \code{density_slope} is
+the effect of standardised stipe density on the log scale and is used only
+when the density term is fitted (see \code{\link[=kb_fit_weight_nereo]{kb_fit_weight_nereo()}}). \code{sd_residual}
+is the residual standard deviation of log weight.
 }
 \examples{
-priors <- kb_priors_weight_nereo()
-priors$sd_site <- kb_prior_exponential(2)
+kb_priors_weight_nereo()
+# Change one prior; the others keep their defaults:
+if (interactive()) {
+  kb_fit_weight_nereo(
+    data_weight_sim_nereo,
+    priors = list(sd_site = kb_prior_exponential(rate = 2))
+  )
+}
 }
 \seealso{
 Other priors:

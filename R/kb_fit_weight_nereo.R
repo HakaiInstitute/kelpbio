@@ -3,49 +3,42 @@
 #' Fit an allometric weight model for *Nereocystis luetkeana* via Stan.
 #'
 #' @details
-#' Log wet weight (kg) is modelled with a Normal likelihood. `form` sets expected
-#' weight as a function of sub-bulb diameter (mm), with `x = diameter_mm / d0` and
-#' `d0` the geometric mean diameter of the data:
+#' Log wet weight (kg) is modelled with a Normal likelihood with mean `log(mu)`
+#' and standard deviation `sd_residual`. `form` sets `mu` as a function of
+#' sub-bulb diameter, with `x` the `diameter_mm` divided by the geometric mean
+#' diameter of the data:
 #'
-#' - `"packard_floor"` (the default): `weight_floor + alpha * x^diameter_power`, the
-#'   three-parameter power function of Packard (2023). The weight floor
-#'   `weight_floor` makes the relationship curve on log-log axes: the local allometric
-#'   exponent rises with plant size and levels off toward `diameter_power` as the
-#'   floor's share of weight shrinks.
-#' - `"power"`: `alpha * x^diameter_power`, a power law, which is a straight line on
-#'   log-log axes with the single exponent `diameter_power`.
+#' - `"packard_floor"` (the default):
+#'   `mu = weight_floor + exp(eta) * x^diameter_power`, the three-parameter
+#'   power function of Packard (2023). `weight_floor` makes the relationship
+#'   curve on log-log axes: the local allometric exponent rises with plant
+#'   size and levels off toward `diameter_power` as the floor's share of
+#'   weight shrinks.
+#' - `"power"`: `mu = exp(eta) * x^diameter_power`, a power law, which is a
+#'   straight line on log-log axes.
 #'
-#' `"packard_floor"` is recommended. On a coastwide compilation of *Nereocystis*
-#' harvests (Alaska to California), the power law fitted worse and
-#' underestimated the weight of both the smallest and the largest plants.
-#'
-#' The year, site, and `site:year` effects act on `alpha`, so they scale the
-#' size-dependent part of the weight while any floor is common to all groups.
+#' The linear predictor is
+#' `eta = intercept + site_effect + year_effect + site_year_effect`, so the
+#' site, year, and site:year effects scale the size-dependent part of the
+#' weight, while `weight_floor` is common to all sites and years.
 #'
 #' When `data` has a `stipes_m2` column (stipes per m², a site-year value),
-#' `log(alpha)` also includes `density_slope` times density standardised by its mean
-#' and SD over the fitted plants. Site-years without a recorded density take the
-#' mean. The density term is omitted when fewer than two distinct site-year
-#' densities are recorded.
-#'
-#' The site:year effect is set from the data: it is omitted when the data span a
-#' single year and included otherwise. When no site spans more than one year, or
-#' no year has more than one site, it is kept with a warning, since the
-#' site:year effect cannot then be interpreted separately from the site or year
-#' effect.
+#' `eta` also includes `density_slope` times density standardised by its mean
+#' and SD over the fitted plants. Site-years without a recorded density are
+#' assigned the mean density. The density term is omitted when fewer than two
+#' distinct site-year densities are recorded.
 #'
 #' @inheritSection params Sampling
+#' @inheritSection params Site and year interaction
 #' @inheritParams params
 #' @param data A data frame of weight observations (see
 #'   [kb_check_data_weight_nereo()] for the required columns).
 #' @param priors A named list of prior objects (see [kb_priors_weight_nereo()]),
-#'   or `NULL` to use the defaults. Supplied entries override the corresponding
-#'   defaults; unspecified entries keep their defaults.
+#'   or `NULL` to use the defaults. Entries not supplied keep their defaults.
 #' @param form A string, one of `"packard_floor"` (the default) or `"power"`,
 #'   giving the mean function of weight in diameter (see Details).
-#' @param ... Additional arguments passed to [rstan::sampling()], including a
-#'   `control` list (merged over the `adapt_delta = 0.95` default); see the
-#'   `control` argument of [rstan::stan()] for the available entries.
+#' @param ... Additional arguments passed to [rstan::sampling()], such as
+#'   `control`.
 #'
 #' @return An object of class `c("kb_fit_weight_nereo", "kb_fit_weight", "kb_fit")`.
 #' @references Packard, G. C. (2023). What is complex allometry? *Biology Open*,

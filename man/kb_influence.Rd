@@ -28,18 +28,14 @@ poorly, by Pareto-smoothed importance-sampling leave-one-out cross-validation
 Each observation gets two values:
 \itemize{
 \item \code{pareto_k} measures how much the fit changes when the observation is left
-out. Values above 0.7 mark an influential observation (a lower threshold
-for fits with fewer than about 2,200 draws).
+out. Values above \code{threshold} mark an influential observation.
 \item \code{elpd_loo} is the log density of the observation under a fit that left it
 out. Lower values mark observations the model predicts poorly. Its scale
 depends on the response's units, so compare values within a fit.
 }
 
-A deviance residual from \code{\link[=augment]{augment()}} measures how far an observation is from
-the fit, not how much the fit depends on it. A large residual in a
-well-sampled site and year moves the estimates little, while a modest one at
-the edge of the data, or in a site and year with few observations, can move
-them a lot.
+\code{pareto_k} measures how much the fit depends on an observation, which a
+deviance residual from \code{\link[=augment]{augment()}} does not.
 
 Influential or poorly predicted observations are worth checking for recording
 errors. An observation that checks out is valid data and should be kept:
@@ -47,8 +43,7 @@ influence often reflects a site and year with few observations rather than an
 error. Many influential observations across the data suggest the model
 describes the data poorly.
 
-The values are those of \code{\link[loo:loo]{loo::loo()}} on the fit, computed from the stored draws
-without refitting.
+The values are those of \code{\link[loo:loo]{loo::loo()}} on the fit.
 }
 \examples{
 influence <- kb_influence(fit_weight_sim_nereo)

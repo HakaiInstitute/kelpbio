@@ -10,24 +10,20 @@
 #' named in `by` are absent from the grid, so the prediction treats them as set
 #' by `new_levels`: with the default `"average"`, the typical site or year.
 #'
-#' For a weight fit, supply the predictor values by the predictor's column name:
-#' `diameter_mm` for *Nereocystis*, `fronds` for *Macrocystis*. For a cover
-#' biomass fit, supply `cover`, the tide-corrected proportion of the plot
-#' covered by canopy (0 to 1); each row is then a unit plot at zero tide height,
-#' with the `canopy_area_m2`, `plot_area_m2`, and `tide_height_m` columns the
-#' prediction reads. A single value gives one row per group at that value.
-#' Predictions over a grid with several predictor values are drawn by
-#' [kb_plot_predictions()] as curves.
+#' For a cover biomass fit, the predictor `cover` is the tide-corrected
+#' proportion of the plot covered by canopy (0 to 1); each row is then a unit
+#' plot at zero tide height, with the survey columns that give that cover. A
+#' single predictor value gives one row per group at that value.
 #'
 #' To fix a grouping factor at chosen levels, supply them by name in `...`, for
 #' example `year = 2021` with `by = "site"` for every fitted site in 2021, or
 #' `site = "otter_cove", year = 2019:2022`. Each value is crossed with the rest
-#' of the grid. A level the fit has not seen, such as a future year, is a new
-#' level, resolved at prediction by `new_levels`.
+#' of the grid. A level not in the fit, such as a future year, is a new level,
+#' treated as set by `new_levels`.
 #'
 #' `by = c("site", "year")` gives only the site-years in the fitted data. The
-#' result is an ordinary data frame: rows can be filtered and columns added (such
-#' as `stipes_m2` for a *Nereocystis* weight fit with density) before predicting.
+#' result is a tibble; rows can be filtered and columns added (such as
+#' `stipes_m2` for a *Nereocystis* weight fit with density) before predicting.
 #'
 #' @inheritParams params
 #' @param fit A `kb_fit_weight`, `kb_fit_size`, `kb_fit_density`, or

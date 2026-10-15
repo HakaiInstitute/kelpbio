@@ -12,11 +12,9 @@ An object of class
 fit_cover_biomass_sim_nereo
 }
 \description{
-A slim pre-fit cover biomass model, the result of
-\code{\link[=kb_fit_cover_biomass_nereo]{kb_fit_cover_biomass_nereo()}} on \link{data_cover_biomass_sim_nereo} and
-\link{data_plot_biomass_sim_nereo} with a reduced number of draws. Provided so the
-examples for the fit accessors, S3 methods, and prediction functions run
-quickly. It is fit to simulated data and is not intended for inference.
+A fit of \code{\link[=kb_fit_cover_biomass_nereo]{kb_fit_cover_biomass_nereo()}} to \link{data_cover_biomass_sim_nereo} and
+\link{data_plot_biomass_sim_nereo} with fewer draws than the default, for
+exploring the fit methods without running the sampler.
 }
 \seealso{
 \code{\link[=kb_fit_cover_biomass_nereo]{kb_fit_cover_biomass_nereo()}}, \link{data_cover_biomass_sim_nereo}, and

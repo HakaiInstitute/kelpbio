@@ -25,11 +25,9 @@ package's own parameter names (\code{intercept}, \code{sd_site}, ...), so every 
 matches a row of \code{\link[=tidy]{tidy()}}, \code{\link[=summary]{summary()}}, and \code{\link[=coef]{coef()}}.
 }
 \details{
-The description reflects the fitted object: the priors shown are the fit's
-stored priors, any predictor centering uses the reference value stored on the
-fit, and a random effect dropped at fit time (such as \code{site:year} for
-single-year data) is omitted from both the linear predictor and the
-random-effect list. Priors marked \code{T[0, ]} are truncated at zero.
+Priors, centring, and random effects are those of the fit; a random effect
+not fitted (such as the site:year effect for single-year data) is omitted.
+Priors marked \code{T[0, ]} are truncated at zero.
 }
 \examples{
 kb_model_describe(fit_weight_sim_nereo)

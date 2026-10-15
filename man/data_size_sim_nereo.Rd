@@ -8,7 +8,7 @@
 A data frame with columns:
 \describe{
 \item{diameter_mm}{Maximum sub-bulb diameter (mm), a positive number.}
-\item{site}{Survey site, a factor (10 levels, invented names).}
+\item{site}{Survey site, a factor (10 levels).}
 \item{year}{Survey year, a factor (4 levels).}
 }
 }
@@ -16,15 +16,10 @@ A data frame with columns:
 data_size_sim_nereo
 }
 \description{
-A small simulated dataset of maximum sub-bulb diameter (columns
-\code{diameter_mm}, \code{site}, \code{year}), one row per plant, for runnable examples. It
-is one of five \emph{Nereocystis} datasets simulated together from the same ten
-sites, four years, and true site-year values, with parameters near those
-estimated from Hakai Institute surveys, so plot biomass composed from fits to
-the weight, size, and density datasets agrees with
-\link{data_plot_biomass_sim_nereo}. Plants were measured at most density-surveyed
-site-years; a few have no size data. The site names are invented. The data
-are not real survey data and are not intended for inference.
+A small simulated dataset of maximum sub-bulb diameter, one row per plant,
+for runnable examples. One of five simulated \emph{Nereocystis} datasets with
+shared sites and years, so their fits can be combined into plot biomass (see
+\code{\link[=kb_predict_plot_biomass]{kb_predict_plot_biomass()}}). Some site-years have no size data.
 }
 \seealso{
 \link{fit_size_sim_nereo} for a fit to this dataset.

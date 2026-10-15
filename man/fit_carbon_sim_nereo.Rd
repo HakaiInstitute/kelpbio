@@ -12,10 +12,8 @@ An object of class
 fit_carbon_sim_nereo
 }
 \description{
-A slim pre-fit carbon model, the result of \code{\link[=kb_fit_carbon_nereo]{kb_fit_carbon_nereo()}} on
-\link{data_carbon_sim_nereo} with a reduced number of draws. Provided so the
-examples for the fit accessors, S3 methods, and prediction functions run
-quickly. It is fit to simulated data and is not intended for inference.
+A fit of \code{\link[=kb_fit_carbon_nereo]{kb_fit_carbon_nereo()}} to \link{data_carbon_sim_nereo} with fewer draws
+than the default, for exploring the fit methods without running the sampler.
 }
 \seealso{
 \code{\link[=kb_fit_carbon_nereo]{kb_fit_carbon_nereo()}} and \link{data_carbon_sim_nereo}.

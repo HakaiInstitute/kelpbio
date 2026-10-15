@@ -5,21 +5,11 @@
 #' when `new_data = NULL`.
 #'
 #' @details
-#' Each row is tide-corrected with the fitted `tide_height_slope` and capped at a cover of 1
-#' before the calibration is applied. A row with no canopy predicts the biomass
-#' floor, which is the same for every site and year. For curves over
-#' tide-corrected cover by site or year, build the rows with [kb_new_data()].
+#' Cover is tide-corrected and capped at 1. A row with no canopy predicts the
+#' biomass floor, which is the same for every site and year.
 #'
-#' Each row is resolved on its own: a `site` or `year` the model has seen is
-#' conditioned on its estimated effect, and a new or absent site or year follows
-#' `new_levels`. With the default `"average"`, an unseen site is the typical
-#' site; use `"sample"` for an interval that includes the variation between
-#' sites. For a new site, `representative_site` instead borrows the site effect of
-#' one or more named fitted sites (the per-draw average across several).
-#'
-#' When `new_data = NULL`, the observed data's `estimate`, `lower`, and `upper`
-#' columns (the in situ biomass) are replaced by the prediction; [augment()]
-#' keeps them alongside the fitted values.
+#' When `new_data = NULL`, the in situ biomass columns are replaced by the
+#' prediction; use [augment()] to keep both.
 #'
 #' @inheritParams params
 #' @param fit A `kb_fit_cover_biomass` object.
@@ -46,7 +36,7 @@
 #' # Curves over tide-corrected cover by site:
 #' kb_predict_cover_biomass(fit, kb_new_data(fit, by = "site"))
 #'
-#' # At your own surveys, including a new site:
+#' # At new surveys, including a new site:
 #' kb_predict_cover_biomass(
 #'   fit,
 #'   data.frame(

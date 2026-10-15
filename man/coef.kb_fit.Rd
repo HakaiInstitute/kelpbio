@@ -16,7 +16,7 @@ A tibble with one row per term and columns \code{term}, \code{estimate},
 \code{lower}, and \code{upper}.
 }
 \description{
-A wrapper on \code{\link[=tidy]{tidy()}} returning the model-term posterior summaries.
+Posterior summaries of the model terms, as returned by \code{\link[=tidy]{tidy()}}.
 }
 \examples{
 coef(fit_weight_sim_nereo)

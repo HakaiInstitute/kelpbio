@@ -16,13 +16,11 @@
 #' those observed.
 #'
 #' For a density model, the observed and replicate counts are divided by their
-#' transect's area, so differences in transect length do not dominate the plot
-#' and the axis is a density per m².
+#' transect's area, so the axis is density per m².
 #'
 #' With `type = "residual"`, the observed curve is [residuals()] and each
 #' replicate's curve is the deviance residuals of the replicate under the draw
-#' that generated it. For a well-fitting model the two match, including any
-#' banding a count response gives the residuals.
+#' that generated it. For a well-fitting model the two match.
 #'
 #' The replicates are random, so set a seed with `set.seed()` for a reproducible
 #' plot.

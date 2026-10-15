@@ -1,8 +1,7 @@
 #' Predict Method for a Weight Model Fit
 #'
-#' A thin wrapper on [kb_predict_weight()]: predict weight at the supplied `new_data`
-#' rows (or the observed data when `new_data = NULL`). For curves by site or year,
-#' build the rows with [kb_new_data()].
+#' Predict the expected weight at the rows of `new_data`, or at the observed
+#' data when `new_data = NULL`. Equivalent to [kb_predict_weight()].
 #'
 #' @inheritParams params
 #' @inheritParams kb_predict_weight
@@ -44,9 +43,8 @@ predict.kb_fit_weight <- function(
 
 #' Predict Method for a Size Model Fit
 #'
-#' A thin wrapper on [kb_predict_size()]: predict expected size at the supplied
-#' `new_data` rows (or the observed data when `new_data = NULL`). For one estimate
-#' per site or year, build the rows with [kb_new_data()].
+#' Predict the expected size at the rows of `new_data`, or at the observed data
+#' when `new_data = NULL`. Equivalent to [kb_predict_size()].
 #'
 #' @inheritParams params
 #' @inheritParams kb_predict_size
@@ -88,10 +86,9 @@ predict.kb_fit_size <- function(
 
 #' Predict Method for a Density Model Fit
 #'
-#' A thin wrapper on [kb_predict_density()]: predict the expected density per m²
-#' at the supplied `new_data` rows (or at the observed transects when
-#' `new_data = NULL`). For one estimate per site or year, build the rows with
-#' [kb_new_data()].
+#' Predict the expected density per m² at the rows of `new_data`, or at the
+#' observed transects when `new_data = NULL`. Equivalent to
+#' [kb_predict_density()].
 #'
 #' @inheritParams params
 #' @inheritParams kb_predict_density
@@ -133,8 +130,8 @@ predict.kb_fit_density <- function(
 
 #' Predict Method for a Wet/Dry Model Fit
 #'
-#' A thin wrapper on [kb_predict_wetdry()]: the expected dry:wet mass ratio as a
-#' single estimate.
+#' Summarise the expected dry:wet ratio as a single estimate. Equivalent to
+#' [kb_predict_wetdry()].
 #'
 #' @inheritParams params
 #' @param object A `kb_fit_wetdry` object.
@@ -169,8 +166,8 @@ predict.kb_fit_wetdry <- function(
 
 #' Predict Method for a Carbon Model Fit
 #'
-#' A thin wrapper on [kb_predict_carbon()]: the expected carbon fraction of dry
-#' mass as a single estimate.
+#' Summarise the expected carbon fraction of dry mass as a single estimate.
+#' Equivalent to [kb_predict_carbon()].
 #'
 #' @inheritParams params
 #' @param object A `kb_fit_carbon` object.
@@ -205,10 +202,9 @@ predict.kb_fit_carbon <- function(
 
 #' Predict Method for a Cover Biomass Model Fit
 #'
-#' A thin wrapper on [kb_predict_cover_biomass()]: predict the expected wet biomass per
-#' m² of plot at the supplied `new_data` rows (or at the observed data when
-#' `new_data = NULL`). For curves over cover by site or year, build the rows with
-#' [kb_new_data()].
+#' Predict the expected wet biomass per m² of plot at the rows of `new_data`, or
+#' at the observed data when `new_data = NULL`. Equivalent to
+#' [kb_predict_cover_biomass()].
 #'
 #' @inheritParams params
 #' @inheritParams kb_predict_cover_biomass

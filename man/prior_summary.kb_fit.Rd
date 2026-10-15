@@ -12,10 +12,11 @@
 \item{...}{Unused.}
 }
 \value{
-The named list of prior objects (see \code{\link[=kb_priors_weight_nereo]{kb_priors_weight_nereo()}}).
+The named list of prior objects (see the model's \verb{kb_priors_*()}
+function).
 }
 \description{
-The resolved prior objects used to fit the model.
+The priors used to fit the model.
 }
 \examples{
 prior_summary(fit_weight_sim_nereo)

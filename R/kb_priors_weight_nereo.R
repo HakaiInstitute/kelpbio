@@ -1,19 +1,19 @@
 #' Default Priors for the Nereocystis Weight Model
 #'
-#' The default prior list for the *Nereocystis luetkeana* allometric weight
-#' model. Edit individual entries and pass the list to the `priors` argument of
-#' [kb_fit_weight_nereo()] to override defaults; unmodified entries keep their
-#' defaults.
+#' The default priors for the *Nereocystis luetkeana* allometric weight model.
+#' To change a prior, pass a list of the entries to change to the `priors`
+#' argument of [kb_fit_weight_nereo()]; the other entries keep their defaults.
 #'
 #' Each entry is named after the parameter it sets, as reported by [tidy()] and
 #' [kb_model_describe()]. The prior family of each entry is fixed; only the
 #' hyperparameters can be changed. `intercept` is on the log of the weight above
-#' the floor at the reference diameter (the geometric mean diameter of the
-#' data), `diameter_power` is the allometric exponent, and `weight_floor` is the
-#' weight (kg) as diameter approaches zero, used only by `form =
-#' "packard_floor"`; both are truncated at zero. `density_slope` is the effect of standardised
-#' stipe density on the log scale and is used only when the data include
-#' density. `sd_residual` is the residual standard deviation of log weight.
+#' the floor at the geometric mean diameter of the data, `diameter_power` is the
+#' allometric exponent, and `weight_floor` is the weight (kg) as diameter
+#' approaches zero, used only by `form = "packard_floor"`. The priors on
+#' `diameter_power` and `weight_floor` are truncated at zero. `density_slope` is
+#' the effect of standardised stipe density on the log scale and is used only
+#' when the density term is fitted (see [kb_fit_weight_nereo()]). `sd_residual`
+#' is the residual standard deviation of log weight.
 #'
 #' @return A named list of prior objects with entries `intercept`,
 #'   `diameter_power`, `weight_floor`, `density_slope`, `sd_site`, `sd_year`,
@@ -22,8 +22,14 @@
 #' @export
 #'
 #' @examples
-#' priors <- kb_priors_weight_nereo()
-#' priors$sd_site <- kb_prior_exponential(2)
+#' kb_priors_weight_nereo()
+#' # Change one prior; the others keep their defaults:
+#' if (interactive()) {
+#'   kb_fit_weight_nereo(
+#'     data_weight_sim_nereo,
+#'     priors = list(sd_site = kb_prior_exponential(rate = 2))
+#'   )
+#' }
 kb_priors_weight_nereo <- function() {
   list(
     intercept = kb_prior_normal(mean = 0, sd = 2),

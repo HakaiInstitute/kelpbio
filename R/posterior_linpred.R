@@ -4,9 +4,8 @@
 #' `transform = TRUE`, on the response scale).
 #'
 #' @details
-#' Conditioning is inferred from the grouping columns present in `new_data` (see
-#' [posterior_epred()]); with `new_data = NULL` the observed data is used and
-#' conditioned on its site and year.
+#' Site and year columns in `new_data` are handled as in [posterior_epred()];
+#' with `new_data = NULL` the observed data is used, with its sites and years.
 #'
 #' @inheritParams params
 #' @param object A `kb_fit` object.

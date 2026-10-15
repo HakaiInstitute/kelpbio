@@ -12,10 +12,9 @@ mass ratio on the logit scale) and \code{precision} (the Beta precision; larger
 values mean less spread around the mean ratio).
 }
 \description{
-The default prior list for the \emph{Macrocystis pyrifera} wet/dry model. Edit
-individual entries and pass the list to the \code{priors} argument of
-\code{\link[=kb_fit_wetdry_macro]{kb_fit_wetdry_macro()}} to override defaults; unmodified entries keep their
-defaults.
+The default priors for the \emph{Macrocystis pyrifera} wet/dry model. To change a
+prior, pass a list of the entries to change to the \code{priors} argument of
+\code{\link[=kb_fit_wetdry_macro]{kb_fit_wetdry_macro()}}; the other entries keep their defaults.
 }
 \details{
 Each entry is named after the parameter it sets, as reported by \code{\link[=tidy]{tidy()}} and
@@ -23,8 +22,14 @@ Each entry is named after the parameter it sets, as reported by \code{\link[=tid
 precision is Exponential); only the hyperparameters can be changed.
 }
 \examples{
-priors <- kb_priors_wetdry_macro()
-priors$intercept <- kb_prior_normal(mean = -2.4, sd = 0.5)
+kb_priors_wetdry_macro()
+# Change one prior; the others keep their defaults:
+if (interactive()) {
+  kb_fit_wetdry_macro(
+    data_wetdry_sim_macro,
+    priors = list(intercept = kb_prior_normal(mean = -2.4, sd = 0.5))
+  )
+}
 }
 \seealso{
 Other priors:

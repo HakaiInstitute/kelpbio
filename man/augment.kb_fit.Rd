@@ -12,13 +12,12 @@
 \item{...}{Unused.}
 }
 \value{
-The input data with added columns \code{fitted} (response-scale fitted
-value) and \code{residual} (deviance residual).
+The input data with added columns \code{fitted} (the posterior median of
+the expected response) and \code{residual} (the posterior median of the
+deviance residual).
 }
 \description{
 Append the \code{\link[=fitted]{fitted()}} and deviance \code{\link[=residuals]{residuals()}} values to the input data.
-Values are posterior medians: \code{fitted} of the expected response, \code{residual} of
-the deviance residual.
 }
 \examples{
 augment(fit_weight_sim_nereo)

@@ -12,10 +12,9 @@ density per m²), \code{dispersion} (the negative binomial overdispersion),
 \code{sd_site}, \code{sd_year}, and \code{sd_site_year}.
 }
 \description{
-The default prior list for the \emph{Macrocystis pyrifera} density model. Edit
-individual entries and pass the list to the \code{priors} argument of
-\code{\link[=kb_fit_density_macro]{kb_fit_density_macro()}} to override defaults; unmodified entries keep their
-defaults.
+The default priors for the \emph{Macrocystis pyrifera} density model. To change a
+prior, pass a list of the entries to change to the \code{priors} argument of
+\code{\link[=kb_fit_density_macro]{kb_fit_density_macro()}}; the other entries keep their defaults.
 }
 \details{
 Each entry is named after the parameter it sets, as reported by \code{\link[=tidy]{tidy()}} and
@@ -24,8 +23,14 @@ overdispersion and standard deviations are Exponential); only the
 hyperparameters can be changed.
 }
 \examples{
-priors <- kb_priors_density_macro()
-priors$dispersion <- kb_prior_exponential(2)
+kb_priors_density_macro()
+# Change one prior; the others keep their defaults:
+if (interactive()) {
+  kb_fit_density_macro(
+    data_density_sim_macro,
+    priors = list(dispersion = kb_prior_exponential(rate = 2))
+  )
+}
 }
 \seealso{
 Other priors:

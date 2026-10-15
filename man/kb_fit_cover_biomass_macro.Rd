@@ -26,19 +26,18 @@ kb_fit_cover_biomass_macro(
 
 \item{biomass}{A data frame of in situ wet biomass (kg/m²), one row per
 site-year, with \code{site}, \code{year}, \code{estimate}, \code{lower}, and \code{upper} columns,
-such as a \code{kb_predictions} object from a biomass prediction.}
+such as wet biomass from \code{\link[=kb_predict_plot_biomass]{kb_predict_plot_biomass()}}.}
 
-\item{priors}{A named list of prior objects (see \code{\link[=kb_priors_cover_biomass_macro]{kb_priors_cover_biomass_macro()}}),
-or \code{NULL} to use the defaults. Supplied entries override the corresponding
-defaults; unspecified entries keep their defaults.}
+\item{priors}{A named list of prior objects (see
+\code{\link[=kb_priors_cover_biomass_macro]{kb_priors_cover_biomass_macro()}}), or \code{NULL} to use the defaults. Entries
+not supplied keep their defaults.}
 
-\item{...}{Additional arguments passed to \code{\link[rstan:sampling]{rstan::sampling()}}, including a
-\code{control} list (merged over the \code{adapt_delta = 0.95} default); see the
-\code{control} argument of \code{\link[rstan:stan]{rstan::stan()}} for the available entries.}
+\item{...}{Additional arguments passed to \code{\link[rstan:sampling]{rstan::sampling()}}, such as
+\code{control}.}
 
-\item{conf_level}{A number greater than 0 and less than 1 giving the level of the
-compatibility limits in \code{biomass}, or \code{NULL} to use the level a
-\code{kb_predictions} object records, else 0.95.}
+\item{conf_level}{A number greater than 0 and less than 1 giving the level
+of the compatibility limits in \code{biomass}, or \code{NULL} to use the level
+stored in a \code{kb_predictions} object, or 0.95 for any other data frame.}
 
 \item{prior_only}{A flag specifying whether to sample from the priors only
 (the likelihood is switched off), for prior predictive checks.}
@@ -55,17 +54,15 @@ compatibility limits in \code{biomass}, or \code{NULL} to use the level a
 cores.}
 
 \item{seed}{A whole number passed to \code{\link[rstan:sampling]{rstan::sampling()}} to make the fit
-reproducible, or \code{NULL} (the default). When \code{NULL}, a seed is drawn from R's
-RNG, so a preceding \code{set.seed()} also makes the fit reproducible; an explicit
-\code{seed} takes precedence over the RNG state.}
+reproducible, or \code{NULL} (the default). When \code{NULL}, a seed is drawn from
+R's RNG, so a preceding \code{set.seed()} also makes the fit reproducible.}
 
 \item{progress}{A string, one of \code{"bar"} (the default, a console progress
 bar), \code{"verbose"} (rstan's per-iteration output and diagnostic warnings), or
 \code{"none"} (silent). Controls fit-time console output only.}
 
-\item{progress_dir}{A string giving an existing directory in which to write a
-pollable progress artifact (read by \code{\link[=kb_progress]{kb_progress()}}), or \code{NULL} (the
-default) to write none.}
+\item{progress_dir}{A string giving an existing directory in which to record
+progress for \code{\link[=kb_progress]{kb_progress()}}, or \code{NULL} (the default) to record none.}
 }
 \value{
 An object of class
@@ -77,52 +74,40 @@ Fit a cover-biomass calibration for \emph{Macrocystis pyrifera} via Stan.
 }
 \details{
 Each drone survey in \code{data} is paired with the in situ wet biomass of its
-site-year in \code{biomass}, typically the output of a biomass prediction. Surveys
-whose site-year has no biomass are not fitted, and a message gives their
-site-years.
+site-year in \code{biomass}, typically the output of \code{\link[=kb_predict_plot_biomass]{kb_predict_plot_biomass()}}
+with \code{measure = "wet"}. Surveys whose site-year has no biomass are not
+fitted, and a message gives their site-years.
 
 The in situ wet biomass (kg/m²) is modelled as a floor plus a term
 proportional to the plot's tide-corrected canopy cover:
-\code{mu = biomass_floor + cover_slope * exp(site_effect + year_effect) * cover}. \code{cover_slope} is the wet
-biomass per m² of canopy at a typical site and year, and \code{biomass_floor} the wet
-biomass of a plot with no delineated canopy, common to all sites and years.
-The site and year effects act on the canopy term only. Cover is the canopy
-area increased by \code{tide_height_slope} per metre of tide height, since less of the canopy
-is visible at the surface at higher tides, divided by the plot area and
-capped at 1. The calibration data carry almost no information on \code{tide_height_slope}, so
-the tide correction is set by its prior.
+\code{mu = biomass_floor + cover_slope * exp(site_effect + year_effect) * cover}.
+\code{cover_slope} is the wet biomass per m² of canopy at a typical site and
+year, and \code{biomass_floor} the wet biomass of a plot with no delineated
+canopy, common to all sites and years. The site and year effects act on the
+canopy term only. Cover is the canopy area increased by \code{tide_height_slope}
+per metre of tide height, since less of the canopy is visible at the surface
+at higher tides, divided by the plot area and capped at 1. The default prior
+on \code{tide_height_slope} is informative and largely sets the tide correction,
+because calibration data rarely separate tide height from other differences
+between surveys.
 
-The log of the biomass estimate is Normal around \code{log(mu)} with standard
-deviation \code{error_scaling} times the log-scale SD implied by its \code{lower} and \code{upper}
-limits, so each survey is weighted by the precision of its in situ estimate,
-and \code{error_scaling} calibrates the supplied SDs.
+The log of the biomass estimate is Normal around \code{log(mu)} with SD
+\code{error_scaling} times the log-scale SD implied by its \code{lower} and \code{upper}
+limits, so each survey is weighted by the precision of its in situ estimate.
 }
 \section{Sampling}{
 
-\code{niters} is the number of saved post-warmup draws per chain; warmup defaults to
-match \code{niters} and the post-warmup phase is thinned by \code{nthin}.
+Chains run in parallel by default. Set \code{options(mc.cores = 1)} (or pass
+\code{cores = 1}) on shared servers, in containers, or inside another parallel
+context.
 
-\code{progress} controls fit-time console output. The default \code{"bar"} shows a
-progress bar; \code{"verbose"} streams rstan's per-iteration output and its
-post-sampling diagnostic warnings; \code{"none"} is silent. \code{progress} changes only
-console output, never the fit; inspect convergence with \code{\link[=kb_converged]{kb_converged()}},
-\code{\link[=glance]{glance()}}, or \code{\link[=summary]{summary()}} in every mode.
+The sampler runs with \code{adapt_delta = 0.95} by default, which reduces
+divergences at the cost of slightly longer runtime. Override it, or set any
+other sampler control, by passing a \code{control} list through \code{...}, e.g.
+\code{control = list(adapt_delta = 0.99)}; only the entries supplied are changed.
+See the \code{control} argument of \code{\link[rstan:stan]{rstan::stan()}} for the full set of entries.
 
-Supply \code{progress_dir} (an existing directory) to have the fit write a progress
-record there, which \code{\link[=kb_progress]{kb_progress()}} reads to report the completed fraction
-from another R process (for example, to drive a progress indicator while the fit
-runs in the background).
-
-Chains run in parallel by default (\code{cores = NULL} uses \code{getOption("mc.cores")},
-falling back to \code{chains}, capped at the available cores). Set
-\code{options(mc.cores = 1)} (or pass \code{cores = 1}) on shared servers, in containers,
-or inside another parallel context.
-
-The sampler runs with \code{adapt_delta = 0.95} by default, which reduces divergences
-at the cost of slightly longer runtime. Override it, or set any other sampler
-control, by passing a \code{control} list through \code{...}, e.g.
-\code{control = list(adapt_delta = 0.99)}; only the entries supplied are changed. See
-the \code{control} argument of \code{\link[rstan:stan]{rstan::stan()}} for the full set of entries.
+Check convergence with \code{\link[=kb_converged]{kb_converged()}}, \code{\link[=glance]{glance()}}, or \code{\link[=summary]{summary()}}.
 }
 
 \examples{

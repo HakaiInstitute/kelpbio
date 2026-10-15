@@ -3,22 +3,24 @@
 #' Draws of the expected response.
 #'
 #' @details
-#' Each draw is the expected response given that draw's parameters, where `mu` is
-#' the linear predictor: for weight, `exp(mu + sd_residual^2 / 2)` (*Nereocystis*) or
-#' `exp(mu)` (*Macrocystis*); for size, `exp(mu)` (*Nereocystis*) or the mean of
-#' the zero-truncated distribution (*Macrocystis*); for density, the expected
-#' count on the row's `area_m2` (1 m² when absent), `(1 - zi) * exp(mu)` with `zi` the
-#' zero-inflation probability (*Nereocystis*) or `exp(mu)` (*Macrocystis*); for
-#' wet/dry, the mean dry:wet ratio `inv_logit(mu)`; for carbon, the mean carbon
-#' fraction `inv_logit(mu)`; for cover biomass, the wet biomass per m² `exp(mu)`,
-#' without the estimation error of the in situ estimate. For
-#' draws that include observation noise, use [posterior_predict()].
+#' Each draw is the expected response given that draw's parameters:
 #'
-#' Conditioning is inferred from the grouping columns present in `new_data`: a
-#' `site` (and optionally `year`) column with known levels is conditioned on;
-#' factors with no column are handled by `new_levels`. With `new_data = NULL` the
-#' observed data is used and conditioned on its site and year, so the central
-#' estimate agrees with [augment()].
+#' - *Nereocystis* weight: the lognormal mean.
+#' - *Macrocystis* weight: the Gamma mean.
+#' - *Nereocystis* size: the Weibull mean.
+#' - *Macrocystis* size: the mean of the zero-truncated negative binomial.
+#' - Density: the expected count on the row's `area_m2` (1 m² when absent),
+#'   including the zero inflation for *Nereocystis*.
+#' - Wet/dry: the mean dry:wet ratio.
+#' - Carbon: the mean carbon fraction.
+#' - Cover biomass: the wet biomass per m², without the estimation error of the
+#'   in situ estimate.
+#'
+#' For draws that include observation noise, use [posterior_predict()].
+#'
+#' A `site` (and optionally `year`) column in `new_data` with levels in the fit
+#' gives predictions for those levels. With `new_data = NULL` the observed data
+#' is used, with its sites and years.
 #'
 #' @inheritParams params
 #' @param object A `kb_fit` object.

@@ -11,15 +11,10 @@
 #'
 #' The size models have no predictor, so `new_data` needs no columns: each row is
 #' a site, a year, or a site-year, given by its optional `site` and `year`
-#' columns. For one row per site or year, build the rows with [kb_new_data()].
+#' columns.
 #'
-#' Each row is resolved on its own: a `site` or `year` the model has seen is
-#' conditioned on its estimated effect, and a new or absent site or year follows
-#' `new_levels`. With the default `"average"`, an unseen site is the typical
-#' site; use `"sample"` for an interval that includes the variation between
-#' sites. For a new site, `representative_site` instead borrows the site effect of
-#' one or more named fitted sites (the per-draw average across several), and
-#' their site:year effect in a fitted year where they were observed.
+#' With `representative_site`, a new site also takes the named sites'
+#' site:year effect in a year in which they were surveyed.
 #'
 #' @inheritParams params
 #' @param fit A `kb_fit_size` object.
@@ -44,7 +39,7 @@
 #' # By site:
 #' kb_predict_size(fit, kb_new_data(fit, by = "site"))
 #'
-#' # At your own rows, including a new site:
+#' # At new rows, including a new site:
 #' kb_predict_size(fit, data.frame(site = c("otter_cove", "new_site")))
 kb_predict_size <- function(
   fit,

@@ -4,15 +4,8 @@
 #' at the observed data when `new_data = NULL`.
 #'
 #' @details
-#' Each row is resolved on its own: a `site` or `year` the model has seen is
-#' conditioned on its estimated effect, and a new or absent site or year follows
-#' `new_levels`. With the default `"average"`, an unseen site is the typical
-#' site; use `"sample"` for an interval that includes the variation between
-#' sites. For a new site, `representative_site` instead borrows the site effect of
-#' one or more named fitted sites (the per-draw average across several), and
-#' their site:year effect in a fitted year where they were observed.
-#'
-#' For curves by site or year, build the rows with [kb_new_data()].
+#' With `representative_site`, a new site also takes the named sites'
+#' site:year effect in a year in which they were surveyed.
 #'
 #' For a *Nereocystis* fit that includes density, each row uses its `stipes_m2`
 #' value if present, otherwise the recorded density of its site-year in the
@@ -43,7 +36,7 @@
 #' # Curves by site:
 #' kb_predict_weight(fit, kb_new_data(fit, by = "site"))
 #'
-#' # At your own measurements:
+#' # At new measurements:
 #' kb_predict_weight(fit, data.frame(diameter_mm = c(20, 40, 60)))
 #'
 #' # A new site, with between-site variation:

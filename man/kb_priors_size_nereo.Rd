@@ -12,10 +12,9 @@ diameter), \code{shape} (the Weibull shape), \code{sd_site}, \code{sd_year}, and
 \code{sd_site_year}.
 }
 \description{
-The default prior list for the \emph{Nereocystis luetkeana} size model. Edit
-individual entries and pass the list to the \code{priors} argument of
-\code{\link[=kb_fit_size_nereo]{kb_fit_size_nereo()}} to override defaults; unmodified entries keep their
-defaults.
+The default priors for the \emph{Nereocystis luetkeana} size model. To change a
+prior, pass a list of the entries to change to the \code{priors} argument of
+\code{\link[=kb_fit_size_nereo]{kb_fit_size_nereo()}}; the other entries keep their defaults.
 }
 \details{
 Each entry is named after the parameter it sets, as reported by \code{\link[=tidy]{tidy()}} and
@@ -24,8 +23,14 @@ shape and standard deviations are Exponential); only the hyperparameters can be
 changed.
 }
 \examples{
-priors <- kb_priors_size_nereo()
-priors$sd_site <- kb_prior_exponential(2)
+kb_priors_size_nereo()
+# Change one prior; the others keep their defaults:
+if (interactive()) {
+  kb_fit_size_nereo(
+    data_size_sim_nereo,
+    priors = list(sd_site = kb_prior_exponential(rate = 2))
+  )
+}
 }
 \seealso{
 Other priors:

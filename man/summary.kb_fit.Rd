@@ -65,10 +65,9 @@ of central posterior summaries.}
 of the interval limits.}
 }
 
-Population-level coefficients and random-effect standard deviations are always
-shown. The group-level deviations are included only when
-\code{include_random_effects = TRUE}, following the convention that \code{summary}
-reports the variance hyperparameters rather than the per-level effects.
+Population-level coefficients and random-effect standard deviations are
+always shown. The group-level deviations are included only when
+\code{include_random_effects = TRUE}.
 }
 \examples{
 summary(fit_weight_sim_nereo)

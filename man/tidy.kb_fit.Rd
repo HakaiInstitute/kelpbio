@@ -34,11 +34,13 @@ A tibble with one row per term and columns \code{term}, \code{estimate},
 \code{lower}, \code{upper}.
 }
 \description{
-Posterior summaries of the model terms: the population-level effects and the
-random-effect standard deviations, plus (when \code{include_random_effects = TRUE})
-the group-level deviations, each named by its level, as in \code{site_effect[otter_cove]}
-or \code{site_year_effect[otter_cove,2020]}. By default the per-level deviations are
-omitted, following the \code{broom.mixed} convention.
+Posterior summaries of the model terms.
+}
+\details{
+The terms are the population-level effects and the random-effect standard
+deviations. With \code{include_random_effects = TRUE}, the group-level deviations
+are added, each named by its level, as in \code{site_effect[otter_cove]} or
+\code{site_year_effect[otter_cove,2020]}.
 }
 \examples{
 tidy(fit_weight_sim_nereo)

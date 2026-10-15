@@ -25,8 +25,8 @@ pyrifera} weight model, with appropriate types and values.
 Required columns: whole-number \code{fronds} (> 0), numeric \code{weight_kg} (kg, > 0), and
 factor or character \code{site} and \code{year}, with no missing values.
 
-\code{fronds} is the frond count used as the size predictor (in the Hakai surveys,
-the number of fronds at least 1 m long with recorded biomass).
+\code{fronds} is the number of fronds reaching 1 m above the holdfast, used as the
+size predictor.
 }
 \examples{
 data <- data.frame(

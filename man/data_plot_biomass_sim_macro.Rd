@@ -7,7 +7,7 @@
 \format{
 A data frame with columns:
 \describe{
-\item{site}{Survey site, a factor (10 levels, invented names).}
+\item{site}{Survey site, a factor (10 levels).}
 \item{year}{Survey year, a factor (4 levels).}
 \item{estimate}{In situ wet biomass (kg/m²), a positive number.}
 \item{lower, upper}{Lower and upper 95\% compatibility limits of
@@ -19,17 +19,9 @@ data_plot_biomass_sim_macro
 }
 \description{
 A small simulated dataset of the in situ wet biomass of each site-year in
-\link{data_cover_biomass_sim_macro} (columns \code{site}, \code{year}, \code{estimate}, \code{lower},
-\code{upper}), one row per site-year, standing in for the output of
-\code{\link[=kb_predict_plot_biomass]{kb_predict_plot_biomass()}}, for runnable examples. It is one of five
-\emph{Macrocystis} datasets simulated together from the same ten sites, four
-years, and true site-year values, with parameters near those estimated from
-Hakai Institute surveys, so plot biomass composed from fits to the weight,
-size, and density datasets agrees with these estimates. Each estimate is the
-true plot biomass of its site-year with lognormal estimation error, which its
-limits understate slightly, as the cover biomass model allows for. The site
-names are invented. The data are not real survey data and are not intended
-for inference.
+\link{data_cover_biomass_sim_macro}, one row per site-year, in the format
+returned by \code{\link[=kb_predict_plot_biomass]{kb_predict_plot_biomass()}}, for runnable examples. One of five
+simulated \emph{Macrocystis} datasets with shared sites and years.
 }
 \seealso{
 \link{fit_cover_biomass_sim_macro} for a fit to this dataset.

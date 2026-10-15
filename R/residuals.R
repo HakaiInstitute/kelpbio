@@ -13,11 +13,6 @@
 #' dry:wet mass ratio (wet/dry) and the carbon fraction (carbon), and Normal on
 #' the log in situ biomass estimate (cover).
 #'
-#' A size residual is zero where the observation equals the value that
-#' maximises its likelihood with the shape or overdispersion held fixed: the
-#' Weibull scale for *Nereocystis* (which exceeds the mean when the shape is
-#' greater than 1), and the truncated mean for *Macrocystis*.
-#'
 #' @param object A `kb_fit` object.
 #' @param ... Unused.
 #'

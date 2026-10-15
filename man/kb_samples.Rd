@@ -38,11 +38,10 @@ A \code{posterior} \code{draws_rvars} object.
 The posterior draws of the effects a fitted model estimated.
 }
 \details{
-\code{kb_samples(fit)} is \code{as_draws(fit)}, so the other \code{posterior} conversions,
-such as \code{as_draws_df()}, and \code{summarise_draws()} accept a fit directly, as
-they do a brms or cmdstanr fit. \code{summarise_draws(fit)} reports each
-parameter's Rhat and effective sample size, and \code{nchains()}, \code{niterations()},
-\code{ndraws()}, \code{nvariables()}, and \code{variables()} return those of the draws.
+The \code{posterior} functions, such as \code{as_draws_df()}, \code{summarise_draws()},
+\code{nchains()}, \code{ndraws()}, and \code{variables()}, also accept a fit.
+\code{summarise_draws(fit)} reports each parameter's Rhat and effective sample
+size.
 }
 \examples{
 kb_samples(fit_weight_sim_nereo)

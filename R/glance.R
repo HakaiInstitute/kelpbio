@@ -21,12 +21,12 @@
 #'
 #' @inheritSection kb_converged Assessing convergence
 #' @inheritSection kb_converged Resolving convergence failure
-#' @seealso [kb_converged()], which produces the `converged` column.
+#' @seealso [kb_converged()]
 #'
 #' @return A one-row tibble with `n` (the number of observations), `K` (the
 #'   number of terms [tidy()] reports, excluding the per-level group effects),
 #'   `nchains`, `niters`, `nthin`, `ess_bulk`, `ess_tail`, `rhat`,
-#'   `perc_divergent`, and `converged`.
+#'   `perc_divergent`, and `converged` (from [kb_converged()]).
 #' @family generics
 #' @exportS3Method generics::glance
 #' @examples

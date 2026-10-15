@@ -5,25 +5,15 @@
 #' cross-validation (PSIS-LOO; Vehtari et al. 2017).
 #'
 #' @details
-#' Computed from the stored draws and [log_lik()], so the model is not refitted.
 #'
-#' The pointwise results (`$pointwise` and `loo::pareto_k_values()`) have one row
-#' per observation, in the order of the fitted data:
 #'
-#' - `elpd_loo` is the log density of the observation under a fit that left it
-#'   out. A low value marks an observation the model predicts poorly, such as an
-#'   outlier or a data error.
-#' - The Pareto k diagnostic measures how much the fit changes when the
-#'   observation is left out. A value above about 0.7 (the printed result gives
-#'   the exact threshold, which depends on the number of draws) marks an
-#'   influential observation, for which the PSIS-LOO estimate is also
-#'   unreliable.
+#' The pointwise results (`$pointwise` and `loo::pareto_k_values()`) have one
+#' row per observation, in the order of the fitted data. `elpd_loo` and the
+#' Pareto k diagnostic are described in [kb_influence()], which adds them to the
+#' data. A Pareto k above the threshold in the printed result also marks the
+#' PSIS-LOO estimate as unreliable.
 #'
-#' The log-likelihood is of the response as recorded, so [loo::loo_compare()] can
-#' compare fits to the same data, such as two forms of a model. It lists the
-#' fits from best to worst predictive accuracy: `elpd_diff` is each fit's
-#' difference from the best and `se_diff` its standard error. A difference small
-#' relative to its standard error gives no clear preference between the fits.
+#' Use [loo::loo_compare()] to compare fits to the same data.
 #'
 #' @param x A `kb_fit` object.
 #' @param ... Passed to `loo::loo()`, for example `cores`.

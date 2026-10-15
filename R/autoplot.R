@@ -1,8 +1,6 @@
 #' Autoplot Method for Predictions
 #'
-#' The conventional `ggplot2::autoplot` entry point for a `kb_predictions`
-#' object: a thin wrapper on [kb_plot_predictions()]. Dispatches on the
-#' prediction data frame, never on a fit.
+#' Plot a `kb_predictions` object, as [kb_plot_predictions()] does.
 #'
 #' @param object A `kb_predictions` object.
 #' @param ... Passed to [kb_plot_predictions()] (e.g. `x`, `log_axis`, `max_facets`).

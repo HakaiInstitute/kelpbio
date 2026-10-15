@@ -8,7 +8,7 @@
 #' mass.
 #'
 #' @details
-#' Each row is one dried tissue sample, as reported by the isotope lab:
+#' Each row is one dried tissue sample:
 #' `sample_mass_mg` is the mass of the sample analysed and `carbon_mass_ug` the
 #' carbon measured in it. The model's response is the carbon fraction,
 #' `carbon_mass_ug / 1000 / sample_mass_mg`. A warning gives the number of samples

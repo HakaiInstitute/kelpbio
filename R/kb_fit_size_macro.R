@@ -5,28 +5,20 @@
 #' @details
 #' The number of fronds reaching 1 m above the holdfast is modelled with a
 #' zero-truncated negative binomial likelihood, since the model describes plants
-#' with at least one such frond. The log mean before truncation (`intercept`) varies by
-#' site, by year, and by `site:year`; the overdispersion (`dispersion`) is
-#' common to all plants. Predictions report the mean of the truncated
-#' distribution: the expected frond count of a plant with at least one frond at
-#' 1 m.
-#'
-#' The site:year effect is set from the data: it is omitted when the data span a
-#' single year and included otherwise. When no site spans more than one year, or
-#' no year has more than one site, it is kept with a warning, since the
-#' site:year effect cannot then be interpreted separately from the site or year
-#' effect.
+#' with at least one such frond. The log mean before truncation (`intercept`)
+#' varies by site, by year, and by `site:year`; the overdispersion
+#' (`dispersion`) is common to all plants. Predictions report the mean of the
+#' truncated distribution.
 #'
 #' @inheritSection params Sampling
+#' @inheritSection params Site and year interaction
 #' @inheritParams params
 #' @param data A data frame of size observations, one row per plant (see
 #'   [kb_check_data_size_macro()] for the required columns).
 #' @param priors A named list of prior objects (see [kb_priors_size_macro()]),
-#'   or `NULL` to use the defaults. Supplied entries override the corresponding
-#'   defaults; unspecified entries keep their defaults.
-#' @param ... Additional arguments passed to [rstan::sampling()], including a
-#'   `control` list (merged over the `adapt_delta = 0.95` default); see the
-#'   `control` argument of [rstan::stan()] for the available entries.
+#'   or `NULL` to use the defaults. Entries not supplied keep their defaults.
+#' @param ... Additional arguments passed to [rstan::sampling()], such as
+#'   `control`.
 #'
 #' @return An object of class `c("kb_fit_size_macro", "kb_fit_size", "kb_fit")`.
 #' @family model

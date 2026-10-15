@@ -5,27 +5,20 @@
 #' of surveys.
 #'
 #' @details
-#' A survey's total is the expected biomass per m² of bed, the floor plus the
-#' canopy term at full cover for its site and year, times its tide-corrected
-#' canopy area. The mapped canopy is taken as the extent of the bed, so the floor
-#' applies over the canopy area only. The interval is for the expected total:
-#' it carries the uncertainty in the parameters and the site and year effects,
-#' not survey-to-survey variation. Dry biomass is the wet total times the expected
-#' dry:wet ratio from `wetdry`, and carbon the dry total times the expected
-#' carbon fraction from `carbon`, both pooled over the samples those fits were
-#' given.
+#' A survey's total is the expected biomass per m² at full cover for its site
+#' and year times its tide-corrected canopy area. The mapped canopy is taken as
+#' the extent of the bed, so no biomass is counted outside it. The interval is
+#' for the expected total: it carries the uncertainty in the parameters and the
+#' site and year effects, not survey-to-survey variation. Dry biomass is the
+#' wet total times the expected dry:wet ratio from `wetdry`, and carbon the dry
+#' total times the expected carbon fraction from `carbon`.
 #'
-#' A site or year absent from the cover fit's data follows `new_levels`, and
-#' `cover_support` shows what the fit has for each survey. With the default
-#' `"sample"`, the effect of an unseen site or year is drawn from its fitted
-#' distribution, once for all surveys naming it, so set a seed with `set.seed()`
-#' for reproducible intervals; `"average"` holds it at the typical site or year.
+#' With `new_levels = "sample"`, the effect of a new site or year is drawn once
+#' and shared by all surveys naming it.
 #'
-#' `sum_by` sums the survey totals within groups on each posterior draw before
-#' summarising, so the limits of a regional or yearly total are correct; summing
-#' the per-survey estimates or limits afterwards is not. Use `character(0)` for
-#' one total over all surveys. Two surveys of the same site in the same year would
-#' both count its mapped canopy, so a group holding them warns.
+#' Totals are summed within `sum_by` groups on each draw, so do not sum
+#' per-survey estimates or limits. Sum at most one survey per site-year; a group
+#' with more warns.
 #'
 #' @inheritParams params
 #' @param fit A `kb_fit_cover_biomass` object.
@@ -45,11 +38,10 @@
 #'   `new_data` to sum the survey totals within, `character(0)` to sum all of
 #'   them, or `NULL` (the default) for one total per survey.
 #' @param new_levels A string, one of `"sample"` (the default) or `"average"`,
-#'   controlling how a site or year absent from the cover fit's data is treated:
-#'   `"sample"` draws its effect from the fitted distribution, so the interval
-#'   includes the variation between sites or years, as suits a total for that
-#'   particular site and year; `"average"` holds it at zero (the typical site or
-#'   year).
+#'   giving how a site or year not in the cover fit is treated: `"sample"` draws
+#'   a new effect, so the interval includes the variation between sites or
+#'   years; `"average"` uses the typical site or year. `"sample"` gives a
+#'   different interval on each call; use `set.seed()` to reproduce it.
 #'
 #' @return A `kb_predictions` object. Without `sum_by`, the rows of `new_data`
 #'   with added `cover_support` (`"site, year"`, `"site"`, `"year"`, or `"none"`:

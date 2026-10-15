@@ -3,9 +3,8 @@
 #' The pointwise log-likelihood of the observed data, suitable for [loo::loo()].
 #'
 #' @details
-#' Computed from the stored draws by evaluating the model's likelihood at the
-#' observed data. Each value is the log density of the response as recorded (for
-#' example weight in kg, not log weight), so models of the same response can be
+#' Each value is the log density of the response as recorded (for example
+#' weight in kg, not log weight), so models of the same response can be
 #' compared with [loo::loo_compare()].
 #'
 #' @param object A `kb_fit` object.

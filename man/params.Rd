@@ -24,17 +24,15 @@
 cores.}
 
 \item{seed}{A whole number passed to \code{\link[rstan:sampling]{rstan::sampling()}} to make the fit
-reproducible, or \code{NULL} (the default). When \code{NULL}, a seed is drawn from R's
-RNG, so a preceding \code{set.seed()} also makes the fit reproducible; an explicit
-\code{seed} takes precedence over the RNG state.}
+reproducible, or \code{NULL} (the default). When \code{NULL}, a seed is drawn from
+R's RNG, so a preceding \code{set.seed()} also makes the fit reproducible.}
 
 \item{progress}{A string, one of \code{"bar"} (the default, a console progress
 bar), \code{"verbose"} (rstan's per-iteration output and diagnostic warnings), or
 \code{"none"} (silent). Controls fit-time console output only.}
 
-\item{progress_dir}{A string giving an existing directory in which to write a
-pollable progress artifact (read by \code{\link[=kb_progress]{kb_progress()}}), or \code{NULL} (the
-default) to write none.}
+\item{progress_dir}{A string giving an existing directory in which to record
+progress for \code{\link[=kb_progress]{kb_progress()}}, or \code{NULL} (the default) to record none.}
 
 \item{conf_level}{A number greater than 0 and less than 1 giving the
 compatibility-interval level.}
@@ -53,30 +51,22 @@ group-level random-effect terms in the output.}
 sample size per chain.}
 
 \item{max_perc_divergent}{A number giving the maximum acceptable percentage of
-saved draws that ended in a divergent transition. \code{0} requires a fit with no
-divergent transitions.}
+saved draws that ended in a divergent transition.}
 
 \item{by}{A character vector of grouping factors, \code{"site"}, \code{"year"}, or
 both, giving one row per fitted level (per observed site-year for both), or
 \code{NULL} for no grouping columns (the typical site and year).}
 
 \item{new_levels}{A string, one of \code{"average"} (the default) or \code{"sample"},
-controlling how random effects that are not conditioned on are treated
-(factors absent from the rows, and any new level not seen in the fit).
-\code{"average"} holds them at zero, giving the typical (median) group;
-\code{"sample"} draws a new random effect from \code{Normal(0, sd)}, widening the
-interval to include between-group variation, as suits a prediction for a
-particular unsurveyed site. Known levels are always conditioned on.
-\code{"sample"} draws fresh randomness on each call, so set a seed with
-\code{set.seed()} for a reproducible interval.}
+giving how a site or year that is new or absent from \code{new_data} is
+treated (sites and years in the fit use their estimated effects):
+\code{"average"} uses the typical site or year; \code{"sample"} draws a new effect,
+so the interval includes the variation between sites or years. \code{"sample"}
+gives a different interval on each call; use \code{set.seed()} to reproduce it.}
 
-\item{representative_site}{A character vector of site levels present in the
-fit, or \code{NULL} (the default). When supplied, a new or absent site takes the
-named sites' site effect (the per-draw average when several are named)
-instead of the \code{new_levels} treatment, and, in a fitted year, their
-site:year effect for that year (averaged over the named sites observed that
-year). A site:year effect none of them has, such as in a new year, follows
-\code{new_levels}.}
+\item{representative_site}{A character vector of sites in the fit whose
+effects a new site takes (averaged when several are named), or \code{NULL} (the
+default) to follow \code{new_levels}.}
 }
 \description{
 Default parameter descriptions which may be overridden in individual
@@ -89,30 +79,25 @@ A string is a non-missing character scalar.
 }
 \section{Sampling}{
 
-\code{niters} is the number of saved post-warmup draws per chain; warmup defaults to
-match \code{niters} and the post-warmup phase is thinned by \code{nthin}.
+Chains run in parallel by default. Set \code{options(mc.cores = 1)} (or pass
+\code{cores = 1}) on shared servers, in containers, or inside another parallel
+context.
 
-\code{progress} controls fit-time console output. The default \code{"bar"} shows a
-progress bar; \code{"verbose"} streams rstan's per-iteration output and its
-post-sampling diagnostic warnings; \code{"none"} is silent. \code{progress} changes only
-console output, never the fit; inspect convergence with \code{\link[=kb_converged]{kb_converged()}},
-\code{\link[=glance]{glance()}}, or \code{\link[=summary]{summary()}} in every mode.
+The sampler runs with \code{adapt_delta = 0.95} by default, which reduces
+divergences at the cost of slightly longer runtime. Override it, or set any
+other sampler control, by passing a \code{control} list through \code{...}, e.g.
+\code{control = list(adapt_delta = 0.99)}; only the entries supplied are changed.
+See the \code{control} argument of \code{\link[rstan:stan]{rstan::stan()}} for the full set of entries.
 
-Supply \code{progress_dir} (an existing directory) to have the fit write a progress
-record there, which \code{\link[=kb_progress]{kb_progress()}} reads to report the completed fraction
-from another R process (for example, to drive a progress indicator while the fit
-runs in the background).
+Check convergence with \code{\link[=kb_converged]{kb_converged()}}, \code{\link[=glance]{glance()}}, or \code{\link[=summary]{summary()}}.
+}
 
-Chains run in parallel by default (\code{cores = NULL} uses \code{getOption("mc.cores")},
-falling back to \code{chains}, capped at the available cores). Set
-\code{options(mc.cores = 1)} (or pass \code{cores = 1}) on shared servers, in containers,
-or inside another parallel context.
+\section{Site and year interaction}{
 
-The sampler runs with \code{adapt_delta = 0.95} by default, which reduces divergences
-at the cost of slightly longer runtime. Override it, or set any other sampler
-control, by passing a \code{control} list through \code{...}, e.g.
-\code{control = list(adapt_delta = 0.99)}; only the entries supplied are changed. See
-the \code{control} argument of \code{\link[rstan:stan]{rstan::stan()}} for the full set of entries.
+The site:year effect is included when the data span more than one year. If
+no site is surveyed in more than one year, or no year has more than one
+site, it is included with a warning, because it cannot then be distinguished
+from the site or year effect.
 }
 
 \keyword{internal}

@@ -23,8 +23,8 @@ a scalar point estimate (e.g. \code{median} or \code{mean}).}
 A \code{kb_predictions} object.
 }
 \description{
-A thin wrapper on \code{\link[=kb_predict_wetdry]{kb_predict_wetdry()}}: the expected dry:wet mass ratio as a
-single estimate.
+Summarise the expected dry:wet ratio as a single estimate. Equivalent to
+\code{\link[=kb_predict_wetdry]{kb_predict_wetdry()}}.
 }
 \examples{
 predict(fit_wetdry_sim_macro)

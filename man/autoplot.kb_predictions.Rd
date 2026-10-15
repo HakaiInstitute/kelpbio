@@ -15,9 +15,7 @@
 A \code{ggplot} object.
 }
 \description{
-The conventional \code{ggplot2::autoplot} entry point for a \code{kb_predictions}
-object: a thin wrapper on \code{\link[=kb_plot_predictions]{kb_plot_predictions()}}. Dispatches on the
-prediction data frame, never on a fit.
+Plot a \code{kb_predictions} object, as \code{\link[=kb_plot_predictions]{kb_plot_predictions()}} does.
 }
 \examples{
 fit <- fit_weight_sim_nereo

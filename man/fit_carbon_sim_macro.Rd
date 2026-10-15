@@ -12,10 +12,8 @@ An object of class
 fit_carbon_sim_macro
 }
 \description{
-A slim pre-fit carbon model, the result of \code{\link[=kb_fit_carbon_macro]{kb_fit_carbon_macro()}} on
-\link{data_carbon_sim_macro} with a reduced number of draws. Provided so the
-examples for the fit accessors, S3 methods, and prediction functions run
-quickly. It is fit to simulated data and is not intended for inference.
+A fit of \code{\link[=kb_fit_carbon_macro]{kb_fit_carbon_macro()}} to \link{data_carbon_sim_macro} with fewer draws
+than the default, for exploring the fit methods without running the sampler.
 }
 \seealso{
 \code{\link[=kb_fit_carbon_macro]{kb_fit_carbon_macro()}} and \link{data_carbon_sim_macro}.

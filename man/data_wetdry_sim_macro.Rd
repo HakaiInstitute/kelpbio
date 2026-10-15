@@ -16,11 +16,8 @@ A data frame with columns:
 data_wetdry_sim_macro
 }
 \description{
-A small simulated dataset of sample wet and dry masses (columns \code{wet_mass_g},
-\code{dry_mass_g}), one row per tissue sample, for runnable examples. It is
-simulated from the wet/dry model structure (a Beta dry:wet mass ratio with a
-mean and precision common to all samples), not real lab data, and is not
-intended for inference.
+A small simulated dataset of sample wet and dry masses, one row per tissue
+sample, for runnable examples.
 }
 \seealso{
 \link{fit_wetdry_sim_macro} for a fit to this dataset.

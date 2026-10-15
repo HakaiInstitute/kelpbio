@@ -11,10 +11,8 @@ An object of class \code{c("kb_fit_size_macro", "kb_fit_size", "kb_fit")}.
 fit_size_sim_macro
 }
 \description{
-A slim pre-fit size model, the result of \code{\link[=kb_fit_size_macro]{kb_fit_size_macro()}} on
-\link{data_size_sim_macro} with a reduced number of draws. Provided so the
-examples for the fit accessors, S3 methods, and prediction functions run
-quickly. It is fit to simulated data and is not intended for inference.
+A fit of \code{\link[=kb_fit_size_macro]{kb_fit_size_macro()}} to \link{data_size_sim_macro} with fewer draws than
+the default, for exploring the fit methods without running the sampler.
 }
 \seealso{
 \code{\link[=kb_fit_size_macro]{kb_fit_size_macro()}} and \link{data_size_sim_macro}.

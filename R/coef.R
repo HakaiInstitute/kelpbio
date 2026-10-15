@@ -1,6 +1,6 @@
 #' Coefficients of a Model Fit
 #'
-#' A wrapper on [tidy()] returning the model-term posterior summaries.
+#' Posterior summaries of the model terms, as returned by [tidy()].
 #'
 #' @param object A `kb_fit` object.
 #' @param ... Passed to [tidy()].

@@ -1,8 +1,9 @@
 #' Exponential Prior
 #'
 #' Construct an Exponential prior object to replace an entry of a `kb_priors_*()` list
-#' passed to the `priors` argument of the `kb_fit_*()` functions. Used for the standard
-#' deviation (scale) hyperparameters.
+#' passed to the `priors` argument of the `kb_fit_*()` functions. Used for
+#' positive parameters such as standard deviations, dispersion, shape, and
+#' precision.
 #'
 #' @param rate A positive number giving the rate.
 #'

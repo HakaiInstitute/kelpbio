@@ -26,22 +26,15 @@ columns and optional \code{site} and \code{year} columns, one row per prediction
 \item{...}{Unused.}
 
 \item{new_levels}{A string, one of \code{"average"} (the default) or \code{"sample"},
-controlling how random effects that are not conditioned on are treated
-(factors absent from the rows, and any new level not seen in the fit).
-\code{"average"} holds them at zero, giving the typical (median) group;
-\code{"sample"} draws a new random effect from \code{Normal(0, sd)}, widening the
-interval to include between-group variation, as suits a prediction for a
-particular unsurveyed site. Known levels are always conditioned on.
-\code{"sample"} draws fresh randomness on each call, so set a seed with
-\code{set.seed()} for a reproducible interval.}
+giving how a site or year that is new or absent from \code{new_data} is
+treated (sites and years in the fit use their estimated effects):
+\code{"average"} uses the typical site or year; \code{"sample"} draws a new effect,
+so the interval includes the variation between sites or years. \code{"sample"}
+gives a different interval on each call; use \code{set.seed()} to reproduce it.}
 
-\item{representative_site}{A character vector of site levels present in the
-fit, or \code{NULL} (the default). When supplied, a new or absent site takes the
-named sites' site effect (the per-draw average when several are named)
-instead of the \code{new_levels} treatment, and, in a fitted year, their
-site:year effect for that year (averaged over the named sites observed that
-year). A site:year effect none of them has, such as in a new year, follows
-\code{new_levels}.}
+\item{representative_site}{A character vector of sites in the fit whose
+effects a new site takes (averaged when several are named), or \code{NULL} (the
+default) to follow \code{new_levels}.}
 
 \item{conf_level}{A number greater than 0 and less than 1 giving the
 compatibility-interval level.}
@@ -62,21 +55,11 @@ area, and tide height, at each row of \code{new_data}, or at the observed survey
 when \code{new_data = NULL}.
 }
 \details{
-Each row is tide-corrected with the fitted \code{tide_height_slope} and capped at a cover of 1
-before the calibration is applied. A row with no canopy predicts the biomass
-floor, which is the same for every site and year. For curves over
-tide-corrected cover by site or year, build the rows with \code{\link[=kb_new_data]{kb_new_data()}}.
+Cover is tide-corrected and capped at 1. A row with no canopy predicts the
+biomass floor, which is the same for every site and year.
 
-Each row is resolved on its own: a \code{site} or \code{year} the model has seen is
-conditioned on its estimated effect, and a new or absent site or year follows
-\code{new_levels}. With the default \code{"average"}, an unseen site is the typical
-site; use \code{"sample"} for an interval that includes the variation between
-sites. For a new site, \code{representative_site} instead borrows the site effect of
-one or more named fitted sites (the per-draw average across several).
-
-When \code{new_data = NULL}, the observed data's \code{estimate}, \code{lower}, and \code{upper}
-columns (the in situ biomass) are replaced by the prediction; \code{\link[=augment]{augment()}}
-keeps them alongside the fitted values.
+When \code{new_data = NULL}, the in situ biomass columns are replaced by the
+prediction; use \code{\link[=augment]{augment()}} to keep both.
 }
 \examples{
 fit <- fit_cover_biomass_sim_nereo
@@ -87,7 +70,7 @@ kb_predict_cover_biomass(fit)
 # Curves over tide-corrected cover by site:
 kb_predict_cover_biomass(fit, kb_new_data(fit, by = "site"))
 
-# At your own surveys, including a new site:
+# At new surveys, including a new site:
 kb_predict_cover_biomass(
   fit,
   data.frame(

@@ -23,22 +23,15 @@
 \item{...}{Unused.}
 
 \item{new_levels}{A string, one of \code{"average"} (the default) or \code{"sample"},
-controlling how random effects that are not conditioned on are treated
-(factors absent from the rows, and any new level not seen in the fit).
-\code{"average"} holds them at zero, giving the typical (median) group;
-\code{"sample"} draws a new random effect from \code{Normal(0, sd)}, widening the
-interval to include between-group variation, as suits a prediction for a
-particular unsurveyed site. Known levels are always conditioned on.
-\code{"sample"} draws fresh randomness on each call, so set a seed with
-\code{set.seed()} for a reproducible interval.}
+giving how a site or year that is new or absent from \code{new_data} is
+treated (sites and years in the fit use their estimated effects):
+\code{"average"} uses the typical site or year; \code{"sample"} draws a new effect,
+so the interval includes the variation between sites or years. \code{"sample"}
+gives a different interval on each call; use \code{set.seed()} to reproduce it.}
 
-\item{representative_site}{A character vector of site levels present in the
-fit, or \code{NULL} (the default). When supplied, a new or absent site takes the
-named sites' site effect (the per-draw average when several are named)
-instead of the \code{new_levels} treatment, and, in a fitted year, their
-site:year effect for that year (averaged over the named sites observed that
-year). A site:year effect none of them has, such as in a new year, follows
-\code{new_levels}.}
+\item{representative_site}{A character vector of sites in the fit whose
+effects a new site takes (averaged when several are named), or \code{NULL} (the
+default) to follow \code{new_levels}.}
 }
 \value{
 A draws-by-observations (\verb{D x N}) matrix.
@@ -47,22 +40,25 @@ A draws-by-observations (\verb{D x N}) matrix.
 Draws of the expected response.
 }
 \details{
-Each draw is the expected response given that draw's parameters, where \code{mu} is
-the linear predictor: for weight, \code{exp(mu + sd_residual^2 / 2)} (\emph{Nereocystis}) or
-\code{exp(mu)} (\emph{Macrocystis}); for size, \code{exp(mu)} (\emph{Nereocystis}) or the mean of
-the zero-truncated distribution (\emph{Macrocystis}); for density, the expected
-count on the row's \code{area_m2} (1 m² when absent), \code{(1 - zi) * exp(mu)} with \code{zi} the
-zero-inflation probability (\emph{Nereocystis}) or \code{exp(mu)} (\emph{Macrocystis}); for
-wet/dry, the mean dry:wet ratio \code{inv_logit(mu)}; for carbon, the mean carbon
-fraction \code{inv_logit(mu)}; for cover biomass, the wet biomass per m² \code{exp(mu)},
-without the estimation error of the in situ estimate. For
-draws that include observation noise, use \code{\link[=posterior_predict]{posterior_predict()}}.
+Each draw is the expected response given that draw's parameters:
+\itemize{
+\item \emph{Nereocystis} weight: the lognormal mean.
+\item \emph{Macrocystis} weight: the Gamma mean.
+\item \emph{Nereocystis} size: the Weibull mean.
+\item \emph{Macrocystis} size: the mean of the zero-truncated negative binomial.
+\item Density: the expected count on the row's \code{area_m2} (1 m² when absent),
+including the zero inflation for \emph{Nereocystis}.
+\item Wet/dry: the mean dry:wet ratio.
+\item Carbon: the mean carbon fraction.
+\item Cover biomass: the wet biomass per m², without the estimation error of the
+in situ estimate.
+}
 
-Conditioning is inferred from the grouping columns present in \code{new_data}: a
-\code{site} (and optionally \code{year}) column with known levels is conditioned on;
-factors with no column are handled by \code{new_levels}. With \code{new_data = NULL} the
-observed data is used and conditioned on its site and year, so the central
-estimate agrees with \code{\link[=augment]{augment()}}.
+For draws that include observation noise, use \code{\link[=posterior_predict]{posterior_predict()}}.
+
+A \code{site} (and optionally \code{year}) column in \code{new_data} with levels in the fit
+gives predictions for those levels. With \code{new_data = NULL} the observed data
+is used, with its sites and years.
 }
 \examples{
 ep <- posterior_epred(fit_weight_sim_nereo)

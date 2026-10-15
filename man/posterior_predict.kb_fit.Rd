@@ -25,51 +25,40 @@ a cover fit), or
 \item{...}{Unused.}
 
 \item{new_levels}{A string, one of \code{"average"} (the default) or \code{"sample"},
-controlling how random effects that are not conditioned on are treated
-(factors absent from the rows, and any new level not seen in the fit).
-\code{"average"} holds them at zero, giving the typical (median) group;
-\code{"sample"} draws a new random effect from \code{Normal(0, sd)}, widening the
-interval to include between-group variation, as suits a prediction for a
-particular unsurveyed site. Known levels are always conditioned on.
-\code{"sample"} draws fresh randomness on each call, so set a seed with
-\code{set.seed()} for a reproducible interval.}
+giving how a site or year that is new or absent from \code{new_data} is
+treated (sites and years in the fit use their estimated effects):
+\code{"average"} uses the typical site or year; \code{"sample"} draws a new effect,
+so the interval includes the variation between sites or years. \code{"sample"}
+gives a different interval on each call; use \code{set.seed()} to reproduce it.}
 
-\item{representative_site}{A character vector of site levels present in the
-fit, or \code{NULL} (the default). When supplied, a new or absent site takes the
-named sites' site effect (the per-draw average when several are named)
-instead of the \code{new_levels} treatment, and, in a fitted year, their
-site:year effect for that year (averaged over the named sites observed that
-year). A site:year effect none of them has, such as in a new year, follows
-\code{new_levels}.}
+\item{representative_site}{A character vector of sites in the fit whose
+effects a new site takes (averaged when several are named), or \code{NULL} (the
+default) to follow \code{new_levels}.}
 }
 \value{
 A draws-by-observations (\verb{D x N}) matrix.
 }
 \description{
-Draws from the posterior predictive distribution: replicate responses (weights,
-plant sizes, transect counts, dry:wet ratios, carbon fractions, or in situ
-biomass estimates) carrying both parameter uncertainty and observation noise from
-the model's likelihood. With \code{new_data = NULL} the replicates are at the
-observed data, as plotted by \link[=pp_check.kb_fit]{pp_check()}.
+Draws from the posterior predictive distribution: replicate responses
+(weights, plant sizes, transect counts, dry:wet ratios, carbon fractions, or
+in situ biomass estimates) carrying both parameter uncertainty and
+observation noise from the model's likelihood. With \code{new_data = NULL} the
+replicates are at the observed data, as plotted by
+\link[=pp_check.kb_fit]{pp_check()}.
 }
 \details{
-For supplied \code{new_data}, conditioning is inferred from the grouping columns
-present (see \code{\link[=posterior_epred]{posterior_epred()}}).
+Site and year columns in \code{new_data} are handled as in \code{\link[=posterior_epred]{posterior_epred()}}.
 
 The observation noise follows the fitted likelihood: Normal on log weight
 (\emph{Nereocystis} weight), Gamma (\emph{Macrocystis} weight), Weibull (\emph{Nereocystis}
-size), zero-truncated negative binomial (\emph{Macrocystis} size, so every draw is a
-whole number of at least 1), zero-inflated negative binomial (\emph{Nereocystis}
-density), negative binomial (\emph{Macrocystis} density), Beta (wet/dry and
-carbon, so every draw lies between 0 and 1), and lognormal (cover). Density
-draws are counts on each row's \code{area_m2}, or on 1 m² when \code{new_data} has no
-\code{area_m2} column. Cover draws are in situ biomass estimates whose log-scale SD
-is \code{error_scaling} times that implied by the row's \code{lower} and \code{upper} (at the
-fit's \code{conf_level}), so cover \code{new_data} must carry those columns.
+size), zero-truncated negative binomial (\emph{Macrocystis} size), zero-inflated
+negative binomial (\emph{Nereocystis} density), negative binomial (\emph{Macrocystis}
+density), Beta (wet/dry and carbon), and lognormal (cover). Density draws are
+counts on each row's \code{area_m2}, or on 1 m² when \code{new_data} has no \code{area_m2}
+column. For a cover biomass fit, \code{new_data} must include \code{lower} and \code{upper}
+(see \code{\link[=kb_fit_cover_biomass_nereo]{kb_fit_cover_biomass_nereo()}}).
 
-The observation noise is drawn in R, for every \code{new_data} including \code{NULL}, so
-repeated calls return different replicates. Set a seed with \code{set.seed()} for
-reproducible draws.
+Repeated calls return different draws; use \code{set.seed()} to reproduce them.
 }
 \examples{
 set.seed(1)

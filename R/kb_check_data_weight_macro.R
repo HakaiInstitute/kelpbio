@@ -7,8 +7,8 @@
 #' factor or character `site` and `year`, with no missing values.
 #'
 #' @details
-#' `fronds` is the frond count used as the size predictor (in the Hakai surveys,
-#' the number of fronds at least 1 m long with recorded biomass).
+#' `fronds` is the number of fronds reaching 1 m above the holdfast, used as the
+#' size predictor.
 #'
 #' @param data A data frame of weight observations, one row per plant.
 #' @param x_name A string naming `data` in error messages.

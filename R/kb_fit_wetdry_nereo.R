@@ -17,11 +17,9 @@
 #' @param data A data frame of wet/dry observations, one row per sample (see
 #'   [kb_check_data_wetdry_nereo()] for the required columns).
 #' @param priors A named list of prior objects (see [kb_priors_wetdry_nereo()]),
-#'   or `NULL` to use the defaults. Supplied entries override the corresponding
-#'   defaults; unspecified entries keep their defaults.
-#' @param ... Additional arguments passed to [rstan::sampling()], including a
-#'   `control` list (merged over the `adapt_delta = 0.95` default); see the
-#'   `control` argument of [rstan::stan()] for the available entries.
+#'   or `NULL` to use the defaults. Entries not supplied keep their defaults.
+#' @param ... Additional arguments passed to [rstan::sampling()], such as
+#'   `control`.
 #'
 #' @return An object of class
 #'   `c("kb_fit_wetdry_nereo", "kb_fit_wetdry", "kb_fit")`.

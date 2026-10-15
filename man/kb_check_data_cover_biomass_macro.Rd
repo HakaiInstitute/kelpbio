@@ -43,8 +43,8 @@ have \code{estimate}, \code{lower}, or \code{upper} columns, since the response 
 \code{biomass}.
 
 \code{biomass} holds the in situ wet biomass (kg per m²) of each site-year and its
-compatibility limits, such as the output of a biomass prediction. Other
-columns of either data frame are ignored.
+compatibility limits, such as wet biomass from \code{\link[=kb_predict_plot_biomass]{kb_predict_plot_biomass()}}.
+Other columns of either data frame are ignored.
 }
 \examples{
 data <- data.frame(

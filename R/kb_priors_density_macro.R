@@ -1,9 +1,8 @@
 #' Default Priors for the Macrocystis Density Model
 #'
-#' The default prior list for the *Macrocystis pyrifera* density model. Edit
-#' individual entries and pass the list to the `priors` argument of
-#' [kb_fit_density_macro()] to override defaults; unmodified entries keep their
-#' defaults.
+#' The default priors for the *Macrocystis pyrifera* density model. To change a
+#' prior, pass a list of the entries to change to the `priors` argument of
+#' [kb_fit_density_macro()]; the other entries keep their defaults.
 #'
 #' Each entry is named after the parameter it sets, as reported by [tidy()] and
 #' [kb_model_describe()]. The prior family of each entry is fixed (the intercept is Normal, the
@@ -17,8 +16,14 @@
 #' @export
 #'
 #' @examples
-#' priors <- kb_priors_density_macro()
-#' priors$dispersion <- kb_prior_exponential(2)
+#' kb_priors_density_macro()
+#' # Change one prior; the others keep their defaults:
+#' if (interactive()) {
+#'   kb_fit_density_macro(
+#'     data_density_sim_macro,
+#'     priors = list(dispersion = kb_prior_exponential(rate = 2))
+#'   )
+#' }
 kb_priors_density_macro <- function() {
   list(
     intercept = kb_prior_normal(mean = 0, sd = 2),
