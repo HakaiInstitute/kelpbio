@@ -4,7 +4,8 @@
 #' pyrifera* density model, with appropriate types and values.
 #'
 #' Required columns: whole-number `plants` (>= 0), numeric `area_m2` (m², > 0),
-#' and factor or character `site` and `year`, with no missing values.
+#' factor or character `site`, and factor, character, or whole-number `year`,
+#' with no missing values.
 #'
 #' @details
 #' Each row is one transect: `plants` is the number of plants counted on it and
@@ -23,7 +24,7 @@
 #' @examples
 #' data <- data.frame(
 #'   plants = c(15, 3), area_m2 = c(40, 60), site = factor(c("a", "b")),
-#'   year = factor(c("2020", "2021"))
+#'   year = c(2020, 2021)
 #' )
 #' kb_check_data_density_macro(data)
 kb_check_data_density_macro <- function(

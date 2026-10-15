@@ -28,12 +28,14 @@ in situ biomass to pair with it.
 }
 \details{
 Required columns of \code{data}: numeric \code{canopy_area_m2} (m², >= 0),
-\code{plot_area_m2} (m², > 0 and at least \code{canopy_area_m2}), and \code{tide_height_m}
-(m), and factor or character \code{site} and \code{year}, with no missing values.
+\code{plot_area_m2} (m², > 0 and at least \code{canopy_area_m2}), \code{tide_height_m}
+(m), factor or character \code{site}, and factor, character, or whole-number
+\code{year}, with no missing values.
 
-Required columns of \code{biomass}: factor or character \code{site} and \code{year}, one row
-per site-year, and numeric \code{estimate}, \code{lower}, and \code{upper} (kg/m², > 0, with
-\verb{lower <= estimate <= upper} and \code{lower < upper}), with no missing values.
+Required columns of \code{biomass}: factor or character \code{site} and factor,
+character, or whole-number \code{year}, one row per site-year, and numeric
+\code{estimate}, \code{lower}, and \code{upper} (kg/m², > 0, with \verb{lower <= estimate <= upper}
+and \code{lower < upper}), with no missing values.
 
 Each row of \code{data} is one drone survey of a plot. \code{canopy_area_m2} is the
 canopy area the drone imagery delineated within the plot, \code{plot_area_m2} the

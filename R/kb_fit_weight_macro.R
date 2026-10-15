@@ -63,6 +63,7 @@ kb_fit_weight_macro <- function(
     progress = progress,
     progress_dir = progress_dir
   )
+  data <- year_as_factor(data)
   site_year <- site_year_structure(data)
   notify_site_year(site_year, progress = progress)
 

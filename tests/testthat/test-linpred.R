@@ -181,6 +181,18 @@ test_that("data_linpred rejects empty new_data and missing site or year", {
   expect_equal(res$group_vars, "year")
 })
 
+test_that("a numeric year in new_data names the fitted level and becomes a factor", {
+  year <- size_nereo_fit$meta$year_levels[1]
+  numeric <- data_linpred(size_nereo_fit, data.frame(year = as.numeric(year)), "average")
+  character <- data_linpred(size_nereo_fit, data.frame(year = year), "average")
+  expect_identical(numeric$grid$year, factor(year))
+  expect_equal(numeric$linpred, character$linpred)
+  expect_error(
+    data_linpred(size_nereo_fit, data.frame(year = 2020.5), "average"),
+    "whole numbers"
+  )
+})
+
 test_that("new_data errors name the verb the user called", {
   err <- expect_error(
     kb_predict_weight(weight_nereo_fit, data.frame(diameter_mm = 30, site = NA))

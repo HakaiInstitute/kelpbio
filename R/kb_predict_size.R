@@ -24,7 +24,8 @@
 #' @inheritParams params
 #' @param fit A `kb_fit_size` object.
 #' @param new_data A data frame with optional `site` and `year` columns, one row
-#'   per prediction, or `NULL` to predict at the observed data.
+#'   per prediction, or `NULL` to predict at the observed data. A numeric `year`
+#'   is converted to a factor.
 #' @param ... Unused.
 #'
 #' @return A `kb_predictions` object: the rows of `new_data` with added

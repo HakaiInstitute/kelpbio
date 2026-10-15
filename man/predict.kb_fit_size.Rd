@@ -19,7 +19,8 @@
 \item{object}{A \code{kb_fit_size} object.}
 
 \item{new_data}{A data frame with optional \code{site} and \code{year} columns, one row
-per prediction, or \code{NULL} to predict at the observed data.}
+per prediction, or \code{NULL} to predict at the observed data. A numeric \code{year}
+is converted to a factor.}
 
 \item{...}{Unused.}
 

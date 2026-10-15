@@ -22,7 +22,7 @@ priors) is the one `kb_model_describe()` reports, pinned by
 
 ### Requirement: Input data
 
-The required columns SHALL be, with `site` and `year` (where required) character or factor and no missing or infinite values in any required column. A column measured in a unit SHALL name the unit as a suffix (`_mm`, `_kg`, `_m2`); counts and grouping columns carry no suffix.
+The required columns SHALL be, with `site` (where required) character or factor, `year` (where required) character, factor, or whole-number numeric, and no missing or infinite values in any required column. This applies to the `site` and `year` of cover biomass `biomass` too. A numeric `year` SHALL name the level of the same digits, so 2020 and `"2020"` are one year, and the fit SHALL hold it, in its stored data and its year effects, as a factor whose levels follow numeric order. A column measured in a unit SHALL name the unit as a suffix (`_mm`, `_kg`, `_m2`); counts and grouping columns carry no suffix.
 
 - *Nereocystis* weight: `diameter_mm` (sub-bulb diameter, mm, > 0), `weight_kg` (kg, > 0), `site`, and `year`.
 - *Macrocystis* weight: `fronds` (a positive whole number), `weight_kg` (kg, > 0), `site`, and `year`.
@@ -39,6 +39,18 @@ The required columns SHALL be, with `site` and `year` (where required) character
 #### Scenario: Valid data passes
 - **WHEN** a data check is called on data meeting the requirements
 - **THEN** it returns the data invisibly with no message
+
+#### Scenario: A numeric year is a level
+- **WHEN** a data check or fit function is given `year` as whole numbers
+- **THEN** it is accepted, and the fit's stored data and year effects hold `year` as a factor with the levels the same years give as character
+
+#### Scenario: A numeric year pairs with a character year
+- **WHEN** cover biomass surveys give a site-year's year as 2020 and `biomass` gives it as `"2020"`
+- **THEN** the survey is paired with that biomass
+
+#### Scenario: A fractional year errors
+- **WHEN** `year` in `data` or `biomass` holds a value that is not a whole number, such as 2020.5
+- **THEN** it errors naming the column
 
 #### Scenario: A bad column errors naming it
 - **WHEN** a required column is missing, of the wrong type, out of range, or contains `NA`
