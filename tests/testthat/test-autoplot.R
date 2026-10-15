@@ -3,4 +3,8 @@ test_that("autoplot forwards to kb_plot_predictions and returns a ggplot", {
   gg <- ggplot2::autoplot(p, x = "site")
   expect_s3_class(gg, "ggplot")
   expect_identical(gg$labels$x, "Site")
+  expect_equal(
+    ggplot2::layer_data(gg),
+    ggplot2::layer_data(kb_plot_predictions(p, x = "site"))
+  )
 })
