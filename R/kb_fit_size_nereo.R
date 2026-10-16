@@ -3,10 +3,13 @@
 #' Fit a size-distribution model for *Nereocystis luetkeana* via Stan.
 #'
 #' @details
-#' Maximum sub-bulb diameter (mm) is modelled with a Weibull likelihood
-#' parameterised by its mean. The log mean diameter (`intercept`) varies by site,
-#' by year, and by `site:year`; the Weibull shape (`shape`) is common to
-#' all plants.
+#' Maximum sub-bulb diameter (mm) is modelled with a Weibull likelihood with
+#' mean `mu` and shape `shape`, common to all plants, so `mu` is the expected
+#' diameter.
+#'
+#' `mu` varies by site and year, `log(mu) = intercept + site_effect +
+#' year_effect + site_year_effect`, so `intercept` is the log expected
+#' diameter at a typical site and year.
 #'
 #' @inheritSection params Sampling
 #' @inheritSection params Site and year interaction

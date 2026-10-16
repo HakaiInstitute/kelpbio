@@ -12,7 +12,7 @@ kb_check_data_wetdry_nereo(
 \arguments{
 \item{data}{A data frame of wet/dry observations, one row per sample.}
 
-\item{x_name}{A string naming \code{data} in error messages.}
+\item{x_name}{A string naming the data for error messages.}
 }
 \value{
 \code{data}, invisibly.

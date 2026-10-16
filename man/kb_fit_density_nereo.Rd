@@ -29,23 +29,23 @@ supplied keep their defaults.}
 \item{...}{Additional arguments passed to \code{\link[rstan:sampling]{rstan::sampling()}}, such as
 \code{control}.}
 
-\item{prior_only}{A flag specifying whether to sample from the priors only
-(the likelihood is switched off), for prior predictive checks.}
+\item{prior_only}{A flag specifying whether to sample from the priors only,
+for prior predictive checks.}
 
 \item{chains}{A whole number of MCMC chains.}
 
-\item{niters}{A whole number of saved post-warmup draws per chain, at least 2
-(warmup defaults to match).}
+\item{niters}{A whole number of saved post-warmup draws per chain (minimum
+2; number of warmup draws defaults to match).}
 
-\item{nthin}{A whole number giving the thinning interval.}
+\item{nthin}{A whole number of the thinning interval.}
 
-\item{cores}{A whole number of cores for parallel chains, or \code{NULL} to use
-\code{getOption("mc.cores")} (falling back to \code{chains}), capped at the available
-cores.}
+\item{cores}{A whole number of cores used to sample chains in parallel, or
+\code{NULL} to use \code{getOption("mc.cores")} if set or \code{chains} if not. Capped at
+the number of available cores.}
 
 \item{seed}{A whole number passed to \code{\link[rstan:sampling]{rstan::sampling()}} to make the fit
-reproducible, or \code{NULL} (the default). When \code{NULL}, a seed is drawn from
-R's RNG, so a preceding \code{set.seed()} also makes the fit reproducible.}
+reproducible, or \code{NULL} (the default, which uses a random seed). A
+preceding \code{set.seed()} also makes the fit reproducible.}
 
 \item{progress}{A string, one of \code{"bar"} (the default, a console progress
 bar), \code{"verbose"} (rstan's per-iteration output and diagnostic warnings), or
@@ -62,19 +62,27 @@ An object of class
 Fit a stipe-density model for \emph{Nereocystis luetkeana} via Stan.
 }
 \details{
-The number of stipes on a transect is modelled with a zero-inflated negative
-binomial likelihood. The expected count is the transect area times the stipe
-density, so \code{area_m2} enters as an offset. The log density (\code{intercept}, log
-stipes per m² on occupied transects at a typical site and year) varies by
-site, by year, and by \code{site:year}. A transect is unoccupied (a structural
-zero) with a probability whose logit is \code{logit_zero_inflation}, common to
-all transects; an occupied transect can still count no stipes. The
-overdispersion (\code{dispersion}) is also common to all transects. Predictions
-report the expected density over all transects, occupied or not.
+The number of stipes on a transect is modelled with a zero-inflated
+negative binomial likelihood, which combines two processes:
+\itemize{
+\item Occupancy: a transect is unoccupied, and so counts no stipes (a
+structural zero), with a probability whose logit is
+\code{logit_zero_inflation}, common to all transects.
+\item Count: on an occupied transect, the count is negative binomial with mean
+\code{mu} and overdispersion \code{dispersion}, common to all transects, so an
+occupied transect can still count no stipes (a sampling zero).
+}
+
+\code{mu} is the transect area times the stipe density on occupied transects,
+\code{mu = area_m2 * density}, and \code{density} varies by site and year,
+\code{log(density) = intercept + site_effect + year_effect + site_year_effect},
+so \code{intercept} is the log stipe density (stipes per m²) at a typical site
+and year. Predictions report the expected density over all transects,
+occupied or not.
 }
 \section{Sampling}{
 
-Chains run in parallel by default. Set \code{options(mc.cores = 1)} (or pass
+Chains are run in parallel by default. Set \code{options(mc.cores = 1)} (or pass
 \code{cores = 1}) on shared servers, in containers, or inside another parallel
 context.
 

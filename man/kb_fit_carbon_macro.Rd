@@ -28,23 +28,23 @@ or \code{NULL} to use the defaults. Entries not supplied keep their defaults.}
 \item{...}{Additional arguments passed to \code{\link[rstan:sampling]{rstan::sampling()}}, such as
 \code{control}.}
 
-\item{prior_only}{A flag specifying whether to sample from the priors only
-(the likelihood is switched off), for prior predictive checks.}
+\item{prior_only}{A flag specifying whether to sample from the priors only,
+for prior predictive checks.}
 
 \item{chains}{A whole number of MCMC chains.}
 
-\item{niters}{A whole number of saved post-warmup draws per chain, at least 2
-(warmup defaults to match).}
+\item{niters}{A whole number of saved post-warmup draws per chain (minimum
+2; number of warmup draws defaults to match).}
 
-\item{nthin}{A whole number giving the thinning interval.}
+\item{nthin}{A whole number of the thinning interval.}
 
-\item{cores}{A whole number of cores for parallel chains, or \code{NULL} to use
-\code{getOption("mc.cores")} (falling back to \code{chains}), capped at the available
-cores.}
+\item{cores}{A whole number of cores used to sample chains in parallel, or
+\code{NULL} to use \code{getOption("mc.cores")} if set or \code{chains} if not. Capped at
+the number of available cores.}
 
 \item{seed}{A whole number passed to \code{\link[rstan:sampling]{rstan::sampling()}} to make the fit
-reproducible, or \code{NULL} (the default). When \code{NULL}, a seed is drawn from
-R's RNG, so a preceding \code{set.seed()} also makes the fit reproducible.}
+reproducible, or \code{NULL} (the default, which uses a random seed). A
+preceding \code{set.seed()} also makes the fit reproducible.}
 
 \item{progress}{A string, one of \code{"bar"} (the default, a console progress
 bar), \code{"verbose"} (rstan's per-iteration output and diagnostic warnings), or
@@ -61,19 +61,19 @@ An object of class
 Fit a carbon-fraction model for \emph{Macrocystis pyrifera} via Stan.
 }
 \details{
-The carbon fraction of each dried sample, \code{carbon_mass_ug / 1000 / sample_mass_mg}, is modelled with a Beta likelihood parameterised by its mean
-and precision. The logit mean fraction (\code{intercept})
-and the precision (\code{precision}) are common to all samples, so the model
-estimates one carbon fraction of dry mass for the population of samples
-supplied.
+The carbon fraction of each dried sample, its carbon mass divided by its
+mass (\code{carbon_mass_ug} converted to mg, divided by \code{sample_mass_mg}), is
+modelled with a Beta likelihood with mean \code{mu} and precision \code{precision},
+both common to all samples, so \code{mu} is the expected fraction and
+\code{logit(mu) = intercept}.
 
 Samples are pooled over the months, sites, and tissues they come from. To
-estimate the fraction for a particular season, fit the model to that season's
-samples only.
+estimate the fraction for a particular season, fit the model to that
+season's samples only.
 }
 \section{Sampling}{
 
-Chains run in parallel by default. Set \code{options(mc.cores = 1)} (or pass
+Chains are run in parallel by default. Set \code{options(mc.cores = 1)} (or pass
 \code{cores = 1}) on shared servers, in containers, or inside another parallel
 context.
 

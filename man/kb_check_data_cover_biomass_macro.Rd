@@ -16,7 +16,7 @@ kb_check_data_cover_biomass_macro(
 \item{biomass}{A data frame of in situ wet biomass, one row per site-year, or
 \code{NULL} to check \code{data} only.}
 
-\item{x_name}{A string naming \code{data} in error messages.}
+\item{x_name}{A string naming the data for error messages.}
 }
 \value{
 \code{data}, invisibly.

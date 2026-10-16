@@ -4,29 +4,29 @@
 #'
 #' @details
 #' Log wet weight (kg) is modelled with a Normal likelihood with mean `log(mu)`
-#' and standard deviation `sd_residual`. `form` sets `mu` as a function of
-#' sub-bulb diameter, with `x` the `diameter_mm` divided by the geometric mean
-#' diameter of the data:
+#' and standard deviation `sd_residual`, so `log(mu)` is the expected log
+#' weight. `form` sets `mu` as a function of sub-bulb diameter, with `x` the
+#' `diameter_mm` divided by the geometric mean diameter of the data:
 #'
 #' - `"packard_floor"` (the default):
-#'   `mu = weight_floor + exp(eta) * x^diameter_power`, the three-parameter
+#'   `mu = weight_floor + alpha * x^diameter_power`, the three-parameter
 #'   power function of Packard (2023). `weight_floor` makes the relationship
 #'   curve on log-log axes: the local allometric exponent rises with plant
 #'   size and levels off toward `diameter_power` as the floor's share of
 #'   weight shrinks.
-#' - `"power"`: `mu = exp(eta) * x^diameter_power`, a power law, which is a
+#' - `"power"`: `mu = alpha * x^diameter_power`, a power law, which is a
 #'   straight line on log-log axes.
 #'
-#' The linear predictor is
-#' `eta = intercept + site_effect + year_effect + site_year_effect`, so the
-#' site, year, and site:year effects scale the size-dependent part of the
-#' weight, while `weight_floor` is common to all sites and years.
+#' The allometric coefficient `alpha` varies by site and year,
+#' `log(alpha) = intercept + site_effect + year_effect + site_year_effect`, so
+#' these effects scale the size-dependent part of the weight, while
+#' `weight_floor` is common to all sites and years.
 #'
 #' When `data` has a `stipes_m2` column (stipes per m², a site-year value),
-#' `eta` also includes `density_slope` times density standardised by its mean
-#' and SD over the fitted plants. Site-years without a recorded density are
-#' assigned the mean density. The density term is omitted when fewer than two
-#' distinct site-year densities are recorded.
+#' `log(alpha)` also includes `density_slope` times density standardised by
+#' its mean and SD over the fitted plants. Site-years without a recorded
+#' density are assigned the mean density. The density term is omitted when
+#' fewer than two distinct site-year densities are recorded.
 #'
 #' @inheritSection params Sampling
 #' @inheritSection params Site and year interaction

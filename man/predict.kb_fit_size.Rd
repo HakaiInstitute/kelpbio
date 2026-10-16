@@ -23,12 +23,20 @@ per prediction, or \code{NULL} to predict at the observed data.}
 
 \item{...}{These dots are for future extensions and must be empty.}
 
-\item{new_levels}{A string, one of \code{"average"} (the default) or \code{"sample"},
-giving how a site or year that is new or absent from \code{new_data} is
-treated (sites and years in the fit use their estimated effects):
-\code{"average"} uses the typical site or year; \code{"sample"} draws a new effect,
-so the interval includes the variation between sites or years. \code{"sample"}
-gives a different interval on each call; use \code{set.seed()} to reproduce it.}
+\item{new_levels}{A string giving how uncertainty is shown for a site or
+year not in the fit, or when \code{new_data} has no \code{site} or \code{year} column.
+Sites and years in the fit always use their own estimates. One of:
+\itemize{
+\item \code{"average"} (the default): the typical site or year. The interval
+covers uncertainty in the typical value only. Use it to describe an
+average site or year.
+\item \code{"sample"}: a new effect for each new site or year,
+drawn from the estimated variation among sites or among years. The
+estimate is about the same, but the interval also includes that
+variation. Use it to get realistic uncertainty about a particular site
+or year the model has no data on. The interval varies slightly between
+calls; use \code{set.seed()} to reproduce it.
+}}
 
 \item{representative_site}{A character vector of sites in the fit whose
 effects a new site takes (averaged when several are named), or \code{NULL} (the

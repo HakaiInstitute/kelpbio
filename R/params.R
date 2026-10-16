@@ -8,7 +8,7 @@
 #' A string is a non-missing character scalar.
 #'
 #' @section Sampling:
-#' Chains run in parallel by default. Set `options(mc.cores = 1)` (or pass
+#' Chains are run in parallel by default. Set `options(mc.cores = 1)` (or pass
 #' `cores = 1`) on shared servers, in containers, or inside another parallel
 #' context.
 #'
@@ -30,19 +30,19 @@
 #' @param fit A `kb_fit` object.
 #' @param object A `kb_fit` object.
 #' @param x A `kb_fit` object.
-#' @param x_name A string naming `data` in error messages.
-#' @param prior_only A flag specifying whether to sample from the priors only
-#'   (the likelihood is switched off), for prior predictive checks.
+#' @param x_name A string naming the data for error messages.
+#' @param prior_only A flag specifying whether to sample from the priors only,
+#'   for prior predictive checks.
 #' @param chains A whole number of MCMC chains.
-#' @param niters A whole number of saved post-warmup draws per chain, at least 2
-#'   (warmup defaults to match).
-#' @param nthin A whole number giving the thinning interval.
-#' @param cores A whole number of cores for parallel chains, or `NULL` to use
-#'   `getOption("mc.cores")` (falling back to `chains`), capped at the available
-#'   cores.
+#' @param niters A whole number of saved post-warmup draws per chain (minimum
+#'   2; number of warmup draws defaults to match).
+#' @param nthin A whole number of the thinning interval.
+#' @param cores A whole number of cores used to sample chains in parallel, or
+#'   `NULL` to use `getOption("mc.cores")` if set or `chains` if not. Capped at
+#'   the number of available cores.
 #' @param seed A whole number passed to [rstan::sampling()] to make the fit
-#'   reproducible, or `NULL` (the default). When `NULL`, a seed is drawn from
-#'   R's RNG, so a preceding `set.seed()` also makes the fit reproducible.
+#'   reproducible, or `NULL` (the default, which uses a random seed). A
+#'   preceding `set.seed()` also makes the fit reproducible.
 #' @param progress A string, one of `"bar"` (the default, a console progress
 #'   bar), `"verbose"` (rstan's per-iteration output and diagnostic warnings), or
 #'   `"none"` (silent). Controls fit-time console output only.
@@ -60,15 +60,24 @@
 #'   sample size per chain.
 #' @param max_perc_divergent A number giving the maximum acceptable percentage of
 #'   saved draws that ended in a divergent transition.
-#' @param by A character vector of grouping factors, `"site"`, `"year"`, or
-#'   both, giving one row per fitted level (per observed site-year for both), or
-#'   `NULL` for no grouping columns (the typical site and year).
-#' @param new_levels A string, one of `"average"` (the default) or `"sample"`,
-#'   giving how a site or year that is new or absent from `new_data` is
-#'   treated (sites and years in the fit use their estimated effects):
-#'   `"average"` uses the typical site or year; `"sample"` draws a new effect,
-#'   so the interval includes the variation between sites or years. `"sample"`
-#'   gives a different interval on each call; use `set.seed()` to reproduce it.
+#' @param by A character vector of grouping factors giving the rows of the
+#'   grid. One of:
+#'   - `NULL`: no grouping columns (the typical site and year).
+#'   - `"site"`: one row per fitted site.
+#'   - `"year"`: one row per fitted year.
+#'   - `c("site", "year")`: one row per observed site-year.
+#' @param new_levels A string giving how uncertainty is shown for a site or
+#'   year not in the fit, or when `new_data` has no `site` or `year` column.
+#'   Sites and years in the fit always use their own estimates. One of:
+#'   - `"average"` (the default): the typical site or year. The interval
+#'     covers uncertainty in the typical value only. Use it to describe an
+#'     average site or year.
+#'   - `"sample"`: a new effect for each new site or year,
+#'     drawn from the estimated variation among sites or among years. The
+#'     estimate is about the same, but the interval also includes that
+#'     variation. Use it to get realistic uncertainty about a particular site
+#'     or year the model has no data on. The interval varies slightly between
+#'     calls; use `set.seed()` to reproduce it.
 #' @param representative_site A character vector of sites in the fit whose
 #'   effects a new site takes (averaged when several are named), or `NULL` (the
 #'   default) to follow `new_levels`.

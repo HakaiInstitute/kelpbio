@@ -3,11 +3,16 @@
 #' Fit an allometric weight model for *Macrocystis pyrifera* via Stan.
 #'
 #' @details
-#' The response is wet weight, modelled on the natural scale with a Gamma
-#' likelihood. Expected weight is a log-linear (allometric) function of log frond
-#' count, centred at its geometric mean so the intercept is the expected weight
-#' at a typical frond count. The Gamma shape (`shape`) is constant across plants.
-#' The intercept varies by site, by year, and by `site:year`.
+#' Wet weight (kg) is modelled with a Gamma likelihood with mean `mu` and shape
+#' `shape`, common to all plants, so `mu` is the expected weight. `mu` is a
+#' power function of frond count, `mu = alpha * x^fronds_slope`, with `x` the
+#' `fronds` divided by the geometric mean frond count of the data, which is a
+#' straight line on log-log axes.
+#'
+#' The allometric coefficient `alpha` varies by site and year,
+#' `log(alpha) = intercept + site_effect + year_effect + site_year_effect`, so
+#' `intercept` is the log expected weight of a plant with the geometric mean
+#' frond count at a typical site and year.
 #'
 #' @inheritSection params Sampling
 #' @inheritSection params Site and year interaction

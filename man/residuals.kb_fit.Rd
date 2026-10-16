@@ -20,12 +20,12 @@ the fitted likelihood, matching \code{\link[=augment]{augment()}}'s \code{residu
 }
 \details{
 The deviance residual is computed per draw, then summarised with the posterior
-median. The likelihoods are Normal on log weight (\emph{Nereocystis} weight), Gamma
-on weight (\emph{Macrocystis} weight), Weibull on diameter (\emph{Nereocystis} size),
-zero-truncated negative binomial on frond count (\emph{Macrocystis} size),
+median. The likelihoods are Normal on log weight (\emph{Nereocystis} weight),
+Gamma on weight (\emph{Macrocystis} weight), Weibull on diameter (\emph{Nereocystis}
+size), zero-truncated negative binomial on frond count (\emph{Macrocystis} size),
 zero-inflated negative binomial on stipe count (\emph{Nereocystis} density),
 negative binomial on plant count (\emph{Macrocystis} density), Beta on the
-dry:wet mass ratio (wet/dry) and the carbon fraction (carbon), and Normal on
+dry:wet ratio (wet/dry) and the carbon fraction (carbon), and Normal on
 the log in situ biomass estimate (cover).
 }
 \examples{

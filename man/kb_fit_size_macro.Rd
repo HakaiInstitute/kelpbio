@@ -28,23 +28,23 @@ or \code{NULL} to use the defaults. Entries not supplied keep their defaults.}
 \item{...}{Additional arguments passed to \code{\link[rstan:sampling]{rstan::sampling()}}, such as
 \code{control}.}
 
-\item{prior_only}{A flag specifying whether to sample from the priors only
-(the likelihood is switched off), for prior predictive checks.}
+\item{prior_only}{A flag specifying whether to sample from the priors only,
+for prior predictive checks.}
 
 \item{chains}{A whole number of MCMC chains.}
 
-\item{niters}{A whole number of saved post-warmup draws per chain, at least 2
-(warmup defaults to match).}
+\item{niters}{A whole number of saved post-warmup draws per chain (minimum
+2; number of warmup draws defaults to match).}
 
-\item{nthin}{A whole number giving the thinning interval.}
+\item{nthin}{A whole number of the thinning interval.}
 
-\item{cores}{A whole number of cores for parallel chains, or \code{NULL} to use
-\code{getOption("mc.cores")} (falling back to \code{chains}), capped at the available
-cores.}
+\item{cores}{A whole number of cores used to sample chains in parallel, or
+\code{NULL} to use \code{getOption("mc.cores")} if set or \code{chains} if not. Capped at
+the number of available cores.}
 
 \item{seed}{A whole number passed to \code{\link[rstan:sampling]{rstan::sampling()}} to make the fit
-reproducible, or \code{NULL} (the default). When \code{NULL}, a seed is drawn from
-R's RNG, so a preceding \code{set.seed()} also makes the fit reproducible.}
+reproducible, or \code{NULL} (the default, which uses a random seed). A
+preceding \code{set.seed()} also makes the fit reproducible.}
 
 \item{progress}{A string, one of \code{"bar"} (the default, a console progress
 bar), \code{"verbose"} (rstan's per-iteration output and diagnostic warnings), or
@@ -61,15 +61,18 @@ Fit a size-distribution model for \emph{Macrocystis pyrifera} via Stan.
 }
 \details{
 The number of fronds reaching 1 m above the holdfast is modelled with a
-zero-truncated negative binomial likelihood, since the model describes plants
-with at least one such frond. The log mean before truncation (\code{intercept})
-varies by site, by year, and by \code{site:year}; the overdispersion
-(\code{dispersion}) is common to all plants. Predictions report the mean of the
-truncated distribution.
+zero-truncated negative binomial likelihood with mean before truncation
+\code{mu} and overdispersion \code{dispersion}, common to all plants. The truncation
+excludes plants with no such fronds, and these should be excluded from the
+data prior to model fitting.
+
+\code{mu} varies by site and year, \code{log(mu) = intercept + site_effect + year_effect + site_year_effect}, so \code{intercept} is the log mean before
+truncation at a typical site and year. Predictions report the mean of the
+truncated distribution, the expected frond count of a recorded plant.
 }
 \section{Sampling}{
 
-Chains run in parallel by default. Set \code{options(mc.cores = 1)} (or pass
+Chains are run in parallel by default. Set \code{options(mc.cores = 1)} (or pass
 \code{cores = 1}) on shared servers, in containers, or inside another parallel
 context.
 

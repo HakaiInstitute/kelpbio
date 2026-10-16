@@ -43,11 +43,20 @@ or \code{NULL}.}
 \code{new_data} to sum the survey totals within, \code{character(0)} to sum all of
 them, or \code{NULL} (the default) for one total per survey.}
 
-\item{new_levels}{A string, one of \code{"sample"} (the default) or \code{"average"},
-giving how a site or year not in the cover fit is treated: \code{"sample"} draws
-a new effect, so the interval includes the variation between sites or
-years; \code{"average"} uses the typical site or year. \code{"sample"} gives a
-different interval on each call; use \code{set.seed()} to reproduce it.}
+\item{new_levels}{A string giving how uncertainty is shown for a site or
+year not in the cover fit. Sites and years in the fit always use their
+own estimates. One of:
+\itemize{
+\item \code{"sample"} (the default): a new effect for each new site or year,
+drawn from the estimated variation among sites or among years. The
+estimate is about the same, but the interval also includes that
+variation. Use it to get realistic uncertainty about a particular site
+or year the model has no data on. The interval varies slightly between
+calls; use \code{set.seed()} to reproduce it.
+\item \code{"average"}: the typical site or year. The interval covers
+uncertainty in the typical value only. Use it to describe an average
+site or year.
+}}
 
 \item{representative_site}{A character vector of sites in the fit whose
 effects a new site takes (averaged when several are named), or \code{NULL} (the

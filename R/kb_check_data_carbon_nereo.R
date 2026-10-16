@@ -8,12 +8,13 @@
 #' mass.
 #'
 #' @details
-#' Each row is one dried tissue sample:
-#' `sample_mass_mg` is the mass of the sample analysed and `carbon_mass_ug` the
-#' carbon measured in it. The model's response is the carbon fraction,
-#' `carbon_mass_ug / 1000 / sample_mass_mg`. A warning gives the number of samples
-#' whose carbon fraction falls outside 0.10 to 0.50, the plausible range for kelp
-#' tissue; they are kept, not removed. Other columns are ignored.
+#' Each row is one dried tissue sample: `sample_mass_mg` is the mass of the
+#' sample analysed and `carbon_mass_ug` the carbon measured in it. The
+#' model's response is the carbon fraction, the carbon mass divided by the
+#' sample mass (`carbon_mass_ug` converted to mg). A warning gives the number
+#' of samples whose carbon fraction falls outside 0.10 to 0.50, the plausible
+#' range for kelp tissue; they are kept, not removed. Other columns are
+#' ignored.
 #'
 #' @inheritParams params
 #' @param data A data frame of carbon observations, one row per sample.

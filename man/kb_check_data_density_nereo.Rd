@@ -12,7 +12,7 @@ kb_check_data_density_nereo(
 \arguments{
 \item{data}{A data frame of density observations, one row per transect.}
 
-\item{x_name}{A string naming \code{data} in error messages.}
+\item{x_name}{A string naming the data for error messages.}
 }
 \value{
 \code{data}, invisibly.

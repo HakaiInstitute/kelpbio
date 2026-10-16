@@ -3,10 +3,10 @@
 #' Fit a dry:wet mass ratio model for *Nereocystis luetkeana* via Stan.
 #'
 #' @details
-#' The dry:wet mass ratio of each sample, `dry_mass_g / wet_mass_g`, is modelled
-#' with a Beta likelihood parameterised by its mean and precision. The logit mean
-#' ratio (`intercept`) and the precision (`precision`) are common to all samples,
-#' so the model estimates one ratio for the population of samples supplied.
+#' The dry:wet ratio of each sample, `dry_mass_g / wet_mass_g`, is modelled
+#' with a Beta likelihood with mean `mu` and precision `precision`, both
+#' common to all samples, so `mu` is the expected ratio and `logit(mu) =
+#' intercept`.
 #'
 #' Samples are pooled over the months, sites, and tissues they come from. To
 #' estimate the ratio for a particular season, fit the model to that season's

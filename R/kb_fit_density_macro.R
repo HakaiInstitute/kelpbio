@@ -4,11 +4,14 @@
 #'
 #' @details
 #' The number of plants on a transect is modelled with a negative binomial
-#' likelihood. Plants are those with at least one frond reaching 1 m above the
-#' holdfast, the same plants the size model describes. The expected count is the transect area times the plant density, so
-#' `area_m2` enters as an offset. The log density (`intercept`, log plants per m² at
-#' a typical site and year) varies by site, by year, and by `site:year`; the
-#' overdispersion (`dispersion`) is common to all transects.
+#' likelihood with mean `mu` and overdispersion `dispersion`, common to all
+#' transects. Plants are those with at least one frond reaching 1 m above the
+#' holdfast, the same plants the size model describes.
+#'
+#' `mu` is the transect area times the plant density, `mu = area_m2 *
+#' density`, and `density` varies by site and year, `log(density) = intercept
+#' + site_effect + year_effect + site_year_effect`, so `intercept` is the log
+#' plant density (plants per m²) at a typical site and year.
 #'
 #' @inheritSection params Sampling
 #' @inheritSection params Site and year interaction

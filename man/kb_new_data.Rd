@@ -10,9 +10,14 @@ kb_new_data(fit, by = NULL, ...)
 \item{fit}{A \code{kb_fit_weight}, \code{kb_fit_size}, \code{kb_fit_density}, or
 \code{kb_fit_cover_biomass} object.}
 
-\item{by}{A character vector of grouping factors, \code{"site"}, \code{"year"}, or
-both, giving one row per fitted level (per observed site-year for both), or
-\code{NULL} for no grouping columns (the typical site and year).}
+\item{by}{A character vector of grouping factors giving the rows of the
+grid. One of:
+\itemize{
+\item \code{NULL}: no grouping columns (the typical site and year).
+\item \code{"site"}: one row per fitted site.
+\item \code{"year"}: one row per fitted year.
+\item \code{c("site", "year")}: one row per observed site-year.
+}}
 
 \item{...}{Named values to cross into the grid: for a weight or cover biomass
 fit, the predictor values as a numeric vector (\code{diameter_mm}, \code{fronds}, or

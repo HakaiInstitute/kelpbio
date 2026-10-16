@@ -13,10 +13,9 @@
 #'
 #' @inheritParams params
 #' @param fit A `kb_fit_weight` object.
-#' @param new_data A data frame with the fit's predictor column (`diameter_mm` in
-#'   millimetres for *Nereocystis*, `fronds` for *Macrocystis*) and optional
-#'   `site` and `year` columns (and, for *Nereocystis*, an optional `stipes_m2`
-#'   column in stipes per m²), or `NULL` to predict at the observed data.
+#' @param new_data A data frame of the rows to predict at, with the fit's
+#'   predictor column (`diameter_mm` or `fronds`) and optional `site` and `year`
+#'   columns, or `NULL` for the observed data.
 #'
 #' @returns A `kb_predictions` object: the rows of `new_data` with added
 #'   `estimate`, `lower`, and `upper` columns summarising the posterior

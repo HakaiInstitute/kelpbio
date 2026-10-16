@@ -4,26 +4,29 @@
 #'
 #' @details
 #' Each drone survey in `data` is paired with the in situ wet biomass of its
-#' site-year in `biomass`, typically the output of [kb_predict_plot_biomass()]
-#' with `measure = "wet"`. Surveys whose site-year has no biomass are not
-#' fitted, and a message gives their site-years.
+#' site-year in `biomass`, typically the output of
+#' [kb_predict_plot_biomass()] with `measure = "wet"`. Surveys whose
+#' site-year has no biomass are not fitted, and a message notifies which
+#' those are.
 #'
-#' The in situ wet biomass (kg/m²) is modelled as a floor plus a term
-#' proportional to the plot's tide-corrected canopy cover:
-#' `mu = biomass_floor + cover_slope * exp(site_effect + year_effect) * cover`.
-#' `cover_slope` is the wet biomass per m² of canopy at a typical site and
-#' year, and `biomass_floor` the wet biomass of a plot with no delineated
-#' canopy, common to all sites and years. The site and year effects act on the
-#' canopy term only. Cover is the canopy area increased by `tide_height_slope`
-#' per metre of tide height, since less of the canopy is visible at the surface
-#' at higher tides, divided by the plot area and capped at 1. The default prior
-#' on `tide_height_slope` is informative and largely sets the tide correction,
-#' because calibration data rarely separate tide height from other differences
-#' between surveys.
+#' The log of the in situ wet biomass estimate (kg/m²) is modelled with a
+#' Normal likelihood with mean `log(mu)` and standard deviation
+#' `error_scaling` times the log-scale SD implied by the estimate's `lower`
+#' and `upper` limits, so `log(mu)` is the expected log biomass and each
+#' survey is weighted by the precision of its in situ biomass estimate.
 #'
-#' The log of the biomass estimate is Normal around `log(mu)` with SD
-#' `error_scaling` times the log-scale SD implied by its `lower` and `upper`
-#' limits, so each survey is weighted by the precision of its in situ estimate.
+#' `mu` is a floor plus a term proportional to the plot's tide-corrected
+#' canopy cover, `mu = biomass_floor + cover_slope * exp(site_effect +
+#' year_effect) * cover`, so `cover_slope` is the wet biomass per m² of
+#' canopy at a typical site and year, and `biomass_floor`, common to all
+#' sites and years, is the wet biomass of a plot with no delineated canopy.
+#'
+#' `cover` is the canopy area increased by `tide_height_slope` per metre of
+#' tide height, since less of the canopy is visible at the surface at higher
+#' tides, divided by the plot area and capped at 1. The default prior on
+#' `tide_height_slope` is informative and largely sets the tide correction,
+#' because calibration data rarely separate tide height from other
+#' differences between surveys.
 #'
 #' @inheritSection params Sampling
 #' @inheritParams kb_fit_cover_biomass_nereo

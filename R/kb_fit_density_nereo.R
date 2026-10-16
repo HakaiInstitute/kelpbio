@@ -3,15 +3,22 @@
 #' Fit a stipe-density model for *Nereocystis luetkeana* via Stan.
 #'
 #' @details
-#' The number of stipes on a transect is modelled with a zero-inflated negative
-#' binomial likelihood. The expected count is the transect area times the stipe
-#' density, so `area_m2` enters as an offset. The log density (`intercept`, log
-#' stipes per m² on occupied transects at a typical site and year) varies by
-#' site, by year, and by `site:year`. A transect is unoccupied (a structural
-#' zero) with a probability whose logit is `logit_zero_inflation`, common to
-#' all transects; an occupied transect can still count no stipes. The
-#' overdispersion (`dispersion`) is also common to all transects. Predictions
-#' report the expected density over all transects, occupied or not.
+#' The number of stipes on a transect is modelled with a zero-inflated
+#' negative binomial likelihood, which combines two processes:
+#'
+#' - Occupancy: a transect is unoccupied, and so counts no stipes (a
+#'   structural zero), with a probability whose logit is
+#'   `logit_zero_inflation`, common to all transects.
+#' - Count: on an occupied transect, the count is negative binomial with mean
+#'   `mu` and overdispersion `dispersion`, common to all transects, so an
+#'   occupied transect can still count no stipes (a sampling zero).
+#'
+#' `mu` is the transect area times the stipe density on occupied transects,
+#' `mu = area_m2 * density`, and `density` varies by site and year,
+#' `log(density) = intercept + site_effect + year_effect + site_year_effect`,
+#' so `intercept` is the log stipe density (stipes per m²) at a typical site
+#' and year. Predictions report the expected density over all transects,
+#' occupied or not.
 #'
 #' @inheritSection params Sampling
 #' @inheritSection params Site and year interaction

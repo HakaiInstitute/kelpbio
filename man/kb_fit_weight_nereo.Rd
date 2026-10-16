@@ -32,23 +32,23 @@ giving the mean function of weight in diameter (see Details).}
 \item{...}{Additional arguments passed to \code{\link[rstan:sampling]{rstan::sampling()}}, such as
 \code{control}.}
 
-\item{prior_only}{A flag specifying whether to sample from the priors only
-(the likelihood is switched off), for prior predictive checks.}
+\item{prior_only}{A flag specifying whether to sample from the priors only,
+for prior predictive checks.}
 
 \item{chains}{A whole number of MCMC chains.}
 
-\item{niters}{A whole number of saved post-warmup draws per chain, at least 2
-(warmup defaults to match).}
+\item{niters}{A whole number of saved post-warmup draws per chain (minimum
+2; number of warmup draws defaults to match).}
 
-\item{nthin}{A whole number giving the thinning interval.}
+\item{nthin}{A whole number of the thinning interval.}
 
-\item{cores}{A whole number of cores for parallel chains, or \code{NULL} to use
-\code{getOption("mc.cores")} (falling back to \code{chains}), capped at the available
-cores.}
+\item{cores}{A whole number of cores used to sample chains in parallel, or
+\code{NULL} to use \code{getOption("mc.cores")} if set or \code{chains} if not. Capped at
+the number of available cores.}
 
 \item{seed}{A whole number passed to \code{\link[rstan:sampling]{rstan::sampling()}} to make the fit
-reproducible, or \code{NULL} (the default). When \code{NULL}, a seed is drawn from
-R's RNG, so a preceding \code{set.seed()} also makes the fit reproducible.}
+reproducible, or \code{NULL} (the default, which uses a random seed). A
+preceding \code{set.seed()} also makes the fit reproducible.}
 
 \item{progress}{A string, one of \code{"bar"} (the default, a console progress
 bar), \code{"verbose"} (rstan's per-iteration output and diagnostic warnings), or
@@ -65,34 +65,34 @@ Fit an allometric weight model for \emph{Nereocystis luetkeana} via Stan.
 }
 \details{
 Log wet weight (kg) is modelled with a Normal likelihood with mean \code{log(mu)}
-and standard deviation \code{sd_residual}. \code{form} sets \code{mu} as a function of
-sub-bulb diameter, with \code{x} the \code{diameter_mm} divided by the geometric mean
-diameter of the data:
+and standard deviation \code{sd_residual}, so \code{log(mu)} is the expected log
+weight. \code{form} sets \code{mu} as a function of sub-bulb diameter, with \code{x} the
+\code{diameter_mm} divided by the geometric mean diameter of the data:
 \itemize{
 \item \code{"packard_floor"} (the default):
-\code{mu = weight_floor + exp(eta) * x^diameter_power}, the three-parameter
+\code{mu = weight_floor + alpha * x^diameter_power}, the three-parameter
 power function of Packard (2023). \code{weight_floor} makes the relationship
 curve on log-log axes: the local allometric exponent rises with plant
 size and levels off toward \code{diameter_power} as the floor's share of
 weight shrinks.
-\item \code{"power"}: \code{mu = exp(eta) * x^diameter_power}, a power law, which is a
+\item \code{"power"}: \code{mu = alpha * x^diameter_power}, a power law, which is a
 straight line on log-log axes.
 }
 
-The linear predictor is
-\code{eta = intercept + site_effect + year_effect + site_year_effect}, so the
-site, year, and site:year effects scale the size-dependent part of the
-weight, while \code{weight_floor} is common to all sites and years.
+The allometric coefficient \code{alpha} varies by site and year,
+\code{log(alpha) = intercept + site_effect + year_effect + site_year_effect}, so
+these effects scale the size-dependent part of the weight, while
+\code{weight_floor} is common to all sites and years.
 
 When \code{data} has a \code{stipes_m2} column (stipes per m², a site-year value),
-\code{eta} also includes \code{density_slope} times density standardised by its mean
-and SD over the fitted plants. Site-years without a recorded density are
-assigned the mean density. The density term is omitted when fewer than two
-distinct site-year densities are recorded.
+\code{log(alpha)} also includes \code{density_slope} times density standardised by
+its mean and SD over the fitted plants. Site-years without a recorded
+density are assigned the mean density. The density term is omitted when
+fewer than two distinct site-year densities are recorded.
 }
 \section{Sampling}{
 
-Chains run in parallel by default. Set \code{options(mc.cores = 1)} (or pass
+Chains are run in parallel by default. Set \code{options(mc.cores = 1)} (or pass
 \code{cores = 1}) on shared servers, in containers, or inside another parallel
 context.
 

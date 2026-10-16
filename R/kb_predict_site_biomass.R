@@ -33,11 +33,18 @@
 #' @param sum_by A character vector naming character or factor columns of
 #'   `new_data` to sum the survey totals within, `character(0)` to sum all of
 #'   them, or `NULL` (the default) for one total per survey.
-#' @param new_levels A string, one of `"sample"` (the default) or `"average"`,
-#'   giving how a site or year not in the cover fit is treated: `"sample"` draws
-#'   a new effect, so the interval includes the variation between sites or
-#'   years; `"average"` uses the typical site or year. `"sample"` gives a
-#'   different interval on each call; use `set.seed()` to reproduce it.
+#' @param new_levels A string giving how uncertainty is shown for a site or
+#'   year not in the cover fit. Sites and years in the fit always use their
+#'   own estimates. One of:
+#'   - `"sample"` (the default): a new effect for each new site or year,
+#'     drawn from the estimated variation among sites or among years. The
+#'     estimate is about the same, but the interval also includes that
+#'     variation. Use it to get realistic uncertainty about a particular site
+#'     or year the model has no data on. The interval varies slightly between
+#'     calls; use `set.seed()` to reproduce it.
+#'   - `"average"`: the typical site or year. The interval covers
+#'     uncertainty in the typical value only. Use it to describe an average
+#'     site or year.
 #'
 #' @returns A `kb_predictions` object. Without `sum_by`, the rows of `new_data`
 #'   with added `cover_support` (`"site, year"`, `"site"`, `"year"`, or `"none"`:

@@ -5,12 +5,12 @@
 #'
 #' @details
 #' The deviance residual is computed per draw, then summarised with the posterior
-#' median. The likelihoods are Normal on log weight (*Nereocystis* weight), Gamma
-#' on weight (*Macrocystis* weight), Weibull on diameter (*Nereocystis* size),
-#' zero-truncated negative binomial on frond count (*Macrocystis* size),
+#' median. The likelihoods are Normal on log weight (*Nereocystis* weight),
+#' Gamma on weight (*Macrocystis* weight), Weibull on diameter (*Nereocystis*
+#' size), zero-truncated negative binomial on frond count (*Macrocystis* size),
 #' zero-inflated negative binomial on stipe count (*Nereocystis* density),
 #' negative binomial on plant count (*Macrocystis* density), Beta on the
-#' dry:wet mass ratio (wet/dry) and the carbon fraction (carbon), and Normal on
+#' dry:wet ratio (wet/dry) and the carbon fraction (carbon), and Normal on
 #' the log in situ biomass estimate (cover).
 #'
 #'

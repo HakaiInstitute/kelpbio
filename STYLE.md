@@ -76,7 +76,7 @@ One term per concept, used everywhere:
 | Wet/dry | dry:wet ratio | wet-to-dry, dry:wet mass ratio |
 | Model inputs from the sub-models | combine | compose |
 
-Model parameters are written exactly as `tidy()` reports them (`intercept`, `sd_site`, `logit_zero_inflation`). No other symbols.
+Model parameters are written exactly as `tidy()` reports them (`intercept`, `sd_site`, `logit_zero_inflation`). Any other symbol (such as `mu`, `alpha`, or `x`) is defined once where it first appears.
 
 ## Model descriptions (fit topics)
 

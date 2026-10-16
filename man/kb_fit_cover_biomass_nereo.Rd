@@ -39,23 +39,23 @@ not supplied keep their defaults.}
 of the compatibility limits in \code{biomass}, or \code{NULL} to use the level
 stored in a \code{kb_predictions} object, or 0.95 for any other data frame.}
 
-\item{prior_only}{A flag specifying whether to sample from the priors only
-(the likelihood is switched off), for prior predictive checks.}
+\item{prior_only}{A flag specifying whether to sample from the priors only,
+for prior predictive checks.}
 
 \item{chains}{A whole number of MCMC chains.}
 
-\item{niters}{A whole number of saved post-warmup draws per chain, at least 2
-(warmup defaults to match).}
+\item{niters}{A whole number of saved post-warmup draws per chain (minimum
+2; number of warmup draws defaults to match).}
 
-\item{nthin}{A whole number giving the thinning interval.}
+\item{nthin}{A whole number of the thinning interval.}
 
-\item{cores}{A whole number of cores for parallel chains, or \code{NULL} to use
-\code{getOption("mc.cores")} (falling back to \code{chains}), capped at the available
-cores.}
+\item{cores}{A whole number of cores used to sample chains in parallel, or
+\code{NULL} to use \code{getOption("mc.cores")} if set or \code{chains} if not. Capped at
+the number of available cores.}
 
 \item{seed}{A whole number passed to \code{\link[rstan:sampling]{rstan::sampling()}} to make the fit
-reproducible, or \code{NULL} (the default). When \code{NULL}, a seed is drawn from
-R's RNG, so a preceding \code{set.seed()} also makes the fit reproducible.}
+reproducible, or \code{NULL} (the default, which uses a random seed). A
+preceding \code{set.seed()} also makes the fit reproducible.}
 
 \item{progress}{A string, one of \code{"bar"} (the default, a console progress
 bar), \code{"verbose"} (rstan's per-iteration output and diagnostic warnings), or
@@ -74,30 +74,32 @@ Fit a cover-biomass calibration for \emph{Nereocystis luetkeana} via Stan.
 }
 \details{
 Each drone survey in \code{data} is paired with the in situ wet biomass of its
-site-year in \code{biomass}, typically the output of \code{\link[=kb_predict_plot_biomass]{kb_predict_plot_biomass()}}
-with \code{measure = "wet"}. Surveys whose site-year has no biomass are not
-fitted, and a message gives their site-years.
+site-year in \code{biomass}, typically the output of
+\code{\link[=kb_predict_plot_biomass]{kb_predict_plot_biomass()}} with \code{measure = "wet"}. Surveys whose
+site-year has no biomass are not fitted, and a message notifies which
+those are.
 
-The in situ wet biomass (kg/m²) is modelled as a floor plus a term
-proportional to the plot's tide-corrected canopy cover:
-\code{mu = biomass_floor + cover_slope * exp(site_effect + year_effect) * cover}.
-\code{cover_slope} is the wet biomass per m² of canopy at a typical site and
-year, and \code{biomass_floor} the wet biomass of a plot with no delineated
-canopy, common to all sites and years. The site and year effects act on the
-canopy term only. Cover is the canopy area increased by \code{tide_height_slope}
-per metre of tide height, since less of the canopy is visible at the surface
-at higher tides, divided by the plot area and capped at 1. The default prior
-on \code{tide_height_slope} is informative and largely sets the tide correction,
-because calibration data rarely separate tide height from other differences
-between surveys.
+The log of the in situ wet biomass estimate (kg/m²) is modelled with a
+Normal likelihood with mean \code{log(mu)} and standard deviation
+\code{error_scaling} times the log-scale SD implied by the estimate's \code{lower}
+and \code{upper} limits, so \code{log(mu)} is the expected log biomass and each
+survey is weighted by the precision of its in situ biomass estimate.
 
-The log of the biomass estimate is Normal around \code{log(mu)} with SD
-\code{error_scaling} times the log-scale SD implied by its \code{lower} and \code{upper}
-limits, so each survey is weighted by the precision of its in situ estimate.
+\code{mu} is a floor plus a term proportional to the plot's tide-corrected
+canopy cover, \code{mu = biomass_floor + cover_slope * exp(site_effect + year_effect) * cover}, so \code{cover_slope} is the wet biomass per m² of
+canopy at a typical site and year, and \code{biomass_floor}, common to all
+sites and years, is the wet biomass of a plot with no delineated canopy.
+
+\code{cover} is the canopy area increased by \code{tide_height_slope} per metre of
+tide height, since less of the canopy is visible at the surface at higher
+tides, divided by the plot area and capped at 1. The default prior on
+\code{tide_height_slope} is informative and largely sets the tide correction,
+because calibration data rarely separate tide height from other
+differences between surveys.
 }
 \section{Sampling}{
 
-Chains run in parallel by default. Set \code{options(mc.cores = 1)} (or pass
+Chains are run in parallel by default. Set \code{options(mc.cores = 1)} (or pass
 \code{cores = 1}) on shared servers, in containers, or inside another parallel
 context.
 

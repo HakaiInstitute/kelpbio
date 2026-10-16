@@ -28,23 +28,23 @@ or \code{NULL} to use the defaults. Entries not supplied keep their defaults.}
 \item{...}{Additional arguments passed to \code{\link[rstan:sampling]{rstan::sampling()}}, such as
 \code{control}.}
 
-\item{prior_only}{A flag specifying whether to sample from the priors only
-(the likelihood is switched off), for prior predictive checks.}
+\item{prior_only}{A flag specifying whether to sample from the priors only,
+for prior predictive checks.}
 
 \item{chains}{A whole number of MCMC chains.}
 
-\item{niters}{A whole number of saved post-warmup draws per chain, at least 2
-(warmup defaults to match).}
+\item{niters}{A whole number of saved post-warmup draws per chain (minimum
+2; number of warmup draws defaults to match).}
 
-\item{nthin}{A whole number giving the thinning interval.}
+\item{nthin}{A whole number of the thinning interval.}
 
-\item{cores}{A whole number of cores for parallel chains, or \code{NULL} to use
-\code{getOption("mc.cores")} (falling back to \code{chains}), capped at the available
-cores.}
+\item{cores}{A whole number of cores used to sample chains in parallel, or
+\code{NULL} to use \code{getOption("mc.cores")} if set or \code{chains} if not. Capped at
+the number of available cores.}
 
 \item{seed}{A whole number passed to \code{\link[rstan:sampling]{rstan::sampling()}} to make the fit
-reproducible, or \code{NULL} (the default). When \code{NULL}, a seed is drawn from
-R's RNG, so a preceding \code{set.seed()} also makes the fit reproducible.}
+reproducible, or \code{NULL} (the default, which uses a random seed). A
+preceding \code{set.seed()} also makes the fit reproducible.}
 
 \item{progress}{A string, one of \code{"bar"} (the default, a console progress
 bar), \code{"verbose"} (rstan's per-iteration output and diagnostic warnings), or
@@ -60,15 +60,20 @@ An object of class \code{c("kb_fit_weight_macro", "kb_fit_weight", "kb_fit")}.
 Fit an allometric weight model for \emph{Macrocystis pyrifera} via Stan.
 }
 \details{
-The response is wet weight, modelled on the natural scale with a Gamma
-likelihood. Expected weight is a log-linear (allometric) function of log frond
-count, centred at its geometric mean so the intercept is the expected weight
-at a typical frond count. The Gamma shape (\code{shape}) is constant across plants.
-The intercept varies by site, by year, and by \code{site:year}.
+Wet weight (kg) is modelled with a Gamma likelihood with mean \code{mu} and shape
+\code{shape}, common to all plants, so \code{mu} is the expected weight. \code{mu} is a
+power function of frond count, \code{mu = alpha * x^fronds_slope}, with \code{x} the
+\code{fronds} divided by the geometric mean frond count of the data, which is a
+straight line on log-log axes.
+
+The allometric coefficient \code{alpha} varies by site and year,
+\code{log(alpha) = intercept + site_effect + year_effect + site_year_effect}, so
+\code{intercept} is the log expected weight of a plant with the geometric mean
+frond count at a typical site and year.
 }
 \section{Sampling}{
 
-Chains run in parallel by default. Set \code{options(mc.cores = 1)} (or pass
+Chains are run in parallel by default. Set \code{options(mc.cores = 1)} (or pass
 \code{cores = 1}) on shared servers, in containers, or inside another parallel
 context.
 
