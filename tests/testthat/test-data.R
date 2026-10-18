@@ -171,7 +171,7 @@ test_that("data_weight_sim_nereo has the expected columns and passes validation"
   expect_s3_class(data_weight_sim_nereo, "data.frame")
   expect_named(
     data_weight_sim_nereo,
-    c("diameter_mm", "weight_kg", "site", "year", "stipes_m2")
+    c("diameter_mm", "weight_kg", "site", "year")
   )
   expect_silent(kb_check_data_weight_nereo(data_weight_sim_nereo))
 })
@@ -182,7 +182,6 @@ test_that("data_weight_sim_nereo matches its documented format", {
   expect_equal(nlevels(data_weight_sim_nereo$year), 4L)
   expect_true(all(data_weight_sim_nereo$diameter_mm > 0))
   expect_true(all(data_weight_sim_nereo$weight_kg > 0))
-  expect_false(anyNA(data_weight_sim_nereo$stipes_m2))
 })
 
 test_that("the nereo data sources cover different site-years", {
@@ -199,17 +198,6 @@ test_that("the nereo data sources cover different site-years", {
   expect_gt(length(setdiff(density, size)), 0L)
   expect_true(all(key(data_cover_biomass_sim_nereo) %in% key(data_plot_biomass_sim_nereo)))
   expect_true(all(key(data_cover_biomass_sim_nereo) %in% density))
-})
-
-test_that("the harvested site-years carry the stipe density observed in the density data", {
-  density <- data_density_sim_nereo
-  key <- site_year_key(density$site, density$year)
-  observed <- tapply(density$stipes, key, sum) / tapply(density$area_m2, key, sum)
-  weight_key <- site_year_key(data_weight_sim_nereo$site, data_weight_sim_nereo$year)
-  expect_equal(
-    data_weight_sim_nereo$stipes_m2,
-    round(as.vector(observed[weight_key]), 2)
-  )
 })
 
 test_that("data_wetdry_sim_macro has the expected columns and passes validation", {

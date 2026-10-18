@@ -8,8 +8,8 @@ kb_priors_weight_nereo()
 }
 \value{
 A named list of prior objects with entries \code{intercept},
-\code{diameter_power}, \code{weight_floor}, \code{density_slope}, \code{sd_site}, \code{sd_year},
-\code{sd_site_year}, and \code{sd_residual}.
+\code{diameter_power}, \code{weight_floor}, \code{sd_site}, \code{sd_year}, \code{sd_site_year},
+and \code{sd_residual}.
 }
 \description{
 The default priors for the \emph{Nereocystis luetkeana} allometric weight model.
@@ -23,10 +23,8 @@ hyperparameters can be changed. \code{intercept} is on the log of the weight abo
 the floor at the geometric mean diameter of the data, \code{diameter_power} is the
 allometric exponent, and \code{weight_floor} is the weight (kg) as diameter
 approaches zero, used only by \code{form = "packard_floor"}. The priors on
-\code{diameter_power} and \code{weight_floor} are truncated at zero. \code{density_slope} is
-the effect of standardised stipe density on the log scale and is used only
-when the density term is fitted (see \code{\link[=kb_fit_weight_nereo]{kb_fit_weight_nereo()}}). \code{sd_residual}
-is the residual standard deviation of log weight.
+\code{diameter_power} and \code{weight_floor} are truncated at zero. \code{sd_residual} is the
+residual standard deviation of log weight.
 }
 \examples{
 kb_priors_weight_nereo()

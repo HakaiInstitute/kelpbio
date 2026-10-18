@@ -206,5 +206,8 @@ importFrom(rstantools,
   prior_summary,
   rstan_config
 )
-importFrom(stats,nobs)
+importFrom(stats,
+  nobs,
+  residuals
+)
 useDynLib(kelpbio, .registration = TRUE)

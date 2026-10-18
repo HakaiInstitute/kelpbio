@@ -14,6 +14,6 @@ test_that("kb_samples errors on an object that is not a fit", {
 })
 
 test_that("kb_samples excludes effects the fit omitted", {
-  off <- omit_terms(weight_nereo_fit, "density_slope")
-  expect_false("density_slope" %in% posterior::variables(kb_samples(off)))
+  off <- omit_terms(weight_nereo_fit, "weight_floor")
+  expect_false("weight_floor" %in% posterior::variables(kb_samples(off)))
 })

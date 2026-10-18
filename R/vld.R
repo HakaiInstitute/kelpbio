@@ -28,8 +28,7 @@
 .vld_new_data_weight_nereo <- function(x) {
   is.data.frame(x) &&
     "diameter_mm" %in% names(x) &&
-    .vld_positive_measure(x$diameter_mm) &&
-    (!"stipes_m2" %in% names(x) || .vld_density(x$stipes_m2))
+    .vld_positive_measure(x$diameter_mm)
 }
 
 .vld_positive_measure <- function(x) {
@@ -55,19 +54,6 @@
 
 .vld_frond_reaches_1m <- function(x) {
   all(x >= 1)
-}
-
-.vld_density <- function(x) {
-  all(is.na(x)) || (is.numeric(x) && .vld_finite(x) && all(x >= 0, na.rm = TRUE))
-}
-
-.vld_density_site_year <- function(data) {
-  recorded <- !is.na(data$stipes_m2)
-  key <- site_year_key(data$site, data$year)[recorded]
-  n_distinct <- tapply(data$stipes_m2[recorded], key, function(x) {
-    length(unique(x))
-  })
-  all(n_distinct <= 1L)
 }
 
 .vld_new_data_weight_macro <- function(x) {

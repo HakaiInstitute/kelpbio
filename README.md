@@ -49,22 +49,22 @@ The allometric weight model relates wet weight to sub-bulb diameter,
 with random effects for year, site, and site-by-year.
 
 The model is fitted to a data frame of `diameter_mm`, `weight_kg`,
-`site`, and `year`, with an optional site-year stipe density,
-`stipes_m2`. A small simulated dataset is included with the package:
+`site`, and `year`. A small simulated dataset is included with the
+package:
 
 ``` r
 library(kelpbio)
 
 head(data_weight_sim_nereo)
-#> # A tibble: 6 × 5
-#>   diameter_mm weight_kg site       year  stipes_m2
-#>         <dbl>     <dbl> <fct>      <fct>     <dbl>
-#> 1        26.6     0.661 otter_cove 2019       0.37
-#> 2        11.8     0.134 otter_cove 2019       0.37
-#> 3        22.8     0.715 otter_cove 2019       0.37
-#> 4        37.1     1.94  otter_cove 2019       0.37
-#> 5        36.5     1.52  otter_cove 2019       0.37
-#> 6        25.9     0.271 otter_cove 2019       0.37
+#> # A tibble: 6 × 4
+#>   diameter_mm weight_kg site       year 
+#>         <dbl>     <dbl> <fct>      <fct>
+#> 1        26.6     0.59  otter_cove 2019 
+#> 2        11.8     0.129 otter_cove 2019 
+#> 3        22.8     0.644 otter_cove 2019 
+#> 4        37.1     1.71  otter_cove 2019 
+#> 5        36.5     1.34  otter_cove 2019 
+#> 6        25.9     0.242 otter_cove 2019
 ```
 
 Fit the model with `kb_fit_weight_nereo()`:
@@ -85,23 +85,23 @@ Check convergence with `glance()` and summarise the model terms with
 
 ``` r
 glance(fit)
-#> # A tibble: 1 × 9
-#>       n     K nchains niters nthin   ess  rhat perc_divergent converged
-#>   <int> <int>   <int>  <dbl> <int> <dbl> <dbl>          <dbl> <lgl>    
-#> 1   420    11       3    500     2  641.  1.00              0 TRUE
+#> # A tibble: 1 × 10
+#>       n     K nchains niters nthin ess_bulk ess_tail  rhat perc_divergent
+#>   <int> <int>   <int>  <dbl> <int>    <dbl>    <dbl> <dbl>          <dbl>
+#> 1   420     7       3    500     2     629.     646.  1.00              0
+#> # ℹ 1 more variable: converged <lgl>
 
 tidy(fit)
-#> # A tibble: 8 × 4
-#>   term      estimate    lower  upper
-#>   <chr>        <dbl>    <dbl>  <dbl>
-#> 1 bWeight    -1.02   -1.49    -0.498
-#> 2 bPower      3.25    3.02     3.5  
-#> 3 bFloor      0.125   0.107    0.144
-#> 4 bDensity   -0.0528 -0.219    0.107
-#> 5 sSite       0.106   0.00442  0.385
-#> 6 sYear       0.326   0.0889   1.02 
-#> 7 sSiteYear   0.246   0.131    0.426
-#> 8 sWeight     0.449   0.421    0.485
+#> # A tibble: 7 × 4
+#>   term           estimate   lower  upper
+#>   <chr>             <dbl>   <dbl>  <dbl>
+#> 1 intercept        -0.932 -1.43   -0.397
+#> 2 diameter_power    3.26   3.04    3.51 
+#> 3 weight_floor      0.125  0.106   0.145
+#> 4 sd_site           0.342  0.143   0.716
+#> 5 sd_year           0.307  0.0902  1.01 
+#> 6 sd_site_year      0.13   0.0112  0.34 
+#> 7 sd_residual       0.45   0.422   0.482
 ```
 
 Predict the weight-diameter curve for each site at a grid from
@@ -125,13 +125,13 @@ set.seed(1)
 kb_predict_weight(fit, new_data)
 #> <kb_predictions> predictor: diameter_mm | response: weight_kg | by: site
 #> # A tibble: 5 × 5
-#>   diameter_mm site       estimate  lower  upper
-#>         <dbl> <chr>         <dbl>  <dbl>  <dbl>
-#> 1          20 otter_cove    0.398  0.295  0.582
-#> 2          35 otter_cove    1.73   1.12   2.85 
-#> 3          50 otter_cove    5.18   3.25   8.94 
-#> 4          65 otter_cove   11.9    7.32  21.6  
-#> 5          80 otter_cove   23.3   13.9   43.2
+#>   diameter_mm site       estimate  lower upper
+#>         <dbl> <chr>         <dbl>  <dbl> <dbl>
+#> 1          20 otter_cove    0.361  0.278  0.5 
+#> 2          35 otter_cove    1.52   1      2.33
+#> 3          50 otter_cove    4.56   2.89   7.11
+#> 4          65 otter_cove   10.5    6.57  16.7 
+#> 5          80 otter_cove   20.6   12.7   33.4
 ```
 
 The fitted object exposes the standard `rstantools` generics

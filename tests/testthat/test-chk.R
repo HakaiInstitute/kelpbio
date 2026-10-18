@@ -149,11 +149,6 @@ test_that(".chk_fit_rows points zero-row data to prior_only", {
   expect_snapshot(error = TRUE, .chk_fit_rows(data[0, , drop = FALSE], prior_only = FALSE))
 })
 
-test_that(".chk_new_data_weight_nereo errors on a negative density", {
-  d <- data.frame(diameter_mm = 30, stipes_m2 = -2)
-  expect_snapshot(error = TRUE, .chk_new_data_weight_nereo(d))
-})
-
 test_that(".chk_new_data errors name the invalid predictor column", {
   expect_snapshot(error = TRUE, .chk_new_data_weight_nereo(data.frame(diameter_mm = 0)))
   expect_snapshot(error = TRUE, .chk_new_data_weight_nereo(data.frame(diameter_mm = "30")))
@@ -351,7 +346,6 @@ test_that(".chk_finite, .chk_rows, and .chk_new_data_groups name the problem", {
 
 test_that("measure checks reject infinite values", {
   expect_error(.chk_positive_measure(c(1, Inf), "`x`"), "finite")
-  expect_error(.chk_density(c(1, Inf), "`x`"), "finite")
   expect_error(
     .chk_measure_columns(data.frame(weight_kg = Inf), "weight_kg", "`data`"),
     "finite"

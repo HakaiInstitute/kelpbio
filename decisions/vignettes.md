@@ -39,8 +39,5 @@ Interpretation:
 - Without harvest data, the weight model is borrowed from another programme, so
   biomass assumes that programme's allometry applies, and the intervals do not
   include variation in the allometry between programmes.
-- The *Nereocystis* weight model's density effect was estimated on diver stipe
-  density. Surface density is lower, so use a weight fit without the density
-  effect, or state the mismatch.
 - `zi` and the dispersion describe the quadrat design and are not comparable
   with transect-based fits.

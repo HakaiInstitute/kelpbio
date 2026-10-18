@@ -65,14 +65,6 @@
       ! `data` must have at least one row.
       i Set `prior_only = TRUE` to sample from the priors alone.
 
-# .chk_new_data_weight_nereo errors on a negative density
-
-    Code
-      .chk_new_data_weight_nereo(d)
-    Condition
-      Error in `.chk_density()`:
-      ! Column `stipes_m2` of `d` must be greater than or equal to 0.
-
 # .chk_new_data errors name the invalid predictor column
 
     Code

@@ -52,7 +52,6 @@
     cli::cli_abort("{x_name} must have a {.field diameter_mm} column.")
   }
   .chk_positive_measure(x$diameter_mm, x_name = column_xname(x_name, "diameter_mm"))
-  .chk_density(x$stipes_m2, x_name = column_xname(x_name, "stipes_m2"))
 }
 
 .chk_positive_measure <- function(x, x_name = deparse(substitute(x))) {
@@ -127,33 +126,6 @@
     "{x_name} must be at least 1.",
     i = "The model describes plants with at least one frond reaching 1 m above the holdfast.",
     i = "Remove plants with 0 fronds, and leave them out of the density counts too."
-  ))
-}
-
-.chk_density <- function(x, x_name = deparse(substitute(x))) {
-  if (.vld_density(x)) {
-    return(invisible(x))
-  }
-  if (!is.numeric(x)) {
-    cli::cli_abort("{x_name} must be numeric.")
-  }
-  .chk_finite(x, x_name)
-  cli::cli_abort("{x_name} must be greater than or equal to 0.")
-}
-
-.chk_density_site_year <- function(data, x_name = deparse(substitute(data))) {
-  if (.vld_density_site_year(data)) {
-    return(invisible(data))
-  }
-  recorded <- !is.na(data$stipes_m2)
-  key <- site_year_key(data$site, data$year)[recorded]
-  n_distinct <- tapply(data$stipes_m2[recorded], key, function(x) {
-    length(unique(x))
-  })
-  bad <- names(n_distinct)[n_distinct > 1L]
-  cli::cli_abort(c(
-    "{column_xname(x_name, 'stipes_m2')} must have one value per site-year.",
-    x = "Conflicting values in site-year{?s} {.val {bad}}."
   ))
 }
 

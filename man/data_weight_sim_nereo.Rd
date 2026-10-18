@@ -11,16 +11,14 @@ A data frame with columns:
 \item{weight_kg}{Wet weight (kg), a positive number.}
 \item{site}{Survey site, a factor (10 levels).}
 \item{year}{Survey year, a factor (4 levels).}
-\item{stipes_m2}{Stipe density of the site-year (stipes per m²), as
-observed in \link{data_density_sim_nereo}.}
 }
 }
 \usage{
 data_weight_sim_nereo
 }
 \description{
-A small simulated dataset of sub-bulb diameter, wet weight, and stipe
-density, one row per harvested plant, for runnable examples. One of five
+A small simulated dataset of sub-bulb diameter and wet weight, one row per
+harvested plant, for runnable examples. One of five
 simulated \emph{Nereocystis} datasets with shared sites and years, so their fits
 can be combined into plot biomass (see \code{\link[=kb_predict_plot_biomass]{kb_predict_plot_biomass()}}). Some
 site-years have no weight data.

@@ -35,24 +35,12 @@ A row whose `site`, `year`, or site-year is a fitted level SHALL be conditioned 
 - **THEN** `new_levels = "sample"` adds no site:year variation
 
 #### Scenario: A representative site stands in for a new site in a year it was observed
-- **WHEN** a new site is predicted in year `y` with `representative_site = s`, where site `s` was observed in `y`, with the same `stipes_m2` as site `s` in `y`
+- **WHEN** a new site is predicted in year `y` with `representative_site = s`, where site `s` was observed in `y`
 - **THEN** the prediction equals predicting site `s` in year `y`, under either `new_levels`
-
-### Requirement: Density is resolved per row
-
-For a *Nereocystis* fit with the density effect, each row SHALL use its `stipes_m2` value if present, otherwise the recorded density of its site-year in the fitted data, otherwise the fitted mean. This applies to every prediction and summary computed at rows, including the observed data. A `stipes_m2` column in `new_data` SHALL be validated (numeric, `>= 0`, `NA` allowed) and is ignored by a fit without the density effect.
-
-#### Scenario: Resolution order
-- **WHEN** rows supply `stipes_m2`, omit it for a fitted site-year with recorded density, and omit it for a new site-year
-- **THEN** they use the supplied value, the recorded value, and the fitted mean, respectively
-
-#### Scenario: Curves by site and year use recorded densities
-- **WHEN** `kb_predict_weight(fit, kb_new_data(fit, by = c("site", "year")))` is called
-- **THEN** each curve uses its site-year's recorded density, and grids by other `by` values use the fitted mean
 
 ### Requirement: Draws, likelihood, and priors
 
-`posterior_epred()`, `posterior_linpred()`, and `posterior_predict()` SHALL return a draws-by-rows matrix for `new_data` (or the observed data), resolving groups and density as above. For a density fit, each row SHALL be a transect of its `area_m2`, or of 1 m² when `new_data` has no `area_m2` column, and the observed data SHALL use their recorded areas. `posterior_epred()` SHALL give the expected response. Where that differs from the inverse link of the linear predictor, `posterior_linpred(transform = TRUE)` SHALL return the inverse link:
+`posterior_epred()`, `posterior_linpred()`, and `posterior_predict()` SHALL return a draws-by-rows matrix for `new_data` (or the observed data), resolving groups as above. For a density fit, each row SHALL be a transect of its `area_m2`, or of 1 m² when `new_data` has no `area_m2` column, and the observed data SHALL use their recorded areas. `posterior_epred()` SHALL give the expected response. Where that differs from the inverse link of the linear predictor, `posterior_linpred(transform = TRUE)` SHALL return the inverse link:
 
 - *Nereocystis* weight, whose log weight is Normal: the expected weight is `exp(mu + sd_residual^2 / 2)`, above the median `exp(mu)`.
 - *Macrocystis* size, whose frond count is a zero-truncated negative binomial: the expected count is the truncated mean, above the untruncated mean `exp(mu)`.
@@ -148,7 +136,7 @@ The prediction verbs, `fitted()`, and `augment()` SHALL summarise `posterior_epr
 
 ### Requirement: Values far outside the fitted range are flagged
 
-Prediction SHALL warn when supplied values of the species predictor lie below half the fitted minimum or above twice the fitted maximum, or supplied `stipes_m2` values (for a fit with the density effect) lie above twice the fitted maximum, naming the column, the fitted range, and the column's expected unit where it has one. This applies to any `new_data`, including a grid from `kb_new_data()` with supplied predictor values. The warning SHALL NOT stop the prediction. The message is pinned by `tests/testthat/_snaps/warn.md`.
+Prediction SHALL warn when supplied values of the species predictor lie below half the fitted minimum or above twice the fitted maximum, naming the column, the fitted range, and the column's expected unit where it has one. This applies to any `new_data`, including a grid from `kb_new_data()` with supplied predictor values. The warning SHALL NOT stop the prediction. The message is pinned by `tests/testthat/_snaps/warn.md`.
 
 #### Scenario: Diameter in centimetres at prediction is flagged
 - **WHEN** `new_data` gives `diameter_mm` in centimetres to a fit made in millimetres
@@ -162,7 +150,7 @@ Prediction SHALL warn when supplied values of the species predictor lie below ha
 
 `kb_predict_plot_biomass(weight, size, density, wetdry, carbon)` SHALL combine a weight, a size, and a density fit of the same species into the expected biomass per m² of each site-year in the density fit's data, for the `measure` chosen by a name-only argument: `"wet"` (the default, kg/m²), `"dry"` (kg/m², needing a wet/dry fit as `wetdry`), or `"carbon"` (g C/m², needing `wetdry` and a carbon fit as `carbon`). It SHALL return a `kb_predictions` object with one row per such site-year and columns `site`, `year`, `weight_support`, `size_support`, `estimate`, `lower`, and `upper`, using `conf_level` (default 0.95), `estimate` (default `median`), and `sig_fig` (default 3). `weight_support` and `size_support` SHALL give the data the weight or size fit has for the site-year: `"site-year"` where the site-year is in its data, else `"site, year"` where both its site and its year are, else `"site"` or `"year"` where only one is, else `"none"`.
 
-Per draw, biomass SHALL be the site-year's expected density per m² times its mean plant weight: the expected weight at size averaged over the site-year's size distribution, truncated above at the largest size in the size fit's data. The name-only `n_plants` (default 100) SHALL set the number of plants averaged per draw. For a *Nereocystis* weight fit with the density effect, each site-year SHALL use its observed stipe density in the density fit's data, with a warning when a site-year's density lies far above the densities the weight fit saw, as for `stipes_m2` in `new_data`. Per draw, dry biomass SHALL be wet biomass times the expected dry:wet ratio, and carbon biomass dry biomass times the expected carbon fraction, converted to grams.
+Per draw, biomass SHALL be the site-year's expected density per m² times its mean plant weight: the expected weight at size averaged over the site-year's size distribution, truncated above at the largest size in the size fit's data. The name-only `n_plants` (default 100) SHALL set the number of plants averaged per draw. Per draw, dry biomass SHALL be wet biomass times the expected dry:wet ratio, and carbon biomass dry biomass times the expected carbon fraction, converted to grams.
 
 Weight and size at a site-year SHALL be resolved as in the prediction verbs, with name-only `new_levels` (default `"sample"`) and `representative_site`. A `representative_site` SHALL be fitted in both the weight and size fits. A name-only `progress` (`"bar"`, the default, or `"none"`) SHALL control a console progress bar, and a `progress_dir` naming an existing directory SHALL receive a progress record that `kb_progress()` reads, as for the fits. The function SHALL error, naming the problem, when an argument is not a fit of the required model, a fit the `measure` needs is not supplied, the fits supplied differ in species, they differ in their number of draws, or the density or size fit has no observed data.
 

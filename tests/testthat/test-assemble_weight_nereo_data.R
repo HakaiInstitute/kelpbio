@@ -53,7 +53,6 @@ test_that("assemble_weight_nereo_data maps every prior hyperparameter to its own
     intercept = kb_prior_normal(0.1, 1.1),
     diameter_power = kb_prior_normal(0.2, 1.2),
     weight_floor = kb_prior_normal(0.3, 1.3),
-    density_slope = kb_prior_normal(0.4, 1.4),
     sd_site = kb_prior_exponential(2.1),
     sd_year = kb_prior_exponential(2.2),
     sd_site_year = kb_prior_exponential(2.4),
@@ -71,8 +70,6 @@ test_that("assemble_weight_nereo_data maps every prior hyperparameter to its own
   expect_equal(sd$prior_diameter_power_sd, 1.2)
   expect_equal(sd$prior_weight_floor_mean, 0.3)
   expect_equal(sd$prior_weight_floor_sd, 1.3)
-  expect_equal(sd$prior_density_slope_mean, 0.4)
-  expect_equal(sd$prior_density_slope_sd, 1.4)
   expect_equal(sd$prior_sd_site_rate, 2.1)
   expect_equal(sd$prior_sd_year_rate, 2.2)
   expect_equal(sd$prior_sd_site_year_rate, 2.4)
@@ -121,30 +118,4 @@ test_that("assemble_weight_nereo_data accepts zero-row data", {
   expect_length(sd$site, 0)
   expect_length(sd$diameter_mm, 0)
   expect_equal(sd$prior_only, 1L)
-})
-
-test_that("assemble_weight_nereo_data passes standardised density and its flag", {
-  data <- data.frame(
-    diameter_mm = c(20, 35, 50, 40),
-    weight_kg = c(0.5, 2, 4, 3),
-    site = c("a", "b", "a", "b"),
-    year = c("2020", "2020", "2021", "2021"),
-    stipes_m2 = c(2, 4, NA, NA)
-  )
-  sd <- assemble_weight_nereo_data(data, kb_priors_weight_nereo(), 30)
-  expect_equal(sd$density_on, 1L)
-  # Standardised over the recorded rows; unrecorded site-years take the mean.
-  expect_equal(sd$density, c(-1, 1, 0, 0) / sqrt(2))
-})
-
-test_that("assemble_weight_nereo_data zeroes density when there is none", {
-  data <- data.frame(
-    diameter_mm = c(20, 35),
-    weight_kg = c(0.5, 2),
-    site = c("a", "b"),
-    year = c("2020", "2020")
-  )
-  sd <- assemble_weight_nereo_data(data, kb_priors_weight_nereo(), 30)
-  expect_equal(sd$density_on, 0L)
-  expect_equal(sd$density, c(0, 0))
 })

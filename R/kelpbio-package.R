@@ -5,7 +5,7 @@
 #' @importFrom rstantools rstan_config
 #' @importFrom posterior rvar
 #' @importFrom RcppParallel RcppParallelLibs
-#' @importFrom stats nobs
+#' @importFrom stats nobs residuals
 #' @importFrom rlang .data %||%
 #' @useDynLib kelpbio, .registration = TRUE
 "_PACKAGE"

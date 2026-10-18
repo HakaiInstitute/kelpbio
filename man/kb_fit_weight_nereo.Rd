@@ -83,12 +83,6 @@ The allometric coefficient \code{alpha} varies by site and year,
 \code{log(alpha) = intercept + site_effect + year_effect + site_year_effect}, so
 these effects scale the size-dependent part of the weight, while
 \code{weight_floor} is common to all sites and years.
-
-When \code{data} has a \code{stipes_m2} column (stipes per m², a site-year value),
-\code{log(alpha)} also includes \code{density_slope} times density standardised by
-its mean and SD over the fitted plants. Site-years without a recorded
-density are assigned the mean density. The density term is omitted when
-fewer than two distinct site-year densities are recorded.
 }
 \section{Sampling}{
 

@@ -7,10 +7,6 @@
 #' With `representative_site`, a new site also takes the named sites'
 #' site:year effect in a year in which they were surveyed.
 #'
-#' For a *Nereocystis* fit that includes density, each row uses its `stipes_m2`
-#' value if present, otherwise the recorded density of its site-year in the
-#' fitted data, otherwise the fitted mean density.
-#'
 #' @inheritParams params
 #' @param fit A `kb_fit_weight` object.
 #' @param new_data A data frame of the rows to predict at, with the fit's

@@ -42,7 +42,7 @@ keep_parameters <- function(fit, variables) {
 # A fit as it would be built with `terms` switched off.
 omit_terms <- function(fit, terms) {
   fit$meta$terms <- lapply(fit$meta$terms, setdiff, terms)
-  if ("density_slope" %in% terms) fit$meta$density_on <- FALSE
+  if ("weight_floor" %in% terms) fit$meta$form <- "power"
   if ("site_year_effect" %in% terms) fit$meta$site_year_on <- FALSE
   keep_parameters(fit, unlist(fit$meta$terms, use.names = FALSE))
 }

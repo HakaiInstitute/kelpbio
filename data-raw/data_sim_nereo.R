@@ -47,12 +47,10 @@ effects <- function(sd_site, sd_year, sd_site_year) {
   a_site[i_site] + a_year[i_year] + a_site_year
 }
 
-# Weight: lognormal around a power function of diameter with a floor, with a
-# stipe density effect on the weight above the floor.
+# Weight: lognormal around a power function of diameter with a floor.
 b_weight30 <- log(0.91) # log weight above the floor (kg) at 30 mm
 b_power <- 3.02
 b_floor <- 0.115 # kg
-b_density <- -0.159 # per SD of stipe density
 sd_weight <- 0.46 # residual SD of log weight
 # Site differences dominate site:year noise, so the site SD is identifiable
 # from the seven harvested sites.
@@ -78,8 +76,7 @@ b_tide <- 0.28 # fractional canopy increase per m of tide
 b_scaling <- 1.21 # multiplier on the in situ log SDs
 grid$e_cover <- effects(0.2, 0.2, 0)
 
-# 3. Density observations, which also give each site-year's observed stipe
-# density: the weight model's density covariate, as plot biomass reads it ----
+# 3. Density observations ------------------------------------------------------
 
 data_density_sim_nereo <- do.call(rbind, lapply(which(grid$density), function(i) {
   n <- 4L
@@ -90,27 +87,10 @@ data_density_sim_nereo <- do.call(rbind, lapply(which(grid$density), function(i)
   data.frame(stipes = as.integer(stipes), area_m2 = area_m2, site = grid$site[i], year = grid$year[i])
 }))
 
-totals <- stats::aggregate(
-  cbind(stipes, area_m2) ~ site + year,
-  data = data_density_sim_nereo,
-  FUN = sum
-)
-grid$stipes_m2 <- round(
-  (totals$stipes / totals$area_m2)[match(key, paste(totals$site, totals$year))],
-  2
-)
-
-# The density covariate is standardised over the harvested plants, as the weight
-# fit does; every harvested site-year has the same number of plants.
 n_weight <- 20L
-harvest_density <- rep(grid$stipes_m2[grid$weight], each = n_weight)
-density_mean <- mean(harvest_density)
-density_sd <- stats::sd(harvest_density)
 
 expected_weight <- function(diameter, i) {
-  density_std <- (grid$stipes_m2[i] - density_mean) / density_sd
-  b_floor + exp(b_weight30 + b_density * density_std + grid$e_weight[i]) *
-    (diameter / 30)^b_power
+  b_floor + exp(b_weight30 + grid$e_weight[i]) * (diameter / 30)^b_power
 }
 size_scale <- function(i) exp(b_diameter + grid$e_size[i]) / gamma(1 + 1 / shape_size)
 
@@ -137,8 +117,7 @@ data_weight_sim_nereo <- do.call(rbind, lapply(which(grid$weight), function(i) {
     diameter_mm = round(diameter, 1),
     weight_kg = round(exp(log_weight), 3),
     site = grid$site[i],
-    year = grid$year[i],
-    stipes_m2 = grid$stipes_m2[i]
+    year = grid$year[i]
   )
 }))
 

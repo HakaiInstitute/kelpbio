@@ -81,13 +81,7 @@ test_that("representative_site borrows the site:year effect where the site was o
   site_year <- weight_nereo_fit$meta$site_year_levels[1]
   site <- sub(":.*", "", site_year)
   year <- sub(".*:", "", site_year)
-  density <- weight_nereo_fit$meta$density_levels[[site_year]]
-  new_row <- data.frame(
-    site = "brand_new_site",
-    year = year,
-    diameter_mm = 40,
-    stipes_m2 = density
-  )
+  new_row <- data.frame(site = "brand_new_site", year = year, diameter_mm = 40)
   averaged <- kb_predict_weight(weight_nereo_fit, new_row, representative_site = site)
   sampled <- kb_predict_weight(
     weight_nereo_fit,
@@ -151,36 +145,4 @@ test_that("new_data far outside the fitted range warns but still predicts", {
     "far outside"
   )
   expect_equal(nrow(p), 1L)
-})
-
-test_that("a fitted site-year recorded without density uses the fitted mean", {
-  fit <- weight_nereo_fit
-  levels <- fit$meta$density_levels
-  site_year <- strsplit(names(levels)[1], ":", fixed = TRUE)[[1]]
-  fit$meta$density_levels <- levels[-1]
-  bare <- kb_predict_weight(
-    fit,
-    data.frame(diameter_mm = 30, site = site_year[1], year = site_year[2]),
-    new_levels = "average"
-  )
-  at_mean <- kb_predict_weight(
-    fit,
-    data.frame(
-      diameter_mm = 30,
-      site = site_year[1],
-      year = site_year[2],
-      stipes_m2 = fit$meta$density_mean
-    ),
-    new_levels = "average"
-  )
-  expect_equal(bare$estimate, at_mean$estimate)
-})
-
-test_that("density far above the fitted range warns; a sparse density does not", {
-  nd <- function(density) data.frame(diameter_mm = 30, stipes_m2 = density)
-  expect_warning(
-    kb_predict_weight(weight_nereo_fit, nd(40000), new_levels = "average"),
-    "far outside"
-  )
-  expect_no_warning(kb_predict_weight(weight_nereo_fit, nd(0.2), new_levels = "average"))
 })

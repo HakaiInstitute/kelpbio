@@ -21,9 +21,7 @@
 #' has for the site-year, from most to least local: `"site-year"` (that
 #' site-year's own data), `"site, year"` (its site and its year, but not
 #' together), `"site"`, `"year"`, or `"none"`; the less local, the more the
-#' estimate borrows from other site-years. For a *Nereocystis* weight fit with a
-#' density effect, each site-year uses the stipe density observed in `density`'s
-#' data.
+#' estimate borrows from other site-years.
 #'
 #' The fits must be of the same species and have the same number of posterior
 #' draws.
@@ -126,9 +124,6 @@ kb_predict_plot_biomass <- function(
   .chk_summary_args(conf_level, estimate, sig_fig)
 
   grid <- plot_biomass_grid(weight, size, density)
-  if (.density_on(weight)) {
-    warn_outside_range(weight, grid$stipes_m2, "stipes_m2", lower = FALSE)
-  }
   groups <- grid[c("site", "year")]
 
   # Per m^2: the grid holds no area column, so no offset.

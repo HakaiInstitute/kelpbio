@@ -56,7 +56,6 @@ warn_implausible_units <- function(data, x_name) {
   limits <- list(
     diameter_mm = c(10, 200),
     weight_kg = c(-Inf, 100),
-    stipes_m2 = c(-Inf, 100),
     area_m2 = c(1, 5000),
     plot_area_m2 = c(1, 1e6),
     site_area_m2 = c(10, 1e9),
@@ -86,9 +85,8 @@ warn_implausible_units <- function(data, x_name) {
 }
 
 # Warn when values lie below half the fitted minimum or above twice the fitted
-# maximum. `lower = FALSE` is for a column whose unit mistakes only inflate
-# values (density) and whose small values are real sparse sites.
-warn_outside_range <- function(fit, values, col, lower = TRUE) {
+# maximum.
+warn_outside_range <- function(fit, values, col) {
   fitted <- suppressWarnings(as.numeric(fit$data[[col]]))
   values <- suppressWarnings(as.numeric(values))
   if (all(is.na(fitted)) || all(is.na(values))) {
@@ -96,8 +94,7 @@ warn_outside_range <- function(fit, values, col, lower = TRUE) {
   }
   lo <- min(fitted, na.rm = TRUE)
   hi <- max(fitted, na.rm = TRUE)
-  low <- if (lower) values < lo / 2 else FALSE
-  n <- sum(low | values > 2 * hi, na.rm = TRUE)
+  n <- sum(values < lo / 2 | values > 2 * hi, na.rm = TRUE)
   if (n > 0) {
     unit <- if (col %in% names(column_units)) column_units[[col]] else NULL
     range_txt <- paste(signif(lo, 3), "to", signif(hi, 3))

@@ -9,7 +9,6 @@ test_that("tidy returns house columns and omits group-level terms by default", {
       "intercept",
       "diameter_power",
       "weight_floor",
-      "density_slope",
       "sd_site",
       "sd_year",
       "sd_site_year",

@@ -24,3 +24,4 @@
 ^decisions$
 ^figure$
 ^tests/testthat/_problems$
+^review$

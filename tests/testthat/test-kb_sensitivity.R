@@ -64,9 +64,9 @@ test_that("the thresholds set the flags and leave the values unchanged", {
 
 test_that("an omitted effect has no row", {
   skip_if_not_installed("priorsense")
-  fit <- omit_terms(weight_nereo_fit, "density_slope")
+  fit <- omit_terms(weight_nereo_fit, "weight_floor")
   out <- kb_sensitivity(fit)
-  expect_false("density_slope" %in% out$term)
+  expect_false("weight_floor" %in% out$term)
 })
 
 test_that("kb_sensitivity refuses fits with no likelihood", {

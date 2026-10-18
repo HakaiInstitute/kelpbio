@@ -6,8 +6,7 @@ mean_plant_weight <- function(weight, row, sizes, effects) {
   nchains <- posterior::nchains(weight$draws)
   plants <- tibble::tibble(
     site = rep(row$site, n),
-    year = rep(row$year, n),
-    stipes_m2 = rep(row[["stipes_m2"]], n)
+    year = rep(row$year, n)
   )
   plants[[weight$meta$predictor]] <- posterior::rvar(sizes, nchains = nchains)
   plant_effects <- posterior::rvar(
