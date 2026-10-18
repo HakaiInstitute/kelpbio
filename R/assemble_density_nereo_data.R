@@ -14,8 +14,7 @@
 assemble_density_nereo_data <- function(
   data,
   priors,
-  prior_only = FALSE,
-  site_year_on = TRUE
+  prior_only = FALSE
 ) {
   c(
     group_stan_data(data),
@@ -23,8 +22,7 @@ assemble_density_nereo_data <- function(
       n_obs = nrow(data),
       stipes = as.integer(data$stipes),
       area_m2 = as.numeric(data$area_m2),
-      prior_only = as.integer(prior_only),
-      site_year_on = as.integer(site_year_on)
+      prior_only = as.integer(prior_only)
     ),
     prior_data(priors)
   )

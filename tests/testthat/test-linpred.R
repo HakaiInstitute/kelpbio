@@ -72,26 +72,19 @@ test_that("sample widens vs average when a factor is omitted (nereo)", {
   expect_true(all(sd_smp >= sd_avg))
 })
 
-test_that("a dropped site:year effect contributes nothing to the linear predictor", {
-  on <- weight_nereo_fit
-  on$meta$site_year_on <- TRUE
-  off <- weight_nereo_fit
-  off$meta$site_year_on <- FALSE
-  s <- weight_nereo_fit$meta$site_levels[1]
-  y <- weight_nereo_fit$meta$year_levels[1]
-  grid <- data.frame(diameter_mm = 40, site = s, year = y)
-
-  e_on <- exp(as.numeric(posterior::draws_of(.linpred(on, grid, "average"))))
-  e_off <- exp(as.numeric(posterior::draws_of(.linpred(off, grid, "average"))))
-
-  expect_false(isTRUE(all.equal(e_on, e_off)))
-  # site:year acts on log(alpha), so the difference is site_year_effect[s, y] on
-  # the log of the weight above the floor.
-  floor <- as.numeric(posterior::draws_of(weight_nereo_fit$draws$weight_floor))
-  si <- match(s, weight_nereo_fit$meta$site_levels)
-  yi <- match(y, weight_nereo_fit$meta$year_levels)
-  bsy <- posterior::draws_of(weight_nereo_fit$draws$site_year_effect)[, si, yi]
-  expect_equal(log(e_on - floor) - log(e_off - floor), as.numeric(bsy))
+test_that("a fit without a site:year effect adds none to the group effects", {
+  # Cover biomass fits site and year effects only; under "sample" a fitted site
+  # and year draw nothing new, so the effects are exactly site plus year.
+  fit <- cover_biomass_macro_fit
+  s <- fit$meta$site_levels[1]
+  y <- fit$meta$year_levels[1]
+  grid <- data.frame(site = s, year = y)
+  got <- .group_effects(fit, grid, "sample", NULL)
+  si <- match(s, fit$meta$site_levels)
+  yi <- match(y, fit$meta$year_levels)
+  expected <- posterior::draws_of(fit$draws$site_effect)[, si] +
+    posterior::draws_of(fit$draws$year_effect)[, yi]
+  expect_equal(as.numeric(posterior::draws_of(got)), as.numeric(expected))
 })
 
 test_that("a fitted site and year never observed together take no site:year effect under average", {

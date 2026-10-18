@@ -1,7 +1,7 @@
 // Nereocystis size: maximum sub-bulb diameter is Weibull, parameterised by its mean.
 //   diameter_mm ~ weibull(shape, mu / tgamma(1 + 1 / shape))
 //   log(mu) = intercept + site_effect[site] + year_effect[year]
-//             + site_year_on * site_year_effect[site, year]
+//             + site_year_effect[site, year]
 // The shape is one scalar: a group-varying shape can start near zero, where
 // tgamma(1 + 1 / shape) overflows and the chain freezes.
 data {
@@ -20,7 +20,6 @@ data {
   real<lower=0> prior_sd_site_year_rate;
 
   int<lower=0, upper=1> prior_only;
-  int<lower=0, upper=1> site_year_on;
 }
 transformed data {
   // index of (site, year) in to_vector(site_year_effect)
@@ -55,7 +54,7 @@ model {
   to_vector(z_site_year) ~ std_normal();
   if (prior_only == 0) {
     vector[n_obs] log_mu = intercept + site_effect[site] + year_effect[year]
-      + site_year_on * to_vector(site_year_effect)[sy_idx];
+      + to_vector(site_year_effect)[sy_idx];
     diameter_mm ~ weibull(shape, exp(log_mu) / tgamma(1 + 1 / shape));
   }
 }

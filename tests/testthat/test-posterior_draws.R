@@ -16,9 +16,9 @@ test_that("posterior conversions and summaries accept a fit", {
 })
 
 test_that("as_draws leaves out an effect the fit omitted", {
-  fit <- omit_terms(weight_nereo_fit, site_year_off(FALSE))
+  fit <- omit_terms(weight_nereo_fit, "weight_floor")
   vars <- posterior::variables(posterior::as_draws(fit))
-  expect_false(any(c("sd_site_year", "site_year_effect") %in% vars))
+  expect_false("weight_floor" %in% vars)
 })
 
 test_that("as_draws is re-exported, so it needs no posterior::", {

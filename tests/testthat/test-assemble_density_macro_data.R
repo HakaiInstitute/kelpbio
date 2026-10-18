@@ -18,7 +18,6 @@ test_that("assemble_density_macro_data maps data to the Stan data block", {
   expect_identical(sd$plants, c(3L, 0L, 12L))
   expect_equal(sd$area_m2, c(40, 40, 120))
   expect_equal(sd$prior_only, 0L)
-  expect_equal(sd$site_year_on, 1L)
 })
 
 test_that("assemble_density_macro_data maps every prior hyperparameter to its own Stan field", {
@@ -39,12 +38,6 @@ test_that("assemble_density_macro_data maps every prior hyperparameter to its ow
 })
 
 test_that("assemble_density_macro_data encodes the flags and accepts zero-row data", {
-  off <- assemble_density_macro_data(
-    density_macro_data(),
-    kb_priors_density_macro(),
-    site_year_on = FALSE
-  )
-  expect_equal(off$site_year_on, 0L)
   sd <- assemble_density_macro_data(
     density_macro_data()[0, ],
     kb_priors_density_macro(),

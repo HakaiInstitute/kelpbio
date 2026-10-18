@@ -43,7 +43,6 @@ keep_parameters <- function(fit, variables) {
 omit_terms <- function(fit, terms) {
   fit$meta$terms <- lapply(fit$meta$terms, setdiff, terms)
   if ("weight_floor" %in% terms) fit$meta$form <- "power"
-  if ("site_year_effect" %in% terms) fit$meta$site_year_on <- FALSE
   keep_parameters(fit, unlist(fit$meta$terms, use.names = FALSE))
 }
 

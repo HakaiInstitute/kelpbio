@@ -57,20 +57,12 @@ test_that("tidy forwards conf_level/estimate/sig_fig to the summariser", {
 })
 
 test_that("tidy reports exactly the recorded terms, at both levels", {
-  fits <- list(nereo = weight_nereo_fit, macro = weight_macro_fit)
-  for (species in names(fits)) {
-    fit <- fits[[species]]
-    off <- omit_terms(fit, site_year_off(FALSE))
-    expect_false("sd_site_year" %in% tidy(off)$term, info = species)
-    expect_false(
-      any(startsWith(
-        tidy(off, include_random_effects = TRUE)$term,
-        "site_year_effect"
-      )),
-      info = species
-    )
-    expect_true("sd_site_year" %in% tidy(fit)$term, info = species)
-  }
+  off <- omit_terms(weight_nereo_fit, "weight_floor")
+  expect_false("weight_floor" %in% tidy(off)$term)
+  expect_false(
+    "weight_floor" %in% tidy(off, include_random_effects = TRUE)$term
+  )
+  expect_true("weight_floor" %in% tidy(weight_nereo_fit)$term)
 })
 
 test_that("every declared term has draws behind it", {

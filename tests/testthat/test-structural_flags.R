@@ -9,29 +9,3 @@ test_that(".site_year_on reads the recorded flag, missing as FALSE", {
   # As for wet/dry and carbon.
   expect_false(.site_year_on(list(meta = list())))
 })
-
-test_that("the prediction engine and the model description agree on the flag", {
-  # Each reads the flag independently, so a polarity mismatch could slip by.
-  s <- weight_nereo_fit$meta$site_levels[1]
-  y <- weight_nereo_fit$meta$year_levels[1]
-  grid <- data.frame(diameter_mm = 40, site = s, year = y)
-
-  for (flag in list(TRUE, FALSE)) {
-    fit <- weight_nereo_fit
-    fit$meta["site_year_on"] <- list(flag)
-
-    described <- any(grepl(
-      "site_year_effect",
-      utils::capture.output(kb_model_describe(fit))
-    ))
-
-    off <- weight_nereo_fit
-    off$meta$site_year_on <- FALSE
-    contributes <- !isTRUE(all.equal(
-      as.numeric(posterior::draws_of(.linpred(fit, grid, "average"))),
-      as.numeric(posterior::draws_of(.linpred(off, grid, "average")))
-    ))
-
-    expect_identical(described, contributes)
-  }
-})

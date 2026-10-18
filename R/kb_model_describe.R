@@ -6,8 +6,8 @@
 #' matches a row of [tidy()], [summary()], and [coef()].
 #'
 #' @details
-#' Priors, centring, and random effects are those of the fit; a random effect
-#' not fitted (such as the site:year effect for single-year data) is omitted.
+#' Priors, centring, and random effects are those of the fit; an effect not
+#' fitted (such as the weight floor of a power-law fit) is omitted.
 #' Priors marked `T[0, ]` are truncated at zero.
 #'
 #' @inheritParams params
@@ -43,15 +43,22 @@ kb_model_describe <- function(fit, ..., prose = FALSE) {
 
 #' @export
 .model_spec.kb_fit_weight_nereo <- function(fit) {
-  sy <- .site_year_on(fit)
   floor <- .floor_on(fit)
   d0 <- signif(fit$meta$predictor_ref, 3)
   pri <- fit$meta$priors
 
-  mean_terms <- c("intercept", "site_effect[site]", "year_effect[year]")
+  mean_terms <- c(
+    "intercept", "site_effect[site]", "year_effect[year]",
+    "site_year_effect[site, year]"
+  )
   random <- list(
     list(term = "site_effect[site]", sd = "sd_site", gloss = "site effect on log(alpha)"),
-    list(term = "year_effect[year]", sd = "sd_year", gloss = "year effect on log(alpha)")
+    list(term = "year_effect[year]", sd = "sd_year", gloss = "year effect on log(alpha)"),
+    list(
+      term = "site_year_effect[site, year]",
+      sd = "sd_site_year",
+      gloss = "site:year effect on log(alpha)"
+    )
   )
   priors <- list(
     intercept = pri$intercept,
@@ -59,25 +66,13 @@ kb_model_describe <- function(fit, ..., prose = FALSE) {
     weight_floor = pri$weight_floor,
     sd_residual = pri$sd_residual,
     sd_site = pri$sd_site,
-    sd_year = pri$sd_year
+    sd_year = pri$sd_year,
+    sd_site_year = pri$sd_site_year
   )
   centering <- sprintf(
     "x = diameter_mm / d0,  d0 = %s  (geometric mean diameter)",
     format(d0)
   )
-  if (sy) {
-    mean_terms <- c(mean_terms, "site_year_effect[site, year]")
-    random <- c(
-      random,
-      list(list(
-        term = "site_year_effect[site, year]",
-        sd = "sd_site_year",
-        gloss = "site:year effect on log(alpha)"
-      ))
-    )
-    priors$sd_site_year <- pri$sd_site_year
-  }
-
   if (!floor) {
     priors$weight_floor <- NULL
   }
@@ -123,12 +118,7 @@ kb_model_describe <- function(fit, ..., prose = FALSE) {
       "Wet weight was modelled on the log scale with a Normal likelihood as an ",
       "allometric function of sub-bulb diameter. ",
       form_prose,
-      " ",
-      if (sy) {
-        "The log of alpha varied by site, by year, and by site:year."
-      } else {
-        "The log of alpha varied by site and by year."
-      },
+      " The log of alpha varied by site, by year, and by site:year.",
       " Regularising priors were placed on all parameters (see the notation ",
       "form for the hyperparameters)."
     )
@@ -137,35 +127,30 @@ kb_model_describe <- function(fit, ..., prose = FALSE) {
 
 #' @export
 .model_spec.kb_fit_weight_macro <- function(fit) {
-  sy <- .site_year_on(fit)
   f0 <- signif(fit$meta$predictor_ref, 3)
   pri <- fit$meta$priors
 
-  mean_terms <- c("intercept", "site_effect[site]", "year_effect[year]")
+  mean_terms <- c(
+    "intercept", "site_effect[site]", "year_effect[year]",
+    "site_year_effect[site, year]"
+  )
   random <- list(
     list(term = "site_effect[site]", sd = "sd_site", gloss = "site effect on log(alpha)"),
-    list(term = "year_effect[year]", sd = "sd_year", gloss = "year effect on log(alpha)")
+    list(term = "year_effect[year]", sd = "sd_year", gloss = "year effect on log(alpha)"),
+    list(
+      term = "site_year_effect[site, year]",
+      sd = "sd_site_year",
+      gloss = "site:year effect on log(alpha)"
+    )
   )
   priors <- list(
     intercept = pri$intercept,
     fronds_slope = pri$fronds_slope,
     shape = pri$shape,
     sd_site = pri$sd_site,
-    sd_year = pri$sd_year
+    sd_year = pri$sd_year,
+    sd_site_year = pri$sd_site_year
   )
-  if (sy) {
-    mean_terms <- c(mean_terms, "site_year_effect[site, year]")
-    random <- c(
-      random,
-      list(list(
-        term = "site_year_effect[site, year]",
-        sd = "sd_site_year",
-        gloss = "site:year effect on log(alpha)"
-      ))
-    )
-    priors$sd_site_year <- pri$sd_site_year
-  }
-
   list(
     title = "Weight allometry",
     species = .species_label(fit$meta$species),
@@ -194,7 +179,7 @@ kb_model_describe <- function(fit, ..., prose = FALSE) {
         "the notation form for the hyperparameters)."
       ),
       format(f0),
-      if (sy) "site, by year, and by site:year" else "site and by year"
+      "site, by year, and by site:year"
     )
   )
 }
@@ -202,31 +187,27 @@ kb_model_describe <- function(fit, ..., prose = FALSE) {
 # Random-effect structure shared by size and density; `intercept` is the
 # species' intercept name.
 .group_spec_effects <- function(fit, intercept, on = "log(mu)") {
-  sy <- .site_year_on(fit)
   pri <- fit$meta$priors
-  mean_terms <- c(intercept, "site_effect[site]", "year_effect[year]")
-  random <- list(
-    list(term = "site_effect[site]", sd = "sd_site", gloss = paste("site effect on", on)),
-    list(term = "year_effect[year]", sd = "sd_year", gloss = paste("year effect on", on))
-  )
-  sds <- list(sd_site = pri$sd_site, sd_year = pri$sd_year)
-  if (sy) {
-    mean_terms <- c(mean_terms, "site_year_effect[site, year]")
-    random <- c(
-      random,
-      list(list(
+  list(
+    mean_terms = c(
+      intercept, "site_effect[site]", "year_effect[year]",
+      "site_year_effect[site, year]"
+    ),
+    random = list(
+      list(term = "site_effect[site]", sd = "sd_site", gloss = paste("site effect on", on)),
+      list(term = "year_effect[year]", sd = "sd_year", gloss = paste("year effect on", on)),
+      list(
         term = "site_year_effect[site, year]",
         sd = "sd_site_year",
         gloss = paste("site:year effect on", on)
-      ))
-    )
-    sds$sd_site_year <- pri$sd_site_year
-  }
-  list(
-    mean_terms = mean_terms,
-    random = random,
-    sds = sds,
-    groups = if (sy) "site, year, and site:year" else "site and year"
+      )
+    ),
+    sds = list(
+      sd_site = pri$sd_site,
+      sd_year = pri$sd_year,
+      sd_site_year = pri$sd_site_year
+    ),
+    groups = "site, year, and site:year"
   )
 }
 

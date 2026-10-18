@@ -2,7 +2,7 @@
 //   weight_kg ~ gamma(shape, shape / mu)
 //   log(mu) = intercept + fronds_slope * log(fronds / fronds_ref)
 //             + site_effect[site] + year_effect[year]
-//             + site_year_on * site_year_effect[site, year]
+//             + site_year_effect[site, year]
 data {
   int<lower=0> n_obs;
   int<lower=1> n_site;
@@ -23,7 +23,6 @@ data {
   real<lower=0> prior_sd_site_year_rate;
 
   int<lower=0, upper=1> prior_only;
-  int<lower=0, upper=1> site_year_on;
 }
 transformed data {
   vector[n_obs] log_fronds = log(fronds) - log(fronds_ref);
@@ -62,7 +61,7 @@ model {
   if (prior_only == 0) {
     vector[n_obs] log_mu = intercept + fronds_slope * log_fronds
       + site_effect[site] + year_effect[year]
-      + site_year_on * to_vector(site_year_effect)[sy_idx];
+      + to_vector(site_year_effect)[sy_idx];
     weight_kg ~ gamma(shape, shape * exp(-log_mu));
   }
 }

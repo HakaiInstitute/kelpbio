@@ -2,7 +2,7 @@
 // since plants with none are not recorded.
 //   fronds ~ neg_binomial_2(mu, 1 / dispersion) T[1, ]
 //   log(mu) = intercept + site_effect[site] + year_effect[year]
-//             + site_year_on * site_year_effect[site, year]
+//             + site_year_effect[site, year]
 // mu is the mean before truncation.
 data {
   int<lower=0> n_obs;
@@ -20,7 +20,6 @@ data {
   real<lower=0> prior_sd_site_year_rate;
 
   int<lower=0, upper=1> prior_only;
-  int<lower=0, upper=1> site_year_on;
 }
 transformed data {
   // index of (site, year) in to_vector(site_year_effect)
@@ -56,7 +55,7 @@ model {
   if (prior_only == 0) {
     real phi = 1 / dispersion;
     vector[n_obs] log_mu = intercept + site_effect[site] + year_effect[year]
-      + site_year_on * to_vector(site_year_effect)[sy_idx];
+      + to_vector(site_year_effect)[sy_idx];
     // log P(0) = -phi * log(1 + mu / phi), written on the log scale for stability
     vector[n_obs] log_p0 = -phi * log1p_exp(log_mu - log(phi));
     target += neg_binomial_2_log_lpmf(fronds | log_mu, phi)

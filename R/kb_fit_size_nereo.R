@@ -56,22 +56,16 @@ kb_fit_size_nereo <- function(
     progress = progress,
     progress_dir = progress_dir
   )
-  site_year <- site_year_structure(data)
-  notify_site_year(site_year, progress = progress)
+  notify_site_year(site_year_aliasing(data))
 
   priors <- resolve_priors(priors, kb_priors_size_nereo())
   stan_data <- assemble_size_nereo_data(
     data,
     priors,
-    prior_only = prior_only,
-    site_year_on = site_year$on
+    prior_only = prior_only
   )
 
-  parameters <- fit_parameters(
-    priors,
-    GROUP_EFFECTS,
-    off = site_year_off(site_year$on)
-  )
+  parameters <- fit_parameters(priors, GROUP_EFFECTS)
   core <- fit_stan(
     stanmodels$size_nereo,
     stan_data,
@@ -99,7 +93,7 @@ kb_fit_size_nereo <- function(
     prior_only = prior_only,
     nthin = as.integer(nthin),
     meta_extra = list(
-      site_year_on = site_year$on,
+      site_year_on = TRUE,
       # No predictor: size is predicted per group.
       response = "diameter_mm"
     )

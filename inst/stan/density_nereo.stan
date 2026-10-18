@@ -2,7 +2,7 @@
 // with the transect area as an offset.
 //   stipes ~ ZINB(area_m2 * exp(log_density), 1 / dispersion, inv_logit(logit_zero_inflation))
 //   log_density = intercept + site_effect[site] + year_effect[year]
-//                 + site_year_on * site_year_effect[site, year]
+//                 + site_year_effect[site, year]
 // exp(log_density) is the density on a transect holding stipes.
 functions {
   int count_zeros(array[] int y) {
@@ -32,7 +32,6 @@ data {
   real<lower=0> prior_sd_site_year_rate;
 
   int<lower=0, upper=1> prior_only;
-  int<lower=0, upper=1> site_year_on;
 }
 transformed data {
   vector[n_obs] log_area = log(area_m2);
@@ -88,7 +87,7 @@ model {
     real log_zi = log_inv_logit(logit_zero_inflation);
     real log1m_zi = log1m_inv_logit(logit_zero_inflation);
     vector[n_obs] log_mu = log_area + intercept + site_effect[site] + year_effect[year]
-      + site_year_on * to_vector(site_year_effect)[sy_idx];
+      + to_vector(site_year_effect)[sy_idx];
     // A zero is structural or a negative binomial zero, log(zi + (1 - zi) * P0),
     // on the log scale for stability.
     vector[n_zero] log_p0 = -phi * log1p_exp(log_mu[idx_zero] - log(phi));

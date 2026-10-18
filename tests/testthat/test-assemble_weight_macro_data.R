@@ -20,7 +20,6 @@ test_that("assemble_weight_macro_data maps data and priors to the Stan data bloc
   expect_equal(sd$weight_kg, c(0.4, 2, 1))
   expect_equal(sd$fronds_ref, exp(mean(log(c(3, 8, 5)))))
   expect_equal(sd$prior_only, 0L)
-  expect_equal(sd$site_year_on, 1L)
 })
 
 test_that("assemble_weight_macro_data maps every prior hyperparameter to its own Stan field", {
@@ -48,27 +47,6 @@ test_that("assemble_weight_macro_data maps every prior hyperparameter to its own
   expect_equal(sd$prior_sd_site_rate, 2.1)
   expect_equal(sd$prior_sd_year_rate, 2.2)
   expect_equal(sd$prior_sd_site_year_rate, 2.3)
-})
-
-test_that("assemble_weight_macro_data encodes site_year_on as 0/1", {
-  data <- data.frame(
-    fronds = c(3L, 8L, 5L),
-    weight_kg = c(0.4, 2, 1),
-    site = factor(c("a", "b", "a")),
-    year = factor(c("2020", "2020", "2021"))
-  )
-  on <- assemble_weight_macro_data(
-    data,
-    kb_priors_weight_macro(),
-    site_year_on = TRUE
-  )
-  off <- assemble_weight_macro_data(
-    data,
-    kb_priors_weight_macro(),
-    site_year_on = FALSE
-  )
-  expect_equal(on$site_year_on, 1L)
-  expect_equal(off$site_year_on, 0L)
 })
 
 test_that("assemble_weight_macro_data accepts zero-row data", {

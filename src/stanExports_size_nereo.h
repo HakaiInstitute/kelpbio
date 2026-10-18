@@ -13,32 +13,32 @@ namespace model_size_nereo_namespace {
 using stan::model::model_base_crtp;
 using namespace stan::math;
 stan::math::profile_map profiles__;
-static constexpr std::array<const char*, 55> locations_array__ =
+static constexpr std::array<const char*, 54> locations_array__ =
   {" (found before start of program)",
-  " (in 'size_nereo', line 31, column 2 to column 17)",
-  " (in 'size_nereo', line 32, column 2 to column 22)",
+  " (in 'size_nereo', line 30, column 2 to column 17)",
+  " (in 'size_nereo', line 31, column 2 to column 22)",
+  " (in 'size_nereo', line 32, column 2 to column 24)",
   " (in 'size_nereo', line 33, column 2 to column 24)",
-  " (in 'size_nereo', line 34, column 2 to column 24)",
-  " (in 'size_nereo', line 35, column 2 to column 29)",
+  " (in 'size_nereo', line 34, column 2 to column 29)",
+  " (in 'size_nereo', line 35, column 2 to column 24)",
   " (in 'size_nereo', line 36, column 2 to column 24)",
-  " (in 'size_nereo', line 37, column 2 to column 24)",
-  " (in 'size_nereo', line 38, column 2 to column 37)",
+  " (in 'size_nereo', line 37, column 2 to column 37)",
+  " (in 'size_nereo', line 40, column 2 to column 48)",
   " (in 'size_nereo', line 41, column 2 to column 48)",
-  " (in 'size_nereo', line 42, column 2 to column 48)",
-  " (in 'size_nereo', line 43, column 2 to column 71)",
-  " (in 'size_nereo', line 46, column 2 to column 63)",
-  " (in 'size_nereo', line 47, column 2 to column 40)",
+  " (in 'size_nereo', line 42, column 2 to column 71)",
+  " (in 'size_nereo', line 45, column 2 to column 63)",
+  " (in 'size_nereo', line 46, column 2 to column 40)",
+  " (in 'size_nereo', line 47, column 2 to column 44)",
   " (in 'size_nereo', line 48, column 2 to column 44)",
-  " (in 'size_nereo', line 49, column 2 to column 44)",
-  " (in 'size_nereo', line 50, column 2 to column 54)",
+  " (in 'size_nereo', line 49, column 2 to column 54)",
+  " (in 'size_nereo', line 50, column 2 to column 24)",
   " (in 'size_nereo', line 51, column 2 to column 24)",
-  " (in 'size_nereo', line 52, column 2 to column 24)",
-  " (in 'size_nereo', line 53, column 2 to column 40)",
-  " (in 'size_nereo', line 55, column 11 to column 16)",
-  " (in 'size_nereo', line 55, column 4 to line 56, column 59)",
-  " (in 'size_nereo', line 57, column 4 to column 70)",
-  " (in 'size_nereo', line 54, column 23 to line 58, column 3)",
-  " (in 'size_nereo', line 54, column 2 to line 58, column 3)",
+  " (in 'size_nereo', line 52, column 2 to column 40)",
+  " (in 'size_nereo', line 54, column 11 to column 16)",
+  " (in 'size_nereo', line 54, column 4 to line 55, column 44)",
+  " (in 'size_nereo', line 56, column 4 to column 70)",
+  " (in 'size_nereo', line 53, column 23 to line 57, column 3)",
+  " (in 'size_nereo', line 53, column 2 to line 57, column 3)",
   " (in 'size_nereo', line 8, column 2 to column 21)",
   " (in 'size_nereo', line 9, column 2 to column 22)",
   " (in 'size_nereo', line 10, column 2 to column 22)",
@@ -55,20 +55,19 @@ static constexpr std::array<const char*, 55> locations_array__ =
   " (in 'size_nereo', line 18, column 2 to column 35)",
   " (in 'size_nereo', line 19, column 2 to column 40)",
   " (in 'size_nereo', line 20, column 2 to column 35)",
-  " (in 'size_nereo', line 21, column 2 to column 37)",
-  " (in 'size_nereo', line 25, column 8 to column 13)",
-  " (in 'size_nereo', line 25, column 2 to column 26)",
-  " (in 'size_nereo', line 27, column 4 to column 49)",
-  " (in 'size_nereo', line 26, column 21 to line 28, column 3)",
-  " (in 'size_nereo', line 26, column 2 to line 28, column 3)",
+  " (in 'size_nereo', line 24, column 8 to column 13)",
+  " (in 'size_nereo', line 24, column 2 to column 26)",
+  " (in 'size_nereo', line 26, column 4 to column 49)",
+  " (in 'size_nereo', line 25, column 21 to line 27, column 3)",
+  " (in 'size_nereo', line 25, column 2 to line 27, column 3)",
+  " (in 'size_nereo', line 35, column 9 to column 15)",
   " (in 'size_nereo', line 36, column 9 to column 15)",
   " (in 'size_nereo', line 37, column 9 to column 15)",
-  " (in 'size_nereo', line 38, column 9 to column 15)",
-  " (in 'size_nereo', line 38, column 17 to column 23)",
+  " (in 'size_nereo', line 37, column 17 to column 23)",
+  " (in 'size_nereo', line 40, column 9 to column 15)",
   " (in 'size_nereo', line 41, column 9 to column 15)",
   " (in 'size_nereo', line 42, column 9 to column 15)",
-  " (in 'size_nereo', line 43, column 9 to column 15)",
-  " (in 'size_nereo', line 43, column 17 to column 23)"};
+  " (in 'size_nereo', line 42, column 17 to column 23)"};
 #include <stan_meta_header.hpp>
 class model_size_nereo final : public model_base_crtp<model_size_nereo> {
 private:
@@ -85,7 +84,6 @@ private:
   double prior_sd_year_rate;
   double prior_sd_site_year_rate;
   int prior_only;
-  int site_year_on;
   std::vector<int> sy_idx;
   Eigen::Map<Eigen::Matrix<double,-1,1>> diameter_mm{nullptr, 0};
 public:
@@ -247,45 +245,33 @@ public:
       current_statement__ = 40;
       stan::math::check_less_or_equal(function__, "prior_only", prior_only, 1);
       current_statement__ = 41;
-      context__.validate_dims("data initialization", "site_year_on", "int",
-        std::vector<size_t>{});
-      site_year_on = std::numeric_limits<int>::min();
-      current_statement__ = 41;
-      site_year_on = context__.vals_i("site_year_on")[(1 - 1)];
-      current_statement__ = 41;
-      stan::math::check_greater_or_equal(function__, "site_year_on",
-        site_year_on, 0);
-      current_statement__ = 41;
-      stan::math::check_less_or_equal(function__, "site_year_on",
-        site_year_on, 1);
-      current_statement__ = 42;
       stan::math::validate_non_negative_index("sy_idx", "n_obs", n_obs);
-      current_statement__ = 43;
+      current_statement__ = 42;
       sy_idx = std::vector<int>(n_obs, std::numeric_limits<int>::min());
-      current_statement__ = 46;
+      current_statement__ = 45;
       for (int i = 1; i <= n_obs; ++i) {
-        current_statement__ = 44;
+        current_statement__ = 43;
         stan::model::assign(sy_idx,
           (stan::model::rvalue(site, "site", stan::model::index_uni(i)) +
           ((stan::model::rvalue(year, "year", stan::model::index_uni(i)) - 1)
           * n_site)), "assigning variable sy_idx", stan::model::index_uni(i));
       }
-      current_statement__ = 47;
+      current_statement__ = 46;
       stan::math::validate_non_negative_index("z_site", "n_site", n_site);
-      current_statement__ = 48;
+      current_statement__ = 47;
       stan::math::validate_non_negative_index("z_year", "n_year", n_year);
-      current_statement__ = 49;
+      current_statement__ = 48;
       stan::math::validate_non_negative_index("z_site_year", "n_site", n_site);
-      current_statement__ = 50;
+      current_statement__ = 49;
       stan::math::validate_non_negative_index("z_site_year", "n_year", n_year);
-      current_statement__ = 51;
+      current_statement__ = 50;
       stan::math::validate_non_negative_index("site_effect", "n_site", n_site);
-      current_statement__ = 52;
+      current_statement__ = 51;
       stan::math::validate_non_negative_index("year_effect", "n_year", n_year);
-      current_statement__ = 53;
+      current_statement__ = 52;
       stan::math::validate_non_negative_index("site_year_effect", "n_site",
         n_site);
-      current_statement__ = 54;
+      current_statement__ = 53;
       stan::math::validate_non_negative_index("site_year_effect", "n_year",
         n_year);
     } catch (const std::exception& e) {
@@ -408,10 +394,9 @@ public:
                     stan::model::index_multi(site))),
                 stan::model::rvalue(year_effect, "year_effect",
                   stan::model::index_multi(year))),
-              stan::math::multiply(static_cast<double>(site_year_on),
-                stan::model::rvalue(stan::math::to_vector(site_year_effect),
-                  "to_vector(site_year_effect)",
-                  stan::model::index_multi(sy_idx)))),
+              stan::model::rvalue(stan::math::to_vector(site_year_effect),
+                "to_vector(site_year_effect)",
+                stan::model::index_multi(sy_idx))),
             "assigning variable log_mu");
           current_statement__ = 22;
           lp_accum__.add(stan::math::weibull_lpdf<propto__>(diameter_mm,
@@ -534,10 +519,9 @@ public:
                     stan::model::index_multi(site))),
                 stan::model::rvalue(year_effect, "year_effect",
                   stan::model::index_multi(year))),
-              stan::math::multiply(static_cast<double>(site_year_on),
-                stan::model::rvalue(stan::math::to_vector(site_year_effect),
-                  "to_vector(site_year_effect)",
-                  stan::model::index_multi(sy_idx)))),
+              stan::model::rvalue(stan::math::to_vector(site_year_effect),
+                "to_vector(site_year_effect)",
+                stan::model::index_multi(sy_idx))),
             "assigning variable log_mu");
           current_statement__ = 22;
           lp_accum__.add(stan::math::weibull_lpdf<propto__>(diameter_mm,

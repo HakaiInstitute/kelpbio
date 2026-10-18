@@ -17,13 +17,6 @@ test_that("custom stored priors are reflected", {
   expect_true(any(grepl("Normal\\(1.5, 0.05\\)", out)))
 })
 
-test_that("a dropped site:year effect is omitted from the description", {
-  fit <- weight_nereo_fit
-  fit$meta$site_year_on <- FALSE
-  out <- capture.output(kb_model_describe(fit))
-  expect_false(any(grepl("SiteYear", out)))
-})
-
 test_that("prose = TRUE returns the lines invisibly", {
   expect_invisible(kb_model_describe(weight_nereo_fit, prose = TRUE))
   expect_type(
@@ -75,13 +68,6 @@ test_that("kb_model_describe renders the cover biomass model with each species' 
   expect_snapshot(kb_model_describe(cover_biomass_nereo_fit))
   expect_snapshot(kb_model_describe(cover_biomass_macro_fit))
   expect_snapshot(kb_model_describe(cover_biomass_macro_fit, prose = TRUE))
-})
-
-test_that("a dropped site:year effect is omitted from the size description", {
-  fit <- size_nereo_fit
-  fit$meta$site_year_on <- FALSE
-  out <- capture.output(kb_model_describe(fit))
-  expect_false(any(grepl("SiteYear", out)))
 })
 
 test_that("kb_model_describe follows the power-law form", {
