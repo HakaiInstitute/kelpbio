@@ -1,4 +1,4 @@
-#' Influential Observations
+#' Influential observations
 #'
 #' Identify the observations that most influence a fit and those it predicts
 #' poorly, by Pareto-smoothed importance-sampling leave-one-out cross-validation
@@ -8,17 +8,13 @@
 #' Each observation gets two values:
 #'
 #' - `pareto_k` measures how much the fit changes when the observation is left
-#'   out. Values above 0.7 mark an influential observation (a lower threshold
-#'   for fits with fewer than about 2,200 draws).
+#'   out. Values above `threshold` mark an influential observation.
 #' - `elpd_loo` is the log density of the observation under a fit that left it
 #'   out. Lower values mark observations the model predicts poorly. Its scale
 #'   depends on the response's units, so compare values within a fit.
 #'
-#' A deviance residual from [augment()] measures how far an observation is from
-#' the fit, not how much the fit depends on it. A large residual in a
-#' well-sampled site and year moves the estimates little, while a modest one at
-#' the edge of the data, or in a site and year with few observations, can move
-#' them a lot.
+#' `pareto_k` measures how much the fit depends on an observation, which a
+#' deviance residual from [augment()] does not.
 #'
 #' Influential or poorly predicted observations are worth checking for recording
 #' errors. An observation that checks out is valid data and should be kept:
@@ -26,22 +22,20 @@
 #' error. Many influential observations across the data suggest the model
 #' describes the data poorly.
 #'
-#' The values are those of [loo::loo()] on the fit, computed from the stored draws
-#' without refitting.
+#' The values are those of [loo::loo()] on the fit.
 #'
-#' @param fit A `kb_fit` object.
-#' @param ... Unused.
+#' @inheritParams params
 #' @param threshold A number greater than 0: an observation with `pareto_k`
 #'   above it is influential. `NULL` (the default) uses the threshold of
 #'   [loo::loo()], `min(1 - 1 / log10(S), 0.7)` for `S` posterior draws.
 #'
-#' @return The fitted data as a tibble, one row per observation, with added
+#' @returns The fitted data as a tibble, one row per observation, with added
 #'   columns `elpd_loo`, `pareto_k`, and `influential`.
 #' @references
 #' Vehtari, A., Gelman, A., and Gabry, J. (2017). Practical Bayesian model
 #' evaluation using leave-one-out cross-validation and WAIC. Statistics and
 #' Computing, 27, 1413-1432.
-#' @family model
+#' @family diagnostics
 #' @seealso [loo.kb_fit()] for the full PSIS-LOO result.
 #' @export
 #'

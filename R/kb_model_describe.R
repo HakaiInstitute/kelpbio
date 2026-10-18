@@ -1,4 +1,4 @@
-#' Describe a Fitted Model
+#' Describe a fitted model
 #'
 #' Render the complete fitted model in scientific notation (the default) or as a
 #' report-ready methods paragraph (`prose = TRUE`). The notation uses the
@@ -6,20 +6,17 @@
 #' matches a row of [tidy()], [summary()], and [coef()].
 #'
 #' @details
-#' The description reflects the fitted object: the priors shown are the fit's
-#' stored priors, any predictor centering uses the reference value stored on the
-#' fit, and a random effect dropped at fit time (such as `site:year` for
-#' single-year data) is omitted from both the linear predictor and the
-#' random-effect list. Priors marked `T[0, ]` are truncated at zero.
+#' Priors, centring, and random effects are those of the fit; a random effect
+#' not fitted (such as the site:year effect for single-year data) is omitted.
+#' Priors marked `T[0, ]` are truncated at zero.
 #'
-#' @param fit A `kb_fit` object.
-#' @param ... Unused.
+#' @inheritParams params
 #' @param prose A flag specifying whether to render a methods-section paragraph
 #'   instead of the notation block.
 #'
-#' @return The rendered lines, invisibly (a character vector). Called for the
+#' @returns The rendered lines, invisibly (a character vector). Called for the
 #'   printed description.
-#' @family model
+#' @family fit methods
 #' @export
 #'
 #' @examples
@@ -52,18 +49,18 @@ kb_model_describe <- function(fit, ..., prose = FALSE) {
   d0 <- signif(fit$meta$predictor_ref, 3)
   pri <- fit$meta$priors
 
-  mean_terms <- c("intercept", "year_effect[year]", "site_effect[site]")
+  mean_terms <- c("intercept", "site_effect[site]", "year_effect[year]")
   random <- list(
-    list(term = "year_effect[year]", sd = "sd_year", gloss = "year effect on log(alpha)"),
-    list(term = "site_effect[site]", sd = "sd_site", gloss = "site effect on log(alpha)")
+    list(term = "site_effect[site]", sd = "sd_site", gloss = "site effect on log(alpha)"),
+    list(term = "year_effect[year]", sd = "sd_year", gloss = "year effect on log(alpha)")
   )
   priors <- list(
     intercept = pri$intercept,
     diameter_power = pri$diameter_power,
     weight_floor = pri$weight_floor,
     sd_residual = pri$sd_residual,
-    sd_year = pri$sd_year,
-    sd_site = pri$sd_site
+    sd_site = pri$sd_site,
+    sd_year = pri$sd_year
   )
   centering <- sprintf(
     "x = diameter_mm / d0,  d0 = %s  (geometric mean diameter)",
@@ -111,8 +108,8 @@ kb_model_describe <- function(fit, ..., prose = FALSE) {
   form_prose <- if (floor) {
     sprintf(
       paste0(
-        "Expected weight followed a three-parameter power function (Packard ",
-        "2023) of diameter relative to the geometric mean diameter ",
+        "The expected log weight was log(mu), where mu followed a ",
+        "three-parameter power function (Packard 2023) of diameter relative to the geometric mean diameter ",
         "(%s), in which weight_floor is the weight as diameter approaches zero, alpha ",
         "the weight above the floor at the reference diameter, and diameter_power the ",
         "allometric exponent."
@@ -122,7 +119,8 @@ kb_model_describe <- function(fit, ..., prose = FALSE) {
   } else {
     sprintf(
       paste0(
-        "Expected weight followed a power law in diameter relative to the ",
+        "The expected log weight was log(mu), where mu followed a power law ",
+        "in diameter relative to the ",
         "geometric mean diameter (%s), in which alpha is the weight at the ",
         "reference diameter and diameter_power the allometric exponent."
       ),
@@ -151,12 +149,12 @@ kb_model_describe <- function(fit, ..., prose = FALSE) {
       form_prose,
       " ",
       if (sy) {
-        "The log of alpha varied by year, by site, and by site-year."
+        "The log of alpha varied by site, by year, and by site:year."
       } else {
-        "The log of alpha varied by year and by site."
+        "The log of alpha varied by site and by year."
       },
       density_prose,
-      " Regularizing priors were placed on all parameters (see the notation ",
+      " Regularising priors were placed on all parameters (see the notation ",
       "form for the hyperparameters)."
     )
   )
@@ -168,10 +166,10 @@ kb_model_describe <- function(fit, ..., prose = FALSE) {
   f0 <- signif(fit$meta$predictor_ref, 3)
   pri <- fit$meta$priors
 
-  mean_terms <- c("intercept", "fronds_slope * x", "site_effect[site]", "year_effect[year]")
+  mean_terms <- c("intercept", "site_effect[site]", "year_effect[year]")
   random <- list(
-    list(term = "site_effect[site]", sd = "sd_site", gloss = "site intercept"),
-    list(term = "year_effect[year]", sd = "sd_year", gloss = "year intercept")
+    list(term = "site_effect[site]", sd = "sd_site", gloss = "site effect on log(alpha)"),
+    list(term = "year_effect[year]", sd = "sd_year", gloss = "year effect on log(alpha)")
   )
   priors <- list(
     intercept = pri$intercept,
@@ -187,7 +185,7 @@ kb_model_describe <- function(fit, ..., prose = FALSE) {
       list(list(
         term = "site_year_effect[site, year]",
         sd = "sd_site_year",
-        gloss = "site:year intercept"
+        gloss = "site:year effect on log(alpha)"
       ))
     )
     priors$sd_site_year <- pri$sd_site_year
@@ -196,13 +194,16 @@ kb_model_describe <- function(fit, ..., prose = FALSE) {
   list(
     title = "Weight allometry",
     species = .species_label(fit$meta$species),
-    response_desc = "wet weight",
+    response_desc = "wet weight (kg)",
     predictor_desc = "frond count",
-    likelihood = "weight_kg ~ Gamma(shape, shape / mu)",
-    mean_lhs = "log(mu)",
+    likelihood = paste0(
+      "weight_kg ~ Gamma(shape, shape / mu)",
+      "\n  mu = alpha * x^fronds_slope"
+    ),
+    mean_lhs = "log(alpha)",
     mean_terms = mean_terms,
     centering = sprintf(
-      "x = log(fronds) - log(f0),  f0 = %s  (geometric mean frond count)",
+      "x = fronds / f0,  f0 = %s  (geometric mean frond count)",
       format(f0)
     ),
     random = random,
@@ -210,26 +211,28 @@ kb_model_describe <- function(fit, ..., prose = FALSE) {
     prose = sprintf(
       paste0(
         "Wet weight was modelled with a Gamma likelihood as an allometric ",
-        "function of frond count. Expected weight was log-linear in log frond ",
-        "count, centered at the geometric mean (%s), with the intercept varying ",
-        "by site, year%s. Regularizing priors were placed on all parameters ",
-        "(see the notation form for the hyperparameters)."
+        "function of frond count. The expected weight was mu, where mu followed ",
+        "a power law in frond count relative to the geometric mean frond count ",
+        "(%s), in which alpha is the expected weight at the geometric mean ",
+        "frond count and fronds_slope the allometric exponent. The log of alpha ",
+        "varied by %s. Regularising priors were placed on all parameters (see ",
+        "the notation form for the hyperparameters)."
       ),
       format(f0),
-      if (sy) ", and site-year" else ""
+      if (sy) "site, by year, and by site:year" else "site and by year"
     )
   )
 }
 
 # Random-effect structure shared by size and density; `intercept` is the
 # species' intercept name.
-.group_spec_effects <- function(fit, intercept) {
+.group_spec_effects <- function(fit, intercept, on = "log(mu)") {
   sy <- .site_year_on(fit)
   pri <- fit$meta$priors
   mean_terms <- c(intercept, "site_effect[site]", "year_effect[year]")
   random <- list(
-    list(term = "site_effect[site]", sd = "sd_site", gloss = "site effect on log(mu)"),
-    list(term = "year_effect[year]", sd = "sd_year", gloss = "year effect on log(mu)")
+    list(term = "site_effect[site]", sd = "sd_site", gloss = paste("site effect on", on)),
+    list(term = "year_effect[year]", sd = "sd_year", gloss = paste("year effect on", on))
   )
   sds <- list(sd_site = pri$sd_site, sd_year = pri$sd_year)
   if (sy) {
@@ -239,7 +242,7 @@ kb_model_describe <- function(fit, ..., prose = FALSE) {
       list(list(
         term = "site_year_effect[site, year]",
         sd = "sd_site_year",
-        gloss = "site:year effect on log(mu)"
+        gloss = paste("site:year effect on", on)
       ))
     )
     sds$sd_site_year <- pri$sd_site_year
@@ -248,7 +251,7 @@ kb_model_describe <- function(fit, ..., prose = FALSE) {
     mean_terms = mean_terms,
     random = random,
     sds = sds,
-    groups = if (sy) "site, year, and site-year" else "site and year"
+    groups = if (sy) "site, year, and site:year" else "site and year"
   )
 }
 
@@ -274,7 +277,7 @@ kb_model_describe <- function(fit, ..., prose = FALSE) {
       paste0(
         "Maximum sub-bulb diameter was modelled with a Weibull likelihood ",
         "parameterised by its mean, mu, with a shape common to all plants. ",
-        "The log of mu varied by %s. Regularizing priors were placed on all ",
+        "The log of mu varied by %s. Regularising priors were placed on all ",
         "parameters (see the notation form for the hyperparameters)."
       ),
       eff$groups
@@ -306,7 +309,7 @@ kb_model_describe <- function(fit, ..., prose = FALSE) {
         "The number of fronds reaching 1 m above the holdfast was modelled with ",
         "a zero-truncated negative binomial likelihood, with an overdispersion ",
         "common to all plants. The log of the untruncated mean, mu, varied by ",
-        "%s. Regularizing priors were placed on all parameters (see the ",
+        "%s. Regularising priors were placed on all parameters (see the ",
         "notation form for the hyperparameters)."
       ),
       eff$groups
@@ -318,7 +321,7 @@ kb_model_describe <- function(fit, ..., prose = FALSE) {
 #' @export
 .model_spec.kb_fit_density_nereo <- function(fit) {
   pri <- fit$meta$priors
-  eff <- .group_spec_effects(fit, "intercept")
+  eff <- .group_spec_effects(fit, "intercept", on = "log(density)")
   list(
     title = "Density",
     species = .species_label(fit$meta$species),
@@ -326,10 +329,11 @@ kb_model_describe <- function(fit, ..., prose = FALSE) {
     likelihood = paste0(
       "stipes ~ ZeroInflatedNegBinomial(mu, 1 / dispersion, zi)",
       "\n  zi = inv_logit(logit_zero_inflation)",
+      "\n  mu = area_m2 * density",
       "\n  E[stipes] = (1 - zi) * mu"
     ),
-    mean_lhs = "log(mu)",
-    mean_terms = c("log(area_m2)", eff$mean_terms),
+    mean_lhs = "log(density)",
+    mean_terms = eff$mean_terms,
     random = eff$random,
     priors = c(
       list(
@@ -342,10 +346,12 @@ kb_model_describe <- function(fit, ..., prose = FALSE) {
     prose = sprintf(
       paste0(
         "The number of stipes on a transect was modelled with a zero-inflated ",
-        "negative binomial likelihood, with the transect area as an offset. The ",
-        "zero-inflation probability, zi, and the overdispersion were common to ",
-        "all transects. The log stipe density on occupied transects ",
-        "varied by %s. Regularizing priors were placed on all parameters (see ",
+        "negative binomial likelihood, which combines two processes: occupancy, ",
+        "in which a transect is unoccupied (a structural zero) with a ",
+        "probability, zi, common to all transects; and a negative binomial ",
+        "count on occupied transects, with mean mu, the transect area times the ",
+        "stipe density, and an overdispersion common to all transects. The log ",
+        "stipe density varied by %s. Regularising priors were placed on all parameters (see ",
         "the notation form for the hyperparameters)."
       ),
       eff$groups
@@ -356,14 +362,17 @@ kb_model_describe <- function(fit, ..., prose = FALSE) {
 #' @export
 .model_spec.kb_fit_density_macro <- function(fit) {
   pri <- fit$meta$priors
-  eff <- .group_spec_effects(fit, "intercept")
+  eff <- .group_spec_effects(fit, "intercept", on = "log(density)")
   list(
     title = "Density",
     species = .species_label(fit$meta$species),
     response_desc = "plants counted on a transect of area_m2 (m\u00b2)",
-    likelihood = "plants ~ NegBinomial(mu, 1 / dispersion)",
-    mean_lhs = "log(mu)",
-    mean_terms = c("log(area_m2)", eff$mean_terms),
+    likelihood = paste0(
+      "plants ~ NegBinomial(mu, 1 / dispersion)",
+      "\n  mu = area_m2 * density"
+    ),
+    mean_lhs = "log(density)",
+    mean_terms = eff$mean_terms,
     random = eff$random,
     priors = c(
       list(intercept = pri$intercept, dispersion = pri$dispersion),
@@ -372,9 +381,9 @@ kb_model_describe <- function(fit, ..., prose = FALSE) {
     prose = sprintf(
       paste0(
         "The number of plants on a transect was modelled with a negative ",
-        "binomial likelihood, with the transect area as an offset and an ",
-        "overdispersion common to all transects. The log plant density varied ",
-        "by %s. Regularizing priors were placed on all parameters (see the ",
+        "binomial likelihood with mean mu, the transect area times the plant ",
+        "density, and an overdispersion common to all transects. The log plant ",
+        "density varied by %s. Regularising priors were placed on all parameters (see the ",
         "notation form for the hyperparameters)."
       ),
       eff$groups
@@ -389,8 +398,8 @@ kb_model_describe <- function(fit, ..., prose = FALSE) {
     fit,
     title = "Wet/dry ratio",
     response = "dry_wet_ratio",
-    response_desc = "dry_mass_g / wet_mass_g, the dry:wet mass ratio of a sample",
-    subject = "The dry:wet mass ratio of each sample"
+    response_desc = "dry_mass_g / wet_mass_g, the dry:wet ratio of a sample",
+    subject = "The dry:wet ratio of each sample"
   )
 }
 
@@ -401,8 +410,8 @@ kb_model_describe <- function(fit, ..., prose = FALSE) {
     title = "Carbon fraction",
     response = "carbon_fraction",
     response_desc = paste0(
-      "carbon_fraction = carbon_mass_ug / 1000 / sample_mass_mg, the fraction ",
-      "of a dry sample's mass that is carbon"
+      "carbon_fraction, the carbon mass divided by the sample mass (carbon_mass_ug ",
+      "converted to mg, divided by sample_mass_mg)"
     ),
     subject = "The carbon fraction of each dried sample"
   )
@@ -426,7 +435,7 @@ kb_model_describe <- function(fit, ..., prose = FALSE) {
       subject,
       " was modelled with a Beta likelihood parameterised by its mean, mu, ",
       "and precision, both common to all samples. Samples were pooled over the ",
-      "months, sites, and tissues they came from. Regularizing priors were ",
+      "months, sites, and tissues they came from. Regularising priors were ",
       "placed on all parameters (see the notation form for the ",
       "hyperparameters)."
     )
@@ -473,9 +482,9 @@ kb_model_describe <- function(fit, ..., prose = FALSE) {
       "plot's tide-corrected canopy cover, whose slope varied by site and year. ",
       "Canopy area was increased by a fixed fraction per metre of tide height, ",
       "and cover was capped at 1. The log of each in situ estimate was modelled ",
-      "with a normal likelihood whose standard deviation was the log-scale ",
+      "with a Normal likelihood whose standard deviation was the log-scale ",
       "standard deviation of that estimate multiplied by a scaling parameter. ",
-      "Regularizing priors were placed on all parameters, with an informative ",
+      "Regularising priors were placed on all parameters, with an informative ",
       "prior on the tide correction (see the notation form for the ",
       "hyperparameters)."
     )

@@ -2,7 +2,7 @@
 % Please edit documentation in R/loo.R
 \name{loo.kb_fit}
 \alias{loo.kb_fit}
-\title{Leave-One-Out Cross-Validation}
+\title{Leave-one-out cross-validation}
 \usage{
 \method{loo}{kb_fit}(x, ...)
 }
@@ -20,37 +20,23 @@ left out, by Pareto-smoothed importance-sampling leave-one-out
 cross-validation (PSIS-LOO; Vehtari et al. 2017).
 }
 \details{
-Computed from the stored draws and \code{\link[=log_lik]{log_lik()}}, so the model is not refitted.
+The pointwise results (\verb{$pointwise} and \code{loo::pareto_k_values()}) have one
+row per observation, in the order of the fitted data. \code{elpd_loo} and the
+Pareto k diagnostic are described in \code{\link[=kb_influence]{kb_influence()}}, which adds them to the
+data. A Pareto k above the threshold in the printed result also marks the
+PSIS-LOO estimate as unreliable.
 
-The pointwise results (\verb{$pointwise} and \code{loo::pareto_k_values()}) have one row
-per observation, in the order of the fitted data:
-\itemize{
-\item \code{elpd_loo} is the log density of the observation under a fit that left it
-out. A low value marks an observation the model predicts poorly, such as an
-outlier or a data error.
-\item The Pareto k diagnostic measures how much the fit changes when the
-observation is left out. A value above about 0.7 (the printed result gives
-the exact threshold, which depends on the number of draws) marks an
-influential observation, for which the PSIS-LOO estimate is also
-unreliable.
-}
-
-The log-likelihood is of the response as recorded, so \code{\link[loo:loo_compare]{loo::loo_compare()}} can
-compare fits to the same data, such as two forms of a model. It lists the
-fits from best to worst predictive accuracy: \code{elpd_diff} is each fit's
-difference from the best and \code{se_diff} its standard error. A difference small
-relative to its standard error gives no clear preference between the fits.
+Use \code{\link[loo:loo_compare]{loo::loo_compare()}} to compare fits to the same data.
 }
 \examples{
 loo_weight <- loo(fit_weight_sim_nereo)
 loo_weight
 loo::pareto_k_values(loo_weight)
-
+\dontshow{if (interactive()) withAutoprint(\{ # examplesIf}
 # Compare the two forms of the Nereocystis weight model on the same data:
-if (interactive()) {
-  fit_power <- kb_fit_weight_nereo(data_weight_sim_nereo, form = "power")
-  loo_compare(loo(fit_weight_sim_nereo), loo(fit_power))
-}
+fit_power <- kb_fit_weight_nereo(data_weight_sim_nereo, form = "power")
+loo_compare(loo(fit_weight_sim_nereo), loo(fit_power))
+\dontshow{\}) # examplesIf}
 }
 \references{
 Vehtari, A., Gelman, A., and Gabry, J. (2017). Practical Bayesian model
@@ -60,26 +46,11 @@ Computing, 27, 1413-1432.
 \seealso{
 \code{\link[=log_lik]{log_lik()}} for the pointwise log-likelihood.
 
-Other generics:
-\code{\link[=augment.kb_fit]{augment.kb_fit()}},
-\code{\link[=coef.kb_fit]{coef.kb_fit()}},
+Other diagnostics:
 \code{\link[=create_priorsense_data.kb_fit]{create_priorsense_data.kb_fit()}},
-\code{\link[=fitted.kb_fit]{fitted.kb_fit()}},
-\code{\link[=glance.kb_fit]{glance.kb_fit()}},
-\code{\link[=log_lik.kb_fit]{log_lik.kb_fit()}},
-\code{\link[=posterior_epred.kb_fit]{posterior_epred.kb_fit()}},
-\code{\link[=posterior_linpred.kb_fit]{posterior_linpred.kb_fit()}},
-\code{\link[=posterior_predict.kb_fit]{posterior_predict.kb_fit()}},
-\code{\link[=pp_check.kb_fit]{pp_check.kb_fit()}},
-\code{\link[=predict.kb_fit_carbon]{predict.kb_fit_carbon()}},
-\code{\link[=predict.kb_fit_cover_biomass]{predict.kb_fit_cover_biomass()}},
-\code{\link[=predict.kb_fit_density]{predict.kb_fit_density()}},
-\code{\link[=predict.kb_fit_size]{predict.kb_fit_size()}},
-\code{\link[=predict.kb_fit_weight]{predict.kb_fit_weight()}},
-\code{\link[=predict.kb_fit_wetdry]{predict.kb_fit_wetdry()}},
-\code{\link[=prior_summary.kb_fit]{prior_summary.kb_fit()}},
-\code{\link[=residuals.kb_fit]{residuals.kb_fit()}},
-\code{\link[=summary.kb_fit]{summary.kb_fit()}},
-\code{\link[=tidy.kb_fit]{tidy.kb_fit()}}
+\code{\link[=kb_converged]{kb_converged()}},
+\code{\link[=kb_influence]{kb_influence()}},
+\code{\link[=kb_sensitivity]{kb_sensitivity()}},
+\code{\link[=pp_check.kb_fit]{pp_check.kb_fit()}}
 }
-\concept{generics}
+\concept{diagnostics}

@@ -1,4 +1,4 @@
-#' Power-Scaling Data for priorsense
+#' Power-scaling data for the priorsense package
 #'
 #' The posterior draws, log prior, and pointwise log-likelihood of a fit, in the
 #' form the priorsense package uses, so that priorsense functions such as
@@ -10,11 +10,11 @@
 #' are included, and the log prior is the sum of those priors. Random-effect levels
 #' are left out. [kb_sensitivity()] summarises the same computation as a table.
 #'
-#' @param x A `kb_fit` object.
+#' @inheritParams params
 #' @param ... Passed to `priorsense::create_priorsense_data()`.
 #'
-#' @return A `priorsense_data` object.
-#' @family generics
+#' @returns A `priorsense_data` object.
+#' @family diagnostics
 #' @exportS3Method priorsense::create_priorsense_data
 #' @examplesIf rlang::is_installed("priorsense")
 #' priorsense::powerscale_sensitivity(fit_wetdry_sim_nereo)

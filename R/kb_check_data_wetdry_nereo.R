@@ -1,4 +1,4 @@
-#' Validate Nereocystis Wet/Dry Model Data
+#' Check Nereocystis wet/dry data
 #'
 #' Check that `data` contains the columns required to fit the *Nereocystis
 #' luetkeana* wet/dry model, with appropriate types and values.
@@ -12,11 +12,11 @@
 #' falls outside 0.02 to 0.5, the plausible range for kelp tissue; they are kept,
 #' not removed. Other columns are ignored.
 #'
+#' @inheritParams params
 #' @param data A data frame of wet/dry observations, one row per sample.
-#' @param x_name A string naming `data` in error messages.
 #'
-#' @return `data`, invisibly.
-#' @family data
+#' @returns `data`, invisibly.
+#' @family data checks
 #' @export
 #'
 #' @examples

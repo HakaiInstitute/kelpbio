@@ -1,9 +1,8 @@
-#' Default Priors for the Macrocystis Cover Biomass Model
+#' Default priors for the Macrocystis cover biomass model
 #'
-#' The default prior list for the *Macrocystis pyrifera* cover biomass model. Edit
-#' individual entries and pass the list to the `priors` argument of
-#' [kb_fit_cover_biomass_macro()] to override defaults; unmodified entries keep their
-#' defaults.
+#' The default priors for the *Macrocystis pyrifera* cover biomass model. To
+#' change a prior, pass a list of the entries to change to the `priors` argument
+#' of [kb_fit_cover_biomass_macro()]; the other entries keep their defaults.
 #'
 #' Each entry is named after the parameter it sets, as reported by [tidy()] and
 #' [kb_model_describe()]. The prior family of each entry is fixed (the cover
@@ -12,7 +11,7 @@
 #' hyperparameters can be changed. The floor, tide, and error scaling priors are
 #' truncated at zero.
 #'
-#' @return A named list of prior objects with entries `cover_slope` (the wet
+#' @returns A named list of prior objects with entries `cover_slope` (the wet
 #'   biomass per m² at full tide-corrected canopy cover, at a typical site and
 #'   year), `biomass_floor` (the wet biomass per m² at zero cover),
 #'   `tide_height_slope` (the fractional increase in canopy area per metre of
@@ -22,8 +21,14 @@
 #' @export
 #'
 #' @examples
-#' priors <- kb_priors_cover_biomass_macro()
-#' priors$cover_slope <- kb_prior_lognormal(meanlog = 2, sdlog = 0.5)
+#' kb_priors_cover_biomass_macro()
+#' @examplesIf interactive()
+#' # Change one prior; the others keep their defaults:
+#' kb_fit_cover_biomass_macro(
+#'   data_cover_biomass_sim_macro,
+#'   data_plot_biomass_sim_macro,
+#'   priors = list(cover_slope = kb_prior_lognormal(meanlog = 2, sdlog = 0.5))
+#' )
 kb_priors_cover_biomass_macro <- function() {
   list(
     cover_slope = kb_prior_lognormal(meanlog = 2, sdlog = 1),

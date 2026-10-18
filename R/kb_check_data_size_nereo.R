@@ -1,4 +1,4 @@
-#' Validate Nereocystis Size Model Data
+#' Check Nereocystis size data
 #'
 #' Check that `data` contains the columns required to fit the *Nereocystis
 #' luetkeana* size model, with appropriate types and values.
@@ -11,11 +11,11 @@
 #' measurement as the predictor of the weight model ([kb_fit_weight_nereo()]).
 #' Other columns are ignored.
 #'
+#' @inheritParams params
 #' @param data A data frame of size observations, one row per plant.
-#' @param x_name A string naming `data` in error messages.
 #'
-#' @return `data`, invisibly.
-#' @family data
+#' @returns `data`, invisibly.
+#' @family data checks
 #' @export
 #'
 #' @examples

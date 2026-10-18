@@ -2,14 +2,14 @@
 % Please edit documentation in R/kb_converged.R
 \name{kb_converged}
 \alias{kb_converged}
-\title{Convergence of a Model Fit}
+\title{Whether a fit has converged}
 \usage{
 kb_converged(fit, ..., rhat = 1.01, ess = 100, max_perc_divergent = 0.2)
 }
 \arguments{
 \item{fit}{A \code{kb_fit} object.}
 
-\item{...}{Unused.}
+\item{...}{These dots are for future extensions and must be empty.}
 
 \item{rhat}{A number giving the maximum acceptable Rhat.}
 
@@ -17,13 +17,10 @@ kb_converged(fit, ..., rhat = 1.01, ess = 100, max_perc_divergent = 0.2)
 sample size per chain.}
 
 \item{max_perc_divergent}{A number giving the maximum acceptable percentage of
-saved draws that ended in a divergent transition. \code{0} requires a fit with no
-divergent transitions.}
+saved draws that ended in a divergent transition.}
 }
 \value{
-A flag: \code{TRUE} if every Rhat is below \code{rhat}, every bulk and tail
-effective sample size is at least \code{ess} times the number of chains, and
-the divergence rate is at or below \code{max_perc_divergent}.
+A flag: \code{TRUE} if all three conditions are met, otherwise \code{FALSE}.
 }
 \description{
 Whether a model fit has converged, from the Rhat and effective sample sizes
@@ -37,29 +34,16 @@ Three conditions must be met:
 \item every parameter's rank-normalized split Rhat below \code{rhat} (default 1.01;
 Vehtari et al. 2021, Section 2);
 \item every parameter's bulk and tail effective sample size at least \code{ess} times
-the number of chains (default 100, so 400 for four chains). Vehtari et al.
-(2021, Section 2) and the Stan diagnostics guide recommend this for the
-bulk effective sample size, so that Rhat and the effective sample size are
-themselves reliable; it is applied to the tail effective sample size too,
-as rstan's sampler warnings do, because compatibility limits are tail
-quantiles;
+the number of chains (default 100, so 400 for four chains; Vehtari et al.
+2021);
 \item the percentage of divergent transitions at or below \code{max_perc_divergent}
-(default 0.2\% of saved draws). This tolerance is kelpbio's: the Stan
-diagnostics guide sets no threshold and advises that even a few divergences
-cannot be safely ignored when completely reliable inference is needed.
-Set \code{max_perc_divergent = 0} to require none.
+(default 0.2\% of saved draws). Set \code{max_perc_divergent = 0} to require
+none.
 }
 
-The effective sample sizes are judged in absolute terms, not as a share of
-the draws: a slowly mixing sampler run long enough gives reliable estimates.
 Rhat and the effective sample sizes are those of \code{\link[posterior:rhat]{posterior::rhat()}},
 \code{\link[posterior:ess_bulk]{posterior::ess_bulk()}}, and \code{\link[posterior:ess_tail]{posterior::ess_tail()}}, reported for each
 parameter by \code{posterior::summarise_draws(fit)}.
-
-Treedepth saturation and E-BFMI are additionally reported in
-\code{print(summary(fit))}, although these do not affect convergence. The former
-indicates issues with efficiency and the latter is a per-chain signal that in
-practice accompanies divergences.
 }
 
 \section{Resolving convergence failure}{
@@ -69,12 +53,13 @@ In order, try the following:
 \enumerate{
 \item Increase \code{adapt_delta} through the \code{control} argument of the \verb{kb_fit_*()}
 functions (e.g., \verb{kb_fit_*(df, control = list(adapt_delta = 0.99))}). The
-default \code{adapt_delta} value is 0.95. Higher \code{adapt_delta} values will
-increase model runtime. This should reduce divergent transitions and can
-also resolve Rhat and effective sample size issues.
+default \code{adapt_delta} value is 0.95. Higher values reduce divergent
+transitions and can also resolve Rhat and effective sample size issues,
+at the cost of a longer runtime.
 \item Run longer: increase \code{niters}, or \code{nthin} to run more iterations while
 saving the same number of draws. Both raise the effective sample sizes.
-\item Tighten the SD priors.
+\item Narrow the priors on the random-effect standard deviations (\code{sd_site},
+\code{sd_year}, \code{sd_site_year}) through the \code{priors} argument.
 }
 }
 
@@ -94,24 +79,11 @@ Stan Development Team. Runtime warnings and convergence problems.
 \url{https://mc-stan.org/learn-stan/diagnostics-warnings.html}
 }
 \seealso{
-Other model:
-\code{\link[=kb_fit_carbon_macro]{kb_fit_carbon_macro()}},
-\code{\link[=kb_fit_carbon_nereo]{kb_fit_carbon_nereo()}},
-\code{\link[=kb_fit_cover_biomass_macro]{kb_fit_cover_biomass_macro()}},
-\code{\link[=kb_fit_cover_biomass_nereo]{kb_fit_cover_biomass_nereo()}},
-\code{\link[=kb_fit_density_macro]{kb_fit_density_macro()}},
-\code{\link[=kb_fit_density_nereo]{kb_fit_density_nereo()}},
-\code{\link[=kb_fit_size_macro]{kb_fit_size_macro()}},
-\code{\link[=kb_fit_size_nereo]{kb_fit_size_nereo()}},
-\code{\link[=kb_fit_weight_macro]{kb_fit_weight_macro()}},
-\code{\link[=kb_fit_weight_nereo]{kb_fit_weight_nereo()}},
-\code{\link[=kb_fit_wetdry_macro]{kb_fit_wetdry_macro()}},
-\code{\link[=kb_fit_wetdry_nereo]{kb_fit_wetdry_nereo()}},
+Other diagnostics:
+\code{\link[=create_priorsense_data.kb_fit]{create_priorsense_data.kb_fit()}},
 \code{\link[=kb_influence]{kb_influence()}},
-\code{\link[=kb_model_describe]{kb_model_describe()}},
-\code{\link[=kb_progress]{kb_progress()}},
-\code{\link[=kb_samples]{kb_samples()}},
 \code{\link[=kb_sensitivity]{kb_sensitivity()}},
-\code{\link[=kb_stancode]{kb_stancode()}}
+\code{\link[=loo.kb_fit]{loo.kb_fit()}},
+\code{\link[=pp_check.kb_fit]{pp_check.kb_fit()}}
 }
-\concept{model}
+\concept{diagnostics}

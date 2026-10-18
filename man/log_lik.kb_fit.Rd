@@ -2,14 +2,14 @@
 % Please edit documentation in R/log_lik.R
 \name{log_lik.kb_fit}
 \alias{log_lik.kb_fit}
-\title{Pointwise Log-Likelihood}
+\title{Pointwise log-likelihood}
 \usage{
 \method{log_lik}{kb_fit}(object, ...)
 }
 \arguments{
 \item{object}{A \code{kb_fit} object.}
 
-\item{...}{Unused.}
+\item{...}{These dots are for future extensions and must be empty.}
 }
 \value{
 A draws-by-observations (\verb{D x N}) matrix.
@@ -18,9 +18,8 @@ A draws-by-observations (\verb{D x N}) matrix.
 The pointwise log-likelihood of the observed data, suitable for \code{\link[loo:loo]{loo::loo()}}.
 }
 \details{
-Computed from the stored draws by evaluating the model's likelihood at the
-observed data. Each value is the log density of the response as recorded (for
-example weight in kg, not log weight), so models of the same response can be
+Each value is the log density of the response as recorded (for example
+weight in kg, not log weight), so models of the same response can be
 compared with \code{\link[loo:loo_compare]{loo::loo_compare()}}.
 }
 \examples{
@@ -30,26 +29,20 @@ dim(ll)
 \seealso{
 \code{\link[=loo.kb_fit]{loo.kb_fit()}} for leave-one-out cross-validation of a fit.
 
-Other generics:
+Other fit methods:
 \code{\link[=augment.kb_fit]{augment.kb_fit()}},
 \code{\link[=coef.kb_fit]{coef.kb_fit()}},
-\code{\link[=create_priorsense_data.kb_fit]{create_priorsense_data.kb_fit()}},
 \code{\link[=fitted.kb_fit]{fitted.kb_fit()}},
 \code{\link[=glance.kb_fit]{glance.kb_fit()}},
-\code{\link[=loo.kb_fit]{loo.kb_fit()}},
+\code{\link[=kb_model_describe]{kb_model_describe()}},
+\code{\link[=kb_samples]{kb_samples()}},
+\code{\link[=kb_stancode]{kb_stancode()}},
 \code{\link[=posterior_epred.kb_fit]{posterior_epred.kb_fit()}},
 \code{\link[=posterior_linpred.kb_fit]{posterior_linpred.kb_fit()}},
 \code{\link[=posterior_predict.kb_fit]{posterior_predict.kb_fit()}},
-\code{\link[=pp_check.kb_fit]{pp_check.kb_fit()}},
-\code{\link[=predict.kb_fit_carbon]{predict.kb_fit_carbon()}},
-\code{\link[=predict.kb_fit_cover_biomass]{predict.kb_fit_cover_biomass()}},
-\code{\link[=predict.kb_fit_density]{predict.kb_fit_density()}},
-\code{\link[=predict.kb_fit_size]{predict.kb_fit_size()}},
-\code{\link[=predict.kb_fit_weight]{predict.kb_fit_weight()}},
-\code{\link[=predict.kb_fit_wetdry]{predict.kb_fit_wetdry()}},
 \code{\link[=prior_summary.kb_fit]{prior_summary.kb_fit()}},
 \code{\link[=residuals.kb_fit]{residuals.kb_fit()}},
 \code{\link[=summary.kb_fit]{summary.kb_fit()}},
 \code{\link[=tidy.kb_fit]{tidy.kb_fit()}}
 }
-\concept{generics}
+\concept{fit methods}

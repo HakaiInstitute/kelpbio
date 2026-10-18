@@ -2,7 +2,7 @@
 % Please edit documentation in R/posterior_predict.R
 \name{posterior_predict.kb_fit}
 \alias{posterior_predict.kb_fit}
-\title{Posterior-Predictive Draws}
+\title{Posterior predictive draws}
 \usage{
 \method{posterior_predict}{kb_fit}(
   object,
@@ -22,54 +22,51 @@
 a cover fit), or
 \code{NULL} to predict at the observed data.}
 
-\item{...}{Unused.}
+\item{...}{These dots are for future extensions and must be empty.}
 
-\item{new_levels}{A string, one of \code{"average"} (the default) or \code{"sample"},
-controlling how random effects that are not conditioned on are treated
-(factors absent from the rows, and any new level not seen in the fit).
-\code{"average"} holds them at zero, giving the typical (median) group;
-\code{"sample"} draws a new random effect from \code{Normal(0, sd)}, widening the
-interval to include between-group variation, as suits a prediction for a
-particular unsurveyed site. Known levels are always conditioned on.
-\code{"sample"} draws fresh randomness on each call, so set a seed with
-\code{set.seed()} for a reproducible interval.}
+\item{new_levels}{A string giving how uncertainty is shown for a site or
+year not in the fit, or when \code{new_data} has no \code{site} or \code{year} column.
+Sites and years in the fit always use their own estimates. One of:
+\itemize{
+\item \code{"average"} (the default): the typical site or year. The interval
+covers uncertainty in the typical value only. Use it to describe an
+average site or year.
+\item \code{"sample"}: a new effect for each new site or year,
+drawn from the estimated variation among sites or among years. The
+estimate is about the same, but the interval also includes that
+variation. Use it to get realistic uncertainty about a particular site
+or year the model has no data on. The interval varies slightly between
+calls; use \code{set.seed()} to reproduce it.
+}}
 
-\item{representative_site}{A character vector of site levels present in the
-fit, or \code{NULL} (the default). When supplied, a new or absent site takes the
-named sites' site effect (the per-draw average when several are named)
-instead of the \code{new_levels} treatment, and, in a fitted year, their
-site:year effect for that year (averaged over the named sites observed that
-year). A site:year effect none of them has, such as in a new year, follows
-\code{new_levels}.}
+\item{representative_site}{A character vector of sites in the fit whose
+effects a new site takes (averaged when several are named), or \code{NULL} (the
+default) to follow \code{new_levels}.}
 }
 \value{
 A draws-by-observations (\verb{D x N}) matrix.
 }
 \description{
-Draws from the posterior predictive distribution: replicate responses (weights,
-plant sizes, transect counts, dry:wet ratios, carbon fractions, or in situ
-biomass estimates) carrying both parameter uncertainty and observation noise from
-the model's likelihood. With \code{new_data = NULL} the replicates are at the
-observed data, as plotted by \link[=pp_check.kb_fit]{pp_check()}.
+Draws from the posterior predictive distribution: replicate responses
+(weights, plant sizes, transect counts, dry:wet ratios, carbon fractions, or
+in situ biomass estimates) carrying both parameter uncertainty and
+observation noise from the model's likelihood. With \code{new_data = NULL} the
+replicates are at the observed data, as plotted by
+\link[=pp_check.kb_fit]{pp_check()}.
 }
 \details{
-For supplied \code{new_data}, conditioning is inferred from the grouping columns
-present (see \code{\link[=posterior_epred]{posterior_epred()}}).
+Site and year columns in \code{new_data} are handled as in \code{\link[=posterior_epred]{posterior_epred()}}.
 
 The observation noise follows the fitted likelihood: Normal on log weight
 (\emph{Nereocystis} weight), Gamma (\emph{Macrocystis} weight), Weibull (\emph{Nereocystis}
-size), zero-truncated negative binomial (\emph{Macrocystis} size, so every draw is a
-whole number of at least 1), zero-inflated negative binomial (\emph{Nereocystis}
-density), negative binomial (\emph{Macrocystis} density), Beta (wet/dry and
-carbon, so every draw lies between 0 and 1), and lognormal (cover). Density
-draws are counts on each row's \code{area_m2}, or on 1 m² when \code{new_data} has no
-\code{area_m2} column. Cover draws are in situ biomass estimates whose log-scale SD
-is \code{error_scaling} times that implied by the row's \code{lower} and \code{upper} (at the
-fit's \code{conf_level}), so cover \code{new_data} must carry those columns.
+size), zero-truncated negative binomial (\emph{Macrocystis} size), zero-inflated
+negative binomial (\emph{Nereocystis} density), negative binomial (\emph{Macrocystis}
+density), Beta (wet/dry and carbon), and lognormal (cover). Density draws are
+counts on each row's \code{area_m2}, or on 1 m² when \code{new_data} has no \code{area_m2}
+column. For a cover biomass fit, \code{new_data} must include \code{lower} and \code{upper}
+(see \code{\link[=kb_fit_cover_biomass_nereo]{kb_fit_cover_biomass_nereo()}}).
 
-The observation noise is drawn in R, for every \code{new_data} including \code{NULL}, so
-repeated calls return different replicates. Set a seed with \code{set.seed()} for
-reproducible draws.
+Repeated calls return different draws; use \code{set.seed()} to reproduce them.
 }
 \examples{
 set.seed(1)
@@ -77,26 +74,20 @@ pp <- posterior_predict(fit_weight_sim_nereo)
 dim(pp)
 }
 \seealso{
-Other generics:
+Other fit methods:
 \code{\link[=augment.kb_fit]{augment.kb_fit()}},
 \code{\link[=coef.kb_fit]{coef.kb_fit()}},
-\code{\link[=create_priorsense_data.kb_fit]{create_priorsense_data.kb_fit()}},
 \code{\link[=fitted.kb_fit]{fitted.kb_fit()}},
 \code{\link[=glance.kb_fit]{glance.kb_fit()}},
+\code{\link[=kb_model_describe]{kb_model_describe()}},
+\code{\link[=kb_samples]{kb_samples()}},
+\code{\link[=kb_stancode]{kb_stancode()}},
 \code{\link[=log_lik.kb_fit]{log_lik.kb_fit()}},
-\code{\link[=loo.kb_fit]{loo.kb_fit()}},
 \code{\link[=posterior_epred.kb_fit]{posterior_epred.kb_fit()}},
 \code{\link[=posterior_linpred.kb_fit]{posterior_linpred.kb_fit()}},
-\code{\link[=pp_check.kb_fit]{pp_check.kb_fit()}},
-\code{\link[=predict.kb_fit_carbon]{predict.kb_fit_carbon()}},
-\code{\link[=predict.kb_fit_cover_biomass]{predict.kb_fit_cover_biomass()}},
-\code{\link[=predict.kb_fit_density]{predict.kb_fit_density()}},
-\code{\link[=predict.kb_fit_size]{predict.kb_fit_size()}},
-\code{\link[=predict.kb_fit_weight]{predict.kb_fit_weight()}},
-\code{\link[=predict.kb_fit_wetdry]{predict.kb_fit_wetdry()}},
 \code{\link[=prior_summary.kb_fit]{prior_summary.kb_fit()}},
 \code{\link[=residuals.kb_fit]{residuals.kb_fit()}},
 \code{\link[=summary.kb_fit]{summary.kb_fit()}},
 \code{\link[=tidy.kb_fit]{tidy.kb_fit()}}
 }
-\concept{generics}
+\concept{fit methods}

@@ -1,23 +1,27 @@
-#' Default Priors for the Nereocystis Carbon Model
+#' Default priors for the Nereocystis carbon model
 #'
-#' The default prior list for the *Nereocystis luetkeana* carbon model. Edit
-#' individual entries and pass the list to the `priors` argument of
-#' [kb_fit_carbon_nereo()] to override defaults; unmodified entries keep their
-#' defaults.
+#' The default priors for the *Nereocystis luetkeana* carbon model. To change a
+#' prior, pass a list of the entries to change to the `priors` argument of
+#' [kb_fit_carbon_nereo()]; the other entries keep their defaults.
 #'
 #' Each entry is named after the parameter it sets, as reported by [tidy()] and
 #' [kb_model_describe()]. The prior family of each entry is fixed (the intercept is Normal, the
 #' precision is Exponential); only the hyperparameters can be changed.
 #'
-#' @return A named list of prior objects with entries `intercept` (the carbon
+#' @returns A named list of prior objects with entries `intercept` (the carbon
 #'   fraction of dry mass on the logit scale) and `precision` (the Beta
 #'   precision; larger values mean less spread around the mean fraction).
 #' @family priors
 #' @export
 #'
 #' @examples
-#' priors <- kb_priors_carbon_nereo()
-#' priors$intercept <- kb_prior_normal(mean = -1, sd = 0.5)
+#' kb_priors_carbon_nereo()
+#' @examplesIf interactive()
+#' # Change one prior; the others keep their defaults:
+#' kb_fit_carbon_nereo(
+#'   data_carbon_sim_nereo,
+#'   priors = list(intercept = kb_prior_normal(mean = -1, sd = 0.5))
+#' )
 kb_priors_carbon_nereo <- function() {
   list(
     intercept = kb_prior_normal(mean = -0.8, sd = 0.3),

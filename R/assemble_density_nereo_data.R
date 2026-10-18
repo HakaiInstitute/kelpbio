@@ -9,7 +9,7 @@
 #' @inheritParams params
 #' @param priors A list of the resolved named priors (see `resolve_priors()`).
 #'
-#' @return A named list suitable for `rstan::sampling(stanmodels$density_nereo, data = .)`.
+#' @returns A named list suitable for `rstan::sampling(stanmodels$density_nereo, data = .)`.
 #' @noRd
 assemble_density_nereo_data <- function(
   data,

@@ -2,14 +2,14 @@
 % Please edit documentation in R/kb_sensitivity.R
 \name{kb_sensitivity}
 \alias{kb_sensitivity}
-\title{Prior Sensitivity of a Model Fit}
+\title{Prior sensitivity}
 \usage{
 kb_sensitivity(fit, ..., prior_threshold = 0.1, likelihood_threshold = 0.05)
 }
 \arguments{
 \item{fit}{A \code{kb_fit} object.}
 
-\item{...}{Unused.}
+\item{...}{These dots are for future extensions and must be empty.}
 
 \item{prior_threshold}{A number greater than 0: a parameter with \code{prior_cjs}
 below it has a weak prior.}
@@ -30,8 +30,7 @@ data, by power-scaling (Kallioinen et al. 2024).
 \details{
 Power-scaling raises the prior, or the likelihood, to a power slightly above
 and below 1 and measures how far each parameter's posterior moves, as a
-cumulative Jensen-Shannon (CJS) distance. It uses the stored draws, so the
-model is not refitted.
+cumulative Jensen-Shannon (CJS) distance.
 
 Each parameter falls into one of four cases:
 \itemize{
@@ -48,9 +47,9 @@ parameter the data identify only weakly.
 
 Each \code{term} is also the name of its prior's entry in the list from the
 model's \verb{kb_priors_*()} function, so to change a flagged prior, edit that
-entry and refit. Random-effect levels are not
-assessed; their standard deviations (\code{sd_site}, \code{sd_year}, \code{sd_site_year}) carry the
-sensitivity of each random effect.
+entry and refit. Random-effect levels are not assessed; their standard
+deviations (\code{sd_site}, \code{sd_year}, \code{sd_site_year}) carry the sensitivity of
+each random effect.
 
 Requires the priorsense package. Its functions, such as
 \code{priorsense::powerscale_plot_dens()}, also accept a fit directly.
@@ -66,24 +65,11 @@ Detecting and diagnosing prior and likelihood sensitivity with power-scaling.
 Statistics and Computing, 34, 57.
 }
 \seealso{
-Other model:
+Other diagnostics:
+\code{\link[=create_priorsense_data.kb_fit]{create_priorsense_data.kb_fit()}},
 \code{\link[=kb_converged]{kb_converged()}},
-\code{\link[=kb_fit_carbon_macro]{kb_fit_carbon_macro()}},
-\code{\link[=kb_fit_carbon_nereo]{kb_fit_carbon_nereo()}},
-\code{\link[=kb_fit_cover_biomass_macro]{kb_fit_cover_biomass_macro()}},
-\code{\link[=kb_fit_cover_biomass_nereo]{kb_fit_cover_biomass_nereo()}},
-\code{\link[=kb_fit_density_macro]{kb_fit_density_macro()}},
-\code{\link[=kb_fit_density_nereo]{kb_fit_density_nereo()}},
-\code{\link[=kb_fit_size_macro]{kb_fit_size_macro()}},
-\code{\link[=kb_fit_size_nereo]{kb_fit_size_nereo()}},
-\code{\link[=kb_fit_weight_macro]{kb_fit_weight_macro()}},
-\code{\link[=kb_fit_weight_nereo]{kb_fit_weight_nereo()}},
-\code{\link[=kb_fit_wetdry_macro]{kb_fit_wetdry_macro()}},
-\code{\link[=kb_fit_wetdry_nereo]{kb_fit_wetdry_nereo()}},
 \code{\link[=kb_influence]{kb_influence()}},
-\code{\link[=kb_model_describe]{kb_model_describe()}},
-\code{\link[=kb_progress]{kb_progress()}},
-\code{\link[=kb_samples]{kb_samples()}},
-\code{\link[=kb_stancode]{kb_stancode()}}
+\code{\link[=loo.kb_fit]{loo.kb_fit()}},
+\code{\link[=pp_check.kb_fit]{pp_check.kb_fit()}}
 }
-\concept{model}
+\concept{diagnostics}

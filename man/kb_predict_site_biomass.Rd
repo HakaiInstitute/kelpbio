@@ -2,7 +2,7 @@
 % Please edit documentation in R/kb_predict_site_biomass.R
 \name{kb_predict_site_biomass}
 \alias{kb_predict_site_biomass}
-\title{Predict Site Biomass}
+\title{Predict site biomass}
 \usage{
 kb_predict_site_biomass(
   fit,
@@ -34,7 +34,7 @@ or \code{NULL}.}
 \item{carbon}{A \code{kb_fit_carbon} object, required for carbon biomass, or
 \code{NULL}.}
 
-\item{...}{Unused.}
+\item{...}{These dots are for future extensions and must be empty.}
 
 \item{measure}{A string, one of \code{"wet"} (kg), \code{"dry"} (kg), or \code{"carbon"}
 (kg C), giving the biomass to predict.}
@@ -43,20 +43,24 @@ or \code{NULL}.}
 \code{new_data} to sum the survey totals within, \code{character(0)} to sum all of
 them, or \code{NULL} (the default) for one total per survey.}
 
-\item{new_levels}{A string, one of \code{"sample"} (the default) or \code{"average"},
-controlling how a site or year absent from the cover fit's data is treated:
-\code{"sample"} draws its effect from the fitted distribution, so the interval
-includes the variation between sites or years, as suits a total for that
-particular site and year; \code{"average"} holds it at zero (the typical site or
-year).}
+\item{new_levels}{A string giving how uncertainty is shown for a site or
+year not in the cover fit. Sites and years in the fit always use their
+own estimates. One of:
+\itemize{
+\item \code{"sample"} (the default): a new effect for each new site or year,
+drawn from the estimated variation among sites or among years. The
+estimate is about the same, but the interval also includes that
+variation. Use it to get realistic uncertainty about a particular site
+or year the model has no data on. The interval varies slightly between
+calls; use \code{set.seed()} to reproduce it.
+\item \code{"average"}: the typical site or year. The interval covers
+uncertainty in the typical value only. Use it to describe an average
+site or year.
+}}
 
-\item{representative_site}{A character vector of site levels present in the
-fit, or \code{NULL} (the default). When supplied, a new or absent site takes the
-named sites' site effect (the per-draw average when several are named)
-instead of the \code{new_levels} treatment, and, in a fitted year, their
-site:year effect for that year (averaged over the named sites observed that
-year). A site:year effect none of them has, such as in a new year, follows
-\code{new_levels}.}
+\item{representative_site}{A character vector of sites in the fit whose
+effects a new site takes (averaged when several are named), or \code{NULL} (the
+default) to follow \code{new_levels}.}
 
 \item{conf_level}{A number greater than 0 and less than 1 giving the
 compatibility-interval level.}
@@ -79,27 +83,20 @@ biomass fit: wet or dry (kg) or carbon (kg C), optionally summed over groups
 of surveys.
 }
 \details{
-A survey's total is the expected biomass per m² of bed, the floor plus the
-canopy term at full cover for its site and year, times its tide-corrected
-canopy area. The mapped canopy is taken as the extent of the bed, so the floor
-applies over the canopy area only. The interval is for the expected total:
-it carries the uncertainty in the parameters and the site and year effects,
-not survey-to-survey variation. Dry biomass is the wet total times the expected
-dry:wet ratio from \code{wetdry}, and carbon the dry total times the expected
-carbon fraction from \code{carbon}, both pooled over the samples those fits were
-given.
+A survey's total is the expected biomass per m² at full cover for its site
+and year times its tide-corrected canopy area. The mapped canopy is taken as
+the extent of the bed, so no biomass is counted outside it. The interval is
+for the expected total: it carries the uncertainty in the parameters and the
+site and year effects, not survey-to-survey variation. Dry biomass is the
+wet total times the expected dry:wet ratio from \code{wetdry}, and carbon the dry
+total times the expected carbon fraction from \code{carbon}.
 
-A site or year absent from the cover fit's data follows \code{new_levels}, and
-\code{cover_support} shows what the fit has for each survey. With the default
-\code{"sample"}, the effect of an unseen site or year is drawn from its fitted
-distribution, once for all surveys naming it, so set a seed with \code{set.seed()}
-for reproducible intervals; \code{"average"} holds it at the typical site or year.
+With \code{new_levels = "sample"}, the effect of a new site or year is drawn once
+and shared by all surveys naming it.
 
-\code{sum_by} sums the survey totals within groups on each posterior draw before
-summarising, so the limits of a regional or yearly total are correct; summing
-the per-survey estimates or limits afterwards is not. Use \code{character(0)} for
-one total over all surveys. Two surveys of the same site in the same year would
-both count its mapped canopy, so a group holding them warns.
+Totals are summed within \code{sum_by} groups on each draw, so do not sum
+per-survey estimates or limits. Sum at most one survey per site-year; a group
+with more warns.
 }
 \examples{
 fit <- fit_cover_biomass_sim_nereo
@@ -134,7 +131,7 @@ kb_predict_site_biomass(
 \code{\link[=kb_predict_cover_biomass]{kb_predict_cover_biomass()}} for biomass per m² of a surveyed plot,
 and \code{\link[=kb_predict_plot_biomass]{kb_predict_plot_biomass()}} for in situ biomass per m².
 
-Other prediction:
+Other prediction functions:
 \code{\link[=autoplot.kb_predictions]{autoplot.kb_predictions()}},
 \code{\link[=kb_new_data]{kb_new_data()}},
 \code{\link[=kb_plot_predictions]{kb_plot_predictions()}},
@@ -144,6 +141,12 @@ Other prediction:
 \code{\link[=kb_predict_plot_biomass]{kb_predict_plot_biomass()}},
 \code{\link[=kb_predict_size]{kb_predict_size()}},
 \code{\link[=kb_predict_weight]{kb_predict_weight()}},
-\code{\link[=kb_predict_wetdry]{kb_predict_wetdry()}}
+\code{\link[=kb_predict_wetdry]{kb_predict_wetdry()}},
+\code{\link[=predict.kb_fit_carbon]{predict.kb_fit_carbon()}},
+\code{\link[=predict.kb_fit_cover_biomass]{predict.kb_fit_cover_biomass()}},
+\code{\link[=predict.kb_fit_density]{predict.kb_fit_density()}},
+\code{\link[=predict.kb_fit_size]{predict.kb_fit_size()}},
+\code{\link[=predict.kb_fit_weight]{predict.kb_fit_weight()}},
+\code{\link[=predict.kb_fit_wetdry]{predict.kb_fit_wetdry()}}
 }
-\concept{prediction}
+\concept{prediction functions}

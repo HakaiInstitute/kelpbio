@@ -1,18 +1,11 @@
-#' Predict Weight
+#' Predict weight
 #'
 #' Predict the expected wet weight (kg) of a plant at each row of `new_data`, or
 #' at the observed data when `new_data = NULL`.
 #'
 #' @details
-#' Each row is resolved on its own: a `site` or `year` the model has seen is
-#' conditioned on its estimated effect, and a new or absent site or year follows
-#' `new_levels`. With the default `"average"`, an unseen site is the typical
-#' site; use `"sample"` for an interval that includes the variation between
-#' sites. For a new site, `representative_site` instead borrows the site effect of
-#' one or more named fitted sites (the per-draw average across several), and
-#' their site:year effect in a fitted year where they were observed.
-#'
-#' For curves by site or year, build the rows with [kb_new_data()].
+#' With `representative_site`, a new site also takes the named sites'
+#' site:year effect in a year in which they were surveyed.
 #'
 #' For a *Nereocystis* fit that includes density, each row uses its `stipes_m2`
 #' value if present, otherwise the recorded density of its site-year in the
@@ -20,16 +13,14 @@
 #'
 #' @inheritParams params
 #' @param fit A `kb_fit_weight` object.
-#' @param new_data A data frame with the fit's predictor column (`diameter_mm` in
-#'   millimetres for *Nereocystis*, `fronds` for *Macrocystis*) and optional
-#'   `site` and `year` columns (and, for *Nereocystis*, an optional `stipes_m2`
-#'   column in stipes per m²), or `NULL` to predict at the observed data.
-#' @param ... Unused.
+#' @param new_data A data frame of the rows to predict at, with the fit's
+#'   predictor column (`diameter_mm` or `fronds`) and optional `site` and `year`
+#'   columns, or `NULL` for the observed data.
 #'
-#' @return A `kb_predictions` object: the rows of `new_data` with added
+#' @returns A `kb_predictions` object: the rows of `new_data` with added
 #'   `estimate`, `lower`, and `upper` columns summarising the posterior
 #'   distribution of expected weight.
-#' @family prediction
+#' @family prediction functions
 #' @seealso [kb_new_data()] to build rows by site or year over a predictor
 #'   sequence, and [posterior_predict()] for draws of individual plant weights.
 #' @export
@@ -43,7 +34,7 @@
 #' # Curves by site:
 #' kb_predict_weight(fit, kb_new_data(fit, by = "site"))
 #'
-#' # At your own measurements:
+#' # At new measurements:
 #' kb_predict_weight(fit, data.frame(diameter_mm = c(20, 40, 60)))
 #'
 #' # A new site, with between-site variation:

@@ -10,7 +10,7 @@
 #' @param defaults The default named prior list (e.g. from [kb_priors_weight_nereo()]).
 #' @param call The call named in errors: the fit function the user called.
 #'
-#' @return A named list of prior objects with the same names as `defaults`.
+#' @returns A named list of prior objects with the same names as `defaults`.
 #' @noRd
 resolve_priors <- function(priors, defaults, call = rlang::caller_env()) {
   if (is.null(priors)) {

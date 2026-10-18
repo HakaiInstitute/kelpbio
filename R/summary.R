@@ -1,4 +1,4 @@
-#' Summarise a Model Fit
+#' Summarise a fit
 #'
 #' A model fit's metadata paired with a per-term posterior summary table.
 #'
@@ -30,19 +30,16 @@
 #'     of the interval limits.}
 #' }
 #'
-#' Population-level coefficients and random-effect standard deviations are always
-#' shown. The group-level deviations are included only when
-#' `include_random_effects = TRUE`, following the convention that `summary`
-#' reports the variance hyperparameters rather than the per-level effects.
+#' Population-level coefficients and random-effect standard deviations are
+#' always shown. The group-level deviations are included only when
+#' `include_random_effects = TRUE`.
 #'
 #' @inheritParams params
-#' @param object A `kb_fit` object.
-#' @param ... Unused.
 #'
-#' @return A `summary_kb_fit` object: a list of fit metadata and a
+#' @returns A `summary_kb_fit` object: a list of fit metadata and a
 #'   `coefficients` tibble with columns `term`, `estimate`, `lower`, `upper`,
 #'   `rhat`, `ess_bulk`, and `ess_tail`.
-#' @family generics
+#' @family fit methods
 #' @exportS3Method base::summary
 #' @examples
 #' summary(fit_weight_sim_nereo)

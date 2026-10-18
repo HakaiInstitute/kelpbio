@@ -1,4 +1,4 @@
-#' Validate Nereocystis Density Model Data
+#' Check Nereocystis density data
 #'
 #' Check that `data` contains the columns required to fit the *Nereocystis
 #' luetkeana* density model, with appropriate types and values.
@@ -12,11 +12,11 @@
 #' summed, with their areas, to one row per transect before fitting. A count of
 #' zero is valid. Other columns are ignored.
 #'
+#' @inheritParams params
 #' @param data A data frame of density observations, one row per transect.
-#' @param x_name A string naming `data` in error messages.
 #'
-#' @return `data`, invisibly.
-#' @family data
+#' @returns `data`, invisibly.
+#' @family data checks
 #' @export
 #'
 #' @examples

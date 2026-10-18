@@ -2,7 +2,7 @@
 % Please edit documentation in R/pp_check.R
 \name{pp_check.kb_fit}
 \alias{pp_check.kb_fit}
-\title{Posterior Predictive Check}
+\title{Posterior predictive check}
 \usage{
 \method{pp_check}{kb_fit}(object, type = c("response", "residual"), ..., ndraws = 50L)
 }
@@ -12,7 +12,7 @@
 \item{type}{A string, one of \code{"response"} (the recorded response) or
 \code{"residual"} (deviance residuals), specifying what to compare.}
 
-\item{...}{Unused.}
+\item{...}{These dots are for future extensions and must be empty.}
 
 \item{ndraws}{A whole number of replicate datasets to draw, at most the
 number of draws in the fit.}
@@ -37,13 +37,11 @@ so the plot is a prior predictive check: whether the priors allow data like
 those observed.
 
 For a density model, the observed and replicate counts are divided by their
-transect's area, so differences in transect length do not dominate the plot
-and the axis is a density per m².
+transect's area, so the axis is density per m².
 
 With \code{type = "residual"}, the observed curve is \code{\link[=residuals]{residuals()}} and each
 replicate's curve is the deviance residuals of the replicate under the draw
-that generated it. For a well-fitting model the two match, including any
-banding a count response gives the residuals.
+that generated it. For a well-fitting model the two match.
 
 The replicates are random, so set a seed with \code{set.seed()} for a reproducible
 plot.
@@ -56,26 +54,11 @@ pp_check(fit_size_sim_macro, "residual", ndraws = 20)
 \seealso{
 \code{\link[=posterior_predict]{posterior_predict()}} for the replicates themselves.
 
-Other generics:
-\code{\link[=augment.kb_fit]{augment.kb_fit()}},
-\code{\link[=coef.kb_fit]{coef.kb_fit()}},
+Other diagnostics:
 \code{\link[=create_priorsense_data.kb_fit]{create_priorsense_data.kb_fit()}},
-\code{\link[=fitted.kb_fit]{fitted.kb_fit()}},
-\code{\link[=glance.kb_fit]{glance.kb_fit()}},
-\code{\link[=log_lik.kb_fit]{log_lik.kb_fit()}},
-\code{\link[=loo.kb_fit]{loo.kb_fit()}},
-\code{\link[=posterior_epred.kb_fit]{posterior_epred.kb_fit()}},
-\code{\link[=posterior_linpred.kb_fit]{posterior_linpred.kb_fit()}},
-\code{\link[=posterior_predict.kb_fit]{posterior_predict.kb_fit()}},
-\code{\link[=predict.kb_fit_carbon]{predict.kb_fit_carbon()}},
-\code{\link[=predict.kb_fit_cover_biomass]{predict.kb_fit_cover_biomass()}},
-\code{\link[=predict.kb_fit_density]{predict.kb_fit_density()}},
-\code{\link[=predict.kb_fit_size]{predict.kb_fit_size()}},
-\code{\link[=predict.kb_fit_weight]{predict.kb_fit_weight()}},
-\code{\link[=predict.kb_fit_wetdry]{predict.kb_fit_wetdry()}},
-\code{\link[=prior_summary.kb_fit]{prior_summary.kb_fit()}},
-\code{\link[=residuals.kb_fit]{residuals.kb_fit()}},
-\code{\link[=summary.kb_fit]{summary.kb_fit()}},
-\code{\link[=tidy.kb_fit]{tidy.kb_fit()}}
+\code{\link[=kb_converged]{kb_converged()}},
+\code{\link[=kb_influence]{kb_influence()}},
+\code{\link[=kb_sensitivity]{kb_sensitivity()}},
+\code{\link[=loo.kb_fit]{loo.kb_fit()}}
 }
-\concept{generics}
+\concept{diagnostics}

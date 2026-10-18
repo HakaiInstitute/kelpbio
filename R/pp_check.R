@@ -1,4 +1,4 @@
-#' Posterior Predictive Check
+#' Posterior predictive check
 #'
 #' Plot the density of the observed data over the densities of replicate datasets
 #' simulated from the fitted model, to check that the model reproduces its data.
@@ -16,26 +16,23 @@
 #' those observed.
 #'
 #' For a density model, the observed and replicate counts are divided by their
-#' transect's area, so differences in transect length do not dominate the plot
-#' and the axis is a density per m².
+#' transect's area, so the axis is density per m².
 #'
 #' With `type = "residual"`, the observed curve is [residuals()] and each
 #' replicate's curve is the deviance residuals of the replicate under the draw
-#' that generated it. For a well-fitting model the two match, including any
-#' banding a count response gives the residuals.
+#' that generated it. For a well-fitting model the two match.
 #'
 #' The replicates are random, so set a seed with `set.seed()` for a reproducible
 #' plot.
 #'
-#' @param object A `kb_fit` object.
+#' @inheritParams params
 #' @param type A string, one of `"response"` (the recorded response) or
 #'   `"residual"` (deviance residuals), specifying what to compare.
-#' @param ... Unused.
 #' @param ndraws A whole number of replicate datasets to draw, at most the
 #'   number of draws in the fit.
 #'
-#' @return A `ggplot` object from [bayesplot::ppc_dens_overlay()].
-#' @family generics
+#' @returns A `ggplot` object from [bayesplot::ppc_dens_overlay()].
+#' @family diagnostics
 #' @seealso [posterior_predict()] for the replicates themselves.
 #' @exportS3Method bayesplot::pp_check
 #' @examples

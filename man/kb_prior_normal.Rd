@@ -2,7 +2,7 @@
 % Please edit documentation in R/kb_prior_normal.R
 \name{kb_prior_normal}
 \alias{kb_prior_normal}
-\title{Normal Prior}
+\title{Normal prior}
 \usage{
 kb_prior_normal(mean = 0, sd = 1)
 }

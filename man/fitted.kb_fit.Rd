@@ -2,14 +2,14 @@
 % Please edit documentation in R/fitted.R
 \name{fitted.kb_fit}
 \alias{fitted.kb_fit}
-\title{Fitted Values}
+\title{Fitted values}
 \usage{
 \method{fitted}{kb_fit}(object, ...)
 }
 \arguments{
 \item{object}{A \code{kb_fit} object.}
 
-\item{...}{Unused.}
+\item{...}{These dots are for future extensions and must be empty.}
 }
 \value{
 A numeric vector of fitted values on the response scale, length
@@ -30,26 +30,20 @@ fitted(fit_weight_sim_nereo)
 \code{\link[=residuals]{residuals()}} for deviance residuals, \code{\link[=augment]{augment()}}, and
 \code{\link[=posterior_epred]{posterior_epred()}} for the full posterior.
 
-Other generics:
+Other fit methods:
 \code{\link[=augment.kb_fit]{augment.kb_fit()}},
 \code{\link[=coef.kb_fit]{coef.kb_fit()}},
-\code{\link[=create_priorsense_data.kb_fit]{create_priorsense_data.kb_fit()}},
 \code{\link[=glance.kb_fit]{glance.kb_fit()}},
+\code{\link[=kb_model_describe]{kb_model_describe()}},
+\code{\link[=kb_samples]{kb_samples()}},
+\code{\link[=kb_stancode]{kb_stancode()}},
 \code{\link[=log_lik.kb_fit]{log_lik.kb_fit()}},
-\code{\link[=loo.kb_fit]{loo.kb_fit()}},
 \code{\link[=posterior_epred.kb_fit]{posterior_epred.kb_fit()}},
 \code{\link[=posterior_linpred.kb_fit]{posterior_linpred.kb_fit()}},
 \code{\link[=posterior_predict.kb_fit]{posterior_predict.kb_fit()}},
-\code{\link[=pp_check.kb_fit]{pp_check.kb_fit()}},
-\code{\link[=predict.kb_fit_carbon]{predict.kb_fit_carbon()}},
-\code{\link[=predict.kb_fit_cover_biomass]{predict.kb_fit_cover_biomass()}},
-\code{\link[=predict.kb_fit_density]{predict.kb_fit_density()}},
-\code{\link[=predict.kb_fit_size]{predict.kb_fit_size()}},
-\code{\link[=predict.kb_fit_weight]{predict.kb_fit_weight()}},
-\code{\link[=predict.kb_fit_wetdry]{predict.kb_fit_wetdry()}},
 \code{\link[=prior_summary.kb_fit]{prior_summary.kb_fit()}},
 \code{\link[=residuals.kb_fit]{residuals.kb_fit()}},
 \code{\link[=summary.kb_fit]{summary.kb_fit()}},
 \code{\link[=tidy.kb_fit]{tidy.kb_fit()}}
 }
-\concept{generics}
+\concept{fit methods}

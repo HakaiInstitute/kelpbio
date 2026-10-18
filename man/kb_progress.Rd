@@ -2,7 +2,7 @@
 % Please edit documentation in R/kb_progress.R
 \name{kb_progress}
 \alias{kb_progress}
-\title{Completed Fraction of a Running Task}
+\title{Completed fraction of a running task}
 \usage{
 kb_progress(progress_dir)
 }
@@ -14,7 +14,7 @@ the task.}
 A number between 0 and 1.
 }
 \description{
-The proportion completed by a fit or a long prediction writing to
+The proportion completed by a fit or \code{\link[=kb_predict_plot_biomass]{kb_predict_plot_biomass()}} writing to
 \code{progress_dir}, as a number from 0 to 1.
 }
 \details{
@@ -23,9 +23,7 @@ Pass the same directory given as \code{progress_dir} to a \verb{kb_fit_*} functi
 example, a Shiny app can run the task in the background and poll
 \code{kb_progress()} from the main session to drive a progress indicator. It
 returns \code{0} before the task has written anything and \code{1} once it has finished.
-When a prediction and a fit share a directory, the prediction's progress is
-reported once it has started; use a new directory for each task to keep them
-apart.
+Use a separate directory for each task.
 }
 \examples{
 progress_dir <- tempfile()
@@ -34,8 +32,7 @@ dir.create(progress_dir)
 kb_progress(progress_dir)
 }
 \seealso{
-Other model:
-\code{\link[=kb_converged]{kb_converged()}},
+Other fit functions:
 \code{\link[=kb_fit_carbon_macro]{kb_fit_carbon_macro()}},
 \code{\link[=kb_fit_carbon_nereo]{kb_fit_carbon_nereo()}},
 \code{\link[=kb_fit_cover_biomass_macro]{kb_fit_cover_biomass_macro()}},
@@ -47,11 +44,6 @@ Other model:
 \code{\link[=kb_fit_weight_macro]{kb_fit_weight_macro()}},
 \code{\link[=kb_fit_weight_nereo]{kb_fit_weight_nereo()}},
 \code{\link[=kb_fit_wetdry_macro]{kb_fit_wetdry_macro()}},
-\code{\link[=kb_fit_wetdry_nereo]{kb_fit_wetdry_nereo()}},
-\code{\link[=kb_influence]{kb_influence()}},
-\code{\link[=kb_model_describe]{kb_model_describe()}},
-\code{\link[=kb_samples]{kb_samples()}},
-\code{\link[=kb_sensitivity]{kb_sensitivity()}},
-\code{\link[=kb_stancode]{kb_stancode()}}
+\code{\link[=kb_fit_wetdry_nereo]{kb_fit_wetdry_nereo()}}
 }
-\concept{model}
+\concept{fit functions}

@@ -1,42 +1,38 @@
-#' Fit a Macrocystis Weight Model
+#' Fit a Macrocystis weight model
 #'
 #' Fit an allometric weight model for *Macrocystis pyrifera* via Stan.
 #'
 #' @details
-#' The response is wet weight, modelled on the natural scale with a Gamma
-#' likelihood. Expected weight is a log-linear (allometric) function of log frond
-#' count, centered at its geometric mean so the intercept is the expected weight
-#' at a typical frond count. The Gamma shape (`shape`) is constant across plants.
-#' The intercept varies by site, by year, and by `site:year`.
+#' Wet weight (kg) is modelled with a Gamma likelihood with mean `mu` and shape
+#' `shape`, common to all plants, so `mu` is the expected weight. `mu` is a
+#' power function of frond count, `mu = alpha * x^fronds_slope`, with `x` the
+#' `fronds` divided by the geometric mean frond count of the data, which is a
+#' straight line on log-log axes.
 #'
-#' The site:year effect is set from the data: it is omitted when the data span a
-#' single year and included otherwise. When no site spans more than one year, or
-#' no year has more than one site, it is kept with a warning, since the
-#' site:year effect cannot then be interpreted separately from the site or year
-#' effect.
+#' The allometric coefficient `alpha` varies by site and year,
+#' `log(alpha) = intercept + site_effect + year_effect + site_year_effect`, so
+#' `intercept` is the log expected weight of a plant with the geometric mean
+#' frond count at a typical site and year.
 #'
 #' @inheritSection params Sampling
+#' @inheritSection params Site and year interaction
+#' @inheritParams kb_fit_weight_nereo
 #' @inheritParams params
 #' @param data A data frame of weight observations (see
 #'   [kb_check_data_weight_macro()] for the required columns).
 #' @param priors A named list of prior objects (see [kb_priors_weight_macro()]),
-#'   or `NULL` to use the defaults. Supplied entries override the corresponding
-#'   defaults; unspecified entries keep their defaults.
-#' @param ... Additional arguments passed to [rstan::sampling()], including a
-#'   `control` list (merged over the `adapt_delta = 0.95` default); see the
-#'   `control` argument of [rstan::stan()] for the available entries.
+#'   or `NULL` to use the defaults. Entries not supplied keep their defaults.
 #'
-#' @return An object of class `c("kb_fit_weight_macro", "kb_fit_weight", "kb_fit")`.
-#' @family model
+#' @returns An object of class `c("kb_fit_weight_macro", "kb_fit_weight", "kb_fit")`.
+#' @family fit functions
 #' @export
 #'
 #' @examples
-#' if (interactive()) {
-#'   fit <- kb_fit_weight_macro(data_weight_sim_macro)
-#'   tidy(fit)
-#' }
 #' # A pre-fit example model ships with the package:
 #' tidy(fit_weight_sim_macro)
+#' @examplesIf interactive()
+#' fit <- kb_fit_weight_macro(data_weight_sim_macro)
+#' tidy(fit)
 kb_fit_weight_macro <- function(
   data,
   priors = NULL,

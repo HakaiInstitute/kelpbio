@@ -2,14 +2,14 @@
 % Please edit documentation in R/kb_influence.R
 \name{kb_influence}
 \alias{kb_influence}
-\title{Influential Observations}
+\title{Influential observations}
 \usage{
 kb_influence(fit, ..., threshold = NULL)
 }
 \arguments{
 \item{fit}{A \code{kb_fit} object.}
 
-\item{...}{Unused.}
+\item{...}{These dots are for future extensions and must be empty.}
 
 \item{threshold}{A number greater than 0: an observation with \code{pareto_k}
 above it is influential. \code{NULL} (the default) uses the threshold of
@@ -28,18 +28,14 @@ poorly, by Pareto-smoothed importance-sampling leave-one-out cross-validation
 Each observation gets two values:
 \itemize{
 \item \code{pareto_k} measures how much the fit changes when the observation is left
-out. Values above 0.7 mark an influential observation (a lower threshold
-for fits with fewer than about 2,200 draws).
+out. Values above \code{threshold} mark an influential observation.
 \item \code{elpd_loo} is the log density of the observation under a fit that left it
 out. Lower values mark observations the model predicts poorly. Its scale
 depends on the response's units, so compare values within a fit.
 }
 
-A deviance residual from \code{\link[=augment]{augment()}} measures how far an observation is from
-the fit, not how much the fit depends on it. A large residual in a
-well-sampled site and year moves the estimates little, while a modest one at
-the edge of the data, or in a site and year with few observations, can move
-them a lot.
+\code{pareto_k} measures how much the fit depends on an observation, which a
+deviance residual from \code{\link[=augment]{augment()}} does not.
 
 Influential or poorly predicted observations are worth checking for recording
 errors. An observation that checks out is valid data and should be kept:
@@ -47,8 +43,7 @@ influence often reflects a site and year with few observations rather than an
 error. Many influential observations across the data suggest the model
 describes the data poorly.
 
-The values are those of \code{\link[loo:loo]{loo::loo()}} on the fit, computed from the stored draws
-without refitting.
+The values are those of \code{\link[loo:loo]{loo::loo()}} on the fit.
 }
 \examples{
 influence <- kb_influence(fit_weight_sim_nereo)
@@ -62,24 +57,11 @@ Computing, 27, 1413-1432.
 \seealso{
 \code{\link[=loo.kb_fit]{loo.kb_fit()}} for the full PSIS-LOO result.
 
-Other model:
+Other diagnostics:
+\code{\link[=create_priorsense_data.kb_fit]{create_priorsense_data.kb_fit()}},
 \code{\link[=kb_converged]{kb_converged()}},
-\code{\link[=kb_fit_carbon_macro]{kb_fit_carbon_macro()}},
-\code{\link[=kb_fit_carbon_nereo]{kb_fit_carbon_nereo()}},
-\code{\link[=kb_fit_cover_biomass_macro]{kb_fit_cover_biomass_macro()}},
-\code{\link[=kb_fit_cover_biomass_nereo]{kb_fit_cover_biomass_nereo()}},
-\code{\link[=kb_fit_density_macro]{kb_fit_density_macro()}},
-\code{\link[=kb_fit_density_nereo]{kb_fit_density_nereo()}},
-\code{\link[=kb_fit_size_macro]{kb_fit_size_macro()}},
-\code{\link[=kb_fit_size_nereo]{kb_fit_size_nereo()}},
-\code{\link[=kb_fit_weight_macro]{kb_fit_weight_macro()}},
-\code{\link[=kb_fit_weight_nereo]{kb_fit_weight_nereo()}},
-\code{\link[=kb_fit_wetdry_macro]{kb_fit_wetdry_macro()}},
-\code{\link[=kb_fit_wetdry_nereo]{kb_fit_wetdry_nereo()}},
-\code{\link[=kb_model_describe]{kb_model_describe()}},
-\code{\link[=kb_progress]{kb_progress()}},
-\code{\link[=kb_samples]{kb_samples()}},
 \code{\link[=kb_sensitivity]{kb_sensitivity()}},
-\code{\link[=kb_stancode]{kb_stancode()}}
+\code{\link[=loo.kb_fit]{loo.kb_fit()}},
+\code{\link[=pp_check.kb_fit]{pp_check.kb_fit()}}
 }
-\concept{model}
+\concept{diagnostics}

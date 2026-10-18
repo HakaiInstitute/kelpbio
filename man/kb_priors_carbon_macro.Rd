@@ -2,7 +2,7 @@
 % Please edit documentation in R/kb_priors_carbon_macro.R
 \name{kb_priors_carbon_macro}
 \alias{kb_priors_carbon_macro}
-\title{Default Priors for the Macrocystis Carbon Model}
+\title{Default priors for the Macrocystis carbon model}
 \usage{
 kb_priors_carbon_macro()
 }
@@ -12,10 +12,9 @@ fraction of dry mass on the logit scale) and \code{precision} (the Beta
 precision; larger values mean less spread around the mean fraction).
 }
 \description{
-The default prior list for the \emph{Macrocystis pyrifera} carbon model. Edit
-individual entries and pass the list to the \code{priors} argument of
-\code{\link[=kb_fit_carbon_macro]{kb_fit_carbon_macro()}} to override defaults; unmodified entries keep their
-defaults.
+The default priors for the \emph{Macrocystis pyrifera} carbon model. To change a
+prior, pass a list of the entries to change to the \code{priors} argument of
+\code{\link[=kb_fit_carbon_macro]{kb_fit_carbon_macro()}}; the other entries keep their defaults.
 }
 \details{
 Each entry is named after the parameter it sets, as reported by \code{\link[=tidy]{tidy()}} and
@@ -23,8 +22,14 @@ Each entry is named after the parameter it sets, as reported by \code{\link[=tid
 precision is Exponential); only the hyperparameters can be changed.
 }
 \examples{
-priors <- kb_priors_carbon_macro()
-priors$intercept <- kb_prior_normal(mean = -1, sd = 0.5)
+kb_priors_carbon_macro()
+\dontshow{if (interactive()) withAutoprint(\{ # examplesIf}
+# Change one prior; the others keep their defaults:
+kb_fit_carbon_macro(
+  data_carbon_sim_macro,
+  priors = list(intercept = kb_prior_normal(mean = -1, sd = 0.5))
+)
+\dontshow{\}) # examplesIf}
 }
 \seealso{
 Other priors:

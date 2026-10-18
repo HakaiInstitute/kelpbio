@@ -2,7 +2,7 @@
 % Please edit documentation in R/kb_new_data.R
 \name{kb_new_data}
 \alias{kb_new_data}
-\title{Build New Data for Prediction}
+\title{Build new data to predict at}
 \usage{
 kb_new_data(fit, by = NULL, ...)
 }
@@ -10,9 +10,14 @@ kb_new_data(fit, by = NULL, ...)
 \item{fit}{A \code{kb_fit_weight}, \code{kb_fit_size}, \code{kb_fit_density}, or
 \code{kb_fit_cover_biomass} object.}
 
-\item{by}{A character vector of grouping factors, \code{"site"}, \code{"year"}, or
-both, giving one row per fitted level (per observed site-year for both), or
-\code{NULL} for no grouping columns (the typical site and year).}
+\item{by}{A character vector of grouping factors giving the rows of the
+grid. One of:
+\itemize{
+\item \code{NULL}: no grouping columns (the typical site and year).
+\item \code{"site"}: one row per fitted site.
+\item \code{"year"}: one row per fitted year.
+\item \code{c("site", "year")}: one row per observed site-year.
+}}
 
 \item{...}{Named values to cross into the grid: for a weight or cover biomass
 fit, the predictor values as a numeric vector (\code{diameter_mm}, \code{fronds}, or
@@ -36,24 +41,20 @@ Pass the result as \code{new_data} to the model's prediction function, for examp
 named in \code{by} are absent from the grid, so the prediction treats them as set
 by \code{new_levels}: with the default \code{"average"}, the typical site or year.
 
-For a weight fit, supply the predictor values by the predictor's column name:
-\code{diameter_mm} for \emph{Nereocystis}, \code{fronds} for \emph{Macrocystis}. For a cover
-biomass fit, supply \code{cover}, the tide-corrected proportion of the plot
-covered by canopy (0 to 1); each row is then a unit plot at zero tide height,
-with the \code{canopy_area_m2}, \code{plot_area_m2}, and \code{tide_height_m} columns the
-prediction reads. A single value gives one row per group at that value.
-Predictions over a grid with several predictor values are drawn by
-\code{\link[=kb_plot_predictions]{kb_plot_predictions()}} as curves.
+For a cover biomass fit, the predictor \code{cover} is the tide-corrected
+proportion of the plot covered by canopy (0 to 1); each row is then a unit
+plot at zero tide height, with the survey columns that give that cover. A
+single predictor value gives one row per group at that value.
 
 To fix a grouping factor at chosen levels, supply them by name in \code{...}, for
 example \code{year = 2021} with \code{by = "site"} for every fitted site in 2021, or
 \verb{site = "otter_cove", year = 2019:2022}. Each value is crossed with the rest
-of the grid. A level the fit has not seen, such as a future year, is a new
-level, resolved at prediction by \code{new_levels}.
+of the grid. A level not in the fit, such as a future year, is a new level,
+treated as set by \code{new_levels}.
 
 \code{by = c("site", "year")} gives only the site-years in the fitted data. The
-result is an ordinary data frame: rows can be filtered and columns added (such
-as \code{stipes_m2} for a \emph{Nereocystis} weight fit with density) before predicting.
+result is a tibble; rows can be filtered and columns added (such as
+\code{stipes_m2} for a \emph{Nereocystis} weight fit with density) before predicting.
 }
 \examples{
 kb_new_data(fit_size_sim_nereo, by = "site")
@@ -69,7 +70,7 @@ kb_new_data(fit_size_sim_nereo, site = "otter_cove", year = 2019:2022)
 kb_predict_size(fit_size_sim_nereo, kb_new_data(fit_size_sim_nereo, by = "site"))
 }
 \seealso{
-Other prediction:
+Other prediction functions:
 \code{\link[=autoplot.kb_predictions]{autoplot.kb_predictions()}},
 \code{\link[=kb_plot_predictions]{kb_plot_predictions()}},
 \code{\link[=kb_predict_carbon]{kb_predict_carbon()}},
@@ -79,6 +80,12 @@ Other prediction:
 \code{\link[=kb_predict_site_biomass]{kb_predict_site_biomass()}},
 \code{\link[=kb_predict_size]{kb_predict_size()}},
 \code{\link[=kb_predict_weight]{kb_predict_weight()}},
-\code{\link[=kb_predict_wetdry]{kb_predict_wetdry()}}
+\code{\link[=kb_predict_wetdry]{kb_predict_wetdry()}},
+\code{\link[=predict.kb_fit_carbon]{predict.kb_fit_carbon()}},
+\code{\link[=predict.kb_fit_cover_biomass]{predict.kb_fit_cover_biomass()}},
+\code{\link[=predict.kb_fit_density]{predict.kb_fit_density()}},
+\code{\link[=predict.kb_fit_size]{predict.kb_fit_size()}},
+\code{\link[=predict.kb_fit_weight]{predict.kb_fit_weight()}},
+\code{\link[=predict.kb_fit_wetdry]{predict.kb_fit_wetdry()}}
 }
-\concept{prediction}
+\concept{prediction functions}

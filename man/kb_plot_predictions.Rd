@@ -2,7 +2,7 @@
 % Please edit documentation in R/kb_plot_predictions.R
 \name{kb_plot_predictions}
 \alias{kb_plot_predictions}
-\title{Plot Model Predictions}
+\title{Plot predictions}
 \usage{
 kb_plot_predictions(
   predictions,
@@ -15,10 +15,10 @@ kb_plot_predictions(
 \arguments{
 \item{predictions}{A \code{kb_predictions} object.}
 
-\item{...}{Unused.}
+\item{...}{These dots are for future extensions and must be empty.}
 
-\item{x}{A string naming the x-axis column, or \code{NULL} to infer it from the
-metadata.}
+\item{x}{A string naming the x-axis column, or \code{NULL} to choose it from the
+predictions.}
 
 \item{log_axis}{A string, one of \code{"none"} (linear axes), \code{"y"} (log-scaled
 y-axis), or \code{"xy"} (log-scaled x- and y-axes).}
@@ -36,30 +36,21 @@ Render a \code{ggplot} from a \code{kb_predictions} object (the output of a
 }
 \details{
 Called with just the predictions, the plot configures itself: the x-axis,
-faceting, and geometry are inferred from the prediction's metadata. The result
-is a standard \code{ggplot} that can be refined with \code{+} (scales, labels, themes,
+faceting, and geometry are chosen from the predictions. The result is a
+standard \code{ggplot} that can be refined with \code{+} (scales, labels, themes,
 \code{coord_flip()}).
 
-The geometry is chosen automatically, not set by an argument: a line with a
-compatibility-interval ribbon for predictions at a \code{\link[=kb_new_data]{kb_new_data()}} grid over
-several predictor values (weight curves), and \code{geom_pointrange} otherwise (for
-example size by site, or weight at the observed plants). Override the inferred
-x-axis with \code{x}.
+Predictions over a grid of predictor values (as from \code{\link[=kb_new_data]{kb_new_data()}}) are
+drawn as a line and compatibility-interval ribbon; others as points with
+intervals. Override the chosen x-axis with \code{x}.
 
 Axes are linear by default, with the y-axis extended to zero. Weights,
 densities, and biomass often span orders of magnitude; \code{log_axis = "y"} shows
 them on a log scale, and \code{log_axis = "xy"} also log-scales a numeric x-axis,
-as for a weight curve. A log axis says so in its title. Every value on a log
-axis must be positive, so a cover
-curve on log-log axes needs a grid of positive cover values (see the
-examples).
+as for a weight curve. A log axis says so in its title. Values on a log axis
+must be positive.
 
-Only the predictions are drawn. They hold the effects not in the prediction at
-their typical values, while each raw observation carries its own site, year,
-and site-year effects, so raw data are not a like-for-like comparison. Add
-them as a layer with \code{+} if wanted. To compare the model with the data, plot
-the fitted values from \code{\link[=augment]{augment()}} against the observed response, or check
-\code{\link[=posterior_predict]{posterior_predict()}} replicates against the data.
+Only the predictions are drawn; add raw data as a ggplot2 layer.
 }
 \examples{
 fit <- fit_weight_sim_nereo
@@ -102,7 +93,7 @@ kb_predict_cover_biomass(
   kb_plot_predictions(log_axis = "xy")
 }
 \seealso{
-Other prediction:
+Other prediction functions:
 \code{\link[=autoplot.kb_predictions]{autoplot.kb_predictions()}},
 \code{\link[=kb_new_data]{kb_new_data()}},
 \code{\link[=kb_predict_carbon]{kb_predict_carbon()}},
@@ -112,6 +103,12 @@ Other prediction:
 \code{\link[=kb_predict_site_biomass]{kb_predict_site_biomass()}},
 \code{\link[=kb_predict_size]{kb_predict_size()}},
 \code{\link[=kb_predict_weight]{kb_predict_weight()}},
-\code{\link[=kb_predict_wetdry]{kb_predict_wetdry()}}
+\code{\link[=kb_predict_wetdry]{kb_predict_wetdry()}},
+\code{\link[=predict.kb_fit_carbon]{predict.kb_fit_carbon()}},
+\code{\link[=predict.kb_fit_cover_biomass]{predict.kb_fit_cover_biomass()}},
+\code{\link[=predict.kb_fit_density]{predict.kb_fit_density()}},
+\code{\link[=predict.kb_fit_size]{predict.kb_fit_size()}},
+\code{\link[=predict.kb_fit_weight]{predict.kb_fit_weight()}},
+\code{\link[=predict.kb_fit_wetdry]{predict.kb_fit_wetdry()}}
 }
-\concept{prediction}
+\concept{prediction functions}

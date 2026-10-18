@@ -2,7 +2,7 @@
 % Please edit documentation in R/predict.R
 \name{predict.kb_fit_density}
 \alias{predict.kb_fit_density}
-\title{Predict Method for a Density Model Fit}
+\title{Predict method for density fits}
 \usage{
 \method{predict}{kb_fit_density}(
   object,
@@ -21,25 +21,26 @@
 \item{new_data}{A data frame with optional \code{site} and \code{year} columns, one row
 per prediction, or \code{NULL} to predict at the observed transects.}
 
-\item{...}{Unused.}
+\item{...}{These dots are for future extensions and must be empty.}
 
-\item{new_levels}{A string, one of \code{"average"} (the default) or \code{"sample"},
-controlling how random effects that are not conditioned on are treated
-(factors absent from the rows, and any new level not seen in the fit).
-\code{"average"} holds them at zero, giving the typical (median) group;
-\code{"sample"} draws a new random effect from \code{Normal(0, sd)}, widening the
-interval to include between-group variation, as suits a prediction for a
-particular unsurveyed site. Known levels are always conditioned on.
-\code{"sample"} draws fresh randomness on each call, so set a seed with
-\code{set.seed()} for a reproducible interval.}
+\item{new_levels}{A string giving how uncertainty is shown for a site or
+year not in the fit, or when \code{new_data} has no \code{site} or \code{year} column.
+Sites and years in the fit always use their own estimates. One of:
+\itemize{
+\item \code{"average"} (the default): the typical site or year. The interval
+covers uncertainty in the typical value only. Use it to describe an
+average site or year.
+\item \code{"sample"}: a new effect for each new site or year,
+drawn from the estimated variation among sites or among years. The
+estimate is about the same, but the interval also includes that
+variation. Use it to get realistic uncertainty about a particular site
+or year the model has no data on. The interval varies slightly between
+calls; use \code{set.seed()} to reproduce it.
+}}
 
-\item{representative_site}{A character vector of site levels present in the
-fit, or \code{NULL} (the default). When supplied, a new or absent site takes the
-named sites' site effect (the per-draw average when several are named)
-instead of the \code{new_levels} treatment, and, in a fitted year, their
-site:year effect for that year (averaged over the named sites observed that
-year). A site:year effect none of them has, such as in a new year, follows
-\code{new_levels}.}
+\item{representative_site}{A character vector of sites in the fit whose
+effects a new site takes (averaged when several are named), or \code{NULL} (the
+default) to follow \code{new_levels}.}
 
 \item{conf_level}{A number greater than 0 and less than 1 giving the
 compatibility-interval level.}
@@ -53,35 +54,30 @@ a scalar point estimate (e.g. \code{median} or \code{mean}).}
 A \code{kb_predictions} object.
 }
 \description{
-A thin wrapper on \code{\link[=kb_predict_density]{kb_predict_density()}}: predict the expected density per m²
-at the supplied \code{new_data} rows (or at the observed transects when
-\code{new_data = NULL}). For one estimate per site or year, build the rows with
-\code{\link[=kb_new_data]{kb_new_data()}}.
+Predict the expected density per m² at the rows of \code{new_data}, or at the
+observed transects when \code{new_data = NULL}. Equivalent to
+\code{\link[=kb_predict_density]{kb_predict_density()}}.
 }
 \examples{
 predict(fit_density_sim_nereo, data.frame(site = "otter_cove"))
 }
 \seealso{
-Other generics:
-\code{\link[=augment.kb_fit]{augment.kb_fit()}},
-\code{\link[=coef.kb_fit]{coef.kb_fit()}},
-\code{\link[=create_priorsense_data.kb_fit]{create_priorsense_data.kb_fit()}},
-\code{\link[=fitted.kb_fit]{fitted.kb_fit()}},
-\code{\link[=glance.kb_fit]{glance.kb_fit()}},
-\code{\link[=log_lik.kb_fit]{log_lik.kb_fit()}},
-\code{\link[=loo.kb_fit]{loo.kb_fit()}},
-\code{\link[=posterior_epred.kb_fit]{posterior_epred.kb_fit()}},
-\code{\link[=posterior_linpred.kb_fit]{posterior_linpred.kb_fit()}},
-\code{\link[=posterior_predict.kb_fit]{posterior_predict.kb_fit()}},
-\code{\link[=pp_check.kb_fit]{pp_check.kb_fit()}},
+Other prediction functions:
+\code{\link[=autoplot.kb_predictions]{autoplot.kb_predictions()}},
+\code{\link[=kb_new_data]{kb_new_data()}},
+\code{\link[=kb_plot_predictions]{kb_plot_predictions()}},
+\code{\link[=kb_predict_carbon]{kb_predict_carbon()}},
+\code{\link[=kb_predict_cover_biomass]{kb_predict_cover_biomass()}},
+\code{\link[=kb_predict_density]{kb_predict_density()}},
+\code{\link[=kb_predict_plot_biomass]{kb_predict_plot_biomass()}},
+\code{\link[=kb_predict_site_biomass]{kb_predict_site_biomass()}},
+\code{\link[=kb_predict_size]{kb_predict_size()}},
+\code{\link[=kb_predict_weight]{kb_predict_weight()}},
+\code{\link[=kb_predict_wetdry]{kb_predict_wetdry()}},
 \code{\link[=predict.kb_fit_carbon]{predict.kb_fit_carbon()}},
 \code{\link[=predict.kb_fit_cover_biomass]{predict.kb_fit_cover_biomass()}},
 \code{\link[=predict.kb_fit_size]{predict.kb_fit_size()}},
 \code{\link[=predict.kb_fit_weight]{predict.kb_fit_weight()}},
-\code{\link[=predict.kb_fit_wetdry]{predict.kb_fit_wetdry()}},
-\code{\link[=prior_summary.kb_fit]{prior_summary.kb_fit()}},
-\code{\link[=residuals.kb_fit]{residuals.kb_fit()}},
-\code{\link[=summary.kb_fit]{summary.kb_fit()}},
-\code{\link[=tidy.kb_fit]{tidy.kb_fit()}}
+\code{\link[=predict.kb_fit_wetdry]{predict.kb_fit_wetdry()}}
 }
-\concept{generics}
+\concept{prediction functions}

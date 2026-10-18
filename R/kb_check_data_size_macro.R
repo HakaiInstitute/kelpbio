@@ -1,4 +1,4 @@
-#' Validate Macrocystis Size Model Data
+#' Check Macrocystis size data
 #'
 #' Check that `data` contains the columns required to fit the *Macrocystis
 #' pyrifera* size model, with appropriate types and values.
@@ -15,8 +15,8 @@
 #'
 #' @inheritParams kb_check_data_size_nereo
 #'
-#' @return `data`, invisibly.
-#' @family data
+#' @returns `data`, invisibly.
+#' @family data checks
 #' @export
 #'
 #' @examples

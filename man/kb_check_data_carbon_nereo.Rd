@@ -2,7 +2,7 @@
 % Please edit documentation in R/kb_check_data_carbon_nereo.R
 \name{kb_check_data_carbon_nereo}
 \alias{kb_check_data_carbon_nereo}
-\title{Validate Nereocystis Carbon Model Data}
+\title{Check Nereocystis carbon data}
 \usage{
 kb_check_data_carbon_nereo(
   data,
@@ -12,7 +12,7 @@ kb_check_data_carbon_nereo(
 \arguments{
 \item{data}{A data frame of carbon observations, one row per sample.}
 
-\item{x_name}{A string naming \code{data} in error messages.}
+\item{x_name}{A string naming the data for error messages.}
 }
 \value{
 \code{data}, invisibly.
@@ -26,45 +26,20 @@ Required columns: numeric \code{sample_mass_mg} (mg, > 0) and \code{carbon_mass_
 (µg, > 0), with no missing values and the carbon mass less than the sample
 mass.
 
-Each row is one dried tissue sample, as reported by the isotope lab:
-\code{sample_mass_mg} is the mass of the sample analysed and \code{carbon_mass_ug} the
-carbon measured in it. The model's response is the carbon fraction,
-\code{carbon_mass_ug / 1000 / sample_mass_mg}. A warning gives the number of samples
-whose carbon fraction falls outside 0.10 to 0.50, the plausible range for kelp
-tissue; they are kept, not removed. Other columns are ignored.
+Each row is one dried tissue sample: \code{sample_mass_mg} is the mass of the
+sample analysed and \code{carbon_mass_ug} the carbon measured in it. The
+model's response is the carbon fraction, the carbon mass divided by the
+sample mass (\code{carbon_mass_ug} converted to mg). A warning gives the number
+of samples whose carbon fraction falls outside 0.10 to 0.50, the plausible
+range for kelp tissue; they are kept, not removed. Other columns are
+ignored.
 }
 \examples{
 data <- data.frame(sample_mass_mg = c(2.5, 2.3), carbon_mass_ug = c(650, 610))
 kb_check_data_carbon_nereo(data)
 }
 \seealso{
-Other data:
-\code{\link{data_carbon_sim_macro}},
-\code{\link{data_carbon_sim_nereo}},
-\code{\link{data_cover_biomass_sim_macro}},
-\code{\link{data_cover_biomass_sim_nereo}},
-\code{\link{data_density_sim_macro}},
-\code{\link{data_density_sim_nereo}},
-\code{\link{data_plot_biomass_sim_macro}},
-\code{\link{data_plot_biomass_sim_nereo}},
-\code{\link{data_size_sim_macro}},
-\code{\link{data_size_sim_nereo}},
-\code{\link{data_weight_sim_macro}},
-\code{\link{data_weight_sim_nereo}},
-\code{\link{data_wetdry_sim_macro}},
-\code{\link{data_wetdry_sim_nereo}},
-\code{\link{fit_carbon_sim_macro}},
-\code{\link{fit_carbon_sim_nereo}},
-\code{\link{fit_cover_biomass_sim_macro}},
-\code{\link{fit_cover_biomass_sim_nereo}},
-\code{\link{fit_density_sim_macro}},
-\code{\link{fit_density_sim_nereo}},
-\code{\link{fit_size_sim_macro}},
-\code{\link{fit_size_sim_nereo}},
-\code{\link{fit_weight_sim_macro}},
-\code{\link{fit_weight_sim_nereo}},
-\code{\link{fit_wetdry_sim_macro}},
-\code{\link{fit_wetdry_sim_nereo}},
+Other data checks:
 \code{\link[=kb_check_data_carbon_macro]{kb_check_data_carbon_macro()}},
 \code{\link[=kb_check_data_cover_biomass_macro]{kb_check_data_cover_biomass_macro()}},
 \code{\link[=kb_check_data_cover_biomass_nereo]{kb_check_data_cover_biomass_nereo()}},
@@ -77,4 +52,4 @@ Other data:
 \code{\link[=kb_check_data_wetdry_macro]{kb_check_data_wetdry_macro()}},
 \code{\link[=kb_check_data_wetdry_nereo]{kb_check_data_wetdry_nereo()}}
 }
-\concept{data}
+\concept{data checks}

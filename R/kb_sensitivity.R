@@ -1,4 +1,4 @@
-#' Prior Sensitivity of a Model Fit
+#' Prior sensitivity
 #'
 #' Assess how much each parameter's posterior depends on its prior and on the
 #' data, by power-scaling (Kallioinen et al. 2024).
@@ -6,8 +6,7 @@
 #' @details
 #' Power-scaling raises the prior, or the likelihood, to a power slightly above
 #' and below 1 and measures how far each parameter's posterior moves, as a
-#' cumulative Jensen-Shannon (CJS) distance. It uses the stored draws, so the
-#' model is not refitted.
+#' cumulative Jensen-Shannon (CJS) distance.
 #'
 #' Each parameter falls into one of four cases:
 #'
@@ -23,21 +22,20 @@
 #'
 #' Each `term` is also the name of its prior's entry in the list from the
 #' model's `kb_priors_*()` function, so to change a flagged prior, edit that
-#' entry and refit. Random-effect levels are not
-#' assessed; their standard deviations (`sd_site`, `sd_year`, `sd_site_year`) carry the
-#' sensitivity of each random effect.
+#' entry and refit. Random-effect levels are not assessed; their standard
+#' deviations (`sd_site`, `sd_year`, `sd_site_year`) carry the sensitivity of
+#' each random effect.
 #'
 #' Requires the priorsense package. Its functions, such as
 #' `priorsense::powerscale_plot_dens()`, also accept a fit directly.
 #'
-#' @param fit A `kb_fit` object.
-#' @param ... Unused.
+#' @inheritParams params
 #' @param prior_threshold A number greater than 0: a parameter with `prior_cjs`
 #'   below it has a weak prior.
 #' @param likelihood_threshold A number greater than 0: a parameter with
 #'   `likelihood_cjs` at or above it has strong data.
 #'
-#' @return A tibble with one row per parameter that has a prior and columns
+#' @returns A tibble with one row per parameter that has a prior and columns
 #'   `term` (the parameter, which is also its prior entry), `prior_cjs` and
 #'   `likelihood_cjs` (the sensitivity to the prior and to the likelihood),
 #'   `weak_prior`, and `strong_data`.
@@ -45,7 +43,7 @@
 #' Kallioinen, N., Paananen, T., Bürkner, P.-C., and Vehtari, A. (2024).
 #' Detecting and diagnosing prior and likelihood sensitivity with power-scaling.
 #' Statistics and Computing, 34, 57.
-#' @family model
+#' @family diagnostics
 #' @export
 #'
 #' @examplesIf rlang::is_installed("priorsense")

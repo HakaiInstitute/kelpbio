@@ -1,42 +1,37 @@
-#' Fit a Macrocystis Carbon Model
+#' Fit a Macrocystis carbon model
 #'
 #' Fit a carbon-fraction model for *Macrocystis pyrifera* via Stan.
 #'
 #' @details
-#' The carbon fraction of each dried sample, `carbon_mass_ug / 1000 /
-#' sample_mass_mg`, is modelled with a Beta likelihood parameterised by its mean
-#' and precision. The logit mean fraction (`intercept`)
-#' and the precision (`precision`) are common to all samples, so the model
-#' estimates one carbon fraction of dry mass for the population of samples
-#' supplied.
+#' The carbon fraction of each dried sample, its carbon mass divided by its
+#' mass (`carbon_mass_ug` converted to mg, divided by `sample_mass_mg`), is
+#' modelled with a Beta likelihood with mean `mu` and precision `precision`,
+#' both common to all samples, so `mu` is the expected fraction and
+#' `logit(mu) = intercept`.
 #'
 #' Samples are pooled over the months, sites, and tissues they come from. To
-#' estimate the fraction for a particular season, fit the model to that season's
-#' samples only.
+#' estimate the fraction for a particular season, fit the model to that
+#' season's samples only.
 #'
 #' @inheritSection params Sampling
+#' @inheritParams kb_fit_weight_nereo
 #' @inheritParams params
 #' @param data A data frame of carbon observations, one row per sample (see
 #'   [kb_check_data_carbon_macro()] for the required columns).
 #' @param priors A named list of prior objects (see [kb_priors_carbon_macro()]),
-#'   or `NULL` to use the defaults. Supplied entries override the corresponding
-#'   defaults; unspecified entries keep their defaults.
-#' @param ... Additional arguments passed to [rstan::sampling()], including a
-#'   `control` list (merged over the `adapt_delta = 0.95` default); see the
-#'   `control` argument of [rstan::stan()] for the available entries.
+#'   or `NULL` to use the defaults. Entries not supplied keep their defaults.
 #'
-#' @return An object of class
+#' @returns An object of class
 #'   `c("kb_fit_carbon_macro", "kb_fit_carbon", "kb_fit")`.
-#' @family model
+#' @family fit functions
 #' @export
 #'
 #' @examples
-#' if (interactive()) {
-#'   fit <- kb_fit_carbon_macro(data_carbon_sim_macro)
-#'   tidy(fit)
-#' }
 #' # A pre-fit example model is included with the package:
 #' tidy(fit_carbon_sim_macro)
+#' @examplesIf interactive()
+#' fit <- kb_fit_carbon_macro(data_carbon_sim_macro)
+#' tidy(fit)
 kb_fit_carbon_macro <- function(
   data,
   priors = NULL,

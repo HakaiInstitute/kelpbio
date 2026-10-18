@@ -3,7 +3,7 @@
 \docType{data}
 \name{data_carbon_sim_macro}
 \alias{data_carbon_sim_macro}
-\title{Simulated Macrocystis Carbon Dataset}
+\title{Simulated Macrocystis carbon data}
 \format{
 A data frame with columns:
 \describe{
@@ -17,16 +17,13 @@ less than the sample mass.}
 data_carbon_sim_macro
 }
 \description{
-A small simulated dataset of sample and carbon masses (columns
-\code{sample_mass_mg}, \code{carbon_mass_ug}), one row per dried tissue sample, for
-runnable examples. It is simulated from the carbon model structure (a Beta
-carbon fraction with a mean and precision common to all samples), not real
-lab data, and is not intended for inference.
+A small simulated dataset of sample and carbon masses, one row per dried
+tissue sample, for runnable examples.
 }
 \seealso{
 \link{fit_carbon_sim_macro} for a fit to this dataset.
 
-Other data:
+Other example datasets:
 \code{\link{data_carbon_sim_nereo}},
 \code{\link{data_cover_biomass_sim_macro}},
 \code{\link{data_cover_biomass_sim_nereo}},
@@ -39,31 +36,7 @@ Other data:
 \code{\link{data_weight_sim_macro}},
 \code{\link{data_weight_sim_nereo}},
 \code{\link{data_wetdry_sim_macro}},
-\code{\link{data_wetdry_sim_nereo}},
-\code{\link{fit_carbon_sim_macro}},
-\code{\link{fit_carbon_sim_nereo}},
-\code{\link{fit_cover_biomass_sim_macro}},
-\code{\link{fit_cover_biomass_sim_nereo}},
-\code{\link{fit_density_sim_macro}},
-\code{\link{fit_density_sim_nereo}},
-\code{\link{fit_size_sim_macro}},
-\code{\link{fit_size_sim_nereo}},
-\code{\link{fit_weight_sim_macro}},
-\code{\link{fit_weight_sim_nereo}},
-\code{\link{fit_wetdry_sim_macro}},
-\code{\link{fit_wetdry_sim_nereo}},
-\code{\link[=kb_check_data_carbon_macro]{kb_check_data_carbon_macro()}},
-\code{\link[=kb_check_data_carbon_nereo]{kb_check_data_carbon_nereo()}},
-\code{\link[=kb_check_data_cover_biomass_macro]{kb_check_data_cover_biomass_macro()}},
-\code{\link[=kb_check_data_cover_biomass_nereo]{kb_check_data_cover_biomass_nereo()}},
-\code{\link[=kb_check_data_density_macro]{kb_check_data_density_macro()}},
-\code{\link[=kb_check_data_density_nereo]{kb_check_data_density_nereo()}},
-\code{\link[=kb_check_data_size_macro]{kb_check_data_size_macro()}},
-\code{\link[=kb_check_data_size_nereo]{kb_check_data_size_nereo()}},
-\code{\link[=kb_check_data_weight_macro]{kb_check_data_weight_macro()}},
-\code{\link[=kb_check_data_weight_nereo]{kb_check_data_weight_nereo()}},
-\code{\link[=kb_check_data_wetdry_macro]{kb_check_data_wetdry_macro()}},
-\code{\link[=kb_check_data_wetdry_nereo]{kb_check_data_wetdry_nereo()}}
+\code{\link{data_wetdry_sim_nereo}}
 }
-\concept{data}
+\concept{example datasets}
 \keyword{datasets}

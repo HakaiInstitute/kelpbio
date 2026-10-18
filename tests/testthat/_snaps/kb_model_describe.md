@@ -68,15 +68,16 @@
       kb_model_describe(weight_nereo_fit, prose = TRUE)
     Output
       Wet weight was modelled on the log scale with a Normal likelihood as an
-      allometric function of sub-bulb diameter. Expected weight followed a
-      three-parameter power function (Packard 2023) of diameter relative to the
-      geometric mean diameter (23.4), in which weight_floor is the weight as
-      diameter approaches zero, alpha the weight above the floor at the reference
-      diameter, and diameter_power the allometric exponent. The log of alpha
-      varied by year, by site, and by site-year. The log of alpha also varied
-      linearly with site-year stipe density, standardised by its mean (1.26) and
-      standard deviation (1.32). Regularizing priors were placed on all
-      parameters (see the notation form for the hyperparameters).
+      allometric function of sub-bulb diameter. The expected log weight was
+      log(mu), where mu followed a three-parameter power function (Packard 2023)
+      of diameter relative to the geometric mean diameter (23.4), in which
+      weight_floor is the weight as diameter approaches zero, alpha the weight
+      above the floor at the reference diameter, and diameter_power the
+      allometric exponent. The log of alpha varied by year, by site, and by
+      site:year. The log of alpha also varied linearly with site-year stipe
+      density, standardised by its mean (1.26) and standard deviation (1.32).
+      Regularising priors were placed on all parameters (see the notation form
+      for the hyperparameters).
 
 # kb_model_describe renders the size notation blocks
 
@@ -141,7 +142,7 @@
       The number of fronds reaching 1 m above the holdfast was modelled with a
       zero-truncated negative binomial likelihood, with an overdispersion common
       to all plants. The log of the untruncated mean, mu, varied by site, year,
-      and site-year. Regularizing priors were placed on all parameters (see the
+      and site:year. Regularising priors were placed on all parameters (see the
       notation form for the hyperparameters).
 
 # kb_model_describe renders the density notation blocks
@@ -184,7 +185,7 @@
       negative binomial likelihood, with the transect area as an offset. The
       zero-inflation probability, zi, and the overdispersion were common to all
       transects. The log stipe density on occupied transects varied by site,
-      year, and site-year. Regularizing priors were placed on all parameters (see
+      year, and site:year. Regularising priors were placed on all parameters (see
       the notation form for the hyperparameters).
 
 ---
@@ -221,7 +222,7 @@
       kb_model_describe(wetdry_nereo_fit)
     Output
       Wet/dry ratio - Nereocystis luetkeana
-      Response: dry_mass_g / wet_mass_g, the dry:wet mass ratio of a sample
+      Response: dry_mass_g / wet_mass_g, the dry:wet ratio of a sample
       
       Likelihood
         dry_wet_ratio ~ Beta(mu * precision, (1 - mu) * precision)
@@ -236,10 +237,10 @@
     Code
       kb_model_describe(wetdry_macro_fit, prose = TRUE)
     Output
-      The dry:wet mass ratio of each sample was modelled with a Beta likelihood
+      The dry:wet ratio of each sample was modelled with a Beta likelihood
       parameterised by its mean, mu, and precision, both common to all samples.
       Samples were pooled over the months, sites, and tissues they came from.
-      Regularizing priors were placed on all parameters (see the notation form
+      Regularising priors were placed on all parameters (see the notation form
       for the hyperparameters).
 
 # kb_model_describe renders the carbon model
@@ -266,7 +267,7 @@
       The carbon fraction of each dried sample was modelled with a Beta
       likelihood parameterised by its mean, mu, and precision, both common to all
       samples. Samples were pooled over the months, sites, and tissues they came
-      from. Regularizing priors were placed on all parameters (see the notation
+      from. Regularising priors were placed on all parameters (see the notation
       form for the hyperparameters).
 
 # kb_model_describe renders the cover biomass model with each species' priors
@@ -333,8 +334,8 @@
       plot's tide-corrected canopy cover, whose slope varied by site and year.
       Canopy area was increased by a fixed fraction per metre of tide height, and
       cover was capped at 1. The log of each in situ estimate was modelled with a
-      normal likelihood whose standard deviation was the log-scale standard
-      deviation of that estimate multiplied by a scaling parameter. Regularizing
+      Normal likelihood whose standard deviation was the log-scale standard
+      deviation of that estimate multiplied by a scaling parameter. Regularising
       priors were placed on all parameters, with an informative prior on the tide
       correction (see the notation form for the hyperparameters).
 
@@ -377,12 +378,12 @@
       kb_model_describe(power, prose = TRUE)
     Output
       Wet weight was modelled on the log scale with a Normal likelihood as an
-      allometric function of sub-bulb diameter. Expected weight followed a power
-      law in diameter relative to the geometric mean diameter (23.4), in which
-      alpha is the weight at the reference diameter and diameter_power the
-      allometric exponent. The log of alpha varied by year, by site, and by
-      site-year. The log of alpha also varied linearly with site-year stipe
-      density, standardised by its mean (1.26) and standard deviation (1.32).
-      Regularizing priors were placed on all parameters (see the notation form
-      for the hyperparameters).
+      allometric function of sub-bulb diameter. The expected log weight was
+      log(mu), where mu followed a power law in diameter relative to the
+      geometric mean diameter (23.4), in which alpha is the weight at the
+      reference diameter and diameter_power the allometric exponent. The log of
+      alpha varied by year, by site, and by site:year. The log of alpha also
+      varied linearly with site-year stipe density, standardised by its mean
+      (1.26) and standard deviation (1.32). Regularising priors were placed on
+      all parameters (see the notation form for the hyperparameters).
 

@@ -3,7 +3,7 @@
 \docType{data}
 \name{fit_size_sim_nereo}
 \alias{fit_size_sim_nereo}
-\title{Example Nereocystis Size Model Fit}
+\title{Example Nereocystis size fit}
 \format{
 An object of class \code{c("kb_fit_size_nereo", "kb_fit_size", "kb_fit")}.
 }
@@ -11,29 +11,13 @@ An object of class \code{c("kb_fit_size_nereo", "kb_fit_size", "kb_fit")}.
 fit_size_sim_nereo
 }
 \description{
-A slim pre-fit size model, the result of \code{\link[=kb_fit_size_nereo]{kb_fit_size_nereo()}} on
-\link{data_size_sim_nereo} with a reduced number of draws. Provided so the
-examples for the fit accessors, S3 methods, and prediction functions run
-quickly. It is fit to simulated data and is not intended for inference.
+A fit of \code{\link[=kb_fit_size_nereo]{kb_fit_size_nereo()}} to \link{data_size_sim_nereo} with fewer draws than
+the default, for exploring the fit methods without running the sampler.
 }
 \seealso{
 \code{\link[=kb_fit_size_nereo]{kb_fit_size_nereo()}} and \link{data_size_sim_nereo}.
 
-Other data:
-\code{\link{data_carbon_sim_macro}},
-\code{\link{data_carbon_sim_nereo}},
-\code{\link{data_cover_biomass_sim_macro}},
-\code{\link{data_cover_biomass_sim_nereo}},
-\code{\link{data_density_sim_macro}},
-\code{\link{data_density_sim_nereo}},
-\code{\link{data_plot_biomass_sim_macro}},
-\code{\link{data_plot_biomass_sim_nereo}},
-\code{\link{data_size_sim_macro}},
-\code{\link{data_size_sim_nereo}},
-\code{\link{data_weight_sim_macro}},
-\code{\link{data_weight_sim_nereo}},
-\code{\link{data_wetdry_sim_macro}},
-\code{\link{data_wetdry_sim_nereo}},
+Other example fits:
 \code{\link{fit_carbon_sim_macro}},
 \code{\link{fit_carbon_sim_nereo}},
 \code{\link{fit_cover_biomass_sim_macro}},
@@ -44,19 +28,7 @@ Other data:
 \code{\link{fit_weight_sim_macro}},
 \code{\link{fit_weight_sim_nereo}},
 \code{\link{fit_wetdry_sim_macro}},
-\code{\link{fit_wetdry_sim_nereo}},
-\code{\link[=kb_check_data_carbon_macro]{kb_check_data_carbon_macro()}},
-\code{\link[=kb_check_data_carbon_nereo]{kb_check_data_carbon_nereo()}},
-\code{\link[=kb_check_data_cover_biomass_macro]{kb_check_data_cover_biomass_macro()}},
-\code{\link[=kb_check_data_cover_biomass_nereo]{kb_check_data_cover_biomass_nereo()}},
-\code{\link[=kb_check_data_density_macro]{kb_check_data_density_macro()}},
-\code{\link[=kb_check_data_density_nereo]{kb_check_data_density_nereo()}},
-\code{\link[=kb_check_data_size_macro]{kb_check_data_size_macro()}},
-\code{\link[=kb_check_data_size_nereo]{kb_check_data_size_nereo()}},
-\code{\link[=kb_check_data_weight_macro]{kb_check_data_weight_macro()}},
-\code{\link[=kb_check_data_weight_nereo]{kb_check_data_weight_nereo()}},
-\code{\link[=kb_check_data_wetdry_macro]{kb_check_data_wetdry_macro()}},
-\code{\link[=kb_check_data_wetdry_nereo]{kb_check_data_wetdry_nereo()}}
+\code{\link{fit_wetdry_sim_nereo}}
 }
-\concept{data}
+\concept{example fits}
 \keyword{datasets}

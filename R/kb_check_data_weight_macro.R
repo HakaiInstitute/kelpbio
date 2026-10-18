@@ -1,4 +1,4 @@
-#' Validate Macrocystis Weight Model Data
+#' Check Macrocystis weight data
 #'
 #' Check that `data` contains the columns required to fit the *Macrocystis
 #' pyrifera* weight model, with appropriate types and values.
@@ -7,14 +7,14 @@
 #' factor or character `site` and `year`, with no missing values.
 #'
 #' @details
-#' `fronds` is the frond count used as the size predictor (in the Hakai surveys,
-#' the number of fronds at least 1 m long with recorded biomass).
+#' `fronds` is the number of fronds reaching 1 m above the holdfast, used as the
+#' size predictor.
 #'
-#' @param data A data frame of weight observations, one row per plant.
-#' @param x_name A string naming `data` in error messages.
 #'
-#' @return `data`, invisibly.
-#' @family data
+#' @inheritParams kb_check_data_weight_nereo
+#' @inheritParams params
+#' @returns `data`, invisibly.
+#' @family data checks
 #' @export
 #'
 #' @examples

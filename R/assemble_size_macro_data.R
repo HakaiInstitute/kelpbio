@@ -8,7 +8,7 @@
 #' @inheritParams params
 #' @param priors A list of the resolved named priors (see `resolve_priors()`).
 #'
-#' @return A named list suitable for `rstan::sampling(stanmodels$size_macro, data = .)`.
+#' @returns A named list suitable for `rstan::sampling(stanmodels$size_macro, data = .)`.
 #' @noRd
 assemble_size_macro_data <- function(
   data,

@@ -1,15 +1,13 @@
-#' Augment Model Data
+#' Add fitted values and residuals to the data
 #'
 #' Append the [fitted()] and deviance [residuals()] values to the input data.
-#' Values are posterior medians: `fitted` of the expected response, `residual` of
-#' the deviance residual.
 #'
-#' @param x A `kb_fit` object.
-#' @param ... Unused.
 #'
-#' @return The input data with added columns `fitted` (response-scale fitted
-#'   value) and `residual` (deviance residual).
-#' @family generics
+#' @inheritParams params
+#' @returns The input data with added columns `fitted` (the posterior median of
+#'   the expected response) and `residual` (the posterior median of the
+#'   deviance residual).
+#' @family fit methods
 #' @seealso [fitted()] and [residuals()].
 #' @exportS3Method generics::augment
 #' @examples

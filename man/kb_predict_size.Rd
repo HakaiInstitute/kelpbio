@@ -2,7 +2,7 @@
 % Please edit documentation in R/kb_predict_size.R
 \name{kb_predict_size}
 \alias{kb_predict_size}
-\title{Predict Size}
+\title{Predict size}
 \usage{
 kb_predict_size(
   fit,
@@ -21,25 +21,26 @@ kb_predict_size(
 \item{new_data}{A data frame with optional \code{site} and \code{year} columns, one row
 per prediction, or \code{NULL} to predict at the observed data.}
 
-\item{...}{Unused.}
+\item{...}{These dots are for future extensions and must be empty.}
 
-\item{new_levels}{A string, one of \code{"average"} (the default) or \code{"sample"},
-controlling how random effects that are not conditioned on are treated
-(factors absent from the rows, and any new level not seen in the fit).
-\code{"average"} holds them at zero, giving the typical (median) group;
-\code{"sample"} draws a new random effect from \code{Normal(0, sd)}, widening the
-interval to include between-group variation, as suits a prediction for a
-particular unsurveyed site. Known levels are always conditioned on.
-\code{"sample"} draws fresh randomness on each call, so set a seed with
-\code{set.seed()} for a reproducible interval.}
+\item{new_levels}{A string giving how uncertainty is shown for a site or
+year not in the fit, or when \code{new_data} has no \code{site} or \code{year} column.
+Sites and years in the fit always use their own estimates. One of:
+\itemize{
+\item \code{"average"} (the default): the typical site or year. The interval
+covers uncertainty in the typical value only. Use it to describe an
+average site or year.
+\item \code{"sample"}: a new effect for each new site or year,
+drawn from the estimated variation among sites or among years. The
+estimate is about the same, but the interval also includes that
+variation. Use it to get realistic uncertainty about a particular site
+or year the model has no data on. The interval varies slightly between
+calls; use \code{set.seed()} to reproduce it.
+}}
 
-\item{representative_site}{A character vector of site levels present in the
-fit, or \code{NULL} (the default). When supplied, a new or absent site takes the
-named sites' site effect (the per-draw average when several are named)
-instead of the \code{new_levels} treatment, and, in a fitted year, their
-site:year effect for that year (averaged over the named sites observed that
-year). A site:year effect none of them has, such as in a new year, follows
-\code{new_levels}.}
+\item{representative_site}{A character vector of sites in the fit whose
+effects a new site takes (averaged when several are named), or \code{NULL} (the
+default) to follow \code{new_levels}.}
 
 \item{conf_level}{A number greater than 0 and less than 1 giving the
 compatibility-interval level.}
@@ -66,15 +67,10 @@ frond.
 
 The size models have no predictor, so \code{new_data} needs no columns: each row is
 a site, a year, or a site-year, given by its optional \code{site} and \code{year}
-columns. For one row per site or year, build the rows with \code{\link[=kb_new_data]{kb_new_data()}}.
+columns.
 
-Each row is resolved on its own: a \code{site} or \code{year} the model has seen is
-conditioned on its estimated effect, and a new or absent site or year follows
-\code{new_levels}. With the default \code{"average"}, an unseen site is the typical
-site; use \code{"sample"} for an interval that includes the variation between
-sites. For a new site, \code{representative_site} instead borrows the site effect of
-one or more named fitted sites (the per-draw average across several), and
-their site:year effect in a fitted year where they were observed.
+With \code{representative_site}, a new site also takes the named sites'
+site:year effect in a year in which they were surveyed.
 }
 \examples{
 fit <- fit_size_sim_nereo
@@ -85,14 +81,14 @@ kb_predict_size(fit)
 # By site:
 kb_predict_size(fit, kb_new_data(fit, by = "site"))
 
-# At your own rows, including a new site:
+# At new rows, including a new site:
 kb_predict_size(fit, data.frame(site = c("otter_cove", "new_site")))
 }
 \seealso{
 \code{\link[=kb_new_data]{kb_new_data()}} to build rows by site or year, and
 \code{\link[=posterior_predict]{posterior_predict()}} for draws of individual plant sizes.
 
-Other prediction:
+Other prediction functions:
 \code{\link[=autoplot.kb_predictions]{autoplot.kb_predictions()}},
 \code{\link[=kb_new_data]{kb_new_data()}},
 \code{\link[=kb_plot_predictions]{kb_plot_predictions()}},
@@ -102,6 +98,12 @@ Other prediction:
 \code{\link[=kb_predict_plot_biomass]{kb_predict_plot_biomass()}},
 \code{\link[=kb_predict_site_biomass]{kb_predict_site_biomass()}},
 \code{\link[=kb_predict_weight]{kb_predict_weight()}},
-\code{\link[=kb_predict_wetdry]{kb_predict_wetdry()}}
+\code{\link[=kb_predict_wetdry]{kb_predict_wetdry()}},
+\code{\link[=predict.kb_fit_carbon]{predict.kb_fit_carbon()}},
+\code{\link[=predict.kb_fit_cover_biomass]{predict.kb_fit_cover_biomass()}},
+\code{\link[=predict.kb_fit_density]{predict.kb_fit_density()}},
+\code{\link[=predict.kb_fit_size]{predict.kb_fit_size()}},
+\code{\link[=predict.kb_fit_weight]{predict.kb_fit_weight()}},
+\code{\link[=predict.kb_fit_wetdry]{predict.kb_fit_wetdry()}}
 }
-\concept{prediction}
+\concept{prediction functions}

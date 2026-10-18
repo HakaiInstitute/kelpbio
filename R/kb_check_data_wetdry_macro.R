@@ -1,4 +1,4 @@
-#' Validate Macrocystis Wet/Dry Model Data
+#' Check Macrocystis wet/dry data
 #'
 #' Check that `data` contains the columns required to fit the *Macrocystis
 #' pyrifera* wet/dry model, with appropriate types and values.
@@ -14,8 +14,8 @@
 #'
 #' @inheritParams kb_check_data_wetdry_nereo
 #'
-#' @return `data`, invisibly.
-#' @family data
+#' @returns `data`, invisibly.
+#' @family data checks
 #' @export
 #'
 #' @examples

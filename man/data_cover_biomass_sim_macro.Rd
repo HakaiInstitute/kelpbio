@@ -3,11 +3,11 @@
 \docType{data}
 \name{data_cover_biomass_sim_macro}
 \alias{data_cover_biomass_sim_macro}
-\title{Simulated Macrocystis Cover Dataset}
+\title{Simulated Macrocystis drone survey data}
 \format{
 A data frame with columns:
 \describe{
-\item{site}{Survey site, a factor (10 levels, invented names).}
+\item{site}{Survey site, a factor (10 levels).}
 \item{year}{Survey year, a factor (4 levels).}
 \item{canopy_area_m2}{Canopy area delineated within the plot (m²), at
 least 0.}
@@ -19,22 +19,15 @@ least 0.}
 data_cover_biomass_sim_macro
 }
 \description{
-A small simulated dataset of drone surveys (columns \code{site}, \code{year},
-\code{canopy_area_m2}, \code{plot_area_m2}, \code{tide_height_m}), one row per survey, for
-runnable examples, paired with the in situ biomass in
-\link{data_plot_biomass_sim_macro}. It is one of five \emph{Macrocystis} datasets
-simulated together from the same ten sites, four years, and true site-year
-values, with parameters near those estimated from Hakai Institute surveys, so
-plot biomass composed from fits to the weight, size, and density datasets
-agrees with \link{data_plot_biomass_sim_macro}. Surveys cover about two-thirds of
-the density-surveyed site-years, one survey each. The site names are
-invented. The data are not real survey data and are not intended for
-inference.
+A small simulated dataset of drone surveys, one row per survey, for runnable
+examples, paired with the in situ biomass in \link{data_plot_biomass_sim_macro}
+to fit \code{\link[=kb_fit_cover_biomass_macro]{kb_fit_cover_biomass_macro()}}. One of five simulated \emph{Macrocystis}
+datasets with shared sites and years. Some site-years have no survey.
 }
 \seealso{
 \link{fit_cover_biomass_sim_macro} for a fit to this dataset.
 
-Other data:
+Other example datasets:
 \code{\link{data_carbon_sim_macro}},
 \code{\link{data_carbon_sim_nereo}},
 \code{\link{data_cover_biomass_sim_nereo}},
@@ -47,31 +40,7 @@ Other data:
 \code{\link{data_weight_sim_macro}},
 \code{\link{data_weight_sim_nereo}},
 \code{\link{data_wetdry_sim_macro}},
-\code{\link{data_wetdry_sim_nereo}},
-\code{\link{fit_carbon_sim_macro}},
-\code{\link{fit_carbon_sim_nereo}},
-\code{\link{fit_cover_biomass_sim_macro}},
-\code{\link{fit_cover_biomass_sim_nereo}},
-\code{\link{fit_density_sim_macro}},
-\code{\link{fit_density_sim_nereo}},
-\code{\link{fit_size_sim_macro}},
-\code{\link{fit_size_sim_nereo}},
-\code{\link{fit_weight_sim_macro}},
-\code{\link{fit_weight_sim_nereo}},
-\code{\link{fit_wetdry_sim_macro}},
-\code{\link{fit_wetdry_sim_nereo}},
-\code{\link[=kb_check_data_carbon_macro]{kb_check_data_carbon_macro()}},
-\code{\link[=kb_check_data_carbon_nereo]{kb_check_data_carbon_nereo()}},
-\code{\link[=kb_check_data_cover_biomass_macro]{kb_check_data_cover_biomass_macro()}},
-\code{\link[=kb_check_data_cover_biomass_nereo]{kb_check_data_cover_biomass_nereo()}},
-\code{\link[=kb_check_data_density_macro]{kb_check_data_density_macro()}},
-\code{\link[=kb_check_data_density_nereo]{kb_check_data_density_nereo()}},
-\code{\link[=kb_check_data_size_macro]{kb_check_data_size_macro()}},
-\code{\link[=kb_check_data_size_nereo]{kb_check_data_size_nereo()}},
-\code{\link[=kb_check_data_weight_macro]{kb_check_data_weight_macro()}},
-\code{\link[=kb_check_data_weight_nereo]{kb_check_data_weight_nereo()}},
-\code{\link[=kb_check_data_wetdry_macro]{kb_check_data_wetdry_macro()}},
-\code{\link[=kb_check_data_wetdry_nereo]{kb_check_data_wetdry_nereo()}}
+\code{\link{data_wetdry_sim_nereo}}
 }
-\concept{data}
+\concept{example datasets}
 \keyword{datasets}

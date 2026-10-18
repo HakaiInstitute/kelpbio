@@ -10,7 +10,7 @@
 #' @inheritParams params
 #' @param priors A resolved named prior list (see `resolve_priors()`).
 #'
-#' @return A named list suitable for `rstan::sampling(stanmodels$weight_macro, data = .)`.
+#' @returns A named list suitable for `rstan::sampling(stanmodels$weight_macro, data = .)`.
 #' @noRd
 assemble_weight_macro_data <- function(
   data,

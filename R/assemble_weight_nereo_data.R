@@ -13,7 +13,7 @@
 #'   `geometric_ref()`.
 #' @param density A list from `density_structure()`.
 #'
-#' @return A named list suitable for `rstan::sampling(stanmodels$weight_nereo, data = .)`.
+#' @returns A named list suitable for `rstan::sampling(stanmodels$weight_nereo, data = .)`.
 #' @noRd
 assemble_weight_nereo_data <- function(
   data,

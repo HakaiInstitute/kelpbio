@@ -1,4 +1,4 @@
-#' Predict Plot Biomass from the Component Models
+#' Predict plot biomass
 #'
 #' Combine weight, size, and density fits into the expected biomass per m² of
 #' each site-year surveyed for density, as wet, dry, or carbon biomass.
@@ -6,71 +6,65 @@
 #' @details
 #' For each posterior draw, wet biomass is the site-year's expected density per
 #' m² times its mean plant weight: the expected weight at size averaged over the
-#' site-year's size distribution. The size distribution is truncated above at the
-#' largest size in the size fit's data, since plant size has a ceiling the
-#' distribution cannot represent; above the largest weighed size, the weight
-#' allometry is extrapolated. `n_plants` sizes are taken at evenly spaced
-#' quantiles of the distribution, so the average is accurate to well under 1% at
-#' the default.
+#' site-year's size distribution. The size distribution is truncated above at
+#' the largest size in the size fit's data; above the largest weighed size, the
+#' weight allometry is extrapolated.
 #'
-#' Dry biomass is wet biomass times the expected dry:wet ratio from `wetdry`, and
-#' carbon biomass is dry biomass times the expected carbon fraction from
-#' `carbon`, in grams. Both ratios are pooled over the samples their fits were
-#' given, so for a season-specific ratio fit them to that season's samples.
+#' Dry biomass is wet biomass times the expected dry:wet ratio from `wetdry`,
+#' and carbon biomass is dry biomass times the expected carbon fraction from
+#' `carbon`, in grams. Both ratios are pooled over their fits' samples (see
+#' [kb_predict_wetdry()]).
 #'
-#' A site-year that the weight or size fit did not observe uses that fit's site
-#' and year effects where it has them, and otherwise follows `new_levels` or
-#' `representative_site`, as in [kb_predict_weight()]. `weight_support` and
-#' `size_support` show what each fit has for the site-year, from most to least
-#' local: `"site-year"` (that site-year's own data), `"site, year"` (its site and
-#' its year, but not together), `"site"`, `"year"`, or `"none"`; the less local,
-#' the more the estimate borrows from other site-years. With `new_levels = "sample"`
-#' the results vary between calls; set a seed with `set.seed()` for reproducible
-#' intervals. For a *Nereocystis* weight fit with a density effect, each
-#' site-year uses the stipe density observed in `density`'s data.
+#' A site-year not in the weight or size fit uses that fit's site and year
+#' effects where it has them, and otherwise follows `new_levels` or
+#' `representative_site`. `weight_support` and `size_support` show what each fit
+#' has for the site-year, from most to least local: `"site-year"` (that
+#' site-year's own data), `"site, year"` (its site and its year, but not
+#' together), `"site"`, `"year"`, or `"none"`; the less local, the more the
+#' estimate borrows from other site-years. For a *Nereocystis* weight fit with a
+#' density effect, each site-year uses the stipe density observed in `density`'s
+#' data.
 #'
 #' The fits must be of the same species and have the same number of posterior
 #' draws.
 #'
-#' The work grows with the number of site-years and draws, so `progress = "bar"`
-#' shows a console progress bar, and `progress_dir` records progress for
-#' [kb_progress()] to read from another R process, such as a Shiny app running
-#' the prediction in the background.
-#'
 #' @inheritParams params
 #' @param weight A `kb_fit_weight` object.
 #' @param size A `kb_fit_size` object.
-#' @param density A `kb_fit_density` object. Its site-years are the rows of the
-#'   result.
+#' @param density A `kb_fit_density` object.
 #' @param wetdry A `kb_fit_wetdry` object, required for dry and carbon biomass,
 #'   or `NULL`.
 #' @param carbon A `kb_fit_carbon` object, required for carbon biomass, or
 #'   `NULL`.
-#' @param ... Unused.
 #' @param measure A string, one of `"wet"` (kg/m²), `"dry"` (kg/m²), or
 #'   `"carbon"` (g C/m²), giving the biomass to predict.
-#' @param new_levels A string, one of `"sample"` (the default) or `"average"`,
-#'   controlling how a site or year the weight or size fit never saw is treated:
-#'   `"sample"` draws its effect from the fitted distribution, so the interval
-#'   includes the variation between sites or years, as suits an estimate for that
-#'   particular site-year; `"average"` holds it at zero (the typical site or
-#'   year).
-#' @param representative_site A character vector of sites fitted in both
-#'   `weight` and `size`, or `NULL`. When supplied, a site either fit never saw
-#'   takes the named sites' effects (the per-draw average when several are
-#'   named) instead of the `new_levels` treatment.
-#' @param n_plants A whole number of plants averaged per draw to compute the mean
-#'   plant weight.
+#' @param new_levels A string giving how uncertainty is shown for a site or
+#'   year not in the weight or size fit. Sites and years in the fit always use
+#'   their own estimates. One of:
+#'   - `"sample"` (the default): a new effect for each new site or year,
+#'     drawn from the estimated variation among sites or among years. The
+#'     estimate is about the same, but the interval also includes that
+#'     variation. Use it to get realistic uncertainty about a particular site
+#'     or year the model has no data on. The interval varies slightly between
+#'     calls; use `set.seed()` to reproduce it.
+#'   - `"average"`: the typical site or year. The interval covers
+#'     uncertainty in the typical value only. Use it to describe an average
+#'     site or year.
+#' @param representative_site A character vector of sites in both the `weight`
+#'   and `size` fits whose effects a new site takes (averaged when several are
+#'   named), or `NULL` (the default) to follow `new_levels`.
+#' @param n_plants A whole number of sizes averaged per draw to compute the
+#'   mean plant weight; larger values are more precise and slower.
 #' @param progress A string, one of `"bar"` (the default, a console progress
 #'   bar) or `"none"` (silent).
 #' @param progress_dir A string giving an existing directory in which to record
 #'   progress for [kb_progress()], or `NULL` (the default) to record none.
 #'
-#' @return A `kb_predictions` object with one row per site-year in `density`'s
+#' @returns A `kb_predictions` object with one row per site-year in `density`'s
 #'   data and columns `site`, `year`, `weight_support`, `size_support`, and
 #'   `estimate`, `lower`, and `upper` summarising the posterior distribution of
 #'   the expected biomass.
-#' @family prediction
+#' @family prediction functions
 #' @export
 #'
 #' @examples

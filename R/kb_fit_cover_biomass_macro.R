@@ -1,59 +1,55 @@
-#' Fit a Macrocystis Cover Biomass Model
+#' Fit a Macrocystis cover biomass model
 #'
 #' Fit a cover-biomass calibration for *Macrocystis pyrifera* via Stan.
 #'
 #' @details
 #' Each drone survey in `data` is paired with the in situ wet biomass of its
-#' site-year in `biomass`, typically the output of a biomass prediction. Surveys
-#' whose site-year has no biomass are not fitted, and a message gives their
-#' site-years.
+#' site-year in `biomass`, typically the output of
+#' [kb_predict_plot_biomass()] with `measure = "wet"`. Surveys whose
+#' site-year has no biomass are not fitted, and a message notifies which
+#' those are.
 #'
-#' The in situ wet biomass (kg/m²) is modelled as a floor plus a term
-#' proportional to the plot's tide-corrected canopy cover:
-#' `mu = biomass_floor + cover_slope * exp(site_effect + year_effect) * cover`. `cover_slope` is the wet
-#' biomass per m² of canopy at a typical site and year, and `biomass_floor` the wet
-#' biomass of a plot with no delineated canopy, common to all sites and years.
-#' The site and year effects act on the canopy term only. Cover is the canopy
-#' area increased by `tide_height_slope` per metre of tide height, since less of the canopy
-#' is visible at the surface at higher tides, divided by the plot area and
-#' capped at 1. The calibration data carry almost no information on `tide_height_slope`, so
-#' the tide correction is set by its prior.
+#' The log of the in situ wet biomass estimate (kg/m²) is modelled with a
+#' Normal likelihood with mean `log(mu)` and standard deviation
+#' `error_scaling` times the log-scale SD implied by the estimate's `lower`
+#' and `upper` limits, so `log(mu)` is the expected log biomass and each
+#' survey is weighted by the precision of its in situ biomass estimate.
 #'
-#' The log of the biomass estimate is Normal around `log(mu)` with standard
-#' deviation `error_scaling` times the log-scale SD implied by its `lower` and `upper`
-#' limits, so each survey is weighted by the precision of its in situ estimate,
-#' and `error_scaling` calibrates the supplied SDs.
+#' `mu` is a floor plus a term proportional to the plot's tide-corrected
+#' canopy cover, `mu = biomass_floor + cover_slope * exp(site_effect +
+#' year_effect) * cover`, so `cover_slope` is the wet biomass per m² of
+#' canopy at a typical site and year, and `biomass_floor`, common to all
+#' sites and years, is the wet biomass of a plot with no delineated canopy.
+#'
+#' `cover` is the canopy area increased by `tide_height_slope` per metre of
+#' tide height, since less of the canopy is visible at the surface at higher
+#' tides, divided by the plot area and capped at 1. The default prior on
+#' `tide_height_slope` is informative and largely sets the tide correction,
+#' because calibration data rarely separate tide height from other
+#' differences between surveys.
 #'
 #' @inheritSection params Sampling
+#' @inheritParams kb_fit_cover_biomass_nereo
+#' @inheritParams kb_fit_weight_nereo
 #' @inheritParams params
 #' @param data A data frame of drone surveys, one row per survey (see
 #'   [kb_check_data_cover_biomass_macro()] for the required columns).
-#' @param biomass A data frame of in situ wet biomass (kg/m²), one row per
-#'   site-year, with `site`, `year`, `estimate`, `lower`, and `upper` columns,
-#'   such as a `kb_predictions` object from a biomass prediction.
-#' @param priors A named list of prior objects (see [kb_priors_cover_biomass_macro()]),
-#'   or `NULL` to use the defaults. Supplied entries override the corresponding
-#'   defaults; unspecified entries keep their defaults.
-#' @param conf_level A number greater than 0 and less than 1 giving the level of the
-#'   compatibility limits in `biomass`, or `NULL` to use the level a
-#'   `kb_predictions` object records, else 0.95.
-#' @param ... Additional arguments passed to [rstan::sampling()], including a
-#'   `control` list (merged over the `adapt_delta = 0.95` default); see the
-#'   `control` argument of [rstan::stan()] for the available entries.
+#' @param priors A named list of prior objects (see
+#'   [kb_priors_cover_biomass_macro()]), or `NULL` to use the defaults. Entries
+#'   not supplied keep their defaults.
 #'
-#' @return An object of class
+#' @returns An object of class
 #'   `c("kb_fit_cover_biomass_macro", "kb_fit_cover_biomass", "kb_fit")`. Its `data` holds the
 #'   fitted surveys with the paired `estimate`, `lower`, and `upper` columns.
-#' @family model
+#' @family fit functions
 #' @export
 #'
 #' @examples
-#' if (interactive()) {
-#'   fit <- kb_fit_cover_biomass_macro(data_cover_biomass_sim_macro, data_plot_biomass_sim_macro)
-#'   tidy(fit)
-#' }
 #' # A pre-fit example model is included with the package:
 #' tidy(fit_cover_biomass_sim_macro)
+#' @examplesIf interactive()
+#' fit <- kb_fit_cover_biomass_macro(data_cover_biomass_sim_macro, data_plot_biomass_sim_macro)
+#' tidy(fit)
 kb_fit_cover_biomass_macro <- function(
   data,
   biomass,

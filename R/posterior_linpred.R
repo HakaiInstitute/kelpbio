@@ -1,25 +1,19 @@
-#' Linear-Predictor Posterior Draws
+#' Draws of the linear predictor
 #'
 #' Draws of the linear predictor on the link scale (or, with
 #' `transform = TRUE`, on the response scale).
 #'
 #' @details
-#' Conditioning is inferred from the grouping columns present in `new_data` (see
-#' [posterior_epred()]); with `new_data = NULL` the observed data is used and
-#' conditioned on its site and year.
+#' Site and year columns in `new_data` are handled as in [posterior_epred()];
+#' with `new_data = NULL` the observed data is used, with its sites and years.
 #'
+#' @inheritParams posterior_epred.kb_fit
 #' @inheritParams params
-#' @param object A `kb_fit` object.
 #' @param transform A flag specifying whether to apply the inverse link (`exp`,
 #'   or the inverse logit for wet/dry and carbon).
-#' @param new_data A data frame with the fit's predictor column (and optional
-#'   `site`, `year`, and `stipes_m2` columns; for a density fit, an optional
-#'   `area_m2` column giving each transect's area, 1 m² when absent), or
-#'   `NULL` for the observed data.
-#' @param ... Unused.
 #'
-#' @return A draws-by-observations (`D x N`) matrix.
-#' @family generics
+#' @returns A draws-by-observations (`D x N`) matrix.
+#' @family fit methods
 #' @exportS3Method rstantools::posterior_linpred
 #' @examples
 #' lp <- posterior_linpred(fit_weight_sim_nereo)

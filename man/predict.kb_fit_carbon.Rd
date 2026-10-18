@@ -2,14 +2,14 @@
 % Please edit documentation in R/predict.R
 \name{predict.kb_fit_carbon}
 \alias{predict.kb_fit_carbon}
-\title{Predict Method for a Carbon Model Fit}
+\title{Predict method for carbon fits}
 \usage{
 \method{predict}{kb_fit_carbon}(object, ..., conf_level = 0.95, estimate = stats::median, sig_fig = 3)
 }
 \arguments{
 \item{object}{A \code{kb_fit_carbon} object.}
 
-\item{...}{Unused.}
+\item{...}{These dots are for future extensions and must be empty.}
 
 \item{conf_level}{A number greater than 0 and less than 1 giving the
 compatibility-interval level.}
@@ -23,33 +23,29 @@ a scalar point estimate (e.g. \code{median} or \code{mean}).}
 A \code{kb_predictions} object.
 }
 \description{
-A thin wrapper on \code{\link[=kb_predict_carbon]{kb_predict_carbon()}}: the expected carbon fraction of dry
-mass as a single estimate.
+Summarise the expected carbon fraction of dry mass as a single estimate.
+Equivalent to \code{\link[=kb_predict_carbon]{kb_predict_carbon()}}.
 }
 \examples{
 predict(fit_carbon_sim_macro)
 }
 \seealso{
-Other generics:
-\code{\link[=augment.kb_fit]{augment.kb_fit()}},
-\code{\link[=coef.kb_fit]{coef.kb_fit()}},
-\code{\link[=create_priorsense_data.kb_fit]{create_priorsense_data.kb_fit()}},
-\code{\link[=fitted.kb_fit]{fitted.kb_fit()}},
-\code{\link[=glance.kb_fit]{glance.kb_fit()}},
-\code{\link[=log_lik.kb_fit]{log_lik.kb_fit()}},
-\code{\link[=loo.kb_fit]{loo.kb_fit()}},
-\code{\link[=posterior_epred.kb_fit]{posterior_epred.kb_fit()}},
-\code{\link[=posterior_linpred.kb_fit]{posterior_linpred.kb_fit()}},
-\code{\link[=posterior_predict.kb_fit]{posterior_predict.kb_fit()}},
-\code{\link[=pp_check.kb_fit]{pp_check.kb_fit()}},
+Other prediction functions:
+\code{\link[=autoplot.kb_predictions]{autoplot.kb_predictions()}},
+\code{\link[=kb_new_data]{kb_new_data()}},
+\code{\link[=kb_plot_predictions]{kb_plot_predictions()}},
+\code{\link[=kb_predict_carbon]{kb_predict_carbon()}},
+\code{\link[=kb_predict_cover_biomass]{kb_predict_cover_biomass()}},
+\code{\link[=kb_predict_density]{kb_predict_density()}},
+\code{\link[=kb_predict_plot_biomass]{kb_predict_plot_biomass()}},
+\code{\link[=kb_predict_site_biomass]{kb_predict_site_biomass()}},
+\code{\link[=kb_predict_size]{kb_predict_size()}},
+\code{\link[=kb_predict_weight]{kb_predict_weight()}},
+\code{\link[=kb_predict_wetdry]{kb_predict_wetdry()}},
 \code{\link[=predict.kb_fit_cover_biomass]{predict.kb_fit_cover_biomass()}},
 \code{\link[=predict.kb_fit_density]{predict.kb_fit_density()}},
 \code{\link[=predict.kb_fit_size]{predict.kb_fit_size()}},
 \code{\link[=predict.kb_fit_weight]{predict.kb_fit_weight()}},
-\code{\link[=predict.kb_fit_wetdry]{predict.kb_fit_wetdry()}},
-\code{\link[=prior_summary.kb_fit]{prior_summary.kb_fit()}},
-\code{\link[=residuals.kb_fit]{residuals.kb_fit()}},
-\code{\link[=summary.kb_fit]{summary.kb_fit()}},
-\code{\link[=tidy.kb_fit]{tidy.kb_fit()}}
+\code{\link[=predict.kb_fit_wetdry]{predict.kb_fit_wetdry()}}
 }
-\concept{generics}
+\concept{prediction functions}

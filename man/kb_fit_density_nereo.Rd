@@ -2,7 +2,7 @@
 % Please edit documentation in R/kb_fit_density_nereo.R
 \name{kb_fit_density_nereo}
 \alias{kb_fit_density_nereo}
-\title{Fit a Nereocystis Density Model}
+\title{Fit a Nereocystis density model}
 \usage{
 kb_fit_density_nereo(
   data,
@@ -22,40 +22,37 @@ kb_fit_density_nereo(
 \item{data}{A data frame of density observations, one row per transect (see
 \code{\link[=kb_check_data_density_nereo]{kb_check_data_density_nereo()}} for the required columns).}
 
-\item{priors}{A named list of prior objects (see \code{\link[=kb_priors_density_nereo]{kb_priors_density_nereo()}}),
-or \code{NULL} to use the defaults. Supplied entries override the corresponding
-defaults; unspecified entries keep their defaults.}
+\item{priors}{A named list of prior objects (see
+\code{\link[=kb_priors_density_nereo]{kb_priors_density_nereo()}}), or \code{NULL} to use the defaults. Entries not
+supplied keep their defaults.}
 
-\item{...}{Additional arguments passed to \code{\link[rstan:sampling]{rstan::sampling()}}, including a
-\code{control} list (merged over the \code{adapt_delta = 0.95} default); see the
-\code{control} argument of \code{\link[rstan:stan]{rstan::stan()}} for the available entries.}
+\item{...}{Additional arguments passed to \code{\link[rstan:sampling]{rstan::sampling()}}, such as
+\code{control}.}
 
-\item{prior_only}{A flag specifying whether to sample from the priors only
-(the likelihood is switched off), for prior predictive checks.}
+\item{prior_only}{A flag specifying whether to sample from the priors only,
+for prior predictive checks.}
 
 \item{chains}{A whole number of MCMC chains.}
 
-\item{niters}{A whole number of saved post-warmup draws per chain, at least 2
-(warmup defaults to match).}
+\item{niters}{A whole number of saved post-warmup draws per chain (minimum
+2; number of warmup draws defaults to match).}
 
-\item{nthin}{A whole number giving the thinning interval.}
+\item{nthin}{A whole number of the thinning interval.}
 
-\item{cores}{A whole number of cores for parallel chains, or \code{NULL} to use
-\code{getOption("mc.cores")} (falling back to \code{chains}), capped at the available
-cores.}
+\item{cores}{A whole number of cores used to sample chains in parallel, or
+\code{NULL} to use \code{getOption("mc.cores")} if set or \code{chains} if not. Capped at
+the number of available cores.}
 
 \item{seed}{A whole number passed to \code{\link[rstan:sampling]{rstan::sampling()}} to make the fit
-reproducible, or \code{NULL} (the default). When \code{NULL}, a seed is drawn from R's
-RNG, so a preceding \code{set.seed()} also makes the fit reproducible; an explicit
-\code{seed} takes precedence over the RNG state.}
+reproducible, or \code{NULL} (the default, which uses a random seed). A
+preceding \code{set.seed()} also makes the fit reproducible.}
 
 \item{progress}{A string, one of \code{"bar"} (the default, a console progress
 bar), \code{"verbose"} (rstan's per-iteration output and diagnostic warnings), or
 \code{"none"} (silent). Controls fit-time console output only.}
 
-\item{progress_dir}{A string giving an existing directory in which to write a
-pollable progress artifact (read by \code{\link[=kb_progress]{kb_progress()}}), or \code{NULL} (the
-default) to write none.}
+\item{progress_dir}{A string giving an existing directory in which to record
+progress for \code{\link[=kb_progress]{kb_progress()}}, or \code{NULL} (the default) to record none.}
 }
 \value{
 An object of class
@@ -65,61 +62,57 @@ An object of class
 Fit a stipe-density model for \emph{Nereocystis luetkeana} via Stan.
 }
 \details{
-The number of stipes on a transect is modelled with a zero-inflated negative
-binomial likelihood. The expected count is the transect area times the stipe
-density, so \code{area_m2} enters as an offset. The log density (\code{intercept}, log
-stipes per m² on occupied transects at a typical site and year) varies by
-site, by year, and by \code{site:year}. A transect is unoccupied (a structural zero)
-with probability \code{zi}, estimated on the logit scale (\code{logit_zero_inflation}) and
-common to all transects; an occupied transect can still count no stipes. The
-overdispersion (\code{dispersion}) is also common to all transects. Predictions
-report the expected density over all transects, occupied or not.
+The number of stipes on a transect is modelled with a zero-inflated
+negative binomial likelihood, which combines two processes:
+\itemize{
+\item Occupancy: a transect is unoccupied, and so counts no stipes (a
+structural zero), with a probability whose logit is
+\code{logit_zero_inflation}, common to all transects.
+\item Count: on an occupied transect, the count is negative binomial with mean
+\code{mu} and overdispersion \code{dispersion}, common to all transects, so an
+occupied transect can still count no stipes (a sampling zero).
+}
 
-The site:year effect is set from the data: it is omitted when the data span a
-single year and included otherwise. When no site spans more than one year, or
-no year has more than one site, it is kept with a warning, since the
-site:year effect cannot then be interpreted separately from the site or year
-effect.
+\code{mu} is the transect area times the stipe density on occupied transects,
+\code{mu = area_m2 * density}, and \code{density} varies by site and year,
+\code{log(density) = intercept + site_effect + year_effect + site_year_effect},
+so \code{intercept} is the log stipe density (stipes per m²) at a typical site
+and year. Predictions report the expected density over all transects,
+occupied or not.
 }
 \section{Sampling}{
 
-\code{niters} is the number of saved post-warmup draws per chain; warmup defaults to
-match \code{niters} and the post-warmup phase is thinned by \code{nthin}.
+Chains are run in parallel by default. Set \code{options(mc.cores = 1)} (or pass
+\code{cores = 1}) on shared servers, in containers, or inside another parallel
+context.
 
-\code{progress} controls fit-time console output. The default \code{"bar"} shows a
-progress bar; \code{"verbose"} streams rstan's per-iteration output and its
-post-sampling diagnostic warnings; \code{"none"} is silent. \code{progress} changes only
-console output, never the fit; inspect convergence with \code{\link[=kb_converged]{kb_converged()}},
-\code{\link[=glance]{glance()}}, or \code{\link[=summary]{summary()}} in every mode.
+The sampler runs with \code{adapt_delta = 0.95} by default, which reduces
+divergences at the cost of slightly longer runtime. Override it, or set any
+other sampler control, by passing a \code{control} list through \code{...}, e.g.
+\code{control = list(adapt_delta = 0.99)}; only the entries supplied are changed.
+See the \code{control} argument of \code{\link[rstan:stan]{rstan::stan()}} for the full set of entries.
 
-Supply \code{progress_dir} (an existing directory) to have the fit write a progress
-record there, which \code{\link[=kb_progress]{kb_progress()}} reads to report the completed fraction
-from another R process (for example, to drive a progress indicator while the fit
-runs in the background).
+Check convergence with \code{\link[=kb_converged]{kb_converged()}}, \code{\link[=glance]{glance()}}, or \code{\link[=summary]{summary()}}.
+}
 
-Chains run in parallel by default (\code{cores = NULL} uses \code{getOption("mc.cores")},
-falling back to \code{chains}, capped at the available cores). Set
-\code{options(mc.cores = 1)} (or pass \code{cores = 1}) on shared servers, in containers,
-or inside another parallel context.
+\section{Site and year interaction}{
 
-The sampler runs with \code{adapt_delta = 0.95} by default, which reduces divergences
-at the cost of slightly longer runtime. Override it, or set any other sampler
-control, by passing a \code{control} list through \code{...}, e.g.
-\code{control = list(adapt_delta = 0.99)}; only the entries supplied are changed. See
-the \code{control} argument of \code{\link[rstan:stan]{rstan::stan()}} for the full set of entries.
+The site:year effect is included when the data span more than one year. If
+no site is surveyed in more than one year, or no year has more than one
+site, it is included with a warning, because it cannot then be distinguished
+from the site or year effect.
 }
 
 \examples{
-if (interactive()) {
-  fit <- kb_fit_density_nereo(data_density_sim_nereo)
-  tidy(fit)
-}
 # A pre-fit example model is included with the package:
 tidy(fit_density_sim_nereo)
+\dontshow{if (interactive()) withAutoprint(\{ # examplesIf}
+fit <- kb_fit_density_nereo(data_density_sim_nereo)
+tidy(fit)
+\dontshow{\}) # examplesIf}
 }
 \seealso{
-Other model:
-\code{\link[=kb_converged]{kb_converged()}},
+Other fit functions:
 \code{\link[=kb_fit_carbon_macro]{kb_fit_carbon_macro()}},
 \code{\link[=kb_fit_carbon_nereo]{kb_fit_carbon_nereo()}},
 \code{\link[=kb_fit_cover_biomass_macro]{kb_fit_cover_biomass_macro()}},
@@ -131,11 +124,6 @@ Other model:
 \code{\link[=kb_fit_weight_nereo]{kb_fit_weight_nereo()}},
 \code{\link[=kb_fit_wetdry_macro]{kb_fit_wetdry_macro()}},
 \code{\link[=kb_fit_wetdry_nereo]{kb_fit_wetdry_nereo()}},
-\code{\link[=kb_influence]{kb_influence()}},
-\code{\link[=kb_model_describe]{kb_model_describe()}},
-\code{\link[=kb_progress]{kb_progress()}},
-\code{\link[=kb_samples]{kb_samples()}},
-\code{\link[=kb_sensitivity]{kb_sensitivity()}},
-\code{\link[=kb_stancode]{kb_stancode()}}
+\code{\link[=kb_progress]{kb_progress()}}
 }
-\concept{model}
+\concept{fit functions}

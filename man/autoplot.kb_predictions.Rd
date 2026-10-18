@@ -2,7 +2,7 @@
 % Please edit documentation in R/autoplot.R
 \name{autoplot.kb_predictions}
 \alias{autoplot.kb_predictions}
-\title{Autoplot Method for Predictions}
+\title{Plot predictions with autoplot()}
 \usage{
 \method{autoplot}{kb_predictions}(object, ...)
 }
@@ -15,9 +15,7 @@
 A \code{ggplot} object.
 }
 \description{
-The conventional \code{ggplot2::autoplot} entry point for a \code{kb_predictions}
-object: a thin wrapper on \code{\link[=kb_plot_predictions]{kb_plot_predictions()}}. Dispatches on the
-prediction data frame, never on a fit.
+Plot a \code{kb_predictions} object, as \code{\link[=kb_plot_predictions]{kb_plot_predictions()}} does.
 }
 \examples{
 fit <- fit_weight_sim_nereo
@@ -25,7 +23,7 @@ p <- kb_predict_weight(fit, kb_new_data(fit, by = "site"))
 ggplot2::autoplot(p)
 }
 \seealso{
-Other prediction:
+Other prediction functions:
 \code{\link[=kb_new_data]{kb_new_data()}},
 \code{\link[=kb_plot_predictions]{kb_plot_predictions()}},
 \code{\link[=kb_predict_carbon]{kb_predict_carbon()}},
@@ -35,6 +33,12 @@ Other prediction:
 \code{\link[=kb_predict_site_biomass]{kb_predict_site_biomass()}},
 \code{\link[=kb_predict_size]{kb_predict_size()}},
 \code{\link[=kb_predict_weight]{kb_predict_weight()}},
-\code{\link[=kb_predict_wetdry]{kb_predict_wetdry()}}
+\code{\link[=kb_predict_wetdry]{kb_predict_wetdry()}},
+\code{\link[=predict.kb_fit_carbon]{predict.kb_fit_carbon()}},
+\code{\link[=predict.kb_fit_cover_biomass]{predict.kb_fit_cover_biomass()}},
+\code{\link[=predict.kb_fit_density]{predict.kb_fit_density()}},
+\code{\link[=predict.kb_fit_size]{predict.kb_fit_size()}},
+\code{\link[=predict.kb_fit_weight]{predict.kb_fit_weight()}},
+\code{\link[=predict.kb_fit_wetdry]{predict.kb_fit_wetdry()}}
 }
-\concept{prediction}
+\concept{prediction functions}
