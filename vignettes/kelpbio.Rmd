@@ -18,181 +18,171 @@ knitr::opts_chunk$set(
 library(kelpbio)
 ```
 
-kelpbio fits Bayesian hierarchical Stan models to estimate kelp biomass from
-field measurements. This article walks through the allometric weight model for
-*Nereocystis luetkeana*, which relates wet weight to sub-bulb diameter with
-random effects for year, site, and site-by-year, then shows the parallel model for
-*Macrocystis pyrifera*. Further biomass components (plant size distribution,
-density, and wet-to-dry and carbon tissue conversions) are in development.
+kelpbio estimates the total biomass of a kelp bed in each site and year from
+three sources: the canopy area mapped by drone, the biomass counted by in situ
+surveys of plots, and a calibration model that relates the two. Models are
+available for *Nereocystis luetkeana* and *Macrocystis pyrifera*.
 
-Each species has its own fit function, priors, and data check, because the
-models differ in structure, not just in data. The fitted objects share one class
-and one set of methods, so once the *Nereocystis* workflow below is familiar the
-*Macrocystis* model is used the same way.
-
-Under the hood, models are fitted with [rstan](https://mc-stan.org/rstan/). The
-Stan code is pre-compiled when the package is installed, so no separate Stan
-installation is required.
-
-## Providing data
-
-The weight model is fitted to a data frame with a numeric `diameter_mm` (sub-bulb
-diameter, mm), a numeric `weight_kg` (wet weight, kg), and `site` and `year`
-grouping factors. A small simulated dataset is included with the package:
-
-```{r}
-data_weight_sim_nereo
+```{r workflow, echo = FALSE, out.width = "100%", fig.alt = "Flow diagram in three columns. Weight, size, and survey data feed the weight and size models and then survey biomass. Survey biomass, with plot drone cover, fits the cover calibration. The calibration and canopy data give total canopy biomass, which wet/dry and carbon models, fitted to tissue samples, convert to dry and carbon biomass."}
+knitr::include_graphics("workflow.svg")
 ```
 
-`kb_check_data_weight_nereo()` confirms the data are in the expected format,
-returning the data invisibly if the checks pass and raising an informative error
-otherwise:
+Each prediction is computed from the posterior draws of every model that feeds
+it, so its uncertainty carries through to the totals.
+
+## Terms
+
+- **Plant**: one individual (sporophyte), identified by its holdfast. "Plant" is
+  used for convenience, as in Reed et al. (2009).
+- **Plot**: a fixed area at a site, identified by `plot_id`. Drone canopy within
+  the plot is measured over its polygon (`plot_area_m2`).
+- **Survey**: one in situ count of a plot on a `date`, over the area searched
+  (`survey_area_m2`), for example a dive's transects. The area searched may be
+  smaller than the plot.
+
+Estimates are for the peak season, at site-year resolution:
+
+- A site-year may hold several plots, and a plot several surveys.
+- Each survey is one row. Surveys with drone cover each enter the calibration as
+  one observation, sharing their site and year effects.
+
+## Inputs
+
+| Data | One row per | Keyed by | Fitted by or passed to |
+|---|---|---|---|
+| Weight | harvested plant | `site`, `date` | `kb_fit_weight_nereo()`, `kb_fit_weight_macro()` |
+| Size (*Nereocystis*) | measured plant | `site`, `date` (`plot_id` optional) | `kb_fit_size_nereo()` |
+| Survey | survey of a plot | `site`, `plot_id`, `date` | `kb_predict_biomass_survey()` |
+| Plants (census) | counted plant | `site`, `plot_id`, `date` | `kb_predict_biomass_survey()` |
+| Canopy | mapped site-year | `site`, `year` | `kb_predict_biomass_canopy()` |
+
+Field data are dated: `date` is a `Date`, and the year is taken from it. The
+models work at site-year resolution, so predictions and totals are by site and
+year.
+
+Plant sizes come from one of two sources:
+
+- **Tallied plants** (*Nereocystis*): the survey records the number of `plants`,
+  and a size fit models their size distribution from a measured sample.
+- **Counted plants** (*Macrocystis*, or any full census): a plants table holds
+  the size of every counted plant, joined to its survey by `site`, `plot_id`, and
+  `date`. A survey with no plant rows has no biomass.
 
 ```{r}
-kb_check_data_weight_nereo(data_weight_sim_nereo)
+data_survey_sim_nereo
 ```
 
-## Fitting the model
+## Workflow
 
-`kb_fit_weight_nereo()` fits the model. Set `progress = "none"` to silence the
-sampler's console output, and `seed` for a reproducible fit. 
+The weight and size models are fitted first. The bundled pre-fits stand in for
+them here.
 
 ```{r, eval = FALSE}
-fit <- kb_fit_weight_nereo(
-  data_weight_sim_nereo,
-  chains = 2,
-  niters = 400,
-  seed = 42
-)
+fit_weight <- kb_fit_weight_nereo(data_weight_sim_nereo)
+fit_size <- kb_fit_size_nereo(data_size_sim_nereo)
 ```
 
-```{r, echo = FALSE}
-fit <- fit_weight_sim_nereo
-```
+Survey biomass is the expected weight of each survey's plants per m² of the area
+searched.
 
-The short run above keeps the example quick; for a real analysis use the
-defaults (`chains = 4`, `niters = 1000`) or more.
-
-## Checking convergence
-
-`glance()` returns a one-row summary of the fit, including the sampler settings
-and the convergence diagnostics. `converged` is `TRUE` when every parameter's
-R-hat is below its threshold (1.01 by default), the effective sample rate is
-adequate, and the divergent transition rate is at or below its threshold (0.2%).
-See [`kb_converged()`] for what to try when a fit does not converge.
+Sites and years without weight or size data take a sampled effect, so a seed
+makes the results reproducible.
 
 ```{r}
-glance(fit)
-```
-
-## Summarising the fit
-
-`tidy()` returns the model terms with a point estimate and compatibility limits.
-`intercept`, `diameter_power`, and `weight_floor` describe the allometric curve; the
-`s`-prefixed terms are the random-effect and residual standard deviations.
-
-```{r}
-tidy(fit)
-```
-
-## Priors
-
-`kb_priors_weight_nereo()` returns the default priors, which are weakly
-informative on the model's centered log scale.
-
-```{r}
-kb_priors_weight_nereo()
-```
-
-Adjust a prior by replacing an element with `kb_prior_normal()` or
-`kb_prior_exponential()` and passing the result to the `priors` argument of
-`kb_fit_weight_nereo()`:
-
-```{r, eval = FALSE}
-priors <- kb_priors_weight_nereo()
-priors$sd_site <- kb_prior_exponential(2)
-fit <- kb_fit_weight_nereo(data_weight_sim_nereo, priors = priors, seed = 1)
-```
-
-## Predictions
-
-`kb_new_data()` builds a diameter sequence crossed with the groups named in
-`by`, and `kb_predict_weight()` summarises the fitted weight-diameter curve at
-those rows, one curve per group. Pass the result to `kb_plot_predictions()` to
-plot the curve with its compatibility band:
-
-```{r, fig.width = 7, fig.height = 4.5}
-kb_predict_weight(fit, kb_new_data(fit, by = "site")) |>
-  kb_plot_predictions()
-```
-
-`kb_predict_weight()` also predicts at the rows of your own data frame,
-returning a point estimate and compatibility limits for each row:
-
-```{r}
-new_data <- data.frame(diameter_mm = c(20, 35, 50, 65, 80), site = "otter_cove")
-kb_predict_weight(fit, new_data)
-```
-
-## The Macrocystis weight model
-
-*Macrocystis pyrifera* is measured differently in the field: the size predictor
-is a frond count (`fronds`) rather than a diameter, and wet weight is modelled
-with a Gamma likelihood whose dispersion scales with the frond count. The model
-also carries a year main effect in addition to site and site-by-year. These
-differences are why *Macrocystis* has its own functions rather than a `species`
-argument. The bundled `data_weight_sim_macro` has the same shape as the
-*Nereocystis* dataset, with `fronds` in place of `diameter_mm`:
-
-```{r}
-data_weight_sim_macro
-```
-
-`kb_fit_weight_macro()` fits the model, with `kb_check_data_weight_macro()` and
-`kb_priors_weight_macro()` as the matching data check and default priors. As
-before, a pre-fit model on the simulated data ships with the package:
-
-```{r, eval = FALSE}
-fit_macro <- kb_fit_weight_macro(data_weight_sim_macro, seed = 1)
-```
-
-```{r, echo = FALSE}
-fit_macro <- fit_weight_sim_macro
-```
-
-The fit object is the same class as the *Nereocystis* fit, so `glance()`,
-`tidy()`, and the prediction functions work identically. The term table reflects
-the *Macrocystis* structure: a single frond slope (`fronds_slope`), the Gamma shape
-(`shape`), and a year standard deviation (`sd_year`).
-
-```{r}
-tidy(fit_macro)
-```
-
-One curve per year:
-
-```{r, fig.width = 7, fig.height = 4.5}
-kb_predict_weight(fit_macro, kb_new_data(fit_macro, by = "year")) |>
-  kb_plot_predictions()
-```
-
-## Standard Bayesian tooling
-
-The fitted object exposes the `rstantools` generics, so it composes directly
-with `bayesplot` and `loo`. A posterior-predictive check uses the replicates
-from `posterior_predict()`:
-
-```{r, eval = FALSE}
-# The replicates are drawn, so set a seed to reproduce a check.
 set.seed(1)
-bayesplot::ppc_dens_overlay(
-  y = fit$data$weight_kg,
-  yrep = posterior_predict(fit)
+biomass <- kb_predict_biomass_survey(
+  fit_weight_sim_nereo,
+  fit_size_sim_nereo,
+  data_survey_sim_nereo
+)
+biomass
+```
+
+```{r}
+biomass_site_year <- kb_predict_biomass_survey(
+  fit_weight_sim_nereo,
+  fit_size_sim_nereo,
+  data_survey_sim_nereo,
+  sum_by = c("site", "year")
+)
+kb_plot_predictions(biomass_site_year)
+```
+
+The calibration relates survey biomass to the tide-corrected drone cover of each
+survey's plot.
+
+```{r, eval = FALSE}
+fit_cover <- kb_fit_cover_calibration_nereo(biomass)
+```
+
+```{r}
+fit_cover <- fit_cover_calibration_sim_nereo
+kb_predict_cover_calibration(fit_cover, kb_new_data(fit_cover)) |>
+  kb_plot_predictions()
+```
+
+Total biomass is the calibration applied over each site-year's mapped canopy.
+
+```{r}
+totals <- kb_predict_biomass_canopy(fit_cover, data_canopy_sim_nereo)
+totals
+kb_plot_predictions(totals)
+```
+
+Totals sum over any grouping column, draw by draw:
+
+```{r}
+kb_predict_biomass_canopy(fit_cover, data_canopy_sim_nereo, sum_by = "year")
+```
+
+Dry and carbon biomass take a wet/dry fit, and for carbon also a carbon fit:
+
+```{r}
+kb_predict_biomass_canopy(
+  fit_cover,
+  data_canopy_sim_nereo,
+  wetdry = fit_wetdry_sim_nereo,
+  carbon = fit_carbon_sim_nereo,
+  measure = "carbon"
 )
 ```
 
-Leave-one-out cross-validation uses the pointwise `log_lik()`:
+### *Macrocystis*
 
-```{r, eval = FALSE}
-loo::loo(log_lik(fit))
+Every counted *Macrocystis* plant has its fronds at 1 m recorded, so a plants
+table takes the place of a size fit.
+
+```{r}
+biomass_macro <- kb_predict_biomass_survey(
+  fit_weight_sim_macro,
+  data_plants_sim_macro,
+  data_survey_sim_macro
+)
 ```
+
+The calibration and totals then follow as for *Nereocystis*.
+
+## Other uses
+
+- **Plant weights**: `kb_predict_weight()` gives the expected weight of plants of
+  given sizes.
+- **Size distributions**: `kb_predict_size()` and `posterior_predict()` on a size
+  fit describe *Nereocystis* size by site and year.
+- **Mean plant weight**: `kb_predict_mean_weight()` combines the weight and size
+  fits per site-year.
+- **Censused sites**: where every plant in a site is counted and measured,
+  `kb_predict_biomass_survey(per_area = FALSE)` gives its total biomass with no
+  drone calibration.
+- **Other size measures**: the *Nereocystis* weight and size models accept any
+  plant diameter in `diameter_mm`, such as bulb diameter or sub-bulb diameter
+  15 cm below the bulb, provided that:
+  - the weight and size data use the same measurement;
+  - the power law (`form = "power"`) or Packard power law (`form =
+    "packard_floor"`) fits the data, as `pp_check()` and `loo()` show.
+
+## References
+
+Reed, D. C., Rassweiler, A. R., and Arkema, K. K. 2009. Density derived
+estimates of standing crop and net primary production in the giant kelp
+*Macrocystis pyrifera*. Marine Biology 156: 2077-2083.
+<https://doi.org/10.1007/s00227-009-1238-6>

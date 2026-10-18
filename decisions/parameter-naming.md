@@ -70,21 +70,15 @@ for the Poisson), which matches Stan's naming of phi as the precision and the
 | | `bShape` | `shape` |
 | Size, *Nereocystis* | `bDiameter` | `intercept` |
 | | `bShape` | `shape` |
-| Size, *Macrocystis* | `bFronds` | `intercept` |
-| | `bDispersion` | `dispersion` |
-| Density, *Nereocystis* | `bStipes` | `intercept` |
-| | `bZeroInflation` | `logit_zero_inflation` |
-| | `bDispersion` | `dispersion` |
-| Density, *Macrocystis* | `bPlants` | `intercept` |
-| | `bDispersion` | `dispersion` |
 | Wet/dry | `bDryWet` | `intercept` |
 | | `bPrecision` | `precision` |
 | Carbon | `bCarbon` | `intercept` |
 | | `bPrecision` | `precision` |
-| Cover biomass | `bCanopy` | `cover_slope` |
+| Cover calibration | `bCanopy` | `cover_slope` |
 | | `bFloor` | `biomass_floor` |
 | | `bTide` | `tide_height_slope` |
-| | `bScaling` | `error_scaling` |
+| | `sBase` | `sd_residual` |
+| | `sCV` | `cv_residual` |
 | All with group effects | `sSite`, `sYear`, `sSiteYear` | `sd_site`, `sd_year`, `sd_site_year` |
 | | `bSite`, `bYear`, `bSiteYear` | `site_effect`, `year_effect`, `site_year_effect` |
 | | `z_bSite`, `z_bYear`, `z_bSiteYear` | `z_site`, `z_year`, `z_site_year` |

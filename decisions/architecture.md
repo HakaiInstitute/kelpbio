@@ -19,9 +19,68 @@ downstream (summaries, diagnostics, predictions, plots) is `posterior` arithmeti
 over stored draws. Fit objects are therefore small, portable, robust across rstan
 versions, and a pre-fit model is not a special case (`decisions/prediction-engine.md`).
 
-The package fits weight, size, density, wet/dry, carbon, and cover-biomass
-models for *Nereocystis luetkeana* and *Macrocystis pyrifera*, and composes them
-into plot biomass by size integration and into site totals from drone cover.
+The package fits weight, wet/dry, carbon, and cover calibration models for
+*Nereocystis luetkeana* and *Macrocystis pyrifera*, and a size model for
+*Nereocystis*. It composes them into the biomass of in situ surveys (each
+counted plant's expected weight, summed over the area searched) and into biomass
+over drone-mapped canopy (the cover calibration applied to canopy area).
+
+## Models, verbs, and data
+
+Model verbs report one fitted model's expected response and are named for the
+model. Derived verbs combine fits with the user's data and are named for what the
+biomass comes from. Data inputs list their columns; `?` marks an optional column.
+
+Fits and model verbs:
+
+```mermaid
+flowchart LR
+    DW[/"weight data<br/>site · date · weight_kg<br/>diameter_mm (nereo) or fronds (macro)"/] --> FW["kb_fit_weight_nereo()<br/>kb_fit_weight_macro()"] --> MW["kb_predict_weight()<br/>kg at a size"]
+    DS[/"size data (nereo)<br/>site · date · diameter_mm · plot_id?"/] --> FS["kb_fit_size_nereo()"] --> MS["kb_predict_size()<br/>mean diameter"]
+    DWD[/"wet/dry data<br/>wet_mass_g · dry_mass_g"/] --> FWD["kb_fit_wetdry_*()"] --> MWD["kb_predict_wetdry()<br/>dry:wet ratio"]
+    DC[/"carbon data<br/>sample_mass_mg · carbon_mass_ug"/] --> FC["kb_fit_carbon_*()"] --> MC["kb_predict_carbon()<br/>carbon fraction"]
+    BIO(["kb_predict_biomass_survey() output<br/>one row per survey, with drone cover"]) --> FCC["kb_fit_cover_calibration_*(data)"] --> MCC["kb_predict_cover_calibration()<br/>kg/m² of plot at a cover"]
+```
+
+Biomass (derived verbs):
+
+```mermaid
+flowchart TB
+    FW["weight fit"] --> VMW
+    FS["size fit (nereo)"] --> VMW["kb_predict_mean_weight(weight, size, new_data?)<br/>kg per plant"]
+    FW --> VBP
+    FS -->|"sizes modelled<br/>(tallied plants)"| VBP
+    DPL[/"plants: one row per counted plant<br/>site · plot_id · date<br/>diameter_mm or fronds · partial?"/] -->|"sizes observed<br/>(a census)"| VBP
+    DSU[/"survey: one row per survey of a plot<br/>site · plot_id · date · survey_area_m2<br/>plants (tallied, with a size fit)<br/>plot_area_m2? · canopy_area_m2? · tide_height_m?<br/>grouping columns?"/] --> VBP["kb_predict_biomass_survey(weight, size, survey)<br/>per_area = TRUE: kg/m² surveyed<br/>FALSE: kg in the surveyed area"]
+    VBP -->|"rows with drone cover"| FCC["kb_fit_cover_calibration_*(data)"]
+    FCC --> VCA["kb_predict_biomass_canopy(fit, new_data)<br/>per_area = FALSE: kg over the canopy<br/>TRUE: kg/m² of canopy"]
+    DCA[/"canopy: one row per mapped site-year<br/>site · year · canopy_area_m2 · tide_height_m<br/>site_area_m2? · grouping columns?"/] --> VCA
+```
+
+Estimates are for the peak season at site-year resolution: every model has site
+and year effects only. A plot may be surveyed more than once, and a site-year may
+hold several plots; each survey with drone cover (`plot_area_m2`,
+`canopy_area_m2`, and `tide_height_m` on its row) is one observation in the cover
+calibration. In every dated table (weight, size, survey, plants) `year` comes
+from `date`. A survey's plants come from the plant rows,
+joined by `site`, `plot_id`, and `date`, when every plant was measured, and from
+its tallied `plants` column when sizes come from a size fit; a survey with no
+plant rows is zero. Biomass per m² divides by `survey_area_m2`, the area
+searched; cover divides canopy by `plot_area_m2`, and the calibration takes a
+survey's biomass per m² as its plot's. "Plant" stands for one
+individual (sporophyte) identified by its holdfast, in both species.
+
+The derived verbs share `wetdry` and `carbon` fits with `measure` (wet, dry, or
+carbon), `new_levels` (default `"sample"`), `representative_site`, and the
+summary trio. Their output carries the response as an `rvar` column of draws
+next to `estimate`, `lower`, and `upper`, so one verb's output can feed another:
+the cover calibration fit reads the mean and SD of `biomass_kg_m2` from
+unsummed `kb_predict_biomass_survey()` output. `kb_predict_mean_weight()` takes
+fits only and has no `sum_by`. The two biomass verbs take `sum_by`: `NULL` gives
+one row per input row; column names give one row per group, with kg summed and,
+per area, divided by the summed area, draw by draw.
+
+## Layers
 
 ```mermaid
 flowchart LR
@@ -39,8 +98,6 @@ flowchart LR
 Everything to the right of the fit object reads stored draws and metadata and never
 re-enters Stan. That boundary is what makes the whole surface testable without
 MCMC and makes a pre-fit model behave exactly like a fresh one.
-
-## Layers
 
 - **Fitting.** Each `kb_fit_<model>_<species>()` validates its inputs, derives the
   model structure from the data (which effects are fitted), assembles the Stan data
@@ -85,14 +142,6 @@ Stan model's log density with and without the likelihood (`prior_only`) at rando
 parameter values and checks the difference against `log_lik()`, so the two cannot
 drift apart.
 
-## Offsets
-
-A rate model's survey effort enters as an offset taken from the grid: rows with
-the offset column use the effort recorded, and rows without it take one neutral
-unit. The draw generics follow the rows, while the density verb drops the offset
-so it always reports the rate (`decisions/prediction-engine.md`). The density
-models carry the offset (`area_m2`); weight and size have none.
-
 ## Random-effect resolution
 
 A known level conditions on its estimated effect regardless of `new_levels`; only an
@@ -119,7 +168,7 @@ printing), while `model` is not duplicated because nothing displays it and a sec
 copy could disagree with the class.
 
 Within `meta`, a fact every sub-model must declare is a required argument of the fit
-constructor (`offset`, `terms`), so omitting it fails at fit time; a fact only some
+constructor (`terms`), so omitting it fails at fit time; a fact only some
 models have travels in `meta_extra`. The declarations are not validated at runtime:
 the constructor is internal and every caller is one of the package's own fit
 functions, so a malformed declaration is an authoring error that tests catch.

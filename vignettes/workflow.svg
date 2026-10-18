@@ -1,0 +1,109 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 910 656" width="910" height="656" role="img" aria-labelledby="title desc">
+  <title id="title">kelpbio workflow</title>
+  <desc id="desc">Field data are fitted by Bayesian sub-models, whose draws combine into survey biomass, the cover calibration, and total biomass per site-year.</desc>
+  <style>
+    .bg { fill: #ffffff; }
+    .box { stroke-width: 1.2; }
+    .data { fill: #DAEAF6; stroke: #89B8DC; }
+    .model { fill: #DDF2E4; stroke: #7BC496; }
+    .output { fill: #FFF2CC; stroke: #D4B84A; }
+    .title { font-family: "Inter", "Segoe UI", "Helvetica Neue", Arial, sans-serif; font-size: 15px; font-weight: 600; text-anchor: middle; }
+    .sub { font-family: "Inter", "Segoe UI", "Helvetica Neue", Arial, sans-serif; font-size: 12px; fill: #777; text-anchor: middle; }
+    .fn { font-family: "SFMono-Regular", Menlo, Consolas, monospace; font-size: 12px; text-anchor: middle; }
+    .data-text { fill: #2C5777; }
+    .model-text { fill: #2D6B42; }
+    .output-text { fill: #6B5B1E; }
+    .edge { fill: none; stroke: #A0A6AF; stroke-width: 1.3; marker-end: url(#arrow); }
+    .dashed { stroke-dasharray: 5 4; }
+    .label { font-family: "Inter", "Segoe UI", "Helvetica Neue", Arial, sans-serif; font-size: 12px; font-weight: 500; fill: #555; text-anchor: middle; }
+    .heading { font-family: "Inter", "Segoe UI", "Helvetica Neue", Arial, sans-serif; font-size: 12px; font-weight: 600; letter-spacing: 0.08em; fill: #8A8F98; text-anchor: middle; }
+    .legend { font-family: "Inter", "Segoe UI", "Helvetica Neue", Arial, sans-serif; font-size: 12.5px; fill: #666; }
+  </style>
+  <defs>
+    <marker id="arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <path d="M 0 0 L 8 3 L 0 6 Z" fill="#A0A6AF"/>
+    </marker>
+  </defs>
+
+  <rect class="bg" width="910" height="656"/>
+
+  <text class="heading" x="135" y="24">INPUT DATA</text>
+  <text class="heading" x="445" y="24">MODEL FITS</text>
+  <text class="heading" x="765" y="24">PREDICTIONS</text>
+
+  <!-- Edges -->
+  <path class="edge" d="M 240 79 L 323 79"/>
+  <path class="edge" d="M 240 169 L 323 169"/>
+  <path class="edge" d="M 560 79 C 610 79 600 155 643 155"/>
+  <path class="edge" d="M 560 169 L 643 169"/>
+  <path class="edge" d="M 240 259 L 585 259 C 620 259 608 183 643 183"/>
+  <text class="label" x="412" y="250">plants and area searched</text>
+  <path class="edge dashed" d="M 765 198 C 765 290 640 336 567 336"/>
+  <text class="label" x="655" y="278" text-anchor="end">with plot drone cover</text>
+  <path class="edge" d="M 560 362 C 600 362 605 385 643 385"/>
+  <path class="edge" d="M 240 439 L 585 439 C 620 439 608 405 643 405"/>
+  <text class="label" x="412" y="430">mapped canopy area</text>
+  <path class="edge" d="M 765 424 L 765 508"/>
+  <path class="edge" d="M 240 543 L 323 543"/>
+  <path class="edge" d="M 560 543 L 643 543"/>
+
+  <!-- Input data -->
+  <rect rx="8" ry="8" class="box data" x="30" y="50" width="210" height="58"/>
+  <text class="title data-text" x="135" y="71">Weight data</text>
+  <text class="sub" x="135" y="92">one row per harvested plant</text>
+
+  <rect rx="8" ry="8" class="box data" x="30" y="140" width="210" height="58"/>
+  <text class="title data-text" x="135" y="161">Size data</text>
+  <text class="sub" x="135" y="182">one row per measured plant</text>
+
+  <rect rx="8" ry="8" class="box data" x="30" y="230" width="210" height="58"/>
+  <text class="title data-text" x="135" y="251">Survey data</text>
+  <text class="sub" x="135" y="272">one row per survey of a plot</text>
+
+  <rect rx="8" ry="8" class="box data" x="30" y="410" width="210" height="58"/>
+  <text class="title data-text" x="135" y="431">Canopy data</text>
+  <text class="sub" x="135" y="452">one row per mapped site-year</text>
+
+  <rect rx="8" ry="8" class="box data" x="30" y="514" width="210" height="58"/>
+  <text class="title data-text" x="135" y="535">Tissue samples</text>
+  <text class="sub" x="135" y="556">wet and dry mass, carbon mass</text>
+
+  <!-- Model fits -->
+  <rect rx="8" ry="8" class="box model" x="330" y="50" width="230" height="58"/>
+  <text class="title model-text" x="445" y="71">Weight model</text>
+  <text class="fn model-text" x="445" y="92">kb_fit_weight_*()</text>
+
+  <rect rx="8" ry="8" class="box model" x="330" y="140" width="230" height="58"/>
+  <text class="title model-text" x="445" y="161">Size model</text>
+  <text class="fn model-text" x="445" y="182">kb_fit_size_nereo()</text>
+
+  <rect rx="8" ry="8" class="box model" x="330" y="320" width="230" height="58"/>
+  <text class="title model-text" x="445" y="341">Cover calibration</text>
+  <text class="fn model-text" x="445" y="362">kb_fit_cover_calibration_*()</text>
+
+  <rect rx="8" ry="8" class="box model" x="330" y="510" width="230" height="66"/>
+  <text class="title model-text" x="445" y="531">Wet/dry and carbon models</text>
+  <text class="fn model-text" x="445" y="552">kb_fit_wetdry_*()</text>
+  <text class="fn model-text" x="445" y="568">kb_fit_carbon_*()</text>
+
+  <!-- Predictions -->
+  <rect rx="8" ry="8" class="box output" x="650" y="140" width="230" height="58"/>
+  <text class="title output-text" x="765" y="161">Survey biomass</text>
+  <text class="fn output-text" x="765" y="182">kb_predict_biomass_survey()</text>
+
+  <rect rx="8" ry="8" class="box output" x="650" y="366" width="230" height="58"/>
+  <text class="title output-text" x="765" y="387">Total canopy biomass</text>
+  <text class="fn output-text" x="765" y="408">kb_predict_biomass_canopy()</text>
+
+  <rect rx="8" ry="8" class="box output" x="650" y="514" width="230" height="58"/>
+  <text class="title output-text" x="765" y="535">Dry and carbon biomass</text>
+  <text class="fn output-text" x="765" y="556">measure = "dry" or "carbon"</text>
+
+  <!-- Legend -->
+  <rect rx="4" ry="4" class="box data" x="250" y="614" width="16" height="16"/>
+  <text class="legend" x="274" y="626">Input data</text>
+  <rect rx="4" ry="4" class="box model" x="375" y="614" width="16" height="16"/>
+  <text class="legend" x="399" y="626">Bayesian model</text>
+  <rect rx="4" ry="4" class="box output" x="520" y="614" width="16" height="16"/>
+  <text class="legend" x="544" y="626">Prediction with uncertainty</text>
+</svg>
