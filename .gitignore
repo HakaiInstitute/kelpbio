@@ -31,3 +31,10 @@ tests/testthat/testthat-problems.rds
 # script run logs
 scripts/*.log
 figure/
+
+# local working files (documentation review copies, scratch scripts)
+/review/
+scripts/demo-api-test2.R
+scripts/demo-api-test3.R
+scripts/demo-workflow.R
+scripts/sim-site-year-drop.R
