@@ -1,17 +1,24 @@
-# Build the simulated Macrocystis site-based datasets: data_weight_sim_macro,
-# data_size_sim_macro, data_density_sim_macro, data_cover_biomass_sim_macro, and
-# data_plot_biomass_sim_macro, for fast tests and runnable examples. Not for
-# inference.
+# Build the simulated Macrocystis datasets: data_weight_sim_macro,
+# data_survey_sim_macro, data_plants_sim_macro, and data_canopy_sim_macro, for
+# fast tests and runnable examples. Not for inference.
 #
-# All five come from one set of true site-year values, so they agree: plot
-# biomass composed from fits to the weight, size, and density data lands near
-# the in situ plot biomass the cover data are calibrated against. Means, slopes,
-# shapes, and dispersions are near the analysis-project production fits;
-# random-effect SDs are held moderate so the small pre-fits converge and site
-# differences show in examples. The data sources cover different site-years, as
-# in the field: density at most, size at most of those, weight harvests at about
-# half (three sites never harvested), and drone surveys at about two-thirds.
-# Site names are invented and match no Hakai Institute survey site.
+# All four come from one set of true site-year values, so they agree: survey
+# biomass from the weight fit and the counted plants lands near the true
+# biomass the drone cover is simulated from. Means, slopes, shapes, and
+# dispersions are near the analysis-project production fits; random-effect SDs
+# are held moderate so the small pre-fits converge and site differences show in
+# examples. The data sources cover different site-years, as in the field:
+# surveys at most, weight harvests at about half (three sites never harvested),
+# and drone cover at about two-thirds. Site names are invented and match no
+# Hakai Institute survey site.
+#
+# Every counted plant has its fronds at 1 m recorded, drawn from the
+# site-year's frond distribution; about one in twelve is a partial (edge)
+# plant. Each site-year's four transects are summed to one survey of plot "1";
+# at a few site-years the transects are split between two plots, or between two
+# visits to one plot, and one transect with no plants is its own survey. The
+# draws up to the transect counts are unchanged from earlier versions, so the
+# weight data and their pre-fit are too.
 #
 # Run from the package root:
 #   Rscript data-raw/data_sim_macro.R
@@ -32,12 +39,12 @@ i_site <- match(grid$site, sites)
 i_year <- match(grid$year, years)
 key <- paste(grid$site, grid$year)
 
-grid$density <- !key %in% c("murrelet_pass 2022", "nudibranch_bay 2019")
-grid$size <- grid$density &
+grid$surveyed <- !key %in% c("murrelet_pass 2022", "nudibranch_bay 2019")
+grid$size <- grid$surveyed &
   !key %in% c("seal_ledge 2021", "limpet_head 2019", "abalone_reef 2022", "anemone_bay 2020")
 # Seven sites harvested, each in three of the four years.
-grid$weight <- grid$density & i_site <= 7 & i_year != (i_site %% 4) + 1
-grid$drone <- grid$density & (i_site + i_year) %% 3 != 0
+grid$weight <- grid$surveyed & i_site <= 7 & i_year != (i_site %% 4) + 1
+grid$drone <- grid$surveyed & (i_site + i_year) %% 3 != 0
 
 # 2. True values ---------------------------------------------------------------
 
@@ -60,7 +67,7 @@ b_fronds_size <- 1.73 # log mean frond count before truncation
 dispersion_size <- 0.63 # variance mu + dispersion * mu^2
 grid$e_size <- effects(0.28, 0.27, 0.23)
 
-# Density: negative binomial plant count on a transect of area_m2. The intercept
+# Counts: negative binomial plant count on a transect of area_m2. The intercept
 # is above the production estimate (log 0.31) so the composed plot biomass spans
 # the production range despite the moderated SDs.
 b_plants <- log(0.45) # log plants per m^2
@@ -70,8 +77,7 @@ grid$e_density <- effects(0.5, 0.2, 0.4)
 # Cover: biomass floor plus a canopy term in tide-corrected cover.
 b_canopy <- 8 # kg per m^2 of canopy, within the production interval
 b_floor <- 0.42 # kg/m^2 at zero cover
-b_tide <- 0.23 # fractional canopy increase per m of tide
-b_scaling <- 1.16 # multiplier on the in situ log SDs
+b_tide <- 0.23 # share of the zero-tide canopy lost per m of tide
 grid$e_cover <- effects(0.2, 0.2, 0)
 
 # True plot biomass (wet kg/m^2): expected plants per m^2 times the mean expected
@@ -115,13 +121,15 @@ data_weight_sim_macro <- do.call(rbind, lapply(cells("weight"), function(i) {
   )
 }))
 
+# Drawn but not saved (there is no Macrocystis size model), so the draws after
+# it match earlier versions.
 data_size_sim_macro <- do.call(rbind, lapply(cells("size"), function(i) {
   n <- 20L
   fronds <- rztnb(n, exp(b_fronds_size + grid$e_size[i]), dispersion_size)
   data.frame(fronds = as.integer(fronds), site = grid$site[i], year = grid$year[i])
 }))
 
-data_density_sim_macro <- do.call(rbind, lapply(cells("density"), function(i) {
+transects <- do.call(rbind, lapply(cells("surveyed"), function(i) {
   n <- 4L
   area_m2 <- sample(c(40, 40, 40, 60, 120), n, replace = TRUE)
   mu <- area_m2 * exp(b_plants + grid$e_density[i])
@@ -133,66 +141,119 @@ data_density_sim_macro <- do.call(rbind, lapply(cells("density"), function(i) {
   )
 }))
 
-# 4. Drone surveys and in situ plot biomass ------------------------------------
+# 4. Counted plants and in situ surveys -------------------------------------------
 
-# Each surveyed site-year's tide-corrected cover is the cover model solved for its
-# true plot biomass. Macrocystis surveys have no zero-canopy plots, so cover is
-# kept between 0.02 and 0.95.
-drone <- grid[cells("drone"), ]
-n <- nrow(drone)
+# A survey is a plot visit: its transects' areas summed and their plants listed.
+transects$transect <- stats::ave(seq_len(nrow(transects)), transects$site, transects$year, FUN = seq_along)
+transects$plot_id <- "1"
+transects$visit <- 1L
+two_plots <- c("seal_ledge 2020", "limpet_head 2021", "driftwood_cove 2019")
+two_visits <- "anemone_bay 2021"
+tkey <- paste(transects$site, transects$year)
+transects$plot_id[tkey %in% two_plots & transects$transect > 2] <- "2"
+transects$visit[tkey %in% two_visits & transects$transect > 2] <- 2L
+# One transect becomes an empty survey of its own plot.
+empty <- which(!tkey %in% c(two_plots, two_visits))[5]
+transects$plants[empty] <- 0L
+transects$plot_id[empty] <- "3"
+
+survey_id <- paste(transects$site, transects$year, transects$plot_id, transects$visit)
+first <- !duplicated(survey_id)
+survey <- transects[first, c("site", "year", "plot_id", "visit")]
+survey$survey_area_m2 <- as.vector(tapply(transects$area_m2, survey_id, sum)[survey_id[first]])
+survey$date <- as.Date(sprintf(
+  "%s-08-%02d",
+  survey$year,
+  10L + match(survey$site, sites) + 10L * (survey$visit - 1L)
+))
+
+i_grid <- match(paste(transects$site, transects$year), key)
+plants <- do.call(rbind, lapply(which(transects$plants > 0), function(t) {
+  n <- transects$plants[t]
+  i <- i_grid[t]
+  data.frame(
+    survey = survey_id[t],
+    fronds = as.integer(rztnb(n, exp(b_fronds_size + grid$e_size[i]), dispersion_size)),
+    partial = stats::runif(n) < 1 / 12
+  )
+}))
+s_row <- match(plants$survey, survey_id[first])
+plants$site <- survey$site[s_row]
+plants$plot_id <- survey$plot_id[s_row]
+plants$date <- survey$date[s_row]
+
+# Drone cover on the surveys of drone site-years: the cover model solved for the
+# true plot biomass, with plot-to-plot variation, kept between 0.02 and 0.95.
+i_survey <- match(paste(survey$site, survey$year), key)
+drone <- grid$drone[i_survey]
+n <- nrow(survey)
 plot_area_m2 <- round(stats::runif(n, 180, 280), 1)
 tide_height_m <- sample(seq(0, 1.6, by = 0.05), n, replace = TRUE)
-cover <- (drone$plot_biomass - b_floor) / (b_canopy * exp(drone$e_cover))
+cover <- (grid$plot_biomass[i_survey] - b_floor) /
+  (b_canopy * exp(grid$e_cover[i_survey])) * exp(stats::rnorm(n, 0, 0.1))
 clipped <- cover < 0.02 | cover > 0.95
 cover <- pmin(pmax(cover, 0.02), 0.95)
-canopy_area_m2 <- round(cover * plot_area_m2 / (1 + b_tide * tide_height_m), 2)
+canopy_area_m2 <- round(cover * plot_area_m2 * (1 - b_tide * tide_height_m), 2)
+survey$plot_area_m2 <- ifelse(drone, plot_area_m2, NA_real_)
+survey$canopy_area_m2 <- ifelse(drone, canopy_area_m2, NA_real_)
+survey$tide_height_m <- ifelse(drone, tide_height_m, NA_real_)
+survey$survey_area_m2 <- pmin(survey$survey_area_m2, ifelse(drone, plot_area_m2, Inf))
 
-# The in situ estimate and its 95% compatibility limits, lognormal around the
-# true plot biomass; the limits understate the error by the factor b_scaling.
-sd_log <- stats::runif(n, 0.18, 0.5)
-log_estimate <- log(drone$plot_biomass) + stats::rnorm(n, 0, b_scaling * sd_log)
-z <- stats::qnorm(0.975)
+data_survey_sim_macro <- survey[c(
+  "site", "plot_id", "date", "survey_area_m2",
+  "plot_area_m2", "canopy_area_m2", "tide_height_m"
+)]
+data_plants_sim_macro <- plants[c("site", "plot_id", "date", "fronds", "partial")]
 
-data_cover_biomass_sim_macro <- data.frame(
-  site = drone$site,
-  year = drone$year,
-  canopy_area_m2 = canopy_area_m2,
-  plot_area_m2 = plot_area_m2,
-  tide_height_m = tide_height_m
+# 5. Mapped canopy for totals ----------------------------------------------------
+
+canopy <- grid[grid$drone, c("site", "year")]
+m <- nrow(canopy)
+canopy$canopy_area_m2 <- round(stats::runif(m, 500, 12000))
+canopy$tide_height_m <- sample(seq(0, 1.6, by = 0.05), m, replace = TRUE)
+canopy$site_area_m2 <- round(canopy$canopy_area_m2 * stats::runif(m, 1.5, 3))
+canopy$region <- factor(
+  ifelse(match(canopy$site, sites) <= 5, "north", "south"),
+  levels = c("north", "south")
 )
+data_canopy_sim_macro <- canopy
 
-data_plot_biomass_sim_macro <- data.frame(
-  site = drone$site,
-  year = drone$year,
-  estimate = signif(exp(log_estimate), 3),
-  lower = signif(exp(log_estimate - z * sd_log), 3),
-  upper = signif(exp(log_estimate + z * sd_log), 3)
-)
+# Harvests are dated within the peak season, a few days before the survey, with
+# no new draws. The year comes from the date.
+data_weight_sim_macro$date <- as.Date(sprintf(
+  "%s-08-%02d",
+  data_weight_sim_macro$year,
+  5L + match(data_weight_sim_macro$site, sites)
+))
+data_weight_sim_macro$year <- NULL
 
-# 5. Save ----------------------------------------------------------------------
+# 6. Save ----------------------------------------------------------------------
 
 # Levels in creation order, not string order; this order carries through to fits
 # and predictions.
 as_sim <- function(data) {
   data$site <- factor(data$site, levels = sites)
-  data$year <- factor(data$year, levels = years)
+  if ("year" %in% names(data)) {
+    data$year <- factor(data$year, levels = years)
+  }
   rownames(data) <- NULL
   tibble::as_tibble(data)
 }
 data_weight_sim_macro <- as_sim(data_weight_sim_macro)
-data_size_sim_macro <- as_sim(data_size_sim_macro)
-data_density_sim_macro <- as_sim(data_density_sim_macro)
-data_cover_biomass_sim_macro <- as_sim(data_cover_biomass_sim_macro)
-data_plot_biomass_sim_macro <- as_sim(data_plot_biomass_sim_macro)
+data_survey_sim_macro <- as_sim(data_survey_sim_macro)
+data_plants_sim_macro <- as_sim(data_plants_sim_macro)
+data_canopy_sim_macro <- as_sim(data_canopy_sim_macro)
 
 message(
-  "True plot biomass (kg/m2) at density-surveyed site-years, quantiles 0, 0.25, 0.5, 0.75, 1: ",
-  paste(signif(stats::quantile(grid$plot_biomass[grid$density]), 2), collapse = ", ")
+  "True plot biomass (kg/m2) at surveyed site-years, quantiles 0, 0.25, 0.5, 0.75, 1: ",
+  paste(signif(stats::quantile(grid$plot_biomass[grid$surveyed]), 2), collapse = ", ")
 )
-message("Drone surveys with clipped cover: ", sum(clipped), " of ", n)
+message(
+  "Surveys: ", n, "; with drone cover: ", sum(drone),
+  "; clipped cover: ", sum(clipped & drone), "; counted plants: ", nrow(plants)
+)
 
 usethis::use_data(data_weight_sim_macro, overwrite = TRUE)
-usethis::use_data(data_size_sim_macro, overwrite = TRUE)
-usethis::use_data(data_density_sim_macro, overwrite = TRUE)
-usethis::use_data(data_cover_biomass_sim_macro, overwrite = TRUE)
-usethis::use_data(data_plot_biomass_sim_macro, overwrite = TRUE)
+usethis::use_data(data_survey_sim_macro, overwrite = TRUE)
+usethis::use_data(data_plants_sim_macro, overwrite = TRUE)
+usethis::use_data(data_canopy_sim_macro, overwrite = TRUE)

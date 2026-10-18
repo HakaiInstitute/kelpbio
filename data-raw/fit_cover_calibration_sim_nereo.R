@@ -1,20 +1,29 @@
-# Build fit_cover_biomass_sim_nereo, a slim pre-fit cover biomass model for runnable examples and
-# tests. Fitted to the whole data_cover_biomass_sim_nereo and data_plot_biomass_sim_nereo,
-# with reduced chains and draws so the object stays small; its size is set by the
-# draw count alone, since no per-observation quantities are stored. Not for inference. Reproducibility
-# comes from the sampler `seed`.
+# Build fit_cover_calibration_sim_nereo, a slim pre-fit cover calibration model
+# for runnable examples and tests. Fitted to the survey biomass from
+# fit_weight_sim_nereo, fit_size_sim_nereo, and data_survey_sim_nereo, with reduced chains
+# and draws so the object stays small; its size is set by the draw count alone,
+# since no per-observation quantities are stored. Not for inference.
+# Reproducibility comes from set.seed() for the survey biomass and the sampler
+# `seed`.
 #
 # Requires the compiled package (run `devtools::install()` first; a Stan change
 # is only picked up after install). Re-run whenever the Stan model, the
-# simulated dataset, or the kb_fit object structure changes. Run from the
-# package root:
-#   Rscript data-raw/fit_cover_biomass_sim_nereo.R
+# simulated datasets, the weight or size pre-fits, or the kb_fit object
+# structure changes. Run from the package root:
+#   Rscript data-raw/fit_cover_calibration_sim_nereo.R
 
 devtools::load_all(quiet = TRUE)
 
-fit_cover_biomass_sim_nereo <- kb_fit_cover_biomass_nereo(
-  data_cover_biomass_sim_nereo,
-  data_plot_biomass_sim_nereo,
+set.seed(42)
+biomass <- kb_predict_biomass_survey(
+  fit_weight_sim_nereo,
+  fit_size_sim_nereo,
+  data_survey_sim_nereo,
+  progress = "none"
+)
+
+fit_cover_calibration_sim_nereo <- kb_fit_cover_calibration_nereo(
+  biomass,
   chains = 3L,
   niters = 500L,
   # nthin multiplies the sampling iterations while holding the saved draw count
@@ -28,4 +37,4 @@ fit_cover_biomass_sim_nereo <- kb_fit_cover_biomass_nereo(
   control = list(adapt_delta = 0.999)
 )
 
-usethis::use_data(fit_cover_biomass_sim_nereo, overwrite = TRUE)
+usethis::use_data(fit_cover_calibration_sim_nereo, overwrite = TRUE)

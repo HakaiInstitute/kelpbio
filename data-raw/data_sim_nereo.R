@@ -1,17 +1,22 @@
-# Build the simulated Nereocystis site-based datasets: data_weight_sim_nereo,
-# data_size_sim_nereo, data_density_sim_nereo, data_cover_biomass_sim_nereo, and
-# data_plot_biomass_sim_nereo, for fast tests and runnable examples. Not for
-# inference.
+# Build the simulated Nereocystis datasets: data_weight_sim_nereo,
+# data_size_sim_nereo, data_survey_sim_nereo, and data_canopy_sim_nereo, for
+# fast tests and runnable examples. Not for inference.
 #
-# All five come from one set of true site-year values, so they agree: plot
-# biomass composed from fits to the weight, size, and density data lands near
-# the in situ plot biomass the cover data are calibrated against. Means, slopes,
-# shapes, and dispersions are near the analysis-project production fits;
-# random-effect SDs are held moderate so the small pre-fits converge and site
-# differences show in examples. The data sources cover different site-years, as
-# in the field: density at most, size at most of those, weight harvests at about
-# half (three sites never harvested), and drone surveys at about two-thirds.
-# Site names are invented and match no Hakai Institute survey site.
+# All four come from one set of true site-year values, so they agree: survey
+# biomass from fits to the weight and size data lands near the true biomass the
+# drone cover is simulated from. Means, slopes, shapes, and dispersions are near
+# the analysis-project production fits; random-effect SDs are held moderate so
+# the small pre-fits converge and site differences show in examples. The data
+# sources cover different site-years, as in the field: surveys at most, size at
+# most of those, weight harvests at about half (three sites never harvested),
+# and drone cover at about two-thirds. Site names are invented and match no
+# Hakai Institute survey site.
+#
+# Each site-year's four transects are summed to one in situ survey of plot "1";
+# at a few site-years the transects are split between two plots, or between two
+# visits to one plot, and one transect with no plants is its own survey. The
+# draws up to the size data are unchanged from earlier versions, so the weight
+# and size data, and their pre-fits, are too.
 #
 # Run from the package root:
 #   Rscript data-raw/data_sim_nereo.R
@@ -31,12 +36,12 @@ i_site <- match(grid$site, sites)
 i_year <- match(grid$year, years)
 key <- paste(grid$site, grid$year)
 
-grid$density <- !key %in% c("raven_reef 2022", "tidepool_bluff 2019")
-grid$size <- grid$density &
+grid$surveyed <- !key %in% c("raven_reef 2022", "tidepool_bluff 2019")
+grid$size <- grid$surveyed &
   !key %in% c("gull_rock 2020", "urchin_shoal 2022", "fog_islet 2021", "cedar_bay 2019")
 # Seven sites harvested, each in three of the four years.
-grid$weight <- grid$density & i_site <= 7 & i_year != (i_site %% 4) + 1
-grid$drone <- grid$density & (i_site + i_year) %% 3 != 0
+grid$weight <- grid$surveyed & i_site <= 7 & i_year != (i_site %% 4) + 1
+grid$drone <- grid$surveyed & (i_site + i_year) %% 3 != 0
 
 # 2. True values ---------------------------------------------------------------
 
@@ -61,10 +66,10 @@ b_diameter <- log(23) # log mean diameter (mm)
 shape_size <- 2.7
 grid$e_size <- effects(0.2, 0.15, 0.12)
 
-# Density: zero-inflated negative binomial stipe count on a transect of area_m2.
+# Counts: zero-inflated negative binomial plant count on a transect of area_m2.
 # The intercept is above the production estimate (log 0.18) so the composed plot
 # biomass spans the production range despite the moderated SDs.
-b_stipes <- log(1.5) # log stipes per m^2 on occupied transects
+b_plants <- log(1.5) # log plants per m^2 on occupied transects
 zero_inflation <- 0.05 # probability a transect is unoccupied (a structural zero)
 dispersion_density <- 0.45 # variance mu + dispersion * mu^2
 grid$e_density <- effects(0.6, 0.4, 0.5)
@@ -72,19 +77,18 @@ grid$e_density <- effects(0.6, 0.4, 0.5)
 # Cover: biomass floor plus a canopy term in tide-corrected cover.
 b_canopy <- 8 # kg per m^2 of canopy
 b_cover_floor <- 0.093 # kg/m^2 at zero cover
-b_tide <- 0.28 # fractional canopy increase per m of tide
-b_scaling <- 1.21 # multiplier on the in situ log SDs
+b_tide <- 0.28 # share of the zero-tide canopy lost per m of tide
 grid$e_cover <- effects(0.2, 0.2, 0)
 
-# 3. Density observations ------------------------------------------------------
+# 3. Transect counts ------------------------------------------------------------
 
-data_density_sim_nereo <- do.call(rbind, lapply(which(grid$density), function(i) {
+transects <- do.call(rbind, lapply(which(grid$surveyed), function(i) {
   n <- 4L
   area_m2 <- sample(c(20, 40, 40, 60, 100), n, replace = TRUE)
-  mu <- area_m2 * exp(b_stipes + grid$e_density[i])
-  stipes <- stats::rnbinom(n, mu = mu, size = 1 / dispersion_density)
-  stipes[stats::runif(n) < zero_inflation] <- 0L
-  data.frame(stipes = as.integer(stipes), area_m2 = area_m2, site = grid$site[i], year = grid$year[i])
+  mu <- area_m2 * exp(b_plants + grid$e_density[i])
+  plants <- stats::rnbinom(n, mu = mu, size = 1 / dispersion_density)
+  plants[stats::runif(n) < zero_inflation] <- 0L
+  data.frame(plants = as.integer(plants), area_m2 = area_m2, site = grid$site[i], year = grid$year[i])
 }))
 
 n_weight <- 20L
@@ -94,15 +98,15 @@ expected_weight <- function(diameter, i) {
 }
 size_scale <- function(i) exp(b_diameter + grid$e_size[i]) / gamma(1 + 1 / shape_size)
 
-# True plot biomass (wet kg/m^2) at density-surveyed site-years: expected stipes
+# True plot biomass (wet kg/m^2) at surveyed site-years: expected plants
 # per m^2 times the mean expected plant weight over the diameter distribution,
 # using the lognormal mean.
 quantiles <- (seq_len(1000) - 0.5) / 1000
 grid$plot_biomass <- NA_real_
-for (i in which(grid$density)) {
+for (i in which(grid$surveyed)) {
   diameter <- stats::qweibull(quantiles, shape_size, size_scale(i))
-  stipes_m2 <- (1 - zero_inflation) * exp(b_stipes + grid$e_density[i])
-  grid$plot_biomass[i] <- stipes_m2 *
+  plants_m2 <- (1 - zero_inflation) * exp(b_plants + grid$e_density[i])
+  grid$plot_biomass[i] <- plants_m2 *
     mean(expected_weight(diameter, i)) * exp(sd_weight^2 / 2)
 }
 
@@ -126,69 +130,110 @@ data_size_sim_nereo <- do.call(rbind, lapply(which(grid$size), function(i) {
   data.frame(diameter_mm = round(diameter, 1), site = grid$site[i], year = grid$year[i])
 }))
 
-# 5. Drone surveys and in situ plot biomass ------------------------------------
+# 5. In situ surveys --------------------------------------------------------------
 
-# Each surveyed site-year's tide-corrected cover is the cover model solved for its
-# true plot biomass. Nereocystis surveys include plots with no delineated canopy,
-# so cover below zero is set to zero; it is capped at 0.95.
-drone <- grid[grid$drone, ]
-n <- nrow(drone)
+# A survey is a plot visit: its transects' plants and areas summed.
+transects$transect <- stats::ave(seq_len(nrow(transects)), transects$site, transects$year, FUN = seq_along)
+transects$plot_id <- "1"
+transects$visit <- 1L
+two_plots <- c("otter_cove 2020", "heron_reef 2021", "eagle_spit 2019")
+two_visits <- "cedar_bay 2021"
+tkey <- paste(transects$site, transects$year)
+transects$plot_id[tkey %in% two_plots & transects$transect > 2] <- "2"
+transects$visit[tkey %in% two_visits & transects$transect > 2] <- 2L
+# One transect with no plants becomes a survey of its own plot, an empty survey.
+empty <- which(transects$plants == 0 & !tkey %in% c(two_plots, two_visits))[1]
+transects$plot_id[empty] <- "3"
+
+survey_id <- paste(transects$site, transects$year, transects$plot_id, transects$visit)
+first <- !duplicated(survey_id)
+survey <- transects[first, c("site", "year", "plot_id", "visit")]
+survey$plants <- as.vector(tapply(transects$plants, survey_id, sum)[survey_id[first]])
+survey$survey_area_m2 <- as.vector(tapply(transects$area_m2, survey_id, sum)[survey_id[first]])
+survey$date <- as.Date(sprintf(
+  "%s-08-%02d",
+  survey$year,
+  10L + match(survey$site, sites) + 10L * (survey$visit - 1L)
+))
+
+# Drone cover on the surveys of drone site-years: the cover model solved for the
+# true plot biomass, with plot-to-plot variation. Cover below zero is set to
+# zero and capped at 0.95; the empty survey's plot has no delineated canopy.
+i_grid <- match(paste(survey$site, survey$year), key)
+drone <- grid$drone[i_grid]
+n <- nrow(survey)
 plot_area_m2 <- round(stats::runif(n, 180, 280), 1)
 tide_height_m <- sample(seq(0, 1.6, by = 0.05), n, replace = TRUE)
-cover <- (drone$plot_biomass - b_cover_floor) / (b_canopy * exp(drone$e_cover))
+cover <- (grid$plot_biomass[i_grid] - b_cover_floor) /
+  (b_canopy * exp(grid$e_cover[i_grid])) * exp(stats::rnorm(n, 0, 0.1))
 clipped <- cover > 0.95
 cover <- pmin(pmax(cover, 0), 0.95)
-canopy_area_m2 <- round(cover * plot_area_m2 / (1 + b_tide * tide_height_m), 2)
+cover[survey$plot_id == "3"] <- 0
+canopy_area_m2 <- round(cover * plot_area_m2 * (1 - b_tide * tide_height_m), 2)
+survey$plot_area_m2 <- ifelse(drone, plot_area_m2, NA_real_)
+survey$canopy_area_m2 <- ifelse(drone, canopy_area_m2, NA_real_)
+survey$tide_height_m <- ifelse(drone, tide_height_m, NA_real_)
+survey$survey_area_m2 <- pmin(survey$survey_area_m2, ifelse(drone, plot_area_m2, Inf))
 
-# The in situ estimate and its 95% compatibility limits, lognormal around the
-# true plot biomass; the limits understate the error by the factor b_scaling.
-sd_log <- stats::runif(n, 0.3, 0.8)
-log_estimate <- log(drone$plot_biomass) + stats::rnorm(n, 0, b_scaling * sd_log)
-z <- stats::qnorm(0.975)
+data_survey_sim_nereo <- survey[c(
+  "site", "plot_id", "date", "survey_area_m2", "plants",
+  "plot_area_m2", "canopy_area_m2", "tide_height_m"
+)]
 
-data_cover_biomass_sim_nereo <- data.frame(
-  site = drone$site,
-  year = drone$year,
-  canopy_area_m2 = canopy_area_m2,
-  plot_area_m2 = plot_area_m2,
-  tide_height_m = tide_height_m
+# 6. Mapped canopy for totals ----------------------------------------------------
+
+canopy <- grid[grid$drone, c("site", "year")]
+m <- nrow(canopy)
+canopy$canopy_area_m2 <- round(stats::runif(m, 500, 12000))
+canopy$tide_height_m <- sample(seq(0, 1.6, by = 0.05), m, replace = TRUE)
+canopy$site_area_m2 <- round(canopy$canopy_area_m2 * stats::runif(m, 1.5, 3))
+canopy$region <- factor(
+  ifelse(match(canopy$site, sites) <= 5, "north", "south"),
+  levels = c("north", "south")
 )
+data_canopy_sim_nereo <- canopy
 
-data_plot_biomass_sim_nereo <- data.frame(
-  site = drone$site,
-  year = drone$year,
-  estimate = signif(exp(log_estimate), 3),
-  lower = signif(exp(log_estimate - z * sd_log), 3),
-  upper = signif(exp(log_estimate + z * sd_log), 3)
-)
+# Harvests and size measurements are dated within the peak season, with no new
+# draws: harvests a few days before the survey, sizes on the survey's plot "1" on
+# its date. The year comes from the date.
+dated <- function(data, day0) {
+  data$date <- as.Date(sprintf("%s-08-%02d", data$year, day0 + match(data$site, sites)))
+  data$year <- NULL
+  data
+}
+data_weight_sim_nereo <- dated(data_weight_sim_nereo, 5L)
+data_size_sim_nereo <- dated(data_size_sim_nereo, 10L)
+data_size_sim_nereo <- data_size_sim_nereo[c("diameter_mm", "site", "date")]
+data_size_sim_nereo$plot_id <- "1"
+data_size_sim_nereo <- data_size_sim_nereo[c("diameter_mm", "site", "plot_id", "date")]
 
-# 6. Save ----------------------------------------------------------------------
+# 7. Save ----------------------------------------------------------------------
 
 # Levels in creation order, not string order; this order carries through to fits
 # and predictions.
 as_sim <- function(data) {
   data$site <- factor(data$site, levels = sites)
-  data$year <- factor(data$year, levels = years)
+  if ("year" %in% names(data)) {
+    data$year <- factor(data$year, levels = years)
+  }
   rownames(data) <- NULL
   tibble::as_tibble(data)
 }
 data_weight_sim_nereo <- as_sim(data_weight_sim_nereo)
 data_size_sim_nereo <- as_sim(data_size_sim_nereo)
-data_density_sim_nereo <- as_sim(data_density_sim_nereo)
-data_cover_biomass_sim_nereo <- as_sim(data_cover_biomass_sim_nereo)
-data_plot_biomass_sim_nereo <- as_sim(data_plot_biomass_sim_nereo)
+data_survey_sim_nereo <- as_sim(data_survey_sim_nereo)
+data_canopy_sim_nereo <- as_sim(data_canopy_sim_nereo)
 
 message(
-  "True plot biomass (kg/m2) at density-surveyed site-years, quantiles 0, 0.25, 0.5, 0.75, 1: ",
+  "True plot biomass (kg/m2) at surveyed site-years, quantiles 0, 0.25, 0.5, 0.75, 1: ",
   paste(signif(stats::quantile(grid$plot_biomass, na.rm = TRUE), 2), collapse = ", ")
 )
 message(
-  "Drone surveys with capped cover: ", sum(clipped), " of ", n,
-  "; with no canopy: ", sum(canopy_area_m2 == 0)
+  "Surveys: ", n, "; with drone cover: ", sum(drone),
+  "; capped cover: ", sum(clipped & drone), "; no plants: ", sum(survey$plants == 0)
 )
 
 usethis::use_data(data_weight_sim_nereo, overwrite = TRUE)
 usethis::use_data(data_size_sim_nereo, overwrite = TRUE)
-usethis::use_data(data_density_sim_nereo, overwrite = TRUE)
-usethis::use_data(data_cover_biomass_sim_nereo, overwrite = TRUE)
-usethis::use_data(data_plot_biomass_sim_nereo, overwrite = TRUE)
+usethis::use_data(data_survey_sim_nereo, overwrite = TRUE)
+usethis::use_data(data_canopy_sim_nereo, overwrite = TRUE)

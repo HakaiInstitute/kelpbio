@@ -1,10 +1,10 @@
 # Builds the cached test fixtures; not run during testing. From the package
 # root, optionally naming models to rebuild only those:
-#   Rscript tests/testthat/fixtures/make-fixtures.R density wetdry
+#   Rscript tests/testthat/fixtures/make-fixtures.R size wetdry
 
 devtools::load_all(quiet = TRUE)
 
-models <- c("weight", "size", "density", "wetdry", "carbon", "cover_biomass")
+models <- c("weight", "size", "wetdry", "carbon", "cover_calibration")
 selected <- commandArgs(trailingOnly = TRUE)
 if (!length(selected)) {
   selected <- models
@@ -17,7 +17,6 @@ if (length(unknown)) {
 size_subset <- function(data) {
   d <- subset(data, site %in% levels(data$site)[1:4])
   d$site <- droplevels(factor(d$site))
-  d$year <- droplevels(factor(d$year))
   d
 }
 
@@ -29,7 +28,6 @@ if ("weight" %in% selected) {
     site %in% levels(data_weight_sim_nereo$site)[1:4]
   )
   d$site <- droplevels(factor(d$site))
-  d$year <- droplevels(factor(d$year))
 
   weight_nereo_fit <- kb_fit_weight_nereo(
     d,
@@ -50,10 +48,9 @@ if ("weight" %in% selected) {
     data_weight_sim_macro,
     site %in%
       levels(data_weight_sim_macro$site)[1:4] &
-      year %in% c("2019", "2020", "2021")
+      format(date, "%Y") %in% c("2019", "2020", "2021")
   )
   dm$site <- droplevels(factor(dm$site))
-  dm$year <- droplevels(factor(dm$year))
 
   weight_macro_fit <- kb_fit_weight_macro(
     dm,
@@ -85,46 +82,6 @@ if ("size" %in% selected) {
   saveRDS(size_nereo_fit, "tests/testthat/fixtures/size_nereo_fit.rds")
   message("Wrote tests/testthat/fixtures/size_nereo_fit.rds")
 
-  size_macro_fit <- kb_fit_size_macro(
-    size_subset(data_size_sim_macro),
-    chains = 2L,
-    niters = 300L,
-    nthin = 5L,
-    cores = 2L,
-    progress = "none",
-    seed = 42L,
-    control = list(adapt_delta = 0.999)
-  )
-  saveRDS(size_macro_fit, "tests/testthat/fixtures/size_macro_fit.rds")
-  message("Wrote tests/testthat/fixtures/size_macro_fit.rds")
-}
-
-if ("density" %in% selected) {
-  density_nereo_fit <- kb_fit_density_nereo(
-    size_subset(data_density_sim_nereo),
-    chains = 2L,
-    niters = 300L,
-    nthin = 5L,
-    cores = 2L,
-    progress = "none",
-    seed = 42L,
-    control = list(adapt_delta = 0.999)
-  )
-  saveRDS(density_nereo_fit, "tests/testthat/fixtures/density_nereo_fit.rds")
-  message("Wrote tests/testthat/fixtures/density_nereo_fit.rds")
-
-  density_macro_fit <- kb_fit_density_macro(
-    size_subset(data_density_sim_macro),
-    chains = 2L,
-    niters = 300L,
-    nthin = 5L,
-    cores = 2L,
-    progress = "none",
-    seed = 42L,
-    control = list(adapt_delta = 0.999)
-  )
-  saveRDS(density_macro_fit, "tests/testthat/fixtures/density_macro_fit.rds")
-  message("Wrote tests/testthat/fixtures/density_macro_fit.rds")
 }
 
 if ("wetdry" %in% selected) {
@@ -181,30 +138,51 @@ if ("carbon" %in% selected) {
   message("Wrote tests/testthat/fixtures/carbon_macro_fit.rds")
 }
 
-if ("cover_biomass" %in% selected) {
-  cover_biomass_nereo_fit <- kb_fit_cover_biomass_nereo(
-    size_subset(data_cover_biomass_sim_nereo),
-    size_subset(data_plot_biomass_sim_nereo),
+if ("cover_calibration" %in% selected) {
+  # Survey biomass at four sites from the bundled weight and size pre-fits.
+  survey_subset <- function(data) {
+    d <- subset(data, site %in% levels(data$site)[1:4])
+    d$site <- droplevels(factor(d$site))
+    d
+  }
+  set.seed(42)
+  biomass_nereo <- kb_predict_biomass_survey(
+    fit_weight_sim_nereo,
+    fit_size_sim_nereo,
+    survey_subset(data_survey_sim_nereo),
+    progress = "none"
+  )
+  cover_calibration_nereo_fit <- kb_fit_cover_calibration_nereo(
+    biomass_nereo,
     chains = 2L,
     niters = 300L,
     nthin = 5L,
     cores = 2L,
     progress = "none",
-    seed = 42L
+    seed = 42L,
+    control = list(adapt_delta = 0.99)
   )
-  saveRDS(cover_biomass_nereo_fit, "tests/testthat/fixtures/cover_biomass_nereo_fit.rds")
-  message("Wrote tests/testthat/fixtures/cover_biomass_nereo_fit.rds")
+  saveRDS(cover_calibration_nereo_fit, "tests/testthat/fixtures/cover_calibration_nereo_fit.rds")
+  message("Wrote tests/testthat/fixtures/cover_calibration_nereo_fit.rds")
 
-  cover_biomass_macro_fit <- kb_fit_cover_biomass_macro(
-    size_subset(data_cover_biomass_sim_macro),
-    size_subset(data_plot_biomass_sim_macro),
+  set.seed(42)
+  plants <- subset(data_plants_sim_macro, site %in% levels(data_plants_sim_macro$site)[1:4])
+  biomass_macro <- kb_predict_biomass_survey(
+    fit_weight_sim_macro,
+    plants,
+    survey_subset(data_survey_sim_macro),
+    progress = "none"
+  )
+  cover_calibration_macro_fit <- kb_fit_cover_calibration_macro(
+    biomass_macro,
     chains = 2L,
     niters = 300L,
     nthin = 5L,
     cores = 2L,
     progress = "none",
-    seed = 42L
+    seed = 42L,
+    control = list(adapt_delta = 0.99)
   )
-  saveRDS(cover_biomass_macro_fit, "tests/testthat/fixtures/cover_biomass_macro_fit.rds")
-  message("Wrote tests/testthat/fixtures/cover_biomass_macro_fit.rds")
+  saveRDS(cover_calibration_macro_fit, "tests/testthat/fixtures/cover_calibration_macro_fit.rds")
+  message("Wrote tests/testthat/fixtures/cover_calibration_macro_fit.rds")
 }
