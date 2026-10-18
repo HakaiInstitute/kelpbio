@@ -37,4 +37,7 @@ figure/
 scripts/demo-api-test2.R
 scripts/demo-api-test3.R
 scripts/demo-workflow.R
-scripts/sim-site-year-drop.R
+
+# side analyses (simulation studies) and their outputs
+scripts/sim-site-year-drop*
+scripts/sim-output/

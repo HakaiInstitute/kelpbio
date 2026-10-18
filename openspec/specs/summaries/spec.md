@@ -24,10 +24,10 @@ description, accessors, and the errors raised for unsupported objects.
 
 ### Requirement: Omitted effects are not reported
 
-An effect the fit omitted (site:year for single-year data, or the weight floor of a power-law fit) SHALL NOT appear in `tidy()`, `coef()`, `summary()`, or `kb_model_describe()`, since its draws never met the data.
+An effect the fit omitted (the weight floor of a power-law fit) SHALL NOT appear in `tidy()`, `coef()`, `summary()`, or `kb_model_describe()`, since its draws never met the data.
 
 #### Scenario: An omitted effect is absent
-- **WHEN** a fit omitted the site:year or floor term
+- **WHEN** a fit omitted the floor term
 - **THEN** its terms appear in none of `tidy()`, `summary()`, or `kb_model_describe()`, including under `include_random_effects = TRUE`
 
 ### Requirement: Convergence
@@ -131,7 +131,7 @@ A kelpbio function taking a fit (`kb_model_describe()`, `kb_stancode()`, `kb_sam
 `kb_samples()`, `as_draws()`, `nvariables()`, `variables()`, `glance()`, `kb_converged()`, and `kb_sensitivity()` SHALL cover only the effects the fit estimated. The draws of an omitted effect SHALL NOT be returned, its diagnostics SHALL NOT affect the convergence verdict, and it SHALL NOT appear in the sensitivity table.
 
 #### Scenario: An omitted effect is not in the draws
-- **WHEN** `kb_samples(fit)` or `posterior::as_draws(fit)` is called on a fit that omitted the site:year effect
+- **WHEN** `kb_samples(fit)` or `posterior::as_draws(fit)` is called on a fit that omitted the weight floor
 - **THEN** the returned draws do not include that effect
 
 #### Scenario: An omitted effect does not affect convergence
@@ -139,7 +139,7 @@ A kelpbio function taking a fit (`kb_model_describe()`, `kb_stancode()`, `kb_sam
 - **THEN** `kb_converged()` is unaffected
 
 #### Scenario: An omitted effect has no sensitivity row
-- **WHEN** `kb_sensitivity(fit)` is called on a fit that omitted the floor or site:year effect
+- **WHEN** `kb_sensitivity(fit)` is called on a fit that omitted the floor effect
 - **THEN** the table has no row for that effect or its prior
 
 ### Requirement: Prior sensitivity
