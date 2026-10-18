@@ -44,39 +44,6 @@
 }
 
 #' @export
-.obs_family.kb_fit_size_macro <- function(fit, grid) {
-  theta <- .draw_vec(fit, "dispersion")
-  list(
-    family = "gamma_pois_zt",
-    response = function(data) data$fronds,
-    pars = function(mu_d, d) list(lambda = exp(mu_d), theta = theta[d])
-  )
-}
-
-#' @export
-.obs_family.kb_fit_density_nereo <- function(fit, grid) {
-  theta <- .draw_vec(fit, "dispersion")
-  zi <- stats::plogis(.draw_vec(fit, "logit_zero_inflation"))
-  list(
-    family = "gamma_pois_zi",
-    response = function(data) data$stipes,
-    pars = function(mu_d, d) {
-      list(lambda = exp(mu_d), theta = theta[d], prob = zi[d])
-    }
-  )
-}
-
-#' @export
-.obs_family.kb_fit_density_macro <- function(fit, grid) {
-  theta <- .draw_vec(fit, "dispersion")
-  list(
-    family = "gamma_pois",
-    response = function(data) data$plants,
-    pars = function(mu_d, d) list(lambda = exp(mu_d), theta = theta[d])
-  )
-}
-
-#' @export
 .obs_family.kb_fit_wetdry <- function(fit, grid) {
   .obs_family_beta_mean(fit, function(data) data$dry_mass_g / data$wet_mass_g)
 }
@@ -99,18 +66,38 @@
   )
 }
 
-# Each row's log-scale SD comes from its in situ limits, so replicates at new
-# data need the limits too.
+# Each survey's SD adds its biomass SD (from plant weight) to the residual. At
+# new data without it, replicates carry the residual alone.
 #' @export
-.obs_family.kb_fit_cover_biomass <- function(fit, grid) {
-  .chk_biomass_limits(grid, x_name = "`new_data`")
-  scaling <- .draw_vec(fit, "error_scaling")
-  sd_log <- cover_log_sd(grid$lower, grid$upper, fit$meta$conf_level)
+.obs_family.kb_fit_cover_calibration <- function(fit, grid) {
+  sd_residual <- .draw_vec(fit, "sd_residual")
+  cv_residual <- .draw_vec(fit, "cv_residual")
+  biomass_sd <- survey_biomass_sd(grid)
   list(
-    family = "lnorm",
-    response = function(data) data$estimate,
-    pars = function(mu_d, d) list(meanlog = mu_d, sdlog = scaling[d] * sd_log)
+    family = "censored_normal",
+    response = function(data) data$biomass_kg_m2,
+    pars = function(mu_d, d) {
+      mu <- exp(mu_d)
+      list(
+        mean = mu,
+        sd = sqrt(sd_residual[d]^2 + (cv_residual[d] * mu)^2 + biomass_sd^2)
+      )
+    }
   )
+}
+
+# The SD of each row's survey biomass: the stored SD of a fitted survey, the
+# SD of a column of draws, or 0 when `grid` has neither.
+survey_biomass_sd <- function(grid) {
+  if ("biomass_sd_kg_m2" %in% names(grid)) {
+    return(as.numeric(grid$biomass_sd_kg_m2))
+  }
+  if (posterior::is_rvar(grid[["biomass_kg_m2"]])) {
+    draws <- posterior::draws_of(grid$biomass_kg_m2)
+    dim(draws) <- c(nrow(draws), nrow(grid))
+    return(apply(draws, 2L, stats::sd))
+  }
+  rep(0, nrow(grid))
 }
 
 # Evaluates the "log_lik", "res", or "ran" function at every draw of `mu`
@@ -142,20 +129,10 @@
       res = res_weibull,
       ran = ran_weibull
     ),
-    gamma_pois = list(
-      log_lik = extras::log_lik_gamma_pois,
-      res = extras::res_gamma_pois,
-      ran = extras::ran_gamma_pois
-    ),
-    gamma_pois_zi = list(
-      log_lik = extras::log_lik_gamma_pois_zi,
-      res = extras::res_gamma_pois_zi,
-      ran = extras::ran_gamma_pois_zi
-    ),
-    gamma_pois_zt = list(
-      log_lik = log_lik_gamma_pois_zt,
-      res = res_gamma_pois_zt,
-      ran = ran_gamma_pois_zt
+    censored_normal = list(
+      log_lik = log_lik_censored_normal,
+      res = res_censored_normal,
+      ran = ran_censored_normal
     ),
     beta = list(
       log_lik = extras::log_lik_beta,

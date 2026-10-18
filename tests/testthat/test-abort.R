@@ -39,8 +39,7 @@ test_that("every internal generic has a default, and only display ones are total
       ".linpred",
       ".log_prior_density",
       ".model_spec",
-      ".obs_family",
-      ".plant_sizes"
+      ".obs_family"
     )
   )
 

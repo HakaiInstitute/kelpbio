@@ -17,7 +17,7 @@ test_that("log_prior sums the priors of the fitted terms per draw", {
 })
 
 test_that("log_prior evaluates a lognormal prior on the parameter itself", {
-  fit <- cover_biomass_nereo_fit
+  fit <- cover_calibration_nereo_fit
   slope_only <- fit
   slope_only$meta$terms$fixed <- "cover_slope"
   x <- draws_of_term(fit, "cover_slope")
@@ -51,15 +51,12 @@ test_that("every fitted term of every model has a prior entry of its name", {
     weight_nereo_fit,
     weight_macro_fit,
     size_nereo_fit,
-    size_macro_fit,
-    density_nereo_fit,
-    density_macro_fit,
     wetdry_nereo_fit,
     wetdry_macro_fit,
     carbon_nereo_fit,
     carbon_macro_fit,
-    cover_biomass_nereo_fit,
-    cover_biomass_macro_fit
+    cover_calibration_nereo_fit,
+    cover_calibration_macro_fit
   )
   for (fit in fits) {
     expect_true(all(fit$meta$terms$fixed %in% names(fit$meta$priors)))

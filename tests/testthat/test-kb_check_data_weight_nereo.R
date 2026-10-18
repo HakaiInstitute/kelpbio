@@ -3,18 +3,18 @@ test_that("valid weight data passes invisibly", {
     diameter_mm = c(20, 35),
     weight_kg = c(0.5, 2),
     site = factor(c("a", "b")),
-    year = factor(c("2020", "2021"))
+    date = as.Date(c("2020-08-01", "2021-08-01"))
   )
   expect_silent(kb_check_data_weight_nereo(data))
   expect_identical(kb_check_data_weight_nereo(data), data)
 })
 
-test_that("character site/year is accepted", {
+test_that("character site is accepted", {
   data <- data.frame(
     diameter_mm = 20,
     weight_kg = 0.5,
     site = "a",
-    year = "2020",
+    date = as.Date("2020-08-01"),
     stringsAsFactors = FALSE
   )
   expect_silent(kb_check_data_weight_nereo(data))
@@ -25,7 +25,7 @@ test_that("unsuffixed column names error naming the suffixed column", {
     diameter = 20,
     weight = 0.5,
     site = factor("a"),
-    year = factor("2020")
+    date = as.Date("2020-08-01")
   )
   expect_error(kb_check_data_weight_nereo(data), "diameter_mm")
 })
@@ -35,10 +35,10 @@ test_that("missing, mistyped, and impossible values error", {
     diameter_mm = 20,
     weight_kg = 0.5,
     site = factor("a"),
-    year = factor("2020")
+    date = as.Date("2020-08-01")
   )
   expect_snapshot(
-    kb_check_data_weight_nereo(good[c("weight_kg", "site", "year")]),
+    kb_check_data_weight_nereo(good[c("weight_kg", "site", "date")]),
     error = TRUE
   )
   bad_type <- good
@@ -71,4 +71,11 @@ test_that("data in the wrong unit warn but still pass", {
 
 test_that("x_name must be a string", {
   expect_error(kb_check_data_weight_nereo(data.frame(), x_name = 1), "x_name")
+})
+
+test_that("a date given as text or a contradicting year errors", {
+  good <- data_weight_sim_nereo[1:2, ]
+  expect_error(kb_check_data_weight_nereo(transform(good, date = as.character(date))), "Date")
+  expect_error(kb_check_data_weight_nereo(transform(good, year = "1999")), "year")
+  expect_silent(kb_check_data_weight_nereo(transform(good, year = format(date, "%Y"))))
 })

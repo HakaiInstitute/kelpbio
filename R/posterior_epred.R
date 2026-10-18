@@ -8,13 +8,10 @@
 #' - *Nereocystis* weight: the lognormal mean.
 #' - *Macrocystis* weight: the Gamma mean.
 #' - *Nereocystis* size: the Weibull mean.
-#' - *Macrocystis* size: the mean of the zero-truncated negative binomial.
-#' - Density: the expected count on the row's `area_m2` (1 m² when absent),
-#'   including the zero inflation for *Nereocystis*.
 #' - Wet/dry: the mean dry:wet ratio.
 #' - Carbon: the mean carbon fraction.
-#' - Cover biomass: the wet biomass per m², without the estimation error of the
-#'   in situ estimate.
+#' - Cover calibration: `mu`, the mean wet biomass per m² of the Normal before
+#'   censoring at zero.
 #'
 #' For draws that include observation noise, use [posterior_predict()].
 #'
@@ -24,9 +21,7 @@
 #'
 #' @inheritParams params
 #' @param new_data A data frame with the fit's predictor column (and optional
-#'   `site` and `year` columns; for a density fit, an optional
-#'   `area_m2` column giving each transect's area, 1 m² when absent), or
-#'   `NULL` for the observed data.
+#'   `site` and `year` columns), or `NULL` for the observed data.
 #'
 #' @returns A draws-by-observations (`D x N`) matrix.
 #' @family fit methods

@@ -52,7 +52,7 @@ test_that("residuals rejects a non-fit and extra args", {
   )
 })
 
-test_that("size residuals are deviance residuals from the size likelihoods", {
+test_that("size residuals are Weibull deviance residuals", {
   shape <- draw_vec(size_nereo_fit, "shape")
   y <- size_nereo_fit$data$diameter_mm
   expected <- median_residual(size_nereo_fit, function(mu, d) {
@@ -60,33 +60,6 @@ test_that("size residuals are deviance residuals from the size likelihoods", {
   })
   expect_equal(residuals(size_nereo_fit), expected, tolerance = 1e-10)
 
-  theta <- draw_vec(size_macro_fit, "dispersion")
-  y <- size_macro_fit$data$fronds
-  expected <- median_residual(size_macro_fit, function(mu, d) {
-    res_gamma_pois_zt(y, exp(mu), theta[d])
-  })
-  r <- residuals(size_macro_fit)
-  expect_true(all(is.finite(r)))
-  expect_equal(r, expected, tolerance = 1e-10)
-})
-
-test_that("density residuals are deviance residuals from the count likelihoods", {
-  theta <- draw_vec(density_nereo_fit, "dispersion")
-  zi <- stats::plogis(draw_vec(density_nereo_fit, "logit_zero_inflation"))
-  y <- density_nereo_fit$data$stipes
-  expected <- median_residual(density_nereo_fit, function(mu, d) {
-    extras::res_gamma_pois_zi(y, exp(mu), theta[d], prob = zi[d])
-  })
-  expect_equal(residuals(density_nereo_fit), expected, tolerance = 1e-10)
-
-  theta <- draw_vec(density_macro_fit, "dispersion")
-  y <- density_macro_fit$data$plants
-  expected <- median_residual(density_macro_fit, function(mu, d) {
-    extras::res_gamma_pois(y, exp(mu), theta[d])
-  })
-  r <- residuals(density_macro_fit)
-  expect_true(all(is.finite(r)))
-  expect_equal(r, expected, tolerance = 1e-10)
 })
 
 test_that("wet/dry residuals are Beta deviance residuals of the ratio", {
@@ -111,8 +84,8 @@ test_that("carbon residuals are finite Beta deviance residuals", {
   }
 })
 
-test_that("cover residuals are the log-scale residuals over the scaled in situ SD", {
-  for (fit in list(cover_biomass_nereo_fit, cover_biomass_macro_fit)) {
+test_that("cover residuals are finite censored Normal deviance residuals", {
+  for (fit in list(cover_calibration_nereo_fit, cover_calibration_macro_fit)) {
     r <- residuals(fit)
     expect_length(r, nobs(fit))
     expect_true(all(is.finite(r)))

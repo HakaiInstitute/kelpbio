@@ -56,7 +56,7 @@ warn_implausible_units <- function(data, x_name) {
   limits <- list(
     diameter_mm = c(10, 200),
     weight_kg = c(-Inf, 100),
-    area_m2 = c(1, 5000),
+    survey_area_m2 = c(1, 5000),
     plot_area_m2 = c(1, 1e6),
     site_area_m2 = c(10, 1e9),
     tide_height_m = c(-1, 5),
@@ -82,6 +82,36 @@ warn_implausible_units <- function(data, x_name) {
     }
   }
   invisible(data)
+}
+
+# Searching beyond the plot polygon is possible, but swapped area columns are
+# the likelier cause.
+warn_survey_area <- function(data, x_name) {
+  if (!all(c("survey_area_m2", "plot_area_m2") %in% names(data))) {
+    return(invisible(data))
+  }
+  n <- sum(data$survey_area_m2 > data$plot_area_m2, na.rm = TRUE)
+  if (n > 0L) {
+    cli::cli_warn(c(
+      "{n} survey{?s} in {x_name} {cli::qty(n)}{?has a/have} {.field survey_area_m2} above {?its/their} {.field plot_area_m2}.",
+      i = "{.field survey_area_m2} is the area searched and {.field plot_area_m2} the plot polygon; check that they are not swapped."
+    ))
+  }
+  invisible(data)
+}
+
+# Two rows for one site-year in a `sum_by` group are two totals over the same
+# mapped canopy, so their sum double counts. `id` gives each row's group.
+warn_overlapping_canopy <- function(grid, id) {
+  key <- site_year_key(grid$site, grid$year)
+  repeated <- unique(key[duplicated(paste(id, key))])
+  if (length(repeated)) {
+    cli::cli_warn(c(
+      "Some {.arg sum_by} groups hold more than one row for a site-year, so their totals overlap.",
+      i = "Repeated: {.val {repeated}}."
+    ))
+  }
+  invisible(NULL)
 }
 
 # Warn when values lie below half the fitted minimum or above twice the fitted

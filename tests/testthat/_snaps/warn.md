@@ -47,11 +47,11 @@
 ---
 
     Code
-      warn_implausible_units(data.frame(area_m2 = c(4e+05, 2e+05)), "`d`")
+      warn_implausible_units(data.frame(survey_area_m2 = c(4e+05, 2e+05)), "`d`")
     Condition
       Warning:
-      Column `area_m2` of `d` has median 3e+05, which is unusually large for square metres.
-      i Check that area_m2 is in square metres.
+      Column `survey_area_m2` of `d` has median 3e+05, which is unusually large for square metres.
+      i Check that survey_area_m2 is in square metres.
 
 ---
 
@@ -87,4 +87,22 @@
     Condition
       Warning:
       1 value of fronds lies far outside the fitted range (1 to 20).
+
+# a searched area above the plot area warns
+
+    Code
+      warn_survey_area(d, "`d`")
+    Condition
+      Warning:
+      1 survey in `d` has a survey_area_m2 above its plot_area_m2.
+      i survey_area_m2 is the area searched and plot_area_m2 the plot polygon; check that they are not swapped.
+
+# a sum_by group holding one site-year twice warns
+
+    Code
+      warn_overlapping_canopy(grid, c(1L, 1L))
+    Condition
+      Warning:
+      Some `sum_by` groups hold more than one row for a site-year, so their totals overlap.
+      i Repeated: "a:2020".
 

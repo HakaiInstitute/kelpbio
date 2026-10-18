@@ -68,8 +68,8 @@
 #'   kb_plot_predictions(log_axis = "xy")
 #'
 #' # Cover curve on log-log axes, over positive cover values:
-#' cover_fit <- fit_cover_biomass_sim_nereo
-#' kb_predict_cover_biomass(
+#' cover_fit <- fit_cover_calibration_sim_nereo
+#' kb_predict_cover_calibration(
 #'   cover_fit,
 #'   kb_new_data(cover_fit, cover = 10^seq(-3, 0, length.out = 30))
 #' ) |>
@@ -135,8 +135,10 @@ kb_plot_predictions <- function(
     "pointrange"
   }
 
+  # The draws column of a derived verb is not plotted.
+  draws <- vapply(predictions, posterior::is_rvar, logical(1))
   gg <- ggplot2::ggplot(
-    predictions,
+    tibble::as_tibble(predictions)[!draws],
     ggplot2::aes(x = .data[[x]], y = .data$estimate)
   )
   if (style == "ribbon") {
@@ -200,8 +202,8 @@ base_axis_label <- function(name) {
     diameter_mm = "Sub-bulb diameter (mm)",
     fronds = "Fronds",
     weight_kg = "Wet weight (kg)",
-    stipes_m2 = "Stipe density (stipes/m\u00b2)",
-    plants_m2 = "Plant density (plants/m\u00b2)",
+    dry_weight_kg = "Dry weight (kg)",
+    carbon_weight_g = "Carbon weight (g C)",
     biomass_kg_m2 = "Wet biomass (kg/m\u00b2)",
     dry_biomass_kg_m2 = "Dry biomass (kg/m\u00b2)",
     carbon_biomass_g_m2 = "Carbon biomass (g C/m\u00b2)",

@@ -35,10 +35,10 @@ test_that("nereo posterior_epred is the lognormal mean, above the median", {
 
 test_that("rows naming one new site share its sampled effect", {
   withr::local_seed(1)
-  y <- density_nereo_fit$meta$year_levels[1]
+  y <- size_nereo_fit$meta$year_levels[1]
   p <- posterior_epred(
-    density_nereo_fit,
-    data.frame(site = c("new", "new", "other"), year = y, area_m2 = 10),
+    size_nereo_fit,
+    data.frame(site = c("new", "new", "other"), year = y),
     new_levels = "sample"
   )
   expect_identical(p[, 1], p[, 2])
@@ -51,18 +51,6 @@ test_that("the default new_levels is average, so a new site needs no seed", {
     posterior_epred(weight_nereo_fit, nd),
     posterior_epred(weight_nereo_fit, nd, new_levels = "average")
   )
-})
-
-test_that("density draws scale with area_m2, which defaults to one m2", {
-  for (fit in list(density_nereo_fit, density_macro_fit)) {
-    nd <- data.frame(site = fitted_sites(fit), year = "2019", area_m2 = c(10, 20))
-    ep <- posterior_epred(fit, nd)
-    expect_equal(ep[, 2], 2 * ep[, 1])
-    expect_equal(
-      posterior_epred(fit, nd[1, c("site", "year")]),
-      posterior_epred(fit, transform(nd[1, ], area_m2 = 1))
-    )
-  }
 })
 
 test_that("errors name posterior_epred()", {

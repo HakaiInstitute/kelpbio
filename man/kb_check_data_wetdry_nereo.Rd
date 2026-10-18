@@ -38,12 +38,12 @@ kb_check_data_wetdry_nereo(data)
 Other data checks:
 \code{\link[=kb_check_data_carbon_macro]{kb_check_data_carbon_macro()}},
 \code{\link[=kb_check_data_carbon_nereo]{kb_check_data_carbon_nereo()}},
-\code{\link[=kb_check_data_cover_biomass_macro]{kb_check_data_cover_biomass_macro()}},
-\code{\link[=kb_check_data_cover_biomass_nereo]{kb_check_data_cover_biomass_nereo()}},
-\code{\link[=kb_check_data_density_macro]{kb_check_data_density_macro()}},
-\code{\link[=kb_check_data_density_nereo]{kb_check_data_density_nereo()}},
-\code{\link[=kb_check_data_size_macro]{kb_check_data_size_macro()}},
+\code{\link[=kb_check_data_cover_calibration_macro]{kb_check_data_cover_calibration_macro()}},
+\code{\link[=kb_check_data_cover_calibration_nereo]{kb_check_data_cover_calibration_nereo()}},
+\code{\link[=kb_check_data_plants_macro]{kb_check_data_plants_macro()}},
+\code{\link[=kb_check_data_plants_nereo]{kb_check_data_plants_nereo()}},
 \code{\link[=kb_check_data_size_nereo]{kb_check_data_size_nereo()}},
+\code{\link[=kb_check_data_survey]{kb_check_data_survey()}},
 \code{\link[=kb_check_data_weight_macro]{kb_check_data_weight_macro()}},
 \code{\link[=kb_check_data_weight_nereo]{kb_check_data_weight_nereo()}},
 \code{\link[=kb_check_data_wetdry_macro]{kb_check_data_wetdry_macro()}}

@@ -13,11 +13,3 @@ test_that("print.kb_predictions shows the metadata header", {
   expect_output(print(p), "by: site")
 })
 
-test_that("kb_predictions records the interval level", {
-  p <- kb_predict_weight(
-    weight_nereo_fit,
-    kb_new_data(weight_nereo_fit, by = "site"),
-    conf_level = 0.9
-  )
-  expect_identical(attr(p, "kb_conf_level"), 0.9)
-})

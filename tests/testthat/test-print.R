@@ -18,7 +18,6 @@ test_that(".fmt_perc rounds for display and names an unknown rate", {
 
 test_that("print.kb_fit shows the size headers without a predictor line", {
   expect_snapshot(print(size_nereo_fit))
-  expect_snapshot(print(size_macro_fit))
 })
 
 test_that("print.kb_fit shows the wet/dry header without predictor or group lines", {
@@ -29,11 +28,7 @@ test_that("print.kb_fit shows the carbon header", {
   expect_snapshot(print(carbon_nereo_fit))
 })
 
-test_that("print.kb_fit shows the cover biomass header without a predictor line", {
-  expect_snapshot(print(cover_biomass_nereo_fit))
+test_that("print.kb_fit shows the cover calibration header without a predictor line", {
+  expect_snapshot(print(cover_calibration_nereo_fit))
 })
 
-test_that("print.kb_fit shows the density headers without a predictor line", {
-  expect_snapshot(print(density_nereo_fit))
-  expect_snapshot(print(density_macro_fit))
-})

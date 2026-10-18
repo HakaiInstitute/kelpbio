@@ -7,10 +7,10 @@
 \format{
 A data frame with columns:
 \describe{
-\item{fronds}{Frond count, a positive whole number.}
+\item{fronds}{Fronds reaching 1 m above the holdfast, a positive whole number.}
 \item{weight_kg}{Wet weight (kg), a positive number.}
 \item{site}{Survey site, a factor (10 levels).}
-\item{year}{Survey year, a factor (4 levels).}
+\item{date}{Date of the harvest, a \code{Date} (2019 to 2022).}
 }
 }
 \usage{
@@ -18,25 +18,23 @@ data_weight_sim_macro
 }
 \description{
 A small simulated dataset of frond count and wet weight, one row per
-harvested plant, for runnable examples. One of five simulated \emph{Macrocystis}
+harvested plant, for runnable examples. One of four simulated \emph{Macrocystis}
 datasets with shared sites and years, so their fits can be combined into
-plot biomass (see \code{\link[=kb_predict_plot_biomass]{kb_predict_plot_biomass()}}). Some site-years have no
+survey biomass (see \code{\link[=kb_predict_biomass_survey]{kb_predict_biomass_survey()}}). Some site-years have no
 weight data.
 }
 \seealso{
 \link{fit_weight_sim_macro} for a fit to this dataset.
 
 Other example datasets:
+\code{\link{data_canopy_sim_macro}},
+\code{\link{data_canopy_sim_nereo}},
 \code{\link{data_carbon_sim_macro}},
 \code{\link{data_carbon_sim_nereo}},
-\code{\link{data_cover_biomass_sim_macro}},
-\code{\link{data_cover_biomass_sim_nereo}},
-\code{\link{data_density_sim_macro}},
-\code{\link{data_density_sim_nereo}},
-\code{\link{data_plot_biomass_sim_macro}},
-\code{\link{data_plot_biomass_sim_nereo}},
-\code{\link{data_size_sim_macro}},
+\code{\link{data_plants_sim_macro}},
 \code{\link{data_size_sim_nereo}},
+\code{\link{data_survey_sim_macro}},
+\code{\link{data_survey_sim_nereo}},
 \code{\link{data_weight_sim_nereo}},
 \code{\link{data_wetdry_sim_macro}},
 \code{\link{data_wetdry_sim_nereo}}

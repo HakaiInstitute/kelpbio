@@ -24,15 +24,13 @@ tissue sample, for runnable examples.
 \link{fit_carbon_sim_nereo} for a fit to this dataset.
 
 Other example datasets:
+\code{\link{data_canopy_sim_macro}},
+\code{\link{data_canopy_sim_nereo}},
 \code{\link{data_carbon_sim_macro}},
-\code{\link{data_cover_biomass_sim_macro}},
-\code{\link{data_cover_biomass_sim_nereo}},
-\code{\link{data_density_sim_macro}},
-\code{\link{data_density_sim_nereo}},
-\code{\link{data_plot_biomass_sim_macro}},
-\code{\link{data_plot_biomass_sim_nereo}},
-\code{\link{data_size_sim_macro}},
+\code{\link{data_plants_sim_macro}},
 \code{\link{data_size_sim_nereo}},
+\code{\link{data_survey_sim_macro}},
+\code{\link{data_survey_sim_nereo}},
 \code{\link{data_weight_sim_macro}},
 \code{\link{data_weight_sim_nereo}},
 \code{\link{data_wetdry_sim_macro}},

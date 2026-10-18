@@ -74,33 +74,25 @@ test_that(".vld_frond_reaches_1m rejects plants with no frond at 1 m", {
   expect_false(.vld_frond_reaches_1m(c(0, 5)))
 })
 
-test_that(".vld_kb_fit with class kb_fit_density recognises a density fit", {
-  expect_true(.vld_kb_fit(density_nereo_fit, "kb_fit_density"))
-  expect_true(.vld_kb_fit(density_macro_fit, "kb_fit_density"))
-  expect_false(.vld_kb_fit(size_nereo_fit, "kb_fit_density"))
-  expect_false(.vld_kb_fit(1, "kb_fit_density"))
+test_that(".vld_kb_fit with class kb_fit_cover_calibration recognises a calibration fit", {
+  expect_true(.vld_kb_fit(cover_calibration_nereo_fit, "kb_fit_cover_calibration"))
+  expect_true(.vld_kb_fit(cover_calibration_macro_fit, "kb_fit_cover_calibration"))
+  expect_false(.vld_kb_fit(size_nereo_fit, "kb_fit_cover_calibration"))
+  expect_false(.vld_kb_fit(1, "kb_fit_cover_calibration"))
 })
 
 test_that(".vld_kb_fit_grouped recognises the models with grouping factors", {
   expect_true(.vld_kb_fit_grouped(weight_nereo_fit))
-  expect_true(.vld_kb_fit_grouped(size_macro_fit))
-  expect_true(.vld_kb_fit_grouped(density_nereo_fit))
+  expect_true(.vld_kb_fit_grouped(size_nereo_fit))
+  expect_true(.vld_kb_fit_grouped(cover_calibration_nereo_fit))
   expect_false(.vld_kb_fit_grouped(wetdry_nereo_fit))
   expect_false(.vld_kb_fit_grouped(carbon_nereo_fit))
   expect_false(.vld_kb_fit_grouped(1))
 })
 
-test_that(".vld_new_data_density requires a data frame with any area positive", {
-  expect_true(.vld_new_data_density(data.frame(area_m2 = c(20, 40))))
-  expect_true(.vld_new_data_density(data.frame(site = "a")))
-  expect_false(.vld_new_data_density(data.frame(area_m2 = 0)))
-  expect_false(.vld_new_data_density(data.frame(area_m2 = NA_real_)))
-  expect_false(.vld_new_data_density(list(area_m2 = 20)))
-})
-
 test_that(".vld_kb_fit with class kb_fit_wetdry recognises a wet/dry fit", {
   expect_true(.vld_kb_fit(wetdry_nereo_fit, "kb_fit_wetdry"))
-  expect_false(.vld_kb_fit(density_nereo_fit, "kb_fit_wetdry"))
+  expect_false(.vld_kb_fit(size_nereo_fit, "kb_fit_wetdry"))
   expect_false(.vld_kb_fit(1, "kb_fit_wetdry"))
 })
 
@@ -111,15 +103,15 @@ test_that(".vld_kb_fit with class kb_fit_carbon recognises a carbon fit", {
 
 test_that(".vld_same_species and .vld_same_ndraws compare fits", {
   expect_true(.vld_same_species(list(weight_nereo_fit, size_nereo_fit)))
-  expect_false(.vld_same_species(list(weight_nereo_fit, size_macro_fit)))
+  expect_false(.vld_same_species(list(weight_nereo_fit, weight_macro_fit)))
   expect_true(.vld_same_ndraws(list(weight_nereo_fit, size_nereo_fit)))
   expect_false(.vld_same_ndraws(list(weight_nereo_fit, fit_size_sim_nereo)))
 })
 
 
-test_that(".vld_kb_fit with class kb_fit_cover_biomass recognises a cover biomass fit", {
-  expect_true(.vld_kb_fit(cover_biomass_nereo_fit, "kb_fit_cover_biomass"))
-  expect_false(.vld_kb_fit(carbon_nereo_fit, "kb_fit_cover_biomass"))
+test_that(".vld_kb_fit with class kb_fit_cover_calibration recognises a cover calibration fit", {
+  expect_true(.vld_kb_fit(cover_calibration_nereo_fit, "kb_fit_cover_calibration"))
+  expect_false(.vld_kb_fit(carbon_nereo_fit, "kb_fit_cover_calibration"))
 })
 
 test_that(".vld_cover_survey accepts zero canopy within the plot", {
@@ -130,41 +122,6 @@ test_that(".vld_cover_survey accepts zero canopy within the plot", {
   expect_false(.vld_cover_survey(transform(good, tide_height_m = NA)))
   expect_false(.vld_cover_survey(transform(good, tide_height_m = -Inf)))
   expect_false(.vld_cover_survey(good[c("canopy_area_m2", "plot_area_m2")]))
-})
-
-test_that(".vld_biomass_limits and .vld_biomass_estimate need bracketing limits", {
-  good <- data.frame(estimate = 2, lower = 1, upper = 4)
-  expect_true(.vld_biomass_limits(good))
-  expect_true(.vld_biomass_estimate(good))
-  expect_false(.vld_biomass_limits(transform(good, upper = 1)))
-  expect_false(.vld_biomass_estimate(transform(good, estimate = 5)))
-  expect_false(.vld_biomass_estimate(transform(good, estimate = 0.5)))
-  expect_false(.vld_biomass_limits(good["estimate"]))
-})
-
-test_that(".vld_plot_biomass needs one valid row per site-year", {
-  good <- data.frame(
-    site = c("a", "b"),
-    year = "2020",
-    estimate = 2,
-    lower = 1,
-    upper = 4
-  )
-  expect_true(.vld_plot_biomass(good))
-  expect_false(.vld_plot_biomass(rbind(good, good[1, ])))
-  expect_false(.vld_plot_biomass(transform(good, year = 2020)))
-  expect_false(.vld_plot_biomass(good[c("site", "estimate", "lower", "upper")]))
-  expect_false(.vld_plot_biomass(transform(good, lower = 3)))
-})
-
-test_that(".vld_biomass_response accepts wet biomass or an unlabelled frame", {
-  good <- data.frame(site = "a", year = "2020", estimate = 2, lower = 1, upper = 4)
-  wet <- new_kb_predictions(good, NULL, c("site", "year"), "biomass_kg_m2")
-  dry <- new_kb_predictions(good, NULL, c("site", "year"), "dry_biomass_kg_m2")
-  expect_true(.vld_biomass_response(good))
-  expect_true(.vld_biomass_response(wet))
-  expect_false(.vld_biomass_response(dry))
-  expect_false(.vld_plot_biomass(dry))
 })
 
 test_that(".vld_site_surveys needs canopy, tide, site, and year, and a large enough site", {
@@ -257,4 +214,28 @@ test_that(".vld_new_data_groups rejects NA in any site or year column", {
   expect_true(.vld_new_data_groups(data.frame(site = "a", year = 2020)))
   expect_false(.vld_new_data_groups(data.frame(site = NA, year = "2020")))
   expect_false(.vld_new_data_groups(data.frame(year = NA_real_)))
+})
+
+test_that("the survey validators recognise valid survey and plant tables", {
+  s <- data.frame(
+    site = c("a", "a"), plot_id = c("1", "2"), date = as.Date("2021-08-01"),
+    plot_area_m2 = c(200, NA), canopy_area_m2 = c(50, NA), tide_height_m = c(0.5, NA)
+  )
+  expect_true(.vld_date(s$date))
+  expect_false(.vld_date("2021-08-01"))
+  expect_false(.vld_date(as.Date(NA)))
+  expect_true(.vld_date_year(s))
+  expect_true(.vld_date_year(transform(s, year = 2021)))
+  expect_false(.vld_date_year(transform(s, year = 2020)))
+  expect_true(.vld_unique_surveys(s))
+  expect_false(.vld_unique_surveys(transform(s, plot_id = "1")))
+  expect_true(.vld_drone_columns(s))
+  expect_true(.vld_drone_columns(s["site"]))
+  expect_false(.vld_drone_columns(transform(s, tide_height_m = NA)[-3]))
+  expect_false(.vld_drone_columns(transform(s, canopy_area_m2 = c(300, NA))))
+  expect_true(.vld_partial(c(TRUE, FALSE)))
+  expect_false(.vld_partial(c(TRUE, NA)))
+  p <- data.frame(site = "a", plot_id = "1", date = as.Date("2021-08-01"))
+  expect_true(.vld_plants_join(p, s))
+  expect_false(.vld_plants_join(transform(p, plot_id = "9"), s))
 })

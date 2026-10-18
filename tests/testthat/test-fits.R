@@ -16,68 +16,32 @@ test_that("fit_carbon_sim_nereo is a kb_fit_carbon the accessors operate on", {
   expect_s3_class(kb_predict_carbon(fit_carbon_sim_nereo), "kb_predictions")
 })
 
-test_that("fit_cover_biomass_sim_macro is a kb_fit_cover_biomass the accessors operate on", {
-  expect_s3_class(fit_cover_biomass_sim_macro, "kb_fit_cover_biomass_macro")
-  expect_s3_class(fit_cover_biomass_sim_macro, "kb_fit_cover_biomass")
-  expect_identical(fit_cover_biomass_sim_macro$meta$species, "macrocystis")
-  expect_true(nobs(fit_cover_biomass_sim_macro) > 0L)
-  expect_s3_class(tidy(fit_cover_biomass_sim_macro), "tbl_df")
+test_that("fit_cover_calibration_sim_macro is a kb_fit_cover_calibration the accessors operate on", {
+  expect_s3_class(fit_cover_calibration_sim_macro, "kb_fit_cover_calibration_macro")
+  expect_s3_class(fit_cover_calibration_sim_macro, "kb_fit_cover_calibration")
+  expect_identical(fit_cover_calibration_sim_macro$meta$species, "macrocystis")
+  expect_true(nobs(fit_cover_calibration_sim_macro) > 0L)
+  expect_s3_class(tidy(fit_cover_calibration_sim_macro), "tbl_df")
   expect_s3_class(
-    kb_predict_cover_biomass(
-      fit_cover_biomass_sim_macro,
-      kb_new_data(fit_cover_biomass_sim_macro, by = "site")
+    kb_predict_cover_calibration(
+      fit_cover_calibration_sim_macro,
+      kb_new_data(fit_cover_calibration_sim_macro, by = "site")
     ),
     "kb_predictions"
   )
 })
 
-test_that("fit_cover_biomass_sim_nereo is a kb_fit_cover_biomass the accessors operate on", {
-  expect_s3_class(fit_cover_biomass_sim_nereo, "kb_fit_cover_biomass_nereo")
-  expect_s3_class(fit_cover_biomass_sim_nereo, "kb_fit_cover_biomass")
-  expect_identical(fit_cover_biomass_sim_nereo$meta$species, "nereocystis")
-  expect_true(nobs(fit_cover_biomass_sim_nereo) > 0L)
-  expect_s3_class(tidy(fit_cover_biomass_sim_nereo), "tbl_df")
+test_that("fit_cover_calibration_sim_nereo is a kb_fit_cover_calibration the accessors operate on", {
+  expect_s3_class(fit_cover_calibration_sim_nereo, "kb_fit_cover_calibration_nereo")
+  expect_s3_class(fit_cover_calibration_sim_nereo, "kb_fit_cover_calibration")
+  expect_identical(fit_cover_calibration_sim_nereo$meta$species, "nereocystis")
+  expect_true(nobs(fit_cover_calibration_sim_nereo) > 0L)
+  expect_s3_class(tidy(fit_cover_calibration_sim_nereo), "tbl_df")
   expect_s3_class(
-    kb_predict_cover_biomass(
-      fit_cover_biomass_sim_nereo,
-      kb_new_data(fit_cover_biomass_sim_nereo, by = "site")
+    kb_predict_cover_calibration(
+      fit_cover_calibration_sim_nereo,
+      kb_new_data(fit_cover_calibration_sim_nereo, by = "site")
     ),
-    "kb_predictions"
-  )
-})
-
-test_that("fit_density_sim_macro is a kb_fit_density the accessors operate on", {
-  expect_s3_class(fit_density_sim_macro, "kb_fit_density_macro")
-  expect_s3_class(fit_density_sim_macro, "kb_fit_density")
-  expect_identical(fit_density_sim_macro$meta$species, "macrocystis")
-  expect_true(nobs(fit_density_sim_macro) > 0L)
-  expect_s3_class(tidy(fit_density_sim_macro), "tbl_df")
-  expect_s3_class(
-    kb_predict_density(fit_density_sim_macro, kb_new_data(fit_density_sim_macro, by = "site")),
-    "kb_predictions"
-  )
-})
-
-test_that("fit_density_sim_nereo is a kb_fit_density the accessors operate on", {
-  expect_s3_class(fit_density_sim_nereo, "kb_fit_density_nereo")
-  expect_s3_class(fit_density_sim_nereo, "kb_fit_density")
-  expect_identical(fit_density_sim_nereo$meta$species, "nereocystis")
-  expect_true(nobs(fit_density_sim_nereo) > 0L)
-  expect_s3_class(tidy(fit_density_sim_nereo), "tbl_df")
-  expect_s3_class(
-    kb_predict_density(fit_density_sim_nereo, kb_new_data(fit_density_sim_nereo, by = "site")),
-    "kb_predictions"
-  )
-})
-
-test_that("fit_size_sim_macro is a kb_fit_size the accessors operate on", {
-  expect_s3_class(fit_size_sim_macro, "kb_fit_size_macro")
-  expect_s3_class(fit_size_sim_macro, "kb_fit_size")
-  expect_identical(fit_size_sim_macro$meta$species, "macrocystis")
-  expect_true(nobs(fit_size_sim_macro) > 0L)
-  expect_s3_class(tidy(fit_size_sim_macro), "tbl_df")
-  expect_s3_class(
-    kb_predict_size(fit_size_sim_macro, kb_new_data(fit_size_sim_macro, by = "site")),
     "kb_predictions"
   )
 })

@@ -92,3 +92,38 @@
 # nocov start
 params <- function(...) NULL
 # nocov end
+
+#' Parameter Descriptions for the Derived Verbs
+#'
+#' Parameter descriptions shared by [kb_predict_mean_weight()],
+#' [kb_predict_biomass_survey()], and [kb_predict_biomass_canopy()].
+#'
+#' @param weight A `kb_fit_weight` object.
+#' @param wetdry A `kb_fit_wetdry` object, required for dry and carbon biomass,
+#'   or `NULL`.
+#' @param carbon A `kb_fit_carbon` object, required for carbon biomass, or
+#'   `NULL`.
+#' @param n_plants A whole number of sizes averaged per draw to compute the
+#'   mean plant weight; larger values are more precise and slower.
+#' @param progress A string, one of `"bar"` (the default, a console progress
+#'   bar) or `"none"` (silent).
+#' @param new_levels A string giving how uncertainty is shown for a site or
+#'   year not in the fit. Sites and years in the fit always use their own
+#'   estimates. One of:
+#'   - `"sample"` (the default): a new effect for each new site or year,
+#'     drawn from the estimated variation among sites or among years and shared
+#'     by every row naming it. The estimate is about the same, but the interval
+#'     also includes that variation. Use it for particular site-years the model
+#'     has no data on. The interval varies slightly between calls; use
+#'     `set.seed()` to reproduce it.
+#'   - `"average"`: the typical site or year. The interval covers uncertainty
+#'     in the typical value only. Use it to describe an average site or year.
+#' @param sum_by A character vector naming character or factor columns to sum
+#'   within, `character(0)` to sum all rows, or `NULL` (the default) for one row
+#'   per input row. Sums are taken on each draw; per area, the summed biomass is
+#'   divided by the summed area.
+#' @keywords internal
+#' @usage NULL
+# nocov start
+derived_params <- function(...) NULL
+# nocov end

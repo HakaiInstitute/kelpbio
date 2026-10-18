@@ -104,7 +104,7 @@
     Condition
       Error:
       ! `wetdry_nereo_fit` is a <kb_fit_wetdry_nereo> object, whose model has no grouping factors.
-      i Grids are built for weight, size, density, and cover biomass fits.
+      i Grids are built for weight, size, and cover calibration fits.
 
 # .chk_grid_dots accepts the predictor and grouping values and rejects others
 
@@ -166,18 +166,10 @@
       Error:
       ! `year` must be a character, factor, or numeric vector.
 
-# .chk_new_data_density errors name the area column
-
-    Code
-      .chk_new_data_density(data.frame(area_m2 = -1))
-    Condition
-      Error in `.chk_positive_measure()`:
-      ! Column `area_m2` of `data.frame(area_m2 = -1)` must be greater than 0.
-
 # .chk_same_species and .chk_same_ndraws name the fits
 
     Code
-      .chk_same_species(list(weight = weight_nereo_fit, size = size_macro_fit))
+      .chk_same_species(list(weight = weight_nereo_fit, size = weight_macro_fit))
     Condition
       Error:
       ! The fits must be of one species.
@@ -208,24 +200,6 @@
       Error in `.chk_cover_survey()`:
       ! Column `canopy_area_m2` of bad must not exceed plot_area_m2.
       i The canopy is the area delineated within the plot.
-
-# .chk_biomass_limits and .chk_biomass_estimate name the offending limit
-
-    Code
-      .chk_biomass_limits(good["estimate"])
-    Condition
-      Error in `.chk_biomass_limits()`:
-      ! good["estimate"] must have lower and upper columns.
-      i They are the compatibility limits of the in situ biomass estimate, which set its precision.
-
-# .chk_biomass_response names the recorded response
-
-    Code
-      .chk_biomass_response(carbon)
-    Condition
-      Error:
-      ! carbon must be wet biomass (biomass_kg_m2), not carbon_biomass_g_m2.
-      i Predict it with `kb_predict_plot_biomass(measure = "wet")`.
 
 # .chk_site_surveys errors name the survey column
 

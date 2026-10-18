@@ -3,15 +3,12 @@ all_fits <- function() {
     weight_nereo = weight_nereo_fit,
     weight_macro = weight_macro_fit,
     size_nereo = size_nereo_fit,
-    size_macro = size_macro_fit,
-    density_nereo = density_nereo_fit,
-    density_macro = density_macro_fit,
     wetdry_nereo = wetdry_nereo_fit,
     wetdry_macro = wetdry_macro_fit,
     carbon_nereo = carbon_nereo_fit,
     carbon_macro = carbon_macro_fit,
-    cover_biomass_nereo = cover_biomass_nereo_fit,
-    cover_biomass_macro = cover_biomass_macro_fit
+    cover_calibration_nereo = cover_calibration_nereo_fit,
+    cover_calibration_macro = cover_calibration_macro_fit
   )
 }
 

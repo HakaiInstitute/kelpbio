@@ -59,6 +59,7 @@ kb_fit_weight_macro <- function(
     progress = progress,
     progress_dir = progress_dir
   )
+  data <- with_year(data)
   notify_site_year(site_year_aliasing(data))
 
   priors <- resolve_priors(priors, kb_priors_weight_macro())
@@ -90,8 +91,6 @@ kb_fit_weight_macro <- function(
     priors = priors,
     model = "weight",
     species = "macrocystis",
-    # Weight is measured per plant, not per unit of survey effort.
-    offset = NULL,
     terms = parameters,
     prior_only = prior_only,
     nthin = as.integer(nthin),

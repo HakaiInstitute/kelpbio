@@ -4,15 +4,12 @@ test_that("kb_sensitivity returns one row per paired parameter for every model",
     weight_nereo_fit,
     weight_macro_fit,
     size_nereo_fit,
-    size_macro_fit,
-    density_nereo_fit,
-    density_macro_fit,
     wetdry_nereo_fit,
     wetdry_macro_fit,
     carbon_nereo_fit,
     carbon_macro_fit,
-    cover_biomass_nereo_fit,
-    cover_biomass_macro_fit
+    cover_calibration_nereo_fit,
+    cover_calibration_macro_fit
   )
   for (fit in fits) {
     out <- kb_sensitivity(fit)

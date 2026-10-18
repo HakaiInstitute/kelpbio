@@ -74,6 +74,7 @@ kb_fit_weight_nereo <- function(
     progress = progress,
     progress_dir = progress_dir
   )
+  data <- with_year(data)
   notify_site_year(site_year_aliasing(data))
 
   priors <- resolve_priors(priors, kb_priors_weight_nereo())
@@ -116,8 +117,6 @@ kb_fit_weight_nereo <- function(
     priors = priors,
     model = "weight",
     species = "nereocystis",
-    # Weight is measured per plant, not per unit of survey effort.
-    offset = NULL,
     terms = parameters,
     prior_only = prior_only,
     nthin = as.integer(nthin),

@@ -111,11 +111,8 @@ tidy(fit)
 Other fit functions:
 \code{\link[=kb_fit_carbon_macro]{kb_fit_carbon_macro()}},
 \code{\link[=kb_fit_carbon_nereo]{kb_fit_carbon_nereo()}},
-\code{\link[=kb_fit_cover_biomass_macro]{kb_fit_cover_biomass_macro()}},
-\code{\link[=kb_fit_cover_biomass_nereo]{kb_fit_cover_biomass_nereo()}},
-\code{\link[=kb_fit_density_macro]{kb_fit_density_macro()}},
-\code{\link[=kb_fit_density_nereo]{kb_fit_density_nereo()}},
-\code{\link[=kb_fit_size_macro]{kb_fit_size_macro()}},
+\code{\link[=kb_fit_cover_calibration_macro]{kb_fit_cover_calibration_macro()}},
+\code{\link[=kb_fit_cover_calibration_nereo]{kb_fit_cover_calibration_nereo()}},
 \code{\link[=kb_fit_size_nereo]{kb_fit_size_nereo()}},
 \code{\link[=kb_fit_weight_nereo]{kb_fit_weight_nereo()}},
 \code{\link[=kb_fit_wetdry_macro]{kb_fit_wetdry_macro()}},

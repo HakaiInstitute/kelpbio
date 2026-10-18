@@ -1,5 +1,3 @@
-# `response` differs from the fit's response only for a rate (density per m^2
-# rather than a transect count).
 summarise_predictions <- function(
   fit,
   grid,
@@ -8,8 +6,7 @@ summarise_predictions <- function(
   conf_level,
   estimate,
   sig_fig,
-  curve = FALSE,
-  response = fit$meta$response
+  curve = FALSE
 ) {
   summarise_draws_rows(
     grid,
@@ -20,11 +17,13 @@ summarise_predictions <- function(
     sig_fig = sig_fig,
     curve = curve,
     predictor = fit$meta[["predictor"]],
-    response = response
+    response = fit$meta$response
   )
 }
 
-# Takes response-scale draws, so the biomass composition can call it directly.
+# Takes response-scale draws, so the derived verbs can call it directly. With
+# `keep_draws`, the draws travel as an rvar column named for the response, so
+# one derived verb's output can feed another.
 summarise_draws_rows <- function(
   grid,
   draws,
@@ -34,11 +33,15 @@ summarise_draws_rows <- function(
   sig_fig,
   curve,
   predictor,
-  response
+  response,
+  keep_draws = FALSE
 ) {
   a <- (1 - conf_level) / 2
 
   out <- grid
+  if (keep_draws) {
+    out[[response]] <- draws
+  }
   # As in tidy(), `estimate` takes a draws vector, so apply it per column.
   out$estimate <- signif(
     apply(posterior::draws_of(draws), 2L, estimate),
@@ -52,7 +55,6 @@ summarise_draws_rows <- function(
     predictor = predictor,
     group_vars = group_vars,
     response = response,
-    curve = curve,
-    conf_level = conf_level
+    curve = curve
   )
 }

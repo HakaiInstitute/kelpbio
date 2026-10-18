@@ -71,25 +71,6 @@ test_that("size posterior_predict draws plant sizes from the size likelihoods", 
   expect_equal(dim(pp), c(posterior::ndraws(size_nereo_fit$draws), 2L))
   expect_true(all(pp > 0))
 
-  nd <- data.frame(site = fitted_sites(size_macro_fit, 2))
-  pm <- posterior_predict(size_macro_fit, new_data = nd, new_levels = "average")
-  expect_true(all(pm >= 1))
-  expect_true(all(pm == round(pm)))
-  ep <- posterior_epred(size_macro_fit, new_data = nd, new_levels = "average")
-  expect_equal(colMeans(pm), colMeans(ep), tolerance = 0.15)
-})
-
-test_that("density posterior_predict draws transect counts", {
-  withr::local_seed(1)
-  for (fit in list(density_nereo_fit, density_macro_fit)) {
-    nd <- data.frame(site = fitted_sites(fit, 2), area_m2 = c(40, 80))
-    pp <- posterior_predict(fit, new_data = nd, new_levels = "average")
-    expect_equal(dim(pp), c(posterior::ndraws(fit$draws), 2L))
-    expect_true(all(pp >= 0))
-    expect_true(all(pp == round(pp)))
-    ep <- posterior_epred(fit, new_data = nd, new_levels = "average")
-    expect_equal(colMeans(pp), colMeans(ep), tolerance = 0.15)
-  }
 })
 
 test_that("wet/dry posterior_predict draws ratios between 0 and 1", {
@@ -111,32 +92,25 @@ test_that("carbon posterior_predict draws fractions between 0 and 1", {
   expect_equal(mean(pp), mean(posterior_epred(carbon_nereo_fit)), tolerance = 0.02)
 })
 
-test_that("cover posterior_predict draws positive estimates with the in situ precision", {
+test_that("cover posterior_predict draws biomass at the observed surveys", {
   withr::local_seed(1)
-  pp <- posterior_predict(cover_biomass_nereo_fit)
+  pp <- posterior_predict(cover_calibration_nereo_fit)
   expect_equal(
     dim(pp),
-    c(posterior::ndraws(cover_biomass_nereo_fit$draws), nobs(cover_biomass_nereo_fit))
+    c(posterior::ndraws(cover_calibration_nereo_fit$draws), nobs(cover_calibration_nereo_fit))
   )
-  expect_true(all(pp > 0))
-  # Lognormal around the calibration mean, so the log median is log(epred).
-  ep <- posterior_epred(cover_biomass_nereo_fit)
-  expect_equal(
-    stats::median(log(pp) - log(ep)),
-    0,
-    tolerance = 0.05
-  )
+  expect_true(all(pp >= 0))
 })
 
-test_that("cover posterior_predict needs the in situ limits in new_data", {
-  nd <- data.frame(canopy_area_m2 = 40, plot_area_m2 = 200, tide_height_m = 0.5)
-  expect_snapshot(posterior_predict(cover_biomass_nereo_fit, nd), error = TRUE)
+test_that("cover posterior_predict draws biomass of at least zero", {
+  nd <- data.frame(canopy_area_m2 = c(0, 40), plot_area_m2 = 200, tide_height_m = 0.5)
   withr::local_seed(1)
-  pp <- posterior_predict(
-    cover_biomass_nereo_fit,
-    transform(nd, lower = c(0.5), upper = c(2))
-  )
-  expect_equal(ncol(pp), 1L)
+  pp <- posterior_predict(cover_calibration_nereo_fit, nd)
+  expect_equal(ncol(pp), 2L)
+  expect_true(all(pp >= 0))
+  withr::local_seed(1)
+  wider <- posterior_predict(cover_calibration_nereo_fit, transform(nd, biomass_sd_kg_m2 = 5))
+  expect_gt(stats::sd(wider[, 2]), stats::sd(pp[, 2]))
 })
 
 test_that("errors name posterior_predict()", {

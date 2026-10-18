@@ -156,9 +156,9 @@ test_that(".chk_new_data errors name the invalid predictor column", {
   expect_snapshot(error = TRUE, .chk_new_data_weight_macro(data.frame(fronds = 2.5)))
 })
 
-test_that(".chk_kb_fit with class kb_fit_density passes a density fit through and errors otherwise", {
-  expect_invisible(.chk_kb_fit(density_nereo_fit, "kb_fit_density"))
-  expect_error(.chk_kb_fit(weight_nereo_fit, "kb_fit_density"), "must be a <kb_fit_density> object")
+test_that(".chk_kb_fit with class kb_fit_size passes a size fit through and errors otherwise", {
+  expect_invisible(.chk_kb_fit(size_nereo_fit, "kb_fit_size"))
+  expect_error(.chk_kb_fit(weight_nereo_fit, "kb_fit_size"), "must be a <kb_fit_size> object")
 })
 
 test_that(".chk_kb_fit_grouped errors for a non-fit and a model without groups", {
@@ -207,13 +207,6 @@ test_that(".chk_grid_dots accepts the predictor and grouping values and rejects 
     "missing"
   )
 })
-test_that(".chk_new_data_density errors name the area column", {
-  expect_invisible(.chk_new_data_density(data.frame(area_m2 = 40)))
-  expect_invisible(.chk_new_data_density(data.frame(site = "a")))
-  expect_snapshot(error = TRUE, .chk_new_data_density(data.frame(area_m2 = -1)))
-  expect_error(.chk_new_data_density(1), "must be a data frame")
-})
-
 test_that(".chk_kb_fit with class kb_fit_wetdry passes a wet/dry fit through and errors otherwise", {
   expect_invisible(.chk_kb_fit(wetdry_macro_fit, "kb_fit_wetdry"))
   expect_error(.chk_kb_fit(weight_nereo_fit, "kb_fit_wetdry"), "must be a <kb_fit_wetdry> object")
@@ -227,7 +220,7 @@ test_that(".chk_kb_fit with class kb_fit_carbon passes a carbon fit through and 
 test_that(".chk_same_species and .chk_same_ndraws name the fits", {
   expect_invisible(.chk_same_species(list(weight = weight_nereo_fit, size = size_nereo_fit)))
   expect_snapshot(
-    .chk_same_species(list(weight = weight_nereo_fit, size = size_macro_fit)),
+    .chk_same_species(list(weight = weight_nereo_fit, size = weight_macro_fit)),
     error = TRUE
   )
   expect_invisible(.chk_same_ndraws(list(weight = weight_nereo_fit, size = size_nereo_fit)))
@@ -238,9 +231,9 @@ test_that(".chk_same_species and .chk_same_ndraws name the fits", {
 })
 
 
-test_that(".chk_kb_fit with class kb_fit_cover_biomass passes a cover biomass fit through and errors otherwise", {
-  expect_invisible(.chk_kb_fit(cover_biomass_macro_fit, "kb_fit_cover_biomass"))
-  expect_error(.chk_kb_fit(carbon_macro_fit, "kb_fit_cover_biomass"), "must be a <kb_fit_cover_biomass> object")
+test_that(".chk_kb_fit with class kb_fit_cover_calibration passes a cover calibration fit through and errors otherwise", {
+  expect_invisible(.chk_kb_fit(cover_calibration_macro_fit, "kb_fit_cover_calibration"))
+  expect_error(.chk_kb_fit(carbon_macro_fit, "kb_fit_cover_calibration"), "must be a <kb_fit_cover_calibration> object")
 })
 
 test_that(".chk_cover_survey errors name the survey column", {
@@ -254,24 +247,6 @@ test_that(".chk_cover_survey errors name the survey column", {
   bad$tide_height_m <- "low"
   expect_error(.chk_cover_survey(bad), "tide_height_m")
   expect_error(.chk_cover_survey(1), "must be a data frame")
-})
-
-test_that(".chk_biomass_limits and .chk_biomass_estimate name the offending limit", {
-  good <- data.frame(estimate = 2, lower = 1, upper = 4)
-  expect_invisible(.chk_biomass_limits(good))
-  expect_invisible(.chk_biomass_estimate(good))
-  expect_snapshot(error = TRUE, .chk_biomass_limits(good["estimate"]))
-  expect_error(.chk_biomass_limits(transform(good, lower = 0)), "lower")
-  expect_error(.chk_biomass_limits(transform(good, upper = 1)), "less than")
-  expect_error(.chk_biomass_estimate(transform(good, estimate = 0.5)), "estimate")
-  expect_error(.chk_biomass_estimate(transform(good, estimate = 5)), "upper")
-})
-
-test_that(".chk_biomass_response names the recorded response", {
-  good <- data.frame(site = "a", year = "2020", estimate = 2, lower = 1, upper = 4)
-  expect_invisible(.chk_biomass_response(good))
-  carbon <- new_kb_predictions(good, NULL, c("site", "year"), "carbon_biomass_g_m2")
-  expect_snapshot(error = TRUE, .chk_biomass_response(carbon))
 })
 
 test_that(".chk_site_surveys errors name the survey column", {

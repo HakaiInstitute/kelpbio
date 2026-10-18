@@ -65,8 +65,6 @@ fit_beta_model <- function(
     priors = priors,
     model = model,
     species = species,
-    # A proportion within one sample, so there is no survey effort.
-    offset = NULL,
     terms = parameters,
     prior_only = prior_only,
     nthin = as.integer(nthin),

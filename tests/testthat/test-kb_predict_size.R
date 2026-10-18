@@ -1,5 +1,5 @@
 test_that("kb_predict_size at the observed data matches augment", {
-  for (fit in list(size_nereo_fit, size_macro_fit)) {
+  for (fit in list(size_nereo_fit)) {
     p <- kb_predict_size(fit)
     expect_s3_class(p, "kb_predictions")
     expect_equal(nrow(p), nobs(fit))
@@ -33,7 +33,7 @@ test_that("a kb_new_data() grid gives one row per group", {
   expect_null(attr(site, "kb_predictor", exact = TRUE))
   expect_identical(attr(site, "kb_response"), "diameter_mm")
 
-  pop <- kb_predict_size(size_macro_fit, kb_new_data(size_macro_fit))
+  pop <- kb_predict_size(size_nereo_fit, kb_new_data(size_nereo_fit))
   expect_equal(nrow(pop), 1L)
 })
 
@@ -56,11 +56,6 @@ test_that("a new site is sampled or averaged, and a representative site stands i
     new_levels = "average"
   )
   expect_equal(rep$estimate, known$estimate)
-})
-
-test_that("the macro estimate is the truncated mean, at least 1", {
-  p <- kb_predict_size(size_macro_fit, data.frame(site = fitted_sites(size_macro_fit)))
-  expect_gte(p$lower, 1)
 })
 
 test_that("kb_predict_size errors on a weight fit and a non-fit", {

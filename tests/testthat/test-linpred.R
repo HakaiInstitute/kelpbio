@@ -73,9 +73,9 @@ test_that("sample widens vs average when a factor is omitted (nereo)", {
 })
 
 test_that("a fit without a site:year effect adds none to the group effects", {
-  # Cover biomass fits site and year effects only; under "sample" a fitted site
+  # Cover calibration fits site and year effects only; under "sample" a fitted site
   # and year draw nothing new, so the effects are exactly site plus year.
-  fit <- cover_biomass_macro_fit
+  fit <- cover_calibration_macro_fit
   s <- fit$meta$site_levels[1]
   y <- fit$meta$year_levels[1]
   grid <- data.frame(site = s, year = y)

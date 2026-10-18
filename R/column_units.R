@@ -3,7 +3,7 @@
 column_units <- c(
   diameter_mm = "millimetres",
   weight_kg = "kilograms",
-  area_m2 = "square metres",
+  survey_area_m2 = "square metres",
   wet_mass_g = "grams",
   dry_mass_g = "grams",
   sample_mass_mg = "milligrams",
