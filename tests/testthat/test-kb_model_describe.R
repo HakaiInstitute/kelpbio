@@ -49,13 +49,6 @@ test_that("an object that is not a fit errors, attributed to the generic", {
   expect_equal(cnd$call, quote(kb_model_describe(1)))
 })
 
-test_that("the density term is left out when not fitted", {
-  off <- weight_nereo_fit
-  off$meta$density_on <- FALSE
-  out <- capture.output(kb_model_describe(off))
-  expect_false(any(grepl("density", out, ignore.case = TRUE)))
-})
-
 test_that("kb_model_describe renders the size notation blocks", {
   expect_snapshot(kb_model_describe(size_nereo_fit))
   expect_snapshot(kb_model_describe(size_macro_fit))

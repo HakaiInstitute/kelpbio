@@ -104,9 +104,7 @@ effects where it has them, and otherwise follows \code{new_levels} or
 has for the site-year, from most to least local: \code{"site-year"} (that
 site-year's own data), \code{"site, year"} (its site and its year, but not
 together), \code{"site"}, \code{"year"}, or \code{"none"}; the less local, the more the
-estimate borrows from other site-years. For a \emph{Nereocystis} weight fit with a
-density effect, each site-year uses the stipe density observed in \code{density}'s
-data.
+estimate borrows from other site-years.
 
 The fits must be of the same species and have the same number of posterior
 draws.

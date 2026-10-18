@@ -203,18 +203,6 @@ test_that("the observed-data paths reject a zero-observation fit", {
   )
 })
 
-test_that("density shifts log(alpha) by density_slope times standardised density", {
-  grid <- data.frame(diameter_mm = 40, stipes_m2 = 7)
-  off <- weight_nereo_fit
-  off$meta$density_on <- FALSE
-  e_on <- exp(as.numeric(posterior::draws_of(.linpred(weight_nereo_fit, grid, "average"))))
-  e_off <- exp(as.numeric(posterior::draws_of(.linpred(off, grid, "average"))))
-  floor <- as.numeric(posterior::draws_of(weight_nereo_fit$draws$weight_floor))
-  b_density <- as.numeric(posterior::draws_of(weight_nereo_fit$draws$density_slope))
-  z <- (7 - weight_nereo_fit$meta$density_mean) / weight_nereo_fit$meta$density_sd
-  expect_equal(log(e_on - floor) - log(e_off - floor), b_density * z)
-})
-
 test_that("new_data predictions work for a model with no continuous predictor", {
   # Guards the range check indexing the grid with NULL.
   fit <- weight_nereo_fit
@@ -223,7 +211,7 @@ test_that("new_data predictions work for a model with no continuous predictor", 
 })
 
 test_that("a power-law fit's mean is log(alpha) + diameter_power * log(x), with no floor", {
-  grid <- data.frame(diameter_mm = c(15, 40), stipes_m2 = 4)
+  grid <- data.frame(diameter_mm = c(15, 40))
   power <- weight_nereo_fit
   power$meta$form <- "power"
   lp_power <- posterior::draws_of(.linpred(power, grid, "average"))

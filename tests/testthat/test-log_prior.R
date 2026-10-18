@@ -28,15 +28,15 @@ test_that("log_prior evaluates a lognormal prior on the parameter itself", {
 
 test_that("log_prior leaves out a term the fit omitted", {
   full <- log_prior(weight_nereo_fit)
-  dropped <- omit_terms(weight_nereo_fit, "density_slope")
-  p <- weight_nereo_fit$meta$priors$density_slope
-  density_part <- stats::dnorm(
-    draws_of_term(weight_nereo_fit, "density_slope"),
+  dropped <- omit_terms(weight_nereo_fit, "weight_floor")
+  p <- weight_nereo_fit$meta$priors$weight_floor
+  floor_part <- stats::dnorm(
+    draws_of_term(weight_nereo_fit, "weight_floor"),
     p$mean,
     p$sd,
     log = TRUE
   )
-  expect_equal(log_prior(dropped), full - density_part)
+  expect_equal(log_prior(dropped), full - floor_part)
 })
 
 test_that("log_prior follows the fit's stored hyperparameters", {

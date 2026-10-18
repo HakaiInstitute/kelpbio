@@ -214,8 +214,8 @@
 # Built by data-raw/data_sim_nereo.R.
 #' Simulated Nereocystis weight data
 #'
-#' A small simulated dataset of sub-bulb diameter, wet weight, and stipe
-#' density, one row per harvested plant, for runnable examples. One of five
+#' A small simulated dataset of sub-bulb diameter and wet weight, one row per
+#' harvested plant, for runnable examples. One of five
 #' simulated *Nereocystis* datasets with shared sites and years, so their fits
 #' can be combined into plot biomass (see [kb_predict_plot_biomass()]). Some
 #' site-years have no weight data.
@@ -226,8 +226,6 @@
 #'   \item{weight_kg}{Wet weight (kg), a positive number.}
 #'   \item{site}{Survey site, a factor (10 levels).}
 #'   \item{year}{Survey year, a factor (4 levels).}
-#'   \item{stipes_m2}{Stipe density of the site-year (stipes per m²), as
-#'     observed in [data_density_sim_nereo].}
 #' }
 #' @seealso [fit_weight_sim_nereo] for a fit to this dataset.
 #' @family example datasets

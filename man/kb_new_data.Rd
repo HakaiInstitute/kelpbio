@@ -53,8 +53,8 @@ of the grid. A level not in the fit, such as a future year, is a new level,
 treated as set by \code{new_levels}.
 
 \code{by = c("site", "year")} gives only the site-years in the fitted data. The
-result is a tibble; rows can be filtered and columns added (such as
-\code{stipes_m2} for a \emph{Nereocystis} weight fit with density) before predicting.
+result is a tibble; rows can be filtered and columns added before
+predicting.
 }
 \examples{
 kb_new_data(fit_size_sim_nereo, by = "site")

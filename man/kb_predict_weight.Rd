@@ -63,10 +63,6 @@ at the observed data when \code{new_data = NULL}.
 \details{
 With \code{representative_site}, a new site also takes the named sites'
 site:year effect in a year in which they were surveyed.
-
-For a \emph{Nereocystis} fit that includes density, each row uses its \code{stipes_m2}
-value if present, otherwise the recorded density of its site-year in the
-fitted data, otherwise the fitted mean density.
 }
 \examples{
 fit <- fit_weight_sim_nereo

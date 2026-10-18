@@ -10,26 +10,23 @@
         log(weight_kg) ~ Normal(log(mu), sd_residual)
         mu = weight_floor + alpha * x^diameter_power
         log(alpha) = intercept
-                   + density_slope * density
-                   + year_effect[year]
                    + site_effect[site]
+                   + year_effect[year]
                    + site_year_effect[site, year]
         x = diameter_mm / d0,  d0 = 23.4  (geometric mean diameter)
-        density = (stipe density - 1.26) / 1.32  (standardised site-year density)
       
       Random effects
-        year_effect[year]            ~ Normal(0, sd_year)       year effect on log(alpha)
         site_effect[site]            ~ Normal(0, sd_site)       site effect on log(alpha)
+        year_effect[year]            ~ Normal(0, sd_year)       year effect on log(alpha)
         site_year_effect[site, year] ~ Normal(0, sd_site_year)  site:year effect on log(alpha)
       
       Priors
         intercept      ~ Normal(0, 2)
         diameter_power ~ Normal(2, 1) T[0, ]
         weight_floor   ~ Normal(0, 0.5) T[0, ]
-        density_slope  ~ Normal(0, 0.5)
         sd_residual    ~ Exponential(1)
-        sd_year        ~ Exponential(1)
         sd_site        ~ Exponential(1)
+        sd_year        ~ Exponential(1)
         sd_site_year   ~ Exponential(1)
 
 # kb_model_describe renders the macro notation block
@@ -38,21 +35,21 @@
       kb_model_describe(weight_macro_fit)
     Output
       Weight allometry - Macrocystis pyrifera
-      Response: wet weight; predictor: frond count
+      Response: wet weight (kg); predictor: frond count
       
       Likelihood
         weight_kg ~ Gamma(shape, shape / mu)
-        log(mu) = intercept
-                + fronds_slope * x
-                + site_effect[site]
-                + year_effect[year]
-                + site_year_effect[site, year]
-        x = log(fronds) - log(f0),  f0 = 4.61  (geometric mean frond count)
+        mu = alpha * x^fronds_slope
+        log(alpha) = intercept
+                   + site_effect[site]
+                   + year_effect[year]
+                   + site_year_effect[site, year]
+        x = fronds / f0,  f0 = 4.61  (geometric mean frond count)
       
       Random effects
-        site_effect[site]            ~ Normal(0, sd_site)       site intercept
-        year_effect[year]            ~ Normal(0, sd_year)       year intercept
-        site_year_effect[site, year] ~ Normal(0, sd_site_year)  site:year intercept
+        site_effect[site]            ~ Normal(0, sd_site)       site effect on log(alpha)
+        year_effect[year]            ~ Normal(0, sd_year)       year effect on log(alpha)
+        site_year_effect[site, year] ~ Normal(0, sd_site_year)  site:year effect on log(alpha)
       
       Priors
         intercept      ~ Normal(0, 2)
@@ -73,11 +70,9 @@
       of diameter relative to the geometric mean diameter (23.4), in which
       weight_floor is the weight as diameter approaches zero, alpha the weight
       above the floor at the reference diameter, and diameter_power the
-      allometric exponent. The log of alpha varied by year, by site, and by
-      site:year. The log of alpha also varied linearly with site-year stipe
-      density, standardised by its mean (1.26) and standard deviation (1.32).
-      Regularising priors were placed on all parameters (see the notation form
-      for the hyperparameters).
+      allometric exponent. The log of alpha varied by site, by year, and by
+      site:year. Regularising priors were placed on all parameters (see the
+      notation form for the hyperparameters).
 
 # kb_model_describe renders the size notation blocks
 
@@ -156,17 +151,17 @@
       Likelihood
         stipes ~ ZeroInflatedNegBinomial(mu, 1 / dispersion, zi)
         zi = inv_logit(logit_zero_inflation)
+        mu = area_m2 * density
         E[stipes] = (1 - zi) * mu
-        log(mu) = log(area_m2)
-                + intercept
-                + site_effect[site]
-                + year_effect[year]
-                + site_year_effect[site, year]
+        log(density) = intercept
+                     + site_effect[site]
+                     + year_effect[year]
+                     + site_year_effect[site, year]
       
       Random effects
-        site_effect[site]            ~ Normal(0, sd_site)       site effect on log(mu)
-        year_effect[year]            ~ Normal(0, sd_year)       year effect on log(mu)
-        site_year_effect[site, year] ~ Normal(0, sd_site_year)  site:year effect on log(mu)
+        site_effect[site]            ~ Normal(0, sd_site)       site effect on log(density)
+        year_effect[year]            ~ Normal(0, sd_year)       year effect on log(density)
+        site_year_effect[site, year] ~ Normal(0, sd_site_year)  site:year effect on log(density)
       
       Priors
         intercept            ~ Normal(0, 2)
@@ -182,11 +177,13 @@
       kb_model_describe(density_nereo_fit, prose = TRUE)
     Output
       The number of stipes on a transect was modelled with a zero-inflated
-      negative binomial likelihood, with the transect area as an offset. The
-      zero-inflation probability, zi, and the overdispersion were common to all
-      transects. The log stipe density on occupied transects varied by site,
-      year, and site:year. Regularising priors were placed on all parameters (see
-      the notation form for the hyperparameters).
+      negative binomial likelihood, which combines two processes: occupancy, in
+      which a transect is unoccupied (a structural zero) with a probability, zi,
+      common to all transects; and a negative binomial count on occupied
+      transects, with mean mu, the transect area times the stipe density, and an
+      overdispersion common to all transects. The log stipe density varied by
+      site, year, and site:year. Regularising priors were placed on all
+      parameters (see the notation form for the hyperparameters).
 
 ---
 
@@ -198,16 +195,16 @@
       
       Likelihood
         plants ~ NegBinomial(mu, 1 / dispersion)
-        log(mu) = log(area_m2)
-                + intercept
-                + site_effect[site]
-                + year_effect[year]
-                + site_year_effect[site, year]
+        mu = area_m2 * density
+        log(density) = intercept
+                     + site_effect[site]
+                     + year_effect[year]
+                     + site_year_effect[site, year]
       
       Random effects
-        site_effect[site]            ~ Normal(0, sd_site)       site effect on log(mu)
-        year_effect[year]            ~ Normal(0, sd_year)       year effect on log(mu)
-        site_year_effect[site, year] ~ Normal(0, sd_site_year)  site:year effect on log(mu)
+        site_effect[site]            ~ Normal(0, sd_site)       site effect on log(density)
+        year_effect[year]            ~ Normal(0, sd_year)       year effect on log(density)
+        site_year_effect[site, year] ~ Normal(0, sd_site_year)  site:year effect on log(density)
       
       Priors
         intercept      ~ Normal(0, 2)
@@ -249,7 +246,7 @@
       kb_model_describe(carbon_nereo_fit)
     Output
       Carbon fraction - Nereocystis luetkeana
-      Response: carbon_fraction = carbon_mass_ug / 1000 / sample_mass_mg, the fraction of a dry sample's mass that is carbon
+      Response: carbon_fraction, the carbon mass divided by the sample mass (carbon_mass_ug converted to mg, divided by sample_mass_mg)
       
       Likelihood
         carbon_fraction ~ Beta(mu * precision, (1 - mu) * precision)
@@ -351,25 +348,22 @@
         log(weight_kg) ~ Normal(log(mu), sd_residual)
         mu = alpha * x^diameter_power
         log(alpha) = intercept
-                   + density_slope * density
-                   + year_effect[year]
                    + site_effect[site]
+                   + year_effect[year]
                    + site_year_effect[site, year]
         x = diameter_mm / d0,  d0 = 23.4  (geometric mean diameter)
-        density = (stipe density - 1.26) / 1.32  (standardised site-year density)
       
       Random effects
-        year_effect[year]            ~ Normal(0, sd_year)       year effect on log(alpha)
         site_effect[site]            ~ Normal(0, sd_site)       site effect on log(alpha)
+        year_effect[year]            ~ Normal(0, sd_year)       year effect on log(alpha)
         site_year_effect[site, year] ~ Normal(0, sd_site_year)  site:year effect on log(alpha)
       
       Priors
         intercept      ~ Normal(0, 2)
         diameter_power ~ Normal(2, 1) T[0, ]
-        density_slope  ~ Normal(0, 0.5)
         sd_residual    ~ Exponential(1)
-        sd_year        ~ Exponential(1)
         sd_site        ~ Exponential(1)
+        sd_year        ~ Exponential(1)
         sd_site_year   ~ Exponential(1)
 
 ---
@@ -382,8 +376,6 @@
       log(mu), where mu followed a power law in diameter relative to the
       geometric mean diameter (23.4), in which alpha is the weight at the
       reference diameter and diameter_power the allometric exponent. The log of
-      alpha varied by year, by site, and by site:year. The log of alpha also
-      varied linearly with site-year stipe density, standardised by its mean
-      (1.26) and standard deviation (1.32). Regularising priors were placed on
-      all parameters (see the notation form for the hyperparameters).
+      alpha varied by site, by year, and by site:year. Regularising priors were
+      placed on all parameters (see the notation form for the hyperparameters).
 

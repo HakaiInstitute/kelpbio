@@ -1,13 +1,3 @@
-test_that(".density_on reads the recorded flag, missing as FALSE", {
-  fit <- list(meta = list(density_on = TRUE))
-  expect_true(.density_on(fit))
-  fit$meta$density_on <- FALSE
-  expect_false(.density_on(fit))
-  # Only Nereocystis weight records the flag.
-  fit$meta$density_on <- NULL
-  expect_false(.density_on(fit))
-})
-
 test_that(".floor_on is off for a power-law fit", {
   expect_true(.floor_on(list(meta = list(form = "packard_floor"))))
   expect_false(.floor_on(list(meta = list(form = "power"))))

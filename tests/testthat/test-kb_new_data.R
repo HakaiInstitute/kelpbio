@@ -89,21 +89,6 @@ test_that("a grid predictor far outside the fitted range warns at prediction", {
   expect_warning(kb_predict_weight(weight_nereo_fit, grid), "far outside")
 })
 
-test_that("site-year curves use each site-year's recorded density", {
-  curve <- kb_predict_weight(
-    weight_nereo_fit,
-    kb_new_data(weight_nereo_fit, by = c("site", "year"), diameter_mm = 30)
-  )
-  site <- fitted_sites(weight_nereo_fit)
-  row <- curve[curve$site == site & curve$year == "2019", ]
-  recorded <- weight_nereo_fit$meta$density_levels[[paste0(site, ":2019")]]
-  explicit <- kb_predict_weight(
-    weight_nereo_fit,
-    data.frame(diameter_mm = 30, site = site, year = "2019", stipes_m2 = recorded)
-  )
-  expect_equal(row$estimate, explicit$estimate)
-})
-
 test_that("grouping levels supplied in ... are crossed into the grid", {
   grid <- kb_new_data(weight_nereo_fit, by = "site", diameter_mm = 40, year = 2021)
   expect_named(grid, c("site", "year", "diameter_mm"))

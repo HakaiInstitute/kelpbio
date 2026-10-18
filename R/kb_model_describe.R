@@ -44,7 +44,6 @@ kb_model_describe <- function(fit, ..., prose = FALSE) {
 #' @export
 .model_spec.kb_fit_weight_nereo <- function(fit) {
   sy <- .site_year_on(fit)
-  dens <- .density_on(fit)
   floor <- .floor_on(fit)
   d0 <- signif(fit$meta$predictor_ref, 3)
   pri <- fit$meta$priors
@@ -66,29 +65,6 @@ kb_model_describe <- function(fit, ..., prose = FALSE) {
     "x = diameter_mm / d0,  d0 = %s  (geometric mean diameter)",
     format(d0)
   )
-  density_prose <- ""
-  if (dens) {
-    m <- format(signif(fit$meta$density_mean, 3))
-    s <- format(signif(fit$meta$density_sd, 3))
-    mean_terms <- append(mean_terms, "density_slope * density", after = 1L)
-    priors <- append(priors, list(density_slope = pri$density_slope), after = 3L)
-    centering <- paste0(
-      centering,
-      sprintf(
-        "\n  density = (stipe density - %s) / %s  (standardised site-year density)",
-        m,
-        s
-      )
-    )
-    density_prose <- sprintf(
-      paste0(
-        " The log of alpha also varied linearly with site-year stipe density, ",
-        "standardised by its mean (%s) and standard deviation (%s)."
-      ),
-      m,
-      s
-    )
-  }
   if (sy) {
     mean_terms <- c(mean_terms, "site_year_effect[site, year]")
     random <- c(
@@ -153,7 +129,6 @@ kb_model_describe <- function(fit, ..., prose = FALSE) {
       } else {
         "The log of alpha varied by site and by year."
       },
-      density_prose,
       " Regularising priors were placed on all parameters (see the notation ",
       "form for the hyperparameters)."
     )

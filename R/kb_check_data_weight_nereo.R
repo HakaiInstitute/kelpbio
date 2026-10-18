@@ -6,10 +6,6 @@
 #' Required columns: numeric `diameter_mm` (mm, > 0), numeric `weight_kg` (kg, > 0),
 #' and factor or character `site` and `year`, with no missing values.
 #'
-#' Optional column: numeric `stipes_m2`, the stipe density (stipes per m²) of the
-#' plant's site-year, `>= 0` with `NA` where not recorded. Rows from the same
-#' site-year must not have different values.
-#'
 #' @inheritParams params
 #' @param data A data frame of weight observations, one row per plant.
 #'
@@ -38,10 +34,6 @@ kb_check_data_weight_nereo <- function(
       )
       .chk_measure_columns(data, c("diameter_mm", "weight_kg"), x_name)
       .chk_group_columns(data, x_name)
-      if ("stipes_m2" %in% names(data)) {
-        .chk_density(data$stipes_m2, x_name = column_xname(x_name, "stipes_m2"))
-        .chk_density_site_year(data, x_name = x_name)
-      }
       warn_implausible_units(data, x_name)
       warn_group_names(data, x_name)
     },

@@ -27,7 +27,6 @@ test_that("kb_fit_weight returns a correctly-structured object", {
       "intercept",
       "diameter_power",
       "weight_floor",
-      "density_slope",
       "sd_site",
       "sd_year",
       "sd_site_year",
@@ -135,8 +134,6 @@ test_that("progress_dir writes an artifact that kb_progress reads as complete", 
     data_weight_sim_nereo,
     as.integer(site) <= 2 & year %in% c("2019", "2020")
   ))
-  # Without density there is no fit message for "bar" to show.
-  d$stipes_m2 <- NULL
   dir <- withr::local_tempdir()
   fit <- kb_fit_weight_nereo(
     d,
@@ -162,34 +159,6 @@ test_that("a single-year fit records no site:year terms", {
   expect_false("sd_site_year" %in% fit$meta$terms$fixed)
   expect_false("site_year_effect" %in% fit$meta$terms$random)
   expect_false(any(c("sd_site_year", "site_year_effect") %in% names(fit$draws)))
-})
-
-test_that("the fit records the density structure in meta and terms", {
-  # Every row of a recorded site-year carries its density, so the plant-weighted
-  # mean and SD are over the non-missing rows.
-  d <- weight_nereo_fit$data
-  recorded <- !is.na(d$stipes_m2)
-  expect_true(weight_nereo_fit$meta$density_on)
-  expect_equal(weight_nereo_fit$meta$density_mean, mean(d$stipes_m2[recorded]))
-  expect_equal(weight_nereo_fit$meta$density_sd, stats::sd(d$stipes_m2[recorded]))
-
-  keys <- paste(d$site, d$year, sep = ":")
-  per_site_year <- tapply(d$stipes_m2[recorded], keys[recorded], unique)
-  levels <- weight_nereo_fit$meta$density_levels
-  expect_setequal(names(levels), names(per_site_year))
-  expect_equal(unname(levels[names(per_site_year)]), as.vector(per_site_year))
-  expect_true("density_slope" %in% weight_nereo_fit$meta$terms$fixed)
-})
-
-test_that("data without density give a fit with the density term off", {
-  local_fit_stan_stub(weight_nereo_fit)
-  d <- weight_nereo_fit$data
-  d$stipes_m2 <- NULL
-  fit <- kb_fit_weight_nereo(d, progress = "none")
-  expect_false(fit$meta$density_on)
-  expect_false("density_slope" %in% fit$meta$terms$fixed)
-  expect_false("density_slope" %in% tidy(fit)$term)
-  expect_false("density_slope" %in% names(fit$draws))
 })
 
 test_that("the form defaults to packard_floor and power drops the floor", {

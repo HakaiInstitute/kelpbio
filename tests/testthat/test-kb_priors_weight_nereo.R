@@ -6,7 +6,6 @@ test_that("kb_priors_weight returns the default named prior list matching the an
       "intercept",
       "diameter_power",
       "weight_floor",
-      "density_slope",
       "sd_site",
       "sd_year",
       "sd_site_year",
@@ -16,7 +15,6 @@ test_that("kb_priors_weight returns the default named prior list matching the an
   expect_equal(p$intercept, kb_prior_normal(0, 2))
   expect_equal(p$diameter_power, kb_prior_normal(2, 1))
   expect_equal(p$weight_floor, kb_prior_normal(0, 0.5))
-  expect_equal(p$density_slope, kb_prior_normal(0, 0.5))
   expect_equal(p$sd_site, kb_prior_exponential(1))
   expect_equal(p$sd_year, kb_prior_exponential(1))
   expect_equal(p$sd_site_year, kb_prior_exponential(1))

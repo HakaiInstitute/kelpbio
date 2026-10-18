@@ -35,16 +35,6 @@
   draws <- fit$draws
   log_x <- log(grid$diameter_mm) - log(fit$meta$predictor_ref)
   log_alpha <- draws$intercept + effects
-  if (.density_on(fit)) {
-    density <- standardised_density(
-      grid,
-      TRUE,
-      fit$meta$density_mean,
-      fit$meta$density_sd,
-      fit$meta$density_levels
-    )
-    log_alpha <- log_alpha + draws$density_slope * density
-  }
   floor <- if (.floor_on(fit)) draws$weight_floor else 0
   log(floor + exp(log_alpha + draws$diameter_power * log_x))
 }
@@ -191,9 +181,6 @@ data_linpred <- function(
     predictor <- intersect(fit$meta[["predictor"]], names(fit$data))
     if (length(predictor)) {
       warn_outside_range(fit, grid[[predictor]], predictor)
-    }
-    if (.density_on(fit) && "stipes_m2" %in% names(grid)) {
-      warn_outside_range(fit, grid$stipes_m2, "stipes_m2", lower = FALSE)
     }
   }
   linpred <- .linpred(fit, grid, new_levels, representative_site)

@@ -22,28 +22,3 @@
       Error in `kb_check_data_weight_nereo()`:
       ! Column `weight_kg` of `bad_value` must be greater than 0, not -1.
 
-# an optional density column is validated
-
-    Code
-      kb_check_data_weight_nereo(bad)
-    Condition
-      Error in `kb_check_data_weight_nereo()`:
-      ! Column `stipes_m2` of `bad` must be greater than or equal to 0.
-
----
-
-    Code
-      kb_check_data_weight_nereo(bad)
-    Condition
-      Error in `kb_check_data_weight_nereo()`:
-      ! Column `stipes_m2` of `bad` must be numeric.
-
----
-
-    Code
-      kb_check_data_weight_nereo(bad)
-    Condition
-      Error in `kb_check_data_weight_nereo()`:
-      ! Column `stipes_m2` of `bad` must have one value per site-year.
-      x Conflicting values in site-year "a:2020".
-

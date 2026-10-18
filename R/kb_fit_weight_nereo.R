@@ -22,12 +22,6 @@
 #' these effects scale the size-dependent part of the weight, while
 #' `weight_floor` is common to all sites and years.
 #'
-#' When `data` has a `stipes_m2` column (stipes per m², a site-year value),
-#' `log(alpha)` also includes `density_slope` times density standardised by
-#' its mean and SD over the fitted plants. Site-years without a recorded
-#' density are assigned the mean density. The density term is omitted when
-#' fewer than two distinct site-year densities are recorded.
-#'
 #' @inheritSection params Sampling
 #' @inheritSection params Site and year interaction
 #' @inheritParams params
@@ -82,8 +76,6 @@ kb_fit_weight_nereo <- function(
   )
   site_year <- site_year_structure(data)
   notify_site_year(site_year, progress = progress)
-  density <- density_structure(data)
-  notify_density(density, progress = progress)
 
   priors <- resolve_priors(priors, kb_priors_weight_nereo())
   # Shared by the Stan fit and R-side predictions (stored in meta below).
@@ -93,7 +85,6 @@ kb_fit_weight_nereo <- function(
     data,
     priors,
     diameter_ref,
-    density = density,
     prior_only = prior_only,
     site_year_on = site_year$on,
     floor_on = form == "packard_floor"
@@ -104,8 +95,7 @@ kb_fit_weight_nereo <- function(
     GROUP_EFFECTS,
     off = c(
       site_year_off(site_year$on),
-      if (form == "power") "weight_floor",
-      if (!density$on) "density_slope"
+      if (form == "power") "weight_floor"
     )
   )
   core <- fit_stan(
@@ -138,10 +128,6 @@ kb_fit_weight_nereo <- function(
       form = form,
       predictor_ref = diameter_ref,
       site_year_on = site_year$on,
-      density_on = density$on,
-      density_mean = density$mean,
-      density_sd = density$sd,
-      density_levels = density$levels,
       # Lets the model-level prediction and plot code stay species-agnostic.
       predictor = "diameter_mm",
       response = "weight_kg"

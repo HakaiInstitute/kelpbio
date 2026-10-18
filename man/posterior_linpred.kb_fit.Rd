@@ -20,7 +20,7 @@
 or the inverse logit for wet/dry and carbon).}
 
 \item{new_data}{A data frame with the fit's predictor column (and optional
-\code{site}, \code{year}, and \code{stipes_m2} columns; for a density fit, an optional
+\code{site} and \code{year} columns; for a density fit, an optional
 \code{area_m2} column giving each transect's area, 1 m² when absent), or
 \code{NULL} for the observed data.}
 

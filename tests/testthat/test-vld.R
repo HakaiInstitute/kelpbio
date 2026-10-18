@@ -59,21 +59,6 @@ test_that(".vld_progress_dir rejects a directory that cannot be written to", {
   expect_false(.vld_progress_dir(d))
 })
 
-test_that(".vld_density accepts non-negative numbers and all-NA", {
-  expect_true(.vld_density(c(0, 2.5, NA)))
-  expect_true(.vld_density(NA))
-  expect_false(.vld_density(c(1, -1)))
-  expect_false(.vld_density("1"))
-  expect_false(.vld_density(c(1, Inf, NA)))
-})
-
-test_that(".vld_density_site_year allows one recorded value per site-year", {
-  d <- data.frame(site = c("a", "a", "b"), year = "2020", stipes_m2 = c(3, NA, 5))
-  expect_true(.vld_density_site_year(d))
-  d$stipes_m2 <- c(3, 4, 5)
-  expect_false(.vld_density_site_year(d))
-})
-
 test_that(".vld_positive_measure and .vld_frond_count check measured values", {
   expect_true(.vld_positive_measure(c(1.5, 30)))
   expect_false(.vld_positive_measure(c(1, 0)))

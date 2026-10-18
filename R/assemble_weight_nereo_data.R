@@ -11,7 +11,6 @@
 #' @param priors A list of the resolved named priors (see `resolve_priors()`).
 #' @param diameter_ref A number of the diameter reference, from
 #'   `geometric_ref()`.
-#' @param density A list from `density_structure()`.
 #'
 #' @returns A named list suitable for `rstan::sampling(stanmodels$weight_nereo, data = .)`.
 #' @noRd
@@ -19,7 +18,6 @@ assemble_weight_nereo_data <- function(
   data,
   priors,
   diameter_ref,
-  density = density_structure(data),
   prior_only = FALSE,
   site_year_on = TRUE,
   floor_on = TRUE
@@ -31,16 +29,8 @@ assemble_weight_nereo_data <- function(
       diameter_mm = as.numeric(data$diameter_mm),
       weight_kg = as.numeric(data$weight_kg),
       diameter_ref = diameter_ref,
-      density = standardised_density(
-        data,
-        density$on,
-        density$mean,
-        density$sd,
-        density$levels
-      ),
       prior_only = as.integer(prior_only),
       site_year_on = as.integer(site_year_on),
-      density_on = as.integer(density$on),
       floor_on = as.integer(floor_on)
     ),
     prior_data(priors)

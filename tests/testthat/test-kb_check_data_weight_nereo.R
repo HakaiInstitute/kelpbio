@@ -62,28 +62,6 @@ test_that("missing, mistyped, and impossible values error", {
   expect_error(kb_check_data_weight_nereo(zero_weight))
 })
 
-test_that("an optional density column is validated", {
-  data <- data.frame(
-    diameter_mm = c(20, 35, 40),
-    weight_kg = c(0.5, 2, 3),
-    site = c("a", "a", "b"),
-    year = c("2020", "2020", "2020"),
-    stipes_m2 = c(3, NA, 5)
-  )
-  expect_silent(kb_check_data_weight_nereo(data))
-  data$stipes_m2 <- NA
-  expect_silent(kb_check_data_weight_nereo(data))
-
-  bad <- data
-  bad$stipes_m2 <- c(3, -1, 5)
-  expect_snapshot(error = TRUE, kb_check_data_weight_nereo(bad))
-  bad$stipes_m2 <- c("3", "4", "5")
-  expect_snapshot(error = TRUE, kb_check_data_weight_nereo(bad))
-  # two values in one site-year
-  bad$stipes_m2 <- c(3, 4, 5)
-  expect_snapshot(error = TRUE, kb_check_data_weight_nereo(bad))
-})
-
 test_that("data in the wrong unit warn but still pass", {
   data <- data_weight_sim_nereo
   data$diameter_mm <- data$diameter_mm / 10

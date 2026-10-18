@@ -22,8 +22,8 @@
 #' treated as set by `new_levels`.
 #'
 #' `by = c("site", "year")` gives only the site-years in the fitted data. The
-#' result is a tibble; rows can be filtered and columns added (such as
-#' `stipes_m2` for a *Nereocystis* weight fit with density) before predicting.
+#' result is a tibble; rows can be filtered and columns added before
+#' predicting.
 #'
 #' @inheritParams params
 #' @param fit A `kb_fit_weight`, `kb_fit_size`, `kb_fit_density`, or

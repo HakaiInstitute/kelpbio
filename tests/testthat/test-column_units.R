@@ -4,7 +4,6 @@ test_that("column_units names the unit of each unit-bearing column", {
     c(
       "diameter_mm",
       "weight_kg",
-      "stipes_m2",
       "area_m2",
       "wet_mass_g",
       "dry_mass_g",

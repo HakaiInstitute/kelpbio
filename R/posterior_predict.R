@@ -23,7 +23,7 @@
 #'
 #' @inheritParams params
 #' @param new_data A data frame with the fit's predictor column (and optional
-#'   `site`, `year`, and `stipes_m2` columns; for a density fit, an optional
+#'   `site` and `year` columns; for a density fit, an optional
 #'   `area_m2` column giving each transect's area, 1 m² when absent;
 #'   `canopy_area_m2`, `plot_area_m2`, `tide_height_m`, `lower`, and `upper` for
 #'   a cover fit), or
