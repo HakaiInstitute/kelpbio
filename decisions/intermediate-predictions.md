@@ -138,8 +138,9 @@ site-year (`R/mock-example.R`).
 
 **Found in passing, not checked yet:**
 
-- The weight fit adds `stipes_m2` whenever a density sheet exists, even one that
-  failed its check (`R/state.R:286-288`), which would make the weight fit fail.
+- The app adds `stipes_m2` to the weight data whenever a density sheet exists
+  (`R/state.R:286-288`). The kelpbio weight model no longer reads that column, so
+  the app can stop adding it.
 - *Macrocystis* labels still say sub-bulb diameter and 50 mm (`R/data.R:509-515`);
   the app's *Macrocystis* reference is 10 fronds, the mock's 12.5.
 - Stale comments: `R/app-ui.R:1`, `decisions/webapp-decision.md:66-86`,

@@ -31,9 +31,7 @@ str(data_weight_sim_nereo)
 fit_weight_sim_nereo
 
 # --- kb_check_data_weight_nereo() ---------------------------------------------
-# Column names carry their unit: diameter_mm, weight_kg, and the optional stipe
-# density stipes_m2 (stipes per m^2), one value per site-year (NA where a
-# site-year has no density survey)
+# Column names carry their unit: diameter_mm and weight_kg
 kb_check_data_weight_nereo(data_weight_sim_nereo)
 
 bad <- data_weight_sim_nereo
@@ -55,17 +53,15 @@ try(kb_check_data_weight_nereo(bad)) # missing value
 
 # unit checks: data in the wrong unit fit without error but give wrong results,
 # so the data checks warn when a median is implausible (diameter_mm below 10
-# or above 200, weight_kg above 100, stipes_m2 above 100). The data
-# still pass.
+# or above 200, weight_kg above 100). The data still pass.
 cm <- mutate(data_weight_sim_nereo, diameter_mm = diameter_mm / 10)
 kb_check_data_weight_nereo(cm)
 grams <- mutate(data_weight_sim_macro, weight_kg = weight_kg * 1000)
 kb_check_data_weight_macro(grams)
 
 # --- kb_fit_weight_nereo() ----------------------------------------------------
-# The model: log weight ~ Normal, with year, site, site:year, and stipe density
-# effects on log(alpha). The simulated data have density recorded for every
-# site-year. form sets expected weight as a function of x = diameter_mm / d0:
+# The model: log weight ~ Normal, with year, site, and site:year effects on
+# log(alpha). form sets expected weight as a function of x = diameter_mm / d0:
 #   "packard_floor" (default): weight_floor + alpha * x^diameter_power, a power law plus a
 #     weight floor, so the log-log curve bends (recommended)
 #   "power": alpha * x^diameter_power, a straight line on log-log axes (no weight_floor)
@@ -91,7 +87,7 @@ kb_converged(fit)
 summary(fit)
 
 # full model in scientific notation, or as a methods paragraph (prose = TRUE);
-# units, truncated priors (T[0, ]), and the density standardisation are shown
+# units and truncated priors (T[0, ]) are shown
 kb_model_describe(fit)
 kb_model_describe(fit, prose = TRUE)
 
@@ -162,24 +158,6 @@ kb_predict_weight(fit, new_data = tibble(diameter_mm = 40))
 # use generic (wrapper of kb_predict_weight)
 predict(fit)
 
-# stipe density: each row's density is resolved in order: a supplied value, the
-# recorded density of a fitted site-year, otherwise the fitted mean.
-kb_predict_weight(
-  fit,
-  new_data = tibble(
-    diameter_mm = 40,
-    site = c(sites[1], sites[1], "new_reef"),
-    year = "2020",
-    stipes_m2 = c(8, NA, NA) # supplied, recorded site-year, new site (mean)
-  )
-)
-# density effect: expected weight at 40 mm across stand density
-kb_predict_weight(
-  fit,
-  new_data = tibble(diameter_mm = 40, stipes_m2 = seq(1.5, 8, by = 0.5))
-) |>
-  kb_plot_predictions(x = "stipes_m2")
-
 # unit checks at prediction (for example from a pre-fit model): values far
 # outside the fitted range warn, here diameters given in cm to a fit made in mm
 kb_predict_weight(fit, new_data = tibble(diameter_mm = c(2.5, 4)))
@@ -209,34 +187,10 @@ kb_new_data(fit, site = "new_reef", diameter_mm = 30)
 # predict at the grid: curves for the typical site and year, and by site
 kb_predict_weight(fit, kb_new_data(fit))
 kb_predict_weight(fit, kb_new_data(fit, by = "site"))
-# site-year curves use each site-year's recorded density
+# by site and year: the site:year effect of each fitted site-year
 kb_predict_weight(fit, kb_new_data(fit, by = c("site", "year"), diameter_mm = 30))
 # both species have a year main effect, so by = "year" works for nereo too
 kb_predict_weight(fit, kb_new_data(fit, by = "year", diameter_mm = 30))
-
-# the grid is an ordinary data frame: build your own, e.g. allometric curves at
-# low, mean, and high stand density (stipes per m^2) for a typical site and
-# year; density scales the size-dependent part of the weight, so the curves
-# spread with plant size
-tidyr::expand_grid(
-  diameter_mm = seq(15, 80, length.out = 40),
-  stipes_m2 = signif(c(1.5, fit$meta$density_mean, 8), 2)
-) |>
-  kb_predict_weight(fit, new_data = _) |>
-  ggplot(aes(
-    diameter_mm,
-    estimate,
-    colour = factor(stipes_m2),
-    fill = factor(stipes_m2)
-  )) +
-  geom_ribbon(aes(ymin = lower, ymax = upper), alpha = 0.15, colour = NA) +
-  geom_line() +
-  labs(
-    x = "Sub-bulb diameter (mm)",
-    y = "Wet weight (kg)",
-    colour = "Stipes per m²",
-    fill = "Stipes per m²"
-  )
 
 # --- new_levels: "average" (default) versus "sample" --------------------------
 # A site, year, or site-year the fit never saw (or a grouping column that is
@@ -349,7 +303,7 @@ kb_prior_exponential(rate = 1)
 class(kb_prior_exponential(rate = 1))
 
 # intercept, diameter_power (allometric exponent), weight_floor (weight in kg
-# at diameter -> 0), density_slope, and the SDs; diameter_power and weight_floor
+# at diameter -> 0), and the SDs; diameter_power and weight_floor
 # are truncated at zero by the model
 priors <- kb_priors_weight_nereo()
 priors$diameter_power <- kb_prior_normal(mean = 2, sd = 0.05)
@@ -489,14 +443,6 @@ bind_rows(
   geom_line() +
   scale_x_log10() +
   scale_y_log10()
-
-# --- fits without density ----------------------------------------------------
-# Without a density column the density effect is omitted, silently: the model is
-# the same allometry without density_slope.
-no_density <- select(data_weight_sim_nereo, -stipes_m2)
-fit_no_density <- kb_fit_weight_nereo(no_density, chains = 2, niters = 300)
-fit_no_density$meta$density_on # FALSE
-tidy(fit_no_density) # no density_slope
 
 # --- raw posterior draws (rstantools generics) --------------------------------
 # users may want more low-level access to the draws to do their own diagnostics/derived quants
