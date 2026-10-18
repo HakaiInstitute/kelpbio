@@ -16,7 +16,6 @@ test_that("assemble_size_macro_data maps data to the Stan data block", {
   # a Stan integer array
   expect_identical(sd$fronds, c(3L, 8L, 1L))
   expect_equal(sd$prior_only, 0L)
-  expect_equal(sd$site_year_on, 1L)
 })
 
 test_that("assemble_size_macro_data maps every prior hyperparameter to its own Stan field", {
@@ -37,12 +36,6 @@ test_that("assemble_size_macro_data maps every prior hyperparameter to its own S
 })
 
 test_that("assemble_size_macro_data encodes the flags and accepts zero-row data", {
-  off <- assemble_size_macro_data(
-    size_macro_data(),
-    kb_priors_size_macro(),
-    site_year_on = FALSE
-  )
-  expect_equal(off$site_year_on, 0L)
   sd <- assemble_size_macro_data(
     size_macro_data()[0, ],
     kb_priors_size_macro(),

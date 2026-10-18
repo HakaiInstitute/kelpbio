@@ -2,7 +2,7 @@
 //   log(weight_kg) ~ normal(log(mu), sd_residual)
 //   mu         = floor_on * weight_floor + alpha * (diameter_mm / diameter_ref)^diameter_power
 //   log(alpha) = intercept + site_effect[site] + year_effect[year]
-//                + site_year_on * site_year_effect[site, year]
+//                + site_year_effect[site, year]
 // The group effects act on alpha, so the floor is common to every site and year.
 // Normal on log weight rather than Student-t, whose lack of a finite exponential
 // moment would leave expected weight undefined.
@@ -28,7 +28,6 @@ data {
   real<lower=0> prior_sd_residual_rate;
 
   int<lower=0, upper=1> prior_only;
-  int<lower=0, upper=1> site_year_on;
   int<lower=0, upper=1> floor_on;
 }
 transformed data {
@@ -71,7 +70,7 @@ model {
   to_vector(z_site_year) ~ std_normal();
   if (prior_only == 0) {
     vector[n_obs] log_alpha = intercept + site_effect[site] + year_effect[year]
-      + site_year_on * to_vector(site_year_effect)[sy_idx];
+      + to_vector(site_year_effect)[sy_idx];
     vector[n_obs] log_mu = log(floor_on * weight_floor
       + exp(log_alpha + diameter_power * log_x));
     log_weight ~ normal(log_mu, sd_residual);

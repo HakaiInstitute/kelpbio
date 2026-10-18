@@ -21,7 +21,6 @@ test_that("assemble_weight_nereo_data maps data and priors to the Stan data bloc
   expect_equal(sd$weight_kg, c(0.5, 2, 4))
   expect_equal(sd$diameter_ref, 42)
   expect_equal(sd$prior_only, 0L)
-  expect_equal(sd$site_year_on, 1L)
   expect_equal(sd$floor_on, 1L)
 })
 
@@ -74,29 +73,6 @@ test_that("assemble_weight_nereo_data maps every prior hyperparameter to its own
   expect_equal(sd$prior_sd_year_rate, 2.2)
   expect_equal(sd$prior_sd_site_year_rate, 2.4)
   expect_equal(sd$prior_sd_residual_rate, 2.5)
-})
-
-test_that("assemble_weight_nereo_data encodes site_year_on as 0/1", {
-  data <- data.frame(
-    diameter_mm = c(20, 35, 50),
-    weight_kg = c(0.5, 2, 4),
-    site = factor(c("a", "b", "a")),
-    year = factor(c("2020", "2020", "2021"))
-  )
-  on <- assemble_weight_nereo_data(
-    data,
-    kb_priors_weight_nereo(),
-    diameter_ref = 30,
-    site_year_on = TRUE
-  )
-  off <- assemble_weight_nereo_data(
-    data,
-    kb_priors_weight_nereo(),
-    diameter_ref = 30,
-    site_year_on = FALSE
-  )
-  expect_equal(on$site_year_on, 1L)
-  expect_equal(off$site_year_on, 0L)
 })
 
 test_that("assemble_weight_nereo_data accepts zero-row data", {

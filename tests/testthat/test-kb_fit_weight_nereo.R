@@ -151,14 +151,16 @@ test_that("progress_dir writes an artifact that kb_progress reads as complete", 
   expect_identical(kb_progress(dir), 1)
 })
 
-test_that("a single-year fit records no site:year terms", {
+test_that("single-year data fit the site:year effect with an aliasing warning", {
   local_fit_stan_stub(weight_nereo_fit)
   d <- droplevels(subset(weight_nereo_fit$data, year == "2019"))
-  fit <- kb_fit_weight_nereo(d, progress = "none")
-  expect_false(fit$meta$site_year_on)
-  expect_false("sd_site_year" %in% fit$meta$terms$fixed)
-  expect_false("site_year_effect" %in% fit$meta$terms$random)
-  expect_false(any(c("sd_site_year", "site_year_effect") %in% names(fit$draws)))
+  expect_warning(
+    fit <- kb_fit_weight_nereo(d, progress = "none"),
+    "cannot be separated from the site effect"
+  )
+  expect_true(fit$meta$site_year_on)
+  expect_true("sd_site_year" %in% fit$meta$terms$fixed)
+  expect_true("site_year_effect" %in% fit$meta$terms$random)
 })
 
 test_that("the form defaults to packard_floor and power drops the floor", {

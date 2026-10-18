@@ -67,22 +67,16 @@ kb_fit_density_nereo <- function(
     progress = progress,
     progress_dir = progress_dir
   )
-  site_year <- site_year_structure(data)
-  notify_site_year(site_year, progress = progress)
+  notify_site_year(site_year_aliasing(data))
 
   priors <- resolve_priors(priors, kb_priors_density_nereo())
   stan_data <- assemble_density_nereo_data(
     data,
     priors,
-    prior_only = prior_only,
-    site_year_on = site_year$on
+    prior_only = prior_only
   )
 
-  parameters <- fit_parameters(
-    priors,
-    GROUP_EFFECTS,
-    off = site_year_off(site_year$on)
-  )
+  parameters <- fit_parameters(priors, GROUP_EFFECTS)
   core <- fit_stan(
     stanmodels$density_nereo,
     stan_data,
@@ -111,7 +105,7 @@ kb_fit_density_nereo <- function(
     prior_only = prior_only,
     nthin = as.integer(nthin),
     meta_extra = list(
-      site_year_on = site_year$on,
+      site_year_on = TRUE,
       # No predictor: density is predicted per group.
       response = "stipes"
     )

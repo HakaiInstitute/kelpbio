@@ -62,9 +62,8 @@ test_that("summary carries the run-level diagnostics, not the raw count", {
 })
 
 test_that("fit_groups describes the data, not the fitted effects", {
-  fit <- weight_nereo_fit
-  fit$meta$site_year_on <- FALSE
-  expect_named(fit_groups(fit), c("site", "year", "site:year"))
+  # Cover biomass fits no site:year effect, but its data have site-years.
+  expect_named(fit_groups(cover_biomass_macro_fit), c("site", "year", "site:year"))
 })
 
 test_that("fit_groups is empty for data with no grouping", {

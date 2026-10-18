@@ -13,38 +13,38 @@ namespace model_weight_nereo_namespace {
 using stan::model::model_base_crtp;
 using namespace stan::math;
 stan::math::profile_map profiles__;
-static constexpr std::array<const char*, 73> locations_array__ =
+static constexpr std::array<const char*, 72> locations_array__ =
   {" (found before start of program)",
-  " (in 'weight_nereo', line 42, column 2 to column 17)",
-  " (in 'weight_nereo', line 43, column 2 to column 31)",
-  " (in 'weight_nereo', line 44, column 2 to column 29)",
+  " (in 'weight_nereo', line 41, column 2 to column 17)",
+  " (in 'weight_nereo', line 42, column 2 to column 31)",
+  " (in 'weight_nereo', line 43, column 2 to column 29)",
+  " (in 'weight_nereo', line 44, column 2 to column 24)",
   " (in 'weight_nereo', line 45, column 2 to column 24)",
-  " (in 'weight_nereo', line 46, column 2 to column 24)",
-  " (in 'weight_nereo', line 47, column 2 to column 29)",
-  " (in 'weight_nereo', line 48, column 2 to column 28)",
+  " (in 'weight_nereo', line 46, column 2 to column 29)",
+  " (in 'weight_nereo', line 47, column 2 to column 28)",
+  " (in 'weight_nereo', line 48, column 2 to column 24)",
   " (in 'weight_nereo', line 49, column 2 to column 24)",
-  " (in 'weight_nereo', line 50, column 2 to column 24)",
-  " (in 'weight_nereo', line 51, column 2 to column 37)",
+  " (in 'weight_nereo', line 50, column 2 to column 37)",
+  " (in 'weight_nereo', line 53, column 2 to column 48)",
   " (in 'weight_nereo', line 54, column 2 to column 48)",
-  " (in 'weight_nereo', line 55, column 2 to column 48)",
-  " (in 'weight_nereo', line 56, column 2 to column 71)",
-  " (in 'weight_nereo', line 59, column 2 to column 63)",
-  " (in 'weight_nereo', line 61, column 2 to column 78)",
-  " (in 'weight_nereo', line 62, column 2 to column 72)",
+  " (in 'weight_nereo', line 55, column 2 to column 71)",
+  " (in 'weight_nereo', line 58, column 2 to column 63)",
+  " (in 'weight_nereo', line 60, column 2 to column 78)",
+  " (in 'weight_nereo', line 61, column 2 to column 72)",
+  " (in 'weight_nereo', line 62, column 2 to column 44)",
   " (in 'weight_nereo', line 63, column 2 to column 44)",
-  " (in 'weight_nereo', line 64, column 2 to column 44)",
-  " (in 'weight_nereo', line 65, column 2 to column 54)",
-  " (in 'weight_nereo', line 66, column 2 to column 52)",
+  " (in 'weight_nereo', line 64, column 2 to column 54)",
+  " (in 'weight_nereo', line 65, column 2 to column 52)",
+  " (in 'weight_nereo', line 66, column 2 to column 24)",
   " (in 'weight_nereo', line 67, column 2 to column 24)",
-  " (in 'weight_nereo', line 68, column 2 to column 24)",
-  " (in 'weight_nereo', line 69, column 2 to column 40)",
-  " (in 'weight_nereo', line 71, column 11 to column 16)",
-  " (in 'weight_nereo', line 71, column 4 to line 72, column 59)",
-  " (in 'weight_nereo', line 73, column 11 to column 16)",
-  " (in 'weight_nereo', line 73, column 4 to line 74, column 49)",
-  " (in 'weight_nereo', line 75, column 4 to column 45)",
-  " (in 'weight_nereo', line 70, column 23 to line 76, column 3)",
-  " (in 'weight_nereo', line 70, column 2 to line 76, column 3)",
+  " (in 'weight_nereo', line 68, column 2 to column 40)",
+  " (in 'weight_nereo', line 70, column 11 to column 16)",
+  " (in 'weight_nereo', line 70, column 4 to line 71, column 44)",
+  " (in 'weight_nereo', line 72, column 11 to column 16)",
+  " (in 'weight_nereo', line 72, column 4 to line 73, column 49)",
+  " (in 'weight_nereo', line 74, column 4 to column 45)",
+  " (in 'weight_nereo', line 69, column 23 to line 75, column 3)",
+  " (in 'weight_nereo', line 69, column 2 to line 75, column 3)",
   " (in 'weight_nereo', line 10, column 2 to column 21)",
   " (in 'weight_nereo', line 11, column 2 to column 22)",
   " (in 'weight_nereo', line 12, column 2 to column 22)",
@@ -68,25 +68,24 @@ static constexpr std::array<const char*, 73> locations_array__ =
   " (in 'weight_nereo', line 26, column 2 to column 40)",
   " (in 'weight_nereo', line 27, column 2 to column 39)",
   " (in 'weight_nereo', line 28, column 2 to column 35)",
-  " (in 'weight_nereo', line 29, column 2 to column 37)",
-  " (in 'weight_nereo', line 30, column 2 to column 33)",
+  " (in 'weight_nereo', line 29, column 2 to column 33)",
+  " (in 'weight_nereo', line 32, column 9 to column 14)",
+  " (in 'weight_nereo', line 32, column 2 to column 61)",
   " (in 'weight_nereo', line 33, column 9 to column 14)",
-  " (in 'weight_nereo', line 33, column 2 to column 61)",
-  " (in 'weight_nereo', line 34, column 9 to column 14)",
-  " (in 'weight_nereo', line 34, column 2 to column 44)",
-  " (in 'weight_nereo', line 36, column 8 to column 13)",
-  " (in 'weight_nereo', line 36, column 2 to column 26)",
-  " (in 'weight_nereo', line 38, column 4 to column 49)",
-  " (in 'weight_nereo', line 37, column 21 to line 39, column 3)",
-  " (in 'weight_nereo', line 37, column 2 to line 39, column 3)",
+  " (in 'weight_nereo', line 33, column 2 to column 44)",
+  " (in 'weight_nereo', line 35, column 8 to column 13)",
+  " (in 'weight_nereo', line 35, column 2 to column 26)",
+  " (in 'weight_nereo', line 37, column 4 to column 49)",
+  " (in 'weight_nereo', line 36, column 21 to line 38, column 3)",
+  " (in 'weight_nereo', line 36, column 2 to line 38, column 3)",
+  " (in 'weight_nereo', line 48, column 9 to column 15)",
   " (in 'weight_nereo', line 49, column 9 to column 15)",
   " (in 'weight_nereo', line 50, column 9 to column 15)",
-  " (in 'weight_nereo', line 51, column 9 to column 15)",
-  " (in 'weight_nereo', line 51, column 17 to column 23)",
+  " (in 'weight_nereo', line 50, column 17 to column 23)",
+  " (in 'weight_nereo', line 53, column 9 to column 15)",
   " (in 'weight_nereo', line 54, column 9 to column 15)",
   " (in 'weight_nereo', line 55, column 9 to column 15)",
-  " (in 'weight_nereo', line 56, column 9 to column 15)",
-  " (in 'weight_nereo', line 56, column 17 to column 23)"};
+  " (in 'weight_nereo', line 55, column 17 to column 23)"};
 #include <stan_meta_header.hpp>
 class model_weight_nereo final : public model_base_crtp<model_weight_nereo> {
 private:
@@ -109,7 +108,6 @@ private:
   double prior_sd_site_year_rate;
   double prior_sd_residual_rate;
   int prior_only;
-  int site_year_on;
   int floor_on;
   Eigen::Matrix<double,-1,1> log_x_data__;
   Eigen::Matrix<double,-1,1> log_weight_data__;
@@ -345,77 +343,65 @@ public:
       current_statement__ = 53;
       stan::math::check_less_or_equal(function__, "prior_only", prior_only, 1);
       current_statement__ = 54;
-      context__.validate_dims("data initialization", "site_year_on", "int",
-        std::vector<size_t>{});
-      site_year_on = std::numeric_limits<int>::min();
-      current_statement__ = 54;
-      site_year_on = context__.vals_i("site_year_on")[(1 - 1)];
-      current_statement__ = 54;
-      stan::math::check_greater_or_equal(function__, "site_year_on",
-        site_year_on, 0);
-      current_statement__ = 54;
-      stan::math::check_less_or_equal(function__, "site_year_on",
-        site_year_on, 1);
-      current_statement__ = 55;
       context__.validate_dims("data initialization", "floor_on", "int",
         std::vector<size_t>{});
       floor_on = std::numeric_limits<int>::min();
-      current_statement__ = 55;
+      current_statement__ = 54;
       floor_on = context__.vals_i("floor_on")[(1 - 1)];
-      current_statement__ = 55;
+      current_statement__ = 54;
       stan::math::check_greater_or_equal(function__, "floor_on", floor_on, 0);
-      current_statement__ = 55;
+      current_statement__ = 54;
       stan::math::check_less_or_equal(function__, "floor_on", floor_on, 1);
-      current_statement__ = 56;
+      current_statement__ = 55;
       stan::math::validate_non_negative_index("log_x", "n_obs", n_obs);
-      current_statement__ = 57;
+      current_statement__ = 56;
       log_x_data__ = Eigen::Matrix<double,-1,1>::Constant(n_obs,
                        std::numeric_limits<double>::quiet_NaN());
       new (&log_x)
         Eigen::Map<Eigen::Matrix<double,-1,1>>(log_x_data__.data(), n_obs);
-      current_statement__ = 57;
+      current_statement__ = 56;
       stan::model::assign(log_x,
         stan::math::subtract(stan::math::log(diameter_mm),
           stan::math::log(diameter_ref)), "assigning variable log_x");
-      current_statement__ = 58;
+      current_statement__ = 57;
       stan::math::validate_non_negative_index("log_weight", "n_obs", n_obs);
-      current_statement__ = 59;
+      current_statement__ = 58;
       log_weight_data__ = Eigen::Matrix<double,-1,1>::Constant(n_obs,
                             std::numeric_limits<double>::quiet_NaN());
       new (&log_weight)
         Eigen::Map<Eigen::Matrix<double,-1,1>>(log_weight_data__.data(),
         n_obs);
-      current_statement__ = 59;
+      current_statement__ = 58;
       stan::model::assign(log_weight, stan::math::log(weight_kg),
         "assigning variable log_weight");
-      current_statement__ = 60;
+      current_statement__ = 59;
       stan::math::validate_non_negative_index("sy_idx", "n_obs", n_obs);
-      current_statement__ = 61;
+      current_statement__ = 60;
       sy_idx = std::vector<int>(n_obs, std::numeric_limits<int>::min());
-      current_statement__ = 64;
+      current_statement__ = 63;
       for (int i = 1; i <= n_obs; ++i) {
-        current_statement__ = 62;
+        current_statement__ = 61;
         stan::model::assign(sy_idx,
           (stan::model::rvalue(site, "site", stan::model::index_uni(i)) +
           ((stan::model::rvalue(year, "year", stan::model::index_uni(i)) - 1)
           * n_site)), "assigning variable sy_idx", stan::model::index_uni(i));
       }
-      current_statement__ = 65;
+      current_statement__ = 64;
       stan::math::validate_non_negative_index("z_site", "n_site", n_site);
-      current_statement__ = 66;
+      current_statement__ = 65;
       stan::math::validate_non_negative_index("z_year", "n_year", n_year);
-      current_statement__ = 67;
+      current_statement__ = 66;
       stan::math::validate_non_negative_index("z_site_year", "n_site", n_site);
-      current_statement__ = 68;
+      current_statement__ = 67;
       stan::math::validate_non_negative_index("z_site_year", "n_year", n_year);
-      current_statement__ = 69;
+      current_statement__ = 68;
       stan::math::validate_non_negative_index("site_effect", "n_site", n_site);
-      current_statement__ = 70;
+      current_statement__ = 69;
       stan::math::validate_non_negative_index("year_effect", "n_year", n_year);
-      current_statement__ = 71;
+      current_statement__ = 70;
       stan::math::validate_non_negative_index("site_year_effect", "n_site",
         n_site);
-      current_statement__ = 72;
+      current_statement__ = 71;
       stan::math::validate_non_negative_index("site_year_effect", "n_year",
         n_year);
     } catch (const std::exception& e) {
@@ -553,10 +539,9 @@ public:
                     stan::model::index_multi(site))),
                 stan::model::rvalue(year_effect, "year_effect",
                   stan::model::index_multi(year))),
-              stan::math::multiply(static_cast<double>(site_year_on),
-                stan::model::rvalue(stan::math::to_vector(site_year_effect),
-                  "to_vector(site_year_effect)",
-                  stan::model::index_multi(sy_idx)))),
+              stan::model::rvalue(stan::math::to_vector(site_year_effect),
+                "to_vector(site_year_effect)",
+                stan::model::index_multi(sy_idx))),
             "assigning variable log_alpha");
           current_statement__ = 26;
           stan::math::validate_non_negative_index("log_mu", "n_obs", n_obs);
@@ -704,10 +689,9 @@ public:
                     stan::model::index_multi(site))),
                 stan::model::rvalue(year_effect, "year_effect",
                   stan::model::index_multi(year))),
-              stan::math::multiply(static_cast<double>(site_year_on),
-                stan::model::rvalue(stan::math::to_vector(site_year_effect),
-                  "to_vector(site_year_effect)",
-                  stan::model::index_multi(sy_idx)))),
+              stan::model::rvalue(stan::math::to_vector(site_year_effect),
+                "to_vector(site_year_effect)",
+                stan::model::index_multi(sy_idx))),
             "assigning variable log_alpha");
           current_statement__ = 26;
           stan::math::validate_non_negative_index("log_mu", "n_obs", n_obs);

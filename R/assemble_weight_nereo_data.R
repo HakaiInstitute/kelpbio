@@ -19,7 +19,6 @@ assemble_weight_nereo_data <- function(
   priors,
   diameter_ref,
   prior_only = FALSE,
-  site_year_on = TRUE,
   floor_on = TRUE
 ) {
   c(
@@ -30,7 +29,6 @@ assemble_weight_nereo_data <- function(
       weight_kg = as.numeric(data$weight_kg),
       diameter_ref = diameter_ref,
       prior_only = as.integer(prior_only),
-      site_year_on = as.integer(site_year_on),
       floor_on = as.integer(floor_on)
     ),
     prior_data(priors)

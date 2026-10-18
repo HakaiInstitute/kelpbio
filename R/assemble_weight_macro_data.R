@@ -15,8 +15,7 @@
 assemble_weight_macro_data <- function(
   data,
   priors,
-  prior_only = FALSE,
-  site_year_on = TRUE
+  prior_only = FALSE
 ) {
   c(
     group_stan_data(data),
@@ -26,8 +25,7 @@ assemble_weight_macro_data <- function(
       weight_kg = as.numeric(data$weight_kg),
       # 5 fronds, the Macrocystis median, for zero-row data.
       fronds_ref = geometric_ref(data$fronds, fallback = 5),
-      prior_only = as.integer(prior_only),
-      site_year_on = as.integer(site_year_on)
+      prior_only = as.integer(prior_only)
     ),
     prior_data(priors)
   )

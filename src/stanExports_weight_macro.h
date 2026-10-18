@@ -13,34 +13,34 @@ namespace model_weight_macro_namespace {
 using stan::model::model_base_crtp;
 using namespace stan::math;
 stan::math::profile_map profiles__;
-static constexpr std::array<const char*, 64> locations_array__ =
+static constexpr std::array<const char*, 63> locations_array__ =
   {" (found before start of program)",
-  " (in 'weight_macro', line 35, column 2 to column 17)",
-  " (in 'weight_macro', line 36, column 2 to column 20)",
-  " (in 'weight_macro', line 37, column 2 to column 22)",
+  " (in 'weight_macro', line 34, column 2 to column 17)",
+  " (in 'weight_macro', line 35, column 2 to column 20)",
+  " (in 'weight_macro', line 36, column 2 to column 22)",
+  " (in 'weight_macro', line 37, column 2 to column 24)",
   " (in 'weight_macro', line 38, column 2 to column 24)",
-  " (in 'weight_macro', line 39, column 2 to column 24)",
-  " (in 'weight_macro', line 40, column 2 to column 29)",
+  " (in 'weight_macro', line 39, column 2 to column 29)",
+  " (in 'weight_macro', line 40, column 2 to column 24)",
   " (in 'weight_macro', line 41, column 2 to column 24)",
-  " (in 'weight_macro', line 42, column 2 to column 24)",
-  " (in 'weight_macro', line 43, column 2 to column 37)",
+  " (in 'weight_macro', line 42, column 2 to column 37)",
+  " (in 'weight_macro', line 45, column 2 to column 48)",
   " (in 'weight_macro', line 46, column 2 to column 48)",
-  " (in 'weight_macro', line 47, column 2 to column 48)",
-  " (in 'weight_macro', line 48, column 2 to column 71)",
-  " (in 'weight_macro', line 51, column 2 to column 63)",
-  " (in 'weight_macro', line 52, column 2 to column 72)",
-  " (in 'weight_macro', line 53, column 2 to column 40)",
+  " (in 'weight_macro', line 47, column 2 to column 71)",
+  " (in 'weight_macro', line 50, column 2 to column 63)",
+  " (in 'weight_macro', line 51, column 2 to column 72)",
+  " (in 'weight_macro', line 52, column 2 to column 40)",
+  " (in 'weight_macro', line 53, column 2 to column 44)",
   " (in 'weight_macro', line 54, column 2 to column 44)",
-  " (in 'weight_macro', line 55, column 2 to column 44)",
-  " (in 'weight_macro', line 56, column 2 to column 54)",
+  " (in 'weight_macro', line 55, column 2 to column 54)",
+  " (in 'weight_macro', line 56, column 2 to column 24)",
   " (in 'weight_macro', line 57, column 2 to column 24)",
-  " (in 'weight_macro', line 58, column 2 to column 24)",
-  " (in 'weight_macro', line 59, column 2 to column 40)",
-  " (in 'weight_macro', line 61, column 11 to column 16)",
-  " (in 'weight_macro', line 61, column 4 to line 63, column 59)",
-  " (in 'weight_macro', line 64, column 4 to column 51)",
-  " (in 'weight_macro', line 60, column 23 to line 65, column 3)",
-  " (in 'weight_macro', line 60, column 2 to line 65, column 3)",
+  " (in 'weight_macro', line 58, column 2 to column 40)",
+  " (in 'weight_macro', line 60, column 11 to column 16)",
+  " (in 'weight_macro', line 60, column 4 to line 62, column 44)",
+  " (in 'weight_macro', line 63, column 4 to column 51)",
+  " (in 'weight_macro', line 59, column 23 to line 64, column 3)",
+  " (in 'weight_macro', line 59, column 2 to line 64, column 3)",
   " (in 'weight_macro', line 7, column 2 to column 21)",
   " (in 'weight_macro', line 8, column 2 to column 22)",
   " (in 'weight_macro', line 9, column 2 to column 22)",
@@ -62,22 +62,21 @@ static constexpr std::array<const char*, 64> locations_array__ =
   " (in 'weight_macro', line 21, column 2 to column 35)",
   " (in 'weight_macro', line 22, column 2 to column 40)",
   " (in 'weight_macro', line 23, column 2 to column 35)",
-  " (in 'weight_macro', line 24, column 2 to column 37)",
-  " (in 'weight_macro', line 27, column 9 to column 14)",
-  " (in 'weight_macro', line 27, column 2 to column 59)",
-  " (in 'weight_macro', line 29, column 8 to column 13)",
-  " (in 'weight_macro', line 29, column 2 to column 26)",
-  " (in 'weight_macro', line 31, column 4 to column 49)",
-  " (in 'weight_macro', line 30, column 21 to line 32, column 3)",
-  " (in 'weight_macro', line 30, column 2 to line 32, column 3)",
+  " (in 'weight_macro', line 26, column 9 to column 14)",
+  " (in 'weight_macro', line 26, column 2 to column 59)",
+  " (in 'weight_macro', line 28, column 8 to column 13)",
+  " (in 'weight_macro', line 28, column 2 to column 26)",
+  " (in 'weight_macro', line 30, column 4 to column 49)",
+  " (in 'weight_macro', line 29, column 21 to line 31, column 3)",
+  " (in 'weight_macro', line 29, column 2 to line 31, column 3)",
+  " (in 'weight_macro', line 40, column 9 to column 15)",
   " (in 'weight_macro', line 41, column 9 to column 15)",
   " (in 'weight_macro', line 42, column 9 to column 15)",
-  " (in 'weight_macro', line 43, column 9 to column 15)",
-  " (in 'weight_macro', line 43, column 17 to column 23)",
+  " (in 'weight_macro', line 42, column 17 to column 23)",
+  " (in 'weight_macro', line 45, column 9 to column 15)",
   " (in 'weight_macro', line 46, column 9 to column 15)",
   " (in 'weight_macro', line 47, column 9 to column 15)",
-  " (in 'weight_macro', line 48, column 9 to column 15)",
-  " (in 'weight_macro', line 48, column 17 to column 23)"};
+  " (in 'weight_macro', line 47, column 17 to column 23)"};
 #include <stan_meta_header.hpp>
 class model_weight_macro final : public model_base_crtp<model_weight_macro> {
 private:
@@ -98,7 +97,6 @@ private:
   double prior_sd_year_rate;
   double prior_sd_site_year_rate;
   int prior_only;
-  int site_year_on;
   Eigen::Matrix<double,-1,1> log_fronds_data__;
   std::vector<int> sy_idx;
   Eigen::Map<Eigen::Matrix<double,-1,1>> fronds{nullptr, 0};
@@ -311,57 +309,45 @@ public:
       current_statement__ = 47;
       stan::math::check_less_or_equal(function__, "prior_only", prior_only, 1);
       current_statement__ = 48;
-      context__.validate_dims("data initialization", "site_year_on", "int",
-        std::vector<size_t>{});
-      site_year_on = std::numeric_limits<int>::min();
-      current_statement__ = 48;
-      site_year_on = context__.vals_i("site_year_on")[(1 - 1)];
-      current_statement__ = 48;
-      stan::math::check_greater_or_equal(function__, "site_year_on",
-        site_year_on, 0);
-      current_statement__ = 48;
-      stan::math::check_less_or_equal(function__, "site_year_on",
-        site_year_on, 1);
-      current_statement__ = 49;
       stan::math::validate_non_negative_index("log_fronds", "n_obs", n_obs);
-      current_statement__ = 50;
+      current_statement__ = 49;
       log_fronds_data__ = Eigen::Matrix<double,-1,1>::Constant(n_obs,
                             std::numeric_limits<double>::quiet_NaN());
       new (&log_fronds)
         Eigen::Map<Eigen::Matrix<double,-1,1>>(log_fronds_data__.data(),
         n_obs);
-      current_statement__ = 50;
+      current_statement__ = 49;
       stan::model::assign(log_fronds,
         stan::math::subtract(stan::math::log(fronds),
           stan::math::log(fronds_ref)), "assigning variable log_fronds");
-      current_statement__ = 51;
+      current_statement__ = 50;
       stan::math::validate_non_negative_index("sy_idx", "n_obs", n_obs);
-      current_statement__ = 52;
+      current_statement__ = 51;
       sy_idx = std::vector<int>(n_obs, std::numeric_limits<int>::min());
-      current_statement__ = 55;
+      current_statement__ = 54;
       for (int i = 1; i <= n_obs; ++i) {
-        current_statement__ = 53;
+        current_statement__ = 52;
         stan::model::assign(sy_idx,
           (stan::model::rvalue(site, "site", stan::model::index_uni(i)) +
           ((stan::model::rvalue(year, "year", stan::model::index_uni(i)) - 1)
           * n_site)), "assigning variable sy_idx", stan::model::index_uni(i));
       }
-      current_statement__ = 56;
+      current_statement__ = 55;
       stan::math::validate_non_negative_index("z_site", "n_site", n_site);
-      current_statement__ = 57;
+      current_statement__ = 56;
       stan::math::validate_non_negative_index("z_year", "n_year", n_year);
-      current_statement__ = 58;
+      current_statement__ = 57;
       stan::math::validate_non_negative_index("z_site_year", "n_site", n_site);
-      current_statement__ = 59;
+      current_statement__ = 58;
       stan::math::validate_non_negative_index("z_site_year", "n_year", n_year);
-      current_statement__ = 60;
+      current_statement__ = 59;
       stan::math::validate_non_negative_index("site_effect", "n_site", n_site);
-      current_statement__ = 61;
+      current_statement__ = 60;
       stan::math::validate_non_negative_index("year_effect", "n_year", n_year);
-      current_statement__ = 62;
+      current_statement__ = 61;
       stan::math::validate_non_negative_index("site_year_effect", "n_site",
         n_site);
-      current_statement__ = 63;
+      current_statement__ = 62;
       stan::math::validate_non_negative_index("site_year_effect", "n_year",
         n_year);
     } catch (const std::exception& e) {
@@ -492,10 +478,9 @@ public:
                     stan::model::index_multi(site))),
                 stan::model::rvalue(year_effect, "year_effect",
                   stan::model::index_multi(year))),
-              stan::math::multiply(static_cast<double>(site_year_on),
-                stan::model::rvalue(stan::math::to_vector(site_year_effect),
-                  "to_vector(site_year_effect)",
-                  stan::model::index_multi(sy_idx)))),
+              stan::model::rvalue(stan::math::to_vector(site_year_effect),
+                "to_vector(site_year_effect)",
+                stan::model::index_multi(sy_idx))),
             "assigning variable log_mu");
           current_statement__ = 24;
           lp_accum__.add(stan::math::gamma_lpdf<propto__>(weight_kg, shape,
@@ -624,10 +609,9 @@ public:
                     stan::model::index_multi(site))),
                 stan::model::rvalue(year_effect, "year_effect",
                   stan::model::index_multi(year))),
-              stan::math::multiply(static_cast<double>(site_year_on),
-                stan::model::rvalue(stan::math::to_vector(site_year_effect),
-                  "to_vector(site_year_effect)",
-                  stan::model::index_multi(sy_idx)))),
+              stan::model::rvalue(stan::math::to_vector(site_year_effect),
+                "to_vector(site_year_effect)",
+                stan::model::index_multi(sy_idx))),
             "assigning variable log_mu");
           current_statement__ = 24;
           lp_accum__.add(stan::math::gamma_lpdf<propto__>(weight_kg, shape,

@@ -15,7 +15,6 @@ test_that("assemble_size_nereo_data maps data to the Stan data block", {
   expect_equal(sd$year, c(1L, 1L, 2L))
   expect_equal(sd$diameter_mm, c(20, 35, 50))
   expect_equal(sd$prior_only, 0L)
-  expect_equal(sd$site_year_on, 1L)
 })
 
 test_that("assemble_size_nereo_data maps every prior hyperparameter to its own Stan field", {
@@ -37,12 +36,6 @@ test_that("assemble_size_nereo_data maps every prior hyperparameter to its own S
 })
 
 test_that("assemble_size_nereo_data encodes the flags and accepts zero-row data", {
-  off <- assemble_size_nereo_data(
-    size_nereo_data(),
-    kb_priors_size_nereo(),
-    site_year_on = FALSE
-  )
-  expect_equal(off$site_year_on, 0L)
   sd <- assemble_size_nereo_data(
     size_nereo_data()[0, ],
     kb_priors_size_nereo(),

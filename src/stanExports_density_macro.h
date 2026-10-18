@@ -13,32 +13,32 @@ namespace model_density_macro_namespace {
 using stan::model::model_base_crtp;
 using namespace stan::math;
 stan::math::profile_map profiles__;
-static constexpr std::array<const char*, 59> locations_array__ =
+static constexpr std::array<const char*, 58> locations_array__ =
   {" (found before start of program)",
-  " (in 'density_macro', line 32, column 2 to column 17)",
-  " (in 'density_macro', line 33, column 2 to column 27)",
+  " (in 'density_macro', line 31, column 2 to column 17)",
+  " (in 'density_macro', line 32, column 2 to column 27)",
+  " (in 'density_macro', line 33, column 2 to column 24)",
   " (in 'density_macro', line 34, column 2 to column 24)",
-  " (in 'density_macro', line 35, column 2 to column 24)",
-  " (in 'density_macro', line 36, column 2 to column 29)",
+  " (in 'density_macro', line 35, column 2 to column 29)",
+  " (in 'density_macro', line 36, column 2 to column 24)",
   " (in 'density_macro', line 37, column 2 to column 24)",
-  " (in 'density_macro', line 38, column 2 to column 24)",
-  " (in 'density_macro', line 39, column 2 to column 37)",
+  " (in 'density_macro', line 38, column 2 to column 37)",
+  " (in 'density_macro', line 41, column 2 to column 48)",
   " (in 'density_macro', line 42, column 2 to column 48)",
-  " (in 'density_macro', line 43, column 2 to column 48)",
-  " (in 'density_macro', line 44, column 2 to column 71)",
-  " (in 'density_macro', line 47, column 2 to column 63)",
-  " (in 'density_macro', line 48, column 2 to column 50)",
+  " (in 'density_macro', line 43, column 2 to column 71)",
+  " (in 'density_macro', line 46, column 2 to column 63)",
+  " (in 'density_macro', line 47, column 2 to column 50)",
+  " (in 'density_macro', line 48, column 2 to column 44)",
   " (in 'density_macro', line 49, column 2 to column 44)",
-  " (in 'density_macro', line 50, column 2 to column 44)",
-  " (in 'density_macro', line 51, column 2 to column 54)",
+  " (in 'density_macro', line 50, column 2 to column 54)",
+  " (in 'density_macro', line 51, column 2 to column 24)",
   " (in 'density_macro', line 52, column 2 to column 24)",
-  " (in 'density_macro', line 53, column 2 to column 24)",
-  " (in 'density_macro', line 54, column 2 to column 40)",
-  " (in 'density_macro', line 56, column 11 to column 16)",
-  " (in 'density_macro', line 56, column 4 to line 57, column 59)",
-  " (in 'density_macro', line 58, column 4 to column 56)",
-  " (in 'density_macro', line 55, column 23 to line 59, column 3)",
-  " (in 'density_macro', line 55, column 2 to line 59, column 3)",
+  " (in 'density_macro', line 53, column 2 to column 40)",
+  " (in 'density_macro', line 55, column 11 to column 16)",
+  " (in 'density_macro', line 55, column 4 to line 56, column 44)",
+  " (in 'density_macro', line 57, column 4 to column 56)",
+  " (in 'density_macro', line 54, column 23 to line 58, column 3)",
+  " (in 'density_macro', line 54, column 2 to line 58, column 3)",
   " (in 'density_macro', line 7, column 2 to column 21)",
   " (in 'density_macro', line 8, column 2 to column 22)",
   " (in 'density_macro', line 9, column 2 to column 22)",
@@ -57,22 +57,21 @@ static constexpr std::array<const char*, 59> locations_array__ =
   " (in 'density_macro', line 18, column 2 to column 35)",
   " (in 'density_macro', line 19, column 2 to column 40)",
   " (in 'density_macro', line 20, column 2 to column 35)",
-  " (in 'density_macro', line 21, column 2 to column 37)",
-  " (in 'density_macro', line 24, column 9 to column 14)",
-  " (in 'density_macro', line 24, column 2 to column 40)",
-  " (in 'density_macro', line 26, column 8 to column 13)",
-  " (in 'density_macro', line 26, column 2 to column 26)",
-  " (in 'density_macro', line 28, column 4 to column 49)",
-  " (in 'density_macro', line 27, column 21 to line 29, column 3)",
-  " (in 'density_macro', line 27, column 2 to line 29, column 3)",
+  " (in 'density_macro', line 23, column 9 to column 14)",
+  " (in 'density_macro', line 23, column 2 to column 40)",
+  " (in 'density_macro', line 25, column 8 to column 13)",
+  " (in 'density_macro', line 25, column 2 to column 26)",
+  " (in 'density_macro', line 27, column 4 to column 49)",
+  " (in 'density_macro', line 26, column 21 to line 28, column 3)",
+  " (in 'density_macro', line 26, column 2 to line 28, column 3)",
+  " (in 'density_macro', line 36, column 9 to column 15)",
   " (in 'density_macro', line 37, column 9 to column 15)",
   " (in 'density_macro', line 38, column 9 to column 15)",
-  " (in 'density_macro', line 39, column 9 to column 15)",
-  " (in 'density_macro', line 39, column 17 to column 23)",
+  " (in 'density_macro', line 38, column 17 to column 23)",
+  " (in 'density_macro', line 41, column 9 to column 15)",
   " (in 'density_macro', line 42, column 9 to column 15)",
   " (in 'density_macro', line 43, column 9 to column 15)",
-  " (in 'density_macro', line 44, column 9 to column 15)",
-  " (in 'density_macro', line 44, column 17 to column 23)"};
+  " (in 'density_macro', line 43, column 17 to column 23)"};
 #include <stan_meta_header.hpp>
 class model_density_macro final : public model_base_crtp<model_density_macro> {
 private:
@@ -90,7 +89,6 @@ private:
   double prior_sd_year_rate;
   double prior_sd_site_year_rate;
   int prior_only;
-  int site_year_on;
   Eigen::Matrix<double,-1,1> log_area_data__;
   std::vector<int> sy_idx;
   Eigen::Map<Eigen::Matrix<double,-1,1>> area_m2{nullptr, 0};
@@ -263,55 +261,43 @@ public:
       current_statement__ = 42;
       stan::math::check_less_or_equal(function__, "prior_only", prior_only, 1);
       current_statement__ = 43;
-      context__.validate_dims("data initialization", "site_year_on", "int",
-        std::vector<size_t>{});
-      site_year_on = std::numeric_limits<int>::min();
-      current_statement__ = 43;
-      site_year_on = context__.vals_i("site_year_on")[(1 - 1)];
-      current_statement__ = 43;
-      stan::math::check_greater_or_equal(function__, "site_year_on",
-        site_year_on, 0);
-      current_statement__ = 43;
-      stan::math::check_less_or_equal(function__, "site_year_on",
-        site_year_on, 1);
-      current_statement__ = 44;
       stan::math::validate_non_negative_index("log_area", "n_obs", n_obs);
-      current_statement__ = 45;
+      current_statement__ = 44;
       log_area_data__ = Eigen::Matrix<double,-1,1>::Constant(n_obs,
                           std::numeric_limits<double>::quiet_NaN());
       new (&log_area)
         Eigen::Map<Eigen::Matrix<double,-1,1>>(log_area_data__.data(), n_obs);
-      current_statement__ = 45;
+      current_statement__ = 44;
       stan::model::assign(log_area, stan::math::log(area_m2),
         "assigning variable log_area");
-      current_statement__ = 46;
+      current_statement__ = 45;
       stan::math::validate_non_negative_index("sy_idx", "n_obs", n_obs);
-      current_statement__ = 47;
+      current_statement__ = 46;
       sy_idx = std::vector<int>(n_obs, std::numeric_limits<int>::min());
-      current_statement__ = 50;
+      current_statement__ = 49;
       for (int i = 1; i <= n_obs; ++i) {
-        current_statement__ = 48;
+        current_statement__ = 47;
         stan::model::assign(sy_idx,
           (stan::model::rvalue(site, "site", stan::model::index_uni(i)) +
           ((stan::model::rvalue(year, "year", stan::model::index_uni(i)) - 1)
           * n_site)), "assigning variable sy_idx", stan::model::index_uni(i));
       }
-      current_statement__ = 51;
+      current_statement__ = 50;
       stan::math::validate_non_negative_index("z_site", "n_site", n_site);
-      current_statement__ = 52;
+      current_statement__ = 51;
       stan::math::validate_non_negative_index("z_year", "n_year", n_year);
-      current_statement__ = 53;
+      current_statement__ = 52;
       stan::math::validate_non_negative_index("z_site_year", "n_site", n_site);
-      current_statement__ = 54;
+      current_statement__ = 53;
       stan::math::validate_non_negative_index("z_site_year", "n_year", n_year);
-      current_statement__ = 55;
+      current_statement__ = 54;
       stan::math::validate_non_negative_index("site_effect", "n_site", n_site);
-      current_statement__ = 56;
+      current_statement__ = 55;
       stan::math::validate_non_negative_index("year_effect", "n_year", n_year);
-      current_statement__ = 57;
+      current_statement__ = 56;
       stan::math::validate_non_negative_index("site_year_effect", "n_site",
         n_site);
-      current_statement__ = 58;
+      current_statement__ = 57;
       stan::math::validate_non_negative_index("site_year_effect", "n_year",
         n_year);
     } catch (const std::exception& e) {
@@ -434,10 +420,9 @@ public:
                     stan::model::index_multi(site))),
                 stan::model::rvalue(year_effect, "year_effect",
                   stan::model::index_multi(year))),
-              stan::math::multiply(static_cast<double>(site_year_on),
-                stan::model::rvalue(stan::math::to_vector(site_year_effect),
-                  "to_vector(site_year_effect)",
-                  stan::model::index_multi(sy_idx)))),
+              stan::model::rvalue(stan::math::to_vector(site_year_effect),
+                "to_vector(site_year_effect)",
+                stan::model::index_multi(sy_idx))),
             "assigning variable log_mu");
           current_statement__ = 22;
           lp_accum__.add(stan::math::neg_binomial_2_log_lpmf<propto__>(
@@ -558,10 +543,9 @@ public:
                     stan::model::index_multi(site))),
                 stan::model::rvalue(year_effect, "year_effect",
                   stan::model::index_multi(year))),
-              stan::math::multiply(static_cast<double>(site_year_on),
-                stan::model::rvalue(stan::math::to_vector(site_year_effect),
-                  "to_vector(site_year_effect)",
-                  stan::model::index_multi(sy_idx)))),
+              stan::model::rvalue(stan::math::to_vector(site_year_effect),
+                "to_vector(site_year_effect)",
+                stan::model::index_multi(sy_idx))),
             "assigning variable log_mu");
           current_statement__ = 22;
           lp_accum__.add(stan::math::neg_binomial_2_log_lpmf<propto__>(

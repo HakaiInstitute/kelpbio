@@ -87,10 +87,15 @@ Check convergence with \code{\link[=kb_converged]{kb_converged()}}, \code{\link[
 
 \section{Site and year interaction}{
 
-The site:year effect is included when the data span more than one year. If
-no site is surveyed in more than one year, or no year has more than one
-site, it is included with a warning, because it cannot then be distinguished
-from the site or year effect.
+The site:year effect lets each site depart from the year-to-year pattern
+shared by all sites, so a site can have a good year while others have a poor
+one. Separating it from the site and year effects needs at least one site
+surveyed in more than one year and at least one year with more than one
+site. Without that, as with data from a single year, the fit warns:
+estimates for the surveyed site-years are unaffected, but the site or year
+effects, and predictions for other site-years or new sites and years, depend
+on the \code{sd_site_year} prior. Use \code{\link[=kb_sensitivity]{kb_sensitivity()}} to check how much they
+do.
 }
 
 \examples{

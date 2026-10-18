@@ -2,7 +2,7 @@
 // transect area as an offset.
 //   plants ~ neg_binomial_2(area_m2 * exp(log_density), 1 / dispersion)
 //   log_density = intercept + site_effect[site] + year_effect[year]
-//                 + site_year_on * site_year_effect[site, year]
+//                 + site_year_effect[site, year]
 data {
   int<lower=0> n_obs;
   int<lower=1> n_site;
@@ -20,7 +20,6 @@ data {
   real<lower=0> prior_sd_site_year_rate;
 
   int<lower=0, upper=1> prior_only;
-  int<lower=0, upper=1> site_year_on;
 }
 transformed data {
   vector[n_obs] log_area = log(area_m2);
@@ -56,7 +55,7 @@ model {
   to_vector(z_site_year) ~ std_normal();
   if (prior_only == 0) {
     vector[n_obs] log_mu = log_area + intercept + site_effect[site] + year_effect[year]
-      + site_year_on * to_vector(site_year_effect)[sy_idx];
+      + to_vector(site_year_effect)[sy_idx];
     plants ~ neg_binomial_2_log(log_mu, 1 / dispersion);
   }
 }

@@ -32,14 +32,16 @@ test_that("the fit records the species, response, and no predictor", {
   expect_true("sd_site_year" %in% fit$meta$terms$fixed)
 })
 
-test_that("single-year data omit the site:year effect with a message", {
+test_that("single-year data fit the site:year effect with an aliasing warning", {
   local_fit_stan_stub(size_macro_fit)
   d <- droplevels(subset(size_macro_fit$data, year == "2019"))
-  expect_message(fit <- kb_fit_size_macro(d), "site:year effect is omitted")
-  expect_false(fit$meta$site_year_on)
-  expect_false("sd_site_year" %in% fit$meta$terms$fixed)
-  expect_false("site_year_effect" %in% fit$meta$terms$random)
-  expect_false(any(c("sd_site_year", "site_year_effect") %in% names(fit$draws)))
+  expect_warning(
+    fit <- kb_fit_size_macro(d, progress = "none"),
+    "cannot be separated from the site effect"
+  )
+  expect_true(fit$meta$site_year_on)
+  expect_true("sd_site_year" %in% fit$meta$terms$fixed)
+  expect_true("site_year_effect" %in% fit$meta$terms$random)
 })
 
 test_that("invalid data and priors error before sampling", {

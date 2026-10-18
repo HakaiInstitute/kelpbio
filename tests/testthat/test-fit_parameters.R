@@ -10,11 +10,10 @@ test_that("switched-off parameters are left out", {
   got <- fit_parameters(
     priors,
     GROUP_EFFECTS,
-    off = c(site_year_off(FALSE), "weight_floor")
+    off = "weight_floor"
   )
-  expect_false(any(c("sd_site_year", "weight_floor") %in% got$fixed))
-  expect_identical(got$random, c("site_effect", "year_effect"))
-  expect_identical(site_year_off(TRUE), character(0))
+  expect_false("weight_floor" %in% got$fixed)
+  expect_identical(got$random, GROUP_EFFECTS)
 })
 
 test_that("a model without group effects estimates its prior entries", {

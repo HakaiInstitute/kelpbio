@@ -74,8 +74,7 @@ kb_fit_weight_nereo <- function(
     progress = progress,
     progress_dir = progress_dir
   )
-  site_year <- site_year_structure(data)
-  notify_site_year(site_year, progress = progress)
+  notify_site_year(site_year_aliasing(data))
 
   priors <- resolve_priors(priors, kb_priors_weight_nereo())
   # Shared by the Stan fit and R-side predictions (stored in meta below).
@@ -86,7 +85,6 @@ kb_fit_weight_nereo <- function(
     priors,
     diameter_ref,
     prior_only = prior_only,
-    site_year_on = site_year$on,
     floor_on = form == "packard_floor"
   )
 
@@ -94,7 +92,6 @@ kb_fit_weight_nereo <- function(
     priors,
     GROUP_EFFECTS,
     off = c(
-      site_year_off(site_year$on),
       if (form == "power") "weight_floor"
     )
   )
@@ -127,7 +124,7 @@ kb_fit_weight_nereo <- function(
     meta_extra = list(
       form = form,
       predictor_ref = diameter_ref,
-      site_year_on = site_year$on,
+      site_year_on = TRUE,
       # Lets the model-level prediction and plot code stay species-agnostic.
       predictor = "diameter_mm",
       response = "weight_kg"

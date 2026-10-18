@@ -25,8 +25,8 @@ package's own parameter names (\code{intercept}, \code{sd_site}, ...), so every 
 matches a row of \code{\link[=tidy]{tidy()}}, \code{\link[=summary]{summary()}}, and \code{\link[=coef]{coef()}}.
 }
 \details{
-Priors, centring, and random effects are those of the fit; a random effect
-not fitted (such as the site:year effect for single-year data) is omitted.
+Priors, centring, and random effects are those of the fit; an effect not
+fitted (such as the weight floor of a power-law fit) is omitted.
 Priors marked \code{T[0, ]} are truncated at zero.
 }
 \examples{
