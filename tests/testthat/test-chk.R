@@ -259,12 +259,12 @@ test_that(".chk_site_surveys errors name the survey column", {
   expect_error(.chk_site_surveys(1), "must be a data frame")
 })
 
-test_that(".chk_sum_by names a missing or non-grouping column", {
+test_that(".chk_pool_by names a missing or non-grouping column", {
   data <- data.frame(region = "north", zone = 1)
-  expect_invisible(.chk_sum_by("region", data))
-  expect_snapshot(error = TRUE, .chk_sum_by("zone", data))
-  expect_snapshot(error = TRUE, .chk_sum_by(c("region", "district"), data))
-  expect_error(.chk_sum_by(1, data), "character")
+  expect_invisible(.chk_pool_by("region", data))
+  expect_snapshot(error = TRUE, .chk_pool_by("zone", data))
+  expect_snapshot(error = TRUE, .chk_pool_by(c("region", "district"), data))
+  expect_error(.chk_pool_by(1, data), "character")
 })
 
 test_that(".chk_measure_fits requires the fits a measure needs", {

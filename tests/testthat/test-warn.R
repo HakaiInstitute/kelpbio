@@ -120,7 +120,7 @@ test_that("a searched area above the plot area warns", {
   expect_no_warning(warn_survey_area(transform(d, plot_area_m2 = NA), "`d`"))
 })
 
-test_that("a sum_by group holding one site-year twice warns", {
+test_that("a pool_by group holding one site-year twice warns", {
   grid <- tibble::tibble(site = c("a", "a"), year = "2020")
   expect_snapshot(warn_overlapping_canopy(grid, c(1L, 1L)))
   expect_no_warning(warn_overlapping_canopy(grid, c(1L, 2L)))

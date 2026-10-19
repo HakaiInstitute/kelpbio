@@ -1,11 +1,11 @@
-# Per-draw sums of the row draws (D x N) within `sum_by` groups (character(0)
+# Per-draw sums of the row draws (D x N) within `pool_by` groups (character(0)
 # sums all rows), returning the group keys, each row's group, and a D x G
 # matrix. With `area` (length N, or D x N), each sum is divided by its group's
 # summed area, giving the group's value per unit area. Summing draws, not
 # summaries, keeps the limits of a group's total correct.
-sum_draws_by <- function(grid, draws, sum_by, area = NULL) {
-  keys <- tibble::as_tibble(grid)[sum_by]
-  if (length(sum_by)) {
+pool_draws_by <- function(grid, draws, pool_by, area = NULL) {
+  keys <- tibble::as_tibble(grid)[pool_by]
+  if (length(pool_by)) {
     groups <- dplyr::distinct(keys)
     # Character groups sort alphabetically ignoring case, then by case, the
     # same on every machine; factors keep their level order.

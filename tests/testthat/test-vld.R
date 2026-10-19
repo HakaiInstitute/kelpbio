@@ -136,14 +136,14 @@ test_that(".vld_site_surveys needs canopy, tide, site, and year, and a large eno
   expect_false(.vld_site_surveys(list(good)))
 })
 
-test_that(".vld_sum_by accepts NULL or grouping columns of the data", {
+test_that(".vld_pool_by accepts NULL or grouping columns of the data", {
   data <- data.frame(region = "north", zone = 1, site = NA_character_)
-  expect_true(.vld_sum_by(NULL, data))
-  expect_true(.vld_sum_by(character(0), data))
-  expect_true(.vld_sum_by("region", data))
-  expect_false(.vld_sum_by("zone", data))
-  expect_false(.vld_sum_by("site", data))
-  expect_false(.vld_sum_by("missing", data))
+  expect_true(.vld_pool_by(NULL, data))
+  expect_true(.vld_pool_by(character(0), data))
+  expect_true(.vld_pool_by("region", data))
+  expect_false(.vld_pool_by("zone", data))
+  expect_false(.vld_pool_by("site", data))
+  expect_false(.vld_pool_by("missing", data))
 })
 
 test_that(".vld_sampling_dots flags sampler arguments kelpbio sets", {

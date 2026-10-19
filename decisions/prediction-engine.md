@@ -128,7 +128,7 @@ kb_predict_weight(fit, plants)                             # your own rows
   for what the biomass estimate covers, not for a model. They return their
   response as an `rvar` column next to the summary, so one verb's output feeds
   another: the cover calibration reads the mean and SD of each survey's biomass
-  from it. `sum_by` sums draws, not summaries, and per area divides the summed
+  from it. `pool_by` sums draws, not summaries, and per area divides the summed
   kg by the summed area.
 
 `augment()` stays a diagnostics verb (fitted/residuals on the training data, on

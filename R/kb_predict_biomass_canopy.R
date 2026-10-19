@@ -2,7 +2,7 @@
 #'
 #' Predict the biomass over each row's drone-mapped canopy from a cover
 #' calibration fit: wet or dry (kg or kg/m²) or carbon (kg C or g C/m²),
-#' optionally summed over groups of rows.
+#' optionally pooled over groups of rows.
 #'
 #' @details
 #' A row's total is the expected biomass per m² of bed for its site and year
@@ -17,7 +17,7 @@
 #' Dry biomass is the wet total times the expected dry:wet ratio from `wetdry`,
 #' and carbon the dry total times the expected carbon fraction from `carbon`.
 #'
-#' Totals are summed within `sum_by` groups on each draw, so do not sum
+#' Totals are pooled within `pool_by` groups on each draw, so do not sum
 #' per-row estimates or limits. Sum at most one row per site-year; a group with
 #' more warns.
 #'
@@ -28,19 +28,19 @@
 #'   `canopy_area_m2` (the canopy mapped within the site, m²), and
 #'   `tide_height_m` (tide height at the flight, m), and optionally
 #'   `site_area_m2` (the area within the site boundary, m²), which caps the
-#'   tide-corrected canopy. Other columns are kept, and can be named in `sum_by`.
+#'   tide-corrected canopy. Other columns are kept, and can be named in `pool_by`.
 #' @param measure A string, one of `"wet"`, `"dry"`, or `"carbon"`, giving the
 #'   biomass to predict.
 #' @param per_area A flag specifying whether to give biomass per m² of
 #'   tide-corrected canopy, or else the total over the canopy.
 #'
-#' @returns A `kb_predictions` object. Without `sum_by`, the rows of `new_data`
+#' @returns A `kb_predictions` object. Without `pool_by`, the rows of `new_data`
 #'   with added `cover_support` (`"site, year"`, `"site"`, `"year"`, or
 #'   `"none"`: the data the calibration fit has for the row's site and year), the
 #'   draws of the biomass in a column named for it (`biomass_kg`,
 #'   `dry_biomass_kg`, or `carbon_biomass_kg` in total, and `biomass_kg_m2`,
 #'   `dry_biomass_kg_m2`, or `carbon_biomass_g_m2` per m²), and `estimate`,
-#'   `lower`, and `upper`; with `sum_by`, one row per group with its `sum_by`
+#'   `lower`, and `upper`; with `pool_by`, one row per group with its `pool_by`
 #'   columns, the draws, and the summary.
 #' @family prediction functions
 #' @seealso [kb_predict_cover_calibration()] for biomass per m² of a plot at a
@@ -56,7 +56,7 @@
 #'
 #' # Wet totals by year
 #' set.seed(1)
-#' kb_predict_biomass_canopy(fit, data_canopy_sim_nereo, sum_by = "year")
+#' kb_predict_biomass_canopy(fit, data_canopy_sim_nereo, pool_by = "year")
 #'
 #' # Carbon stock by year
 #' set.seed(1)
@@ -66,7 +66,7 @@
 #'   fit_wetdry_sim_nereo,
 #'   fit_carbon_sim_nereo,
 #'   measure = "carbon",
-#'   sum_by = "year"
+#'   pool_by = "year"
 #' )
 kb_predict_biomass_canopy <- function(
   fit,
@@ -76,7 +76,7 @@ kb_predict_biomass_canopy <- function(
   ...,
   measure = c("wet", "dry", "carbon"),
   per_area = FALSE,
-  sum_by = NULL,
+  pool_by = NULL,
   new_levels = c("sample", "average"),
   representative_site = NULL,
   conf_level = 0.95,
@@ -97,7 +97,7 @@ kb_predict_biomass_canopy <- function(
     rlang::current_env()
   )
   warn_implausible_units(new_data, "`new_data`")
-  .chk_sum_by(sum_by, new_data)
+  .chk_pool_by(pool_by, new_data)
   .chk_measure_fits(measure, wetdry, carbon)
   .chk_derived_fits(list(fit = fit, wetdry = wetdry, carbon = carbon))
   .chk_representative_site(fit, representative_site)
@@ -110,16 +110,16 @@ kb_predict_biomass_canopy <- function(
     measure_factor(measure, wetdry, carbon, carbon_scale = carbon_scale)
   area <- if (per_area) canopy$canopy
 
-  if (is.null(sum_by)) {
+  if (is.null(pool_by)) {
     grid$cover_support <- cover_support(fit, grid$site, grid$year)
     draws <- if (per_area) totals / area else totals
     group_vars <- .group_vars()
   } else {
-    summed <- sum_draws_by(grid, totals, sum_by, area = area)
-    warn_overlapping_canopy(grid, summed$id)
-    grid <- summed$groups
-    draws <- summed$draws
-    group_vars <- sum_by
+    pooled <- pool_draws_by(grid, totals, pool_by, area = area)
+    warn_overlapping_canopy(grid, pooled$id)
+    grid <- pooled$groups
+    draws <- pooled$draws
+    group_vars <- pool_by
   }
   summarise_draws_rows(
     grid,

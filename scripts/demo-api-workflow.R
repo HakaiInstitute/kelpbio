@@ -82,13 +82,12 @@ biomass <- kb_predict_biomass_survey(
 )
 biomass
 # pooled all sites biomass per year
-kb_predict_biomass_survey(
+x <- kb_predict_biomass_survey(
   fit_weight,
   fit_size,
-  data_survey_sim_nereo
-  # sum_by = c("year")
-) |>
-  kb_plot_predictions()
+  data_survey_sim_nereo,
+  pool_by = c("site", "year")
+)
 
 # --- calibrate drone cover --------------------------------------------------------
 # the surveys with drone cover are the observations; the others are left out
@@ -116,12 +115,12 @@ totals
 kb_plot_predictions(totals)
 
 # summed by year and by region, draw by draw
-kb_predict_biomass_canopy(fit_cover, data_canopy_sim_nereo, sum_by = "year") |>
+kb_predict_biomass_canopy(fit_cover, data_canopy_sim_nereo, pool_by = "year") |>
   kb_plot_predictions()
 kb_predict_biomass_canopy(
   fit_cover,
   data_canopy_sim_nereo,
-  sum_by = c("region", "year")
+  pool_by = c("region", "year")
 )
 
 # biomass per m2 of canopy (bed biomass)
@@ -134,7 +133,7 @@ kb_predict_biomass_canopy(
   fit_wetdry,
   fit_carbon,
   measure = "carbon",
-  sum_by = "year"
+  pool_by = "year"
 ) |>
   kb_plot_predictions()
 
@@ -174,7 +173,7 @@ fit_cover_prefit <- kb_fit_cover_calibration_nereo(
 kb_predict_biomass_canopy(
   fit_cover_prefit,
   data_canopy_sim_nereo,
-  sum_by = "year"
+  pool_by = "year"
 )
 
 # a weight model whose sites match none of the surveys: borrow one site's
@@ -239,7 +238,7 @@ kb_predict_biomass_survey(
   plants_census,
   survey_census,
   per_area = FALSE,
-  sum_by = c("site", "year")
+  pool_by = c("site", "year")
 ) |>
   kb_plot_predictions()
 kb_predict_biomass_survey(
@@ -249,5 +248,5 @@ kb_predict_biomass_survey(
   fit_wetdry,
   measure = "dry",
   per_area = FALSE,
-  sum_by = "site"
+  pool_by = "site"
 )

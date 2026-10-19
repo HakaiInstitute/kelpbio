@@ -82,7 +82,7 @@ test_that("per_area divides by the area searched", {
   )
 })
 
-test_that("sum_by pools surveys as total kg over total area", {
+test_that("pool_by pools surveys as total kg over total area", {
   withr::local_seed(1)
   rows <- kb_predict_biomass_survey(
     weight_macro_fit, data_plants_sim_macro, data_survey_sim_macro,
@@ -91,7 +91,7 @@ test_that("sum_by pools surveys as total kg over total area", {
   withr::local_seed(1)
   pooled <- kb_predict_biomass_survey(
     weight_macro_fit, data_plants_sim_macro, data_survey_sim_macro,
-    sum_by = c("site", "year"), progress = "none"
+    pool_by = c("site", "year"), progress = "none"
   )
   expect_named(pooled, c("site", "year", "biomass_kg_m2", "estimate", "lower", "upper"))
   key <- paste(rows$site, rows$year)
@@ -128,7 +128,7 @@ test_that("invalid and mismatched inputs error", {
   )
   expect_error(
     kb_predict_biomass_survey(
-      weight_nereo_fit, size_nereo_fit, data_survey_sim_nereo, sum_by = "zone"
+      weight_nereo_fit, size_nereo_fit, data_survey_sim_nereo, pool_by = "zone"
     ),
     "zone"
   )

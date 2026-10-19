@@ -12,7 +12,7 @@ kb_predict_biomass_canopy(
   ...,
   measure = c("wet", "dry", "carbon"),
   per_area = FALSE,
-  sum_by = NULL,
+  pool_by = NULL,
   new_levels = c("sample", "average"),
   representative_site = NULL,
   conf_level = 0.95,
@@ -27,7 +27,7 @@ kb_predict_biomass_canopy(
 \code{canopy_area_m2} (the canopy mapped within the site, m²), and
 \code{tide_height_m} (tide height at the flight, m), and optionally
 \code{site_area_m2} (the area within the site boundary, m²), which caps the
-tide-corrected canopy. Other columns are kept, and can be named in \code{sum_by}.}
+tide-corrected canopy. Other columns are kept, and can be named in \code{pool_by}.}
 
 \item{wetdry}{A \code{kb_fit_wetdry} object, required for dry and carbon biomass,
 or \code{NULL}.}
@@ -43,10 +43,19 @@ biomass to predict.}
 \item{per_area}{A flag specifying whether to give biomass per m² of
 tide-corrected canopy, or else the total over the canopy.}
 
-\item{sum_by}{A character vector naming character or factor columns to sum
-within, \code{character(0)} to sum all rows, or \code{NULL} (the default) for one row
-per input row. Sums are taken on each draw; per area, the summed biomass is
-divided by the summed area.}
+\item{pool_by}{A character vector naming character or factor columns whose
+combinations group the rows, \code{character(0)} to pool all rows, or \code{NULL}
+(the default) for one row per input row. Rows are pooled on each draw:
+\itemize{
+\item \code{per_area = FALSE}: the biomass of the group is the sum of its rows'
+biomass (kg).
+\item \code{per_area = TRUE}: the biomass of the group is the sum of its rows'
+biomass divided by the sum of their areas, the biomass per m² of the
+pooled area (an area-weighted mean, not the mean of the rows' values).
+}
+
+For another summary, such as an unweighted mean of rows, summarise the
+draws column (see \code{vignette("advanced")}).}
 
 \item{new_levels}{A string giving how uncertainty is shown for a site or
 year not in the fit. Sites and years in the fit always use their own
@@ -75,19 +84,19 @@ a scalar point estimate (e.g. \code{median} or \code{mean}).}
 \item{sig_fig}{A whole number of significant figures for summary output.}
 }
 \value{
-A \code{kb_predictions} object. Without \code{sum_by}, the rows of \code{new_data}
+A \code{kb_predictions} object. Without \code{pool_by}, the rows of \code{new_data}
 with added \code{cover_support} (\code{"site, year"}, \code{"site"}, \code{"year"}, or
 \code{"none"}: the data the calibration fit has for the row's site and year), the
 draws of the biomass in a column named for it (\code{biomass_kg},
 \code{dry_biomass_kg}, or \code{carbon_biomass_kg} in total, and \code{biomass_kg_m2},
 \code{dry_biomass_kg_m2}, or \code{carbon_biomass_g_m2} per m²), and \code{estimate},
-\code{lower}, and \code{upper}; with \code{sum_by}, one row per group with its \code{sum_by}
+\code{lower}, and \code{upper}; with \code{pool_by}, one row per group with its \code{pool_by}
 columns, the draws, and the summary.
 }
 \description{
 Predict the biomass over each row's drone-mapped canopy from a cover
 calibration fit: wet or dry (kg or kg/m²) or carbon (kg C or g C/m²),
-optionally summed over groups of rows.
+optionally pooled over groups of rows.
 }
 \details{
 A row's total is the expected biomass per m² of bed for its site and year
@@ -102,7 +111,7 @@ divided by the tide-corrected canopy area, giving the biomass per m² of bed.
 Dry biomass is the wet total times the expected dry:wet ratio from \code{wetdry},
 and carbon the dry total times the expected carbon fraction from \code{carbon}.
 
-Totals are summed within \code{sum_by} groups on each draw, so do not sum
+Totals are pooled within \code{pool_by} groups on each draw, so do not sum
 per-row estimates or limits. Sum at most one row per site-year; a group with
 more warns.
 }
@@ -115,7 +124,7 @@ kb_predict_biomass_canopy(fit, data_canopy_sim_nereo)
 
 # Wet totals by year
 set.seed(1)
-kb_predict_biomass_canopy(fit, data_canopy_sim_nereo, sum_by = "year")
+kb_predict_biomass_canopy(fit, data_canopy_sim_nereo, pool_by = "year")
 
 # Carbon stock by year
 set.seed(1)
@@ -125,7 +134,7 @@ kb_predict_biomass_canopy(
   fit_wetdry_sim_nereo,
   fit_carbon_sim_nereo,
   measure = "carbon",
-  sum_by = "year"
+  pool_by = "year"
 )
 }
 \seealso{

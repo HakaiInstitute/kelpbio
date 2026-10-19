@@ -377,7 +377,7 @@ kb_predict_biomass_canopy(
   fit_cover_calibration_sim_nereo,
   drone,
   new_levels = "average",
-  sum_by = "region"
+  pool_by = "region"
 )
 
 # =============================================================================

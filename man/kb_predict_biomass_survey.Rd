@@ -13,7 +13,7 @@ kb_predict_biomass_survey(
   ...,
   measure = c("wet", "dry", "carbon"),
   per_area = TRUE,
-  sum_by = NULL,
+  pool_by = NULL,
   new_levels = c("sample", "average"),
   representative_site = NULL,
   n_plants = 100L,
@@ -48,10 +48,19 @@ biomass to predict.}
 \item{per_area}{A flag specifying whether to give biomass per m² of the area
 searched, or else the biomass in that area.}
 
-\item{sum_by}{A character vector naming character or factor columns to sum
-within, \code{character(0)} to sum all rows, or \code{NULL} (the default) for one row
-per input row. Sums are taken on each draw; per area, the summed biomass is
-divided by the summed area.}
+\item{pool_by}{A character vector naming character or factor columns whose
+combinations group the rows, \code{character(0)} to pool all rows, or \code{NULL}
+(the default) for one row per input row. Rows are pooled on each draw:
+\itemize{
+\item \code{per_area = FALSE}: the biomass of the group is the sum of its rows'
+biomass (kg).
+\item \code{per_area = TRUE}: the biomass of the group is the sum of its rows'
+biomass divided by the sum of their areas, the biomass per m² of the
+pooled area (an area-weighted mean, not the mean of the rows' values).
+}
+
+For another summary, such as an unweighted mean of rows, summarise the
+draws column (see \code{vignette("advanced")}).}
 
 \item{new_levels}{A string giving how uncertainty is shown for a site or
 year not in the fit. Sites and years in the fit always use their own
@@ -90,13 +99,13 @@ bar) or \code{"none"} (silent).}
 progress for \code{\link[=kb_progress]{kb_progress()}}, or \code{NULL} (the default) to record none.}
 }
 \value{
-A \code{kb_predictions} object. Without \code{sum_by}, the rows of \code{survey}
+A \code{kb_predictions} object. Without \code{pool_by}, the rows of \code{survey}
 with added \code{year} (from \code{date}), \code{weight_support}, \code{size_support} (with a
 size fit), the draws of the biomass in a column named for it
 (\code{biomass_kg_m2}, \code{dry_biomass_kg_m2}, or \code{carbon_biomass_g_m2} per m², and
 \code{biomass_kg}, \code{dry_biomass_kg}, or \code{carbon_biomass_kg} in total), and
-\code{estimate}, \code{lower}, and \code{upper}; with \code{sum_by}, one row per group with its
-\code{sum_by} columns, the draws, and the summary.
+\code{estimate}, \code{lower}, and \code{upper}; with \code{pool_by}, one row per group with its
+\code{pool_by} columns, the draws, and the summary.
 }
 \description{
 Combine a weight fit with the plants counted by each in situ survey into
@@ -139,7 +148,7 @@ kb_predict_biomass_survey(
   fit_weight_sim_macro,
   data_plants_sim_macro,
   data_survey_sim_macro,
-  sum_by = c("site", "year")
+  pool_by = c("site", "year")
 )
 }
 \seealso{

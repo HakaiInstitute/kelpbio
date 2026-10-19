@@ -218,22 +218,22 @@
       ! Column `canopy_area_m2` of transform(good, site_area_m2 = 50) must not exceed site_area_m2.
       i The canopy is the area mapped within the site boundary.
 
-# .chk_sum_by names a missing or non-grouping column
+# .chk_pool_by names a missing or non-grouping column
 
     Code
-      .chk_sum_by("zone", data)
+      .chk_pool_by("zone", data)
     Condition
       Error:
-      ! `sum_by` column zone must be character or factor with no missing values.
+      ! `pool_by` column zone must be character or factor with no missing values.
       i Convert a numeric code with `as.character()` or `factor()`.
 
 ---
 
     Code
-      .chk_sum_by(c("region", "district"), data)
+      .chk_pool_by(c("region", "district"), data)
     Condition
       Error:
-      ! `sum_by` names column district that `new_data` does not have.
+      ! `pool_by` names column district that `new_data` does not have.
 
 # .chk_sampling_dots rejects sampler arguments kelpbio sets, naming the replacement
 

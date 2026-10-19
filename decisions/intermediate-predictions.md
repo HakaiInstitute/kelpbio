@@ -9,7 +9,7 @@ text.
 Approach C of the analysis project's `decisions/cover-count-calibration.md` is
 in: `kb_predict_mean_weight()` (quick win 1), `kb_predict_biomass_survey()`
 (quick wins 2 and 3: the biomass of counted plants, tallied or censused, with
-`sum_by` and `per_area`), the cover calibration on survey biomass with zeros
+`pool_by` and `per_area`), the cover calibration on survey biomass with zeros
 (quick win 4), and the dividing tide correction in the totals (quick win 5).
 Derived verbs carry their draws as an `rvar` column, which settles the design
 question of how intermediate quantities chain.

@@ -32,10 +32,19 @@ has no data on. The interval varies slightly between calls; use
 in the typical value only. Use it to describe an average site or year.
 }}
 
-\item{sum_by}{A character vector naming character or factor columns to sum
-within, \code{character(0)} to sum all rows, or \code{NULL} (the default) for one row
-per input row. Sums are taken on each draw; per area, the summed biomass is
-divided by the summed area.}
+\item{pool_by}{A character vector naming character or factor columns whose
+combinations group the rows, \code{character(0)} to pool all rows, or \code{NULL}
+(the default) for one row per input row. Rows are pooled on each draw:
+\itemize{
+\item \code{per_area = FALSE}: the biomass of the group is the sum of its rows'
+biomass (kg).
+\item \code{per_area = TRUE}: the biomass of the group is the sum of its rows'
+biomass divided by the sum of their areas, the biomass per m² of the
+pooled area (an area-weighted mean, not the mean of the rows' values).
+}
+
+For another summary, such as an unweighted mean of rows, summarise the
+draws column (see \code{vignette("advanced")}).}
 }
 \description{
 Parameter descriptions shared by \code{\link[=kb_predict_mean_weight]{kb_predict_mean_weight()}},

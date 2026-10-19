@@ -739,7 +739,7 @@ kb_predict_biomass_survey(
   fit_weight_sim_macro,
   data_plants_sim_macro,
   data_survey_sim_macro,
-  sum_by = c("site", "year")
+  pool_by = c("site", "year")
 ) |>
   kb_plot_predictions()
 kb_predict_biomass_survey(
@@ -818,9 +818,9 @@ kb_predict_biomass_canopy(fit_cv, data_canopy_sim_nereo) |>
 # biomass per m2 of canopy (bed biomass)
 kb_predict_biomass_canopy(fit_cv, data_canopy_sim_nereo, per_area = TRUE)
 # totals summed on the draws: by region, by year, and over all rows
-kb_predict_biomass_canopy(fit_cv, data_canopy_sim_nereo, sum_by = "region")
-kb_predict_biomass_canopy(fit_cv, data_canopy_sim_nereo, sum_by = "year")
-kb_predict_biomass_canopy(fit_cv, data_canopy_sim_nereo, sum_by = character(0))
+kb_predict_biomass_canopy(fit_cv, data_canopy_sim_nereo, pool_by = "region")
+kb_predict_biomass_canopy(fit_cv, data_canopy_sim_nereo, pool_by = "year")
+kb_predict_biomass_canopy(fit_cv, data_canopy_sim_nereo, pool_by = character(0))
 # carbon stock (kg C) by year, from the wet/dry and carbon fits; the fits must
 # have the same number of draws, so this uses the bundled calibration pre-fit
 # (fit_cv has the default 4000 draws, the bundled pre-fits 1500)
@@ -830,13 +830,13 @@ kb_predict_biomass_canopy(
   fit_wetdry_sim_nereo,
   fit_carbon_sim_nereo,
   measure = "carbon",
-  sum_by = "year"
+  pool_by = "year"
 )
 # two rows of one site-year in a group warn; a canopy larger than its site errors
 kb_predict_biomass_canopy(
   fit_cv,
   bind_rows(data_canopy_sim_nereo, data_canopy_sim_nereo[1, ]),
-  sum_by = "region"
+  pool_by = "region"
 )
 try(kb_predict_biomass_canopy(
   fit_cv,

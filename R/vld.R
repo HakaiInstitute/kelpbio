@@ -194,12 +194,12 @@
   (is.character(x) || is.factor(x)) && !anyNA(x)
 }
 
-.vld_sum_by <- function(sum_by, data) {
-  is.null(sum_by) ||
-    (is.character(sum_by) &&
-      !anyNA(sum_by) &&
-      all(sum_by %in% names(data)) &&
-      all(vapply(data[sum_by], .vld_group_column, logical(1))))
+.vld_pool_by <- function(pool_by, data) {
+  is.null(pool_by) ||
+    (is.character(pool_by) &&
+      !anyNA(pool_by) &&
+      all(pool_by %in% names(data)) &&
+      all(vapply(data[pool_by], .vld_group_column, logical(1))))
 }
 
 .vld_predictions <- function(x) {

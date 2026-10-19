@@ -118,10 +118,17 @@ params <- function(...) NULL
 #'     `set.seed()` to reproduce it.
 #'   - `"average"`: the typical site or year. The interval covers uncertainty
 #'     in the typical value only. Use it to describe an average site or year.
-#' @param sum_by A character vector naming character or factor columns to sum
-#'   within, `character(0)` to sum all rows, or `NULL` (the default) for one row
-#'   per input row. Sums are taken on each draw; per area, the summed biomass is
-#'   divided by the summed area.
+#' @param pool_by A character vector naming character or factor columns whose
+#'   combinations group the rows, `character(0)` to pool all rows, or `NULL`
+#'   (the default) for one row per input row. Rows are pooled on each draw:
+#'   - `per_area = FALSE`: the biomass of the group is the sum of its rows'
+#'     biomass (kg).
+#'   - `per_area = TRUE`: the biomass of the group is the sum of its rows'
+#'     biomass divided by the sum of their areas, the biomass per m² of the
+#'     pooled area (an area-weighted mean, not the mean of the rows' values).
+#'
+#'   For another summary, such as an unweighted mean of rows, summarise the
+#'   draws column (see `vignette("advanced")`).
 #' @keywords internal
 #' @usage NULL
 # nocov start

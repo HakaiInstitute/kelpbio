@@ -76,7 +76,7 @@ summary trio. Their output carries the response as an `rvar` column of draws
 next to `estimate`, `lower`, and `upper`, so one verb's output can feed another:
 the cover calibration fit reads the mean and SD of `biomass_kg_m2` from
 unsummed `kb_predict_biomass_survey()` output. `kb_predict_mean_weight()` takes
-fits only and has no `sum_by`. The two biomass verbs take `sum_by`: `NULL` gives
+fits only and has no `pool_by`. The two biomass verbs take `pool_by`: `NULL` gives
 one row per input row; column names give one row per group, with kg summed and,
 per area, divided by the summed area, draw by draw.
 

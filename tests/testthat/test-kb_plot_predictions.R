@@ -142,7 +142,7 @@ test_that("survey biomass by site-year plots point ranges titled as a biomass", 
     weight_nereo_fit,
     size_nereo_fit,
     data_survey_sim_nereo,
-    sum_by = c("site", "year"),
+    pool_by = c("site", "year"),
     progress = "none"
   )
   gg <- kb_plot_predictions(p, max_facets = Inf)

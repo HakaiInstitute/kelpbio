@@ -41,13 +41,13 @@
 #' @param progress_dir A string giving an existing directory in which to record
 #'   progress for [kb_progress()], or `NULL` (the default) to record none.
 #'
-#' @returns A `kb_predictions` object. Without `sum_by`, the rows of `survey`
+#' @returns A `kb_predictions` object. Without `pool_by`, the rows of `survey`
 #'   with added `year` (from `date`), `weight_support`, `size_support` (with a
 #'   size fit), the draws of the biomass in a column named for it
 #'   (`biomass_kg_m2`, `dry_biomass_kg_m2`, or `carbon_biomass_g_m2` per m², and
 #'   `biomass_kg`, `dry_biomass_kg`, or `carbon_biomass_kg` in total), and
-#'   `estimate`, `lower`, and `upper`; with `sum_by`, one row per group with its
-#'   `sum_by` columns, the draws, and the summary.
+#'   `estimate`, `lower`, and `upper`; with `pool_by`, one row per group with its
+#'   `pool_by` columns, the draws, and the summary.
 #' @family prediction functions
 #' @seealso [kb_fit_cover_calibration_nereo()] to calibrate drone cover on the
 #'   result.
@@ -68,7 +68,7 @@
 #'   fit_weight_sim_macro,
 #'   data_plants_sim_macro,
 #'   data_survey_sim_macro,
-#'   sum_by = c("site", "year")
+#'   pool_by = c("site", "year")
 #' )
 kb_predict_biomass_survey <- function(
   weight,
@@ -79,7 +79,7 @@ kb_predict_biomass_survey <- function(
   ...,
   measure = c("wet", "dry", "carbon"),
   per_area = TRUE,
-  sum_by = NULL,
+  pool_by = NULL,
   new_levels = c("sample", "average"),
   representative_site = NULL,
   n_plants = 100L,
@@ -128,8 +128,8 @@ kb_predict_biomass_survey <- function(
 
   grid <- tibble::as_tibble(survey)
   grid$year <- date_year(grid$date)
-  if (!is.null(sum_by)) {
-    .chk_sum_by(sum_by, grid, data_name = "survey")
+  if (!is.null(pool_by)) {
+    .chk_pool_by(pool_by, grid, data_name = "survey")
   }
   grid <- dplyr::relocate(grid, "year", .after = "site")
   grid$weight_support <- data_support(weight, grid$site, grid$year)
@@ -156,14 +156,14 @@ kb_predict_biomass_survey <- function(
   kg <- kg * measure_factor(measure, wetdry, carbon, carbon_scale = carbon_scale)
   area <- if (per_area) grid$survey_area_m2
 
-  if (is.null(sum_by)) {
+  if (is.null(pool_by)) {
     draws <- if (per_area) sweep(kg, 2L, area, "/") else kg
     group_vars <- .group_vars()
   } else {
-    summed <- sum_draws_by(grid, kg, sum_by, area = area)
-    grid <- summed$groups
-    draws <- summed$draws
-    group_vars <- sum_by
+    pooled <- pool_draws_by(grid, kg, pool_by, area = area)
+    grid <- pooled$groups
+    draws <- pooled$draws
+    group_vars <- pool_by
   }
   summarise_draws_rows(
     grid,

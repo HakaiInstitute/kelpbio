@@ -902,23 +902,23 @@
   ))
 }
 
-.chk_sum_by <- function(sum_by, data, data_name = "new_data", call = rlang::caller_env()) {
-  if (.vld_sum_by(sum_by, data)) {
-    return(invisible(sum_by))
+.chk_pool_by <- function(pool_by, data, data_name = "new_data", call = rlang::caller_env()) {
+  if (.vld_pool_by(pool_by, data)) {
+    return(invisible(pool_by))
   }
-  chk::chk_character(sum_by, x_name = "`sum_by`")
-  chk::chk_not_any_na(sum_by, x_name = "`sum_by`")
-  missing <- setdiff(sum_by, names(data))
+  chk::chk_character(pool_by, x_name = "`pool_by`")
+  chk::chk_not_any_na(pool_by, x_name = "`pool_by`")
+  missing <- setdiff(pool_by, names(data))
   if (length(missing)) {
     cli::cli_abort(
-      "{.arg sum_by} names {cli::qty(missing)}column{?s} {.field {missing}} that {.arg {data_name}} does not have.",
+      "{.arg pool_by} names {cli::qty(missing)}column{?s} {.field {missing}} that {.arg {data_name}} does not have.",
       call = call
     )
   }
-  bad <- sum_by[!vapply(data[sum_by], .vld_group_column, logical(1))]
+  bad <- pool_by[!vapply(data[pool_by], .vld_group_column, logical(1))]
   cli::cli_abort(
     c(
-      "{.arg sum_by} column{?s} {.field {bad}} must be character or factor with no missing values.",
+      "{.arg pool_by} column{?s} {.field {bad}} must be character or factor with no missing values.",
       i = "Convert a numeric code with {.fn as.character} or {.fn factor}."
     ),
     call = call

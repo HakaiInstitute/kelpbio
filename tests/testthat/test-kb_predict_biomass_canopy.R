@@ -64,7 +64,7 @@ test_that("dry and carbon are per-draw conversions of wet", {
 
 test_that("sums are taken on the draws, not the summaries", {
   fit <- cover_calibration_nereo_fit
-  p <- kb_predict_biomass_canopy(fit, surveys(), sum_by = "region", sig_fig = 10)
+  p <- kb_predict_biomass_canopy(fit, surveys(), pool_by = "region", sig_fig = 10)
   expect_named(p, c("region", "biomass_kg", "estimate", "lower", "upper"))
   expect_identical(attr(p, "kb_group_vars"), "region")
   totals <- canopy_biomass_draws(fit, surveys(), "sample", NULL)$biomass
@@ -114,7 +114,7 @@ test_that("missing, invalid, and mismatched inputs error", {
     error = TRUE
   )
   expect_snapshot(
-    kb_predict_biomass_canopy(fit, surveys(), sum_by = "zone"),
+    kb_predict_biomass_canopy(fit, surveys(), pool_by = "zone"),
     error = TRUE
   )
   expect_error(
@@ -140,7 +140,7 @@ test_that("per_area gives biomass per m2 of tide-corrected canopy", {
     apply(res$biomass / res$canopy, 2, stats::median),
     ignore_attr = TRUE
   )
-  summed <- kb_predict_biomass_canopy(fit, surveys(), per_area = TRUE, sum_by = "region", sig_fig = 10)
+  summed <- kb_predict_biomass_canopy(fit, surveys(), per_area = TRUE, pool_by = "region", sig_fig = 10)
   expect_equal(
     summed$estimate[1],
     stats::median((res$biomass[, 1] + res$biomass[, 2]) / (res$canopy[, 1] + res$canopy[, 2])),
@@ -148,10 +148,10 @@ test_that("per_area gives biomass per m2 of tide-corrected canopy", {
   )
 })
 
-test_that("a sum_by group holding one site-year twice warns", {
+test_that("a pool_by group holding one site-year twice warns", {
   twice <- surveys()[c(1, 1), ]
   expect_warning(
-    kb_predict_biomass_canopy(cover_calibration_nereo_fit, twice, sum_by = "region"),
+    kb_predict_biomass_canopy(cover_calibration_nereo_fit, twice, pool_by = "region"),
     "overlap"
   )
 })

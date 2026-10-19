@@ -100,14 +100,14 @@ warn_survey_area <- function(data, x_name) {
   invisible(data)
 }
 
-# Two rows for one site-year in a `sum_by` group are two totals over the same
+# Two rows for one site-year in a `pool_by` group are two totals over the same
 # mapped canopy, so their sum double counts. `id` gives each row's group.
 warn_overlapping_canopy <- function(grid, id) {
   key <- site_year_key(grid$site, grid$year)
   repeated <- unique(key[duplicated(paste(id, key))])
   if (length(repeated)) {
     cli::cli_warn(c(
-      "Some {.arg sum_by} groups hold more than one row for a site-year, so their totals overlap.",
+      "Some {.arg pool_by} groups hold more than one row for a site-year, so their totals overlap.",
       i = "Repeated: {.val {repeated}}."
     ))
   }

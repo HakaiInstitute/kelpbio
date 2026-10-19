@@ -97,12 +97,12 @@
       1 survey in `d` has a survey_area_m2 above its plot_area_m2.
       i survey_area_m2 is the area searched and plot_area_m2 the plot polygon; check that they are not swapped.
 
-# a sum_by group holding one site-year twice warns
+# a pool_by group holding one site-year twice warns
 
     Code
       warn_overlapping_canopy(grid, c(1L, 1L))
     Condition
       Warning:
-      Some `sum_by` groups hold more than one row for a site-year, so their totals overlap.
+      Some `pool_by` groups hold more than one row for a site-year, so their totals overlap.
       i Repeated: "a:2020".
 

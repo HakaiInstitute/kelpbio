@@ -43,6 +43,8 @@ describe a model the analysis no longer uses.
 - **BREAKING** *Nereocystis* counts are `plants`, not `stipes`, for both species.
 - **BREAKING** Weight and size data take `date` in place of `year` (the year is
   derived), as the survey and plant data do; size data may carry `plot_id`.
+- The grouping argument of the biomass verbs is `pool_by`: kg are summed, and
+  per area divided by the summed area.
 - Estimates are scoped to the peak season at site-year resolution; several plots
   per site-year and several surveys per plot are allowed.
 - Bundled data and pre-fits follow: survey, plants, and canopy datasets replace
