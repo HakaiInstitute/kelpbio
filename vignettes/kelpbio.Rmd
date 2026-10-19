@@ -103,7 +103,7 @@ biomass_site_year <- kb_predict_biomass_survey(
   fit_weight_sim_nereo,
   fit_size_sim_nereo,
   data_survey_sim_nereo,
-  sum_by = c("site", "year")
+  pool_by = c("site", "year")
 )
 kb_plot_predictions(biomass_site_year)
 ```
@@ -132,7 +132,7 @@ kb_plot_predictions(totals)
 Totals sum over any grouping column, draw by draw:
 
 ```{r}
-kb_predict_biomass_canopy(fit_cover, data_canopy_sim_nereo, sum_by = "year")
+kb_predict_biomass_canopy(fit_cover, data_canopy_sim_nereo, pool_by = "year")
 ```
 
 Dry and carbon biomass take a wet/dry fit, and for carbon also a carbon fit:
@@ -179,6 +179,12 @@ The calibration and totals then follow as for *Nereocystis*.
   - the weight and size data use the same measurement;
   - the power law (`form = "power"`) or Packard power law (`form =
     "packard_floor"`) fits the data, as `pp_check()` and `loo()` show.
+
+## Next steps
+
+`vignette("advanced")` covers working with the posterior draws directly,
+prediction grids and new sites, priors and prior checks, fit diagnostics, and
+sampler control.
 
 ## References
 

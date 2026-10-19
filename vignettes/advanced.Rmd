@@ -1,0 +1,242 @@
+---
+title: "Advanced usage"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Advanced usage}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup, message = FALSE, warning = FALSE}
+library(kelpbio)
+library(dplyr)
+library(posterior)
+```
+
+This article covers what lies beyond the main workflow in
+`vignette("kelpbio")`: working with posterior draws directly, choosing rows to
+predict at, changing priors, checking a fit, and controlling the sampler. The
+bundled pre-fits stand in for fitted models; calls that run the sampler are
+shown but not run.
+
+## Working with draws
+
+### The draws column
+
+The derived verbs (`kb_predict_mean_weight()`, `kb_predict_biomass_survey()`,
+and `kb_predict_biomass_canopy()`) return their response as a column of
+posterior draws, a `posterior` `rvar`, next to `estimate`, `lower`, and
+`upper`. Arithmetic on an `rvar` is done draw by draw, so any quantity built
+from it carries the full posterior uncertainty.
+
+```{r}
+set.seed(1)
+biomass <- kb_predict_biomass_survey(
+  fit_weight_sim_nereo,
+  fit_size_sim_nereo,
+  data_survey_sim_nereo,
+  progress = "none"
+)
+biomass$biomass_kg_m2[1:3]
+```
+
+### Summaries other than pooling
+
+`pool_by` pools rows by summing biomass, and per area divides by the summed
+area. Other summaries come from summarising the draws column. The unweighted
+mean biomass per m² of the surveys in each site-year, giving each survey the
+same weight whatever its area:
+
+```{r}
+biomass |>
+  group_by(site, year) |>
+  summarise(mean_kg_m2 = rvar_mean(biomass_kg_m2), .groups = "drop")
+```
+
+`rvar_mean()`, `rvar_sum()`, `rvar_median()`, `rvar_min()`, and `rvar_max()`
+summarise across rows within each draw. Summarise the draws, not the
+`estimate`, `lower`, and `upper` columns: the sum or mean of limits is not the
+limit of the sum or mean.
+
+### Comparisons and probabilities
+
+Differences, ratios, and probabilities between groups also come from the
+draws. Total biomass by year, the change from 2019 to 2022, and the
+probability that biomass was higher in 2022:
+
+```{r}
+set.seed(1)
+totals <- kb_predict_biomass_canopy(
+  fit_cover_calibration_sim_nereo,
+  data_canopy_sim_nereo,
+  pool_by = "year"
+)
+by_year <- setNames(totals$biomass_kg, totals$year)
+by_year["2022"] / by_year["2019"]
+Pr(by_year["2022"] > by_year["2019"])
+```
+
+`quantile2()`, `median()`, `mean()`, and `sd()` summarise an `rvar` over its
+draws; `posterior::summarise_draws()` gives several at once.
+
+### The posterior of a fit
+
+`kb_samples()` and `posterior::as_draws()` return a fit's draws as a
+`draws_rvars` object, and the other `posterior` conversions accept a fit:
+
+```{r}
+draws <- kb_samples(fit_weight_sim_nereo)
+draws$diameter_power
+summarise_draws(fit_weight_sim_nereo) |>
+  head()
+```
+
+The `rstantools` generics give draws-by-rows matrices for any rows:
+`posterior_linpred()` (the linear predictor), `posterior_epred()` (the
+expected response), and `posterior_predict()` (new observations, with the
+model's observation noise).
+
+```{r}
+rows <- data.frame(diameter_mm = c(20, 40, 60))
+epred <- posterior_epred(fit_weight_sim_nereo, rows)
+dim(epred)
+```
+
+## Rows to predict at
+
+`kb_new_data()` builds grids by site, year, or both, crossed with values of a
+model's predictor:
+
+```{r}
+grid <- kb_new_data(fit_weight_sim_nereo, by = "site", diameter_mm = c(30, 50))
+head(grid)
+```
+
+A site or year that the fit has no data for is a new level. `new_levels`
+says how its effect is treated: `"average"` takes the typical site or year,
+and `"sample"` draws a new effect from the estimated variation, so the
+interval covers that variation too. `representative_site` gives a new site
+the effects of fitted sites instead:
+
+```{r}
+new_site <- data.frame(diameter_mm = 40, site = "new_reef", year = "2021")
+kb_predict_weight(fit_weight_sim_nereo, new_site, new_levels = "average")
+kb_predict_weight(
+  fit_weight_sim_nereo,
+  new_site,
+  representative_site = "otter_cove"
+)
+```
+
+The derived verbs default to `"sample"`, since their rows are particular
+site-years; the model verbs default to `"average"`.
+
+## Priors
+
+Each model has a list of default priors, one entry per parameter, named as in
+`tidy()`:
+
+```{r}
+kb_priors_cover_calibration_nereo()
+```
+
+A list passed to `priors` replaces only the entries it names; the family of
+each entry is fixed, and its hyperparameters can be changed:
+
+```{r, eval = FALSE}
+fit <- kb_fit_cover_calibration_nereo(
+  biomass,
+  priors = list(cover_slope = kb_prior_lognormal(meanlog = 2, sdlog = 0.5))
+)
+```
+
+`prior_summary()` returns the priors a fit used:
+
+```{r}
+prior_summary(fit_cover_calibration_sim_nereo)
+```
+
+### Prior predictive checks
+
+A fit with `prior_only = TRUE` samples from the priors alone, ignoring the
+data. Its posterior predictive check is a prior predictive check: whether the
+priors allow data like those observed.
+
+```{r, eval = FALSE}
+prior_fit <- kb_fit_weight_nereo(data_weight_sim_nereo, prior_only = TRUE)
+pp_check(prior_fit)
+```
+
+### Prior sensitivity
+
+`kb_sensitivity()` power-scales the prior and the likelihood (with the
+priorsense package) and flags the parameters whose posterior depends strongly
+on the prior or on weak data:
+
+```{r, eval = requireNamespace("priorsense", quietly = TRUE)}
+kb_sensitivity(fit_weight_sim_nereo)
+```
+
+## Checking a fit
+
+- `kb_converged()` checks Rhat, effective sample sizes, and divergences
+  against thresholds that can be set; `summary()` adds the per-parameter
+  diagnostics and the sampler footer.
+- `pp_check()` overlays replicate datasets on the observed data, or with
+  `type = "residual"` the deviance residuals.
+- `loo()` and `loo_compare()` estimate and compare out-of-sample predictive
+  accuracy from the stored draws, and `kb_influence()` lists the observations
+  with high Pareto k.
+- `kb_model_describe()` prints the fitted model, and `kb_stancode()` its Stan
+  source.
+
+```{r}
+kb_converged(fit_weight_sim_nereo)
+pp_check(fit_weight_sim_nereo, type = "residual")
+loo(fit_weight_sim_nereo)
+kb_influence(fit_weight_sim_nereo) |>
+  filter(influential)
+```
+
+`log_lik()` gives the pointwise log-likelihood for the loo package, and the
+draws convert for bayesplot:
+
+```{r}
+bayesplot::mcmc_trace(
+  as_draws_array(fit_weight_sim_nereo),
+  pars = c("intercept", "diameter_power")
+)
+```
+
+## Sampler control
+
+- `chains`, `niters` (saved draws per chain), `nthin`, `cores`, and `seed` set
+  the sampling, and `control` (for example `list(adapt_delta = 0.99)`) passes
+  through to `rstan::sampling()`.
+- Fits combined in a derived verb must have the same number of draws, so fit
+  them with the same `chains` and `niters`.
+- `progress` sets the console output, and `progress_dir` records progress that
+  `kb_progress()` reads from another R process, for example to drive a progress
+  bar in an app.
+
+```{r, eval = FALSE}
+dir <- tempfile()
+dir.create(dir)
+fit <- kb_fit_weight_nereo(
+  data_weight_sim_nereo,
+  chains = 4,
+  niters = 1000,
+  seed = 1,
+  control = list(adapt_delta = 0.99),
+  progress = "none",
+  progress_dir = dir
+)
+kb_progress(dir)
+```
