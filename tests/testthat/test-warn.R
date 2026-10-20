@@ -33,10 +33,10 @@ test_that("plain names, including spaces, raise no warning", {
 })
 
 test_that("the data checks warn on ambiguous group names", {
-  data <- data_size_sim_nereo
+  data <- data_size_sample_sim_nereo
   data$site <- as.character(data$site)
   data$site[1] <- "North Reef, inner"
-  expect_warning(kb_check_data_size_nereo(data), "comma or square bracket")
+  expect_warning(kb_check_data_size_sample_nereo(data), "comma or square bracket")
 })
 
 test_that("a column in the wrong unit warns, naming it and the expected unit", {

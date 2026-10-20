@@ -44,8 +44,9 @@ question of how intermediate quantities chain.
 ## Dive and flight dates
 
 The user pairs each dive with a flight on the survey row, so kelpbio cannot
-check the gap between them. `date` keys surveys only. A seasonal analysis would
-need a period below the year (see Later, larger).
+check the gap between them. Input tables carry `year` only and surveys are keyed
+by `survey_id` (change `survey-data-columns`). A seasonal analysis would need a
+period below the year (see Later, larger).
 
 ## kelpbioshiny
 
@@ -62,10 +63,10 @@ site-year (`R/mock-example.R`).
 
 **What the cover-calibration change means for the app** (kelpbio API after it):
 
-1. **Data.** One survey sheet (site, plot_id, date, survey_area_m2, plants for
+1. **Data.** One survey sheet (survey_id, site, year, survey_area_m2, plants for
    *Nereocystis*, and the drone columns plot_area_m2, canopy_area_m2,
    tide_height_m on the same row), a counted-plant sheet for *Macrocystis*
-   (site, plot_id, date, fronds, partial), and a canopy sheet for totals. The
+   (survey_id, fronds, partial; sheet `size_census`), and a canopy sheet for totals. The
    density sheet and the separate cover sheet go.
 2. **Dependencies.** The cover fit needs survey biomass from
    `kb_predict_biomass_survey()`, so the weight fit (and the *Nereocystis* size

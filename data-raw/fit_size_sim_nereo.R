@@ -1,5 +1,5 @@
 # Build fit_size_sim_nereo, a slim pre-fit size model for runnable examples
-# and tests. Fitted to the whole data_size_sim_nereo with reduced chains and draws
+# and tests. Fitted to the whole data_size_sample_sim_nereo with reduced chains and draws
 # so the object stays small; its size is set by the draw count alone, since no
 # per-observation quantities are stored. Not for inference. Reproducibility comes
 # from the sampler `seed`.
@@ -13,7 +13,7 @@
 devtools::load_all(quiet = TRUE)
 
 fit_size_sim_nereo <- kb_fit_size_nereo(
-  data_size_sim_nereo,
+  data_size_sample_sim_nereo,
   chains = 3L,
   niters = 500L,
   # nthin multiplies the sampling iterations while holding the saved draw count

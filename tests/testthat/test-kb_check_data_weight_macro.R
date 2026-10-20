@@ -3,7 +3,7 @@ test_that("valid macro weight data passes invisibly", {
     fronds = c(3L, 8L),
     weight_kg = c(0.4, 1.7),
     site = factor(c("a", "b")),
-    date = as.Date(c("2020-08-01", "2021-08-01"))
+    year = c("2020", "2021")
   )
   expect_silent(kb_check_data_weight_macro(data))
   expect_identical(kb_check_data_weight_macro(data), data)
@@ -14,7 +14,7 @@ test_that("character site is accepted", {
     fronds = 5L,
     weight_kg = 0.9,
     site = "a",
-    date = as.Date("2020-08-01"),
+    year = "2020",
     stringsAsFactors = FALSE
   )
   expect_silent(kb_check_data_weight_macro(data))
@@ -25,10 +25,10 @@ test_that("missing, mistyped, and impossible values error", {
     fronds = 5L,
     weight_kg = 0.9,
     site = factor("a"),
-    date = as.Date("2020-08-01")
+    year = "2020"
   )
   expect_snapshot(
-    kb_check_data_weight_macro(good[c("weight_kg", "site", "date")]),
+    kb_check_data_weight_macro(good[c("weight_kg", "site", "year")]),
     error = TRUE
   )
   bad_type <- good
@@ -67,9 +67,13 @@ test_that("x_name must be a string", {
   expect_error(kb_check_data_weight_macro(data.frame(), x_name = 1), "x_name")
 })
 
-test_that("a date given as text or a contradicting year errors", {
-  good <- data_weight_sim_macro[1:2, ]
-  expect_error(kb_check_data_weight_macro(transform(good, date = as.character(date))), "Date")
-  expect_error(kb_check_data_weight_macro(transform(good, year = "1999")), "year")
-  expect_silent(kb_check_data_weight_macro(transform(good, year = format(date, "%Y"))))
+test_that("a numeric year is accepted, a fractional one errors", {
+  good <- data.frame(diameter_mm = 30, weight_kg = 1, fronds = 3, site = "a", year = 2020)
+  expect_silent(kb_check_data_weight_macro(good))
+  expect_error(kb_check_data_weight_macro(transform(good, year = 2020.5)), "year")
+})
+
+test_that("a date without a year errors naming year", {
+  good <- data.frame(diameter_mm = 30, weight_kg = 1, fronds = 3, site = "a", date = as.Date("2020-08-01"))
+  expect_error(kb_check_data_weight_macro(good), "year")
 })

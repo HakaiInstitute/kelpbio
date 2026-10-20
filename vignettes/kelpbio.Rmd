@@ -34,15 +34,15 @@ it, so its uncertainty carries through to the totals.
 
 - **Plant**: one individual (sporophyte), identified by its holdfast. "Plant" is
   used for convenience, as in Reed et al. (2009).
-- **Plot**: a fixed area at a site, identified by `plot_id`. Drone canopy within
-  the plot is measured over its polygon (`plot_area_m2`).
-- **Survey**: one in situ count of a plot on a `date`, over the area searched
-  (`survey_area_m2`), for example a dive's transects. The area searched may be
-  smaller than the plot.
+- **Plot**: a fixed area at a site. Drone canopy within the plot is measured
+  over its polygon (`plot_area_m2`).
+- **Survey**: one in situ count, identified by `survey_id`, over the area
+  searched (`survey_area_m2`), for example a dive's transects. The area searched
+  may be smaller than the plot.
 
 Estimates are for the peak season, at site-year resolution:
 
-- A site-year may hold several plots, and a plot several surveys.
+- A site-year may hold several surveys, including several on one day.
 - Each survey is one row. Surveys with drone cover each enter the calibration as
   one observation, sharing their site and year effects.
 
@@ -50,23 +50,23 @@ Estimates are for the peak season, at site-year resolution:
 
 | Data | One row per | Keyed by | Fitted by or passed to |
 |---|---|---|---|
-| Weight | harvested plant | `site`, `date` | `kb_fit_weight_nereo()`, `kb_fit_weight_macro()` |
-| Size (*Nereocystis*) | measured plant | `site`, `date` (`plot_id` optional) | `kb_fit_size_nereo()` |
-| Survey | survey of a plot | `site`, `plot_id`, `date` | `kb_predict_biomass_survey()` |
-| Plants (census) | counted plant | `site`, `plot_id`, `date` | `kb_predict_biomass_survey()` |
+| Weight | harvested plant | `site`, `year` | `kb_fit_weight_nereo()`, `kb_fit_weight_macro()` |
+| Size sample (*Nereocystis*) | measured plant | `site`, `year` | `kb_fit_size_nereo()` |
+| Survey | survey | `survey_id` (with `site`, `year`) | `kb_predict_biomass_survey()` |
+| Size census | counted plant | `survey_id` | `kb_predict_biomass_survey()` |
 | Canopy | mapped site-year | `site`, `year` | `kb_predict_biomass_canopy()` |
 
-Field data are dated: `date` is a `Date`, and the year is taken from it. The
-models work at site-year resolution, so predictions and totals are by site and
-year.
+`year` may be a factor, character, or whole numbers. The models work at
+site-year resolution, so predictions and totals are by site and year.
 
 Plant sizes come from one of two sources:
 
 - **Tallied plants** (*Nereocystis*): the survey records the number of `plants`,
-  and a size fit models their size distribution from a measured sample.
-- **Counted plants** (*Macrocystis*, or any full census): a plants table holds
-  the size of every counted plant, joined to its survey by `site`, `plot_id`, and
-  `date`. A survey with no plant rows has no biomass.
+  and a size fit models their size distribution from a size sample, which need
+  not be linked to any survey.
+- **Size census** (*Macrocystis*, or any full census): a size census holds the
+  size of every counted plant, joined to its survey by `survey_id`. A survey
+  with no census rows has no biomass.
 
 ```{r}
 data_survey_sim_nereo
@@ -79,7 +79,7 @@ them here.
 
 ```{r, eval = FALSE}
 fit_weight <- kb_fit_weight_nereo(data_weight_sim_nereo)
-fit_size <- kb_fit_size_nereo(data_size_sim_nereo)
+fit_size <- kb_fit_size_nereo(data_size_sample_sim_nereo)
 ```
 
 Survey biomass is the expected weight of each survey's plants per m² of the area
@@ -149,13 +149,13 @@ kb_predict_biomass_canopy(
 
 ### *Macrocystis*
 
-Every counted *Macrocystis* plant has its fronds at 1 m recorded, so a plants
-table takes the place of a size fit.
+Every counted *Macrocystis* plant has its fronds at 1 m recorded, so a size
+census takes the place of a size fit.
 
 ```{r}
 biomass_macro <- kb_predict_biomass_survey(
   fit_weight_sim_macro,
-  data_plants_sim_macro,
+  data_size_census_sim_macro,
   data_survey_sim_macro
 )
 ```

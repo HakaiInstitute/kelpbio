@@ -11,10 +11,10 @@
 #' - A size fit, when plants were tallied and a sample of them measured. A
 #'   survey's biomass is its `plants` count times its site-year's mean plant
 #'   weight (see [kb_predict_mean_weight()]).
-#' - A table of every counted plant, when each was measured. A survey's biomass
-#'   is the sum of its plants' expected weights, half for a `partial` plant. A
-#'   survey with no plant rows has no biomass, and a message lists such
-#'   surveys.
+#' - A size census of every counted plant, when each was measured, joined to
+#'   its survey by `survey_id`. A survey's biomass is the sum of its plants'
+#'   expected weights, half for a `partial` plant. A survey with no census rows
+#'   has no biomass, and a message lists such surveys.
 #'
 #' Dry biomass is wet biomass times the expected dry:wet ratio from `wetdry`,
 #' and carbon dry biomass times the expected carbon fraction from `carbon`. The
@@ -26,20 +26,21 @@
 #'
 #' @inheritParams derived_params
 #' @inheritParams params
-#' @param size A `kb_fit_size` object, when plants were tallied, or a data
-#'   frame of every counted plant, one row per plant (see
-#'   [kb_check_data_plants_nereo()] and [kb_check_data_plants_macro()] for the
-#'   columns).
-#' @param survey A data frame of in situ surveys, one row per survey of a plot
-#'   (see [kb_check_data_survey()] for the columns).
+#' @param size A `kb_fit_size` object, when plants were tallied, or a size
+#'   census, a data frame of every counted plant, one row per plant (see
+#'   [kb_check_data_size_census_nereo()] and
+#'   [kb_check_data_size_census_macro()] for the columns).
+#' @param survey A data frame of in situ surveys, one row per survey (see
+#'   [kb_check_data_survey()] for the columns).
 #' @param per_area A flag specifying whether to give biomass per m² of the
 #'   surveyed area, or else the biomass in that area.
 #' @param n_plants A whole number of sizes averaged per draw to compute the
 #'   mean plant weight from a size fit; larger values are more precise and
-#'   slower. Not used with a table of counted plants.
+#'   slower. Not used with a size census.
 #'
 #' @returns A `kb_predictions` object. Without `pool_by`, the rows of `survey`
-#'   with added `year` (from `date`), `weight_support` and, with a size fit,
+#'   (a numeric `year` or `survey_id` as character) with added
+#'   `weight_support` and, with a size fit,
 #'   `size_support` (as in `kb_predict_mean_weight()`), the draws of the
 #'   biomass in a column named for it (`biomass_kg_m2`, `dry_biomass_kg_m2`, or
 #'   `carbon_biomass_g_m2` per m², and `biomass_kg`, `dry_biomass_kg`, or
@@ -64,7 +65,7 @@
 #' set.seed(1)
 #' kb_predict_biomass_survey(
 #'   fit_weight_sim_macro,
-#'   data_plants_sim_macro,
+#'   data_size_census_sim_macro,
 #'   data_survey_sim_macro,
 #'   pool_by = c("site", "year")
 #' )
@@ -96,7 +97,7 @@ kb_predict_biomass_survey <- function(
   .chk_kb_fit(weight, "kb_fit_weight")
   if (!inherits(size, "kb_fit") && !is.data.frame(size)) {
     cli::cli_abort(
-      "{.arg size} must be a {.cls kb_fit_size} object or a data frame of counted plants."
+      "{.arg size} must be a {.cls kb_fit_size} object or a size census data frame."
     )
   }
   census <- !inherits(size, "kb_fit")
@@ -104,7 +105,7 @@ kb_predict_biomass_survey <- function(
     if (!missing(n_plants)) {
       cli::cli_abort(c(
         "{.arg n_plants} applies only with a size fit.",
-        i = "With a table of counted plants, every plant's own size is used."
+        i = "With a size census, every plant's own size is used."
       ))
     }
   } else {
@@ -129,8 +130,7 @@ kb_predict_biomass_survey <- function(
   .chk_representative_site(weight, representative_site)
   .chk_summary_args(conf_level, estimate, sig_fig)
 
-  grid <- tibble::as_tibble(survey)
-  grid$year <- date_year(grid$date)
+  grid <- ids_as_character(tibble::as_tibble(survey))
   if (!is.null(pool_by)) {
     .chk_pool_by(pool_by, grid, data_name = "survey")
     pool_by <- unique(pool_by)
@@ -216,22 +216,20 @@ tallied_biomass_draws <- function(
 # are resolved per site-year, so the plants of one site-year share them.
 census_biomass_draws <- function(
   weight,
-  plants,
+  size_census,
   grid,
   new_levels,
   representative_site,
   progress
 ) {
-  plants <- tibble::as_tibble(plants)
-  plants$year <- date_year(plants$date)
+  plants <- ids_as_character(tibble::as_tibble(size_census))
   predictor <- weight$meta$predictor
   warn_outside_range(weight, plants[[predictor]], predictor)
 
   kg <- matrix(0, nrow = posterior::ndraws(weight$draws), ncol = nrow(grid))
-  survey <- match(
-    survey_key(plants$site, plants$plot_id, plants$date),
-    survey_key(grid$site, grid$plot_id, grid$date)
-  )
+  survey <- match(as.character(plants$survey_id), as.character(grid$survey_id))
+  plants$site <- grid$site[survey]
+  plants$year <- grid$year[survey]
   if (length(survey)) {
     sy_key <- site_year_key(grid$site, grid$year)
     first <- !duplicated(sy_key)
@@ -259,9 +257,9 @@ notify_empty_surveys <- function(grid, empty, progress = "bar") {
   if (identical(progress, "none") || n == 0L) {
     return(invisible(empty))
   }
-  surveys <- survey_key(grid$site[empty], grid$plot_id[empty], grid$date[empty])
+  surveys <- as.character(grid$survey_id[empty])
   cli::cli_inform(c(
-    i = "{n} survey{?s} with no plant rows {cli::qty(n)}{?has/have} no biomass.",
+    i = "{n} survey{?s} with no size census rows {cli::qty(n)}{?has/have} no biomass.",
     " " = "Survey{?s}: {.val {surveys}}."
   ))
   invisible(empty)

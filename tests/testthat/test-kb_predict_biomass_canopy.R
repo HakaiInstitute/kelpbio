@@ -180,3 +180,22 @@ test_that("canopy at zero tide height is used as given, and no canopy stays zero
   expect_equal(posterior::draws_of(p$biomass_kg)[, 1], totals[, 1], ignore_attr = TRUE)
   expect_true(all(posterior::draws_of(p$biomass_kg)[, 2] == 0))
 })
+
+test_that("a numeric year matches the fitted year and pools as character", {
+  withr::local_seed(1)
+  character_year <- kb_predict_biomass_canopy(
+    cover_calibration_nereo_fit, surveys(),
+    new_levels = "average", pool_by = "year"
+  )
+  withr::local_seed(1)
+  numeric_year <- kb_predict_biomass_canopy(
+    cover_calibration_nereo_fit, transform(surveys(), year = 2019),
+    new_levels = "average", pool_by = "year"
+  )
+  expect_identical(numeric_year$year, "2019")
+  expect_equal(numeric_year$biomass_kg, character_year$biomass_kg)
+  expect_error(
+    kb_predict_biomass_canopy(cover_calibration_nereo_fit, transform(surveys(), year = 2019.5)),
+    "year"
+  )
+})

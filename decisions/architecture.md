@@ -35,8 +35,8 @@ Fits and model verbs:
 
 ```mermaid
 flowchart LR
-    DW[/"weight data<br/>site · date · weight_kg<br/>diameter_mm (nereo) or fronds (macro)"/] --> FW["kb_fit_weight_nereo()<br/>kb_fit_weight_macro()"] --> MW["kb_predict_weight()<br/>kg at a size"]
-    DS[/"size data (nereo)<br/>site · date · diameter_mm · plot_id?"/] --> FS["kb_fit_size_nereo()"] --> MS["kb_predict_size()<br/>mean diameter"]
+    DW[/"weight data<br/>site · year · weight_kg<br/>diameter_mm (nereo) or fronds (macro)"/] --> FW["kb_fit_weight_nereo()<br/>kb_fit_weight_macro()"] --> MW["kb_predict_weight()<br/>kg at a size"]
+    DS[/"size sample (nereo)<br/>site · year · diameter_mm"/] --> FS["kb_fit_size_nereo()"] --> MS["kb_predict_size()<br/>mean diameter"]
     DWD[/"wet/dry data<br/>wet_mass_g · dry_mass_g"/] --> FWD["kb_fit_wetdry_*()"] --> MWD["kb_predict_wetdry()<br/>dry:wet ratio"]
     DC[/"carbon data<br/>sample_mass_mg · carbon_mass_ug"/] --> FC["kb_fit_carbon_*()"] --> MC["kb_predict_carbon()<br/>carbon fraction"]
     BIO(["kb_predict_biomass_survey() output<br/>one row per survey, with drone cover"]) --> FCC["kb_fit_cover_calibration_*(data)"] --> MCC["kb_predict_cover_calibration()<br/>kg/m² of plot at a cover"]
@@ -50,22 +50,21 @@ flowchart TB
     FS["size fit (nereo)"] --> VMW["kb_predict_mean_weight(weight, size, new_data?)<br/>kg per plant"]
     FW --> VBP
     FS -->|"sizes modelled<br/>(tallied plants)"| VBP
-    DPL[/"plants: one row per counted plant<br/>site · plot_id · date<br/>diameter_mm or fronds · partial?"/] -->|"sizes observed<br/>(a census)"| VBP
-    DSU[/"survey: one row per survey of a plot<br/>site · plot_id · date · survey_area_m2<br/>plants (tallied, with a size fit)<br/>plot_area_m2? · canopy_area_m2? · tide_height_m?<br/>grouping columns?"/] --> VBP["kb_predict_biomass_survey(weight, size, survey)<br/>per_area = TRUE: kg/m² surveyed<br/>FALSE: kg in the surveyed area"]
+    DPL[/"size census: one row per counted plant<br/>survey_id<br/>diameter_mm or fronds · partial?"/] -->|"sizes observed<br/>(a census)"| VBP
+    DSU[/"survey: one row per survey<br/>survey_id · site · year · survey_area_m2<br/>plants (tallied, with a size fit)<br/>plot_area_m2? · canopy_area_m2? · tide_height_m?<br/>grouping columns?"/] --> VBP["kb_predict_biomass_survey(weight, size, survey)<br/>per_area = TRUE: kg/m² surveyed<br/>FALSE: kg in the surveyed area"]
     VBP -->|"rows with drone cover"| FCC["kb_fit_cover_calibration_*(data)"]
     FCC --> VCA["kb_predict_biomass_canopy(fit, new_data)<br/>kg over the canopy"]
     DCA[/"canopy: one row per map of a site<br/>site · year · canopy_area_m2 · tide_height_m<br/>classified_area_m2 · grouping columns?"/] --> VCA
 ```
 
 Estimates are for the peak season at site-year resolution: every model has site
-and year effects only. A plot may be surveyed more than once, and a site-year may
-hold several plots; each survey with drone cover (`plot_area_m2`,
-`canopy_area_m2`, and `tide_height_m` on its row) is one observation in the cover
-calibration. In every dated table (weight, size, survey, plants) `year` comes
-from `date`. A survey's plants come from the plant rows,
-joined by `site`, `plot_id`, and `date`, when every plant was measured, and from
-its tallied `plants` column when sizes come from a size fit; a survey with no
-plant rows is zero. Biomass per m² divides by `survey_area_m2`, the surveyed
+and year effects only. A site-year may hold several surveys, keyed by `survey_id`;
+each survey with drone cover (`plot_area_m2`, `canopy_area_m2`, and
+`tide_height_m` on its row) is one observation in the cover calibration. Every
+input table gives `year` directly (a numeric year is used as its character
+level). A survey's plants come from the size census, joined by `survey_id`, when
+every plant was measured, and from its tallied `plants` column when sizes come
+from a size fit; a survey with no census rows is zero. Biomass per m² divides by `survey_area_m2`, the surveyed
 area; cover divides canopy by `plot_area_m2`, and the calibration takes a
 survey's biomass per m² as its plot's. "Plant" stands for one
 individual (sporophyte) identified by its holdfast, in both species.

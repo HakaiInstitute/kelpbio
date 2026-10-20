@@ -108,7 +108,7 @@ tidy(fit_cover_calibration_sim_macro)
 \dontshow{if (interactive()) withAutoprint(\{ # examplesIf}
 biomass <- kb_predict_biomass_survey(
   fit_weight_sim_macro,
-  data_plants_sim_macro,
+  data_size_census_sim_macro,
   data_survey_sim_macro
 )
 fit <- kb_fit_cover_calibration_macro(biomass)

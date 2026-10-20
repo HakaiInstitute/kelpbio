@@ -1,5 +1,5 @@
 # Build the simulated Nereocystis datasets: data_weight_sim_nereo,
-# data_size_sim_nereo, data_survey_sim_nereo, and data_canopy_sim_nereo, for
+# data_size_sample_sim_nereo, data_survey_sim_nereo, and data_canopy_sim_nereo, for
 # fast tests and runnable examples. Not for inference.
 #
 # All four come from one set of true site-year values, so they agree: survey
@@ -12,9 +12,9 @@
 # and drone cover at about two-thirds. Site names are invented and match no
 # Hakai Institute survey site.
 #
-# Each site-year's four transects are summed to one in situ survey of plot "1";
-# at a few site-years the transects are split between two plots, or between two
-# visits to one plot, and one transect with no plants is its own survey. The
+# Each site-year's four transects are summed to one in situ survey; at a few
+# site-years the transects are split between two plots, or between two visits
+# to one plot, and one transect with no plants is its own survey. The
 # draws up to the size data are unchanged from earlier versions, so the weight
 # and size data, and their pre-fits, are too.
 #
@@ -125,7 +125,7 @@ data_weight_sim_nereo <- do.call(rbind, lapply(which(grid$weight), function(i) {
   )
 }))
 
-data_size_sim_nereo <- do.call(rbind, lapply(which(grid$size), function(i) {
+data_size_sample_sim_nereo <- do.call(rbind, lapply(which(grid$size), function(i) {
   diameter <- stats::rweibull(20L, shape_size, size_scale(i))
   data.frame(diameter_mm = round(diameter, 1), site = grid$site[i], year = grid$year[i])
 }))
@@ -150,11 +150,12 @@ first <- !duplicated(survey_id)
 survey <- transects[first, c("site", "year", "plot_id", "visit")]
 survey$plants <- as.vector(tapply(transects$plants, survey_id, sum)[survey_id[first]])
 survey$survey_area_m2 <- as.vector(tapply(transects$area_m2, survey_id, sum)[survey_id[first]])
-survey$date <- as.Date(sprintf(
-  "%s-08-%02d",
+survey$survey_id <- paste(
+  survey$site,
   survey$year,
-  10L + match(survey$site, sites) + 10L * (survey$visit - 1L)
-))
+  stats::ave(seq_len(nrow(survey)), survey$site, survey$year, FUN = seq_along),
+  sep = "-"
+)
 
 # Drone cover on the surveys of drone site-years: the cover model solved for the
 # true plot biomass, with plot-to-plot variation. Cover below zero is set to
@@ -176,7 +177,7 @@ survey$tide_height_m <- ifelse(drone, tide_height_m, NA_real_)
 survey$survey_area_m2 <- pmin(survey$survey_area_m2, ifelse(drone, plot_area_m2, Inf))
 
 data_survey_sim_nereo <- survey[c(
-  "site", "plot_id", "date", "survey_area_m2", "plants",
+  "survey_id", "site", "year", "survey_area_m2", "plants",
   "plot_area_m2", "canopy_area_m2", "tide_height_m"
 )]
 
@@ -193,20 +194,6 @@ canopy$region <- factor(
 )
 data_canopy_sim_nereo <- canopy
 
-# Harvests and size measurements are dated within the peak season, with no new
-# draws: harvests a few days before the survey, sizes on the survey's plot "1" on
-# its date. The year comes from the date.
-dated <- function(data, day0) {
-  data$date <- as.Date(sprintf("%s-08-%02d", data$year, day0 + match(data$site, sites)))
-  data$year <- NULL
-  data
-}
-data_weight_sim_nereo <- dated(data_weight_sim_nereo, 5L)
-data_size_sim_nereo <- dated(data_size_sim_nereo, 10L)
-data_size_sim_nereo <- data_size_sim_nereo[c("diameter_mm", "site", "date")]
-data_size_sim_nereo$plot_id <- "1"
-data_size_sim_nereo <- data_size_sim_nereo[c("diameter_mm", "site", "plot_id", "date")]
-
 # 7. Save ----------------------------------------------------------------------
 
 # Levels in creation order, not string order; this order carries through to fits
@@ -220,7 +207,7 @@ as_sim <- function(data) {
   tibble::as_tibble(data)
 }
 data_weight_sim_nereo <- as_sim(data_weight_sim_nereo)
-data_size_sim_nereo <- as_sim(data_size_sim_nereo)
+data_size_sample_sim_nereo <- as_sim(data_size_sample_sim_nereo)
 data_survey_sim_nereo <- as_sim(data_survey_sim_nereo)
 data_canopy_sim_nereo <- as_sim(data_canopy_sim_nereo)
 
@@ -234,6 +221,6 @@ message(
 )
 
 usethis::use_data(data_weight_sim_nereo, overwrite = TRUE)
-usethis::use_data(data_size_sim_nereo, overwrite = TRUE)
+usethis::use_data(data_size_sample_sim_nereo, overwrite = TRUE)
 usethis::use_data(data_survey_sim_nereo, overwrite = TRUE)
 usethis::use_data(data_canopy_sim_nereo, overwrite = TRUE)

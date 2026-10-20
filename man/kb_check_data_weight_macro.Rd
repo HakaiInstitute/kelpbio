@@ -23,16 +23,17 @@ pyrifera} weight model, with appropriate types and values.
 }
 \details{
 Required columns: whole-number \code{fronds} (> 0), numeric \code{weight_kg} (kg, > 0),
-factor or character \code{site}, and \code{date} (a \code{Date}), with no missing values.
+factor or character \code{site}, and \code{year} (factor, character, or whole numbers),
+with no missing values.
 
 \code{fronds} is the number of fronds reaching 1 m above the holdfast, used as the
-size predictor. The year of each row is the year of \code{date}; a \code{year} column,
-if present, must agree with it. Other columns are ignored.
+size predictor. A numeric \code{year} is used as its character level. Other
+columns are ignored.
 }
 \examples{
 data <- data.frame(
   fronds = c(3, 8), weight_kg = c(0.4, 1.7),
-  site = factor(c("a", "b")), date = as.Date(c("2020-08-10", "2021-08-12"))
+  site = factor(c("a", "b")), year = c(2020, 2021)
 )
 kb_check_data_weight_macro(data)
 }
@@ -42,9 +43,9 @@ Other data checks:
 \code{\link[=kb_check_data_carbon_nereo]{kb_check_data_carbon_nereo()}},
 \code{\link[=kb_check_data_cover_calibration_macro]{kb_check_data_cover_calibration_macro()}},
 \code{\link[=kb_check_data_cover_calibration_nereo]{kb_check_data_cover_calibration_nereo()}},
-\code{\link[=kb_check_data_plants_macro]{kb_check_data_plants_macro()}},
-\code{\link[=kb_check_data_plants_nereo]{kb_check_data_plants_nereo()}},
-\code{\link[=kb_check_data_size_nereo]{kb_check_data_size_nereo()}},
+\code{\link[=kb_check_data_size_census_macro]{kb_check_data_size_census_macro()}},
+\code{\link[=kb_check_data_size_census_nereo]{kb_check_data_size_census_nereo()}},
+\code{\link[=kb_check_data_size_sample_nereo]{kb_check_data_size_sample_nereo()}},
 \code{\link[=kb_check_data_survey]{kb_check_data_survey()}},
 \code{\link[=kb_check_data_weight_nereo]{kb_check_data_weight_nereo()}},
 \code{\link[=kb_check_data_wetdry_macro]{kb_check_data_wetdry_macro()}},

@@ -239,26 +239,32 @@ test_that(".vld_new_data_groups rejects NA in any site or year column", {
   expect_false(.vld_new_data_groups(data.frame(year = NA_real_)))
 })
 
-test_that("the survey validators recognise valid survey and plant tables", {
+test_that("the survey validators recognise valid survey and census tables", {
   s <- data.frame(
-    site = c("a", "a"), plot_id = c("1", "2"), date = as.Date("2021-08-01"),
+    survey_id = c("s1", "s2"), site = "a", year = "2021",
     plot_area_m2 = c(200, NA), canopy_area_m2 = c(50, NA), tide_height_m = c(0.5, NA)
   )
-  expect_true(.vld_date(s$date))
-  expect_false(.vld_date("2021-08-01"))
-  expect_false(.vld_date(as.Date(NA)))
-  expect_true(.vld_date_year(s))
-  expect_true(.vld_date_year(transform(s, year = 2021)))
-  expect_false(.vld_date_year(transform(s, year = 2020)))
   expect_true(.vld_unique_surveys(s))
-  expect_false(.vld_unique_surveys(transform(s, plot_id = "1")))
+  expect_false(.vld_unique_surveys(transform(s, survey_id = "s1")))
   expect_true(.vld_drone_columns(s))
   expect_true(.vld_drone_columns(s["site"]))
-  expect_false(.vld_drone_columns(transform(s, tide_height_m = NA)[-3]))
+  expect_false(.vld_drone_columns(transform(s, tide_height_m = NA)[-6]))
   expect_false(.vld_drone_columns(transform(s, canopy_area_m2 = c(300, NA))))
   expect_true(.vld_partial(c(TRUE, FALSE)))
   expect_false(.vld_partial(c(TRUE, NA)))
-  p <- data.frame(site = "a", plot_id = "1", date = as.Date("2021-08-01"))
-  expect_true(.vld_plants_join(p, s))
-  expect_false(.vld_plants_join(transform(p, plot_id = "9"), s))
+  p <- data.frame(survey_id = "s1")
+  expect_true(.vld_census_join(p, s))
+  expect_false(.vld_census_join(transform(p, survey_id = "s9"), s))
+  expect_true(.vld_census_join(data.frame(survey_id = 1), data.frame(survey_id = "1")))
 })
+
+test_that(".vld_id_column allows numeric year and survey_id only", {
+  expect_true(.vld_id_column(c(2020, 2021), "year"))
+  expect_false(.vld_id_column(2020.5, "year"))
+  expect_false(.vld_id_column(c(2020, NA), "year"))
+  expect_true(.vld_id_column(2.5, "survey_id"))
+  expect_false(.vld_id_column(Inf, "survey_id"))
+  expect_false(.vld_id_column(1, "site"))
+  expect_true(.vld_id_column(factor("a"), "site"))
+})
+

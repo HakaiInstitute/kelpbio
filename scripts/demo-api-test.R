@@ -403,7 +403,7 @@ kb_progress(progress_dir) # 1 (complete)
 # (a) Single year of data: site:year cannot be separated from site, so the fit
 # warns naming the site effect (the warning shows whatever `progress` is).
 one_year <- data_weight_sim_nereo |>
-  filter(format(date, "%Y") == "2019") |>
+  filter(year == "2019") |>
   droplevels()
 fit_one_year <- kb_fit_weight_nereo(one_year, chains = 2, niters = 300)
 fit_one_year$meta$site_year_on # TRUE (fitted, with a warning)
@@ -412,7 +412,7 @@ fit_one_year$meta$site_year_on # TRUE (fitted, with a warning)
 # (b) Aliased design: each site sampled in one year and each year at one site,
 # so the warning names both the site and the year effects.
 aliased <- data_weight_sim_nereo |>
-  mutate(year = format(date, "%Y")) |>
+  mutate(year = as.character(year)) |>
   filter(
     (site == "otter_cove" & year == "2019") |
       (site == "gull_rock" & year == "2020") |
@@ -574,11 +574,11 @@ head(residuals(fit_m))
 # predictor, so predictions are one expected size per row or group.
 # Macrocystis has no size model: every counted plant's fronds are recorded.
 
-str(data_size_sim_nereo)
-kb_check_data_size_nereo(data_size_sim_nereo)
+str(data_size_sample_sim_nereo)
+kb_check_data_size_sample_nereo(data_size_sample_sim_nereo)
 kb_priors_size_nereo() # intercept, shape, sd_site/year/site_year
 
-fit_s <- kb_fit_size_nereo(data_size_sim_nereo)
+fit_s <- kb_fit_size_nereo(data_size_sample_sim_nereo)
 fit_s
 tidy(fit_s)
 summary(fit_s)
@@ -691,23 +691,22 @@ kb_predict_carbon(kb_fit_carbon_macro(data_carbon_sim_macro))
 # MEAN WEIGHT AND SURVEY BIOMASS
 # =============================================================================
 # A plant is one individual (sporophyte), identified by its holdfast. A survey
-# is one in situ count of a plot on a date: site, plot_id, date, and the surveyed
-# area (survey_area_m2). Plant sizes come from a size fit when plants were
-# tallied (Nereocystis: `plants` on the survey row), or from a table of every
-# counted plant (Macrocystis: data_plants_sim_macro, with partial plants as
-# half). A survey paired with a drone flight also carries plot_area_m2,
+# is one in situ count: survey_id, site, year, and the surveyed area
+# (survey_area_m2). Plant sizes come from a size fit when plants were tallied
+# (Nereocystis: `plants` on the survey row), or from a size census of every
+# counted plant joined by survey_id (Macrocystis: data_size_census_sim_macro,
+# with partial plants as half). A survey paired with a drone flight also carries plot_area_m2,
 # canopy_area_m2, and tide_height_m.
 
 str(data_survey_sim_nereo)
 kb_check_data_survey(data_survey_sim_nereo)
-kb_check_data_survey(data_survey_sim_macro, data_plants_sim_macro)
-kb_check_data_plants_macro(data_plants_sim_macro)
-# a date as text, or a tally next to a plant table: errors
-try(kb_check_data_survey(mutate(
-  data_survey_sim_nereo,
-  date = as.character(date)
-)))
-try(kb_check_data_survey(data_survey_sim_nereo, data_plants_sim_macro))
+kb_check_data_survey(data_survey_sim_macro, data_size_census_sim_macro)
+kb_check_data_size_census_macro(data_size_census_sim_macro)
+# a numeric year is accepted; a repeated survey_id, or a tally next to a size
+# census: errors
+kb_check_data_survey(mutate(data_survey_sim_nereo, year = as.integer(as.character(year))))
+try(kb_check_data_survey(rbind(data_survey_sim_nereo, data_survey_sim_nereo[1, ])))
+try(kb_check_data_survey(data_survey_sim_nereo, data_size_census_sim_macro))
 
 # mean plant weight of each site-year from the weight and size fits; new
 # site-years are sampled by default (every row is a particular site-year)
@@ -731,27 +730,27 @@ biomass_n <- kb_predict_biomass_survey(
 biomass_n
 biomass_m <- kb_predict_biomass_survey(
   fit_weight_sim_macro,
-  data_plants_sim_macro,
+  data_size_census_sim_macro,
   data_survey_sim_macro
 )
 # pooled by site-year (total kg over total area), or kg in the surveyed area
 kb_predict_biomass_survey(
   fit_weight_sim_macro,
-  data_plants_sim_macro,
+  data_size_census_sim_macro,
   data_survey_sim_macro,
   pool_by = c("site", "year")
 ) |>
   kb_plot_predictions()
 kb_predict_biomass_survey(
   fit_weight_sim_macro,
-  data_plants_sim_macro,
+  data_size_census_sim_macro,
   data_survey_sim_macro,
   per_area = FALSE
 )
 # carbon per m2 (g C/m2)
 kb_predict_biomass_survey(
   fit_weight_sim_macro,
-  data_plants_sim_macro,
+  data_size_census_sim_macro,
   data_survey_sim_macro,
   fit_wetdry_sim_macro,
   fit_carbon_sim_macro,
@@ -760,7 +759,7 @@ kb_predict_biomass_survey(
 # fits of different species: an error
 try(kb_predict_biomass_survey(
   fit_weight_sim_nereo,
-  data_plants_sim_macro,
+  data_size_census_sim_macro,
   data_survey_sim_macro
 ))
 

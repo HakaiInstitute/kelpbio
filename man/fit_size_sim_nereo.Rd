@@ -11,11 +11,11 @@ An object of class \code{c("kb_fit_size_nereo", "kb_fit_size", "kb_fit")}.
 fit_size_sim_nereo
 }
 \description{
-A fit of \code{\link[=kb_fit_size_nereo]{kb_fit_size_nereo()}} to \link{data_size_sim_nereo} with fewer draws than
+A fit of \code{\link[=kb_fit_size_nereo]{kb_fit_size_nereo()}} to \link{data_size_sample_sim_nereo} with fewer draws than
 the default, for exploring the fit methods without running the sampler.
 }
 \seealso{
-\code{\link[=kb_fit_size_nereo]{kb_fit_size_nereo()}} and \link{data_size_sim_nereo}.
+\code{\link[=kb_fit_size_nereo]{kb_fit_size_nereo()}} and \link{data_size_sample_sim_nereo}.
 
 Other example fits:
 \code{\link{fit_carbon_sim_macro}},

@@ -28,8 +28,8 @@ set.seed(42)
 # harvested plants: sub-bulb diameter and wet weight
 str(data_weight_sim_nereo)
 # measured plants: the size distribution of each site-year
-str(data_size_sim_nereo)
-# in situ surveys: one row per survey of a plot (site, plot_id, date), the surveyed
+str(data_size_sample_sim_nereo)
+# in situ surveys: one row per survey (survey_id, site, year), the surveyed
 # area, the plants tallied, and, where a drone flew, the plot polygon,
 # canopy, and tide height
 str(data_survey_sim_nereo)
@@ -41,12 +41,12 @@ str(data_carbon_sim_nereo)
 
 # the data checks run inside the fits too; calling them first shows problems early
 kb_check_data_weight_nereo(data_weight_sim_nereo)
-kb_check_data_size_nereo(data_size_sim_nereo)
+kb_check_data_size_sample_nereo(data_size_sample_sim_nereo)
 kb_check_data_survey(data_survey_sim_nereo)
 
 # --- fit the sub-models ---------------------------------------------------------
 fit_weight <- kb_fit_weight_nereo(data_weight_sim_nereo)
-fit_size <- kb_fit_size_nereo(data_size_sim_nereo)
+fit_size <- kb_fit_size_nereo(data_size_sample_sim_nereo)
 fit_wetdry <- kb_fit_wetdry_nereo(data_wetdry_sim_nereo)
 fit_carbon <- kb_fit_carbon_nereo(data_carbon_sim_nereo)
 
@@ -148,7 +148,7 @@ fit_weight_prefit
 posterior::ndraws(fit_weight_prefit)
 
 fit_size_matched <- kb_fit_size_nereo(
-  data_size_sim_nereo,
+  data_size_sample_sim_nereo,
   chains = 3L,
   niters = 500L
 )
@@ -186,53 +186,50 @@ kb_predict_mean_weight(
 # 3. A CENSUS WITH NO DRONE COVER
 # =============================================================================
 # Every plant on each plot is counted and its sub-bulb diameter measured, and
-# no drone flew. The plant table replaces the size model, and the biomass of the
+# no drone flew. The size census replaces the size model, and the biomass of the
 # surveyed area is the sum of its plants' expected weights: no calibration is
 # needed. Here a census is simulated by giving each tallied plant a diameter
 # drawn from its site-year's measured sizes.
 
 survey_census <- data_survey_sim_nereo |>
-  select(site, plot_id, date, survey_area_m2, plants)
+  select(survey_id, site, year, survey_area_m2, plants)
 
-plants_census <- survey_census |>
-  mutate(year = format(date, "%Y")) |>
+size_census <- survey_census |>
   rowwise() |>
   reframe(
-    site,
-    plot_id,
-    date,
+    survey_id,
     diameter_mm = {
-      measured <- data_size_sim_nereo$diameter_mm[
-        data_size_sim_nereo$site == site &
-          format(data_size_sim_nereo$date, "%Y") == year
+      measured <- data_size_sample_sim_nereo$diameter_mm[
+        data_size_sample_sim_nereo$site == site &
+          data_size_sample_sim_nereo$year == year
       ]
       if (!length(measured)) {
-        measured <- data_size_sim_nereo$diameter_mm
+        measured <- data_size_sample_sim_nereo$diameter_mm
       }
       sample(measured, plants, replace = TRUE)
     }
   )
-# the counts now come from the plant rows, so the survey loses its tally
+# the counts now come from the size census rows, so the survey loses its tally
 survey_census <- select(survey_census, -plants)
 
 str(survey_census)
-str(plants_census)
-kb_check_data_survey(survey_census, plants_census)
+str(size_census)
+kb_check_data_survey(survey_census, size_census)
 
 # biomass in each surveyed area (kg), and per m2
 census_kg <- kb_predict_biomass_survey(
   fit_weight,
-  plants_census,
+  size_census,
   survey_census,
   per_area = FALSE
 )
 census_kg
-kb_predict_biomass_survey(fit_weight, plants_census, survey_census)
+kb_predict_biomass_survey(fit_weight, size_census, survey_census)
 
 # total biomass of the plots by site and year, and dry biomass by year
 kb_predict_biomass_survey(
   fit_weight,
-  plants_census,
+  size_census,
   survey_census,
   per_area = FALSE,
   pool_by = c("site", "year")
@@ -240,7 +237,7 @@ kb_predict_biomass_survey(
   kb_plot_predictions()
 kb_predict_biomass_survey(
   fit_weight,
-  plants_census,
+  size_census,
   survey_census,
   fit_wetdry,
   measure = "dry",
