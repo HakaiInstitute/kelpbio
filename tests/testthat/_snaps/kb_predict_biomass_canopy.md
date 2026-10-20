@@ -26,8 +26,8 @@
 ---
 
     Code
-      kb_predict_biomass_canopy(fit, surveys(), sum_by = "zone")
+      kb_predict_biomass_canopy(fit, surveys(), pool_by = "zone")
     Condition
       Error in `kb_predict_biomass_canopy()`:
-      ! `sum_by` names column zone that `new_data` does not have.
+      ! `pool_by` names column zone that `new_data` does not have.
 
