@@ -239,6 +239,46 @@ test_that("representative_site lends a fitted site's effects on both paths", {
   expect_error(census("new_reef", representative_site = "nowhere"), "nowhere")
 })
 
+test_that("representative_site can name sites per fit on both paths", {
+  tallied <- function(...) {
+    survey <- tibble::tibble(
+      survey_id = "s1", site = "new_reef", year = "2020",
+      survey_area_m2 = 100, plants = 20
+    )
+    p <- kb_predict_biomass_survey(
+      weight_nereo_fit, size_nereo_fit, survey,
+      new_levels = "average", n_plants = 20L, progress = "none", ...
+    )
+    posterior::draws_of(p$biomass_kg_m2)
+  }
+  expect_equal(
+    tallied(representative_site = list(weight = "otter_cove", size = "otter_cove")),
+    tallied(representative_site = "otter_cove")
+  )
+  expect_false(isTRUE(all.equal(
+    tallied(representative_site = list(weight = "otter_cove")),
+    tallied(representative_site = "otter_cove")
+  )))
+
+  survey <- tibble::tibble(survey_id = "s1", site = "new_reef", year = "2019", survey_area_m2 = 100)
+  plants <- tibble::tibble(survey_id = "s1", fronds = c(4, 10))
+  census <- function(...) {
+    p <- kb_predict_biomass_survey(weight_macro_fit, plants, survey, new_levels = "average", ...)
+    posterior::draws_of(p$biomass_kg_m2)
+  }
+  expect_equal(
+    census(representative_site = list(weight = "seal_ledge")),
+    census(representative_site = "seal_ledge")
+  )
+  expect_snapshot(
+    kb_predict_biomass_survey(
+      weight_macro_fit, plants, survey,
+      representative_site = list(size = "seal_ledge")
+    ),
+    error = TRUE
+  )
+})
+
 test_that("the census join ignores the type of survey_id", {
   survey <- subset(data_survey_sim_macro, as.integer(site) <= 2)
   plants <- subset(data_size_census_sim_macro, survey_id %in% survey$survey_id)

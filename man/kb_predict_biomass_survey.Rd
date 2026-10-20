@@ -70,9 +70,10 @@ has no data on. The interval varies slightly between calls; use
 in the typical value only. Use it to describe an average site or year.
 }}
 
-\item{representative_site}{A character vector of sites in the fit whose
-effects a new site takes (averaged when several are named), or \code{NULL} (the
-default) to follow \code{new_levels}.}
+\item{representative_site}{A character vector of sites whose effects a new
+site takes in every fit (averaged when several are named), a list naming
+the sites per fit, such as \code{list(weight = "site_a")}, where a fit left out
+follows \code{new_levels}, or \code{NULL} (the default) to follow \code{new_levels}.}
 
 \item{n_plants}{A whole number of sizes averaged per draw to compute the
 mean plant weight from a size fit; larger values are more precise and
@@ -136,6 +137,15 @@ kb_predict_biomass_survey(
   fit_weight_sim_nereo,
   fit_size_sim_nereo,
   data_survey_sim_nereo
+)
+
+# A site the weight fit has no data for, weighed like a fitted site
+set.seed(1)
+kb_predict_biomass_survey(
+  fit_weight_sim_nereo,
+  fit_size_sim_nereo,
+  subset(data_survey_sim_nereo, site == "fog_islet"),
+  representative_site = list(weight = "otter_cove")
 )
 
 # Every counted plant measured

@@ -56,9 +56,10 @@ has no data on. The interval varies slightly between calls; use
 in the typical value only. Use it to describe an average site or year.
 }}
 
-\item{representative_site}{A character vector of sites in the fit whose
-effects a new site takes (averaged when several are named), or \code{NULL} (the
-default) to follow \code{new_levels}.}
+\item{representative_site}{A character vector of sites whose effects a new
+site takes in every fit (averaged when several are named), a list naming
+the sites per fit, such as \code{list(weight = "site_a")}, where a fit left out
+follows \code{new_levels}, or \code{NULL} (the default) to follow \code{new_levels}.}
 
 \item{n_plants}{A whole number of sizes averaged per draw to compute the
 mean plant weight; larger values are more precise and slower.}

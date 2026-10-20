@@ -25,6 +25,20 @@
       all(representative_site %in% site_levels))
 }
 
+# The shape of representative_site in a verb taking several fits with site
+# effects: a character vector for every fit, or a list naming the fits in
+# `fits`. Each fit's sites are checked by .vld_representative_site().
+.vld_representative_site_fits <- function(representative_site, fits) {
+  if (!is.list(representative_site)) {
+    return(TRUE)
+  }
+  nms <- names(representative_site)
+  !is.null(nms) &&
+    all(nms %in% fits) &&
+    !anyDuplicated(nms) &&
+    all(vapply(representative_site, function(x) is.null(x) || is.character(x), logical(1)))
+}
+
 .vld_new_data_weight_nereo <- function(x) {
   is.data.frame(x) &&
     "diameter_mm" %in% names(x) &&

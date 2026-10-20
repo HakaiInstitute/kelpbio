@@ -16,6 +16,20 @@ test_that(".vld_representative_site accepts NULL and known site levels", {
   expect_false(.vld_representative_site(1, levels))
 })
 
+test_that(".vld_representative_site_fits accepts a vector or a list naming the fits", {
+  fits <- c("weight", "size")
+  expect_true(.vld_representative_site_fits(NULL, fits))
+  expect_true(.vld_representative_site_fits("a", fits))
+  expect_true(.vld_representative_site_fits(list(weight = "a"), fits))
+  expect_true(.vld_representative_site_fits(list(weight = "a", size = NULL), fits))
+  expect_false(.vld_representative_site_fits(list("a"), fits))
+  expect_false(.vld_representative_site_fits(list(wetdry = "a"), fits))
+  repeated <- stats::setNames(list("a", "b"), c("weight", "weight"))
+  expect_false(.vld_representative_site_fits(repeated, fits))
+  expect_false(.vld_representative_site_fits(list(weight = 1), fits))
+  expect_false(.vld_representative_site_fits(list(size = "a"), "weight"))
+})
+
 test_that(".vld_new_data_weight_nereo requires a data frame with diameter", {
   expect_true(.vld_new_data_weight_nereo(data.frame(diameter_mm = 30)))
   expect_false(.vld_new_data_weight_nereo(data.frame(x = 1)))

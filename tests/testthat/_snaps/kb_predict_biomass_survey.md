@@ -62,3 +62,13 @@
       ! Invalid `representative_site` value: "nowhere".
       i Available sites: "otter_cove", "gull_rock", "cedar_bay", and "heron_reef".
 
+# representative_site can name sites per fit on both paths
+
+    Code
+      kb_predict_biomass_survey(weight_macro_fit, plants, survey,
+        representative_site = list(size = "seal_ledge"))
+    Condition
+      Error in `kb_predict_biomass_survey()`:
+      ! `representative_site` cannot name "size" with a size census.
+      i A size census has no site effects; name only "weight".
+

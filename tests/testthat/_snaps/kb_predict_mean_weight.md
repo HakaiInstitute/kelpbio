@@ -24,3 +24,13 @@
       ! Invalid `representative_site` value: "heron_reef".
       i Available sites: "otter_cove", "gull_rock", and "cedar_bay".
 
+# representative_site can name sites for the weight fit only
+
+    Code
+      kb_predict_mean_weight(weight, size_nereo_fit, representative_site = list(
+        "gull_rock"))
+    Condition
+      Error in `kb_predict_mean_weight()`:
+      ! `representative_site` must be a character vector or a list named by "weight" or "size".
+      i For example, `list(weight = "site_a")`.
+

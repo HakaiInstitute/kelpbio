@@ -24,6 +24,7 @@
 #' biomass over its summed `survey_area_m2`: an area-weighted mean, not the
 #' mean of its surveys' values.
 #'
+#' @inheritParams two_fit_params
 #' @inheritParams derived_params
 #' @inheritParams params
 #' @param size A `kb_fit_size` object, when plants were tallied, or a size
@@ -59,6 +60,15 @@
 #'   fit_weight_sim_nereo,
 #'   fit_size_sim_nereo,
 #'   data_survey_sim_nereo
+#' )
+#'
+#' # A site the weight fit has no data for, weighed like a fitted site
+#' set.seed(1)
+#' kb_predict_biomass_survey(
+#'   fit_weight_sim_nereo,
+#'   fit_size_sim_nereo,
+#'   subset(data_survey_sim_nereo, site == "fog_islet"),
+#'   representative_site = list(weight = "otter_cove")
 #' )
 #'
 #' # Every counted plant measured
@@ -101,6 +111,10 @@ kb_predict_biomass_survey <- function(
     )
   }
   census <- !inherits(size, "kb_fit")
+  .chk_representative_site_fits(
+    representative_site,
+    if (census) "weight" else c("weight", "size")
+  )
   if (census) {
     if (!missing(n_plants)) {
       cli::cli_abort(c(
@@ -114,7 +128,7 @@ kb_predict_biomass_survey <- function(
       size,
       hint = "{.arg size} must be fitted to observed plant sizes."
     )
-    .chk_representative_site(size, representative_site)
+    .chk_representative_site(size, representative_sites(representative_site)$size)
     .chk_n_plants(n_plants)
   }
   .with_call(
@@ -127,7 +141,7 @@ kb_predict_biomass_survey <- function(
   .chk_measure_fits(measure, wetdry, carbon)
   fits <- list(weight = weight, size = if (!census) size, wetdry = wetdry, carbon = carbon)
   .chk_derived_fits(fits)
-  .chk_representative_site(weight, representative_site)
+  .chk_representative_site(weight, representative_sites(representative_site)$weight)
   .chk_summary_args(conf_level, estimate, sig_fig)
 
   grid <- ids_as_character(tibble::as_tibble(survey))
@@ -238,7 +252,7 @@ census_biomass_draws <- function(
       weight,
       grid[first, c("site", "year")],
       new_levels,
-      representative_site
+      representative_sites(representative_site, "weight")$weight
     )
     plant_sy <- match(site_year_key(census$site, census$year), sy_key[first])
     lp <- .linpred(weight, census, new_levels, effects = effects[plant_sy])

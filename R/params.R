@@ -132,3 +132,18 @@ params <- function(...) NULL
 # nocov start
 derived_params <- function(...) NULL
 # nocov end
+
+#' Parameter Descriptions for the Two-Fit Derived Verbs
+#'
+#' Parameter descriptions shared by [kb_predict_mean_weight()] and
+#' [kb_predict_biomass_survey()].
+#'
+#' @param representative_site A character vector of sites whose effects a new
+#'   site takes in every fit (averaged when several are named), a list naming
+#'   the sites per fit, such as `list(weight = "site_a")`, where a fit left out
+#'   follows `new_levels`, or `NULL` (the default) to follow `new_levels`.
+#' @keywords internal
+#' @usage NULL
+# nocov start
+two_fit_params <- function(...) NULL
+# nocov end

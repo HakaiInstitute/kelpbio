@@ -17,6 +17,7 @@
 #'
 #' The fits must be of the same species and have the same number of draws.
 #'
+#' @inheritParams two_fit_params
 #' @inheritParams derived_params
 #' @inheritParams params
 #' @param size A `kb_fit_size` object.
@@ -75,8 +76,10 @@ kb_predict_mean_weight <- function(
   )
   .chk_measure_fits(measure, wetdry, carbon)
   .chk_derived_fits(list(weight = weight, size = size, wetdry = wetdry, carbon = carbon))
-  .chk_representative_site(weight, representative_site)
-  .chk_representative_site(size, representative_site)
+  .chk_representative_site_fits(representative_site, c("weight", "size"))
+  sites <- representative_sites(representative_site)
+  .chk_representative_site(weight, sites$weight)
+  .chk_representative_site(size, sites$size)
   .chk_n_plants(n_plants)
   .chk_summary_args(conf_level, estimate, sig_fig)
 

@@ -254,6 +254,32 @@
   )
 }
 
+.chk_representative_site_fits <- function(
+  representative_site,
+  fits,
+  call = rlang::caller_env()
+) {
+  if (.vld_representative_site_fits(representative_site, fits)) {
+    return(invisible(representative_site))
+  }
+  if ("size" %in% names(representative_site) && !"size" %in% fits) {
+    cli::cli_abort(
+      c(
+        "{.arg representative_site} cannot name {.val size} with a size census.",
+        i = "A size census has no site effects; name only {.val weight}."
+      ),
+      call = call
+    )
+  }
+  cli::cli_abort(
+    c(
+      "{.arg representative_site} must be a character vector or a list named by {.or {.val {fits}}}.",
+      i = "For example, {.code list({fits[1]} = \"site_a\")}."
+    ),
+    call = call
+  )
+}
+
 .chk_summary_args <- function(
   conf_level,
   estimate,

@@ -177,13 +177,14 @@ noop_reporter <- function() {
 }
 
 bar_reporter <- function(label = "Fitting model") {
-  id <- NULL
+  bar <- new.env(parent = emptyenv())
+  bar$id <- NULL
   structure(
     list(
       # Scoped to the caller's frame (the fit loop): in a detached environment
       # cli drops the bar between poll ticks ("cannot find progress bar").
       start = function(total) {
-        id <<- cli::cli_progress_bar(
+        bar$id <- cli::cli_progress_bar(
           label,
           total = total,
           format = paste(
@@ -202,14 +203,14 @@ bar_reporter <- function(label = "Fitting model") {
       # must never abort the fit.
       update = function(completed) {
         tryCatch(
-          cli::cli_progress_update(set = completed, id = id),
+          cli::cli_progress_update(set = completed, id = bar$id),
           error = function(e) invisible(NULL)
         )
       },
       finish = function() {
-        if (!is.null(id)) {
+        if (!is.null(bar$id)) {
           tryCatch(
-            cli::cli_progress_done(id = id),
+            cli::cli_progress_done(id = bar$id),
             error = function(e) invisible(NULL)
           )
         }

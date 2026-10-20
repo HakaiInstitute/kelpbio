@@ -134,6 +134,13 @@ test_that(".chk_representative_site passes NULL/known sites and errors on unknow
   )
 })
 
+test_that(".chk_representative_site_fits shows the expected list form", {
+  fits <- c("weight", "size")
+  expect_identical(.chk_representative_site_fits(list(weight = "a"), fits), list(weight = "a"))
+  expect_snapshot(error = TRUE, .chk_representative_site_fits(list("a"), fits))
+  expect_snapshot(error = TRUE, .chk_representative_site_fits(list(size = "a"), "weight"))
+})
+
 test_that(".chk_observed_data rejects a fit with no rows to predict at", {
   # Otherwise .linpred() fails with a posterior broadcast error.
   fit0 <- weight_nereo_fit
