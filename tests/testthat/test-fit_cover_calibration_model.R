@@ -40,7 +40,7 @@ test_that("survey_calibration_rows keeps covered rows as their mean and SD", {
 
 test_that("calibration data without drone cover errors", {
   data <- survey_biomass()
-  data[c("plot_area_m2", "canopy_area_m2", "tide_height_m")] <- NA
+  data[c("plot_area_m2", "canopy_area_m2", "tide_height_m")] <- NA_real_
   expect_snapshot(
     kb_fit_cover_calibration_nereo(data, progress = "none"),
     error = TRUE

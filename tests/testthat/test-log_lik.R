@@ -143,6 +143,7 @@ test_that("log_lik agrees with the Stan model's likelihood for every model", {
   skip_on_cran()
   fits <- list(
     weight_nereo_fit,
+    omit_terms(weight_nereo_fit, "weight_floor"),
     weight_macro_fit,
     size_nereo_fit,
     wetdry_nereo_fit,
@@ -155,6 +156,6 @@ test_that("log_lik agrees with the Stan model's likelihood for every model", {
   for (fit in fits) {
     stan <- stan_log_lik(fit)
     gap <- rowSums(log_lik(stan$fit)) - stan$lp
-    expect_equal(gap, rep(gap[1], length(gap)), tolerance = 1e-8, label = class(fit)[1])
+    expect_equal(gap, rep(gap[1], length(gap)), tolerance = 1e-8, label = paste(c(class(fit)[1], fit$meta$form), collapse = " "))
   }
 })

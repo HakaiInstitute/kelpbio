@@ -41,7 +41,7 @@ test_that("zero canopy predicts the floor for every site and year", {
       canopy_area_m2 = 0,
       plot_area_m2 = 200,
       tide_height_m = 0.5,
-      site = fitted_sites(cover_calibration_nereo_fit, 3),
+      site = fitted_sites(cover_calibration_macro_fit, 3),
       year = c("2019", "2020", "2021")
     ),
     sig_fig = 8
@@ -87,7 +87,7 @@ test_that("a new site is sampled or averaged, and a representative site stands i
   nd <- cover_rows(site = "new_site")
   sampled <- kb_predict_cover_calibration(cover_calibration_nereo_fit, nd, new_levels = "sample")
   averaged <- kb_predict_cover_calibration(cover_calibration_nereo_fit, nd, new_levels = "average")
-  expect_gte(sampled$upper - sampled$lower, averaged$upper - averaged$lower)
+  expect_gt(sampled$upper - sampled$lower, averaged$upper - averaged$lower)
 
   rep <- kb_predict_cover_calibration(
     cover_calibration_nereo_fit,

@@ -82,18 +82,7 @@ test_that("macro summary carries the term list and year group", {
 })
 
 test_that("print.summary_kb_fit shows the slim header, table, and footer", {
-  # MCMC numerics and the data-derived reference value are redacted so the
-  # snapshot survives fixture rebuilds.
-  redact <- function(lines) {
-    lines <- sub("^(\\s*\\d+ \\S+)\\s+[-0-9.].*$", "\\1 <numerics>", lines)
-    lines <- sub("^(Predictor: [a-z_]+, reference) [0-9.]+", "\\1 <value>", lines)
-    sub(
-      "^[0-9.]+% divergent.*min E-BFMI [0-9.]+\\.$",
-      "<n>% divergent transitions; <n>% max-treedepth; min E-BFMI <n>.",
-      lines
-    )
-  }
-  expect_snapshot(print(summary(weight_nereo_fit)), transform = redact)
+  expect_snapshot(print(summary(weight_nereo_fit)), transform = redact_fit_print)
 })
 
 test_that("summary carries the run-level diagnostics, not the raw count", {

@@ -32,9 +32,7 @@ test_that("pp_check plots the response for every model", {
     expect_s3_class(gg, "ggplot")
     yrep <- yrep_of(gg)
     expect_identical(dim(yrep), c(5L, nrow(fit$data)), label = nm)
-    response <- fit$meta$response
-    if (!is.null(fit$meta$offset)) response <- paste0(response, "_m2")
-    expect_identical(gg$labels$x, axis_label(response), label = nm)
+    expect_identical(gg$labels$x, axis_label(fit$meta$response), label = nm)
   }
 })
 

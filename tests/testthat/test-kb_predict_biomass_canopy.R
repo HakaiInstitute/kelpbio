@@ -89,13 +89,13 @@ test_that("an unseen site is sampled by default, wider than averaged", {
     new_levels = "average"
   )
   expect_identical(sampled$cover_support, "year")
-  expect_gte(sampled$upper - sampled$lower, averaged$upper - averaged$lower)
+  expect_gt(sampled$upper - sampled$lower, averaged$upper - averaged$lower)
 })
 
 test_that("results are reproducible under a seed", {
   nd <- transform(
     surveys(),
-    site = c("new1", "new2", fitted_sites(cover_calibration_nereo_fit))
+    site = c("new1", "new2", fitted_sites(cover_calibration_macro_fit))
   )
   withr::local_seed(3)
   a <- kb_predict_biomass_canopy(cover_calibration_macro_fit, nd)

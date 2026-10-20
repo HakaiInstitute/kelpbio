@@ -42,7 +42,7 @@ test_that("a new site is sampled or averaged, and a representative site stands i
   nd <- data.frame(site = "new_site")
   sampled <- kb_predict_size(size_nereo_fit, nd, new_levels = "sample")
   averaged <- kb_predict_size(size_nereo_fit, nd, new_levels = "average")
-  expect_gte(sampled$upper - sampled$lower, averaged$upper - averaged$lower)
+  expect_gt(sampled$upper - sampled$lower, averaged$upper - averaged$lower)
 
   rep <- kb_predict_size(
     size_nereo_fit,

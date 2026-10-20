@@ -131,6 +131,10 @@ test_that("the form defaults to packard_floor and power drops the floor", {
   expect_false("weight_floor" %in% power$meta$terms$fixed)
   expect_false("weight_floor" %in% tidy(power)$term)
   expect_false("weight_floor" %in% posterior::variables(kb_samples(power)))
+
+  expect_identical(capture_stan_data(weight_nereo_fit)$stan_data$floor_on, 1L)
+  power_fit <- omit_terms(weight_nereo_fit, "weight_floor")
+  expect_identical(capture_stan_data(power_fit)$stan_data$floor_on, 0L)
 })
 
 test_that("an unknown form errors before sampling, naming the forms", {
@@ -139,26 +143,6 @@ test_that("an unknown form errors before sampling, naming the forms", {
     kb_fit_weight_nereo(weight_nereo_fit$data, form = "cubic"),
     error = TRUE
   )
-})
-
-test_that("a power-law fit samples and records no floor", {
-  skip_on_cran()
-  d <- droplevels(subset(
-    data_weight_sim_nereo,
-    as.integer(site) <= 2 & as.character(year) %in% c("2019", "2020")
-  ))
-  fit <- kb_fit_weight_nereo(
-    d,
-    form = "power",
-    chains = 2,
-    niters = 100,
-    cores = 2,
-    progress = "none",
-    seed = 1
-  )
-  expect_identical(fit$meta$form, "power")
-  expect_false("weight_floor" %in% tidy(fit)$term)
-  expect_true(all(is.finite(log_lik(fit))))
 })
 
 test_that("data and prior errors name kb_fit_weight_nereo()", {

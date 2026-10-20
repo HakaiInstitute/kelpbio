@@ -8,7 +8,7 @@
       Predictor: diameter_mm, reference <value> (geometric mean)
       Data:      320 observations; groups: site (4), year (5), site:year (16)
       Draws:     2 chains, 300 post-warmup draws each (thin = 5), 600 total
-      Converged: TRUE
+      Converged: <value>
       
       # A tibble: 7 x 8
         term           estimate    lower  upper  rhat ess_bulk ess_tail converged

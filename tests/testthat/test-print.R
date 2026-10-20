@@ -4,11 +4,11 @@ test_that("prior print methods show family and hyperparameters", {
 })
 
 test_that("print.kb_fit shows stable metadata", {
-  expect_snapshot(print(weight_nereo_fit))
+  expect_snapshot(print(weight_nereo_fit), transform = redact_fit_print)
 })
 
 test_that("print.kb_fit shows the macro slim header", {
-  expect_snapshot(print(weight_macro_fit))
+  expect_snapshot(print(weight_macro_fit), transform = redact_fit_print)
 })
 
 test_that(".fmt_perc rounds for display and names an unknown rate", {
@@ -17,18 +17,18 @@ test_that(".fmt_perc rounds for display and names an unknown rate", {
 })
 
 test_that("print.kb_fit shows the size headers without a predictor line", {
-  expect_snapshot(print(size_nereo_fit))
+  expect_snapshot(print(size_nereo_fit), transform = redact_fit_print)
 })
 
 test_that("print.kb_fit shows the wet/dry header without predictor or group lines", {
-  expect_snapshot(print(wetdry_nereo_fit))
+  expect_snapshot(print(wetdry_nereo_fit), transform = redact_fit_print)
 })
 
 test_that("print.kb_fit shows the carbon header", {
-  expect_snapshot(print(carbon_nereo_fit))
+  expect_snapshot(print(carbon_nereo_fit), transform = redact_fit_print)
 })
 
 test_that("print.kb_fit shows the cover calibration header without a predictor line", {
-  expect_snapshot(print(cover_calibration_nereo_fit))
+  expect_snapshot(print(cover_calibration_nereo_fit), transform = redact_fit_print)
 })
 
