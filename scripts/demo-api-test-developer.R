@@ -85,8 +85,8 @@ format(object.size(fit), units = "Kb")
 #   base/stats, generics, rstantools, posterior.
 # - Three class tiers: species leaf -> model -> kb_fit.
 class(fit)
-class(fit_size_sim_macro)
-class(fit_density_sim_nereo)
+class(fit_size_sim_nereo)
+class(fit_cover_calibration_sim_nereo)
 class(fit_wetdry_sim_macro)
 
 # the fit object: a plain list, accessed with $
@@ -216,10 +216,10 @@ try(kb_predict_size(fit))
 
 # Meta versus dispatch (decisions/architecture.md):
 # - A fact computable at fit time, or consumed identically by every model, is
-#   a value in meta (predictor, offset, terms, structural flags).
+#   a value in meta (predictor, terms, structural flags).
 # - Only differing arithmetic or control flow becomes a generic.
-fit$meta[c("predictor", "response", "offset", "form", "site_year_on")]
-fit_density_sim_nereo$meta$offset # density is a rate: area_m2 offset
+fit$meta[c("predictor", "response", "form", "site_year_on")]
+fit_cover_calibration_sim_nereo$meta$site_year_on # no site:year term
 
 # =============================================================================
 # 3. POSTERIOR RVARS AS THE DRAWS ENGINE
@@ -257,7 +257,7 @@ posterior::summarise_draws(
 )
 
 # --- probability statements --------------------------------------------------
-posterior::Pr(d$density_slope < 0) # density reduces plant weight
+posterior::Pr(d$diameter_power > 2) # weight rises faster than diameter squared
 posterior::Pr(d$sd_year > d$sd_site) # more variation among years than sites
 posterior::Pr(d$site_effect > 0) # each site above the typical site
 
@@ -302,16 +302,16 @@ kb_predict_weight(fit, nd)
 # --- the footgun rvars remove ------------------------------------------------
 # - With raw D x N matrices, adding a per-row vector recycles down columns
 #   (across draws), silently, unless you remember sweep().
-# - This is how offsets are added: while still an rvar over rows.
+# - Per-row values (such as log areas) are added while still an rvar over rows.
 draws_mat <- matrix(
   posterior::draws_of(d$intercept),
   nrow = posterior::ndraws(d$intercept),
   ncol = 3
 )
-offset <- log(c(1, 10, 100))
-colMeans(draws_mat + offset) # wrong: recycled over draws
-colMeans(sweep(draws_mat, 2, offset, "+")) # right, by hand
-mean(d$intercept + offset) # right, by construction
+log_area <- log(c(1, 10, 100))
+colMeans(draws_mat + log_area) # wrong: recycled over draws
+colMeans(sweep(draws_mat, 2, log_area, "+")) # right, by hand
+mean(d$intercept + log_area) # right, by construction
 
 # --- versus the mcmcr / mcmcderive idiom (bboutools) -------------------------
 # - bboutools: samples as mcmcr; predictions via mcmc_derive() with a string
@@ -358,8 +358,8 @@ try(plogis(d$intercept))
 # - Only production rvar paths are used; rfun()/rdo()/for_each_draw() avoided.
 
 # --- composition happens on draws, never on intervals ------------------------
-# - Biomass multiplies density by mean plant weight over the size
-#   distribution, per draw; site totals sum per draw, so a regional total's
+# - Survey biomass multiplies plants by mean plant weight over the size
+#   distribution, per draw; canopy totals sum per draw, so a regional total's
 #   limits are correct.
 drone <- tibble(
   site = c("otter_cove", "gull_rock", "cedar_bay"),
@@ -422,13 +422,13 @@ kb_progress(progress_dir) # 1
 list.files(progress_dir) # manifest + per-chain CSVs; kelpbio never deletes it
 fit_bg <- bg$get_result()
 
-# the plot biomass composition writes the same kind of record
+# survey biomass writes the same kind of record
 biomass_dir <- tempfile("kb_progress_")
 dir.create(biomass_dir)
-pb <- kb_predict_plot_biomass(
+pb <- kb_predict_biomass_survey(
   fit_weight_sim_nereo,
   fit_size_sim_nereo,
-  fit_density_sim_nereo,
+  data_survey_sim_nereo,
   progress = "none",
   progress_dir = biomass_dir
 )
@@ -452,7 +452,7 @@ kb_progress(biomass_dir)
 # =============================================================================
 # - Compiled models cannot change per call, so run-time flexibility is data:
 #   - prior hyperparameters in the Stan data block;
-#   - 0/1 structural flags (site_year_on, density_on, floor_on, prior_only).
+#   - 0/1 structural flags (floor_on, prior_only).
 # - Flags are set by the fitting layer from the data or a model-choice
 #   argument (form), never exposed as flag arguments.
 # - A separate .stan only for a different likelihood or major variant.
@@ -472,14 +472,12 @@ grep("_on|prior_only", stan_lines, value = TRUE)
 names(kelpbio:::stanmodels)
 grep("^kb_fit_", getNamespaceExports("kelpbio"), value = TRUE) |> sort()
 
-# The data decide the structure; pure helpers, so testable without MCMC:
-# - site:year only with more than one year;
-# - nereo density effect only with at least two distinct recorded densities.
-one_year <- filter(data_weight_sim_nereo, year == "2019") |> droplevels()
-kelpbio:::site_year_structure(data_weight_sim_nereo)$on
-kelpbio:::site_year_structure(one_year)$on
-kelpbio:::density_structure(data_weight_sim_nereo)$on
-kelpbio:::density_structure(select(data_weight_sim_nereo, -stipes_m2))$on
+# The site:year effect is always fitted; a pure helper reports which effects
+# the data cannot separate from it (the fit then warns), testable without MCMC:
+weight_data <- kelpbio:::with_year(data_weight_sim_nereo) # year from date
+one_year <- filter(weight_data, year == "2019") |> droplevels()
+kelpbio:::site_year_aliasing(weight_data) # none
+kelpbio:::site_year_aliasing(one_year) # "year"
 
 # the Stan data list a fit would send: data, flags, and prior fields
 priors <- kb_priors_weight_nereo()
@@ -487,19 +485,10 @@ stan_data <- kelpbio:::assemble_weight_nereo_data(
   one_year,
   priors,
   diameter_ref = 30,
-  density = kelpbio:::density_structure(one_year),
   prior_only = FALSE,
-  site_year_on = FALSE,
   floor_on = TRUE
 )
-str(stan_data[c(
-  "n_obs",
-  "n_site",
-  "n_year",
-  "site_year_on",
-  "density_on",
-  "floor_on"
-)])
+str(stan_data[c("n_obs", "n_site", "n_year", "floor_on")])
 str(stan_data[startsWith(names(stan_data), "prior_")])
 
 # - An omitted effect is still sampled (from its prior) but is not an
@@ -619,16 +608,15 @@ kb_predict_weight(fit, mixed)
 kb_predict_weight(fit, mixed, new_levels = "sample")
 kb_predict_weight(fit, mixed, representative_site = "gull_rock")
 
-# - Offsets: what a prediction reports is fixed by its rows, not an argument.
-#   kb_predict_density() reports per m^2; the draw generics read area_m2.
-kb_predict_density(
-  fit_density_sim_nereo,
-  tibble(site = "otter_cove", area_m2 = 40)
+# - What a prediction reports is fixed by its rows, not an argument: the cover
+#   calibration reads canopy, plot area, and tide from each row.
+plots <- tibble(
+  site = "otter_cove",
+  canopy_area_m2 = c(0, 100, 200),
+  plot_area_m2 = 200,
+  tide_height_m = 0.5
 )
-median(posterior_epred(
-  fit_density_sim_nereo,
-  tibble(site = "otter_cove", area_m2 = 40)
-))
+kb_predict_cover_calibration(fit_cover_calibration_sim_nereo, plots)
 
 # --- the plot configures itself from attributes ------------------------------
 pred_site <- kb_predict_weight(fit, kb_new_data(fit, by = "site"))
@@ -683,10 +671,6 @@ bayesplot::ppc_dens_overlay(
   log(posterior_predict(fit)[1:50, ])
 ) +
   labs(x = "log weight (kg)")
-bayesplot::ppc_bars(
-  fit_density_sim_nereo$data$stipes,
-  posterior_predict(fit_density_sim_nereo)[1:50, ]
-)
 bayesplot::ppc_stat(
   fit_size_sim_nereo$data$diameter_mm,
   posterior_predict(fit_size_sim_nereo),
