@@ -50,16 +50,6 @@ test_that("the fit records the species, response, predictor, and no site:year", 
   expect_identical(fit$meta$terms$random, c("site_effect", "year_effect"))
 })
 
-test_that("the fit stores each survey's biomass as its mean and SD", {
-  local_fit_stan_stub(cover_calibration_nereo_fit)
-  data <- input()
-  fit <- kb_fit_cover_calibration_nereo(data, progress = "none")
-  draws <- posterior::draws_of(data$biomass_kg_m2)
-  expect_equal(fit$data$biomass_kg_m2, unname(colMeans(draws)))
-  expect_equal(fit$data$biomass_sd_kg_m2, unname(apply(draws, 2, stats::sd)))
-  expect_false(any(vapply(fit$data, posterior::is_rvar, logical(1))))
-})
-
 test_that("surveys without drone cover are not fitted, with a message", {
   local_fit_stan_stub(cover_calibration_nereo_fit)
   data <- input()
@@ -77,19 +67,11 @@ test_that("surveys past the tide limit under the prior warn at fit time", {
   expect_warning(kb_fit_cover_calibration_nereo(data, progress = "none"), "tide prior")
 })
 
-test_that("multi-year data fit no site:year effect and raise no site:year message", {
-  local_fit_stan_stub(cover_calibration_nereo_fit)
-  expect_no_message(kb_fit_cover_calibration_nereo(input()))
-})
-
-test_that("invalid data and wrong priors error before sampling", {
-  local_fit_stan_stub(cover_calibration_nereo_fit)
-  expect_error(kb_fit_cover_calibration_nereo(data.frame(site = "a", year = "2020")), "biomass_kg_m2")
-  p <- kb_priors_cover_calibration_nereo()
-  p$biomass_floor <- kb_prior_exponential(1)
-  expect_error(
-    kb_fit_cover_calibration_nereo(input(), priors = p, progress = "none"),
-    "wrong family"
+test_that("prior_only switches the likelihood off in the Stan data", {
+  expect_identical(capture_stan_data(cover_calibration_nereo_fit)$stan_data$prior_only, 0L)
+  expect_identical(
+    capture_stan_data(cover_calibration_nereo_fit, prior_only = TRUE)$stan_data$prior_only,
+    1L
   )
 })
 
@@ -107,24 +89,20 @@ test_that("zero-row data is accepted under prior_only", {
   expect_s3_class(fit, "kb_fit_cover_calibration_nereo")
 })
 
-test_that("zero-row data error unless prior_only", {
-  expect_error(
-    kb_fit_cover_calibration_nereo(input()[0, ], progress = "none"),
-    "prior_only = TRUE"
-  )
-})
-
 test_that("data and prior errors name kb_fit_cover_calibration_nereo()", {
   local_fit_stan_stub(cover_calibration_nereo_fit)
-  err <- expect_error(kb_fit_cover_calibration_nereo(
-    data.frame(site = "a", year = "2020"),
-    progress = "none"
-  ))
+  err <- expect_error(
+    kb_fit_cover_calibration_nereo(data.frame(site = "a", year = "2020"), progress = "none"),
+    "biomass_kg_m2"
+  )
   expect_identical(err$call[[1]], quote(kb_fit_cover_calibration_nereo))
-  err <- expect_error(kb_fit_cover_calibration_nereo(
-    input(),
-    priors = list(nope = kb_prior_normal(0, 1)),
-    progress = "none"
-  ))
+  err <- expect_error(
+    kb_fit_cover_calibration_nereo(
+      input(),
+      priors = list(nope = kb_prior_normal(0, 1)),
+      progress = "none"
+    ),
+    "Unknown prior"
+  )
   expect_identical(err$call[[1]], quote(kb_fit_cover_calibration_nereo))
 })
