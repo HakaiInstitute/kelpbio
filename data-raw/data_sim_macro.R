@@ -5,34 +5,35 @@
 # All four come from one set of true site-year values, so they agree: survey
 # biomass from the weight fit and the counted plants lands near the true
 # biomass the drone cover is simulated from. Means, slopes, shapes, and
-# dispersions are near the analysis-project production fits; random-effect SDs
-# are held moderate so the small pre-fits converge and site differences show in
-# examples. The data sources cover different site-years, as in the field:
-# surveys at most, weight harvests at about half (three sites never harvested),
-# and drone cover at about two-thirds. Site names are invented and match no
+# dispersions are near the analysis-project production fits, and random-effect
+# SDs near the Hakai Institute fits, so that every model converges at the
+# default sampler settings. Twelve sites over five years. The data sources
+# cover different site-years, as in the field: surveys at most, weight harvests
+# at over half (three sites never harvested), and drone cover at about
+# two-thirds. Site names are invented and match no
 # Hakai Institute survey site.
 #
 # Every counted plant has its fronds at 1 m recorded, drawn from the
 # site-year's frond distribution; about one in twelve is a partial (edge)
 # plant. Each site-year's four transects are summed to one survey; at a few
 # site-years the transects are split between two plots, or between two visits
-# to one plot, and one transect with no plants is its own survey. The
-# draws up to the transect counts are unchanged from earlier versions, so the
-# weight data and their pre-fit are too.
+# to one plot, and one transect with no plants is its own survey.
 #
 # Run from the package root:
 #   Rscript data-raw/data_sim_macro.R
 
-set.seed(202)
+# The seed is one whose true plot biomass stays in the range of the production
+# estimates, with few drone covers at the cap.
+set.seed(8)
 
 # 1. Sites, years, and which data source covers each site-year ---------------
 
 sites <- c(
   "seal_ledge", "mussel_point", "cormorant_rock", "anemone_bay", "limpet_head",
   "shearwater_islet", "driftwood_cove", "abalone_reef", "nudibranch_bay",
-  "murrelet_pass"
+  "murrelet_pass", "otter_reach", "urchin_barren"
 )
-years <- as.character(2019:2022)
+years <- as.character(2019:2023)
 
 grid <- expand.grid(site = sites, year = years, stringsAsFactors = FALSE)
 i_site <- match(grid$site, sites)
@@ -42,8 +43,8 @@ key <- paste(grid$site, grid$year)
 grid$surveyed <- !key %in% c("murrelet_pass 2022", "nudibranch_bay 2019")
 grid$size <- grid$surveyed &
   !key %in% c("seal_ledge 2021", "limpet_head 2019", "abalone_reef 2022", "anemone_bay 2020")
-# Seven sites harvested, each in three of the four years.
-grid$weight <- grid$surveyed & i_site <= 7 & i_year != (i_site %% 4) + 1
+# Nine sites harvested, each in four of the five years.
+grid$weight <- grid$surveyed & i_site <= 9 & i_year != (i_site %% 5) + 1
 grid$drone <- grid$surveyed & (i_site + i_year) %% 3 != 0
 
 # 2. True values ---------------------------------------------------------------
@@ -60,25 +61,25 @@ fronds_ref <- 5
 b_weight5 <- 1.67 # log wet weight (kg) at 5 fronds
 b_fronds_weight <- 1.11
 shape_weight <- 4.7
-grid$e_weight <- effects(0.3, 0.29, 0.15)
+grid$e_weight <- effects(0.3, 0.3, 0.25)
 
 # Size: zero-truncated negative binomial frond count at 1 m.
 b_fronds_size <- 1.73 # log mean frond count before truncation
 dispersion_size <- 0.63 # variance mu + dispersion * mu^2
-grid$e_size <- effects(0.28, 0.27, 0.23)
+grid$e_size <- effects(0.25, 0.2, 0.2)
 
 # Counts: negative binomial plant count on a transect of area_m2. The intercept
 # is above the production estimate (log 0.31) so the composed plot biomass spans
 # the production range despite the moderated SDs.
 b_plants <- log(0.45) # log plants per m^2
 dispersion_density <- 0.11
-grid$e_density <- effects(0.5, 0.2, 0.4)
+grid$e_density <- effects(0.4, 0.2, 0.3)
 
 # Cover: biomass floor plus a canopy term in tide-corrected cover.
 b_canopy <- 8 # kg per m^2 of canopy, within the production interval
 b_floor <- 0.42 # kg/m^2 at zero cover
 b_tide <- 0.23 # share of the zero-tide canopy lost per m of tide
-grid$e_cover <- effects(0.2, 0.2, 0)
+grid$e_cover <- effects(0.3, 0.2, 0)
 
 # True plot biomass (wet kg/m^2): expected plants per m^2 times the mean expected
 # plant weight over the frond-count distribution.
@@ -211,7 +212,7 @@ canopy$canopy_area_m2 <- round(stats::runif(m, 500, 12000))
 canopy$tide_height_m <- sample(seq(0, 1.6, by = 0.05), m, replace = TRUE)
 canopy$classified_area_m2 <- round(canopy$canopy_area_m2 * stats::runif(m, 1.5, 3))
 canopy$region <- factor(
-  ifelse(match(canopy$site, sites) <= 5, "north", "south"),
+  ifelse(match(canopy$site, sites) <= 6, "north", "south"),
   levels = c("north", "south")
 )
 data_canopy_sim_macro <- canopy

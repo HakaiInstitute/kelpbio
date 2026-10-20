@@ -7,8 +7,8 @@
 \format{
 A data frame with columns:
 \describe{
-\item{site}{Survey site, a factor (10 levels).}
-\item{year}{Survey year, a factor (4 levels).}
+\item{site}{Survey site, a factor (12 levels).}
+\item{year}{Survey year, a factor (5 levels).}
 \item{canopy_area_m2}{Canopy mapped within the site (m²).}
 \item{tide_height_m}{Tide height at the flight (m).}
 \item{classified_area_m2}{Water area the canopy classification covered

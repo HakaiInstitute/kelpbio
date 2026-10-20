@@ -8,8 +8,8 @@
 A data frame with columns:
 \describe{
 \item{survey_id}{Survey identifier, a character string.}
-\item{site}{Survey site, a factor (10 levels).}
-\item{year}{Survey year, a factor (4 levels).}
+\item{site}{Survey site, a factor (12 levels).}
+\item{year}{Survey year, a factor (5 levels).}
 \item{survey_area_m2}{Surveyed area (m²), a positive number.}
 \item{plot_area_m2}{Plot polygon (m²), or \code{NA} without a flight.}
 \item{canopy_area_m2}{Drone canopy within the plot (m²), or \code{NA} without
