@@ -8,6 +8,11 @@ name: R-CMD-check.yaml
 
 permissions: read-all
 
+# A new push to a branch cancels its run still in progress.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   R-CMD-check:
     runs-on: ${{ matrix.config.os }}
@@ -16,17 +21,16 @@ jobs:
 
     strategy:
       fail-fast: false
+      # Pull requests check on Ubuntu release only; pushes to dev and main run
+      # the full matrix.
       matrix:
-        config:
-          - {os: macos-latest,   r: 'release'}
-          - {os: windows-latest, r: 'release'}
-          - {os: ubuntu-latest,  r: 'devel', http-user-agent: 'release'}
-          - {os: ubuntu-latest,  r: 'release'}
-          - {os: ubuntu-latest,  r: 'oldrel-1'}
+        config: ${{ fromJSON(github.event_name == 'pull_request' && '[{"os":"ubuntu-latest","r":"release"}]' || '[{"os":"macos-latest","r":"release"},{"os":"windows-latest","r":"release"},{"os":"ubuntu-latest","r":"devel","http-user-agent":"release"},{"os":"ubuntu-latest","r":"release"},{"os":"ubuntu-latest","r":"oldrel-1"}]') }}
 
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
       R_KEEP_PKG_SOURCE: yes
+      # Compiles the Stan models in parallel; they dominate the install time.
+      MAKEFLAGS: -j4
 
     steps:
       - uses: actions/checkout@v4
@@ -57,4 +61,7 @@ jobs:
       - uses: r-lib/actions/check-r-package@v2
         with:
           upload-snapshots: true
-          build_args: 'c("--no-manual","--compact-vignettes=gs+qpdf")'
+          # Vignettes are not built here: building them installs the package
+          # a second time, and the pkgdown workflow renders them on every PR.
+          build_args: 'c("--no-manual","--no-build-vignettes")'
+          args: 'c("--no-manual","--as-cran","--ignore-vignettes")'
