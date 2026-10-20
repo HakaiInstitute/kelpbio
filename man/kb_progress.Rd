@@ -14,12 +14,14 @@ the task.}
 A number between 0 and 1.
 }
 \description{
-The proportion completed by a fit or \code{\link[=kb_predict_plot_biomass]{kb_predict_plot_biomass()}} writing to
-\code{progress_dir}, as a number from 0 to 1.
+The proportion completed by a fit, \code{\link[=kb_predict_mean_weight]{kb_predict_mean_weight()}}, or
+\code{\link[=kb_predict_biomass_survey]{kb_predict_biomass_survey()}} writing to \code{progress_dir}, as a number from 0
+to 1.
 }
 \details{
-Pass the same directory given as \code{progress_dir} to a \verb{kb_fit_*} function or to
-\code{\link[=kb_predict_plot_biomass]{kb_predict_plot_biomass()}}. This reads progress from another R process: for
+Pass the same directory given as \code{progress_dir} to a \verb{kb_fit_*} function,
+\code{kb_predict_mean_weight()}, or \code{kb_predict_biomass_survey()}. This reads
+progress from another R process: for
 example, a Shiny app can run the task in the background and poll
 \code{kb_progress()} from the main session to drive a progress indicator. It
 returns \code{0} before the task has written anything and \code{1} once it has finished.
@@ -35,11 +37,8 @@ kb_progress(progress_dir)
 Other fit functions:
 \code{\link[=kb_fit_carbon_macro]{kb_fit_carbon_macro()}},
 \code{\link[=kb_fit_carbon_nereo]{kb_fit_carbon_nereo()}},
-\code{\link[=kb_fit_cover_biomass_macro]{kb_fit_cover_biomass_macro()}},
-\code{\link[=kb_fit_cover_biomass_nereo]{kb_fit_cover_biomass_nereo()}},
-\code{\link[=kb_fit_density_macro]{kb_fit_density_macro()}},
-\code{\link[=kb_fit_density_nereo]{kb_fit_density_nereo()}},
-\code{\link[=kb_fit_size_macro]{kb_fit_size_macro()}},
+\code{\link[=kb_fit_cover_calibration_macro]{kb_fit_cover_calibration_macro()}},
+\code{\link[=kb_fit_cover_calibration_nereo]{kb_fit_cover_calibration_nereo()}},
 \code{\link[=kb_fit_size_nereo]{kb_fit_size_nereo()}},
 \code{\link[=kb_fit_weight_macro]{kb_fit_weight_macro()}},
 \code{\link[=kb_fit_weight_nereo]{kb_fit_weight_nereo()}},

@@ -1,4 +1,4 @@
-test_that("tide_corrected_cover scales canopy by tide and caps at the plot", {
+test_that("tide_corrected_cover corrects canopy for tide and caps at the plot", {
   grid <- data.frame(
     canopy_area_m2 = c(50, 0, 90),
     plot_area_m2 = c(100, 100, 100),
@@ -6,9 +6,9 @@ test_that("tide_corrected_cover scales canopy by tide and caps at the plot", {
   )
   slope <- posterior::rvar(c(0.2, 0.3))
   cover <- posterior::draws_of(tide_corrected_cover(grid, slope))
-  expect_equal(cover[, 1], c(0.6, 0.65), ignore_attr = TRUE)
+  expect_equal(cover[, 1], c(0.625, 0.5 / 0.7), ignore_attr = TRUE)
   expect_equal(cover[, 2], c(0, 0), ignore_attr = TRUE)
-  # 90 * 1.2 = 108 and 90 * 1.3 = 117 both exceed the plot, so cover is 1.
+  # 90 / 0.8 = 112.5 and 90 / 0.7 = 128.6 both exceed the plot, so cover is 1.
   expect_equal(cover[, 3], c(1, 1), ignore_attr = TRUE)
 })
 

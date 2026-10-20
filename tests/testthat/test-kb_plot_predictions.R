@@ -118,45 +118,47 @@ test_that("size by site plots point ranges with a descriptive y axis", {
   expect_equal(min(ggplot2::layer_scales(gg)$y$range$range), 0)
 })
 
-test_that("density by site plots point ranges titled as a density", {
-  p <- kb_predict_density(
-    density_nereo_fit,
-    kb_new_data(density_nereo_fit, by = "site")
+mean_weight_by_site <- function() {
+  kb_predict_mean_weight(
+    weight_nereo_fit,
+    size_nereo_fit,
+    kb_new_data(size_nereo_fit, by = "site"),
+    new_levels = "average",
+    progress = "none"
   )
-  gg <- kb_plot_predictions(p)
+}
+
+test_that("mean weight by site plots point ranges titled as a weight", {
+  gg <- kb_plot_predictions(mean_weight_by_site())
   geoms <- vapply(gg$layers, function(l) class(l$geom)[1], character(1))
   expect_true(any(grepl("GeomPointrange", geoms)))
   expect_identical(gg$labels$x, "Site")
-  expect_identical(gg$labels$y, "Stipe density (stipes/m\u00b2)")
-  expect_identical(
-    kb_plot_predictions(
-      kb_predict_density(
-        density_macro_fit,
-        kb_new_data(density_macro_fit, by = "site")
-      )
-    )$labels$y,
-    "Plant density (plants/m\u00b2)"
-  )
+  expect_identical(gg$labels$y, "Wet weight (kg)")
 })
 
-test_that("the density-by-site plot is visually stable", {
-  skip_if_not_installed("vdiffr")
-  p <- kb_predict_density(
-    density_macro_fit,
-    kb_new_data(density_macro_fit, by = "site")
+test_that("survey biomass by site-year plots point ranges titled as a biomass", {
+  withr::local_seed(1)
+  p <- kb_predict_biomass_survey(
+    weight_nereo_fit,
+    size_nereo_fit,
+    data_survey_sim_nereo,
+    pool_by = c("site", "year"),
+    progress = "none"
   )
-  vdiffr::expect_doppelganger("density by site", kb_plot_predictions(p))
+  gg <- kb_plot_predictions(p, max_facets = Inf)
+  expect_identical(gg$labels$x, "Year")
+  expect_identical(gg$labels$y, "Wet biomass (kg/m\u00b2)")
 })
 
 test_that("the size-by-site plot is visually stable", {
   skip_if_not_installed("vdiffr")
-  p <- kb_predict_size(size_macro_fit, kb_new_data(size_macro_fit, by = "site"))
+  p <- kb_predict_size(size_nereo_fit, kb_new_data(size_nereo_fit, by = "site"))
   vdiffr::expect_doppelganger("size by site", kb_plot_predictions(p))
 })
 
 test_that("a cover curve plots a ribbon over tide-corrected cover", {
-  fit <- cover_biomass_nereo_fit
-  p <- kb_predict_cover_biomass(fit, kb_new_data(fit))
+  fit <- cover_calibration_nereo_fit
+  p <- kb_predict_cover_calibration(fit, kb_new_data(fit))
   gg <- kb_plot_predictions(p)
   expect_s3_class(gg, "ggplot")
   geoms <- vapply(gg$layers, function(l) class(l$geom)[1], character(1))
@@ -166,26 +168,20 @@ test_that("a cover curve plots a ribbon over tide-corrected cover", {
 })
 
 test_that("log_axis defaults to linear axes with the y-axis from zero", {
-  p <- kb_predict_density(
-    density_nereo_fit,
-    kb_new_data(density_nereo_fit, by = "site")
-  )
+  p <- mean_weight_by_site()
   gg <- kb_plot_predictions(p)
   expect_identical(gg$scales$get_scales("y"), NULL)
   expect_equal(min(ggplot2::layer_scales(gg)$y$range$range), 0)
 })
 
 test_that("log_axis = 'y' log-scales the y-axis without a zero floor", {
-  p <- kb_predict_density(
-    density_nereo_fit,
-    kb_new_data(density_nereo_fit, by = "site")
-  )
+  p <- mean_weight_by_site()
   gg <- kb_plot_predictions(p, log_axis = "y")
   expect_identical(gg$scales$get_scales("y")$trans$name, "log-10")
   expect_null(gg$scales$get_scales("x"))
   expect_gt(min(ggplot2::layer_scales(gg)$y$range$range), -Inf)
   expect_no_warning(ggplot2::ggplot_build(gg))
-  expect_identical(gg$labels$y, "Stipe density (stipes/m\u00b2, log scale)")
+  expect_identical(gg$labels$y, "Wet weight (kg, log scale)")
   expect_identical(gg$labels$x, "Site")
 })
 
@@ -226,22 +222,19 @@ test_that("log tick labels are plain numbers", {
 })
 
 test_that("a log x-axis errors over zero cover and over groups", {
-  fit <- cover_biomass_nereo_fit
-  p <- kb_predict_cover_biomass(fit, kb_new_data(fit))
+  fit <- cover_calibration_nereo_fit
+  p <- kb_predict_cover_calibration(fit, kb_new_data(fit))
   expect_snapshot(kb_plot_predictions(p, log_axis = "xy"), error = TRUE)
   gg <- kb_plot_predictions(p, log_axis = "y")
   expect_identical(gg$scales$get_scales("y")$get_transformation()$name, "log-10")
-  positive <- kb_predict_cover_biomass(
+  positive <- kb_predict_cover_calibration(
     fit,
     kb_new_data(fit, cover = 10^seq(-3, 0, length.out = 5))
   )
   gg <- kb_plot_predictions(positive, log_axis = "xy")
   expect_identical(gg$scales$get_scales("x")$get_transformation()$name, "log-10")
   expect_identical(gg$scales$get_scales("y")$get_transformation()$name, "log-10")
-  by_site <- kb_predict_density(
-    density_nereo_fit,
-    kb_new_data(density_nereo_fit, by = "site")
-  )
+  by_site <- mean_weight_by_site()
   expect_snapshot(kb_plot_predictions(by_site, log_axis = "xy"), error = TRUE)
 })
 

@@ -2,14 +2,14 @@
 #
 #   Rscript scripts/build.R                       routine build
 #   Rscript scripts/build.R --fits                + rebuild all pre-fits and fixtures (MCMC)
-#   Rscript scripts/build.R --fits=density,wetdry + rebuild only those models'
+#   Rscript scripts/build.R --fits=size,wetdry    + rebuild only those models'
 #   Rscript scripts/build.R --check               R CMD check in place of test()
 #   Rscript scripts/build.R --site                + build the pkgdown site
 #
 # Flags combine (--fits=wetdry --check). Also available as Positron / VS Code
 # tasks "kelpbio: ..." (.vscode/tasks.json).
 
-models <- c("weight", "size", "density", "wetdry", "carbon", "cover_biomass")
+models <- c("weight", "size", "wetdry", "carbon", "cover_calibration")
 usage <- paste(
   "Usage: Rscript scripts/build.R [--fits[=<models>]] [--check] [--site]",
   "  --fits           also rebuild the pre-fit models and test fixtures (Stan MCMC)",
@@ -66,6 +66,10 @@ if (rebuild_fits) {
   for (model in fit_models) {
     for (species in c("nereo", "macro")) {
       script <- paste0("data-raw/fit_", model, "_sim_", species, ".R")
+      # Size has a Nereocystis model only.
+      if (!file.exists(script)) {
+        next
+      }
       message("Rebuilding via ", script)
       callr::rscript(script, show = TRUE)
     }

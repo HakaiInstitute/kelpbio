@@ -27,7 +27,7 @@ matches a row of \code{\link[=tidy]{tidy()}}, \code{\link[=summary]{summary()}},
 \details{
 Priors, centring, and random effects are those of the fit; an effect not
 fitted (such as the weight floor of a power-law fit) is omitted.
-Priors marked \code{T[0, ]} are truncated at zero.
+Priors marked \code{T[0, ]} are truncated at zero, and \code{T[0, 0.5]} at 0 and 0.5.
 }
 \examples{
 kb_model_describe(fit_weight_sim_nereo)

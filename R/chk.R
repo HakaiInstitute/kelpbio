@@ -32,7 +32,7 @@
   cli::cli_abort(
     c(
       "{.arg {x_name}} is a {.cls {class(x)[1]}} object, whose model has no grouping factors.",
-      i = "Grids are built for weight, size, density, and cover biomass fits."
+      i = "Grids are built for weight, size, and cover calibration fits."
     ),
     call = call
   )
@@ -125,7 +125,7 @@
   cli::cli_abort(c(
     "{x_name} must be at least 1.",
     i = "The model describes plants with at least one frond reaching 1 m above the holdfast.",
-    i = "Remove plants with 0 fronds, and leave them out of the density counts too."
+    i = "Remove plants with 0 fronds."
   ))
 }
 
@@ -155,19 +155,6 @@
   cli::cli_abort("{x_name} must be a data frame.")
 }
 
-.chk_new_data_density <- function(
-  x,
-  x_name = chk::deparse_backtick_chk(substitute(x))
-) {
-  if (.vld_new_data_density(x)) {
-    return(invisible(x))
-  }
-  if (!is.data.frame(x)) {
-    cli::cli_abort("{x_name} must be a data frame.")
-  }
-  .chk_positive_measure(x$area_m2, x_name = column_xname(x_name, "area_m2"))
-}
-
 .chk_same_species <- function(fits, call = rlang::caller_env()) {
   if (.vld_same_species(fits)) {
     return(invisible(fits))
@@ -194,6 +181,47 @@
       i = "{.arg {names(fits)}} {?has/have} {n} draws."
     ),
     call = call
+  )
+}
+
+# The fits a derived verb combines, NULLs allowed: the conversion fits of the
+# right model, all of one species and one number of draws.
+.chk_derived_fits <- function(fits, call = rlang::caller_env()) {
+  fits <- fits[!vapply(fits, is.null, logical(1))]
+  if (!is.null(fits$wetdry)) {
+    .chk_kb_fit(fits$wetdry, "kb_fit_wetdry", x_name = "wetdry", call = call)
+  }
+  if (!is.null(fits$carbon)) {
+    .chk_kb_fit(fits$carbon, "kb_fit_carbon", x_name = "carbon", call = call)
+  }
+  .chk_same_species(fits, call = call)
+  .chk_same_ndraws(fits, call = call)
+  invisible(fits)
+}
+
+# A table of counted plants must give the weight fit's predictor.
+.chk_census_size <- function(weight, plants, call = rlang::caller_env()) {
+  if (.vld_census_size(weight, plants)) {
+    return(invisible(plants))
+  }
+  predictor <- weight$meta$predictor
+  cli::cli_abort(
+    c(
+      "{.arg size} must have a {.field {predictor}} column, the predictor of {.arg weight}.",
+      i = "{.arg weight} is a {.val {(.species_label(weight$meta$species))}} weight fit."
+    ),
+    call = call
+  )
+}
+
+.chk_n_plants <- function(x, call = rlang::caller_env()) {
+  .with_call(
+    {
+      chk::chk_whole_number(x, x_name = "`n_plants`")
+      chk::chk_gte(x, value = 1, x_name = "`n_plants`")
+      .chk_finite(x, "`n_plants`")
+    },
+    call
   )
 }
 
@@ -488,7 +516,6 @@
   )
 }
 
-
 # Validate new_data's predictor column.
 .chk_new_data <- function(fit, new_data) {
   UseMethod(".chk_new_data")
@@ -509,7 +536,7 @@
   .chk_new_data_weight_macro(new_data)
 }
 
-# Both size species take the same new_data (no predictor column).
+# Size new_data has no predictor column.
 #' @export
 .chk_new_data.kb_fit_size <- function(fit, new_data) {
   .chk_new_data_size(new_data)
@@ -525,12 +552,6 @@
 #' @export
 .chk_new_data.kb_fit_carbon <- function(fit, new_data) {
   .chk_new_data_size(new_data)
-}
-
-# Both density species take the same new_data (the transect area).
-#' @export
-.chk_new_data.kb_fit_density <- function(fit, new_data) {
-  .chk_new_data_density(new_data)
 }
 
 # `x_name` names the data frame; column messages name the column within it.
@@ -562,35 +583,53 @@
   chk::chk_numeric(x$tide_height_m, x_name = nm)
   chk::chk_not_any_na(x$tide_height_m, x_name = nm)
   .chk_finite(x$tide_height_m, nm)
+  if ("biomass_sd_kg_m2" %in% names(x)) {
+    nm <- column_xname(x_name, "biomass_sd_kg_m2")
+    chk::chk_numeric(x$biomass_sd_kg_m2, x_name = nm)
+    chk::chk_not_any_na(x$biomass_sd_kg_m2, x_name = nm)
+    .chk_finite(x$biomass_sd_kg_m2, nm)
+    chk::chk_gte(x$biomass_sd_kg_m2, value = 0, x_name = nm)
+  }
 }
 
-# The data check shared by both cover species.
-.chk_cover_biomass_data <- function(data, biomass, x_name, call = rlang::caller_env()) {
+# The calibration data shared by both species: survey biomass from
+# kb_predict_biomass_survey() with each survey's drone cover on its row.
+.chk_cover_calibration_data <- function(data, x_name, call = rlang::caller_env()) {
   chk::chk_data(data, x_name = x_name)
-  chk::chk_superset(
-    names(data),
-    c("canopy_area_m2", "plot_area_m2", "tide_height_m", "site", "year"),
-    x_name = x_name
-  )
-  # The response comes from `biomass`; columns of the same name in `data` would
-  # be ambiguous once the two are joined.
-  in_data <- intersect(c("estimate", "lower", "upper"), names(data))
-  if (length(in_data)) {
+  hint <- "Use the output of {.fn kb_predict_biomass_survey} with its defaults: wet biomass per m\u00b2, one row per survey."
+  if (!"biomass_kg_m2" %in% names(data)) {
     cli::cli_abort(
-      c(
-        "{x_name} must not have the column{?s} {.field {in_data}}.",
-        i = "Supply the in situ biomass through {.arg biomass}."
-      ),
+      c("{x_name} must have a {.field biomass_kg_m2} column.", i = hint),
       call = call
     )
   }
-  .chk_cover_survey(data, x_name)
+  if (!posterior::is_rvar(data$biomass_kg_m2)) {
+    cli::cli_abort(
+      c("{column_xname(x_name, 'biomass_kg_m2')} must be a column of draws.", i = hint),
+      call = call
+    )
+  }
+  missing <- setdiff(
+    c("site", "year", "plot_area_m2", "canopy_area_m2", "tide_height_m"),
+    names(data)
+  )
+  if (length(missing)) {
+    cli::cli_abort(
+      c("{x_name} must have the column{?s} {.field {missing}}.", i = hint),
+      call = call
+    )
+  }
   .chk_group_columns(data, x_name)
+  .chk_drone_columns(data, x_name)
+  draws <- posterior::draws_of(data$biomass_kg_m2)
+  if (!all(is.finite(draws)) || any(draws < 0)) {
+    cli::cli_abort(
+      "{column_xname(x_name, 'biomass_kg_m2')} must hold finite draws of at least 0.",
+      call = call
+    )
+  }
   warn_implausible_units(data, x_name)
   warn_group_names(data, x_name)
-  if (!is.null(biomass)) {
-    .chk_plot_biomass(biomass, call = call)
-  }
   invisible(data)
 }
 
@@ -652,11 +691,175 @@
   invisible(data)
 }
 
-.chk_group_columns <- function(x, x_name) {
-  if (all(vapply(x[c("site", "year")], .vld_group_column, logical(1)))) {
+.chk_date <- function(x, x_name = deparse(substitute(x))) {
+  if (.vld_date(x)) {
     return(invisible(x))
   }
-  for (col in c("site", "year")) {
+  if (!inherits(x, "Date")) {
+    cli::cli_abort(c(
+      "{x_name} must be a {.cls Date}.",
+      i = "Convert it with {.fn as.Date}, giving the {.arg format} of the text."
+    ))
+  }
+  cli::cli_abort("{x_name} must not have missing values.")
+}
+
+.chk_date_year <- function(x, x_name = deparse(substitute(x))) {
+  if (.vld_date_year(x)) {
+    return(invisible(x))
+  }
+  cli::cli_abort(c(
+    "{column_xname(x_name, 'year')} must be the year of {.field date}.",
+    i = "Drop {.field year}: it is taken from {.field date}."
+  ))
+}
+
+.chk_unique_surveys <- function(x, x_name = deparse(substitute(x))) {
+  if (.vld_unique_surveys(x)) {
+    return(invisible(x))
+  }
+  key <- survey_key(x$site, x$plot_id, x$date)
+  repeated <- unique(key[duplicated(key)])
+  cli::cli_abort(c(
+    "{x_name} must have one row per {.field site}, {.field plot_id}, and {.field date}.",
+    i = "Repeated: {.val {repeated}}."
+  ))
+}
+
+.chk_drone_columns <- function(x, x_name = deparse(substitute(x))) {
+  if (.vld_drone_columns(x)) {
+    return(invisible(x))
+  }
+  cols <- c("plot_area_m2", "canopy_area_m2", "tide_height_m")
+  absent <- setdiff(cols, names(x))
+  if (length(absent)) {
+    cli::cli_abort(c(
+      "{x_name} must have all of {.field {cols}} or none of them.",
+      i = "Missing: {.field {absent}}."
+    ))
+  }
+  missing <- is.na(x[cols])
+  partial <- rowSums(missing) %in% seq_len(length(cols) - 1L)
+  if (any(partial)) {
+    col <- cols[colSums(missing[partial, , drop = FALSE]) > 0][1]
+    cli::cli_abort(c(
+      "{column_xname(x_name, col)} must not be missing where the other drone columns are given.",
+      i = "Give {.field {cols}} together, or leave all three missing for a survey without drone cover."
+    ))
+  }
+  d <- x[!missing[, 1L], cols, drop = FALSE]
+  .chk_positive_measure(d$plot_area_m2, column_xname(x_name, "plot_area_m2"))
+  nm <- column_xname(x_name, "canopy_area_m2")
+  chk::chk_numeric(d$canopy_area_m2, x_name = nm)
+  .chk_finite(d$canopy_area_m2, nm)
+  chk::chk_gte(d$canopy_area_m2, value = 0, x_name = nm)
+  if (any(d$canopy_area_m2 > d$plot_area_m2)) {
+    cli::cli_abort("{nm} must not exceed {.field plot_area_m2}.")
+  }
+  nm <- column_xname(x_name, "tide_height_m")
+  chk::chk_numeric(d$tide_height_m, x_name = nm)
+  .chk_finite(d$tide_height_m, nm)
+  invisible(x)
+}
+
+.chk_partial <- function(x, x_name = deparse(substitute(x))) {
+  if (.vld_partial(x)) {
+    return(invisible(x))
+  }
+  chk::chk_logical(x, x_name = x_name)
+  cli::cli_abort("{x_name} must not have missing values.")
+}
+
+.chk_plants_join <- function(plants, survey, x_name = deparse(substitute(plants))) {
+  if (.vld_plants_join(plants, survey)) {
+    return(invisible(plants))
+  }
+  key <- survey_key(plants$site, plants$plot_id, plants$date)
+  unmatched <- unique(key[!key %in% survey_key(survey$site, survey$plot_id, survey$date)])
+  n <- length(unmatched)
+  cli::cli_abort(c(
+    "{n} plant{?s} in {x_name} {cli::qty(n)}match{?es/} no survey.",
+    i = "Plants join to their survey by {.field site}, {.field plot_id}, and {.field date}.",
+    i = "Unmatched: {.val {utils::head(unmatched, 5)}}."
+  ))
+}
+
+# A survey table; with `plants`, the plant table and the join too.
+.chk_survey_data <- function(data, plants, x_name, plants_name) {
+  chk::chk_data(data, x_name = x_name)
+  .chk_rows(data, x_name)
+  required <- c("site", "plot_id", "date", "survey_area_m2")
+  if (is.null(plants)) {
+    required <- c(required, "plants")
+  }
+  chk::chk_superset(names(data), required, x_name = x_name)
+  .chk_dated_site(data, x_name)
+  .chk_group_columns(data, x_name, "plot_id")
+  .chk_measure_columns(data, "survey_area_m2", x_name)
+  if (is.null(plants)) {
+    .chk_measure_columns(data, "plants", x_name, zero = TRUE)
+  } else if ("plants" %in% names(data)) {
+    cli::cli_abort(c(
+      "{x_name} must not have a {.field plants} column when plant rows are given.",
+      i = "The counts come from the plant rows."
+    ))
+  }
+  .chk_unique_surveys(data, x_name)
+  .chk_drone_columns(data, x_name)
+  warn_implausible_units(data, x_name)
+  warn_group_names(data, x_name)
+  warn_survey_area(data, x_name)
+  if (!is.null(plants)) {
+    size <- intersect(c("diameter_mm", "fronds"), names(plants))
+    if (length(size) != 1L) {
+      cli::cli_abort(
+        "{plants_name} must have one of {.field diameter_mm} (Nereocystis) or {.field fronds} (Macrocystis)."
+      )
+    }
+    .chk_plants_data(plants, size, plants_name)
+    .chk_plants_join(plants, data, plants_name)
+  }
+  invisible(data)
+}
+
+# A plant table of counted plants; `size` is the species' size column.
+.chk_plants_data <- function(data, size, x_name) {
+  chk::chk_data(data, x_name = x_name)
+  chk::chk_superset(names(data), c("site", "plot_id", "date", size), x_name = x_name)
+  .chk_group_columns(data, x_name, c("site", "plot_id"))
+  .chk_date(data$date, column_xname(x_name, "date"))
+  if (identical(size, "fronds")) {
+    nm <- column_xname(x_name, "fronds")
+    chk::chk_numeric(data$fronds, x_name = nm)
+    chk::chk_not_any_na(data$fronds, x_name = nm)
+    .chk_finite(data$fronds, nm)
+    .chk_frond_reaches_1m(data$fronds, nm)
+    chk::chk_whole_numeric(data$fronds, x_name = nm)
+  } else {
+    .chk_measure_columns(data, size, x_name)
+  }
+  if ("partial" %in% names(data)) {
+    .chk_partial(data$partial, column_xname(x_name, "partial"))
+  }
+  warn_implausible_units(data, x_name)
+  warn_group_names(data, x_name)
+  invisible(data)
+}
+
+# `site` and `date` of a dated table (weight, size, survey, plants): `year` is
+# derived from `date`, and a `year` column, if present, must agree with it.
+.chk_dated_site <- function(data, x_name) {
+  .chk_group_columns(data, x_name, "site")
+  .chk_date(data$date, column_xname(x_name, "date"))
+  .chk_date_year(data, x_name)
+  invisible(data)
+}
+
+.chk_group_columns <- function(x, x_name, cols = c("site", "year")) {
+  if (all(vapply(x[cols], .vld_group_column, logical(1)))) {
+    return(invisible(x))
+  }
+  for (col in cols) {
     nm <- column_xname(x_name, col)
     chk::chk_character_or_factor(x[[col]], x_name = nm)
     chk::chk_not_any_na(x[[col]], x_name = nm)
@@ -664,91 +867,11 @@
   invisible(x)
 }
 
-.chk_plot_biomass <- function(
-  x,
-  x_name = "`biomass`",
-  call = rlang::caller_env()
-) {
-  if (.vld_plot_biomass(x)) {
-    return(invisible(x))
-  }
-  chk::chk_data(x, x_name = x_name)
-  chk::chk_superset(
-    names(x),
-    c("site", "year", "estimate", "lower", "upper"),
-    x_name = x_name
-  )
-  .chk_group_columns(x, x_name)
-  .chk_biomass_estimate(x, x_name)
-  .chk_biomass_response(x, x_name, call = call)
-  dup <- unique(site_year_key(x$site, x$year)[
-    duplicated(site_year_key(x$site, x$year))
-  ])
-  cli::cli_abort(
-    c(
-      "{x_name} must have one row per site-year.",
-      i = "Repeated: {.val {dup}}."
-    ),
-    call = call
-  )
-}
-
-.chk_biomass_response <- function(
-  x,
-  x_name = deparse(substitute(x)),
-  call = rlang::caller_env()
-) {
-  if (.vld_biomass_response(x)) {
-    return(invisible(x))
-  }
-  cli::cli_abort(
-    c(
-      "{x_name} must be wet biomass ({.field biomass_kg_m2}), not {.field {attr(x, 'kb_response')}}.",
-      i = "Predict it with {.code kb_predict_plot_biomass(measure = \"wet\")}."
-    ),
-    call = call
-  )
-}
-
-.chk_biomass_limits <- function(x, x_name = deparse(substitute(x))) {
-  if (.vld_biomass_limits(x)) {
-    return(invisible(x))
-  }
-  if (!all(c("lower", "upper") %in% names(x))) {
-    cli::cli_abort(c(
-      "{x_name} must have {.field lower} and {.field upper} columns.",
-      i = "They are the compatibility limits of the in situ biomass estimate, which set its precision."
-    ))
-  }
-  .chk_positive_measure(x$lower, x_name = column_xname(x_name, "lower"))
-  .chk_positive_measure(x$upper, x_name = column_xname(x_name, "upper"))
-  cli::cli_abort(
-    "{column_xname(x_name, 'lower')} must be less than {.field upper}."
-  )
-}
-
-.chk_biomass_estimate <- function(x, x_name = deparse(substitute(x))) {
-  if (.vld_biomass_estimate(x)) {
-    return(invisible(x))
-  }
-  .chk_biomass_limits(x, x_name)
-  .chk_positive_measure(x$estimate, x_name = column_xname(x_name, "estimate"))
-  if (any(x$lower > x$estimate)) {
-    cli::cli_abort(
-      "{column_xname(x_name, 'lower')} must not exceed {.field estimate}."
-    )
-  }
-  cli::cli_abort(
-    "{column_xname(x_name, 'upper')} must not be less than {.field estimate}."
-  )
-}
-
 # Both cover species take the same new_data (the survey columns).
 #' @export
-.chk_new_data.kb_fit_cover_biomass <- function(fit, new_data) {
+.chk_new_data.kb_fit_cover_calibration <- function(fit, new_data) {
   .chk_cover_survey(new_data, x_name = "`new_data`")
 }
-
 
 .chk_site_surveys <- function(x, x_name = deparse(substitute(x))) {
   if (.vld_site_surveys(x)) {
@@ -781,23 +904,23 @@
   ))
 }
 
-.chk_sum_by <- function(sum_by, data, call = rlang::caller_env()) {
-  if (.vld_sum_by(sum_by, data)) {
-    return(invisible(sum_by))
+.chk_pool_by <- function(pool_by, data, data_name = "new_data", call = rlang::caller_env()) {
+  if (.vld_pool_by(pool_by, data)) {
+    return(invisible(pool_by))
   }
-  chk::chk_character(sum_by, x_name = "`sum_by`")
-  chk::chk_not_any_na(sum_by, x_name = "`sum_by`")
-  missing <- setdiff(sum_by, names(data))
+  chk::chk_character(pool_by, x_name = "`pool_by`")
+  chk::chk_not_any_na(pool_by, x_name = "`pool_by`")
+  missing <- setdiff(pool_by, names(data))
   if (length(missing)) {
     cli::cli_abort(
-      "{.arg sum_by} names {cli::qty(missing)}column{?s} {.field {missing}} that {.arg new_data} does not have.",
+      "{.arg pool_by} names {cli::qty(missing)}column{?s} {.field {missing}} that {.arg {data_name}} does not have.",
       call = call
     )
   }
-  bad <- sum_by[!vapply(data[sum_by], .vld_group_column, logical(1))]
+  bad <- pool_by[!vapply(data[pool_by], .vld_group_column, logical(1))]
   cli::cli_abort(
     c(
-      "{.arg sum_by} column{?s} {.field {bad}} must be character or factor with no missing values.",
+      "{.arg pool_by} column{?s} {.field {bad}} must be character or factor with no missing values.",
       i = "Convert a numeric code with {.fn as.character} or {.fn factor}."
     ),
     call = call
@@ -805,6 +928,9 @@
 }
 
 .chk_measure_fits <- function(measure, wetdry, carbon, call = rlang::caller_env()) {
+  if (.vld_measure_fits(measure, wetdry, carbon)) {
+    return(invisible(NULL))
+  }
   if (measure %in% c("dry", "carbon") && is.null(wetdry)) {
     cli::cli_abort("{.arg wetdry} is required for {measure} biomass.", call = call)
   }

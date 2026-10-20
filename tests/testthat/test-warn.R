@@ -33,16 +33,16 @@ test_that("plain names, including spaces, raise no warning", {
 })
 
 test_that("the data checks warn on ambiguous group names", {
-  data <- data_size_sim_macro
+  data <- data_size_sim_nereo
   data$site <- as.character(data$site)
   data$site[1] <- "North Reef, inner"
-  expect_warning(kb_check_data_size_macro(data), "comma or square bracket")
+  expect_warning(kb_check_data_size_nereo(data), "comma or square bracket")
 })
 
 test_that("a column in the wrong unit warns, naming it and the expected unit", {
   expect_snapshot(warn_implausible_units(data.frame(diameter_mm = c(2.5, 3.4, 4)), "`d`"))
   expect_snapshot(warn_implausible_units(data.frame(weight_kg = c(900, 1200)), "`d`"))
-  expect_snapshot(warn_implausible_units(data.frame(area_m2 = c(4e5, 2e5)), "`d`"))
+  expect_snapshot(warn_implausible_units(data.frame(survey_area_m2 = c(4e5, 2e5)), "`d`"))
   expect_snapshot(warn_implausible_units(data.frame(wet_mass_g = c(4000, 5000)), "`d`"))
   expect_snapshot(warn_implausible_units(data.frame(tide_height_m = c(50, 120)), "`d`"))
   expect_warning(
@@ -50,7 +50,7 @@ test_that("a column in the wrong unit warns, naming it and the expected unit", {
     "unusually large for square metres"
   )
   expect_warning(
-    warn_implausible_units(data.frame(area_m2 = c(0.004, 0.006)), "`d`"),
+    warn_implausible_units(data.frame(survey_area_m2 = c(0.004, 0.006)), "`d`"),
     "unusually small for square metres"
   )
   expect_warning(
@@ -65,7 +65,7 @@ test_that("plausible, empty, and all-NA columns do not warn", {
       data.frame(
         diameter_mm = c(20, 40),
         weight_kg = c(1, 3),
-        area_m2 = c(20, 120),
+        survey_area_m2 = c(20, 120),
         wet_mass_g = c(2, 40),
         dry_mass_g = c(0.2, 3.5)
       ),
@@ -111,4 +111,17 @@ test_that("a column without a unit gets no unit hint", {
 test_that("nothing is compared for a fit with no observations", {
   fit <- fit_with(diameter_mm = numeric(0))
   expect_no_warning(warn_outside_range(fit, 1000, "diameter_mm"))
+})
+
+test_that("a surveyed area above the plot area warns", {
+  d <- data.frame(survey_area_m2 = c(120, 300), plot_area_m2 = c(200, 200))
+  expect_snapshot(warn_survey_area(d, "`d`"))
+  expect_no_warning(warn_survey_area(transform(d, survey_area_m2 = 120), "`d`"))
+  expect_no_warning(warn_survey_area(transform(d, plot_area_m2 = NA), "`d`"))
+})
+
+test_that("a pool_by group holding one site-year twice warns", {
+  grid <- tibble::tibble(site = c("a", "a"), year = "2020")
+  expect_snapshot(warn_overlapping_canopy(grid, c(1L, 1L)))
+  expect_no_warning(warn_overlapping_canopy(grid, c(1L, 2L)))
 })

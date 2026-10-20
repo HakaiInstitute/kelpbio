@@ -18,10 +18,9 @@ A numeric vector of fitted values on the response scale, length
 \description{
 Posterior medians of the expected response at each observed row, matching
 \code{\link[=augment]{augment()}}'s \code{fitted} column: wet weight (kg) for weight fits, sub-bulb
-diameter (mm) or fronds for size fits, the stipe or plant count on the
-transect for density fits, the dry:wet ratio for wet/dry fits, the carbon
+diameter (mm) for size fits, the dry:wet ratio for wet/dry fits, the carbon
 fraction of dry mass for carbon fits, and wet biomass (kg/m²) for cover
-biomass fits. For the full posterior, use \code{\link[=posterior_epred]{posterior_epred()}}.
+calibration fits. For the full posterior, use \code{\link[=posterior_epred]{posterior_epred()}}.
 }
 \examples{
 fitted(fit_weight_sim_nereo)

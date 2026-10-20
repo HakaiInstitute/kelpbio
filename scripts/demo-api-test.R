@@ -3,9 +3,9 @@
 #
 # Structure: basic functionality first (fit, accessors, predictions, plots),
 # then advanced functionality (priors, custom-prior/prior-only fits, control,
-# progress, site:year edge cases, fits without density, raw posterior draws)
-# further down, then the Macrocystis weight model, the size, density, wet/dry,
-# and carbon models, and the biomass compositions (plot, cover, site).
+# progress, site:year edge cases, raw posterior draws) further down, then the
+# Macrocystis weight model, the size, wet/dry, and carbon models, survey biomass
+# and mean weight, the cover calibration, and biomass over canopy.
 #
 # Orientation: pair this with decisions/architecture.md (the design overview);
 # the behavioural contract lives in openspec/specs/, and the rendered pkgdown
@@ -104,7 +104,6 @@ posterior::summarise_draws(fit)
 kb_samples(fit)
 # posterior's conversions and summaries accept the fit, as for brms or cmdstanr
 posterior::as_draws_df(fit)
-posterior::summarise_draws(fit)
 prior_summary(fit)
 # prior sensitivity (needs priorsense); each term is also the kb_priors_*()
 # entry to edit, and priorsense's own plots accept the fit
@@ -188,7 +187,10 @@ kb_new_data(fit, site = "new_reef", diameter_mm = 30)
 kb_predict_weight(fit, kb_new_data(fit))
 kb_predict_weight(fit, kb_new_data(fit, by = "site"))
 # by site and year: the site:year effect of each fitted site-year
-kb_predict_weight(fit, kb_new_data(fit, by = c("site", "year"), diameter_mm = 30))
+kb_predict_weight(
+  fit,
+  kb_new_data(fit, by = c("site", "year"), diameter_mm = 30)
+)
 # both species have a year main effect, so by = "year" works for nereo too
 kb_predict_weight(fit, kb_new_data(fit, by = "year", diameter_mm = 30))
 
@@ -205,7 +207,11 @@ kb_predict_weight(fit, new_reef)
 kb_predict_weight(fit, new_reef, new_levels = "sample")
 # a fitted site is conditioned on its own effect under either setting
 kb_predict_weight(fit, tibble(diameter_mm = 40, site = sites[1]))
-kb_predict_weight(fit, tibble(diameter_mm = 40, site = sites[1]), new_levels = "sample")
+kb_predict_weight(
+  fit,
+  tibble(diameter_mm = 40, site = sites[1]),
+  new_levels = "sample"
+)
 
 # the same contrast on a grid: the typical-site curve versus a new-site curve
 bind_rows(
@@ -386,22 +392,27 @@ fit_polled <- kb_fit_weight_nereo(
 kb_progress(progress_dir) # 1 (complete)
 
 # --- site:year effect edge cases ----------------------------------------------
-# The site:year effect is determined automatically from the data (there is no
-# site_year_on argument). Two edge cases a reviewer should see, using subsets of
-# the bundled example data:
+# Weight and size models always fit the site:year effect (there is no
+# site_year_on argument). When the data cannot separate it from the site or year
+# effect, the fit warns, naming that effect; estimates at the surveyed
+# site-years are unaffected, but the site and year effects then lean on the
+# sd_site_year prior (check with kb_sensitivity()). The cover calibration has
+# site and year effects only. Three designs a reviewer should see, using
+# subsets of the bundled example data:
 
-# (a) Single year of data: the site:year effect is confounded with the site
-# effect, so it is omitted. An informational notice prints (unless progress = "none").
+# (a) Single year of data: site:year cannot be separated from site, so the fit
+# warns naming the site effect (the warning shows whatever `progress` is).
 one_year <- data_weight_sim_nereo |>
-  filter(year == "2019") |>
+  filter(format(date, "%Y") == "2019") |>
   droplevels()
 fit_one_year <- kb_fit_weight_nereo(one_year, chains = 2, niters = 300)
-fit_one_year$meta$site_year_on # FALSE (effect omitted)
+fit_one_year$meta$site_year_on # TRUE (fitted, with a warning)
+"sd_site_year" %in% variables(fit_one_year) # TRUE
 
-# (b) Aliased design: several years, but each site sampled in only one year, so
-# site and site:year cannot be separated. The effect is retained and a warning is
-# issued (shown regardless of progress).
+# (b) Aliased design: each site sampled in one year and each year at one site,
+# so the warning names both the site and the year effects.
 aliased <- data_weight_sim_nereo |>
+  mutate(year = format(date, "%Y")) |>
   filter(
     (site == "otter_cove" & year == "2019") |
       (site == "gull_rock" & year == "2020") |
@@ -415,12 +426,15 @@ fit_aliased <- kb_fit_weight_nereo(
   niters = 300,
   progress = "none"
 )
-fit_aliased$meta$site_year_on # TRUE (retained despite non-identifiability)
 
-# An omitted effect is not stored, so it is left out of every summary and of
-# the draws. No sd_site_year here:
-tidy(fit_one_year)
-"sd_site_year" %in% variables(fit_one_year) # FALSE
+# (c) One site over several years: the warning names the year effect.
+one_site <- data_weight_sim_nereo |>
+  filter(site == "otter_cove") |>
+  droplevels()
+fit_one_site <- kb_fit_weight_nereo(one_site, chains = 2, niters = 300, progress = "none")
+
+# how much the site and year effects depend on the sd_site_year prior
+kb_sensitivity(fit_one_year)
 
 # --- functional form ---------------------------------------------------------
 # fit_power (fitted above with form = "power") has no weight_floor; its straight
@@ -553,20 +567,16 @@ range(pp_m) # all > 0
 head(residuals(fit_m))
 
 # =============================================================================
-# SIZE DISTRIBUTION MODELS
+# SIZE DISTRIBUTION MODEL
 # =============================================================================
-# Size is one row per plant: maximum sub-bulb diameter (mm) for nereo (Weibull),
-# fronds reaching 1 m above the holdfast for macro (zero-truncated negative
-# binomial). The log mean size varies by site, year, and site:year. There is no
+# Size is one row per measured Nereocystis plant: maximum sub-bulb diameter (mm),
+# Weibull. The log mean size varies by site, year, and site:year. There is no
 # predictor, so predictions are one expected size per row or group.
+# Macrocystis has no size model: every counted plant's fronds are recorded.
 
 str(data_size_sim_nereo)
 kb_check_data_size_nereo(data_size_sim_nereo)
-kb_check_data_size_macro(data_size_sim_macro)
-try(kb_check_data_size_macro(mutate(data_size_sim_macro, fronds = 0))) # >= 1
-
 kb_priors_size_nereo() # intercept, shape, sd_site/year/site_year
-kb_priors_size_macro() # intercept, dispersion, sd_site/year/site_year
 
 fit_s <- kb_fit_size_nereo(data_size_sim_nereo)
 fit_s
@@ -574,17 +584,11 @@ tidy(fit_s)
 summary(fit_s)
 kb_model_describe(fit_s)
 
-fit_sm <- kb_fit_size_macro(data_size_sim_macro)
-kb_model_describe(fit_sm)
-
-# expected size by group (the mean of the distribution); for macro, the
-# expected frond count of a plant with at least one frond at 1 m
+# expected size by group (the mean of the distribution)
 kb_predict_size(fit_s, kb_new_data(fit_s))
 kb_predict_size(fit_s, kb_new_data(fit_s, by = "site")) |>
   kb_plot_predictions() +
   coord_flip()
-kb_predict_size(fit_sm, kb_new_data(fit_sm, by = "year")) |>
-  kb_plot_predictions()
 
 # rows of site/year (no predictor column); a new site is the typical site by
 # default, and "sample" adds the variation between sites
@@ -600,86 +604,13 @@ kb_predict_size(
   representative_site = "otter_cove"
 )
 
-# macro: posterior_epred is the truncated mean; linpred(transform = TRUE) is the
-# untruncated mean, which is lower
-nd <- tibble(site = "otter_cove")
-median(posterior_epred(fit_sm, new_data = nd))
-median(posterior_linpred(fit_sm, transform = TRUE, new_data = nd))
-
-# draws of individual plant sizes (whole numbers >= 1 for macro)
+# draws of individual plant sizes
 ppc_dens_overlay(fit_s$data$diameter_mm, posterior_predict(fit_s)[1:50, ])
-head(residuals(fit_sm))
 augment(fit_s) |>
   ggplot(aes(fitted, residual)) +
   geom_hline(yintercept = 0, linetype = 2) +
   geom_jitter(width = 0.2, alpha = 0.3)
 
-# =============================================================================
-# DENSITY MODELS
-# =============================================================================
-# Density is one row per transect: the count of stipes (nereo, zero-inflated
-# negative binomial) or plants (macro, negative binomial) on a transect of
-# area_m2. The expected count is area times density, so area_m2 is an offset.
-# Log density varies by site, year, and site:year. Sum bin-level counts (and
-# their areas) to one row per transect before fitting.
-
-str(data_density_sim_nereo)
-kb_check_data_density_nereo(data_density_sim_nereo)
-kb_check_data_density_macro(data_density_sim_macro)
-try(kb_check_data_density_nereo(mutate(data_density_sim_nereo, area_m2 = 0)))
-# area in cm^2 warns
-kb_check_data_density_nereo(mutate(
-  data_density_sim_nereo,
-  area_m2 = area_m2 * 1e4
-))
-
-kb_priors_density_nereo() # intercept, logit_zero_inflation, dispersion, sd_*
-kb_priors_density_macro() # intercept, dispersion, sd_*
-
-fit_d <- kb_fit_density_nereo(data_density_sim_nereo)
-fit_d
-tidy(fit_d) # intercept: log stipes per m^2; logit_zero_inflation: logit P(transect unoccupied)
-kb_model_describe(fit_d)
-
-fit_dm <- kb_fit_density_macro(data_density_sim_macro)
-kb_model_describe(fit_dm)
-
-# density is always per m^2 (zero inflation included for nereo), at the
-# observed transects, by group, or at your own rows
-kb_predict_density(fit_d)
-kb_predict_density(fit_d, kb_new_data(fit_d))
-kb_predict_density(fit_d, kb_new_data(fit_d, by = "site")) |>
-  kb_plot_predictions() +
-  coord_flip()
-kb_predict_density(fit_dm, kb_new_data(fit_dm, by = c("site", "year"))) |>
-  kb_plot_predictions()
-kb_predict_density(fit_d, new_data = tibble(site = c("otter_cove", "new_reef")))
-
-# an area_m2 column does not change the estimate: it stays per m^2
-kb_predict_density(fit_d, new_data = tibble(site = "otter_cove", area_m2 = c(20, 40)))
-# the expected count on a 40 m^2 transect, and its limits, are the density x 40
-kb_predict_density(fit_d, new_data = tibble(site = "otter_cove")) |>
-  mutate(across(c(estimate, lower, upper), \(x) x * 40))
-
-# transect counts: the draw generics read area_m2 (1 m^2 when absent)
-transects <- tibble(site = "otter_cove", area_m2 = c(20, 40))
-apply(posterior_epred(fit_d, new_data = transects), 2, median) # expected counts
-pp_counts <- posterior_predict(fit_d, new_data = transects) # simulated counts
-apply(pp_counts, 2, quantile, probs = c(0.025, 0.5, 0.975))
-
-# nereo: posterior_epred includes the zero-inflation probability;
-# linpred(transform = TRUE) is the mean on an occupied transect, so higher
-nd <- tibble(site = "otter_cove")
-median(posterior_epred(fit_d, new_data = nd))
-median(posterior_linpred(fit_d, transform = TRUE, new_data = nd))
-median(posterior_linpred(fit_d, new_data = nd))
-
-# draws of transect counts (whole numbers >= 0)
-ppc_bars(fit_d$data$stipes, posterior_predict(fit_d)[1:50, ])
-augment(fit_dm) |>
-  ggplot(aes(fitted, residual)) +
-  geom_hline(yintercept = 0, linetype = 2) +
-  geom_point(alpha = 0.3)
 
 # =============================================================================
 # WET/DRY MODELS
@@ -757,91 +688,107 @@ kb_predict_carbon(fit_c)
 kb_predict_carbon(kb_fit_carbon_macro(data_carbon_sim_macro))
 
 # =============================================================================
-# PLOT BIOMASS
+# MEAN WEIGHT AND SURVEY BIOMASS
 # =============================================================================
-# kb_predict_plot_biomass() combines a weight, a size, and a density fit of one
-# species into the expected biomass per m2 of each site-year surveyed for
-# density: density x mean plant weight over the size distribution, per draw.
-# measure = "dry" adds a wet/dry fit, "carbon" a carbon fit too (g C/m2).
-# weight_support / size_support say what data each fit has for the site-year:
-# "site-year", "site, year" (both, not together), "site", "year", or "none".
+# A plant is one individual (sporophyte), identified by its holdfast. A survey
+# is one in situ count of a plot on a date: site, plot_id, date, and the surveyed
+# area (survey_area_m2). Plant sizes come from a size fit when plants were
+# tallied (Nereocystis: `plants` on the survey row), or from a table of every
+# counted plant (Macrocystis: data_plants_sim_macro, with partial plants as
+# half). A survey paired with a drone flight also carries plot_area_m2,
+# canopy_area_m2, and tide_height_m.
 
-# site-years the weight or size fit never saw draw their effects ("sample", the
-# default, unlike the prediction verbs: every row is a particular site-year), so
-# set a seed; "average" gives them the typical site and year instead
+str(data_survey_sim_nereo)
+kb_check_data_survey(data_survey_sim_nereo)
+kb_check_data_survey(data_survey_sim_macro, data_plants_sim_macro)
+kb_check_data_plants_macro(data_plants_sim_macro)
+# a date as text, or a tally next to a plant table: errors
+try(kb_check_data_survey(mutate(
+  data_survey_sim_nereo,
+  date = as.character(date)
+)))
+try(kb_check_data_survey(data_survey_sim_nereo, data_plants_sim_macro))
+
+# mean plant weight of each site-year from the weight and size fits; new
+# site-years are sampled by default (every row is a particular site-year)
 set.seed(1)
-kb_predict_plot_biomass(
+kb_predict_mean_weight(fit_weight_sim_nereo, fit_size_sim_nereo)
+kb_predict_mean_weight(
   fit_weight_sim_nereo,
   fit_size_sim_nereo,
-  fit_density_sim_nereo
-)
-kb_predict_plot_biomass(
-  fit_weight_sim_nereo,
-  fit_size_sim_nereo,
-  fit_density_sim_nereo,
+  kb_new_data(fit_size_sim_nereo, by = "site"),
   new_levels = "average"
+) |>
+  kb_plot_predictions()
+
+# survey biomass per m2 of the surveyed area, one row per survey, with its draws
+set.seed(1)
+biomass_n <- kb_predict_biomass_survey(
+  fit_weight_sim_nereo,
+  fit_size_sim_nereo,
+  data_survey_sim_nereo
 )
-kb_predict_plot_biomass(
+biomass_n
+biomass_m <- kb_predict_biomass_survey(
   fit_weight_sim_macro,
-  fit_size_sim_macro,
-  fit_density_sim_macro,
+  data_plants_sim_macro,
+  data_survey_sim_macro
+)
+# pooled by site-year (total kg over total area), or kg in the surveyed area
+kb_predict_biomass_survey(
+  fit_weight_sim_macro,
+  data_plants_sim_macro,
+  data_survey_sim_macro,
+  pool_by = c("site", "year")
+) |>
+  kb_plot_predictions()
+kb_predict_biomass_survey(
+  fit_weight_sim_macro,
+  data_plants_sim_macro,
+  data_survey_sim_macro,
+  per_area = FALSE
+)
+# carbon per m2 (g C/m2)
+kb_predict_biomass_survey(
+  fit_weight_sim_macro,
+  data_plants_sim_macro,
+  data_survey_sim_macro,
   fit_wetdry_sim_macro,
   fit_carbon_sim_macro,
   measure = "carbon"
-) |>
-  kb_plot_predictions()
-# fits of different species, or different draw counts: an error
-try(kb_predict_plot_biomass(
+)
+# fits of different species: an error
+try(kb_predict_biomass_survey(
   fit_weight_sim_nereo,
-  fit_size_sim_macro,
-  fit_density_sim_nereo
+  data_plants_sim_macro,
+  data_survey_sim_macro
 ))
 
 # =============================================================================
-# COVER BIOMASS MODELS
+# COVER CALIBRATION MODELS
 # =============================================================================
-# Cover takes two data frames. `data` is one row per drone survey:
-# canopy_area_m2 within plot_area_m2, the survey tide_height_m, site, and year.
-# `biomass` is the in situ wet biomass of each site-year (kg/m^2) as
-# estimate/lower/upper, such as kb_predict_plot_biomass() output; the fit pairs them
-# by site and year, and surveys with no biomass are dropped with a message.
-# Biomass is a floor plus a term proportional to tide-corrected cover; each
-# survey is weighted by the precision of its in situ estimate.
+# The calibration takes survey biomass from kb_predict_biomass_survey() with
+# its defaults. Each survey with drone cover is one observation; the others are
+# left out with a message. Biomass is a floor plus a term proportional to
+# tide-corrected cover, Normal censored at zero, with an SD combining a
+# constant, a part proportional to the mean, and each survey's weight SD.
 
-str(data_cover_biomass_sim_nereo)
-str(data_plot_biomass_sim_nereo)
-kb_check_data_cover_biomass_nereo(data_cover_biomass_sim_nereo, data_plot_biomass_sim_nereo)
-# canopy larger than its plot: an error
-try(kb_check_data_cover_biomass_nereo(mutate(
-  data_cover_biomass_sim_nereo,
-  canopy_area_m2 = plot_area_m2 + 1
-)))
-# limits that do not bracket the estimate: an error
-try(kb_check_data_cover_biomass_nereo(
-  data_cover_biomass_sim_nereo,
-  mutate(data_plot_biomass_sim_nereo, lower = estimate * 2)
-))
-# two biomass rows for one site-year: an error
-try(kb_check_data_cover_biomass_nereo(
-  data_cover_biomass_sim_nereo,
-  rbind(data_plot_biomass_sim_nereo, data_plot_biomass_sim_nereo[1, ])
-))
-# tide in cm: a warning
-kb_check_data_cover_biomass_nereo(mutate(
-  data_cover_biomass_sim_nereo,
-  tide_height_m = tide_height_m * 100
-))
+kb_check_data_cover_calibration_nereo(biomass_n)
+# summed or dry biomass has no biomass_kg_m2 column of draws: an error
+try(kb_check_data_cover_calibration_nereo(select(biomass_n, -biomass_kg_m2)))
 
-# cover_slope, biomass_floor, tide_height_slope, error_scaling, sd_site, sd_year
-kb_priors_cover_biomass_nereo()
-kb_priors_cover_biomass_macro() # macro differs in the floor and tide priors
+# cover_slope, biomass_floor, tide_height_slope, sd_residual, cv_residual,
+# sd_site, sd_year
+kb_priors_cover_calibration_nereo()
+kb_priors_cover_calibration_macro() # macro differs in the floor and tide priors
 
-fit_cv <- kb_fit_cover_biomass_nereo(data_cover_biomass_sim_nereo, data_plot_biomass_sim_nereo)
+fit_cv <- kb_fit_cover_calibration_nereo(biomass_n)
 fit_cv
 kb_model_describe(fit_cv)
 tidy(fit_cv)
-augment(fit_cv) # surveys with the paired in situ biomass, fitted, residual
-kb_predict_cover_biomass(
+augment(fit_cv) # surveys with their mean and SD biomass, fitted, residual
+pp_check(fit_cv)
+kb_predict_cover_calibration(
   fit_cv,
   data.frame(
     canopy_area_m2 = c(0, 50, 150),
@@ -851,79 +798,45 @@ kb_predict_cover_biomass(
 )
 # curves over tide-corrected cover (0 to 1 by default) by site: each grid row is
 # a unit plot at zero tide height
-kb_new_data(fit_cv, by = "site", cover = c(0, 0.5, 1))
-kb_predict_cover_biomass(fit_cv, kb_new_data(fit_cv, by = "site")) |>
+kb_predict_cover_calibration(fit_cv, kb_new_data(fit_cv, by = "site")) |>
   kb_plot_predictions()
-# a new site: the typical site by default, "sample" adds between-site variation
-new_survey <- data.frame(
-  site = "new_reef",
-  canopy_area_m2 = 80,
-  plot_area_m2 = 200,
-  tide_height_m = 0.5
-)
-kb_predict_cover_biomass(fit_cv, new_survey)
-kb_predict_cover_biomass(fit_cv, new_survey, new_levels = "sample")
-# surveys without in situ biomass are dropped with a message
-kb_fit_cover_biomass_nereo(data_cover_biomass_sim_nereo, data_plot_biomass_sim_nereo[-(1:3), ])
-# in situ limits at 90% rather than 95%
-kb_fit_cover_biomass_macro(
-  data_cover_biomass_sim_macro,
-  data_plot_biomass_sim_macro,
-  conf_level = 0.9
-)
-
-# end to end: in situ biomass from the weight, size, and density fits, then the
-# cover fit on it (surveys of site-years without plot biomass are dropped)
-set.seed(1)
-plot_biomass <- kb_predict_plot_biomass(
-  fit_weight_sim_nereo,
-  fit_size_sim_nereo,
-  fit_density_sim_nereo
-)
-fit_cv_e2e <- kb_fit_cover_biomass_nereo(data_cover_biomass_sim_nereo, plot_biomass)
-kb_predict_cover_biomass(fit_cv_e2e, kb_new_data(fit_cv_e2e)) |>
-  kb_plot_predictions()
+fit_cvm <- kb_fit_cover_calibration_macro(biomass_m)
 
 # =============================================================================
-# SITE BIOMASS
+# BIOMASS OVER CANOPY
 # =============================================================================
-# kb_predict_site_biomass() turns a cover biomass fit and drone surveys of whole
-# sites into total biomass: the expected biomass per m2 of bed (floor included)
-# times each survey's tide-corrected canopy area, in kg (wet, dry) or kg C. The
-# surveys need site, year, canopy_area_m2, and tide_height_m; site_area_m2 (the
-# area within the site boundary) is optional and caps the corrected canopy.
-# Unseen sites and years are sampled by default, so set a seed.
+# kb_predict_biomass_canopy() turns a cover calibration fit and mapped canopy
+# into total biomass: the expected biomass per m2 of bed (floor included) times
+# each row's tide-corrected canopy area, in kg (wet, dry) or kg C. The rows need
+# site, year, canopy_area_m2, and tide_height_m; site_area_m2 is optional and
+# caps the corrected canopy. Unseen sites and years are sampled by default.
 
-drone <- tibble(
-  site = c("otter_cove", "otter_cove", "gull_rock", "cedar_bay", "new_reef"),
-  year = c("2019", "2020", "2020", "2020", "2020"),
-  canopy_area_m2 = c(1500, 1100, 4800, 2600, 900),
-  tide_height_m = c(1.7, 0.7, 0.5, 1.2, 0.9),
-  site_area_m2 = 5e4,
-  region = c("north", "north", "south", "south", "south")
-)
 set.seed(1)
-# one total per survey; cover_support says what the cover fit has for it
-kb_predict_site_biomass(fit_cv, drone)
-kb_predict_site_biomass(fit_cv, drone) |>
+kb_predict_biomass_canopy(fit_cv, data_canopy_sim_nereo)
+kb_predict_biomass_canopy(fit_cv, data_canopy_sim_nereo) |>
   kb_plot_predictions()
-# a new site at its typical value instead of sampled
-kb_predict_site_biomass(fit_cv, drone, new_levels = "average")
-# totals summed on the draws: by region, by year, and over all surveys
-kb_predict_site_biomass(fit_cv, drone, sum_by = "region")
-kb_predict_site_biomass(fit_cv, drone, sum_by = "year")
-kb_predict_site_biomass(fit_cv, drone, sum_by = character(0))
-# carbon stock (kg C) by year, from the wet/dry and carbon fits
-kb_predict_site_biomass(
-  fit_cv,
-  drone,
+# totals summed on the draws: by region, by year, and over all rows
+kb_predict_biomass_canopy(fit_cv, data_canopy_sim_nereo, pool_by = "region")
+kb_predict_biomass_canopy(fit_cv, data_canopy_sim_nereo, pool_by = "year")
+kb_predict_biomass_canopy(fit_cv, data_canopy_sim_nereo, pool_by = character(0))
+# carbon stock (kg C) by year, from the wet/dry and carbon fits; the fits must
+# have the same number of draws, so this uses the bundled calibration pre-fit
+# (fit_cv has the default 4000 draws, the bundled pre-fits 1500)
+kb_predict_biomass_canopy(
+  fit_cover_calibration_sim_nereo,
+  data_canopy_sim_nereo,
   fit_wetdry_sim_nereo,
   fit_carbon_sim_nereo,
   measure = "carbon",
-  sum_by = "year"
+  pool_by = "year"
 )
-# a numeric grouping column, or two surveys of one site-year in a group
-try(kb_predict_site_biomass(fit_cv, mutate(drone, zone = 1), sum_by = "zone"))
-kb_predict_site_biomass(fit_cv, bind_rows(drone, drone[1, ]), sum_by = "region")
-# a canopy larger than its site: an error
-try(kb_predict_site_biomass(fit_cv, mutate(drone, site_area_m2 = 1000)))
+# two rows of one site-year in a group warn; a canopy larger than its site errors
+kb_predict_biomass_canopy(
+  fit_cv,
+  bind_rows(data_canopy_sim_nereo, data_canopy_sim_nereo[1, ]),
+  pool_by = "region"
+)
+try(kb_predict_biomass_canopy(
+  fit_cv,
+  mutate(data_canopy_sim_nereo, site_area_m2 = 10)
+))

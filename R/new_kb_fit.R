@@ -1,7 +1,7 @@
 # The fit-object constructor shared by every sub-model; `model` and `species`
 # build the three class tiers. The model is not stored in meta, since the class
-# carries it. `offset` and `terms` are required so a sub-model that omits one
-# fails at fit time (decisions/architecture.md). Arguments are not validated:
+# carries it. `terms` is required so a sub-model that omits it fails at fit
+# time (decisions/architecture.md). Arguments are not validated:
 # every caller is one of the package's own kb_fit_*() functions.
 new_kb_fit <- function(
   core,
@@ -9,7 +9,6 @@ new_kb_fit <- function(
   priors,
   model,
   species,
-  offset,
   terms,
   prior_only,
   nthin,
@@ -40,7 +39,6 @@ new_kb_fit <- function(
       # model's effects.
       site_year_levels = site_year_levels(data),
       nthin = nthin,
-      offset = offset,
       terms = terms
     ),
     meta_extra

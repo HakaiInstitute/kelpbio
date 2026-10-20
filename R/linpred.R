@@ -63,17 +63,6 @@
   fit$draws$intercept + effects
 }
 
-#' @export
-.linpred.kb_fit_density <- function(
-  fit,
-  grid,
-  new_levels,
-  representative_site = NULL,
-  effects = .group_effects(fit, grid, new_levels, representative_site)
-) {
-  fit$draws$intercept + effects
-}
-
 # Adding a zero vector broadcasts the scalar rvar over the rows.
 #' @export
 .linpred.kb_fit_wetdry <- function(
@@ -98,7 +87,7 @@
 }
 
 #' @export
-.linpred.kb_fit_cover_biomass <- function(
+.linpred.kb_fit_cover_calibration <- function(
   fit,
   grid,
   new_levels,
@@ -136,22 +125,19 @@
   re_site + re_year + re_sy
 }
 
-# Link-scale mean at the observed rows, offset included. Every level is fitted,
-# so new_levels is immaterial.
+# Link-scale mean at the observed rows. Every level is fitted, so new_levels is
+# immaterial.
 .linpred_obs <- function(fit, call = rlang::caller_env()) {
   .chk_observed_data(fit, call = call)
-  grid <- tibble::as_tibble(fit$data)
-  .linpred(fit, grid, new_levels = "average") + grid_offset(fit, grid)
+  .linpred(fit, tibble::as_tibble(fit$data), new_levels = "average")
 }
 
 # new_data (or the observed data) as a grid plus its link-scale linpred.
-# `offset = FALSE` gives a rate model's rate at any rows (decisions/prediction-engine.md).
 data_linpred <- function(
   fit,
   new_data,
   new_levels,
   representative_site = NULL,
-  offset = TRUE,
   call = rlang::caller_env()
 ) {
   .chk_kb_fit(fit, call = call)
@@ -183,14 +169,10 @@ data_linpred <- function(
       warn_outside_range(fit, grid[[predictor]], predictor)
     }
   }
-  linpred <- .linpred(fit, grid, new_levels, representative_site)
-  if (offset) {
-    linpred <- linpred + grid_offset(fit, grid)
-  }
   list(
     grid = grid,
     group_vars = intersect(.group_vars(), names(grid)),
-    linpred = linpred,
+    linpred = .linpred(fit, grid, new_levels, representative_site),
     curve = isTRUE(attr(new_data, "kb_curve", exact = TRUE))
   )
 }

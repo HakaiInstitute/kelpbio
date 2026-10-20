@@ -7,8 +7,8 @@
 kb_new_data(fit, by = NULL, ...)
 }
 \arguments{
-\item{fit}{A \code{kb_fit_weight}, \code{kb_fit_size}, \code{kb_fit_density}, or
-\code{kb_fit_cover_biomass} object.}
+\item{fit}{A \code{kb_fit_weight}, \code{kb_fit_size}, or \code{kb_fit_cover_calibration}
+object.}
 
 \item{by}{A character vector of grouping factors giving the rows of the
 grid. One of:
@@ -19,7 +19,7 @@ grid. One of:
 \item \code{c("site", "year")}: one row per observed site-year.
 }}
 
-\item{...}{Named values to cross into the grid: for a weight or cover biomass
+\item{...}{Named values to cross into the grid: for a weight or cover calibration
 fit, the predictor values as a numeric vector (\code{diameter_mm}, \code{fronds}, or
 \code{cover}); and the levels of \code{site} or \code{year} not named in \code{by}. If the
 predictor is omitted, 30 evenly spaced values span the observed range for
@@ -27,13 +27,13 @@ weight (whole numbers for \code{fronds}), and 0 to 1 for cover.}
 }
 \value{
 A tibble with the grouping columns named in \code{by} or \code{...}, the predictor
-column for a weight or cover biomass fit, and for a cover biomass fit the
+column for a weight or cover calibration fit, and for a cover calibration fit the
 survey columns.
 }
 \description{
 Build a grid of rows to predict at: one row per fitted site, year, or
 observed site-year, or per supplied site or year, crossed for a weight or
-cover biomass fit with a sequence of its predictor.
+cover calibration fit with a sequence of its predictor.
 }
 \details{
 Pass the result as \code{new_data} to the model's prediction function, for example
@@ -41,7 +41,7 @@ Pass the result as \code{new_data} to the model's prediction function, for examp
 named in \code{by} are absent from the grid, so the prediction treats them as set
 by \code{new_levels}: with the default \code{"average"}, the typical site or year.
 
-For a cover biomass fit, the predictor \code{cover} is the tide-corrected
+For a cover calibration fit, the predictor \code{cover} is the tide-corrected
 proportion of the plot covered by canopy (0 to 1); each row is then a unit
 plot at zero tide height, with the survey columns that give that cover. A
 single predictor value gives one row per group at that value.
@@ -73,17 +73,16 @@ kb_predict_size(fit_size_sim_nereo, kb_new_data(fit_size_sim_nereo, by = "site")
 Other prediction functions:
 \code{\link[=autoplot.kb_predictions]{autoplot.kb_predictions()}},
 \code{\link[=kb_plot_predictions]{kb_plot_predictions()}},
+\code{\link[=kb_predict_biomass_canopy]{kb_predict_biomass_canopy()}},
+\code{\link[=kb_predict_biomass_survey]{kb_predict_biomass_survey()}},
 \code{\link[=kb_predict_carbon]{kb_predict_carbon()}},
-\code{\link[=kb_predict_cover_biomass]{kb_predict_cover_biomass()}},
-\code{\link[=kb_predict_density]{kb_predict_density()}},
-\code{\link[=kb_predict_plot_biomass]{kb_predict_plot_biomass()}},
-\code{\link[=kb_predict_site_biomass]{kb_predict_site_biomass()}},
+\code{\link[=kb_predict_cover_calibration]{kb_predict_cover_calibration()}},
+\code{\link[=kb_predict_mean_weight]{kb_predict_mean_weight()}},
 \code{\link[=kb_predict_size]{kb_predict_size()}},
 \code{\link[=kb_predict_weight]{kb_predict_weight()}},
 \code{\link[=kb_predict_wetdry]{kb_predict_wetdry()}},
 \code{\link[=predict.kb_fit_carbon]{predict.kb_fit_carbon()}},
-\code{\link[=predict.kb_fit_cover_biomass]{predict.kb_fit_cover_biomass()}},
-\code{\link[=predict.kb_fit_density]{predict.kb_fit_density()}},
+\code{\link[=predict.kb_fit_cover_calibration]{predict.kb_fit_cover_calibration()}},
 \code{\link[=predict.kb_fit_size]{predict.kb_fit_size()}},
 \code{\link[=predict.kb_fit_weight]{predict.kb_fit_weight()}},
 \code{\link[=predict.kb_fit_wetdry]{predict.kb_fit_wetdry()}}

@@ -25,7 +25,6 @@ build <- function(...) {
     priors = list(),
     model = "weight",
     species = "nereocystis",
-    offset = NULL,
     terms = terms(),
     prior_only = FALSE,
     nthin = 1L
@@ -46,8 +45,8 @@ test_that("new_kb_fit builds the three class tiers from model and species", {
 
 test_that("new_kb_fit is not weight-specific", {
   expect_identical(
-    class(build(model = "density")),
-    c("kb_fit_density_nereo", "kb_fit_density", "kb_fit")
+    class(build(model = "cover_calibration")),
+    c("kb_fit_cover_calibration_nereo", "kb_fit_cover_calibration", "kb_fit")
   )
 })
 
@@ -66,26 +65,6 @@ test_that("new_kb_fit records the levels and carries meta_extra through", {
 
 test_that("new_kb_fit does not store the model, which the class already carries", {
   expect_null(build()$meta$model)
-})
-
-test_that("new_kb_fit stores the offset column name, NULL for a non-rate model", {
-  expect_null(build()$meta$offset)
-  expect_identical(build(offset = "area")$meta$offset, "area")
-})
-
-test_that("new_kb_fit requires the offset to be declared", {
-  # Otherwise a rate would be silently predicted as a count.
-  args <- list(
-    core(),
-    data = data(),
-    priors = list(),
-    model = "weight",
-    species = "nereocystis",
-    terms = terms(),
-    prior_only = FALSE,
-    nthin = 1L
-  )
-  expect_error(do.call(new_kb_fit, args), "offset")
 })
 
 test_that("new_kb_fit stores the reported parameter set", {
@@ -141,7 +120,6 @@ test_that("new_kb_fit labels the effects and the diagnostics summary alike", {
     priors = list(),
     model = "weight",
     species = "nereocystis",
-    offset = NULL,
     terms = terms(),
     prior_only = FALSE,
     nthin = 1L

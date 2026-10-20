@@ -1,75 +1,29 @@
 # Planned intermediate predictions
 
-Notes, 2026-10-16. Not a change proposal: a record of findings to pick up later,
+Notes, 2026-10-16, updated 2026-10-18. Not a change proposal: a record of findings to pick up later,
 when the work becomes an openspec change. Wording here is notes, not reader-facing
 text.
 
-## Why
+## Done in the cover-calibration change
 
-An evaluation in the analysis project
-(`hakai-kelp-biomass-25/decisions/cover-count-calibration.md`) compared three drone
-calibrations:
+Approach C of the analysis project's `decisions/cover-count-calibration.md` is
+in: `kb_predict_mean_weight()` (quick win 1), `kb_predict_biomass_survey()`
+(quick wins 2 and 3: the biomass of counted plants, tallied or censused, with
+`pool_by` and `per_area`), the cover calibration on survey biomass with zeros
+(quick win 4), and the dividing tide correction in the totals (quick win 5).
+Derived verbs carry their draws as an `rvar` column, which settles the design
+question of how intermediate quantities chain.
 
-- **A, current**: in situ biomass from the density, size and weight fits
-  (`kb_predict_plot_biomass()`), summarised to an estimate and range per site-year,
-  regressed on plot cover (`kb_fit_cover_biomass_*()`).
-- **B, count calibration**: transect counts modelled on plot cover, with mean plant
-  weight applied at the total.
-- **C, plot biomass from counts**: each plot's counted stipes per m² × that
-  site-year's mean weight per plant, regressed on cover on the natural scale. This
-  is the published standard (SBC LTER: Cavanaugh et al. 2011, Bell et al. 2020;
-  Stekoll et al. 2006 for *Nereocystis*). Not yet fitted.
+## Still open
 
-B predicted held-out years better than A for both species. The move is likely to
-C, or to B if C does not match it. Both need quantities kelpbio computes
-internally but does not expose. Other teams need the same building blocks: SBC
-LTER measures every frond in its strips and calibrates against Landsat kelp
-fraction; a drone census of *Nereocystis* bulbs would supply plant counts and
-sizes directly.
-
-## Quick wins
-
-1. **Mean weight per plant for a site-year**, from a weight fit and a size fit,
-   with `new_levels`, `representative_site` and `n_plants` as in
-   `kb_predict_plot_biomass()`, which computes it internally and multiplies it by
-   density. Lets mean weight be combined with density from anywhere (diver counts,
-   a drone count, another survey). Candidate: `kb_predict_mean_weight(weight, size)`.
-2. **Biomass of a set of measured plants**, summed draw by draw. `kb_predict_weight()`
-   returns each plant's expected weight with its own interval, and those intervals
-   cannot be added. Add `sum_by` (as in `kb_predict_site_biomass()`) and an optional
-   area column for per-m² results. Serves a strip census (SBC), quadrat sums
-   (Stekoll), and a drone bulb census. Open: extend `kb_predict_weight()` or add a
-   function; and whether to include plant-level scatter (a realised total) or only
-   expected weights. With many plants the difference is small.
-3. **Plot biomass from counts**, the response for approach C: transect counts ×
-   mean weight per plant (1) or × the plot's measured plants (2), per plot and
-   date, without the density model. Plots with no plants counted are zero. Could
-   be an option of `kb_predict_plot_biomass()` or a composition of (1) with the
-   observed density.
-4. **Calibration response choice** in the cover fit. The current fit takes a
-   summary (`estimate`, `lower`, `upper`) and fits log biomass, so a zero cannot
-   enter. Approach C needs a natural-scale likelihood that takes zeros, with the
-   floor and site and year effects on the slope kept. Passing draws rather than
-   summaries would carry the shared weight-curve uncertainty into the calibration,
-   which a per-plot range treats as independent.
-5. **Site-total options** in `kb_predict_site_biomass()`:
-   - Floor support: apply the floor over canopy area (now) or over a footprint or
-     pixel area (SBC applies its intercept per kelp pixel).
-   - Tide correction form. The tide slopes in use are percentages of the extent at
-     zero tide (Timmer et al. 2024), so recovering that extent divides by
-     (1 − slope × tide); the current correction multiplies by (1 + slope × tide),
-     about 4% low at 0.7 m and 17% low at 1.5 m. Offer no correction for sites
-     with weak tides.
-
-## Design question for all of these
-
-`kb_predictions` objects carry only summaries. Chaining an intermediate quantity
-with its uncertainty needs either the downstream function to take fits (the
-current pattern, `kb_predict_plot_biomass(weight, size, density)`), or predictions
-to carry draws, for example as a `posterior::rvar` column. Draw-carrying
-predictions would let another team combine their own density or calibration with
-kelpbio's mean weight and keep propagated intervals. See
-`decisions/prediction-engine.md`.
+- Mean weight of counted plants (a census), for example as a third scale of
+  `kb_predict_biomass_survey()`; `kb_predict_mean_weight()` takes fits only.
+- Floor support in totals: over canopy area (now), or a footprint or pixel area.
+- No tide correction for sites with weak tides.
+- The weight error shared through the level of the allometry is treated as
+  independent among surveys; the draws column leaves room to propagate it.
+- A site:year effect in the cover calibration once several plots per
+  site-year are common.
 
 ## Later, larger
 
@@ -89,9 +43,9 @@ kelpbio's mean weight and keep propagated intervals. See
 
 ## Dive and flight dates
 
-Decided 2026-10-16: kelpbio will not enforce a flight-to-dive window. It will warn
-when a paired dive and flight are further apart than a set period, which needs a
-survey date in the density and cover data.
+The user pairs each dive with a flight on the survey row, so kelpbio cannot
+check the gap between them. `date` keys surveys only. A seasonal analysis would
+need a period below the year (see Later, larger).
 
 ## kelpbioshiny
 
@@ -106,35 +60,29 @@ site canopy areas, plot boundary area and tide height, but no counts and no plot
 identifier (`R/data.R:56-60`). The example workbook has three plots per surveyed
 site-year (`R/mock-example.R`).
 
-**What approach C would change:**
+**What the cover-calibration change means for the app** (kelpbio API after it):
 
-1. **Data.** A plot identifier in the density and cover sheets, so each drone
-   plot's own transect counts can be found; site-year matching cannot attribute
-   counts when a site-year has more than one plot. A survey date in both sheets if a
-   flight-to-dive window is wanted.
-2. **Dependencies.** The cover fit would need the density data (counts) and the
-   size and weight fits, not the density fit or plot biomass. The fit-queue rules
-   that assume it consumes plot biomass change: `cover_blocked`, `fit_all_plan`,
-   `invalidate_cover`, and the `start_next` guard (`R/state.R:34-83, 163-204,
-   772-796`). The density model would then serve only the Plot biomass page.
-3. **Cover model Data tab.** Show counted plot biomass against cover, with zero
-   plots visible, rather than the plot surveys alone (`R/mod_model.R:205-211`).
-4. **Settings.** Generic: the prior cards follow `kb_priors_cover_biomass_*()`, so
-   they change with it (`error_scaling` would go).
-5. **Estimates.** Room for the quick wins: a mean plant weight page by site-year,
-   counted plot biomass, and plant-set totals from the weight page's "Individual
-   plant" grouping.
-6. **Text** that describes regressing modelled plot biomass on cover: the cover
-   model detail (`R/data.R:57`), the cover Data tab description
-   (`R/mod_model.R:205-211`), the blocked notices (`R/mod_model.R:171-176`,
-   `R/state.R:778`), the `total_biomass` help topic (`R/help.R:177-185`, snapshot
-   `tests/testthat/_snaps/mod_help.md`), the sheets description
-   (`R/mod_data.R:367-370`), the export script (`R/mod_export.R:112-121`), the
-   article summaries (`R/help.R:12-15, 37-41`), and the Total page notices
-   (`R/mod_estimates.R:314`).
-7. **Mocks.** New functions for mean weight, counted plot biomass and the new cover
-   fit; the tide formula in the mock prediction (`R/mock-kelpbio.R:895`) if the
-   correction form changes.
+1. **Data.** One survey sheet (site, plot_id, date, survey_area_m2, plants for
+   *Nereocystis*, and the drone columns plot_area_m2, canopy_area_m2,
+   tide_height_m on the same row), a counted-plant sheet for *Macrocystis*
+   (site, plot_id, date, fronds, partial), and a canopy sheet for totals. The
+   density sheet and the separate cover sheet go.
+2. **Dependencies.** The cover fit needs survey biomass from
+   `kb_predict_biomass_survey()`, so the weight fit (and the *Nereocystis* size
+   fit) must come first. The density fit and the *Macrocystis* size fit go. The
+   fit-queue rules (`cover_blocked`, `fit_all_plan`, `invalidate_cover`,
+   `start_next`; `R/state.R:34-83, 163-204, 772-796`) change accordingly.
+3. **Cover model Data tab.** Survey biomass against cover, with empty surveys
+   visible (`R/mod_model.R:205-211`).
+4. **Settings.** The prior cards follow `kb_priors_cover_calibration_*()`:
+   `error_scaling` goes, `sd_residual` and `cv_residual` arrive.
+5. **Estimates.** Mean weight by site-year (*Nereocystis*), survey biomass
+   (with `per_area`), and totals over canopy (`kb_predict_biomass_canopy()`,
+   kg only).
+6. **Renames.** `kb_fit_cover_biomass_*()` to `kb_fit_cover_calibration_*()`,
+   `kb_predict_site_biomass()` to `kb_predict_biomass_canopy()`,
+   `kb_predict_plot_biomass()` to `kb_predict_biomass_survey()`, `stipes` to
+   `plants`; help text, mocks, and snapshots follow.
 
 **Found in passing, not checked yet:**
 

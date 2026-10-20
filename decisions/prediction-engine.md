@@ -42,22 +42,7 @@ Build the engine on the **`posterior` `rvar` datatype**:
   rescaling step: *Nereocystis* uses `diameter / d0`, *Macrocystis*
   `log(fronds) - log(f0)`. Expressing the predictor relative to its reference makes
   its unit immaterial.
-- A rate model carries a log-scale offset (density is counts over a surveyed
-  area). The offset column is named by `meta$offset`, set at fit time, and the
-  offset is `log()` of that column read from the grid. It is added while the
-  linear predictor is still an `rvar` over grid rows, so it broadcasts
-  elementwise; adding it to a `D x N` draws matrix would recycle down columns.
-  `.linpred()` itself stays offset-free, so the mean still has one definition.
-- The offset comes from the grid: rows carrying the offset column (the observed
-  transects, or user rows with `area_m2`) use it, and rows without it take one
-  unit, whose log is zero. The draw generics (`posterior_*()`) therefore return
-  counts on the supplied transects, or per m² when no area is given. The density
-  verb drops the offset at any rows, so it always reports density per m²: a
-  verb's unit never depends on its input, and the expected count on a transect is
-  the per-m² estimate and limits times its area, since the expected count is
-  linear in area. The neutral value is always `1` because the offset always
-  enters as `log()`.
-- Summaries, `augment()`, and the biomass composition all reuse the same engine;
+- Summaries, `augment()`, and the derived verbs all reuse the same engine;
   there is no bespoke `_samples()` function.
 
 (The observable behaviour of these functions lives in the `predictions`,
@@ -122,8 +107,7 @@ kb_predict_weight(fit, plants)                             # your own rows
   `by` off the same function (tidyverse design guide: no mutually exclusive
   arguments). It replaced a row-wise verb plus a `_by` verb per model, whose
   split meant something different for each model (predictor values for weight,
-  site/year rows for size, a transect count versus a density for density) and
-  whose `new_levels` defaults differed. `_by` wrappers can be added later without
+  site/year rows for size) and whose `new_levels` defaults differed. `_by` wrappers can be added later without
   breaking code, as exact one-line wrappers over `kb_new_data()`.
 - The verbs stay model-named rather than one generic `kb_predict()`: when a
   pre-fit model is loaded in a reviewed script, the call names the model in play.
@@ -133,14 +117,19 @@ kb_predict_weight(fit, plants)                             # your own rows
   checks them against the fit, so no species dispatch is needed. It marks its grid as a curve, and the mark travels into the
   `kb_predictions` object so `kb_plot_predictions()` draws a ribbon only for
   curves: observed plants also vary in diameter, so the data alone cannot say.
-- Density reports per m² everywhere it is summarised (see the offset above);
-  transect counts come from the draw generics.
 - Scalar, intercept-only models (wet/dry, carbon) take no `new_data` and return
   the population estimate.
-- The size models have no predictor, so the verb reports the expected size (the
+- The size model has no predictor, so the verb reports the expected size (the
   mean of the size distribution). The distribution itself is reached through
-  `posterior_predict()`; the biomass composition draws from it per draw rather
-  than through a prediction verb.
+  `posterior_predict()`; mean plant weight draws from it per draw rather than
+  through a prediction verb.
+- Derived verbs (`kb_predict_mean_weight()`, `kb_predict_biomass_survey()`,
+  `kb_predict_biomass_canopy()`) combine fits with the user's data and are named
+  for what the biomass estimate covers, not for a model. They return their
+  response as an `rvar` column next to the summary, so one verb's output feeds
+  another: the cover calibration reads the mean and SD of each survey's biomass
+  from it. `pool_by` sums draws, not summaries, and per area divides the summed
+  kg by the summed area.
 
 `augment()` stays a diagnostics verb (fitted/residuals on the training data, on
 the observation scale), not a prediction entry point.
@@ -157,6 +146,6 @@ mix of observed and new groups resolve in a single call (no bind), and lets the
 argument. `"average"` is the default for every verb and the draw generics: with
 a grid that has no `site` column the typical site is what users usually mean,
 and the result needs no seed. `"sample"` gives a calibrated interval for a
-specific new group and is documented for that case. The biomass composition
-defaults to `"sample"`, since its rows are always specific surveyed site-years,
-and its limits become the measurement error of a cover biomass fit.
+specific new group and is documented for that case. The derived verbs default
+to `"sample"`, since their rows are particular site-years, and survey biomass
+uncertainty becomes the measurement error of the cover calibration.

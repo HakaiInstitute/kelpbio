@@ -9,7 +9,7 @@ R package for Bayesian kelp biomass estimation. All exported functions use the `
 | Routine build + QC | `Rscript scripts/build.R` (runs `rstan_config()` → `install()` → `document()` → `test()`) |
 | Full check (slow) | `Rscript scripts/build.R --check` (`R CMD check` in place of `test()`, since check runs the tests) |
 | pkgdown site | `Rscript scripts/build.R --site` (CI builds the site and runs `R CMD check` on every PR, so neither is needed locally for routine work) |
-| Rebuild pre-fit objects + fixtures (slow, MCMC) | `Rscript scripts/build.R --fits` re-fits every `data/fit_*_sim_*` and `tests/testthat/fixtures/*.rds`; `--fits=density,wetdry` only those models'. Run after changing the fit object structure (all models) or a model (that model) |
+| Rebuild pre-fit objects + fixtures (slow, MCMC) | `Rscript scripts/build.R --fits` re-fits every `data/fit_*_sim_*` and `tests/testthat/fixtures/*.rds`; `--fits=size,wetdry` only those models'. Run after changing the fit object structure (all models) or a model (that model) |
 | Run all tests | `devtools::test()` |
 | Run one test file | `testthat::test_file("tests/testthat/test-<name>.R")` or `devtools::test_active_file()` |
 | Document | `devtools::document()` |
@@ -54,12 +54,12 @@ The analysis project uses `embr`/`cmdstanr`. kelpbio re-implements the same mode
 |-------|-------------|-----------|
 | Weight (allometric) | `models-weight-nereo.R` | `stan/nereo/weight/weight-nereo.stan` |
 | Size (distribution) | `models-size-nereo.R` | `stan/nereo/size/size-nereo.stan` |
-| Density | `models-density-nereo.R` | `stan/nereo/density/density-nereo.stan` |
+| Cover calibration | `models-cover-nereo.R` | `stan/nereo/cover/cover-offset.stan` |
 | Blade fraction | `models-blade-frac-nereo.R` | `stan/nereo/blade/blade-frac-nereo.stan` |
 | Wet/dry | `models-wetdry-nereo.R` | `stan/nereo/wetdry/wetdry-nereo.stan` |
 | Carbon | `models-carbon-nereo.R` | `stan/nereo/carbon/carbon-nereo.stan` |
 
-kelpbio works at **site-year resolution, with no month dimension** (the analysis models' month effects are dropped). Biomass combines the sub-models by size integration, not `density × weight`; see `decisions/prediction-engine.md`.
+kelpbio estimates the **peak season at site-year resolution, with no month dimension** (the analysis models' month effects are dropped); a site-year may hold several plots and a plot several surveys. Biomass of an in situ survey is its counted plants' expected weight over the area searched (mean plant weight by size integration for tallied plants); the cover calibration relates it to drone cover, and totals apply the calibration over mapped canopy. There is no density model and no *Macrocystis* size model; see `decisions/prediction-engine.md`.
 
 Adaptations from the analysis Stan models: prior hyperparameters are passed through the `data` block (the analysis hard-codes them), and columns are snake_case (`diameter_mm`, `weight_kg`, `site`, `year`) rather than CamelCase.
 
@@ -102,8 +102,8 @@ predict.kb_fit_weight  # model tier: wraps the model-named kb_predict_weight()
 # fields, where a missing method degrades a display rather than a number.
 .epred.kb_fit_weight              # model tier (nereo overrides for the lognormal mean)
 .linpred.kb_fit_weight_nereo      # leaf: also .obs_family/.chk_new_data
-# Per-model facts that are values, not behaviour, live in meta instead (offset,
-# terms, predictor, predictor_ref, form, and the site_year_on flag). See "Meta Versus
+# Per-model facts that are values, not behaviour, live in meta instead (terms,
+# predictor, predictor_ref, form, and the site_year_on flag). See "Meta Versus
 # Dispatch" in decisions/architecture.md for the rule that decides which.
 ```
 
@@ -117,12 +117,12 @@ Access via `$`: `x$draws`, `x$data`, `x$meta`; `kb_samples(x)` and `posterior::a
 
   ```r
   # R/vld.R
-  .vld_density <- function(x) {
+  .vld_count <- function(x) {
     all(is.na(x)) || (is.numeric(x) && all(x >= 0, na.rm = TRUE))
   }
   # R/chk.R
-  .chk_density <- function(x, x_name = deparse(substitute(x))) {
-    if (.vld_density(x)) {
+  .chk_count <- function(x, x_name = deparse(substitute(x))) {
+    if (.vld_count(x)) {
       return(invisible(x))
     }
     if (!is.numeric(x)) {
@@ -131,10 +131,10 @@ Access via `$`: `x$draws`, `x$data`, `x$meta`; `kb_samples(x)` and `posterior::a
     cli::cli_abort("{x_name} must be greater than or equal to 0.")
   }
   ```
-- **Input columns**: a column measured in a unit names it as a suffix (`diameter_mm`, `weight_kg`, `area_m2`); counts (`fronds`) and grouping columns (`site`, `year`) take none. A column shared by sub-models keeps one name and unit (`column_units`). Units are fixed, never converted; the plausibility warnings back them. Stan data fields that pass a column through keep its name and suffix; parameters and prior entries are not columns and take no unit suffix (`fronds_slope`, `diameter_power`).
+- **Input columns**: a column measured in a unit names it as a suffix (`diameter_mm`, `weight_kg`, `survey_area_m2`); counts (`fronds`, `plants`) and grouping columns (`site`, `year`) take none. A column shared by sub-models keeps one name and unit (`column_units`). Units are fixed, never converted; the plausibility warnings back them. Stan data fields that pass a column through keep its name and suffix; parameters and prior entries are not columns and take no unit suffix (`fronds_slope`, `diameter_power`).
 - **Output columns**: summaries use `term` / `estimate` / `lower` / `upper` (following bboutools).
 - **Documentation**: roxygen2 with markdown; shared parameters and sections live in `R/params.R` (`@inheritParams params`, `@inheritSection params`). Every reader-facing text (roxygen, `_pkgdown.yml`, README, vignettes) follows `STYLE.md`: topic structure, argument and return wording, vocabulary, examples, and templates per topic type.
-- **Arguments**: name by type, not by dispatch: `data` for input data, `fit` for a fit object (including `kb_stancode()` and `kb_samples()`), `predictions` for a `kb_predictions` frame. S3 methods must keep the generic's first-arg name (`object` for base/stats/rstantools/ggplot2, `x` for generics/posterior), which `R CMD check` enforces, so `object`/`x`/`fit` all naming the same fit is expected, not an inconsistency to fix. Multi-word names are snake_case (`new_data`, `new_levels`, `conf_level`); take the ecosystem spelling only where a generic fixes it (e.g. `transform` in `posterior_linpred`). Order follows the tidyverse data-descriptors-details shape: primary object, then descriptor arguments meant to be passed positionally (`new_data`, `by`, `priors`, then any model choice such as `form`, after `priors` so `priors` stays second in every fit function except the cover biomass fits, whose required `biomass` data frame comes second, before it), then `...`, then every optional detail knob as a name-only argument after `...` (`new_levels`, `representative_site`, `conf_level`, `estimate`, `sig_fig`, `include_random_effects`, `rhat`, `ess`, sampler config) so details cannot be set positionally; guard an empty `...` with `rlang::check_dots_empty()`. The exception is `kb_new_data()`, whose `...` takes the predictor by its column name (`diameter_mm`, `fronds`, or `cover`) and levels of `site` or `year` not in `by`, checked against the fit. The summary trio `conf_level, estimate, sig_fig` keeps that order everywhere. `@param` wording follows `STYLE.md`.
+- **Arguments**: name by type, not by dispatch: `data` for input data, `fit` for a fit object (including `kb_stancode()` and `kb_samples()`), `predictions` for a `kb_predictions` frame. S3 methods must keep the generic's first-arg name (`object` for base/stats/rstantools/ggplot2, `x` for generics/posterior), which `R CMD check` enforces, so `object`/`x`/`fit` all naming the same fit is expected, not an inconsistency to fix. Multi-word names are snake_case (`new_data`, `new_levels`, `conf_level`); take the ecosystem spelling only where a generic fixes it (e.g. `transform` in `posterior_linpred`). Order follows the tidyverse data-descriptors-details shape: primary object, then descriptor arguments meant to be passed positionally (`new_data`, `by`, `priors`, then any model choice such as `form`, after `priors` so `priors` stays second in every fit function; the derived verbs take their fits first, then their data, then the optional conversion fits `wetdry` and `carbon`), then `...`, then every optional detail knob as a name-only argument after `...` (`measure`, `per_area`, `pool_by`, `new_levels`, `representative_site`, `conf_level`, `estimate`, `sig_fig`, `include_random_effects`, `rhat`, `ess`, sampler config) so details cannot be set positionally; guard an empty `...` with `rlang::check_dots_empty()`. The exception is `kb_new_data()`, whose `...` takes the predictor by its column name (`diameter_mm`, `fronds`, or `cover`) and levels of `site` or `year` not in `by`, checked against the fit. The summary trio `conf_level, estimate, sig_fig` keeps that order everywhere. `@param` wording follows `STYLE.md`.
 - **Writing** (docs, README, vignettes, roxygen, specs, PR/commit text): follow the writing style in `~/.claude/CLAUDE.md` (and `STYLE.md` for documentation); in particular no em-dashes or en-dashes (use hyphens, commas, or colons) and no mid-sentence bold for emphasis; concise technical register
 - **File layout**: one function per file, file named after the function (`kb_fit_weight_nereo()` → `R/kb_fit_weight_nereo.R`). S3 methods grouped one file per generic, named after the generic (`R/print.R` holds all `print.*` methods, `R/tidy.R` all `tidy.*`, etc.). Internal functions that share one contract go in one family file named for the family: `chk.R` (`.chk_*`), `vld.R` (`.vld_*`), `warn.R` (plausibility warnings on user data), `structural_flags.R` (`.site_year_on()`, `.floor_on()`), and one file per distribution for the extras-style `log_lik_*`/`res_*`/`ran_*` functions (`weibull.R`). Dataset documentation lives in `R/data.R` (simulated datasets) and `R/fits.R` (pre-fit models). A computation and the notifier that reports it share a file (`site_year_aliasing()` and `notify_site_year()`). Other internal helpers go in clearly-named files, never a catch-all `utils.R`.
 - **Testing**: testthat 3e; strict 1:1 test mirroring (`R/<name>.R` ↔ `tests/testthat/test-<name>.R`). Test the wrapper, not the model's numbers. Snapshot print methods + messages; NEVER snapshot MCMC numerics (test structure + invariants instead). **Never accept snapshot changes** (`testthat::snapshot_accept()`, or accepting via any other route): snapshots are the user's review surface. Run the tests, report what changed and why, and leave the `.new` files in place for the user to review locally with `testthat::snapshot_review()`. Small pre-built fits in `tests/testthat/fixtures/` (built with `rstan::sampling(seed=)`, not `set.seed`); they test structure, not inference, and may not meet the strict `converged()` thresholds. Slow end-to-end fits `skip_on_cran()`. Factor pure logic (data/prior assembly) out of fit functions for MCMC-free testing.

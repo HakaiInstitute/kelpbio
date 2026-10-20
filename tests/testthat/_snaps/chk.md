@@ -104,7 +104,7 @@
     Condition
       Error:
       ! `wetdry_nereo_fit` is a <kb_fit_wetdry_nereo> object, whose model has no grouping factors.
-      i Grids are built for weight, size, density, and cover biomass fits.
+      i Grids are built for weight, size, and cover calibration fits.
 
 # .chk_grid_dots accepts the predictor and grouping values and rejects others
 
@@ -166,18 +166,10 @@
       Error:
       ! `year` must be a character, factor, or numeric vector.
 
-# .chk_new_data_density errors name the area column
-
-    Code
-      .chk_new_data_density(data.frame(area_m2 = -1))
-    Condition
-      Error in `.chk_positive_measure()`:
-      ! Column `area_m2` of `data.frame(area_m2 = -1)` must be greater than 0.
-
 # .chk_same_species and .chk_same_ndraws name the fits
 
     Code
-      .chk_same_species(list(weight = weight_nereo_fit, size = size_macro_fit))
+      .chk_same_species(list(weight = weight_nereo_fit, size = weight_macro_fit))
     Condition
       Error:
       ! The fits must be of one species.
@@ -209,23 +201,13 @@
       ! Column `canopy_area_m2` of bad must not exceed plot_area_m2.
       i The canopy is the area delineated within the plot.
 
-# .chk_biomass_limits and .chk_biomass_estimate name the offending limit
+# .chk_cover_survey checks biomass_sd_kg_m2 where present
 
     Code
-      .chk_biomass_limits(good["estimate"])
+      .chk_cover_survey(transform(good, biomass_sd_kg_m2 = -1))
     Condition
-      Error in `.chk_biomass_limits()`:
-      ! good["estimate"] must have lower and upper columns.
-      i They are the compatibility limits of the in situ biomass estimate, which set its precision.
-
-# .chk_biomass_response names the recorded response
-
-    Code
-      .chk_biomass_response(carbon)
-    Condition
-      Error:
-      ! carbon must be wet biomass (biomass_kg_m2), not carbon_biomass_g_m2.
-      i Predict it with `kb_predict_plot_biomass(measure = "wet")`.
+      Error in `.chk_cover_survey()`:
+      ! Column `biomass_sd_kg_m2` of transform(good, biomass_sd_kg_m2 = -1) must be greater than or equal to 0, not -1.
 
 # .chk_site_surveys errors name the survey column
 
@@ -244,22 +226,22 @@
       ! Column `canopy_area_m2` of transform(good, site_area_m2 = 50) must not exceed site_area_m2.
       i The canopy is the area mapped within the site boundary.
 
-# .chk_sum_by names a missing or non-grouping column
+# .chk_pool_by names a missing or non-grouping column
 
     Code
-      .chk_sum_by("zone", data)
+      .chk_pool_by("zone", data)
     Condition
       Error:
-      ! `sum_by` column zone must be character or factor with no missing values.
+      ! `pool_by` column zone must be character or factor with no missing values.
       i Convert a numeric code with `as.character()` or `factor()`.
 
 ---
 
     Code
-      .chk_sum_by(c("region", "district"), data)
+      .chk_pool_by(c("region", "district"), data)
     Condition
       Error:
-      ! `sum_by` names column district that `new_data` does not have.
+      ! `pool_by` names column district that `new_data` does not have.
 
 # .chk_sampling_dots rejects sampler arguments kelpbio sets, naming the replacement
 

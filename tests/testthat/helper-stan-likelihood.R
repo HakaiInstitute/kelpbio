@@ -42,13 +42,8 @@ capture_stan_data <- function(fit) {
     }
   )
   fit_fun <- get(class(fit)[1], envir = asNamespace("kelpbio"))
-  if (inherits(fit, "kb_fit_cover_biomass")) {
-    args <- list(
-      cover_surveys(fit),
-      cover_biomass(fit),
-      priors = fit$meta$priors,
-      conf_level = fit$meta$conf_level
-    )
+  if (inherits(fit, "kb_fit_cover_calibration")) {
+    args <- list(calibration_input(fit), priors = fit$meta$priors)
   } else {
     args <- list(fit$data, priors = fit$meta$priors)
   }

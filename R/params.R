@@ -14,7 +14,7 @@
 #'
 #' The sampler runs with `adapt_delta = 0.95` by default, which reduces
 #' divergences at the cost of slightly longer runtime. Override it, or set any
-#' other sampler control, by passing a `control` list through `...`, e.g.
+#' other sampler control, by passing a `control` list through `...`, for example
 #' `control = list(adapt_delta = 0.99)`; only the entries supplied are changed.
 #' See the `control` argument of [rstan::stan()] for the full set of entries.
 #'
@@ -56,7 +56,7 @@
 #' @param conf_level A number greater than 0 and less than 1 giving the
 #'   compatibility-interval level.
 #' @param estimate A function that reduces a numeric vector of posterior draws to
-#'   a scalar point estimate (e.g. `median` or `mean`).
+#'   a single estimate, such as `median` or `mean`.
 #' @param sig_fig A whole number of significant figures for summary output.
 #' @param include_random_effects A flag specifying whether to include the
 #'   group-level random-effect terms in the output.
@@ -91,4 +91,43 @@
 #' @usage NULL
 # nocov start
 params <- function(...) NULL
+# nocov end
+
+#' Parameter Descriptions for the Derived Verbs
+#'
+#' Parameter descriptions shared by [kb_predict_mean_weight()],
+#' [kb_predict_biomass_survey()], and [kb_predict_biomass_canopy()].
+#'
+#' @param weight A `kb_fit_weight` object.
+#' @param wetdry A `kb_fit_wetdry` object, required for dry and carbon biomass,
+#'   or `NULL`.
+#' @param carbon A `kb_fit_carbon` object, required for carbon biomass, or
+#'   `NULL`.
+#' @param measure A string, one of `"wet"`, `"dry"`, or `"carbon"`, giving the
+#'   biomass to predict.
+#' @param n_plants A whole number of sizes averaged per draw to compute the
+#'   mean plant weight; larger values are more precise and slower.
+#' @param progress A string, one of `"bar"` (the default, a console progress
+#'   bar) or `"none"` (silent).
+#' @param new_levels A string giving how uncertainty is shown for a site or
+#'   year not in the fit. Sites and years in the fit always use their own
+#'   estimates. One of:
+#'   - `"sample"` (the default): a new effect for each new site or year,
+#'     drawn from the estimated variation among sites or among years and shared
+#'     by every row naming it. The estimate is about the same, but the interval
+#'     also includes that variation. Use it for particular site-years the model
+#'     has no data on. The interval varies slightly between calls; use
+#'     `set.seed()` to reproduce it.
+#'   - `"average"`: the typical site or year. The interval covers uncertainty
+#'     in the typical value only. Use it to describe an average site or year.
+#' @param pool_by A character vector naming character or factor columns whose
+#'   combinations group the rows, such as `c("site", "year")`, `character(0)`
+#'   to pool all rows, or `NULL` (the default) for one row per input row. On
+#'   each draw, the biomass of a group is the sum of its rows' biomass (kg).
+#'   For another summary, such as an unweighted mean of rows, summarise the
+#'   draws column (see `vignette("advanced")`).
+#' @keywords internal
+#' @usage NULL
+# nocov start
+derived_params <- function(...) NULL
 # nocov end

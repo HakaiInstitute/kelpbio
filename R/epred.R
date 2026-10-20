@@ -29,30 +29,6 @@
   exp(lp)
 }
 
-# exp(lp) is the untruncated mean.
-#' @export
-.epred.kb_fit_size_macro <- function(fit, lp, expectation = TRUE) {
-  if (!expectation) {
-    return(exp(lp))
-  }
-  mean_gamma_pois_zt(exp(lp), fit$draws$dispersion)
-}
-
-# The offset is already in lp.
-#' @export
-.epred.kb_fit_density <- function(fit, lp, expectation = TRUE) {
-  exp(lp)
-}
-
-# Zero-inflated: exp(lp) is the mean given a non-structural-zero transect.
-#' @export
-.epred.kb_fit_density_nereo <- function(fit, lp, expectation = TRUE) {
-  if (!expectation) {
-    return(exp(lp))
-  }
-  exp(lp) / (1 + exp(fit$draws$logit_zero_inflation))
-}
-
 #' @export
 .epred.kb_fit_wetdry <- function(fit, lp, expectation = TRUE) {
   1 / (1 + exp(-lp))
@@ -66,6 +42,6 @@
 # No lognormal retransformation: the residual SD is error in the in situ
 # estimates, not variation in biomass.
 #' @export
-.epred.kb_fit_cover_biomass <- function(fit, lp, expectation = TRUE) {
+.epred.kb_fit_cover_calibration <- function(fit, lp, expectation = TRUE) {
   exp(lp)
 }

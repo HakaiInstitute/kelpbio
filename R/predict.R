@@ -82,49 +82,6 @@ predict.kb_fit_size <- function(
   )
 }
 
-#' Predict method for density fits
-#'
-#' Predict the expected density per m² at the rows of `new_data`, or at the
-#' observed transects when `new_data = NULL`. Equivalent to
-#' [kb_predict_density()].
-#'
-#' @inheritParams params
-#' @inheritParams kb_predict_density
-#' @param object A `kb_fit_density` object.
-#'
-#' @returns A `kb_predictions` object.
-#' @family prediction functions
-#' @exportS3Method stats::predict
-#' @examples
-#' predict(fit_density_sim_nereo, data.frame(site = "otter_cove"))
-predict.kb_fit_density <- function(
-  object,
-  new_data = NULL,
-  ...,
-  new_levels = c("average", "sample"),
-  representative_site = NULL,
-  conf_level = 0.95,
-  estimate = stats::median,
-  sig_fig = 3
-) {
-  # error_call() names the generic, not the wrapped verb.
-  .with_call(
-    {
-      rlang::check_dots_empty()
-      kb_predict_density(
-        object,
-        new_data = new_data,
-        new_levels = new_levels,
-        representative_site = representative_site,
-        conf_level = conf_level,
-        estimate = estimate,
-        sig_fig = sig_fig
-      )
-    },
-    rlang::error_call(rlang::current_env())
-  )
-}
-
 #' Predict method for wet/dry fits
 #'
 #' Summarise the expected dry:wet ratio as a single estimate. Equivalent to
@@ -195,25 +152,25 @@ predict.kb_fit_carbon <- function(
   )
 }
 
-#' Predict method for cover biomass fits
+#' Predict method for cover calibration fits
 #'
 #' Predict the expected wet biomass per m² of plot at the rows of `new_data`, or
 #' at the observed data when `new_data = NULL`. Equivalent to
-#' [kb_predict_cover_biomass()].
+#' [kb_predict_cover_calibration()].
 #'
 #' @inheritParams params
-#' @inheritParams kb_predict_cover_biomass
-#' @param object A `kb_fit_cover_biomass` object.
+#' @inheritParams kb_predict_cover_calibration
+#' @param object A `kb_fit_cover_calibration` object.
 #'
 #' @returns A `kb_predictions` object.
 #' @family prediction functions
 #' @exportS3Method stats::predict
 #' @examples
 #' predict(
-#'   fit_cover_biomass_sim_macro,
+#'   fit_cover_calibration_sim_macro,
 #'   data.frame(canopy_area_m2 = 120, plot_area_m2 = 200, tide_height_m = 0.5)
 #' )
-predict.kb_fit_cover_biomass <- function(
+predict.kb_fit_cover_calibration <- function(
   object,
   new_data = NULL,
   ...,
@@ -227,7 +184,7 @@ predict.kb_fit_cover_biomass <- function(
   .with_call(
     {
       rlang::check_dots_empty()
-      kb_predict_cover_biomass(
+      kb_predict_cover_calibration(
         object,
         new_data = new_data,
         new_levels = new_levels,

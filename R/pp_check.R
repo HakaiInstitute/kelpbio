@@ -15,9 +15,6 @@
 #' so the plot is a prior predictive check: whether the priors allow data like
 #' those observed.
 #'
-#' For a density model, the observed and replicate counts are divided by their
-#' transect's area, so the axis is density per m².
-#'
 #' With `type = "residual"`, the observed curve is [residuals()] and each
 #' replicate's curve is the deviance residuals of the replicate under the draw
 #' that generated it. For a well-fitting model the two match.
@@ -38,7 +35,7 @@
 #' @examples
 #' set.seed(1)
 #' pp_check(fit_weight_sim_nereo)
-#' pp_check(fit_size_sim_macro, "residual", ndraws = 20)
+#' pp_check(fit_size_sim_nereo, "residual", ndraws = 20)
 pp_check.kb_fit <- function(
   object,
   type = c("response", "residual"),
@@ -72,16 +69,7 @@ pp_check.kb_fit <- function(
     xlab <- "Deviance residual"
   } else {
     y <- .obs_family(object, object$data)$response(object$data)
-    response <- object$meta$response
-    offset <- object$meta$offset
-    # Transect areas differ, so counts are compared per m^2.
-    if (!is.null(offset)) {
-      area <- object$data[[offset]]
-      y <- y / area
-      yrep <- sweep(yrep, 2L, area, "/")
-      response <- paste0(response, "_m2")
-    }
-    xlab <- axis_label(response)
+    xlab <- axis_label(object$meta$response)
   }
   bayesplot::ppc_dens_overlay(y, yrep) + ggplot2::labs(x = xlab)
 }

@@ -20,11 +20,8 @@ than the default, for exploring the fit methods without running the sampler.
 
 Other example fits:
 \code{\link{fit_carbon_sim_macro}},
-\code{\link{fit_cover_biomass_sim_macro}},
-\code{\link{fit_cover_biomass_sim_nereo}},
-\code{\link{fit_density_sim_macro}},
-\code{\link{fit_density_sim_nereo}},
-\code{\link{fit_size_sim_macro}},
+\code{\link{fit_cover_calibration_sim_macro}},
+\code{\link{fit_cover_calibration_sim_nereo}},
 \code{\link{fit_size_sim_nereo}},
 \code{\link{fit_weight_sim_macro}},
 \code{\link{fit_weight_sim_nereo}},

@@ -8,7 +8,7 @@
 #' @details
 #' Priors, centring, and random effects are those of the fit; an effect not
 #' fitted (such as the weight floor of a power-law fit) is omitted.
-#' Priors marked `T[0, ]` are truncated at zero.
+#' Priors marked `T[0, ]` are truncated at zero, and `T[0, 0.5]` at 0 and 0.5.
 #'
 #' @inheritParams params
 #' @param prose A flag specifying whether to render a methods-section paragraph
@@ -184,9 +184,8 @@ kb_model_describe <- function(fit, ..., prose = FALSE) {
   )
 }
 
-# Random-effect structure shared by size and density; `intercept` is the
-# species' intercept name.
-.group_spec_effects <- function(fit, intercept, on = "log(mu)") {
+# Random-effect structure of the size model; `intercept` is its intercept name.
+.group_spec_effects <- function(fit, intercept) {
   pri <- fit$meta$priors
   list(
     mean_terms = c(
@@ -194,12 +193,12 @@ kb_model_describe <- function(fit, ..., prose = FALSE) {
       "site_year_effect[site, year]"
     ),
     random = list(
-      list(term = "site_effect[site]", sd = "sd_site", gloss = paste("site effect on", on)),
-      list(term = "year_effect[year]", sd = "sd_year", gloss = paste("year effect on", on)),
+      list(term = "site_effect[site]", sd = "sd_site", gloss = "site effect on log(mu)"),
+      list(term = "year_effect[year]", sd = "sd_year", gloss = "year effect on log(mu)"),
       list(
         term = "site_year_effect[site, year]",
         sd = "sd_site_year",
-        gloss = paste("site:year effect on", on)
+        gloss = "site:year effect on log(mu)"
       )
     ),
     sds = list(
@@ -235,112 +234,6 @@ kb_model_describe <- function(fit, ..., prose = FALSE) {
         "parameterised by its mean, mu, with a shape common to all plants. ",
         "The log of mu varied by %s. Regularising priors were placed on all ",
         "parameters (see the notation form for the hyperparameters)."
-      ),
-      eff$groups
-    )
-  )
-}
-
-#' @export
-.model_spec.kb_fit_size_macro <- function(fit) {
-  pri <- fit$meta$priors
-  eff <- .group_spec_effects(fit, "intercept")
-  list(
-    title = "Size distribution",
-    species = .species_label(fit$meta$species),
-    response_desc = "fronds reaching 1 m above the holdfast",
-    likelihood = paste0(
-      "fronds ~ NegBinomial(mu, 1 / dispersion) T[1, ]",
-      "\n  E[fronds] = mu / (1 - P(fronds = 0))"
-    ),
-    mean_lhs = "log(mu)",
-    mean_terms = eff$mean_terms,
-    random = eff$random,
-    priors = c(
-      list(intercept = pri$intercept, dispersion = pri$dispersion),
-      eff$sds
-    ),
-    prose = sprintf(
-      paste0(
-        "The number of fronds reaching 1 m above the holdfast was modelled with ",
-        "a zero-truncated negative binomial likelihood, with an overdispersion ",
-        "common to all plants. The log of the untruncated mean, mu, varied by ",
-        "%s. Regularising priors were placed on all parameters (see the ",
-        "notation form for the hyperparameters)."
-      ),
-      eff$groups
-    )
-  )
-}
-
-# The area offset leads the mean so the notation reads as area times density.
-#' @export
-.model_spec.kb_fit_density_nereo <- function(fit) {
-  pri <- fit$meta$priors
-  eff <- .group_spec_effects(fit, "intercept", on = "log(density)")
-  list(
-    title = "Density",
-    species = .species_label(fit$meta$species),
-    response_desc = "stipes counted on a transect of area_m2 (m\u00b2)",
-    likelihood = paste0(
-      "stipes ~ ZeroInflatedNegBinomial(mu, 1 / dispersion, zi)",
-      "\n  zi = inv_logit(logit_zero_inflation)",
-      "\n  mu = area_m2 * density",
-      "\n  E[stipes] = (1 - zi) * mu"
-    ),
-    mean_lhs = "log(density)",
-    mean_terms = eff$mean_terms,
-    random = eff$random,
-    priors = c(
-      list(
-        intercept = pri$intercept,
-        logit_zero_inflation = pri$logit_zero_inflation,
-        dispersion = pri$dispersion
-      ),
-      eff$sds
-    ),
-    prose = sprintf(
-      paste0(
-        "The number of stipes on a transect was modelled with a zero-inflated ",
-        "negative binomial likelihood, which combines two processes: occupancy, ",
-        "in which a transect is unoccupied (a structural zero) with a ",
-        "probability, zi, common to all transects; and a negative binomial ",
-        "count on occupied transects, with mean mu, the transect area times the ",
-        "stipe density, and an overdispersion common to all transects. The log ",
-        "stipe density varied by %s. Regularising priors were placed on all parameters (see ",
-        "the notation form for the hyperparameters)."
-      ),
-      eff$groups
-    )
-  )
-}
-
-#' @export
-.model_spec.kb_fit_density_macro <- function(fit) {
-  pri <- fit$meta$priors
-  eff <- .group_spec_effects(fit, "intercept", on = "log(density)")
-  list(
-    title = "Density",
-    species = .species_label(fit$meta$species),
-    response_desc = "plants counted on a transect of area_m2 (m\u00b2)",
-    likelihood = paste0(
-      "plants ~ NegBinomial(mu, 1 / dispersion)",
-      "\n  mu = area_m2 * density"
-    ),
-    mean_lhs = "log(density)",
-    mean_terms = eff$mean_terms,
-    random = eff$random,
-    priors = c(
-      list(intercept = pri$intercept, dispersion = pri$dispersion),
-      eff$sds
-    ),
-    prose = sprintf(
-      paste0(
-        "The number of plants on a transect was modelled with a negative ",
-        "binomial likelihood with mean mu, the transect area times the plant ",
-        "density, and an overdispersion common to all transects. The log plant ",
-        "density varied by %s. Regularising priors were placed on all parameters (see the ",
-        "notation form for the hyperparameters)."
       ),
       eff$groups
     )
@@ -400,24 +293,23 @@ kb_model_describe <- function(fit, ..., prose = FALSE) {
 
 # One model for both species; the species differ only in their default priors.
 #' @export
-.model_spec.kb_fit_cover_biomass <- function(fit) {
+.model_spec.kb_fit_cover_calibration <- function(fit) {
   pri <- fit$meta$priors
-  z <- format(signif(stats::qnorm(1 - (1 - fit$meta$conf_level) / 2), 3))
   list(
-    title = "Cover biomass",
+    title = "Cover calibration",
     species = .species_label(fit$meta$species),
     response_desc = paste0(
-      "estimate, the in situ wet biomass of a plot (kg/m\u00b2), ",
-      "with compatibility limits lower and upper"
+      "biomass_kg_m2, the mean wet biomass of an in situ survey (kg/m\u00b2), ",
+      "with SD biomass_sd_kg_m2 from plant weight"
     ),
-    likelihood = "log(estimate) ~ Normal(log(mu), error_scaling * sd)",
+    likelihood = paste0(
+      "biomass_kg_m2 ~ Normal(mu, sigma) censored below at 0",
+      "\n  sigma = sqrt(sd_residual^2 + (cv_residual * mu)^2 + biomass_sd_kg_m2^2)"
+    ),
     mean_lhs = "mu",
     mean_terms = c("biomass_floor", "cover_slope * exp(year_effect[year] + site_effect[site]) * cover"),
     centering = paste0(
-      "cover = min(1, canopy_area_m2 * (1 + tide_height_slope * tide_height_m) / plot_area_m2)\n",
-      "  sd = (log(upper) - log(lower)) / (2 * ",
-      z,
-      ")  (log-scale SD of the in situ estimate)"
+      "cover = min(1, canopy_area_m2 / (1 - tide_height_slope * tide_height_m) / plot_area_m2)"
     ),
     random = list(
       list(term = "year_effect[year]", sd = "sd_year", gloss = "year effect on log(cover_slope)"),
@@ -427,22 +319,25 @@ kb_model_describe <- function(fit, ..., prose = FALSE) {
       cover_slope = pri$cover_slope,
       biomass_floor = pri$biomass_floor,
       tide_height_slope = pri$tide_height_slope,
-      error_scaling = pri$error_scaling,
+      sd_residual = pri$sd_residual,
+      cv_residual = pri$cv_residual,
       sd_year = pri$sd_year,
       sd_site = pri$sd_site
     ),
-    truncated = c("biomass_floor", "tide_height_slope", "error_scaling"),
+    truncated = c("biomass_floor", "cv_residual"),
+    bounded = c(tide_height_slope = " T[0, 0.5]"),
     prose = paste0(
-      "The in situ wet biomass of each surveyed plot was modelled as a biomass ",
+      "The mean wet biomass of each in situ survey was modelled as a biomass ",
       "floor, common to all sites and years, plus a term proportional to the ",
-      "plot's tide-corrected canopy cover, whose slope varied by site and year. ",
-      "Canopy area was increased by a fixed fraction per metre of tide height, ",
-      "and cover was capped at 1. The log of each in situ estimate was modelled ",
-      "with a Normal likelihood whose standard deviation was the log-scale ",
-      "standard deviation of that estimate multiplied by a scaling parameter. ",
-      "Regularising priors were placed on all parameters, with an informative ",
-      "prior on the tide correction (see the notation form for the ",
-      "hyperparameters)."
+      "tide-corrected canopy cover of the survey's plot, whose slope varied by ",
+      "site and year. Canopy area was divided by one minus a fixed share per ",
+      "metre of tide height, and cover was capped at 1. The likelihood was ",
+      "Normal, censored below at zero so that surveys with no plants counted ",
+      "contributed the probability of zero or less, with a standard deviation ",
+      "combining a constant, a part proportional to the mean, and the ",
+      "survey's standard deviation from plant weight. Regularising priors were ",
+      "placed on all parameters, with an informative prior on the tide ",
+      "correction (see the notation form for the hyperparameters)."
     )
   )
 }
@@ -484,7 +379,13 @@ kb_model_describe <- function(fit, ..., prose = FALSE) {
   prior_lines <- vapply(
     names(spec$priors),
     function(nm) {
-      trunc <- if (nm %in% spec$truncated) " T[0, ]" else ""
+      trunc <- if (nm %in% names(spec$bounded)) {
+        spec$bounded[[nm]]
+      } else if (nm %in% spec$truncated) {
+        " T[0, ]"
+      } else {
+        ""
+      }
       sprintf(
         "  %-*s ~ %s%s",
         width,

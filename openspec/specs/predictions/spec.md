@@ -4,11 +4,11 @@
 
 Predicting from a fit: the prediction verb of each model and the grids built for
 it, how groups and optional inputs are resolved per row, the rstantools draw
-generics, plot and site biomass, and plotting predictions.
+generics, survey biomass, totals over mapped canopy, and plotting predictions.
 ## Requirements
 ### Requirement: Groups are resolved per row
 
-A row whose `site`, `year`, or site-year is a fitted level SHALL be conditioned on that level's estimated effect. A new level or an absent grouping column SHALL be handled by `new_levels`: `"average"` sets it to zero (the typical group), and `"sample"` draws a new effect from its estimated distribution. Rows naming the same new site, year, or site-year SHALL share one sampled effect, since they are one group; rows whose grouping column is absent SHALL each draw their own. The default SHALL be `"average"` for every prediction verb, `predict()`, and the `posterior_*()` generics, and `"sample"` for `kb_predict_plot_biomass()` and `kb_predict_site_biomass()`, whose rows are particular surveyed site-years. A new level SHALL NOT error. A missing value in a `site` or `year` column of `new_data` SHALL error, naming the column; a new level is requested by naming it or by leaving out the column. `new_data` with no rows, or with an infinite value in a column the prediction reads, SHALL error. `representative_site` SHALL instead give a new or absent site the estimated site effect of the named fitted site(s), averaged per draw when several are named, and, in a fitted year, their estimated site:year effect for that year, averaged per draw over the named sites observed in that year; a site:year effect none of them has SHALL follow `new_levels`; a name not in the fit SHALL error listing the fitted sites. An effect the fit omitted SHALL contribute nothing, under any `new_levels`.
+A row whose `site`, `year`, or site-year is a fitted level SHALL be conditioned on that level's estimated effect. A new level or an absent grouping column SHALL be handled by `new_levels`: `"average"` sets it to zero (the typical group), and `"sample"` draws a new effect from its estimated distribution. Rows naming the same new site, year, or site-year SHALL share one sampled effect, since they are one group; rows whose grouping column is absent SHALL each draw their own. The default SHALL be `"average"` for every model's prediction verb, `predict()`, and the `posterior_*()` generics, and `"sample"` for the derived verbs `kb_predict_mean_weight()`, `kb_predict_biomass_survey()`, and `kb_predict_biomass_canopy()`, whose rows are particular site-years. A new level SHALL NOT error. A missing value in a `site` or `year` column of `new_data` SHALL error, naming the column; a new level is requested by naming it or by leaving out the column. `new_data` with no rows, or with an infinite value in a column the prediction reads, SHALL error. `representative_site` SHALL instead give a new or absent site the estimated site effect of the named fitted site(s), averaged per draw when several are named, and, in a fitted year, their estimated site:year effect for that year, averaged per draw over the named sites observed in that year; a site:year effect none of them has SHALL follow `new_levels`; a name not in the fit SHALL error listing the fitted sites. An effect the fit omitted SHALL contribute nothing, under any `new_levels`.
 
 #### Scenario: New levels are sampled or averaged
 - **WHEN** `new_data` holds a site the fit never saw
@@ -19,7 +19,7 @@ A row whose `site`, `year`, or site-year is a fitted level SHALL be conditioned 
 - **THEN** the prediction errors naming the column and pointing to a named new level or an absent column
 
 #### Scenario: The default is the typical group
-- **WHEN** a prediction verb or `posterior_epred()` is called without `new_levels` on rows with no `site` or `year` column
+- **WHEN** a model's prediction verb or `posterior_epred()` is called without `new_levels` on rows with no `site` or `year` column
 - **THEN** it equals the same call with `new_levels = "average"`, and repeated calls agree without a seed
 
 #### Scenario: Rows naming one new level share its effect
@@ -40,39 +40,25 @@ A row whose `site`, `year`, or site-year is a fitted level SHALL be conditioned 
 
 ### Requirement: Draws, likelihood, and priors
 
-`posterior_epred()`, `posterior_linpred()`, and `posterior_predict()` SHALL return a draws-by-rows matrix for `new_data` (or the observed data), resolving groups as above. For a density fit, each row SHALL be a transect of its `area_m2`, or of 1 m² when `new_data` has no `area_m2` column, and the observed data SHALL use their recorded areas. `posterior_epred()` SHALL give the expected response. Where that differs from the inverse link of the linear predictor, `posterior_linpred(transform = TRUE)` SHALL return the inverse link:
+`posterior_epred()`, `posterior_linpred()`, and `posterior_predict()` SHALL return a draws-by-rows matrix for `new_data` (or the observed data), resolving groups as above. `posterior_epred()` SHALL give the expected response. Where that differs from the inverse link of the linear predictor, `posterior_linpred(transform = TRUE)` SHALL return the inverse link:
 
 - *Nereocystis* weight, whose log weight is Normal: the expected weight is `exp(mu + sd_residual^2 / 2)`, above the median `exp(mu)`.
-- *Macrocystis* size, whose frond count is a zero-truncated negative binomial: the expected count is the truncated mean, above the untruncated mean `exp(mu)`.
-- *Nereocystis* density, whose stipe count is a zero-inflated negative binomial: the expected count is `(1 - zi) * exp(mu)`, below the mean of an occupied transect, `exp(mu)`, where `zi` is the probability that a transect is unoccupied (a structural zero).
 
-For cover biomass, whose residual is the in situ estimation error rather than variation in biomass, the expected biomass is the inverse link, `exp(mu)`.
+For the cover calibration, whose response is censored at zero, the expected biomass SHALL be the mean of the uncensored Normal, `mu`, the quantity totals over canopy use.
 
-The prediction verbs, `fitted()`, and `augment()` SHALL summarise `posterior_epred()`; the density verb at 1 m². `posterior_predict()` SHALL add observation noise from the model's likelihood, so repeated calls differ unless a seed is set; for size it draws plant sizes, and *Macrocystis* draws are whole numbers of at least 1; for density it draws transect counts, whole numbers of at least 0; for wet/dry and carbon it draws ratios or fractions between 0 and 1; for cover biomass it draws positive in situ biomass estimates, with each row's precision taken from its `lower` and `upper`, which `new_data` SHALL then carry. `log_lik()` SHALL return the deterministic pointwise log-likelihood of the observed data, suitable for `loo::loo()`, and error for a fit with no observations. Each value SHALL be the log density of the recorded response on its recorded scale (weight in kg, diameter in mm, a count, a ratio or fraction, or an in situ biomass estimate), including the Jacobian where the model's likelihood is stated on a transformed scale, so the pointwise log-likelihoods of two models of the same response are comparable. `log_lik()`, `residuals()`, and `posterior_predict()` SHALL use the same observation distribution, and it SHALL be the distribution of the fitted Stan model. `prior_summary()` SHALL return the priors used.
+The prediction verbs, `fitted()`, and `augment()` SHALL summarise `posterior_epred()`. `posterior_predict()` SHALL add observation noise from the model's likelihood, so repeated calls differ unless a seed is set; for size it draws plant sizes; for wet/dry and carbon it draws ratios or fractions between 0 and 1; for the cover calibration it draws biomass per m² of at least 0, each row's spread including its survey biomass SD, from a `biomass_sd_kg_m2` column or the SD of a `biomass_kg_m2` column of draws, and none when `new_data` has neither. `log_lik()` SHALL return the deterministic pointwise log-likelihood of the observed data, suitable for `loo::loo()`, and error for a fit with no observations. Each value SHALL be the log density of the recorded response on its recorded scale (weight in kg, diameter in mm, a ratio or fraction, or a survey's biomass per m², a survey with none taking the log probability of zero or less), including the Jacobian where the model's likelihood is stated on a transformed scale, so the pointwise log-likelihoods of two models of the same response are comparable. `log_lik()`, `residuals()`, and `posterior_predict()` SHALL use the same observation distribution, and it SHALL be the distribution of the fitted Stan model. `prior_summary()` SHALL return the priors used.
 
 #### Scenario: Expected weight exceeds the median for Nereocystis
 - **WHEN** `posterior_epred()` and `posterior_linpred(transform = TRUE)` are called on the same *Nereocystis* weight rows
 - **THEN** each draw of the former equals the latter times `exp(sd_residual^2 / 2)`
 
-#### Scenario: Expected frond count exceeds the untruncated mean
-- **WHEN** `posterior_epred()` and `posterior_linpred(transform = TRUE)` are called on the same *Macrocystis* size rows
-- **THEN** each draw of the former is greater than the latter and at least 1
+#### Scenario: Calibration replicates are never negative
+- **WHEN** `posterior_predict()` is called on a cover calibration fit
+- **THEN** every draw is at least 0
 
-#### Scenario: Expected stipe count includes zero inflation
-- **WHEN** `posterior_epred()` and `posterior_linpred(transform = TRUE)` are called on the same *Nereocystis* density rows
-- **THEN** each draw of the former equals the latter times one minus that draw's zero-inflation probability
-
-#### Scenario: Expected counts scale with area
-- **WHEN** `posterior_epred()` is called on a density fit at the same site and year with `area_m2` of 10 and of 20
-- **THEN** each draw of the second is twice the first
-
-#### Scenario: Density draws default to one square metre
-- **WHEN** `posterior_epred()` is called on a density fit with `new_data` lacking `area_m2`
-- **THEN** it equals the same call with `area_m2 = 1`, and its summary equals `kb_predict_density()` at those rows
-
-#### Scenario: Cover predictive draws need the in situ limits
-- **WHEN** `posterior_predict()` is called on a cover biomass fit with `new_data` lacking `lower` or `upper`
-- **THEN** it errors naming the missing columns
+#### Scenario: Calibration replicates without a survey biomass SD
+- **WHEN** `posterior_predict()` is called on a cover calibration fit with `new_data` lacking `biomass_sd_kg_m2` and `biomass_kg_m2`
+- **THEN** it returns draws whose spread is the residual alone, narrower than with a `biomass_sd_kg_m2` column
 
 #### Scenario: Predictive draws are reproducible under a seed
 - **WHEN** `posterior_predict()` is called twice after the same `set.seed()`
@@ -88,7 +74,7 @@ The prediction verbs, `fitted()`, and `augment()` SHALL summarise `posterior_epr
 
 ### Requirement: Plot predictions
 
-`kb_plot_predictions(predictions)` SHALL return a `ggplot` built from a `kb_predictions` object, never from a fit, and `autoplot()` on a `kb_predictions` object SHALL return the same plot. Predictions made at a `kb_new_data()` grid over a varying predictor SHALL be drawn as a line with a compatibility-interval ribbon; otherwise predictions SHALL be drawn as point ranges. The x-axis variable SHALL default from the prediction's metadata and be overridable through `x`; the remaining grouping variables SHALL be faceted, the x-axis variable never. `max_facets` SHALL cap the panels drawn with a warning giving how many were shown. The plot SHALL draw only the predictions; raw data are not overlaid, and a user can add them as a layer. `log_axis` SHALL default to `"none"` for every prediction, giving linear axes with the y-axis extended to zero; `"y"` SHALL log-scale the y-axis without extending it to zero, and `"xy"` SHALL log-scale both axes. Log-scaled axes SHALL label ticks as plain numbers and add "log scale" to the axis title (e.g. "Wet weight (kg, log scale)"). A log axis SHALL error when any value it shows (the estimate and limits on y, the x-axis variable on x) is not positive, and `"xy"` SHALL error when the x-axis variable is not numeric. Axis titles SHALL be descriptive and, for a quantity with a unit, give the unit in parentheses (e.g. "Sub-bulb diameter (mm)", "Wet weight (kg)", "Stipe density (stipes/m²)"). When the prediction's metadata has been stripped, it SHALL error asking for `x`.
+`kb_plot_predictions(predictions)` SHALL return a `ggplot` built from a `kb_predictions` object, never from a fit, and `autoplot()` on a `kb_predictions` object SHALL return the same plot. Predictions made at a `kb_new_data()` grid over a varying predictor SHALL be drawn as a line with a compatibility-interval ribbon; otherwise predictions SHALL be drawn as point ranges. The x-axis variable SHALL default from the prediction's metadata and be overridable through `x`; the remaining grouping variables SHALL be faceted, the x-axis variable never. `max_facets` SHALL cap the panels drawn with a warning giving how many were shown. The plot SHALL draw only the predictions; raw data are not overlaid, and a user can add them as a layer. `log_axis` SHALL default to `"none"` for every prediction, giving linear axes with the y-axis extended to zero; `"y"` SHALL log-scale the y-axis without extending it to zero, and `"xy"` SHALL log-scale both axes. Log-scaled axes SHALL label ticks as plain numbers and add "log scale" to the axis title (e.g. "Wet weight (kg, log scale)"). A log axis SHALL error when any value it shows (the estimate and limits on y, the x-axis variable on x) is not positive, and `"xy"` SHALL error when the x-axis variable is not numeric. Axis titles SHALL be descriptive and, for a quantity with a unit, give the unit in parentheses (e.g. "Sub-bulb diameter (mm)", "Wet weight (kg)", "Wet biomass (kg/m²)"). When the prediction's metadata has been stripped, it SHALL error asking for `x`.
 
 #### Scenario: Curves get a ribbon, rows get points
 - **WHEN** weight predictions at `kb_new_data(fit)` and at the observed data are plotted
@@ -106,9 +92,9 @@ The prediction verbs, `fitted()`, and `augment()` SHALL summarise `posterior_epr
 - **WHEN** `kb_predict_size(fit, kb_new_data(fit, by = "site"))` is plotted
 - **THEN** point ranges are drawn per site, and the y-axis is titled with the size response
 
-#### Scenario: Density by site
-- **WHEN** `kb_predict_density(fit, kb_new_data(fit, by = "site"))` is plotted
-- **THEN** point ranges are drawn per site, and the y-axis is titled as a density per m², not a count
+#### Scenario: Survey biomass by site-year
+- **WHEN** `kb_predict_biomass_survey()` output summed with `pool_by = c("site", "year")` is plotted
+- **THEN** point ranges are drawn with year on the x-axis and site faceted, and the y-axis is titled "Wet biomass (kg/m²)"
 
 #### Scenario: Too many facets
 - **WHEN** a prediction has more groups than `max_facets`
@@ -119,19 +105,19 @@ The prediction verbs, `fitted()`, and `augment()` SHALL summarise `posterior_epr
 - **THEN** the plot builds with the raw data drawn over the curve
 
 #### Scenario: Log y-axis
-- **WHEN** density by site is plotted with `log_axis = "y"`
-- **THEN** the y-axis is log-scaled, does not extend to zero, and is titled "Stipe density (stipes/m², log scale)"
+- **WHEN** mean weight by site is plotted with `log_axis = "y"`
+- **THEN** the y-axis is log-scaled, does not extend to zero, and is titled with "log scale"
 
 #### Scenario: Log-log curve
 - **WHEN** a weight curve is plotted with `log_axis = "xy"`
 - **THEN** both axes are log-scaled
 
 #### Scenario: Log axis over non-positive values
-- **WHEN** a cover curve at the default `kb_new_data()` grid, which starts at zero cover, is plotted with `log_axis = "xy"`
-- **THEN** it errors naming the x-axis variable
+- **WHEN** a cover curve at the default `kb_new_data()` grid, which starts at zero cover, is plotted with `log_axis = "xy"`, or survey biomass including a survey with no plants is plotted with `log_axis = "y"`
+- **THEN** it errors naming the variable that is not positive
 
 #### Scenario: Log x-axis over groups
-- **WHEN** density by site is plotted with `log_axis = "xy"`
+- **WHEN** mean weight by site is plotted with `log_axis = "xy"`
 - **THEN** it errors because the x-axis is not numeric
 
 ### Requirement: Values far outside the fitted range are flagged
@@ -146,89 +132,28 @@ Prediction SHALL warn when supplied values of the species predictor lie below ha
 - **WHEN** supplied values lie within twice the fitted range
 - **THEN** no warning is issued
 
-### Requirement: Plot biomass
-
-`kb_predict_plot_biomass(weight, size, density, wetdry, carbon)` SHALL combine a weight, a size, and a density fit of the same species into the expected biomass per m² of each site-year in the density fit's data, for the `measure` chosen by a name-only argument: `"wet"` (the default, kg/m²), `"dry"` (kg/m², needing a wet/dry fit as `wetdry`), or `"carbon"` (g C/m², needing `wetdry` and a carbon fit as `carbon`). It SHALL return a `kb_predictions` object with one row per such site-year and columns `site`, `year`, `weight_support`, `size_support`, `estimate`, `lower`, and `upper`, using `conf_level` (default 0.95), `estimate` (default `median`), and `sig_fig` (default 3). `weight_support` and `size_support` SHALL give the data the weight or size fit has for the site-year: `"site-year"` where the site-year is in its data, else `"site, year"` where both its site and its year are, else `"site"` or `"year"` where only one is, else `"none"`.
-
-Per draw, biomass SHALL be the site-year's expected density per m² times its mean plant weight: the expected weight at size averaged over the site-year's size distribution, truncated above at the largest size in the size fit's data. The name-only `n_plants` (default 100) SHALL set the number of plants averaged per draw. Per draw, dry biomass SHALL be wet biomass times the expected dry:wet ratio, and carbon biomass dry biomass times the expected carbon fraction, converted to grams.
-
-Weight and size at a site-year SHALL be resolved as in the prediction verbs, with name-only `new_levels` (default `"sample"`) and `representative_site`. A `representative_site` SHALL be fitted in both the weight and size fits. A name-only `progress` (`"bar"`, the default, or `"none"`) SHALL control a console progress bar, and a `progress_dir` naming an existing directory SHALL receive a progress record that `kb_progress()` reads, as for the fits. The function SHALL error, naming the problem, when an argument is not a fit of the required model, a fit the `measure` needs is not supplied, the fits supplied differ in species, they differ in their number of draws, or the density or size fit has no observed data.
-
-#### Scenario: One row per density-surveyed site-year
-- **WHEN** `kb_predict_plot_biomass(weight, size, density)` is called on fits of one species
-- **THEN** it returns one row for each site-year in the density fit's data, and no other
-
-#### Scenario: Biomass is density times mean plant weight
-- **WHEN** the fits' site and year effects are all observed for a site-year
-- **THEN** each draw of its biomass equals that site-year's expected density per m² times the mean expected weight over its truncated size distribution, within the integration error of `n_plants`
-
-#### Scenario: Dry and carbon are per-draw conversions of wet
-- **WHEN** `measure = "dry"` or `measure = "carbon"` is requested with the fits it needs
-- **THEN** each draw equals the wet biomass draw times the expected dry:wet ratio draw, and for carbon also times the expected carbon fraction draw and 1000
-
-#### Scenario: A missing conversion fit errors
-- **WHEN** `measure = "carbon"` is requested without a `carbon` fit, or `"dry"` without a `wetdry` fit
-- **THEN** it errors naming the missing argument
-
-#### Scenario: The data support of weight and size is reported
-- **WHEN** a density-surveyed site-year is absent from the weight or size fit's data
-- **THEN** it still returns a row, with `weight_support` or `size_support` naming the data the fit does have for it (`"site, year"`, `"site"`, `"year"`, or `"none"`)
-
-#### Scenario: Averaging narrows an unseen site's interval
-- **WHEN** a density-surveyed site is absent from the weight and size fits
-- **THEN** its interval under `new_levels = "sample"` is at least as wide as under `"average"`
-
-#### Scenario: Mismatched fits error
-- **WHEN** the fits differ in species, a fit is of the wrong model, or the fits differ in their number of draws
-- **THEN** it errors naming the mismatch
-
-#### Scenario: Progress can be polled
-- **WHEN** it is called with `progress_dir` and `kb_progress(progress_dir)` is called during and after it
-- **THEN** it returns the completed fraction, reaching `1` when the prediction finishes
-
-#### Scenario: Reproducible under a seed
-- **WHEN** it is called twice after the same `set.seed()`
-- **THEN** the results are identical
-
-### Requirement: Predictions record their interval level
-
-Every `kb_predictions` object SHALL record the `conf_level` its `lower` and `upper` columns were computed at.
-
-#### Scenario: The level travels with the prediction
-- **WHEN** a prediction verb is called with `conf_level = 0.9`
-- **THEN** the returned object records 0.9 as its interval level
-
 ### Requirement: One prediction verb per model
 
 Each model SHALL have one prediction verb, `kb_predict_<model>()`, returning a `kb_predictions` object whose `estimate`, `lower`, and `upper` columns summarise the posterior distribution of the expected response, using `conf_level` (default 0.95), `estimate` (default `median`), and `sig_fig` (default 3). For a model with grouping factors the verb SHALL take `new_data` and predict at its rows, in their order, or at the observed data when `new_data = NULL`. The returned object SHALL hold the input columns plus the summary columns. Predictions per group or over a predictor sequence SHALL be made by passing a grid from `kb_new_data()` as `new_data`.
 
 - Weight: `kb_predict_weight(fit, new_data)` predicts expected weight (kg). `new_data` SHALL have the species predictor column (`diameter_mm` for *Nereocystis*, `fronds` for *Macrocystis*). New data SHALL use the predictor reference stored at fit time.
-- Size: `kb_predict_size(fit, new_data)` predicts expected size, the mean of the size distribution: sub-bulb diameter (mm) for *Nereocystis*, and fronds at 1 m for *Macrocystis*, among plants with at least one. `new_data` needs no columns.
-- Density: `kb_predict_density(fit, new_data)` predicts expected density, stipes (*Nereocystis*) or plants (*Macrocystis*) per m², in a response column named `stipes_m2` or `plants_m2`. It SHALL NOT read an `area_m2` column, so the estimate is per m² at the observed data too. For *Nereocystis* it includes the probability that a transect holds no stipes.
-- Cover biomass: `kb_predict_cover_biomass(fit, new_data)` predicts the expected wet biomass (kg/m²) of a plot from its `canopy_area_m2`, `plot_area_m2`, and `tide_height_m`, which `new_data` SHALL carry.
+- Size: `kb_predict_size(fit, new_data)` predicts expected size, the mean of the *Nereocystis* sub-bulb diameter distribution (mm). `new_data` needs no columns.
+- Cover calibration: `kb_predict_cover_calibration(fit, new_data)` predicts the expected wet biomass per m² of a plot from its `canopy_area_m2`, `plot_area_m2`, and `tide_height_m`, which `new_data` SHALL carry.
 - Wet/dry: `kb_predict_wetdry(fit)` predicts the expected dry:wet mass ratio, one row for the population of samples. The model has no grouping factors or predictor, so the verb takes no `new_data`; the same summary arguments apply.
 - Carbon: `kb_predict_carbon(fit)` predicts the expected carbon fraction of dry mass, one row for the population of samples, on the same terms as wet/dry.
 
 `predict()` on a fit SHALL return the same result as the model's verb with the same arguments.
 
 #### Scenario: Predict at the observed data
-- **WHEN** `kb_predict_weight(fit)`, `kb_predict_size(fit)`, or `kb_predict_cover_biomass(fit)` is called
+- **WHEN** `kb_predict_weight(fit)`, `kb_predict_size(fit)`, or `kb_predict_cover_calibration(fit)` is called
 - **THEN** it returns one prediction per observed row, whose `estimate` equals `augment(fit)$fitted`
 
-#### Scenario: Density at the observed data is per square metre
-- **WHEN** `kb_predict_density(fit)` is called
-- **THEN** it returns one prediction per observed transect, whose `estimate` equals `augment(fit)$fitted` divided by the transect's `area_m2`, up to rounding
-
 #### Scenario: Predict at supplied rows
-- **WHEN** `new_data` carries the columns the model needs (the species predictor for weight, none for size or density, `canopy_area_m2`, `plot_area_m2`, and `tide_height_m` for cover biomass)
+- **WHEN** `new_data` carries the columns the model needs (the species predictor for weight, none for size, `canopy_area_m2`, `plot_area_m2`, and `tide_height_m` for the cover calibration)
 - **THEN** predictions are returned at exactly those rows, in their order
 
-#### Scenario: Density ignores the transect area
-- **WHEN** `kb_predict_density()` is called at the same site and year with `area_m2` of 10 and of 20
-- **THEN** the two estimates are equal
-
 #### Scenario: Zero cover predicts the floor
-- **WHEN** `kb_predict_cover_biomass()` is called at `canopy_area_m2 = 0`
+- **WHEN** `kb_predict_cover_calibration()` is called at `canopy_area_m2 = 0`
 - **THEN** the prediction is the same for every site and year
 
 #### Scenario: Group predictions come from a grid
@@ -253,7 +178,7 @@ Each model SHALL have one prediction verb, `kb_predict_<model>()`, returning a `
 
 ### Requirement: Prediction grids
 
-`kb_new_data(fit, by = NULL, ...)` SHALL return a data frame for use as `new_data` with a weight, size, density, or cover biomass fit: one row per level of the factors named in `by` (`NULL` for a single row with no grouping columns, `"site"`, `"year"`, or `c("site", "year")`, the last taking only the combinations in the fitted data), in the fit's level order. Levels of `site` or `year` not named in `by` MAY be supplied by name in `...` (character, factor, or numeric), and each SHALL be crossed with the rest of the grid; a level the fit has not seen SHALL be accepted and resolved at prediction as a new level. For a weight fit the rows SHALL be crossed with values of the species predictor, supplied as a named numeric vector of any length (`diameter_mm` for *Nereocystis*, `fronds` for *Macrocystis*) and defaulting to 30 evenly spaced values over the observed range, rounded to whole numbers for `fronds`; the predictor column SHALL take the input column's name. For a cover biomass fit the rows SHALL be crossed with values of tide-corrected cover, supplied as `cover` (proportions from 0 to 1) and defaulting to 30 evenly spaced values from 0 to 1, each row being a unit plot at zero tide height with the `canopy_area_m2`, `plot_area_m2`, and `tide_height_m` columns the prediction reads. The grid SHALL hold no `area_m2` column. It SHALL error, naming the valid values, for an unknown `by` value, a `cover` outside 0 to 1, a predictor value the model's data could not hold (a missing, infinite, or non-positive diameter, or fronds that are not a positive whole number), an argument in `...` that is neither the fit's predictor nor `site` or `year` (such as the other species' predictor, or any predictor for a size or density fit), a grouping factor both named in `by` and given values, missing grouping values, or a fit with no grouping factors.
+`kb_new_data(fit, by = NULL, ...)` SHALL return a data frame for use as `new_data` with a weight, size, or cover calibration fit: one row per level of the factors named in `by` (`NULL` for a single row with no grouping columns, `"site"`, `"year"`, or `c("site", "year")`, the last taking only the combinations in the fitted data), in the fit's level order. Levels of `site` or `year` not named in `by` MAY be supplied by name in `...` (character, factor, or numeric), and each SHALL be crossed with the rest of the grid; a level the fit has not seen SHALL be accepted and resolved at prediction as a new level. For a weight fit the rows SHALL be crossed with values of the species predictor, supplied as a named numeric vector of any length (`diameter_mm` for *Nereocystis*, `fronds` for *Macrocystis*) and defaulting to 30 evenly spaced values over the observed range, rounded to whole numbers for `fronds`; the predictor column SHALL take the input column's name. For a cover calibration fit the rows SHALL be crossed with values of tide-corrected cover, supplied as `cover` (proportions from 0 to 1) and defaulting to 30 evenly spaced values from 0 to 1, each row being a unit plot at zero tide height with the `canopy_area_m2`, `plot_area_m2`, and `tide_height_m` columns the prediction reads. It SHALL error, naming the valid values, for an unknown `by` value, a `cover` outside 0 to 1, a predictor value the model's data could not hold (a missing, infinite, or non-positive diameter, or fronds that are not a positive whole number), an argument in `...` that is neither the fit's predictor nor `site` or `year` (such as the other species' predictor, or any predictor for a size fit), a grouping factor both named in `by` and given values, missing grouping values, or a fit with no grouping factors.
 
 #### Scenario: Curves over a named predictor
 - **WHEN** `kb_new_data(fit, by = "site", diameter_mm = c(20, 40))` is called on a *Nereocystis* weight fit
@@ -264,7 +189,7 @@ Each model SHALL have one prediction verb, `kb_predict_<model>()`, returning a `
 - **THEN** it returns one row per fitted site, each at 50 mm
 
 #### Scenario: Cover grids agree with survey rows
-- **WHEN** `kb_predict_cover_biomass(fit, kb_new_data(fit, by = "site", cover = 0.5))` is called, and `kb_predict_cover_biomass()` at the same sites with `canopy_area_m2 = 50`, `plot_area_m2 = 100`, and `tide_height_m = 0`
+- **WHEN** `kb_predict_cover_calibration(fit, kb_new_data(fit, by = "site", cover = 0.5))` is called, and `kb_predict_cover_calibration()` at the same sites with `canopy_area_m2 = 50`, `plot_area_m2 = 100`, and `tide_height_m = 0`
 - **THEN** the estimates are equal
 
 #### Scenario: A default predictor sequence
@@ -280,7 +205,7 @@ Each model SHALL have one prediction verb, `kb_predict_<model>()`, returning a `
 - **THEN** it returns one row per fitted site, each in 2021 at 40 mm
 
 #### Scenario: A wrong predictor argument errors
-- **WHEN** `kb_new_data()` is given `fronds` for a *Nereocystis* weight fit, any predictor for a size or density fit, or `year` together with `by = "year"`
+- **WHEN** `kb_new_data()` is given `fronds` for a *Nereocystis* weight fit, any predictor for a size fit, or `year` together with `by = "year"`
 - **THEN** it errors naming the columns the grid can take, or the conflict
 
 #### Scenario: A fit without groups errors
@@ -289,7 +214,7 @@ Each model SHALL have one prediction verb, `kb_predict_<model>()`, returning a `
 
 ### Requirement: New data are validated
 
-`new_data` SHALL be validated before prediction: it SHALL be a data frame; for weight, *Nereocystis* `diameter_mm` SHALL be numeric, greater than 0, with no missing values, and *Macrocystis* `fronds` a positive whole number with no missing values; for density, an `area_m2` column, where present, SHALL be numeric, greater than 0, with no missing values; for cover biomass, `canopy_area_m2` (`>= 0`), `plot_area_m2` (> 0 and at least `canopy_area_m2`), and `tide_height_m` SHALL be present, numeric, with no missing values. Size and density `new_data` need no columns, and wet/dry and carbon take no `new_data`. An invalid value SHALL error with a message naming the column, pinned by `tests/testthat/_snaps/chk.md`.
+`new_data` SHALL be validated before prediction: it SHALL be a data frame; for weight, *Nereocystis* `diameter_mm` SHALL be numeric, greater than 0, with no missing values, and *Macrocystis* `fronds` a positive whole number with no missing values; for the cover calibration, `canopy_area_m2` (`>= 0`), `plot_area_m2` (> 0 and at least `canopy_area_m2`), and `tide_height_m` SHALL be present, numeric, with no missing values. Size `new_data` needs no columns, and wet/dry and carbon take no `new_data`. An invalid value SHALL error with a message naming the column, pinned by `tests/testthat/_snaps/chk.md`.
 
 #### Scenario: An impossible diameter errors
 - **WHEN** weight `new_data` has a `diameter_mm` that is zero, negative, missing, or not numeric
@@ -299,39 +224,125 @@ Each model SHALL have one prediction verb, `kb_predict_<model>()`, returning a `
 - **WHEN** weight `new_data` has a non-whole `fronds` value
 - **THEN** prediction errors naming `fronds`
 
-#### Scenario: Size and density new data need no columns
-- **WHEN** `kb_predict_size()` or `kb_predict_density()` is called with a data frame of only `site`, or of no columns and `n` rows
+#### Scenario: Size new data need no columns
+- **WHEN** `kb_predict_size()` is called with a data frame of only `site`, or of no columns and `n` rows
 - **THEN** it returns one prediction per row
 
-#### Scenario: Cover new data need the survey columns
-- **WHEN** `kb_predict_cover_biomass(fit, new_data)` is called with `new_data` lacking `tide_height_m`, or with a `canopy_area_m2` above its `plot_area_m2`
+#### Scenario: Cover new data need the plot columns
+- **WHEN** `kb_predict_cover_calibration(fit, new_data)` is called with `new_data` lacking `tide_height_m`, or with a `canopy_area_m2` above its `plot_area_m2`
 - **THEN** prediction errors naming the column
 
-#### Scenario: An impossible area errors
-- **WHEN** density `new_data` has an `area_m2` of zero, negative, missing, or not numeric
-- **THEN** prediction errors naming `area_m2`
+### Requirement: Derived verbs share their arguments and output
 
-### Requirement: Site biomass
+`kb_predict_mean_weight()`, `kb_predict_biomass_survey()`, and `kb_predict_biomass_canopy()` SHALL return a `kb_predictions` object holding the input rows' columns, the summary columns `estimate`, `lower`, and `upper` (with `conf_level`, `estimate`, and `sig_fig` as for the prediction verbs), and the response as a `posterior` `rvar` column of draws named for it, whose summary the summary columns are. Each SHALL take optional `wetdry` and `carbon` fits and a name-only `measure`: `"wet"` (the default), `"dry"` (needing `wetdry`), or `"carbon"` (needing `wetdry` and `carbon`); per draw, dry is wet times the expected dry:wet ratio and carbon is dry times the expected carbon fraction. The measure SHALL never be inferred from the fits supplied. Each SHALL take name-only `new_levels` (default `"sample"`) and `representative_site`, resolved as in "Groups are resolved per row". Each SHALL error, naming the problem, when an argument is not a fit of the required model, a fit the `measure` needs is not supplied, the fits supplied differ in species, or they differ in their number of draws. Results SHALL be reproducible under `set.seed()`.
 
-`kb_predict_site_biomass(fit, new_data, wetdry, carbon)` SHALL take a cover biomass fit and a required `new_data` of drone surveys and return the expected total biomass of each row, for the `measure` chosen by a name-only argument: `"wet"` (the default, kg), `"dry"` (kg, needing a wet/dry fit as `wetdry`), or `"carbon"` (kg C, needing `wetdry` and a carbon fit as `carbon`). `new_data` SHALL carry one row per drone survey of a site with `canopy_area_m2` (the canopy delineated within the site, `>= 0`), `tide_height_m`, `site`, and `year`, each with no missing values, and MAY carry `site_area_m2`, the area within the site boundary (`> 0` and at least `canopy_area_m2`). It SHALL return a `kb_predictions` object with the input columns, `cover_support`, `estimate`, `lower`, and `upper`, using `conf_level` (default 0.95), `estimate` (default `median`), and `sig_fig` (default 3). `cover_support` SHALL give the data the cover fit has for the row: `"site, year"` where both its site and its year are in the fit's data, else `"site"` or `"year"` where only one is, else `"none"`.
+#### Scenario: Draws travel with the summary
+- **WHEN** a derived verb is called
+- **THEN** its response column holds one `rvar` per row, whose summary by the `estimate` function and its quantiles at `conf_level` are the row's `estimate`, `lower`, and `upper`, up to rounding
 
-Per draw, a row's wet total SHALL be the expected biomass per m² of bed, the floor plus the canopy term at full cover with the row's site and year effects, times its tide-corrected canopy area, capped at `site_area_m2` where supplied. The floor SHALL apply over the canopy area only. No observation-level variation SHALL be added. Per draw, the dry total SHALL be the wet total times the expected dry:wet ratio, and the carbon total the dry total times the expected carbon fraction.
+#### Scenario: Dry and carbon are per-draw conversions of wet
+- **WHEN** `measure = "dry"` or `measure = "carbon"` is requested with the fits it needs
+- **THEN** each draw equals the wet draw times the expected dry:wet ratio draw, and for carbon also times the expected carbon fraction draw, converted to the verb's carbon unit
 
-The name-only `sum_by` SHALL, when not `NULL`, sum the row totals on each draw within each combination of the named `new_data` columns before summarising, returning one row per combination with those columns, `estimate`, `lower`, and `upper`, ordered by the columns' factor levels or, for character columns, alphabetically ignoring case; `character(0)` SHALL sum every row. Each `sum_by` column SHALL be character or factor with no missing values. It SHALL warn when a group holds more than one row for the same site and year, since their totals overlap.
+#### Scenario: A missing conversion fit errors
+- **WHEN** `measure = "carbon"` is requested without a `carbon` fit, or `"dry"` without a `wetdry` fit
+- **THEN** it errors naming the missing argument
 
-Site and year SHALL be resolved as in the prediction verbs, with name-only `new_levels` (default `"sample"`) and `representative_site`; rows naming the same new site or year SHALL share one effect. The function SHALL error, naming the problem, when `new_data` is not supplied, `fit` is not a cover biomass fit, `wetdry` or `carbon` is not a fit of that model, a fit the `measure` needs is not supplied, the fits differ in species, they differ in their number of draws, or `sum_by` names a column `new_data` does not have or one that is not character or factor or has missing values.
+#### Scenario: Mismatched fits error
+- **WHEN** the fits differ in species, a fit is of the wrong model, or the fits differ in their number of draws
+- **THEN** it errors naming the mismatch
 
-#### Scenario: One total per survey
-- **WHEN** `kb_predict_site_biomass(fit, new_data)` is called
-- **THEN** it returns one row per row of `new_data`, in order, with a `cover_support` column
+#### Scenario: Reproducible under a seed
+- **WHEN** a derived verb is called twice after the same `set.seed()`
+- **THEN** the results are identical
+
+### Requirement: Pooling over groups
+
+`kb_predict_biomass_survey()` and `kb_predict_biomass_canopy()` SHALL take a name-only `pool_by`. With `NULL` (the default) they SHALL return one row per input row with the support columns. With a character vector of input columns they SHALL return one row per combination of those columns present, with those columns, the summary columns, and the response column, ordered by the columns' factor levels or, for character columns, alphabetically ignoring case; `character(0)` SHALL give one row for all rows. On each draw, biomass SHALL be summed in kg within each group and, for survey biomass with `per_area = TRUE`, divided by the group's summed `survey_area_m2`. Each `pool_by` column SHALL be character or factor with no missing values; another column, or one the input does not have, SHALL error naming it. A sampled new site or year effect SHALL be shared by every row of that level, so a sum carries the among-site variation once per site.
+
+#### Scenario: Sums are taken on the draws
+- **WHEN** `pool_by = "year"` is given
+- **THEN** it returns one row per year whose draws are the sum of that year's row draws, so its `estimate` is the median of the summed draws rather than the sum of the row medians
+
+#### Scenario: Per-area sums divide by the summed area
+- **WHEN** survey biomass is summed with `pool_by = c("site", "year")` and `per_area = TRUE`
+- **THEN** each draw is the site-year's total kg over its summed `survey_area_m2`
+
+#### Scenario: Groups follow factor levels
+- **WHEN** `pool_by = "region"` names a factor column
+- **THEN** the rows follow its level order, and a numeric or partly missing `region` errors naming the column
+
+### Requirement: Mean weight
+
+`kb_predict_mean_weight(weight, size, new_data = NULL, wetdry = NULL, carbon = NULL, ...)` SHALL take a weight and a size fit of the same species and return the expected weight per plant of each row's site-year: the expected weight at size averaged over the site-year's size distribution, truncated above at the largest size in the size fit's data. With `new_data = NULL` the rows SHALL be the site-years in the size fit's data; `new_data` with `site` and `year` columns, or a `kb_new_data()` grid from the size fit, SHALL give other rows. Its response SHALL be wet or dry weight in kg, or carbon in g C, per plant. It SHALL add `weight_support` and `size_support`: `"site-year"` where the site-year is in the fit's data, else `"site, year"` where both its site and its year are, else `"site"` or `"year"` where only one is, else `"none"`. The name-only `n_plants` (default 100) SHALL set the sizes averaged per draw, `progress` SHALL be `"bar"` or `"none"`, and `progress_dir` SHALL behave as for the fits. It SHALL take no `pool_by`. A `representative_site` SHALL be fitted in both fits. It SHALL error when the size fit has no observed data.
+
+#### Scenario: One row per sized site-year by default
+- **WHEN** `kb_predict_mean_weight(weight, size)` is called
+- **THEN** it returns one row per site-year in the size fit's data with `weight_support` and `size_support`
+
+#### Scenario: Mean weight averages the curve over sizes
+- **WHEN** a site-year's site and year effects are observed in both fits
+- **THEN** each draw equals the mean expected weight over its truncated size distribution, within the integration error of `n_plants`
+
+#### Scenario: Grids give typical years
+- **WHEN** it is called with `kb_new_data(size, by = "site")` and `new_levels = "average"`
+- **THEN** it returns one row per fitted site at the typical year
+
+### Requirement: Survey biomass
+
+`kb_predict_biomass_survey(weight, size, survey, wetdry = NULL, carbon = NULL, ...)` SHALL return the biomass of the surveyed area of each in situ survey. `size` SHALL be a size fit of the weight fit's species, when plants were tallied, or a table of every counted plant (see the fitting input data), when every plant was measured. Per draw, a survey's biomass in kg SHALL be its tallied `plants` times its site-year's mean plant weight (as `kb_predict_mean_weight()`), or the sum over its plant rows of the expected weight at each plant's size, half for a `partial` plant. A survey with no plants SHALL have zero biomass on every draw; when its plant rows are absent, a message SHALL list such surveys (suppressed by `progress = "none"`). The name-only `per_area` (default `TRUE`) SHALL divide by `survey_area_m2`, giving biomass per m² of the surveyed area; `FALSE` SHALL give kg in the surveyed area. The response column SHALL be named for the measure and scale: `biomass_kg_m2`, `dry_biomass_kg_m2`, or `carbon_biomass_g_m2` per m², and `biomass_kg`, `dry_biomass_kg`, or `carbon_biomass_kg` in total. Each row SHALL carry `year`, derived from `date`, and `weight_support`, and with a size fit `size_support`. `n_plants`, `progress`, and `progress_dir` SHALL apply with a size fit; `n_plants` supplied with a plant table SHALL error. A `representative_site` SHALL be fitted in the weight fit, and in the size fit when one is given.
+
+#### Scenario: One row per survey
+- **WHEN** `kb_predict_biomass_survey(weight, size, survey)` is called
+- **THEN** it returns one row per row of `survey`, in order, with the response column `biomass_kg_m2`
+
+#### Scenario: Tallied biomass is plants times mean weight
+- **WHEN** sizes come from a size fit
+- **THEN** each draw of a survey's biomass per m² equals its `plants` times the site-year's mean plant weight draw, over its `survey_area_m2`
+
+#### Scenario: Census biomass sums the plants
+- **WHEN** sizes come from a plant table
+- **THEN** each draw of a survey's total equals the sum of its plants' expected weights, half for each `partial` plant
+
+#### Scenario: An empty plant table gives zero biomass
+- **WHEN** the plant table has no rows
+- **THEN** every survey's biomass is zero on every draw and a message lists the surveys
+
+#### Scenario: A survey table with no rows errors
+- **WHEN** `survey` has no rows
+- **THEN** it errors naming `survey`
+
+#### Scenario: Several plots and surveys in a site-year
+- **WHEN** `survey` holds two plots in one site-year, one surveyed twice
+- **THEN** it returns three rows sharing that site-year's weight draws
+
+#### Scenario: A survey with no plant rows is zero
+- **WHEN** a survey has no rows in the plant table
+- **THEN** its biomass is zero on every draw and a message lists it
+
+#### Scenario: Totals scale by the surveyed area
+- **WHEN** it is called with `per_area = FALSE`
+- **THEN** each draw equals the per-m² draw times the row's `survey_area_m2`, in a column named `biomass_kg`
+
+### Requirement: Canopy biomass
+
+`kb_predict_biomass_canopy(fit, new_data, wetdry = NULL, carbon = NULL, ...)` SHALL take a cover calibration fit and a required `new_data` with one row per map of a site's canopy (a site-year MAY have several, such as flights weeks apart), with `canopy_area_m2` (`>= 0`), `tide_height_m`, `site`, and `year`, each with no missing values, and optionally `site_area_m2`, the area within the site boundary (`> 0` and at least `canopy_area_m2`). Per draw, a row's wet total SHALL be the expected biomass per m² of bed, the floor plus the canopy term at full cover with the row's site and year effects, times its tide-corrected canopy area, the canopy divided by one minus the tide slope times the tide height and capped at `site_area_m2` where supplied. The floor SHALL apply over the canopy area only. No observation-level variation SHALL be added. The response column SHALL be `biomass_kg`, `dry_biomass_kg`, or `carbon_biomass_kg`. Each row SHALL carry `cover_support`: `"site, year"` where both its site and its year are in the fit's data, else `"site"` or `"year"` where only one is, else `"none"`. Within a `pool_by` group, more than one row for the same site and year SHALL warn that their totals overlap.
+
+#### Scenario: One total per row
+- **WHEN** `kb_predict_biomass_canopy(fit, new_data)` is called
+- **THEN** it returns one row per row of `new_data`, in order, with a `cover_support` column and the response column `biomass_kg`
 
 #### Scenario: The total is bed biomass times canopy area
 - **WHEN** a row has a fitted site and year and zero tide height
-- **THEN** each draw of its total equals the cover fit's `posterior_epred()` at a fully covered unit plot (`canopy_area_m2 = 1`, `plot_area_m2 = 1`, `tide_height_m = 0`) of that site and year, times the row's `canopy_area_m2`
+- **THEN** each draw of its total equals the calibration fit's `posterior_epred()` at a fully covered unit plot (`canopy_area_m2 = 1`, `plot_area_m2 = 1`, `tide_height_m = 0`) of that site and year, times the row's `canopy_area_m2`
 
 #### Scenario: Totals scale with canopy area
 - **WHEN** two rows differ only in `canopy_area_m2`, with neither capped by `site_area_m2`
 - **THEN** the ratio of their totals equals the ratio of their canopy areas on every draw
+
+#### Scenario: The tide correction divides the canopy
+- **WHEN** a row has tide height `t`, with no `site_area_m2`
+- **THEN** each draw of its total equals the same row at zero tide height with its canopy divided by one minus that draw's tide slope times `t`
 
 #### Scenario: The site area caps the corrected canopy
 - **WHEN** a row's tide-corrected canopy would exceed its `site_area_m2`
@@ -341,31 +352,10 @@ Site and year SHALL be resolved as in the prediction verbs, with name-only `new_
 - **WHEN** a row's `canopy_area_m2` exceeds its `site_area_m2`, or `new_data` lacks `canopy_area_m2` or `tide_height_m`
 - **THEN** it errors naming the column
 
-#### Scenario: Dry and carbon are per-draw conversions of wet
-- **WHEN** `measure = "dry"` or `measure = "carbon"` is requested with the fits it needs
-- **THEN** each draw equals the wet total draw times the expected dry:wet ratio draw, and for carbon also times the expected carbon fraction draw
-
-#### Scenario: Sums are taken on the draws
-- **WHEN** `sum_by = "year"` is given
-- **THEN** it returns one row per year whose draws are the sum of that year's row totals, so its `estimate` is the median of the summed draws rather than the sum of the row medians
-
-#### Scenario: Groups follow factor levels
-- **WHEN** `sum_by = "region"` names a factor column
-- **THEN** the rows follow its level order, and a numeric or partly missing `region` errors naming the column
-
 #### Scenario: Overlapping rows in a sum warn
-- **WHEN** a `sum_by` group holds two rows with the same site and year
+- **WHEN** a `pool_by` group holds two rows with the same site and year
 - **THEN** it warns that their totals overlap and still returns the sum
 
 #### Scenario: An unseen site is sampled by default
-- **WHEN** a row names a site absent from the cover fit's data
+- **WHEN** a row names a site absent from the calibration fit's data
 - **THEN** its `cover_support` is `"year"` or `"none"`, and its interval under the default `"sample"` is at least as wide as under `"average"`
-
-#### Scenario: Mismatched or missing fits error
-- **WHEN** `measure = "carbon"` is requested without `carbon`, or the fits differ in species or number of draws
-- **THEN** it errors naming the problem
-
-#### Scenario: Reproducible under a seed
-- **WHEN** it is called twice after the same `set.seed()`
-- **THEN** the results are identical
-

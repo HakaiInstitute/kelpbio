@@ -22,17 +22,20 @@ Check that \code{data} contains the columns required to fit the \emph{Nereocysti
 luetkeana} size model, with appropriate types and values.
 }
 \details{
-Required columns: numeric \code{diameter_mm} (mm, > 0), and factor or character
-\code{site} and \code{year}, with no missing values.
+Required columns: numeric \code{diameter_mm} (mm, > 0), factor or character
+\code{site}, and \code{date} (a \code{Date}), with no missing values.
 
 \code{diameter_mm} is the maximum sub-bulb diameter of each plant, the same
 measurement as the predictor of the weight model (\code{\link[=kb_fit_weight_nereo]{kb_fit_weight_nereo()}}).
-Other columns are ignored.
+The year of each row is the year of \code{date}; a \code{year} column, if present,
+must agree with it. An optional \code{plot_id} (factor or character) records the
+plot a plant was measured on; the model works at site-year resolution and
+does not use it. Other columns are ignored.
 }
 \examples{
 data <- data.frame(
   diameter_mm = c(22, 41), site = factor(c("a", "b")),
-  year = factor(c("2020", "2021"))
+  date = as.Date(c("2020-08-10", "2021-08-12"))
 )
 kb_check_data_size_nereo(data)
 }
@@ -40,11 +43,11 @@ kb_check_data_size_nereo(data)
 Other data checks:
 \code{\link[=kb_check_data_carbon_macro]{kb_check_data_carbon_macro()}},
 \code{\link[=kb_check_data_carbon_nereo]{kb_check_data_carbon_nereo()}},
-\code{\link[=kb_check_data_cover_biomass_macro]{kb_check_data_cover_biomass_macro()}},
-\code{\link[=kb_check_data_cover_biomass_nereo]{kb_check_data_cover_biomass_nereo()}},
-\code{\link[=kb_check_data_density_macro]{kb_check_data_density_macro()}},
-\code{\link[=kb_check_data_density_nereo]{kb_check_data_density_nereo()}},
-\code{\link[=kb_check_data_size_macro]{kb_check_data_size_macro()}},
+\code{\link[=kb_check_data_cover_calibration_macro]{kb_check_data_cover_calibration_macro()}},
+\code{\link[=kb_check_data_cover_calibration_nereo]{kb_check_data_cover_calibration_nereo()}},
+\code{\link[=kb_check_data_plants_macro]{kb_check_data_plants_macro()}},
+\code{\link[=kb_check_data_plants_nereo]{kb_check_data_plants_nereo()}},
+\code{\link[=kb_check_data_survey]{kb_check_data_survey()}},
 \code{\link[=kb_check_data_weight_macro]{kb_check_data_weight_macro()}},
 \code{\link[=kb_check_data_weight_nereo]{kb_check_data_weight_nereo()}},
 \code{\link[=kb_check_data_wetdry_macro]{kb_check_data_wetdry_macro()}},

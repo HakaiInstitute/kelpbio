@@ -44,14 +44,6 @@ test_that("an object that is not a fit errors, attributed to the generic", {
 
 test_that("kb_model_describe renders the size notation blocks", {
   expect_snapshot(kb_model_describe(size_nereo_fit))
-  expect_snapshot(kb_model_describe(size_macro_fit))
-  expect_snapshot(kb_model_describe(size_macro_fit, prose = TRUE))
-})
-
-test_that("kb_model_describe renders the density notation blocks", {
-  expect_snapshot(kb_model_describe(density_nereo_fit))
-  expect_snapshot(kb_model_describe(density_nereo_fit, prose = TRUE))
-  expect_snapshot(kb_model_describe(density_macro_fit))
 })
 
 test_that("kb_model_describe renders the wet/dry model without random effects", {
@@ -64,10 +56,10 @@ test_that("kb_model_describe renders the carbon model", {
   expect_snapshot(kb_model_describe(carbon_macro_fit, prose = TRUE))
 })
 
-test_that("kb_model_describe renders the cover biomass model with each species' priors", {
-  expect_snapshot(kb_model_describe(cover_biomass_nereo_fit))
-  expect_snapshot(kb_model_describe(cover_biomass_macro_fit))
-  expect_snapshot(kb_model_describe(cover_biomass_macro_fit, prose = TRUE))
+test_that("kb_model_describe renders the cover calibration model with each species' priors", {
+  expect_snapshot(kb_model_describe(cover_calibration_nereo_fit))
+  expect_snapshot(kb_model_describe(cover_calibration_macro_fit))
+  expect_snapshot(kb_model_describe(cover_calibration_macro_fit, prose = TRUE))
 })
 
 test_that("kb_model_describe follows the power-law form", {

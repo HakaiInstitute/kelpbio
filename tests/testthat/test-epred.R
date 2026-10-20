@@ -28,12 +28,9 @@ test_that(".epred returns an rvar for every model", {
     weight_nereo_fit,
     weight_macro_fit,
     size_nereo_fit,
-    size_macro_fit,
-    density_nereo_fit,
-    density_macro_fit,
     wetdry_nereo_fit,
     carbon_nereo_fit,
-    cover_biomass_nereo_fit
+    cover_calibration_nereo_fit
   )
   for (fit in fits) {
     out <- .epred(fit, lp_rvar(fit, c(0.5, 1)))
@@ -47,32 +44,6 @@ test_that("the nereo size mean is the inverse log link", {
   expect_equal(.epred(size_nereo_fit, lp), exp(lp))
 })
 
-test_that("the macro size mean is the truncated mean, above the untruncated one", {
-  nd <- data.frame(site = fitted_sites(size_macro_fit, 2))
-  ep <- posterior_epred(size_macro_fit, new_data = nd)
-  mu <- posterior_linpred(size_macro_fit, transform = TRUE, new_data = nd)
-  theta <- as.vector(posterior::draws_of(size_macro_fit$draws$dispersion))
-  expect_equal(ep, mu / (1 - (1 + mu * theta)^(-1 / theta)))
-  expect_true(all(ep > mu))
-  expect_true(all(ep >= 1))
-})
-
-test_that("the nereo density mean carries the zero-inflation probability", {
-  nd <- data.frame(site = fitted_sites(density_nereo_fit, 2), area_m2 = 40)
-  ep <- posterior_epred(density_nereo_fit, new_data = nd)
-  mu <- posterior_linpred(density_nereo_fit, transform = TRUE, new_data = nd)
-  zi <- stats::plogis(
-    as.vector(posterior::draws_of(density_nereo_fit$draws$logit_zero_inflation))
-  )
-  expect_equal(ep, mu * (1 - zi))
-  expect_true(all(ep < mu))
-})
-
-test_that("the macro density mean is the inverse log link", {
-  lp <- lp_rvar(density_macro_fit, c(3, 3.5))
-  expect_equal(.epred(density_macro_fit, lp), exp(lp))
-})
-
 test_that("the wet/dry and carbon means are the inverse logit", {
   for (fit in list(wetdry_nereo_fit, carbon_nereo_fit)) {
     lp <- lp_rvar(fit, c(-2.4, -1))
@@ -83,8 +54,8 @@ test_that("the wet/dry and carbon means are the inverse logit", {
   }
 })
 
-test_that("the cover biomass mean is the inverse log, with no retransformation", {
-  lp <- lp_rvar(cover_biomass_nereo_fit, c(0.1, 0.5))
-  expect_equal(.epred(cover_biomass_nereo_fit, lp), exp(lp))
-  expect_equal(.epred(cover_biomass_nereo_fit, lp, expectation = FALSE), exp(lp))
+test_that("the cover calibration mean is mu, the inverse log, with no retransformation", {
+  lp <- lp_rvar(cover_calibration_nereo_fit, c(0.1, 0.5))
+  expect_equal(.epred(cover_calibration_nereo_fit, lp), exp(lp))
+  expect_equal(.epred(cover_calibration_nereo_fit, lp, expectation = FALSE), exp(lp))
 })

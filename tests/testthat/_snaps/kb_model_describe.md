@@ -101,118 +101,6 @@
         sd_year        ~ Exponential(1)
         sd_site_year   ~ Exponential(1)
 
----
-
-    Code
-      kb_model_describe(size_macro_fit)
-    Output
-      Size distribution - Macrocystis pyrifera
-      Response: fronds reaching 1 m above the holdfast
-      
-      Likelihood
-        fronds ~ NegBinomial(mu, 1 / dispersion) T[1, ]
-        E[fronds] = mu / (1 - P(fronds = 0))
-        log(mu) = intercept
-                + site_effect[site]
-                + year_effect[year]
-                + site_year_effect[site, year]
-      
-      Random effects
-        site_effect[site]            ~ Normal(0, sd_site)       site effect on log(mu)
-        year_effect[year]            ~ Normal(0, sd_year)       year effect on log(mu)
-        site_year_effect[site, year] ~ Normal(0, sd_site_year)  site:year effect on log(mu)
-      
-      Priors
-        intercept      ~ Normal(0, 2)
-        dispersion     ~ Exponential(1)
-        sd_site        ~ Exponential(1)
-        sd_year        ~ Exponential(1)
-        sd_site_year   ~ Exponential(1)
-
----
-
-    Code
-      kb_model_describe(size_macro_fit, prose = TRUE)
-    Output
-      The number of fronds reaching 1 m above the holdfast was modelled with a
-      zero-truncated negative binomial likelihood, with an overdispersion common
-      to all plants. The log of the untruncated mean, mu, varied by site, year,
-      and site:year. Regularising priors were placed on all parameters (see the
-      notation form for the hyperparameters).
-
-# kb_model_describe renders the density notation blocks
-
-    Code
-      kb_model_describe(density_nereo_fit)
-    Output
-      Density - Nereocystis luetkeana
-      Response: stipes counted on a transect of area_m2 (m²)
-      
-      Likelihood
-        stipes ~ ZeroInflatedNegBinomial(mu, 1 / dispersion, zi)
-        zi = inv_logit(logit_zero_inflation)
-        mu = area_m2 * density
-        E[stipes] = (1 - zi) * mu
-        log(density) = intercept
-                     + site_effect[site]
-                     + year_effect[year]
-                     + site_year_effect[site, year]
-      
-      Random effects
-        site_effect[site]            ~ Normal(0, sd_site)       site effect on log(density)
-        year_effect[year]            ~ Normal(0, sd_year)       year effect on log(density)
-        site_year_effect[site, year] ~ Normal(0, sd_site_year)  site:year effect on log(density)
-      
-      Priors
-        intercept            ~ Normal(0, 2)
-        logit_zero_inflation ~ Normal(0, 2)
-        dispersion           ~ Exponential(1)
-        sd_site              ~ Exponential(1)
-        sd_year              ~ Exponential(1)
-        sd_site_year         ~ Exponential(1)
-
----
-
-    Code
-      kb_model_describe(density_nereo_fit, prose = TRUE)
-    Output
-      The number of stipes on a transect was modelled with a zero-inflated
-      negative binomial likelihood, which combines two processes: occupancy, in
-      which a transect is unoccupied (a structural zero) with a probability, zi,
-      common to all transects; and a negative binomial count on occupied
-      transects, with mean mu, the transect area times the stipe density, and an
-      overdispersion common to all transects. The log stipe density varied by
-      site, year, and site:year. Regularising priors were placed on all
-      parameters (see the notation form for the hyperparameters).
-
----
-
-    Code
-      kb_model_describe(density_macro_fit)
-    Output
-      Density - Macrocystis pyrifera
-      Response: plants counted on a transect of area_m2 (m²)
-      
-      Likelihood
-        plants ~ NegBinomial(mu, 1 / dispersion)
-        mu = area_m2 * density
-        log(density) = intercept
-                     + site_effect[site]
-                     + year_effect[year]
-                     + site_year_effect[site, year]
-      
-      Random effects
-        site_effect[site]            ~ Normal(0, sd_site)       site effect on log(density)
-        year_effect[year]            ~ Normal(0, sd_year)       year effect on log(density)
-        site_year_effect[site, year] ~ Normal(0, sd_site_year)  site:year effect on log(density)
-      
-      Priors
-        intercept      ~ Normal(0, 2)
-        dispersion     ~ Exponential(1)
-        sd_site        ~ Exponential(1)
-        sd_year        ~ Exponential(1)
-        sd_site_year   ~ Exponential(1)
-
 # kb_model_describe renders the wet/dry model without random effects
 
     Code
@@ -267,20 +155,20 @@
       from. Regularising priors were placed on all parameters (see the notation
       form for the hyperparameters).
 
-# kb_model_describe renders the cover biomass model with each species' priors
+# kb_model_describe renders the cover calibration model with each species' priors
 
     Code
-      kb_model_describe(cover_biomass_nereo_fit)
+      kb_model_describe(cover_calibration_nereo_fit)
     Output
-      Cover biomass - Nereocystis luetkeana
-      Response: estimate, the in situ wet biomass of a plot (kg/m²), with compatibility limits lower and upper
+      Cover calibration - Nereocystis luetkeana
+      Response: biomass_kg_m2, the mean wet biomass of an in situ survey (kg/m²), with SD biomass_sd_kg_m2 from plant weight
       
       Likelihood
-        log(estimate) ~ Normal(log(mu), error_scaling * sd)
+        biomass_kg_m2 ~ Normal(mu, sigma) censored below at 0
+        sigma = sqrt(sd_residual^2 + (cv_residual * mu)^2 + biomass_sd_kg_m2^2)
         mu = biomass_floor
            + cover_slope * exp(year_effect[year] + site_effect[site]) * cover
-        cover = min(1, canopy_area_m2 * (1 + tide_height_slope * tide_height_m) / plot_area_m2)
-        sd = (log(upper) - log(lower)) / (2 * 1.96)  (log-scale SD of the in situ estimate)
+        cover = min(1, canopy_area_m2 / (1 - tide_height_slope * tide_height_m) / plot_area_m2)
       
       Random effects
         year_effect[year] ~ Normal(0, sd_year)  year effect on log(cover_slope)
@@ -289,25 +177,26 @@
       Priors
         cover_slope       ~ LogNormal(2, 1)
         biomass_floor     ~ Normal(0, 0.1) T[0, ]
-        tide_height_slope ~ Normal(0.276, 0.04) T[0, ]
-        error_scaling     ~ Normal(1, 0.5) T[0, ]
+        tide_height_slope ~ Normal(0.276, 0.04) T[0, 0.5]
+        sd_residual       ~ Exponential(2)
+        cv_residual       ~ Normal(0, 1) T[0, ]
         sd_year           ~ Exponential(1)
         sd_site           ~ Exponential(1)
 
 ---
 
     Code
-      kb_model_describe(cover_biomass_macro_fit)
+      kb_model_describe(cover_calibration_macro_fit)
     Output
-      Cover biomass - Macrocystis pyrifera
-      Response: estimate, the in situ wet biomass of a plot (kg/m²), with compatibility limits lower and upper
+      Cover calibration - Macrocystis pyrifera
+      Response: biomass_kg_m2, the mean wet biomass of an in situ survey (kg/m²), with SD biomass_sd_kg_m2 from plant weight
       
       Likelihood
-        log(estimate) ~ Normal(log(mu), error_scaling * sd)
+        biomass_kg_m2 ~ Normal(mu, sigma) censored below at 0
+        sigma = sqrt(sd_residual^2 + (cv_residual * mu)^2 + biomass_sd_kg_m2^2)
         mu = biomass_floor
            + cover_slope * exp(year_effect[year] + site_effect[site]) * cover
-        cover = min(1, canopy_area_m2 * (1 + tide_height_slope * tide_height_m) / plot_area_m2)
-        sd = (log(upper) - log(lower)) / (2 * 1.96)  (log-scale SD of the in situ estimate)
+        cover = min(1, canopy_area_m2 / (1 - tide_height_slope * tide_height_m) / plot_area_m2)
       
       Random effects
         year_effect[year] ~ Normal(0, sd_year)  year effect on log(cover_slope)
@@ -316,25 +205,28 @@
       Priors
         cover_slope       ~ LogNormal(2, 1)
         biomass_floor     ~ Normal(0.4, 0.3) T[0, ]
-        tide_height_slope ~ Normal(0.227, 0.03) T[0, ]
-        error_scaling     ~ Normal(1, 0.5) T[0, ]
+        tide_height_slope ~ Normal(0.227, 0.03) T[0, 0.5]
+        sd_residual       ~ Exponential(2)
+        cv_residual       ~ Normal(0, 1) T[0, ]
         sd_year           ~ Exponential(1)
         sd_site           ~ Exponential(1)
 
 ---
 
     Code
-      kb_model_describe(cover_biomass_macro_fit, prose = TRUE)
+      kb_model_describe(cover_calibration_macro_fit, prose = TRUE)
     Output
-      The in situ wet biomass of each surveyed plot was modelled as a biomass
+      The mean wet biomass of each in situ survey was modelled as a biomass
       floor, common to all sites and years, plus a term proportional to the
-      plot's tide-corrected canopy cover, whose slope varied by site and year.
-      Canopy area was increased by a fixed fraction per metre of tide height, and
-      cover was capped at 1. The log of each in situ estimate was modelled with a
-      Normal likelihood whose standard deviation was the log-scale standard
-      deviation of that estimate multiplied by a scaling parameter. Regularising
-      priors were placed on all parameters, with an informative prior on the tide
-      correction (see the notation form for the hyperparameters).
+      tide-corrected canopy cover of the survey's plot, whose slope varied by
+      site and year. Canopy area was divided by one minus a fixed share per metre
+      of tide height, and cover was capped at 1. The likelihood was Normal,
+      censored below at zero so that surveys with no plants counted contributed
+      the probability of zero or less, with a standard deviation combining a
+      constant, a part proportional to the mean, and the survey's standard
+      deviation from plant weight. Regularising priors were placed on all
+      parameters, with an informative prior on the tide correction (see the
+      notation form for the hyperparameters).
 
 # kb_model_describe follows the power-law form
 

@@ -6,7 +6,7 @@ test_that("kb_fit_weight returns a correctly-structured object", {
   skip_on_cran()
   d <- droplevels(subset(
     data_weight_sim_nereo,
-    as.integer(site) <= 2 & year %in% c("2019", "2020")
+    as.integer(site) <= 2 & format(date, "%Y") %in% c("2019", "2020")
   ))
   fit <- kb_fit_weight_nereo(
     d,
@@ -43,7 +43,7 @@ test_that("nthin > 1 still keeps exactly niters draws per chain", {
   skip_on_cran()
   d <- droplevels(subset(
     data_weight_sim_nereo,
-    as.integer(site) <= 2 & year %in% c("2019", "2020")
+    as.integer(site) <= 2 & format(date, "%Y") %in% c("2019", "2020")
   ))
   # nthin = 2 catches a thinning off-by-one that nthin = 1 cannot.
   fit <- kb_fit_weight_nereo(
@@ -63,7 +63,7 @@ test_that("prior_only fit ignores the data", {
   skip_on_cran()
   d <- droplevels(subset(
     data_weight_sim_nereo,
-    as.integer(site) <= 2 & year %in% c("2019", "2020")
+    as.integer(site) <= 2 & format(date, "%Y") %in% c("2019", "2020")
   ))
   f1 <- kb_fit_weight_nereo(
     d,
@@ -122,7 +122,7 @@ test_that("zero-row data error unless prior_only", {
 test_that("progress accepts only the three modes", {
   d <- droplevels(subset(
     data_weight_sim_nereo,
-    as.integer(site) == 1 & year == "2019"
+    as.integer(site) == 1 & format(date, "%Y") == "2019"
   ))
   expect_error(kb_fit_weight_nereo(d, progress = "loud"), "must be one of")
 })
@@ -132,7 +132,7 @@ test_that("progress_dir writes an artifact that kb_progress reads as complete", 
   skip_on_cran()
   d <- droplevels(subset(
     data_weight_sim_nereo,
-    as.integer(site) <= 2 & year %in% c("2019", "2020")
+    as.integer(site) <= 2 & format(date, "%Y") %in% c("2019", "2020")
   ))
   dir <- withr::local_tempdir()
   fit <- kb_fit_weight_nereo(
@@ -153,7 +153,7 @@ test_that("progress_dir writes an artifact that kb_progress reads as complete", 
 
 test_that("single-year data fit the site:year effect with an aliasing warning", {
   local_fit_stan_stub(weight_nereo_fit)
-  d <- droplevels(subset(weight_nereo_fit$data, year == "2019"))
+  d <- droplevels(subset(weight_nereo_fit$data, format(date, "%Y") == "2019"))
   expect_warning(
     fit <- kb_fit_weight_nereo(d, progress = "none"),
     "cannot be separated from the site effect"
@@ -189,7 +189,7 @@ test_that("a power-law fit samples and records no floor", {
   skip_on_cran()
   d <- droplevels(subset(
     data_weight_sim_nereo,
-    as.integer(site) <= 2 & year %in% c("2019", "2020")
+    as.integer(site) <= 2 & format(date, "%Y") %in% c("2019", "2020")
   ))
   fit <- kb_fit_weight_nereo(
     d,

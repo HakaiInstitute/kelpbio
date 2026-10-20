@@ -16,11 +16,9 @@
 \item{object}{A \code{kb_fit} object.}
 
 \item{new_data}{A data frame with the fit's predictor column (and optional
-\code{site} and \code{year} columns; for a density fit, an optional
-\code{area_m2} column giving each transect's area, 1 m² when absent;
-\code{canopy_area_m2}, \code{plot_area_m2}, \code{tide_height_m}, \code{lower}, and \code{upper} for
-a cover fit), or
-\code{NULL} to predict at the observed data.}
+\code{site} and \code{year} columns; \code{canopy_area_m2}, \code{plot_area_m2}, and
+\code{tide_height_m} for a cover calibration fit), or \code{NULL} to predict at the
+observed data.}
 
 \item{...}{These dots are for future extensions and must be empty.}
 
@@ -48,23 +46,21 @@ A draws-by-observations (\verb{D x N}) matrix.
 }
 \description{
 Draws from the posterior predictive distribution: replicate responses
-(weights, plant sizes, transect counts, dry:wet ratios, carbon fractions, or
-in situ biomass estimates) carrying both parameter uncertainty and
-observation noise from the model's likelihood. With \code{new_data = NULL} the
-replicates are at the observed data, as plotted by
-\link[=pp_check.kb_fit]{pp_check()}.
+(weights, plant sizes, dry:wet ratios, carbon fractions, or survey biomass)
+carrying both parameter uncertainty and observation noise from the model's
+likelihood. With \code{new_data = NULL} the replicates are at the observed data,
+as plotted by \link[=pp_check.kb_fit]{pp_check()}.
 }
 \details{
 Site and year columns in \code{new_data} are handled as in \code{\link[=posterior_epred]{posterior_epred()}}.
 
 The observation noise follows the fitted likelihood: Normal on log weight
 (\emph{Nereocystis} weight), Gamma (\emph{Macrocystis} weight), Weibull (\emph{Nereocystis}
-size), zero-truncated negative binomial (\emph{Macrocystis} size), zero-inflated
-negative binomial (\emph{Nereocystis} density), negative binomial (\emph{Macrocystis}
-density), Beta (wet/dry and carbon), and lognormal (cover). Density draws are
-counts on each row's \code{area_m2}, or on 1 m² when \code{new_data} has no \code{area_m2}
-column. For a cover biomass fit, \code{new_data} must include \code{lower} and \code{upper}
-(see \code{\link[=kb_fit_cover_biomass_nereo]{kb_fit_cover_biomass_nereo()}}).
+size), Beta (wet/dry and carbon), and Normal censored at zero (cover
+calibration). For a cover calibration fit, each row's spread includes the SD
+of its survey biomass, from a \code{biomass_sd_kg_m2} column or a
+\code{biomass_kg_m2} column of draws, and the residual alone when \code{new_data} has
+neither.
 
 Repeated calls return different draws; use \code{set.seed()} to reproduce them.
 }

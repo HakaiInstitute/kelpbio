@@ -6,7 +6,7 @@
 .vld_kb_fit_grouped <- function(x) {
   inherits(
     x,
-    c("kb_fit_weight", "kb_fit_size", "kb_fit_density", "kb_fit_cover_biomass")
+    c("kb_fit_weight", "kb_fit_size", "kb_fit_cover_calibration")
   )
 }
 
@@ -56,6 +56,54 @@
   all(x >= 1)
 }
 
+.vld_date <- function(x) {
+  inherits(x, "Date") && !anyNA(x)
+}
+
+# Run after checking `date`. A survey table need not carry `year`.
+.vld_date_year <- function(x) {
+  !"year" %in% names(x) || identical(as.character(x$year), date_year(x$date))
+}
+
+.vld_unique_surveys <- function(x) {
+  !anyDuplicated(survey_key(x$site, x$plot_id, x$date))
+}
+
+# The drone pairing of a survey: all three columns given or all missing on each
+# row, or the columns absent.
+.vld_drone_columns <- function(x) {
+  cols <- c("plot_area_m2", "canopy_area_m2", "tide_height_m")
+  present <- intersect(cols, names(x))
+  if (!length(present)) {
+    return(TRUE)
+  }
+  if (length(present) < length(cols)) {
+    return(FALSE)
+  }
+  missing <- is.na(x[cols])
+  if (!all(rowSums(missing) %in% c(0L, length(cols)))) {
+    return(FALSE)
+  }
+  paired <- !missing[, 1L]
+  d <- x[paired, cols, drop = FALSE]
+  all(vapply(d, is.numeric, logical(1))) &&
+    all(vapply(d, .vld_finite, logical(1))) &&
+    all(d$plot_area_m2 > 0) &&
+    all(d$canopy_area_m2 >= 0) &&
+    all(d$canopy_area_m2 <= d$plot_area_m2)
+}
+
+.vld_partial <- function(x) {
+  is.logical(x) && !anyNA(x)
+}
+
+.vld_plants_join <- function(plants, survey) {
+  all(
+    survey_key(plants$site, plants$plot_id, plants$date) %in%
+      survey_key(survey$site, survey$plot_id, survey$date)
+  )
+}
+
 .vld_new_data_weight_macro <- function(x) {
   is.data.frame(x) && "fronds" %in% names(x) && .vld_frond_count(x$fronds)
 }
@@ -63,12 +111,6 @@
 # Size new_data has no predictor column.
 .vld_new_data_size <- function(x) {
   is.data.frame(x)
-}
-
-# Density new_data may carry the transect area, read by the draw generics.
-.vld_new_data_density <- function(x) {
-  is.data.frame(x) &&
-    (!"area_m2" %in% names(x) || .vld_positive_measure(x$area_m2))
 }
 
 .vld_progress <- function(x) {
@@ -110,7 +152,7 @@
   !isTRUE(fit$meta$prior_only) && .vld_observed_data(fit)
 }
 
-# The survey columns of cover biomass data and new_data.
+# The survey columns of cover calibration data and new_data.
 .vld_cover_survey <- function(x) {
   is.data.frame(x) &&
     all(c("canopy_area_m2", "plot_area_m2", "tide_height_m") %in% names(x)) &&
@@ -122,43 +164,13 @@
     all(x$canopy_area_m2 <= x$plot_area_m2) &&
     is.numeric(x$tide_height_m) &&
     !anyNA(x$tide_height_m) &&
-    .vld_finite(x$tide_height_m)
+    .vld_finite(x$tide_height_m) &&
+    (!"biomass_sd_kg_m2" %in% names(x) || .vld_biomass_sd(x$biomass_sd_kg_m2))
 }
 
-# lower strictly below upper, so the implied log-scale SD is positive.
-.vld_biomass_limits <- function(x) {
-  is.data.frame(x) &&
-    all(c("lower", "upper") %in% names(x)) &&
-    .vld_positive_measure(x$lower) &&
-    .vld_positive_measure(x$upper) &&
-    all(x$lower < x$upper)
+.vld_biomass_sd <- function(x) {
+  is.numeric(x) && !anyNA(x) && .vld_finite(x) && all(x >= 0)
 }
-
-.vld_plot_biomass <- function(x) {
-  is.data.frame(x) &&
-    all(c("site", "year") %in% names(x)) &&
-    (is.character(x$site) || is.factor(x$site)) &&
-    (is.character(x$year) || is.factor(x$year)) &&
-    !anyNA(x$site) &&
-    !anyNA(x$year) &&
-    .vld_biomass_estimate(x) &&
-    .vld_biomass_response(x) &&
-    !anyDuplicated(site_year_key(x$site, x$year))
-}
-
-# A kb_predictions object records its response; the cover fit takes wet biomass.
-.vld_biomass_response <- function(x) {
-  response <- attr(x, "kb_response", exact = TRUE)
-  is.null(response) || identical(response, "biomass_kg_m2")
-}
-
-.vld_biomass_estimate <- function(x) {
-  .vld_biomass_limits(x) &&
-    "estimate" %in% names(x) &&
-    .vld_positive_measure(x$estimate) &&
-    all(x$lower <= x$estimate & x$estimate <= x$upper)
-}
-
 
 # Drone surveys of sites for site totals; `site_area_m2` is optional.
 .vld_site_surveys <- function(x) {
@@ -182,12 +194,23 @@
   (is.character(x) || is.factor(x)) && !anyNA(x)
 }
 
-.vld_sum_by <- function(sum_by, data) {
-  is.null(sum_by) ||
-    (is.character(sum_by) &&
-      !anyNA(sum_by) &&
-      all(sum_by %in% names(data)) &&
-      all(vapply(data[sum_by], .vld_group_column, logical(1))))
+.vld_census_size <- function(weight, plants) {
+  weight$meta$predictor %in% names(plants)
+}
+
+.vld_measure_fits <- function(measure, wetdry, carbon) {
+  (!measure %in% c("dry", "carbon") || !is.null(wetdry)) &&
+    (measure != "carbon" || !is.null(carbon)) &&
+    (is.null(wetdry) || .vld_kb_fit(wetdry, "kb_fit_wetdry")) &&
+    (is.null(carbon) || .vld_kb_fit(carbon, "kb_fit_carbon"))
+}
+
+.vld_pool_by <- function(pool_by, data) {
+  is.null(pool_by) ||
+    (is.character(pool_by) &&
+      !anyNA(pool_by) &&
+      all(pool_by %in% names(data)) &&
+      all(vapply(data[pool_by], .vld_group_column, logical(1))))
 }
 
 .vld_predictions <- function(x) {

@@ -1,10 +1,10 @@
 # missing, mistyped, and impossible values error
 
     Code
-      kb_check_data_weight_nereo(good[c("weight_kg", "site", "year")])
+      kb_check_data_weight_nereo(good[c("weight_kg", "site", "date")])
     Condition
       Error in `kb_check_data_weight_nereo()`:
-      ! `good[c("weight_kg", "site", "year")]` must include 'diameter_mm'.
+      ! `good[c("weight_kg", "site", "date")]` must include 'diameter_mm'.
 
 ---
 

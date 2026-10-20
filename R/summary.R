@@ -101,8 +101,8 @@ summary.kb_fit <- function(
   if (identical(model, "wetdry")) {
     return("Wet/dry")
   }
-  if (identical(model, "cover_biomass")) {
-    return("Cover biomass")
+  if (identical(model, "cover_calibration")) {
+    return("Cover calibration")
   }
   .capitalize(model)
 }

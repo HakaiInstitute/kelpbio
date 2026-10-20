@@ -65,59 +65,6 @@ test_that("nereo size log_lik matches the Weibull density computed directly", {
   expect_equal(log_lik(size_nereo_fit), expected, tolerance = 1e-10)
 })
 
-test_that("macro size log_lik matches the truncated negative binomial computed directly", {
-  mu <- exp(posterior_linpred(size_macro_fit))
-  theta <- as.vector(posterior::draws_of(size_macro_fit$draws$dispersion))
-  y <- size_macro_fit$data$fronds
-  expected <- t(vapply(
-    seq_along(theta),
-    function(d) {
-      size <- 1 / theta[d]
-      stats::dnbinom(y, mu = mu[d, ], size = size, log = TRUE) -
-        log(1 - stats::dnbinom(0, mu = mu[d, ], size = size))
-    },
-    numeric(length(y))
-  ))
-  expect_equal(log_lik(size_macro_fit), expected, tolerance = 1e-8)
-})
-
-test_that("nereo density log_lik matches the zero-inflated negative binomial computed directly", {
-  mu <- exp(posterior_linpred(density_nereo_fit))
-  theta <- as.vector(posterior::draws_of(density_nereo_fit$draws$dispersion))
-  zi <- stats::plogis(
-    as.vector(posterior::draws_of(density_nereo_fit$draws$logit_zero_inflation))
-  )
-  y <- density_nereo_fit$data$stipes
-  expected <- t(vapply(
-    seq_len(nrow(mu)),
-    function(d) {
-      p <- (1 - zi[d]) * stats::dnbinom(y, mu = mu[d, ], size = 1 / theta[d])
-      log(p + zi[d] * (y == 0))
-    },
-    numeric(length(y))
-  ))
-  expect_equal(log_lik(density_nereo_fit), expected, tolerance = 1e-8)
-})
-
-test_that("macro density log_lik matches the negative binomial computed directly", {
-  mu <- exp(posterior_linpred(density_macro_fit))
-  theta <- as.vector(posterior::draws_of(density_macro_fit$draws$dispersion))
-  y <- density_macro_fit$data$plants
-  expected <- t(vapply(
-    seq_len(nrow(mu)),
-    function(d) stats::dnbinom(y, mu = mu[d, ], size = 1 / theta[d], log = TRUE),
-    numeric(length(y))
-  ))
-  expect_equal(log_lik(density_macro_fit), expected, tolerance = 1e-8)
-})
-
-test_that("the density log-likelihood uses each transect's area", {
-  fit <- density_macro_fit
-  doubled <- fit
-  doubled$data$area_m2 <- 2 * doubled$data$area_m2
-  expect_false(isTRUE(all.equal(log_lik(fit), log_lik(doubled))))
-})
-
 test_that("wet/dry log_lik matches the Beta density of the ratio computed directly", {
   mu <- stats::plogis(posterior_linpred(wetdry_nereo_fit))
   precision <- as.vector(posterior::draws_of(wetdry_nereo_fit$draws$precision))
@@ -156,16 +103,22 @@ test_that("carbon log_lik matches the Beta density of the fraction computed dire
   expect_equal(log_lik(carbon_macro_fit), expected, tolerance = 1e-10)
 })
 
-test_that("cover log_lik is the Normal density of the log estimate with its Jacobian", {
-  fit <- cover_biomass_nereo_fit
-  mu <- posterior_linpred(fit)
-  scaling <- as.vector(posterior::draws_of(fit$draws$error_scaling))
-  sd_log <- cover_log_sd(fit$data$lower, fit$data$upper, 0.95)
-  y <- fit$data$estimate
+test_that("cover log_lik is the censored Normal density of the survey biomass", {
+  fit <- cover_calibration_nereo_fit
+  mu <- exp(posterior_linpred(fit))
+  sd_residual <- as.vector(posterior::draws_of(fit$draws$sd_residual))
+  cv_residual <- as.vector(posterior::draws_of(fit$draws$cv_residual))
+  y <- fit$data$biomass_kg_m2
+  biomass_sd <- fit$data$biomass_sd_kg_m2
   expected <- t(vapply(
     seq_len(nrow(mu)),
     function(d) {
-      stats::dlnorm(y, mu[d, ], scaling[d] * sd_log, log = TRUE)
+      sd <- sqrt(sd_residual[d]^2 + (cv_residual[d] * mu[d, ])^2 + biomass_sd^2)
+      ifelse(
+        y == 0,
+        stats::pnorm(0, mu[d, ], sd, log.p = TRUE),
+        stats::dnorm(y, mu[d, ], sd, log = TRUE)
+      )
     },
     numeric(length(y))
   ))
@@ -178,15 +131,12 @@ test_that("log_lik agrees with the Stan model's likelihood for every model", {
     weight_nereo_fit,
     weight_macro_fit,
     size_nereo_fit,
-    size_macro_fit,
-    density_nereo_fit,
-    density_macro_fit,
     wetdry_nereo_fit,
     wetdry_macro_fit,
     carbon_nereo_fit,
     carbon_macro_fit,
-    cover_biomass_nereo_fit,
-    cover_biomass_macro_fit
+    cover_calibration_nereo_fit,
+    cover_calibration_macro_fit
   )
   for (fit in fits) {
     stan <- stan_log_lik(fit)

@@ -1,10 +1,10 @@
 # missing, mistyped, and impossible values error
 
     Code
-      kb_check_data_size_nereo(good[c("site", "year")])
+      kb_check_data_size_nereo(good[c("site", "date")])
     Condition
       Error in `kb_check_data_size_nereo()`:
-      ! `good[c("site", "year")]` must include 'diameter_mm'.
+      ! `good[c("site", "date")]` must include 'diameter_mm'.
 
 ---
 

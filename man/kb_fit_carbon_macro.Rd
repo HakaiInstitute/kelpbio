@@ -79,7 +79,7 @@ context.
 
 The sampler runs with \code{adapt_delta = 0.95} by default, which reduces
 divergences at the cost of slightly longer runtime. Override it, or set any
-other sampler control, by passing a \code{control} list through \code{...}, e.g.
+other sampler control, by passing a \code{control} list through \code{...}, for example
 \code{control = list(adapt_delta = 0.99)}; only the entries supplied are changed.
 See the \code{control} argument of \code{\link[rstan:stan]{rstan::stan()}} for the full set of entries.
 
@@ -97,11 +97,8 @@ tidy(fit)
 \seealso{
 Other fit functions:
 \code{\link[=kb_fit_carbon_nereo]{kb_fit_carbon_nereo()}},
-\code{\link[=kb_fit_cover_biomass_macro]{kb_fit_cover_biomass_macro()}},
-\code{\link[=kb_fit_cover_biomass_nereo]{kb_fit_cover_biomass_nereo()}},
-\code{\link[=kb_fit_density_macro]{kb_fit_density_macro()}},
-\code{\link[=kb_fit_density_nereo]{kb_fit_density_nereo()}},
-\code{\link[=kb_fit_size_macro]{kb_fit_size_macro()}},
+\code{\link[=kb_fit_cover_calibration_macro]{kb_fit_cover_calibration_macro()}},
+\code{\link[=kb_fit_cover_calibration_nereo]{kb_fit_cover_calibration_nereo()}},
 \code{\link[=kb_fit_size_nereo]{kb_fit_size_nereo()}},
 \code{\link[=kb_fit_weight_macro]{kb_fit_weight_macro()}},
 \code{\link[=kb_fit_weight_nereo]{kb_fit_weight_nereo()}},

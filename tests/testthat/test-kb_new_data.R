@@ -4,20 +4,16 @@ test_that("kb_new_data gives one row per fitted level of by", {
   expect_identical(levels(site$site), size_nereo_fit$meta$site_levels)
   expect_equal(nrow(site), length(size_nereo_fit$meta$site_levels))
 
-  year <- kb_new_data(density_macro_fit, by = "year")
+  year <- kb_new_data(size_nereo_fit, by = "year")
   expect_named(year, "year")
-  expect_equal(nrow(year), length(density_macro_fit$meta$year_levels))
+  expect_equal(nrow(year), length(size_nereo_fit$meta$year_levels))
 
-  sy <- kb_new_data(size_macro_fit, by = c("site", "year"))
-  expect_equal(nrow(sy), length(size_macro_fit$meta$site_year_levels))
+  sy <- kb_new_data(size_nereo_fit, by = c("site", "year"))
+  expect_equal(nrow(sy), length(size_nereo_fit$meta$site_year_levels))
 
-  pop <- kb_new_data(density_nereo_fit)
+  pop <- kb_new_data(size_nereo_fit)
   expect_equal(nrow(pop), 1L)
   expect_length(names(pop), 0L)
-})
-
-test_that("kb_new_data holds no area column for a density fit", {
-  expect_false("area_m2" %in% names(kb_new_data(density_nereo_fit, by = "site")))
 })
 
 test_that("a weight grid spans the observed predictor range by default", {
@@ -61,7 +57,7 @@ test_that("weight grids are marked as curves and others are not", {
 })
 
 test_that("a cover grid is unit-plot surveys over cover from 0 to 1", {
-  grid <- kb_new_data(cover_biomass_nereo_fit, by = "site")
+  grid <- kb_new_data(cover_calibration_nereo_fit, by = "site")
   expect_named(
     grid,
     c("site", "cover", "canopy_area_m2", "plot_area_m2", "tide_height_m")
@@ -70,9 +66,9 @@ test_that("a cover grid is unit-plot surveys over cover from 0 to 1", {
   expect_equal(grid$canopy_area_m2, grid$cover)
   expect_true(all(grid$plot_area_m2 == 1 & grid$tide_height_m == 0))
   expect_true(attr(grid, "kb_curve"))
-  expect_error(kb_new_data(cover_biomass_nereo_fit, cover = 1.5), "cover")
-  expect_error(kb_new_data(cover_biomass_nereo_fit, cover = NA_real_), "cover")
-  expect_error(kb_new_data(cover_biomass_nereo_fit, diameter_mm = 30), "cover")
+  expect_error(kb_new_data(cover_calibration_nereo_fit, cover = 1.5), "cover")
+  expect_error(kb_new_data(cover_calibration_nereo_fit, cover = NA_real_), "cover")
+  expect_error(kb_new_data(cover_calibration_nereo_fit, diameter_mm = 30), "cover")
 })
 
 test_that("kb_new_data rejects a bad by, predictor, or model", {
@@ -102,8 +98,8 @@ test_that("grouping levels supplied in ... are crossed into the grid", {
 })
 
 test_that("a supplied level the fit has not seen predicts as a new level", {
-  grid <- kb_new_data(density_nereo_fit, by = "site", year = 2099)
-  p <- kb_predict_density(density_nereo_fit, grid)
+  grid <- kb_new_data(size_nereo_fit, by = "site", year = 2099)
+  p <- kb_predict_size(size_nereo_fit, grid)
   expect_identical(nrow(p), nrow(grid))
   expect_true(all(is.finite(p$estimate)))
 })
@@ -114,7 +110,7 @@ test_that("errors from ... name kb_new_data()", {
     quote(kb_new_data)
   )
   expect_identical(
-    expect_error(kb_new_data(cover_biomass_nereo_fit, cover = 1.5))$call[[1]],
+    expect_error(kb_new_data(cover_calibration_nereo_fit, cover = 1.5))$call[[1]],
     quote(kb_new_data)
   )
   expect_snapshot(error = TRUE, kb_new_data(weight_nereo_fit, by = "year", year = 2021))
@@ -125,5 +121,5 @@ test_that("supplied predictor values are checked like the model's data", {
   expect_error(kb_new_data(weight_nereo_fit, diameter_mm = -1), "greater than 0")
   expect_error(kb_new_data(weight_nereo_fit, diameter_mm = Inf), "finite")
   expect_error(kb_new_data(weight_macro_fit, fronds = 2.5), "whole number")
-  expect_error(kb_new_data(cover_biomass_nereo_fit, cover = 1.2), "between 0 and 1")
+  expect_error(kb_new_data(cover_calibration_nereo_fit, cover = 1.2), "between 0 and 1")
 })

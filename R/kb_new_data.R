@@ -2,7 +2,7 @@
 #'
 #' Build a grid of rows to predict at: one row per fitted site, year, or
 #' observed site-year, or per supplied site or year, crossed for a weight or
-#' cover biomass fit with a sequence of its predictor.
+#' cover calibration fit with a sequence of its predictor.
 #'
 #' @details
 #' Pass the result as `new_data` to the model's prediction function, for example
@@ -10,7 +10,7 @@
 #' named in `by` are absent from the grid, so the prediction treats them as set
 #' by `new_levels`: with the default `"average"`, the typical site or year.
 #'
-#' For a cover biomass fit, the predictor `cover` is the tide-corrected
+#' For a cover calibration fit, the predictor `cover` is the tide-corrected
 #' proportion of the plot covered by canopy (0 to 1); each row is then a unit
 #' plot at zero tide height, with the survey columns that give that cover. A
 #' single predictor value gives one row per group at that value.
@@ -26,16 +26,16 @@
 #' predicting.
 #'
 #' @inheritParams params
-#' @param fit A `kb_fit_weight`, `kb_fit_size`, `kb_fit_density`, or
-#'   `kb_fit_cover_biomass` object.
-#' @param ... Named values to cross into the grid: for a weight or cover biomass
+#' @param fit A `kb_fit_weight`, `kb_fit_size`, or `kb_fit_cover_calibration`
+#'   object.
+#' @param ... Named values to cross into the grid: for a weight or cover calibration
 #'   fit, the predictor values as a numeric vector (`diameter_mm`, `fronds`, or
 #'   `cover`); and the levels of `site` or `year` not named in `by`. If the
 #'   predictor is omitted, 30 evenly spaced values span the observed range for
 #'   weight (whole numbers for `fronds`), and 0 to 1 for cover.
 #'
 #' @returns A tibble with the grouping columns named in `by` or `...`, the predictor
-#'   column for a weight or cover biomass fit, and for a cover biomass fit the
+#'   column for a weight or cover calibration fit, and for a cover calibration fit the
 #'   survey columns.
 #' @family prediction functions
 #' @export
@@ -92,15 +92,10 @@ kb_new_data <- function(fit, by = NULL, ...) {
   grid
 }
 
-#' @export
-.grid_columns.kb_fit_density <- function(fit, grid) {
-  grid
-}
-
 # Cover is already tide-corrected: on a unit plot at zero tide height the
 # correction and the cap leave it unchanged.
 #' @export
-.grid_columns.kb_fit_cover_biomass <- function(fit, grid) {
+.grid_columns.kb_fit_cover_calibration <- function(fit, grid) {
   grid$canopy_area_m2 <- grid$cover
   grid$plot_area_m2 <- 1
   grid$tide_height_m <- 0

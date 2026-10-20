@@ -6,7 +6,7 @@ test_that("kb_fit_weight_macro returns a correctly-structured object", {
   skip_on_cran()
   d <- droplevels(subset(
     data_weight_sim_macro,
-    as.integer(site) <= 2 & year %in% c("2019", "2020")
+    as.integer(site) <= 2 & format(date, "%Y") %in% c("2019", "2020")
   ))
   fit <- kb_fit_weight_macro(
     d,
@@ -44,7 +44,7 @@ test_that("prior_only fit ignores the data", {
   skip_on_cran()
   d <- droplevels(subset(
     data_weight_sim_macro,
-    as.integer(site) <= 2 & year %in% c("2019", "2020")
+    as.integer(site) <= 2 & format(date, "%Y") %in% c("2019", "2020")
   ))
   f1 <- kb_fit_weight_macro(
     d,

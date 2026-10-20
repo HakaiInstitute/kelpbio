@@ -22,7 +22,7 @@ test_that("data_support accepts factors", {
 })
 
 test_that("cover_support names the data the cover fit has, without site-year", {
-  fit <- cover_biomass_nereo_fit
+  fit <- cover_calibration_nereo_fit
   support <- cover_support(
     fit,
     c(rep(fitted_sites(fit), 2), "new", "new"),
