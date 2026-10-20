@@ -4,7 +4,7 @@
 
 Predicting from a fit: the prediction verb of each model and the grids built for
 it, how groups and optional inputs are resolved per row, the rstantools draw
-generics, plot and site biomass, and plotting predictions.
+generics, survey biomass, totals over mapped canopy, and plotting predictions.
 ## Requirements
 ### Requirement: Groups are resolved per row
 
@@ -274,7 +274,7 @@ Each model SHALL have one prediction verb, `kb_predict_<model>()`, returning a `
 
 ### Requirement: Mean weight
 
-`kb_predict_mean_weight(weight, size, new_data = NULL, wetdry = NULL, carbon = NULL, ...)` SHALL take a weight and a size fit of the same species and return the expected weight per plant of each row's site-year: the expected weight at size averaged over the site-year's size distribution, truncated above at the largest size in the size fit's data. With `new_data = NULL` the rows SHALL be the site-years in the size fit's data; `new_data` with `site` and `year` columns, or a `kb_new_data()` grid from the size fit, SHALL give other rows. Its response SHALL be wet or dry weight in kg, or carbon in g C, per plant. It SHALL add `weight_support` and `size_support`: `"site-year"` where the site-year is in the fit's data, else `"site, year"` where both its site and its year are, else `"site"` or `"year"` where only one is, else `"none"`. The name-only `n_plants` (default 100) SHALL set the sizes averaged per draw, and `progress` and `progress_dir` SHALL behave as for the fits. It SHALL take no `pool_by`. A `representative_site` SHALL be fitted in both fits. It SHALL error when the size fit has no observed data.
+`kb_predict_mean_weight(weight, size, new_data = NULL, wetdry = NULL, carbon = NULL, ...)` SHALL take a weight and a size fit of the same species and return the expected weight per plant of each row's site-year: the expected weight at size averaged over the site-year's size distribution, truncated above at the largest size in the size fit's data. With `new_data = NULL` the rows SHALL be the site-years in the size fit's data; `new_data` with `site` and `year` columns, or a `kb_new_data()` grid from the size fit, SHALL give other rows. Its response SHALL be wet or dry weight in kg, or carbon in g C, per plant. It SHALL add `weight_support` and `size_support`: `"site-year"` where the site-year is in the fit's data, else `"site, year"` where both its site and its year are, else `"site"` or `"year"` where only one is, else `"none"`. The name-only `n_plants` (default 100) SHALL set the sizes averaged per draw, `progress` SHALL be `"bar"` or `"none"`, and `progress_dir` SHALL behave as for the fits. It SHALL take no `pool_by`. A `representative_site` SHALL be fitted in both fits. It SHALL error when the size fit has no observed data.
 
 #### Scenario: One row per sized site-year by default
 - **WHEN** `kb_predict_mean_weight(weight, size)` is called
@@ -304,6 +304,14 @@ Each model SHALL have one prediction verb, `kb_predict_<model>()`, returning a `
 - **WHEN** sizes come from a plant table
 - **THEN** each draw of a survey's total equals the sum of its plants' expected weights, half for each `partial` plant
 
+#### Scenario: An empty plant table gives zero biomass
+- **WHEN** the plant table has no rows
+- **THEN** every survey's biomass is zero on every draw and a message lists the surveys
+
+#### Scenario: A survey table with no rows errors
+- **WHEN** `survey` has no rows
+- **THEN** it errors naming `survey`
+
 #### Scenario: Several plots and surveys in a site-year
 - **WHEN** `survey` holds two plots in one site-year, one surveyed twice
 - **THEN** it returns three rows sharing that site-year's weight draws
@@ -318,7 +326,7 @@ Each model SHALL have one prediction verb, `kb_predict_<model>()`, returning a `
 
 ### Requirement: Canopy biomass
 
-`kb_predict_biomass_canopy(fit, new_data, wetdry = NULL, carbon = NULL, ...)` SHALL take a cover calibration fit and a required `new_data` with one row per mapped canopy, with `canopy_area_m2` (`>= 0`), `tide_height_m`, `site`, and `year`, each with no missing values, and optionally `site_area_m2`, the area within the site boundary (`> 0` and at least `canopy_area_m2`). Per draw, a row's wet total SHALL be the expected biomass per m² of bed, the floor plus the canopy term at full cover with the row's site and year effects, times its tide-corrected canopy area, the canopy divided by one minus the tide slope times the tide height and capped at `site_area_m2` where supplied. The floor SHALL apply over the canopy area only. No observation-level variation SHALL be added. The name-only `per_area` (default `FALSE`) SHALL give kg over the canopy; `TRUE` SHALL divide by the tide-corrected canopy area, giving kg per m² of canopy. The response column SHALL be `biomass_kg`, `dry_biomass_kg`, or `carbon_biomass_kg` in total, and `biomass_kg_m2`, `dry_biomass_kg_m2`, or `carbon_biomass_g_m2` per m². Each row SHALL carry `cover_support`: `"site, year"` where both its site and its year are in the fit's data, else `"site"` or `"year"` where only one is, else `"none"`. Within a `pool_by` group, more than one row for the same site and year SHALL warn that their totals overlap.
+`kb_predict_biomass_canopy(fit, new_data, wetdry = NULL, carbon = NULL, ...)` SHALL take a cover calibration fit and a required `new_data` with one row per map of a site's canopy (a site-year MAY have several, such as flights weeks apart), with `canopy_area_m2` (`>= 0`), `tide_height_m`, `site`, and `year`, each with no missing values, and optionally `site_area_m2`, the area within the site boundary (`> 0` and at least `canopy_area_m2`). Per draw, a row's wet total SHALL be the expected biomass per m² of bed, the floor plus the canopy term at full cover with the row's site and year effects, times its tide-corrected canopy area, the canopy divided by one minus the tide slope times the tide height and capped at `site_area_m2` where supplied. The floor SHALL apply over the canopy area only. No observation-level variation SHALL be added. The response column SHALL be `biomass_kg`, `dry_biomass_kg`, or `carbon_biomass_kg`. Each row SHALL carry `cover_support`: `"site, year"` where both its site and its year are in the fit's data, else `"site"` or `"year"` where only one is, else `"none"`. Within a `pool_by` group, more than one row for the same site and year SHALL warn that their totals overlap.
 
 #### Scenario: One total per row
 - **WHEN** `kb_predict_biomass_canopy(fit, new_data)` is called

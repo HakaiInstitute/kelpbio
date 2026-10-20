@@ -26,10 +26,10 @@
 #' @param measure A string, one of `"wet"` (kg), `"dry"` (kg), or `"carbon"`
 #'   (g C), giving the weight to predict.
 #'
-#' @returns A `kb_predictions` object: the rows of `new_data` with added `weight_support` and
-#'   `size_support`, the draws of the mean weight in a `weight_kg`,
-#'   `dry_weight_kg`, or `carbon_weight_g` column, and `estimate`, `lower`, and
-#'   `upper`.
+#' @returns A `kb_predictions` object: the rows of `new_data` with added
+#'   `weight_support` and `size_support`, the draws of the mean weight in a
+#'   `weight_kg`, `dry_weight_kg`, or `carbon_weight_g` column, and `estimate`,
+#'   `lower`, and `upper`.
 #' @family prediction functions
 #' @seealso [kb_predict_biomass_survey()] for the biomass of in situ surveys.
 #' @export

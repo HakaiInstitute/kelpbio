@@ -201,10 +201,10 @@
 
 # A table of counted plants must give the weight fit's predictor.
 .chk_census_size <- function(weight, plants, call = rlang::caller_env()) {
-  predictor <- weight$meta$predictor
-  if (predictor %in% names(plants)) {
+  if (.vld_census_size(weight, plants)) {
     return(invisible(plants))
   }
+  predictor <- weight$meta$predictor
   cli::cli_abort(
     c(
       "{.arg size} must have a {.field {predictor}} column, the predictor of {.arg weight}.",
@@ -516,7 +516,6 @@
   )
 }
 
-
 # Validate new_data's predictor column.
 .chk_new_data <- function(fit, new_data) {
   UseMethod(".chk_new_data")
@@ -584,6 +583,13 @@
   chk::chk_numeric(x$tide_height_m, x_name = nm)
   chk::chk_not_any_na(x$tide_height_m, x_name = nm)
   .chk_finite(x$tide_height_m, nm)
+  if ("biomass_sd_kg_m2" %in% names(x)) {
+    nm <- column_xname(x_name, "biomass_sd_kg_m2")
+    chk::chk_numeric(x$biomass_sd_kg_m2, x_name = nm)
+    chk::chk_not_any_na(x$biomass_sd_kg_m2, x_name = nm)
+    .chk_finite(x$biomass_sd_kg_m2, nm)
+    chk::chk_gte(x$biomass_sd_kg_m2, value = 0, x_name = nm)
+  }
 }
 
 # The calibration data shared by both species: survey biomass from
@@ -781,6 +787,7 @@
 # A survey table; with `plants`, the plant table and the join too.
 .chk_survey_data <- function(data, plants, x_name, plants_name) {
   chk::chk_data(data, x_name = x_name)
+  .chk_rows(data, x_name)
   required <- c("site", "plot_id", "date", "survey_area_m2")
   if (is.null(plants)) {
     required <- c(required, "plants")
@@ -860,16 +867,11 @@
   invisible(x)
 }
 
-
-
-
-
 # Both cover species take the same new_data (the survey columns).
 #' @export
 .chk_new_data.kb_fit_cover_calibration <- function(fit, new_data) {
   .chk_cover_survey(new_data, x_name = "`new_data`")
 }
-
 
 .chk_site_surveys <- function(x, x_name = deparse(substitute(x))) {
   if (.vld_site_surveys(x)) {
@@ -926,6 +928,9 @@
 }
 
 .chk_measure_fits <- function(measure, wetdry, carbon, call = rlang::caller_env()) {
+  if (.vld_measure_fits(measure, wetdry, carbon)) {
+    return(invisible(NULL))
+  }
   if (measure %in% c("dry", "carbon") && is.null(wetdry)) {
     cli::cli_abort("{.arg wetdry} is required for {measure} biomass.", call = call)
   }

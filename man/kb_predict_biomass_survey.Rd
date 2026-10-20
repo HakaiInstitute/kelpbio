@@ -46,20 +46,13 @@ or \code{NULL}.}
 \item{measure}{A string, one of \code{"wet"}, \code{"dry"}, or \code{"carbon"}, giving the
 biomass to predict.}
 
-\item{per_area}{A flag specifying whether to give biomass per m² of the surveyed
-area, or else the biomass in that area.}
+\item{per_area}{A flag specifying whether to give biomass per m² of the
+surveyed area, or else the biomass in that area.}
 
 \item{pool_by}{A character vector naming character or factor columns whose
 combinations group the rows, such as \code{c("site", "year")}, \code{character(0)}
-to pool all rows, or \code{NULL} (the default) for one row per input row. Rows are pooled on each draw:
-\itemize{
-\item \code{per_area = FALSE}: the biomass of the group is the sum of its rows'
-biomass (kg).
-\item \code{per_area = TRUE}: the biomass of the group is the sum of its rows'
-biomass divided by the sum of their areas, the biomass per m² of the
-pooled area (an area-weighted mean, not the mean of the rows' values).
-}
-
+to pool all rows, or \code{NULL} (the default) for one row per input row. On
+each draw, the biomass of a group is the sum of its rows' biomass (kg).
 For another summary, such as an unweighted mean of rows, summarise the
 draws column (see \code{vignette("advanced")}).}
 
@@ -102,9 +95,10 @@ progress for \code{\link[=kb_progress]{kb_progress()}}, or \code{NULL} (the defa
 \value{
 A \code{kb_predictions} object. Without \code{pool_by}, the rows of \code{survey}
 with added \code{year} (from \code{date}), \code{weight_support} and, with a size fit,
-\code{size_support} (as in \code{kb_predict_mean_weight()}), the draws of the biomass in a column named for it
-(\code{biomass_kg_m2}, \code{dry_biomass_kg_m2}, or \code{carbon_biomass_g_m2} per m², and
-\code{biomass_kg}, \code{dry_biomass_kg}, or \code{carbon_biomass_kg} in total), and
+\code{size_support} (as in \code{kb_predict_mean_weight()}), the draws of the
+biomass in a column named for it (\code{biomass_kg_m2}, \code{dry_biomass_kg_m2}, or
+\code{carbon_biomass_g_m2} per m², and \code{biomass_kg}, \code{dry_biomass_kg}, or
+\code{carbon_biomass_kg} in total), and
 \code{estimate}, \code{lower}, and \code{upper}; with \code{pool_by}, one row per group with its
 \code{pool_by} columns, the draws, and the summary.
 }
@@ -129,6 +123,10 @@ surveys.
 Dry biomass is wet biomass times the expected dry:wet ratio from \code{wetdry},
 and carbon dry biomass times the expected carbon fraction from \code{carbon}. The
 fits must be of the same species and have the same number of draws.
+
+With \code{pool_by} and \code{per_area = TRUE}, a group's biomass per m² is its summed
+biomass over its summed \code{survey_area_m2}: an area-weighted mean, not the
+mean of its surveys' values.
 }
 \examples{
 # Tallied plants, sizes from a size fit

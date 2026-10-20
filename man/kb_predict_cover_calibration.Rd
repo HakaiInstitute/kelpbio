@@ -66,8 +66,8 @@ Cover is tide-corrected and capped at 1. A row with no canopy predicts the
 biomass floor, which is the same for every site and year.
 
 The prediction is \code{mu}, the mean before censoring at zero, as used by
-\code{\link[=kb_predict_biomass_canopy]{kb_predict_biomass_canopy()}}. When \code{new_data = NULL}, the survey biomass columns
-are kept; use \code{\link[=augment]{augment()}} for the fitted values next to them.
+\code{\link[=kb_predict_biomass_canopy]{kb_predict_biomass_canopy()}}. When \code{new_data = NULL}, the survey biomass
+columns are kept; use \code{\link[=augment]{augment()}} for the fitted values next to them.
 }
 \examples{
 fit <- fit_cover_calibration_sim_nereo

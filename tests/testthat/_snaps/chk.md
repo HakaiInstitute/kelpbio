@@ -201,6 +201,14 @@
       ! Column `canopy_area_m2` of bad must not exceed plot_area_m2.
       i The canopy is the area delineated within the plot.
 
+# .chk_cover_survey checks biomass_sd_kg_m2 where present
+
+    Code
+      .chk_cover_survey(transform(good, biomass_sd_kg_m2 = -1))
+    Condition
+      Error in `.chk_cover_survey()`:
+      ! Column `biomass_sd_kg_m2` of transform(good, biomass_sd_kg_m2 = -1) must be greater than or equal to 0, not -1.
+
 # .chk_site_surveys errors name the survey column
 
     Code

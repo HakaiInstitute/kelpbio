@@ -153,8 +153,8 @@
 # Built by data-raw/data_sim_nereo.R.
 #' Simulated Nereocystis canopy data
 #'
-#' A small simulated dataset of drone-mapped canopy, one row per mapped
-#' site-year, for runnable examples of totals over the canopy.
+#' A small simulated dataset of drone-mapped canopy, one row per map of a
+#' site's canopy, for runnable examples of totals over the canopy.
 #'
 #' @format A data frame with columns:
 #' \describe{
@@ -196,8 +196,8 @@
 # Built by data-raw/data_sim_macro.R.
 #' Simulated Macrocystis canopy data
 #'
-#' A small simulated dataset of drone-mapped canopy, one row per mapped
-#' site-year, for runnable examples of totals over the canopy.
+#' A small simulated dataset of drone-mapped canopy, one row per map of a
+#' site's canopy, for runnable examples of totals over the canopy.
 #'
 #' @format A data frame with columns:
 #' \describe{

@@ -60,3 +60,45 @@ test_that("progress can be polled", {
   kb_predict_mean_weight(weight_nereo_fit, size_nereo_fit, progress = "none", progress_dir = dir)
   expect_equal(kb_progress(dir), 1)
 })
+
+test_that("mean weight matches a direct integration over the size distribution", {
+  row <- tibble::tibble(site = "otter_cove", year = "2020")
+  p <- kb_predict_mean_weight(
+    weight_nereo_fit, size_nereo_fit, row,
+    new_levels = "average", n_plants = 1000, progress = "none"
+  )
+  draws <- 1:20
+  upper <- max(size_nereo_fit$data$diameter_mm)
+  x <- seq(upper / 4000, upper, length.out = 4000)
+  lp <- posterior::draws_of(.linpred(size_nereo_fit, row, "average", NULL))[draws, 1]
+  shape <- as.vector(posterior::draws_of(size_nereo_fit$draws$shape))[draws]
+  scale <- weibull_scale(exp(lp), shape)
+  # the grid spans sizes below the weighed range, which warns
+  weight <- suppressWarnings(posterior_epred(
+    weight_nereo_fit,
+    data.frame(row, diameter_mm = x),
+    new_levels = "average"
+  ))[draws, ]
+  expected <- vapply(seq_along(draws), function(d) {
+    density <- stats::dweibull(x, shape[d], scale[d]) /
+      stats::pweibull(upper, shape[d], scale[d])
+    sum(diff(x) * (head(weight[d, ] * density, -1) + tail(weight[d, ] * density, -1)) / 2)
+  }, numeric(1))
+  got <- posterior::draws_of(p$weight_kg)[draws, 1]
+  expect_equal(got, expected, tolerance = 0.01, ignore_attr = TRUE)
+})
+
+test_that("a size fit without observed data errors", {
+  size <- size_nereo_fit
+  size$data <- size$data[0, ]
+  expect_snapshot(kb_predict_mean_weight(weight_nereo_fit, size), error = TRUE)
+})
+
+test_that("representative_site must be fitted in both fits", {
+  size <- size_nereo_fit
+  size$meta$site_levels <- setdiff(size$meta$site_levels, "heron_reef")
+  expect_snapshot(
+    kb_predict_mean_weight(weight_nereo_fit, size, representative_site = "heron_reef"),
+    error = TRUE
+  )
+})

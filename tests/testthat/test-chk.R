@@ -249,6 +249,12 @@ test_that(".chk_cover_survey errors name the survey column", {
   expect_error(.chk_cover_survey(1), "must be a data frame")
 })
 
+test_that(".chk_cover_survey checks biomass_sd_kg_m2 where present", {
+  good <- data.frame(canopy_area_m2 = 40, plot_area_m2 = 200, tide_height_m = 0.5)
+  expect_invisible(.chk_cover_survey(transform(good, biomass_sd_kg_m2 = 0.2)))
+  expect_snapshot(error = TRUE, .chk_cover_survey(transform(good, biomass_sd_kg_m2 = -1)))
+})
+
 test_that(".chk_site_surveys errors name the survey column", {
   good <- data.frame(site = "a", year = "2020", canopy_area_m2 = 100, tide_height_m = 0.5)
   expect_invisible(.chk_site_surveys(good))

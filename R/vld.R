@@ -164,13 +164,13 @@
     all(x$canopy_area_m2 <= x$plot_area_m2) &&
     is.numeric(x$tide_height_m) &&
     !anyNA(x$tide_height_m) &&
-    .vld_finite(x$tide_height_m)
+    .vld_finite(x$tide_height_m) &&
+    (!"biomass_sd_kg_m2" %in% names(x) || .vld_biomass_sd(x$biomass_sd_kg_m2))
 }
 
-
-
-
-
+.vld_biomass_sd <- function(x) {
+  is.numeric(x) && !anyNA(x) && .vld_finite(x) && all(x >= 0)
+}
 
 # Drone surveys of sites for site totals; `site_area_m2` is optional.
 .vld_site_surveys <- function(x) {
@@ -192,6 +192,17 @@
 
 .vld_group_column <- function(x) {
   (is.character(x) || is.factor(x)) && !anyNA(x)
+}
+
+.vld_census_size <- function(weight, plants) {
+  weight$meta$predictor %in% names(plants)
+}
+
+.vld_measure_fits <- function(measure, wetdry, carbon) {
+  (!measure %in% c("dry", "carbon") || !is.null(wetdry)) &&
+    (measure != "carbon" || !is.null(carbon)) &&
+    (is.null(wetdry) || .vld_kb_fit(wetdry, "kb_fit_wetdry")) &&
+    (is.null(carbon) || .vld_kb_fit(carbon, "kb_fit_carbon"))
 }
 
 .vld_pool_by <- function(pool_by, data) {

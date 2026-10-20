@@ -94,6 +94,11 @@ kb_predict_biomass_survey <- function(
   chk::chk_flag(per_area)
   .with_call(.chk_progress_dir(progress_dir), rlang::current_env())
   .chk_kb_fit(weight, "kb_fit_weight")
+  if (!inherits(size, "kb_fit") && !is.data.frame(size)) {
+    cli::cli_abort(
+      "{.arg size} must be a {.cls kb_fit_size} object or a data frame of counted plants."
+    )
+  }
   census <- !inherits(size, "kb_fit")
   if (census) {
     if (!missing(n_plants)) {
@@ -128,6 +133,7 @@ kb_predict_biomass_survey <- function(
   grid$year <- date_year(grid$date)
   if (!is.null(pool_by)) {
     .chk_pool_by(pool_by, grid, data_name = "survey")
+    pool_by <- unique(pool_by)
   }
   grid <- dplyr::relocate(grid, "year", .after = "site")
   grid$weight_support <- data_support(weight, grid$site, grid$year)
@@ -221,27 +227,26 @@ census_biomass_draws <- function(
   predictor <- weight$meta$predictor
   warn_outside_range(weight, plants[[predictor]], predictor)
 
-  sy_key <- site_year_key(grid$site, grid$year)
-  first <- !duplicated(sy_key)
-  effects <- .group_effects(
-    weight,
-    grid[first, c("site", "year")],
-    new_levels,
-    representative_site
-  )
-  plant_sy <- match(site_year_key(plants$site, plants$year), sy_key[first])
-  lp <- .linpred(weight, plants, new_levels, effects = effects[plant_sy])
-  plant_kg <- posterior::draws_of(.epred(weight, lp))
-  if ("partial" %in% names(plants)) {
-    plant_kg <- sweep(plant_kg, 2L, ifelse(plants$partial, 0.5, 1), "*")
-  }
-
+  kg <- matrix(0, nrow = posterior::ndraws(weight$draws), ncol = nrow(grid))
   survey <- match(
     survey_key(plants$site, plants$plot_id, plants$date),
     survey_key(grid$site, grid$plot_id, grid$date)
   )
-  kg <- matrix(0, nrow = nrow(plant_kg), ncol = nrow(grid))
   if (length(survey)) {
+    sy_key <- site_year_key(grid$site, grid$year)
+    first <- !duplicated(sy_key)
+    effects <- .group_effects(
+      weight,
+      grid[first, c("site", "year")],
+      new_levels,
+      representative_site
+    )
+    plant_sy <- match(site_year_key(plants$site, plants$year), sy_key[first])
+    lp <- .linpred(weight, plants, new_levels, effects = effects[plant_sy])
+    plant_kg <- posterior::draws_of(.epred(weight, lp))
+    if ("partial" %in% names(plants)) {
+      plant_kg <- sweep(plant_kg, 2L, ifelse(plants$partial, 0.5, 1), "*")
+    }
     kg[, sort(unique(survey))] <- t(rowsum(t(plant_kg), survey))
   }
   notify_empty_surveys(grid, setdiff(seq_len(nrow(grid)), survey), progress)

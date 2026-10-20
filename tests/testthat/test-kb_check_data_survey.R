@@ -27,6 +27,10 @@ test_that("valid survey data pass, alone and with a plant table", {
   expect_silent(kb_check_data_survey(survey()[c("site", "plot_id", "date", "survey_area_m2", "plants")]))
 })
 
+test_that("a table with no rows errors", {
+  expect_snapshot(kb_check_data_survey(survey()[0, ]), error = TRUE)
+})
+
 test_that("a bad or contradicting date errors", {
   expect_snapshot(kb_check_data_survey(transform(survey(), date = "2021-08-01")), error = TRUE)
   expect_snapshot(kb_check_data_survey(survey(year = "2020")), error = TRUE)

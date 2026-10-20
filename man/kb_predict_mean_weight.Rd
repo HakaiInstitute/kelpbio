@@ -78,10 +78,10 @@ bar) or \code{"none"} (silent).}
 progress for \code{\link[=kb_progress]{kb_progress()}}, or \code{NULL} (the default) to record none.}
 }
 \value{
-A \code{kb_predictions} object: the rows of \code{new_data} with added \code{weight_support} and
-\code{size_support}, the draws of the mean weight in a \code{weight_kg},
-\code{dry_weight_kg}, or \code{carbon_weight_g} column, and \code{estimate}, \code{lower}, and
-\code{upper}.
+A \code{kb_predictions} object: the rows of \code{new_data} with added
+\code{weight_support} and \code{size_support}, the draws of the mean weight in a
+\code{weight_kg}, \code{dry_weight_kg}, or \code{carbon_weight_g} column, and \code{estimate},
+\code{lower}, and \code{upper}.
 }
 \description{
 Combine a weight and a size fit into the expected weight per plant of each

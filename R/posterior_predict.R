@@ -51,6 +51,5 @@ posterior_predict.kb_fit <- function(
   )
   res <- data_linpred(object, new_data, new_levels, representative_site, call = call)
   lp <- posterior::draws_of(res$linpred) # D x N, link scale
-  # A cover fit checks each row's in situ limits here.
   .with_call(.eval_family(object, lp, res$grid, "ran"), call)
 }

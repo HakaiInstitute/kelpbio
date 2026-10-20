@@ -8,8 +8,8 @@
 #' biomass floor, which is the same for every site and year.
 #'
 #' The prediction is `mu`, the mean before censoring at zero, as used by
-#' [kb_predict_biomass_canopy()]. When `new_data = NULL`, the survey biomass columns
-#' are kept; use [augment()] for the fitted values next to them.
+#' [kb_predict_biomass_canopy()]. When `new_data = NULL`, the survey biomass
+#' columns are kept; use [augment()] for the fitted values next to them.
 #'
 #' @inheritParams params
 #' @param fit A `kb_fit_cover_calibration` object.

@@ -1,3 +1,11 @@
+# a table with no rows errors
+
+    Code
+      kb_check_data_survey(survey()[0, ])
+    Condition
+      Error in `kb_check_data_survey()`:
+      ! `survey()[0, ]` must have at least one row.
+
 # a bad or contradicting date errors
 
     Code

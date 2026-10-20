@@ -124,6 +124,27 @@ test_that(".vld_cover_survey accepts zero canopy within the plot", {
   expect_false(.vld_cover_survey(good[c("canopy_area_m2", "plot_area_m2")]))
 })
 
+test_that(".vld_cover_survey checks biomass_sd_kg_m2 where present", {
+  good <- data.frame(canopy_area_m2 = 40, plot_area_m2 = 200, tide_height_m = 0.5)
+  expect_true(.vld_cover_survey(transform(good, biomass_sd_kg_m2 = 0)))
+  expect_false(.vld_cover_survey(transform(good, biomass_sd_kg_m2 = -1)))
+  expect_false(.vld_cover_survey(transform(good, biomass_sd_kg_m2 = NA_real_)))
+})
+
+test_that(".vld_census_size needs the weight fit's predictor", {
+  expect_true(.vld_census_size(weight_macro_fit, data.frame(fronds = 3)))
+  expect_false(.vld_census_size(weight_macro_fit, data.frame(diameter_mm = 30)))
+})
+
+test_that(".vld_measure_fits needs the conversion fits the measure uses", {
+  expect_true(.vld_measure_fits("wet", NULL, NULL))
+  expect_true(.vld_measure_fits("dry", wetdry_nereo_fit, NULL))
+  expect_true(.vld_measure_fits("carbon", wetdry_nereo_fit, carbon_nereo_fit))
+  expect_false(.vld_measure_fits("dry", NULL, NULL))
+  expect_false(.vld_measure_fits("carbon", wetdry_nereo_fit, NULL))
+  expect_false(.vld_measure_fits("wet", carbon_nereo_fit, NULL))
+})
+
 test_that(".vld_site_surveys needs canopy, tide, site, and year, and a large enough site", {
   good <- data.frame(site = "a", year = "2020", canopy_area_m2 = 100, tide_height_m = 0.5)
   expect_true(.vld_site_surveys(good))
