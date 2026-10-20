@@ -10,7 +10,7 @@ kb_check_data_size_sample_nereo(
 )
 }
 \arguments{
-\item{data}{A data frame of size observations, one row per plant.}
+\item{data}{A data frame of a size sample, one row per measured plant.}
 
 \item{x_name}{A string naming the data for error messages.}
 }

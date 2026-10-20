@@ -99,7 +99,11 @@
     return(invisible(x))
   }
   groups <- intersect(.group_vars(), names(x))
-  col <- groups[vapply(x[groups], anyNA, logical(1))][1]
+  missing <- groups[vapply(x[groups], anyNA, logical(1))]
+  if (!length(missing)) {
+    return(.chk_id_column(x$year, "year", column_xname(x_name, "year")))
+  }
+  col <- missing[1]
   cli::cli_abort(
     c(
       "{column_xname(x_name, col)} must not have missing values.",
@@ -200,9 +204,9 @@
 }
 
 # A size census must give the weight fit's predictor.
-.chk_census_size <- function(weight, plants, call = rlang::caller_env()) {
-  if (.vld_census_size(weight, plants)) {
-    return(invisible(plants))
+.chk_census_size <- function(weight, size_census, call = rlang::caller_env()) {
+  if (.vld_census_size(weight, size_census)) {
+    return(invisible(size_census))
   }
   predictor <- weight$meta$predictor
   cli::cli_abort(
@@ -695,7 +699,7 @@
   if (.vld_unique_surveys(x)) {
     return(invisible(x))
   }
-  id <- as.character(x$survey_id)
+  id <- id_text(x$survey_id)
   repeated <- unique(id[duplicated(id)])
   cli::cli_abort(c(
     "{column_xname(x_name, 'survey_id')} must identify each survey once.",
@@ -751,8 +755,8 @@
   if (.vld_census_join(size_census, survey)) {
     return(invisible(size_census))
   }
-  id <- as.character(size_census$survey_id)
-  orphan <- !id %in% as.character(survey$survey_id)
+  id <- id_text(size_census$survey_id)
+  orphan <- !id %in% id_text(survey$survey_id)
   n <- sum(orphan)
   unmatched <- unique(id[orphan])
   cli::cli_abort(c(
@@ -822,32 +826,31 @@
   invisible(data)
 }
 
-# Grouping and identifier columns: `site` is character or factor; `year` may
-# also be whole numbers and `survey_id` numbers, converted on entry by
-# ids_as_character().
+# Grouping and identifier columns, converted on entry by ids_as_character().
 .chk_group_columns <- function(x, x_name, cols = c("site", "year")) {
-  if (all(vapply(cols, function(col) .vld_id_column(x[[col]], col), logical(1)))) {
+  for (col in cols) {
+    .chk_id_column(x[[col]], col, column_xname(x_name, col))
+  }
+  invisible(x)
+}
+
+# `site` is character or factor; `year` may also be whole numbers, and
+# `survey_id` any finite numbers.
+.chk_id_column <- function(x, col, x_name = deparse(substitute(x))) {
+  if (.vld_id_column(x, col)) {
     return(invisible(x))
   }
-  for (col in cols) {
-    nm <- column_xname(x_name, col)
-    if (col %in% c("year", "survey_id") && is.numeric(x[[col]])) {
-      chk::chk_not_any_na(x[[col]], x_name = nm)
-      .chk_finite(x[[col]], nm)
-      if (col == "year") {
-        chk::chk_whole_numeric(x[[col]], x_name = nm)
-      }
-    } else {
-      if (col %in% c("year", "survey_id")) {
-        if (!is.character(x[[col]]) && !is.factor(x[[col]])) {
-          cli::cli_abort("{nm} must be character, factor, or numeric.")
-        }
-      } else {
-        chk::chk_character_or_factor(x[[col]], x_name = nm)
-      }
-      chk::chk_not_any_na(x[[col]], x_name = nm)
-    }
+  numeric_ok <- col %in% c("year", "survey_id")
+  if (numeric_ok && is.numeric(x)) {
+    chk::chk_not_any_na(x, x_name = x_name)
+    .chk_finite(x, x_name)
+    chk::chk_whole_numeric(x, x_name = x_name)
   }
+  if (numeric_ok && !is.character(x) && !is.factor(x)) {
+    cli::cli_abort("{x_name} must be character, factor, or numeric.")
+  }
+  chk::chk_character_or_factor(x, x_name = x_name)
+  chk::chk_not_any_na(x, x_name = x_name)
   invisible(x)
 }
 
@@ -857,8 +860,8 @@
   .chk_cover_survey(new_data, x_name = "`new_data`")
 }
 
-.chk_site_surveys <- function(x, x_name = deparse(substitute(x))) {
-  if (.vld_site_surveys(x)) {
+.chk_canopy_maps <- function(x, x_name = deparse(substitute(x))) {
+  if (.vld_canopy_maps(x)) {
     return(invisible(x))
   }
   if (!is.data.frame(x)) {

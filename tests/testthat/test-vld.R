@@ -145,18 +145,18 @@ test_that(".vld_measure_fits needs the conversion fits the measure uses", {
   expect_false(.vld_measure_fits("wet", carbon_nereo_fit, NULL))
 })
 
-test_that(".vld_site_surveys needs canopy, tide, site, year, and a large enough classified area", {
+test_that(".vld_canopy_maps needs canopy, tide, site, year, and a large enough classified area", {
   good <- data.frame(
     site = "a", year = "2020", canopy_area_m2 = 100, tide_height_m = 0.5, classified_area_m2 = 1e4
   )
-  expect_true(.vld_site_surveys(good))
-  expect_false(.vld_site_surveys(good[setdiff(names(good), "classified_area_m2")]))
-  expect_false(.vld_site_surveys(transform(good, classified_area_m2 = 50)))
-  expect_false(.vld_site_surveys(transform(good, canopy_area_m2 = -1)))
-  expect_false(.vld_site_surveys(transform(good, site = NA)))
-  expect_false(.vld_site_surveys(transform(good, tide_height_m = Inf)))
-  expect_false(.vld_site_surveys(good[c("site", "year", "canopy_area_m2")]))
-  expect_false(.vld_site_surveys(list(good)))
+  expect_true(.vld_canopy_maps(good))
+  expect_false(.vld_canopy_maps(good[setdiff(names(good), "classified_area_m2")]))
+  expect_false(.vld_canopy_maps(transform(good, classified_area_m2 = 50)))
+  expect_false(.vld_canopy_maps(transform(good, canopy_area_m2 = -1)))
+  expect_false(.vld_canopy_maps(transform(good, site = NA)))
+  expect_false(.vld_canopy_maps(transform(good, tide_height_m = Inf)))
+  expect_false(.vld_canopy_maps(good[c("site", "year", "canopy_area_m2")]))
+  expect_false(.vld_canopy_maps(list(good)))
 })
 
 test_that(".vld_pool_by accepts NULL or grouping columns of the data", {

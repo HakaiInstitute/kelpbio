@@ -10,7 +10,7 @@
 - [x] 2.1 The survey check requires `survey_id`, `site`, `year`, and `survey_area_m2`, not `plot_id` or `date`; `survey_id` is character, factor, or numeric with no missing values and unique (`.chk_unique_surveys()` and `.vld_unique_surveys()` on `survey_id`, listing repeated values).
 - [x] 2.2 Replace `survey_key()` (and `test-survey_key.R`) with the `survey_id` join in `.chk_plants_join()`/`.vld_plants_join()` (renamed for the size census) and in `R/kb_predict_biomass_survey.R`; the no-plants message lists `survey_id` values.
 - [x] 2.3 `kb_predict_biomass_survey()` takes `year` from `survey` instead of `date_year()`, and keeps `survey_id` in its output.
-- [x] 2.4 Tests in `test-kb_check_data_survey.R`, `test-chk.R`, `test-vld.R`, and `test-kb_predict_biomass_survey.R`: a repeated `survey_id` errors; two surveys in one site-year on one day pass and give two rows; an unmatched census `survey_id` errors.
+- [x] 2.4 Tests in `test-kb_check_data_survey.R`, `test-vld.R`, and `test-kb_predict_biomass_survey.R`: a repeated `survey_id` errors; two surveys in one site-year on one day pass and give two rows; an unmatched census `survey_id` errors.
 
 ## 3. Size tables by role
 

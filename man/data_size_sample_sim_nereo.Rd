@@ -17,9 +17,10 @@ data_size_sample_sim_nereo
 }
 \description{
 A small simulated dataset of maximum sub-bulb diameter, one row per plant of
-a sample measured for the size model, for runnable examples. One of four simulated \emph{Nereocystis} datasets with
-shared sites and years, so their fits can be combined into survey biomass
-(see \code{\link[=kb_predict_biomass_survey]{kb_predict_biomass_survey()}}). Some site-years have no size data.
+a sample measured for the size model, for runnable examples. One of four
+simulated \emph{Nereocystis} datasets with shared sites and years, so their fits
+can be combined into survey biomass (see \code{\link[=kb_predict_biomass_survey]{kb_predict_biomass_survey()}}). Some
+site-years have no size data.
 }
 \seealso{
 \link{fit_size_sim_nereo} for a fit to this dataset.

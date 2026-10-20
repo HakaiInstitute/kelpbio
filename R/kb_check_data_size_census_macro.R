@@ -22,6 +22,8 @@
 #'
 #' @returns `data`, invisibly.
 #' @family data checks
+#' @seealso [kb_fit_size_nereo()] for sizes from a sample when plants were
+#'   tallied rather than measured.
 #' @export
 #'
 #' @examples

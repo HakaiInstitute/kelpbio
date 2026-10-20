@@ -7,8 +7,8 @@
 \format{
 A data frame with columns:
 \describe{
-\item{survey_id}{Survey the plant was counted in, matching
-\code{survey_id} in \link{data_survey_sim_macro}.}
+\item{survey_id}{Survey the plant was counted in, matching its
+\code{survey_id}.}
 \item{fronds}{Fronds reaching 1 m above the holdfast, a positive whole
 number.}
 \item{partial}{Whether the plant is counted as half, a logical.}
@@ -19,7 +19,7 @@ data_size_census_sim_macro
 }
 \description{
 A small simulated dataset of every plant counted by the surveys in
-\code{data_survey_sim_macro}, one row per plant, for runnable examples.
+\link{data_survey_sim_macro}, one row per plant, for runnable examples.
 }
 \seealso{
 \code{\link[=kb_check_data_size_census_macro]{kb_check_data_size_census_macro()}} for the columns.

@@ -36,9 +36,10 @@
 #' Simulated Nereocystis size sample data
 #'
 #' A small simulated dataset of maximum sub-bulb diameter, one row per plant of
-#' a sample measured for the size model, for runnable examples. One of four simulated *Nereocystis* datasets with
-#' shared sites and years, so their fits can be combined into survey biomass
-#' (see [kb_predict_biomass_survey()]). Some site-years have no size data.
+#' a sample measured for the size model, for runnable examples. One of four
+#' simulated *Nereocystis* datasets with shared sites and years, so their fits
+#' can be combined into survey biomass (see [kb_predict_biomass_survey()]). Some
+#' site-years have no size data.
 #'
 #' @format A data frame with columns:
 #' \describe{
@@ -217,12 +218,12 @@
 #' Simulated Macrocystis size census data
 #'
 #' A small simulated dataset of every plant counted by the surveys in
-#' `data_survey_sim_macro`, one row per plant, for runnable examples.
+#' [data_survey_sim_macro], one row per plant, for runnable examples.
 #'
 #' @format A data frame with columns:
 #' \describe{
-#'   \item{survey_id}{Survey the plant was counted in, matching
-#'     `survey_id` in [data_survey_sim_macro].}
+#'   \item{survey_id}{Survey the plant was counted in, matching its
+#'     `survey_id`.}
 #'   \item{fronds}{Fronds reaching 1 m above the holdfast, a positive whole
 #'     number.}
 #'   \item{partial}{Whether the plant is counted as half, a logical.}

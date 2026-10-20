@@ -22,7 +22,8 @@
 
 \item{new_levels}{A string giving how uncertainty is shown for a site or
 year not in the fit, or when \code{new_data} has no \code{site} or \code{year} column.
-Sites and years in the fit always use their own estimates. One of:
+Sites and years in the fit always use their own estimates; a \code{year} of
+whole numbers matches the fitted year of the same value. One of:
 \itemize{
 \item \code{"average"} (the default): the typical site or year. The interval
 covers uncertainty in the typical value only. Use it to describe an

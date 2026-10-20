@@ -15,7 +15,7 @@
 #' Other columns are ignored.
 #'
 #' @inheritParams params
-#' @param data A data frame of size observations, one row per plant.
+#' @param data A data frame of a size sample, one row per measured plant.
 #'
 #' @returns `data`, invisibly.
 #' @family data checks

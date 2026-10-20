@@ -17,10 +17,10 @@ experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](h
 kelpbio fits Bayesian hierarchical models to estimate kelp biomass and
 carbon from field measurements. Its main use is the total biomass of
 each site and year: drone-mapped canopy, the biomass counted by in situ
-surveys of plots, and a calibration model that relates the two.
-Estimates are for the peak season; a site and year may hold several
-plots, and a plot several surveys. “Plant” is used for convenience for
-one individual (sporophyte), identified by its holdfast. See
+surveys, and a calibration model that relates the two. Estimates are for
+the peak season; a site and year may hold several surveys. “Plant” is
+used for convenience for one individual (sporophyte), identified by its
+holdfast. See
 `vignette("kelpbio")` for the workflow.
 
 ## Installation

@@ -77,7 +77,7 @@ a single estimate, such as \code{median} or \code{mean}.}
 }
 \value{
 A \code{kb_predictions} object. Without \code{pool_by}, the rows of \code{new_data}
-with added \code{cover_support} (\code{"site, year"}, \code{"site"}, \code{"year"}, or
+(a numeric \code{year} as character) with added \code{cover_support} (\code{"site, year"}, \code{"site"}, \code{"year"}, or
 \code{"none"}: the data the calibration fit has for the row's site and year), the
 draws of the total in a column named for it (\code{biomass_kg},
 \code{dry_biomass_kg}, or \code{carbon_biomass_kg}), and \code{estimate},

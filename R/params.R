@@ -73,7 +73,8 @@
 #'   - `c("site", "year")`: one row per observed site-year.
 #' @param new_levels A string giving how uncertainty is shown for a site or
 #'   year not in the fit, or when `new_data` has no `site` or `year` column.
-#'   Sites and years in the fit always use their own estimates. One of:
+#'   Sites and years in the fit always use their own estimates; a `year` of
+#'   whole numbers matches the fitted year of the same value. One of:
 #'   - `"average"` (the default): the typical site or year. The interval
 #'     covers uncertainty in the typical value only. Use it to describe an
 #'     average site or year.

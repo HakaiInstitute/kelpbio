@@ -209,20 +209,20 @@
       Error in `.chk_cover_survey()`:
       ! Column `biomass_sd_kg_m2` of transform(good, biomass_sd_kg_m2 = -1) must be greater than or equal to 0, not -1.
 
-# .chk_site_surveys errors name the survey column
+# .chk_canopy_maps errors name the survey column
 
     Code
-      .chk_site_surveys(good[c("site", "year", "canopy_area_m2")])
+      .chk_canopy_maps(good[c("site", "year", "canopy_area_m2")])
     Condition
-      Error in `.chk_site_surveys()`:
+      Error in `.chk_canopy_maps()`:
       ! Good[c("site", "year", "canopy_area_m2")] must include 'classified_area_m2' and 'tide_height_m'.
 
 ---
 
     Code
-      .chk_site_surveys(transform(good, classified_area_m2 = 50))
+      .chk_canopy_maps(transform(good, classified_area_m2 = 50))
     Condition
-      Error in `.chk_site_surveys()`:
+      Error in `.chk_canopy_maps()`:
       ! Column `canopy_area_m2` of transform(good, classified_area_m2 = 50) must not exceed classified_area_m2.
       i The canopy is found within the area the classification covered.
 

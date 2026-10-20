@@ -155,3 +155,8 @@ test_that("a numeric year in new_data matches the fitted year", {
   expect_identical(numeric_year$estimate, character_year$estimate)
   expect_identical(numeric_year$upper, character_year$upper)
 })
+
+test_that("a fractional year in new_data errors naming year", {
+  rows <- data.frame(site = weight_nereo_fit$data$site[1], year = 2021.5, diameter_mm = 40)
+  expect_error(kb_predict_weight(weight_nereo_fit, rows), "year")
+})
