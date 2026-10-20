@@ -1,5 +1,4 @@
 [lint]
-# Skip rstantools-generated files (regenerated at build; not hand-edited), and
-# the developer demo, which walks through internals with `:::` on purpose.
+# Skip rstantools-generated files (regenerated at build; not hand-edited).
 default-exclude = true
-exclude = ["R/stanmodels.R", "scripts/demo-api-test-developer.R"]
+exclude = ["R/stanmodels.R"]
