@@ -256,11 +256,14 @@ test_that(".chk_cover_survey checks biomass_sd_kg_m2 where present", {
 })
 
 test_that(".chk_site_surveys errors name the survey column", {
-  good <- data.frame(site = "a", year = "2020", canopy_area_m2 = 100, tide_height_m = 0.5)
+  good <- data.frame(
+    site = "a", year = "2020", canopy_area_m2 = 100, tide_height_m = 0.5, classified_area_m2 = 1e4
+  )
   expect_invisible(.chk_site_surveys(good))
+  expect_error(.chk_site_surveys(good[setdiff(names(good), "classified_area_m2")]), "classified_area_m2")
   expect_snapshot(error = TRUE, .chk_site_surveys(good[c("site", "year", "canopy_area_m2")]))
-  expect_snapshot(error = TRUE, .chk_site_surveys(transform(good, site_area_m2 = 50)))
-  expect_error(.chk_site_surveys(transform(good, site_area_m2 = 0)), "site_area_m2")
+  expect_snapshot(error = TRUE, .chk_site_surveys(transform(good, classified_area_m2 = 50)))
+  expect_error(.chk_site_surveys(transform(good, classified_area_m2 = 0)), "classified_area_m2")
   expect_error(.chk_site_surveys(transform(good, year = NA)), "year")
   expect_error(.chk_site_surveys(1), "must be a data frame")
 })

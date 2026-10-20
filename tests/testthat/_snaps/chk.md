@@ -215,16 +215,16 @@
       .chk_site_surveys(good[c("site", "year", "canopy_area_m2")])
     Condition
       Error in `.chk_site_surveys()`:
-      ! Good[c("site", "year", "canopy_area_m2")] must include 'tide_height_m'.
+      ! Good[c("site", "year", "canopy_area_m2")] must include 'classified_area_m2' and 'tide_height_m'.
 
 ---
 
     Code
-      .chk_site_surveys(transform(good, site_area_m2 = 50))
+      .chk_site_surveys(transform(good, classified_area_m2 = 50))
     Condition
       Error in `.chk_site_surveys()`:
-      ! Column `canopy_area_m2` of transform(good, site_area_m2 = 50) must not exceed site_area_m2.
-      i The canopy is the area mapped within the site boundary.
+      ! Column `canopy_area_m2` of transform(good, classified_area_m2 = 50) must not exceed classified_area_m2.
+      i The canopy is found within the area the classification covered.
 
 # .chk_pool_by names a missing or non-grouping column
 

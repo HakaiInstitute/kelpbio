@@ -211,7 +211,7 @@ canopy <- grid[grid$drone, c("site", "year")]
 m <- nrow(canopy)
 canopy$canopy_area_m2 <- round(stats::runif(m, 500, 12000))
 canopy$tide_height_m <- sample(seq(0, 1.6, by = 0.05), m, replace = TRUE)
-canopy$site_area_m2 <- round(canopy$canopy_area_m2 * stats::runif(m, 1.5, 3))
+canopy$classified_area_m2 <- round(canopy$canopy_area_m2 * stats::runif(m, 1.5, 3))
 canopy$region <- factor(
   ifelse(match(canopy$site, sites) <= 5, "north", "south"),
   levels = c("north", "south")

@@ -162,7 +162,8 @@
 #'   \item{year}{Survey year, a factor (4 levels).}
 #'   \item{canopy_area_m2}{Canopy mapped within the site (m²).}
 #'   \item{tide_height_m}{Tide height at the flight (m).}
-#'   \item{site_area_m2}{Area within the site boundary (m²).}
+#'   \item{classified_area_m2}{Water area the canopy classification covered
+#'     (m²), including water with no canopy.}
 #'   \item{region}{Region of the site, a factor (`"north"`, `"south"`).}
 #' }
 #' @seealso [kb_predict_biomass_canopy()].
@@ -205,7 +206,8 @@
 #'   \item{year}{Survey year, a factor (4 levels).}
 #'   \item{canopy_area_m2}{Canopy mapped within the site (m²).}
 #'   \item{tide_height_m}{Tide height at the flight (m).}
-#'   \item{site_area_m2}{Area within the site boundary (m²).}
+#'   \item{classified_area_m2}{Water area the canopy classification covered
+#'     (m²), including water with no canopy.}
 #'   \item{region}{Region of the site, a factor (`"north"`, `"south"`).}
 #' }
 #' @seealso [kb_predict_biomass_canopy()].

@@ -808,8 +808,8 @@ fit_cvm <- kb_fit_cover_calibration_macro(biomass_m)
 # kb_predict_biomass_canopy() turns a cover calibration fit and mapped canopy
 # into total biomass: the expected biomass per m2 of bed (floor included) times
 # each row's tide-corrected canopy area, in kg (wet, dry) or kg C. The rows need
-# site, year, canopy_area_m2, and tide_height_m; site_area_m2 is optional and
-# caps the corrected canopy. Unseen sites and years are sampled by default.
+# site, year, canopy_area_m2, tide_height_m, and classified_area_m2, which caps
+# the corrected canopy. Unseen sites and years are sampled by default.
 
 set.seed(1)
 kb_predict_biomass_canopy(fit_cv, data_canopy_sim_nereo)
@@ -838,5 +838,5 @@ kb_predict_biomass_canopy(
 )
 try(kb_predict_biomass_canopy(
   fit_cv,
-  mutate(data_canopy_sim_nereo, site_area_m2 = 10)
+  mutate(data_canopy_sim_nereo, classified_area_m2 = 10)
 ))
