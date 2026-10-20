@@ -14,11 +14,12 @@ mean_weight_draws <- function(
   progress,
   progress_dir
 ) {
+  representative_site <- representative_sites(representative_site)
   size_lp <- posterior::draws_of(
-    .linpred(size, groups, new_levels, representative_site)
+    .linpred(size, groups, new_levels, representative_site$size)
   )
   weight_effects <- posterior::draws_of(
-    .group_effects(weight, groups, new_levels, representative_site)
+    .group_effects(weight, groups, new_levels, representative_site$weight)
   )
   upper <- max(size$data[[size$meta$response]])
   # Midpoints of n_plants equal-probability strata.

@@ -102,3 +102,31 @@ test_that("representative_site must be fitted in both fits", {
     error = TRUE
   )
 })
+
+test_that("representative_site can name sites for the weight fit only", {
+  # otter_cove is new to `weight` and fitted in the size fit.
+  weight <- weight_nereo_fit
+  levels <- weight$meta$site_levels
+  weight$meta$site_levels[levels == "otter_cove"] <- "otter_cove_weight"
+  new_data <- tibble::tibble(site = "otter_cove")
+  mean_weight <- function(weight, ...) {
+    p <- kb_predict_mean_weight(
+      weight, size_nereo_fit, new_data,
+      new_levels = "average", n_plants = 20L, progress = "none", ...
+    )
+    posterior::draws_of(p$weight_kg)
+  }
+  # Swapping the names of otter_cove and gull_rock gives otter_cove the weight
+  # fit's gull_rock effect.
+  swapped <- weight_nereo_fit
+  swapped$meta$site_levels[levels == "otter_cove"] <- "gull_rock"
+  swapped$meta$site_levels[levels == "gull_rock"] <- "otter_cove"
+  expect_equal(
+    mean_weight(weight, representative_site = list(weight = "gull_rock")),
+    mean_weight(swapped)
+  )
+  expect_snapshot(
+    kb_predict_mean_weight(weight, size_nereo_fit, representative_site = list("gull_rock")),
+    error = TRUE
+  )
+})

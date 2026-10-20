@@ -56,6 +56,24 @@
       ! Invalid `representative_site` value: "not_a_site".
       i Available sites: "otter_cove", "gull_rock", "cedar_bay", and "heron_reef".
 
+# .chk_representative_site_fits shows the expected list form
+
+    Code
+      .chk_representative_site_fits(list("a"), fits)
+    Condition
+      Error:
+      ! `representative_site` must be a character vector or a list named by "weight" or "size".
+      i For example, `list(weight = "site_a")`.
+
+---
+
+    Code
+      .chk_representative_site_fits(list(size = "a"), "weight")
+    Condition
+      Error:
+      ! `representative_site` cannot name "size" with a size census.
+      i A size census has no site effects; name only "weight".
+
 # .chk_fit_rows points zero-row data to prior_only
 
     Code
