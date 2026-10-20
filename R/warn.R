@@ -108,6 +108,7 @@ warn_overlapping_canopy <- function(grid, id) {
   if (length(repeated)) {
     cli::cli_warn(c(
       "Some {.arg pool_by} groups hold more than one row for a site-year, so their totals overlap.",
+      i = "Each row is a map of the site-year's bed, so the sum counts it once per map.",
       i = "Repeated: {.val {repeated}}."
     ))
   }
