@@ -20,6 +20,13 @@
 #' - `weak_prior` but not `strong_data`: neither moves the estimate much, often a
 #'   parameter the data identify only weakly.
 #'
+#' A prior that is informative by design is expected to dominate, so a
+#' parameter with `informative_prior = TRUE` and neither flag is not a problem.
+#' The only such parameter is the cover calibration's `tide_height_slope`: its
+#' default prior is the published response of canopy area to tide height
+#' (Timmer et al. 2024), and few surveys span enough tide range to estimate it.
+#' It is marked whatever prior the fit used.
+#'
 #' Each `term` is also the name of its prior's entry in the list from the
 #' model's `kb_priors_*()` function, so to change a flagged prior, edit that
 #' entry and refit. Random-effect levels are not assessed; their standard
@@ -38,11 +45,18 @@
 #' @returns A tibble with one row per parameter that has a prior and columns
 #'   `term` (the parameter, which is also its prior entry), `prior_cjs` and
 #'   `likelihood_cjs` (the sensitivity to the prior and to the likelihood),
-#'   `weak_prior`, and `strong_data`.
+#'   `weak_prior`, `strong_data`, and `informative_prior` (whether the prior is
+#'   informative by design).
 #' @references
 #' Kallioinen, N., Paananen, T., Bürkner, P.-C., and Vehtari, A. (2024).
 #' Detecting and diagnosing prior and likelihood sensitivity with power-scaling.
 #' Statistics and Computing, 34, 57.
+#'
+#' Timmer, B., Reshitnyk, L. Y., Hessing-Lewis, M., Juanes, F., Gendall, L.,
+#' and Costa, M. (2024). Capturing accurate kelp canopy extent: integrating
+#' tides, currents, and species-level morphology in kelp remote sensing.
+#' *Frontiers in Environmental Science*, 12, 1338483.
+#' \doi{10.3389/fenvs.2024.1338483}
 #' @family diagnostics
 #' @export
 #'
@@ -71,6 +85,7 @@ kb_sensitivity <- function(
     prior_cjs = cjs$prior,
     likelihood_cjs = cjs$likelihood,
     weak_prior = cjs$prior < prior_threshold,
-    strong_data = cjs$likelihood >= likelihood_threshold
+    strong_data = cjs$likelihood >= likelihood_threshold,
+    informative_prior = terms %in% fit$meta$informative_priors
   )
 }

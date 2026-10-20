@@ -4,15 +4,18 @@
 \alias{kb_plot_trace}
 \title{Trace plot}
 \usage{
-kb_plot_trace(fit, ...)
+kb_plot_trace(fit, ..., ncol = 2L)
 }
 \arguments{
 \item{fit}{A \code{kb_fit} object.}
 
 \item{...}{These dots are for future extensions and must be empty.}
+
+\item{ncol}{A whole number of panel columns.}
 }
 \value{
-A \code{ggplot} object from \code{\link[bayesplot:mcmc_trace]{bayesplot::mcmc_trace()}}.
+A \code{ggplot} object. It sets no theme, so it takes the active one
+(\code{\link[ggplot2:theme_get]{ggplot2::theme_get()}}); add a theme with \code{+} to change it.
 }
 \description{
 Plot the posterior draws of each term against iteration, one panel per term

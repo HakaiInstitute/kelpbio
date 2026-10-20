@@ -48,7 +48,11 @@ Axes are linear by default, with the y-axis extended to zero. Weights,
 densities, and biomass often span orders of magnitude; \code{log_axis = "y"} shows
 them on a log scale, and \code{log_axis = "xy"} also log-scales a numeric x-axis,
 as for a weight curve. A log axis says so in its title. Values on a log axis
-must be positive.
+must be positive. Numeric axes are labelled as plain numbers with thousands
+separators (\verb{200,000}, not \code{2e+05}).
+
+The plot sets no theme, so it takes the active one
+(\code{\link[ggplot2:theme_get]{ggplot2::theme_get()}}); add a theme with \code{+} to change it.
 
 Only the predictions are drawn; add raw data as a ggplot2 layer.
 }

@@ -170,7 +170,8 @@ test_that("a cover curve plots a ribbon over tide-corrected cover", {
 test_that("log_axis defaults to linear axes with the y-axis from zero", {
   p <- mean_weight_by_site()
   gg <- kb_plot_predictions(p)
-  expect_identical(gg$scales$get_scales("y"), NULL)
+  # Linear: the scale leaves values untransformed.
+  expect_identical(gg$scales$get_scales("y")$transform(10), 10)
   expect_equal(min(ggplot2::layer_scales(gg)$y$range$range), 0)
 })
 
@@ -214,11 +215,23 @@ test_that("the log-log weight curve is visually stable", {
   )
 })
 
-test_that("log tick labels are plain numbers", {
+test_that("tick labels are plain numbers", {
   expect_identical(
-    log_labels(c(0.001, 0.1, 1, 10, 1e5)),
+    plain_labels(c(0.001, 0.1, 1, 10, 1e5)),
     c("0.001", "0.1", "1", "10", "100,000")
   )
+})
+
+test_that("linear axes label large values in full", {
+  p <- kb_predict_weight(weight_nereo_fit, kb_new_data(weight_nereo_fit))
+  p$estimate <- p$estimate * 1e5
+  p$lower <- p$lower * 1e5
+  p$upper <- p$upper * 1e5
+  gg <- kb_plot_predictions(p)
+  labels <- ggplot2::ggplot_build(gg)$layout$panel_params[[1]]$y$get_labels()
+  labels <- labels[!is.na(labels)]
+  expect_false(any(grepl("e[+-]", labels)))
+  expect_true(any(grepl(",", labels)))
 })
 
 test_that("a log x-axis errors over zero cover and over groups", {

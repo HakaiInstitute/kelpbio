@@ -93,7 +93,11 @@ fit_cover_calibration_model <- function(
       # Curves run over tide-corrected cover, a proportion of the plot, which
       # the data do not hold as a column (it depends on the fitted tide_height_slope).
       predictor = "cover",
-      predictor_range = c(0, 1)
+      predictor_range = c(0, 1),
+      # Its default prior is the published tide response (Timmer et al. 2024)
+      # and few surveys span enough tide range to inform it, so its prior is
+      # meant to dominate; kb_sensitivity() marks it.
+      informative_priors = "tide_height_slope"
     )
   )
 }
