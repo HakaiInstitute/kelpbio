@@ -48,7 +48,7 @@ if ("weight" %in% selected) {
     data_weight_sim_macro,
     site %in%
       levels(data_weight_sim_macro$site)[1:4] &
-      format(date, "%Y") %in% c("2019", "2020", "2021")
+      as.character(year) %in% c("2019", "2020", "2021")
   )
   dm$site <- droplevels(factor(dm$site))
 
@@ -70,7 +70,7 @@ if ("weight" %in% selected) {
 
 if ("size" %in% selected) {
   size_nereo_fit <- kb_fit_size_nereo(
-    size_subset(data_size_sim_nereo),
+    size_subset(data_size_sample_sim_nereo),
     chains = 2L,
     niters = 300L,
     nthin = 5L,
@@ -166,11 +166,15 @@ if ("cover_calibration" %in% selected) {
   message("Wrote tests/testthat/fixtures/cover_calibration_nereo_fit.rds")
 
   set.seed(42)
-  plants <- subset(data_plants_sim_macro, site %in% levels(data_plants_sim_macro$site)[1:4])
+  survey_macro <- survey_subset(data_survey_sim_macro)
+  size_census <- subset(
+    data_size_census_sim_macro,
+    survey_id %in% survey_macro$survey_id
+  )
   biomass_macro <- kb_predict_biomass_survey(
     fit_weight_sim_macro,
-    plants,
-    survey_subset(data_survey_sim_macro),
+    size_census,
+    survey_macro,
     progress = "none"
   )
   cover_calibration_macro_fit <- kb_fit_cover_calibration_macro(
