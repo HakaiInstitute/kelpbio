@@ -1,14 +1,15 @@
-#' Check Macrocystis plant data
+#' Check a Macrocystis size census
 #'
-#' Check that `data` has the columns and values of a table of every counted
-#' *Macrocystis pyrifera* plant, for [kb_predict_biomass_survey()].
+#' Check that `data` has the columns and values of a census of every
+#' *Macrocystis pyrifera* plant counted by in situ surveys, for
+#' [kb_predict_biomass_survey()].
 #'
 #' @details
 #' Each row is one counted plant, an individual (sporophyte) identified by its
 #' holdfast. Required columns:
 #'
-#' - `site`, `plot_id`, and `date`, the survey the plant was counted in (see
-#'   [kb_check_data_survey()]).
+#' - `survey_id`, the survey the plant was counted in (see
+#'   [kb_check_data_survey()]), which gives the plant's site and year.
 #' - `fronds`, the number of fronds reaching 1 m above the holdfast (a whole
 #'   number of at least 1), the predictor of the weight model
 #'   ([kb_fit_weight_macro()]).
@@ -24,15 +25,15 @@
 #' @export
 #'
 #' @examples
-#' kb_check_data_plants_macro(data_plants_sim_macro)
-kb_check_data_plants_macro <- function(
+#' kb_check_data_size_census_macro(data_size_census_sim_macro)
+kb_check_data_size_census_macro <- function(
   data,
   x_name = chk::deparse_backtick_chk(substitute(data))
 ) {
   .with_call(
     {
       chk::chk_string(x_name)
-      .chk_plants_data(data, "fronds", x_name)
+      .chk_size_census_data(data, "fronds", x_name)
     },
     rlang::current_env()
   )

@@ -1,8 +1,8 @@
 test_that("kb_fit_size_nereo returns a correctly-structured object", {
   skip_on_cran()
   d <- droplevels(subset(
-    data_size_sim_nereo,
-    as.integer(site) <= 2 & format(date, "%Y") %in% c("2019", "2020")
+    data_size_sample_sim_nereo,
+    as.integer(site) <= 2 & as.character(year) %in% c("2019", "2020")
   ))
   fit <- kb_fit_size_nereo(
     d,
@@ -34,7 +34,7 @@ test_that("the fit records the species, response, and no predictor", {
 
 test_that("single-year data fit the site:year effect with an aliasing warning", {
   local_fit_stan_stub(size_nereo_fit)
-  d <- droplevels(subset(size_nereo_fit$data, format(date, "%Y") == "2019"))
+  d <- droplevels(subset(size_nereo_fit$data, as.character(year) == "2019"))
   expect_warning(
     fit <- kb_fit_size_nereo(d, progress = "none"),
     "cannot be separated from the site effect"
@@ -58,7 +58,7 @@ test_that("invalid data and priors error before sampling", {
 test_that("zero-row data is accepted under prior_only", {
   skip_on_cran()
   fit <- kb_fit_size_nereo(
-    data_size_sim_nereo[0, ],
+    data_size_sample_sim_nereo[0, ],
     prior_only = TRUE,
     chains = 1,
     niters = 100,
@@ -72,7 +72,7 @@ test_that("zero-row data is accepted under prior_only", {
 test_that("zero-row data error unless prior_only", {
   expect_error(
     kb_fit_size_nereo(
-      data_size_sim_nereo[0, ],
+      data_size_sample_sim_nereo[0, ],
       progress = "none"
     ),
     "prior_only = TRUE"
@@ -87,7 +87,7 @@ test_that("data and prior errors name kb_fit_size_nereo()", {
   ))
   expect_identical(err$call[[1]], quote(kb_fit_size_nereo))
   err <- expect_error(kb_fit_size_nereo(
-    data_size_sim_nereo,
+    data_size_sample_sim_nereo,
     priors = list(nope = kb_prior_normal(0, 1)),
     progress = "none"
   ))

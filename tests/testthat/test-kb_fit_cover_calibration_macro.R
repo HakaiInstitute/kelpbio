@@ -6,7 +6,7 @@ test_that("kb_fit_cover_calibration_macro returns a correctly-structured object"
   survey <- subset(data_survey_sim_macro, as.integer(site) <= 4)
   biomass <- kb_predict_biomass_survey(
     fit_weight_sim_macro,
-    subset(data_plants_sim_macro, as.integer(site) <= 4),
+    subset(data_size_census_sim_macro, survey_id %in% survey$survey_id),
     survey,
     progress = "none"
   )

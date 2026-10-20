@@ -40,7 +40,7 @@ Other columns are ignored.
 \examples{
 biomass <- kb_predict_biomass_survey(
   fit_weight_sim_macro,
-  data_plants_sim_macro,
+  data_size_census_sim_macro,
   data_survey_sim_macro,
   progress = "none"
 )
@@ -51,9 +51,9 @@ Other data checks:
 \code{\link[=kb_check_data_carbon_macro]{kb_check_data_carbon_macro()}},
 \code{\link[=kb_check_data_carbon_nereo]{kb_check_data_carbon_nereo()}},
 \code{\link[=kb_check_data_cover_calibration_nereo]{kb_check_data_cover_calibration_nereo()}},
-\code{\link[=kb_check_data_plants_macro]{kb_check_data_plants_macro()}},
-\code{\link[=kb_check_data_plants_nereo]{kb_check_data_plants_nereo()}},
-\code{\link[=kb_check_data_size_nereo]{kb_check_data_size_nereo()}},
+\code{\link[=kb_check_data_size_census_macro]{kb_check_data_size_census_macro()}},
+\code{\link[=kb_check_data_size_census_nereo]{kb_check_data_size_census_nereo()}},
+\code{\link[=kb_check_data_size_sample_nereo]{kb_check_data_size_sample_nereo()}},
 \code{\link[=kb_check_data_survey]{kb_check_data_survey()}},
 \code{\link[=kb_check_data_weight_macro]{kb_check_data_weight_macro()}},
 \code{\link[=kb_check_data_weight_nereo]{kb_check_data_weight_nereo()}},

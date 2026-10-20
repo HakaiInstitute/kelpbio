@@ -199,7 +199,7 @@
   invisible(fits)
 }
 
-# A table of counted plants must give the weight fit's predictor.
+# A size census must give the weight fit's predictor.
 .chk_census_size <- function(weight, plants, call = rlang::caller_env()) {
   if (.vld_census_size(weight, plants)) {
     return(invisible(plants))
@@ -691,38 +691,15 @@
   invisible(data)
 }
 
-.chk_date <- function(x, x_name = deparse(substitute(x))) {
-  if (.vld_date(x)) {
-    return(invisible(x))
-  }
-  if (!inherits(x, "Date")) {
-    cli::cli_abort(c(
-      "{x_name} must be a {.cls Date}.",
-      i = "Convert it with {.fn as.Date}, giving the {.arg format} of the text."
-    ))
-  }
-  cli::cli_abort("{x_name} must not have missing values.")
-}
-
-.chk_date_year <- function(x, x_name = deparse(substitute(x))) {
-  if (.vld_date_year(x)) {
-    return(invisible(x))
-  }
-  cli::cli_abort(c(
-    "{column_xname(x_name, 'year')} must be the year of {.field date}.",
-    i = "Drop {.field year}: it is taken from {.field date}."
-  ))
-}
-
 .chk_unique_surveys <- function(x, x_name = deparse(substitute(x))) {
   if (.vld_unique_surveys(x)) {
     return(invisible(x))
   }
-  key <- survey_key(x$site, x$plot_id, x$date)
-  repeated <- unique(key[duplicated(key)])
+  id <- as.character(x$survey_id)
+  repeated <- unique(id[duplicated(id)])
   cli::cli_abort(c(
-    "{x_name} must have one row per {.field site}, {.field plot_id}, and {.field date}.",
-    i = "Repeated: {.val {repeated}}."
+    "{column_xname(x_name, 'survey_id')} must identify each survey once.",
+    i = "Repeated: {.val {utils::head(repeated, 5)}}."
   ))
 }
 
@@ -770,38 +747,38 @@
   cli::cli_abort("{x_name} must not have missing values.")
 }
 
-.chk_plants_join <- function(plants, survey, x_name = deparse(substitute(plants))) {
-  if (.vld_plants_join(plants, survey)) {
-    return(invisible(plants))
+.chk_census_join <- function(size_census, survey, x_name = deparse(substitute(size_census))) {
+  if (.vld_census_join(size_census, survey)) {
+    return(invisible(size_census))
   }
-  key <- survey_key(plants$site, plants$plot_id, plants$date)
-  unmatched <- unique(key[!key %in% survey_key(survey$site, survey$plot_id, survey$date)])
-  n <- length(unmatched)
+  id <- as.character(size_census$survey_id)
+  orphan <- !id %in% as.character(survey$survey_id)
+  n <- sum(orphan)
+  unmatched <- unique(id[orphan])
   cli::cli_abort(c(
     "{n} plant{?s} in {x_name} {cli::qty(n)}match{?es/} no survey.",
-    i = "Plants join to their survey by {.field site}, {.field plot_id}, and {.field date}.",
-    i = "Unmatched: {.val {utils::head(unmatched, 5)}}."
+    i = "Plants join to their survey by {.field survey_id}.",
+    i = "Unmatched {.field survey_id}: {.val {utils::head(unmatched, 5)}}."
   ))
 }
 
-# A survey table; with `plants`, the plant table and the join too.
-.chk_survey_data <- function(data, plants, x_name, plants_name) {
+# A survey table; with `size_census`, the census, and the join too.
+.chk_survey_data <- function(data, size_census, x_name, census_name) {
   chk::chk_data(data, x_name = x_name)
   .chk_rows(data, x_name)
-  required <- c("site", "plot_id", "date", "survey_area_m2")
-  if (is.null(plants)) {
+  required <- c("survey_id", "site", "year", "survey_area_m2")
+  if (is.null(size_census)) {
     required <- c(required, "plants")
   }
   chk::chk_superset(names(data), required, x_name = x_name)
-  .chk_dated_site(data, x_name)
-  .chk_group_columns(data, x_name, "plot_id")
+  .chk_group_columns(data, x_name, c("survey_id", "site", "year"))
   .chk_measure_columns(data, "survey_area_m2", x_name)
-  if (is.null(plants)) {
+  if (is.null(size_census)) {
     .chk_measure_columns(data, "plants", x_name, zero = TRUE)
   } else if ("plants" %in% names(data)) {
     cli::cli_abort(c(
-      "{x_name} must not have a {.field plants} column when plant rows are given.",
-      i = "The counts come from the plant rows."
+      "{x_name} must not have a {.field plants} column when a size census is given.",
+      i = "The counts come from the size census rows."
     ))
   }
   .chk_unique_surveys(data, x_name)
@@ -809,25 +786,25 @@
   warn_implausible_units(data, x_name)
   warn_group_names(data, x_name)
   warn_survey_area(data, x_name)
-  if (!is.null(plants)) {
-    size <- intersect(c("diameter_mm", "fronds"), names(plants))
+  if (!is.null(size_census)) {
+    size <- intersect(c("diameter_mm", "fronds"), names(size_census))
     if (length(size) != 1L) {
       cli::cli_abort(
-        "{plants_name} must have one of {.field diameter_mm} (Nereocystis) or {.field fronds} (Macrocystis)."
+        "{census_name} must have one of {.field diameter_mm} (Nereocystis) or {.field fronds} (Macrocystis)."
       )
     }
-    .chk_plants_data(plants, size, plants_name)
-    .chk_plants_join(plants, data, plants_name)
+    .chk_size_census_data(size_census, size, census_name)
+    .chk_census_join(size_census, data, census_name)
   }
   invisible(data)
 }
 
-# A plant table of counted plants; `size` is the species' size column.
-.chk_plants_data <- function(data, size, x_name) {
+# A size census, every plant a survey counted; `size` is the species' size
+# column.
+.chk_size_census_data <- function(data, size, x_name) {
   chk::chk_data(data, x_name = x_name)
-  chk::chk_superset(names(data), c("site", "plot_id", "date", size), x_name = x_name)
-  .chk_group_columns(data, x_name, c("site", "plot_id"))
-  .chk_date(data$date, column_xname(x_name, "date"))
+  chk::chk_superset(names(data), c("survey_id", size), x_name = x_name)
+  .chk_group_columns(data, x_name, "survey_id")
   if (identical(size, "fronds")) {
     nm <- column_xname(x_name, "fronds")
     chk::chk_numeric(data$fronds, x_name = nm)
@@ -842,27 +819,34 @@
     .chk_partial(data$partial, column_xname(x_name, "partial"))
   }
   warn_implausible_units(data, x_name)
-  warn_group_names(data, x_name)
   invisible(data)
 }
 
-# `site` and `date` of a dated table (weight, size, survey, plants): `year` is
-# derived from `date`, and a `year` column, if present, must agree with it.
-.chk_dated_site <- function(data, x_name) {
-  .chk_group_columns(data, x_name, "site")
-  .chk_date(data$date, column_xname(x_name, "date"))
-  .chk_date_year(data, x_name)
-  invisible(data)
-}
-
+# Grouping and identifier columns: `site` is character or factor; `year` may
+# also be whole numbers and `survey_id` numbers, converted on entry by
+# ids_as_character().
 .chk_group_columns <- function(x, x_name, cols = c("site", "year")) {
-  if (all(vapply(x[cols], .vld_group_column, logical(1)))) {
+  if (all(vapply(cols, function(col) .vld_id_column(x[[col]], col), logical(1)))) {
     return(invisible(x))
   }
   for (col in cols) {
     nm <- column_xname(x_name, col)
-    chk::chk_character_or_factor(x[[col]], x_name = nm)
-    chk::chk_not_any_na(x[[col]], x_name = nm)
+    if (col %in% c("year", "survey_id") && is.numeric(x[[col]])) {
+      chk::chk_not_any_na(x[[col]], x_name = nm)
+      .chk_finite(x[[col]], nm)
+      if (col == "year") {
+        chk::chk_whole_numeric(x[[col]], x_name = nm)
+      }
+    } else {
+      if (col %in% c("year", "survey_id")) {
+        if (!is.character(x[[col]]) && !is.factor(x[[col]])) {
+          cli::cli_abort("{nm} must be character, factor, or numeric.")
+        }
+      } else {
+        chk::chk_character_or_factor(x[[col]], x_name = nm)
+      }
+      chk::chk_not_any_na(x[[col]], x_name = nm)
+    }
   }
   invisible(x)
 }

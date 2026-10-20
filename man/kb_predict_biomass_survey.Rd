@@ -27,13 +27,13 @@ kb_predict_biomass_survey(
 \arguments{
 \item{weight}{A \code{kb_fit_weight} object.}
 
-\item{size}{A \code{kb_fit_size} object, when plants were tallied, or a data
-frame of every counted plant, one row per plant (see
-\code{\link[=kb_check_data_plants_nereo]{kb_check_data_plants_nereo()}} and \code{\link[=kb_check_data_plants_macro]{kb_check_data_plants_macro()}} for the
-columns).}
+\item{size}{A \code{kb_fit_size} object, when plants were tallied, or a size
+census, a data frame of every counted plant, one row per plant (see
+\code{\link[=kb_check_data_size_census_nereo]{kb_check_data_size_census_nereo()}} and
+\code{\link[=kb_check_data_size_census_macro]{kb_check_data_size_census_macro()}} for the columns).}
 
-\item{survey}{A data frame of in situ surveys, one row per survey of a plot
-(see \code{\link[=kb_check_data_survey]{kb_check_data_survey()}} for the columns).}
+\item{survey}{A data frame of in situ surveys, one row per survey (see
+\code{\link[=kb_check_data_survey]{kb_check_data_survey()}} for the columns).}
 
 \item{wetdry}{A \code{kb_fit_wetdry} object, required for dry and carbon biomass,
 or \code{NULL}.}
@@ -76,7 +76,7 @@ default) to follow \code{new_levels}.}
 
 \item{n_plants}{A whole number of sizes averaged per draw to compute the
 mean plant weight from a size fit; larger values are more precise and
-slower. Not used with a table of counted plants.}
+slower. Not used with a size census.}
 
 \item{conf_level}{A number greater than 0 and less than 1 giving the
 compatibility-interval level.}
@@ -94,7 +94,8 @@ progress for \code{\link[=kb_progress]{kb_progress()}}, or \code{NULL} (the defa
 }
 \value{
 A \code{kb_predictions} object. Without \code{pool_by}, the rows of \code{survey}
-with added \code{year} (from \code{date}), \code{weight_support} and, with a size fit,
+(a numeric \code{year} or \code{survey_id} as character) with added
+\code{weight_support} and, with a size fit,
 \code{size_support} (as in \code{kb_predict_mean_weight()}), the draws of the
 biomass in a column named for it (\code{biomass_kg_m2}, \code{dry_biomass_kg_m2}, or
 \code{carbon_biomass_g_m2} per m², and \code{biomass_kg}, \code{dry_biomass_kg}, or
@@ -114,10 +115,10 @@ sizes come from one of two sources:
 \item A size fit, when plants were tallied and a sample of them measured. A
 survey's biomass is its \code{plants} count times its site-year's mean plant
 weight (see \code{\link[=kb_predict_mean_weight]{kb_predict_mean_weight()}}).
-\item A table of every counted plant, when each was measured. A survey's biomass
-is the sum of its plants' expected weights, half for a \code{partial} plant. A
-survey with no plant rows has no biomass, and a message lists such
-surveys.
+\item A size census of every counted plant, when each was measured, joined to
+its survey by \code{survey_id}. A survey's biomass is the sum of its plants'
+expected weights, half for a \code{partial} plant. A survey with no census rows
+has no biomass, and a message lists such surveys.
 }
 
 Dry biomass is wet biomass times the expected dry:wet ratio from \code{wetdry},
@@ -141,7 +142,7 @@ kb_predict_biomass_survey(
 set.seed(1)
 kb_predict_biomass_survey(
   fit_weight_sim_macro,
-  data_plants_sim_macro,
+  data_size_census_sim_macro,
   data_survey_sim_macro,
   pool_by = c("site", "year")
 )

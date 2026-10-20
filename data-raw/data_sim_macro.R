@@ -1,5 +1,5 @@
 # Build the simulated Macrocystis datasets: data_weight_sim_macro,
-# data_survey_sim_macro, data_plants_sim_macro, and data_canopy_sim_macro, for
+# data_survey_sim_macro, data_size_census_sim_macro, and data_canopy_sim_macro, for
 # fast tests and runnable examples. Not for inference.
 #
 # All four come from one set of true site-year values, so they agree: survey
@@ -14,9 +14,9 @@
 #
 # Every counted plant has its fronds at 1 m recorded, drawn from the
 # site-year's frond distribution; about one in twelve is a partial (edge)
-# plant. Each site-year's four transects are summed to one survey of plot "1";
-# at a few site-years the transects are split between two plots, or between two
-# visits to one plot, and one transect with no plants is its own survey. The
+# plant. Each site-year's four transects are summed to one survey; at a few
+# site-years the transects are split between two plots, or between two visits
+# to one plot, and one transect with no plants is its own survey. The
 # draws up to the transect counts are unchanged from earlier versions, so the
 # weight data and their pre-fit are too.
 #
@@ -161,11 +161,12 @@ survey_id <- paste(transects$site, transects$year, transects$plot_id, transects$
 first <- !duplicated(survey_id)
 survey <- transects[first, c("site", "year", "plot_id", "visit")]
 survey$survey_area_m2 <- as.vector(tapply(transects$area_m2, survey_id, sum)[survey_id[first]])
-survey$date <- as.Date(sprintf(
-  "%s-08-%02d",
+survey$survey_id <- paste(
+  survey$site,
   survey$year,
-  10L + match(survey$site, sites) + 10L * (survey$visit - 1L)
-))
+  stats::ave(seq_len(nrow(survey)), survey$site, survey$year, FUN = seq_along),
+  sep = "-"
+)
 
 i_grid <- match(paste(transects$site, transects$year), key)
 plants <- do.call(rbind, lapply(which(transects$plants > 0), function(t) {
@@ -177,10 +178,7 @@ plants <- do.call(rbind, lapply(which(transects$plants > 0), function(t) {
     partial = stats::runif(n) < 1 / 12
   )
 }))
-s_row <- match(plants$survey, survey_id[first])
-plants$site <- survey$site[s_row]
-plants$plot_id <- survey$plot_id[s_row]
-plants$date <- survey$date[s_row]
+plants$survey_id <- survey$survey_id[match(plants$survey, survey_id[first])]
 
 # Drone cover on the surveys of drone site-years: the cover model solved for the
 # true plot biomass, with plot-to-plot variation, kept between 0.02 and 0.95.
@@ -200,10 +198,10 @@ survey$tide_height_m <- ifelse(drone, tide_height_m, NA_real_)
 survey$survey_area_m2 <- pmin(survey$survey_area_m2, ifelse(drone, plot_area_m2, Inf))
 
 data_survey_sim_macro <- survey[c(
-  "site", "plot_id", "date", "survey_area_m2",
+  "survey_id", "site", "year", "survey_area_m2",
   "plot_area_m2", "canopy_area_m2", "tide_height_m"
 )]
-data_plants_sim_macro <- plants[c("site", "plot_id", "date", "fronds", "partial")]
+data_size_census_sim_macro <- plants[c("survey_id", "fronds", "partial")]
 
 # 5. Mapped canopy for totals ----------------------------------------------------
 
@@ -218,21 +216,14 @@ canopy$region <- factor(
 )
 data_canopy_sim_macro <- canopy
 
-# Harvests are dated within the peak season, a few days before the survey, with
-# no new draws. The year comes from the date.
-data_weight_sim_macro$date <- as.Date(sprintf(
-  "%s-08-%02d",
-  data_weight_sim_macro$year,
-  5L + match(data_weight_sim_macro$site, sites)
-))
-data_weight_sim_macro$year <- NULL
-
 # 6. Save ----------------------------------------------------------------------
 
 # Levels in creation order, not string order; this order carries through to fits
 # and predictions.
 as_sim <- function(data) {
-  data$site <- factor(data$site, levels = sites)
+  if ("site" %in% names(data)) {
+    data$site <- factor(data$site, levels = sites)
+  }
   if ("year" %in% names(data)) {
     data$year <- factor(data$year, levels = years)
   }
@@ -241,7 +232,7 @@ as_sim <- function(data) {
 }
 data_weight_sim_macro <- as_sim(data_weight_sim_macro)
 data_survey_sim_macro <- as_sim(data_survey_sim_macro)
-data_plants_sim_macro <- as_sim(data_plants_sim_macro)
+data_size_census_sim_macro <- as_sim(data_size_census_sim_macro)
 data_canopy_sim_macro <- as_sim(data_canopy_sim_macro)
 
 message(
@@ -255,5 +246,5 @@ message(
 
 usethis::use_data(data_weight_sim_macro, overwrite = TRUE)
 usethis::use_data(data_survey_sim_macro, overwrite = TRUE)
-usethis::use_data(data_plants_sim_macro, overwrite = TRUE)
+usethis::use_data(data_size_census_sim_macro, overwrite = TRUE)
 usethis::use_data(data_canopy_sim_macro, overwrite = TRUE)

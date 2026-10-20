@@ -20,7 +20,7 @@
 #' @examplesIf interactive()
 #' # Change one prior; the others keep their defaults:
 #' kb_fit_size_nereo(
-#'   data_size_sim_nereo,
+#'   data_size_sample_sim_nereo,
 #'   priors = list(sd_site = kb_prior_exponential(rate = 2))
 #' )
 # Unlike the analysis project (Normal(1, 1) on the log shape), the shape is

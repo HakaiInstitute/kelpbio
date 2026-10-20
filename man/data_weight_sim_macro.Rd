@@ -11,7 +11,7 @@ A data frame with columns:
 number.}
 \item{weight_kg}{Wet weight (kg), a positive number.}
 \item{site}{Survey site, a factor (10 levels).}
-\item{date}{Date of the harvest, a \code{Date} (2019 to 2022).}
+\item{year}{Harvest year, a factor (4 levels).}
 }
 }
 \usage{
@@ -32,8 +32,8 @@ Other example datasets:
 \code{\link{data_canopy_sim_nereo}},
 \code{\link{data_carbon_sim_macro}},
 \code{\link{data_carbon_sim_nereo}},
-\code{\link{data_plants_sim_macro}},
-\code{\link{data_size_sim_nereo}},
+\code{\link{data_size_census_sim_macro}},
+\code{\link{data_size_sample_sim_nereo}},
 \code{\link{data_survey_sim_macro}},
 \code{\link{data_survey_sim_nereo}},
 \code{\link{data_weight_sim_nereo}},

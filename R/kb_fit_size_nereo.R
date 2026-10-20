@@ -15,8 +15,8 @@
 #' @inheritSection params Site and year interaction
 #' @inheritParams kb_fit_weight_nereo
 #' @inheritParams params
-#' @param data A data frame of size observations, one row per plant (see
-#'   [kb_check_data_size_nereo()] for the required columns).
+#' @param data A data frame of a size sample, one row per measured plant (see
+#'   [kb_check_data_size_sample_nereo()] for the required columns).
 #' @param priors A named list of prior objects (see [kb_priors_size_nereo()]),
 #'   or `NULL` to use the defaults. Entries not supplied keep their defaults.
 #'
@@ -28,7 +28,7 @@
 #' # A pre-fit example model is included with the package:
 #' tidy(fit_size_sim_nereo)
 #' @examplesIf interactive()
-#' fit <- kb_fit_size_nereo(data_size_sim_nereo)
+#' fit <- kb_fit_size_nereo(data_size_sample_sim_nereo)
 #' tidy(fit)
 kb_fit_size_nereo <- function(
   data,
@@ -46,7 +46,7 @@ kb_fit_size_nereo <- function(
   progress <- rlang::arg_match(progress)
   .chk_fit_inputs(
     data,
-    kb_check_data_size_nereo,
+    kb_check_data_size_sample_nereo,
     prior_only = prior_only,
     chains = chains,
     niters = niters,

@@ -27,7 +27,7 @@ kb_priors_size_nereo()
 \dontshow{if (interactive()) withAutoprint(\{ # examplesIf}
 # Change one prior; the others keep their defaults:
 kb_fit_size_nereo(
-  data_size_sim_nereo,
+  data_size_sample_sim_nereo,
   priors = list(sd_site = kb_prior_exponential(rate = 2))
 )
 \dontshow{\}) # examplesIf}

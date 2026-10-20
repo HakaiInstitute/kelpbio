@@ -116,6 +116,7 @@ kb_predict_biomass_canopy <- function(
     cap = "the classified area",
     basis = "on more than 5% of draws"
   )
+  new_data <- ids_as_character(new_data)
   .chk_pool_by(pool_by, new_data)
   pool_by <- unique(pool_by)
   .chk_measure_fits(measure, wetdry, carbon)

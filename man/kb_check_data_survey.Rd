@@ -6,16 +6,17 @@
 \usage{
 kb_check_data_survey(
   data,
-  plants = NULL,
+  size_census = NULL,
   x_name = chk::deparse_backtick_chk(substitute(data))
 )
 }
 \arguments{
-\item{data}{A data frame of in situ surveys, one row per survey of a plot.}
+\item{data}{A data frame of in situ surveys, one row per survey.}
 
-\item{plants}{A data frame of counted plants, one row per plant (see
-\code{\link[=kb_check_data_plants_nereo]{kb_check_data_plants_nereo()}} and \code{\link[=kb_check_data_plants_macro]{kb_check_data_plants_macro()}} for the
-columns), or \code{NULL} to check \code{data} alone with its \code{plants} column.}
+\item{size_census}{A data frame of every plant the surveys counted, one row
+per plant (see \code{\link[=kb_check_data_size_census_nereo]{kb_check_data_size_census_nereo()}} and
+\code{\link[=kb_check_data_size_census_macro]{kb_check_data_size_census_macro()}} for the columns), or \code{NULL} to check
+\code{data} alone with its \code{plants} column.}
 
 \item{x_name}{A string naming the data for error messages.}
 }
@@ -28,19 +29,20 @@ Check that \code{data} has the columns and values needed to predict the biomass
 of in situ surveys with \code{\link[=kb_predict_biomass_survey]{kb_predict_biomass_survey()}}.
 }
 \details{
-Each row of \code{data} is one survey of a plot: one count of its plants on a
-date. A plant is one individual (sporophyte), identified by its holdfast.
+Each row of \code{data} is one survey: one count of the plants in a surveyed
+area. A plant is one individual (sporophyte), identified by its holdfast.
 Required columns:
 \itemize{
-\item \code{site} and \code{plot_id}, factor or character, identifying the plot within its
-site.
-\item \code{date}, a \code{Date}. The year of the survey is the year of \code{date}; a \code{year}
-column, if present, must agree with it.
+\item \code{survey_id}, factor, character, or numeric, identifying each survey once.
+Surveys of the same site in the same year, including on the same day, are
+separate rows.
+\item \code{site}, factor or character, and \code{year}, factor, character, or whole
+numbers. A numeric \code{year} or \code{survey_id} is used as its character value.
 \item \code{survey_area_m2}, the surveyed area (m², > 0), such as a dive's transects.
 Biomass per m² is the biomass counted over this area.
 \item \code{plants}, the number of plants counted (\verb{>= 0}), when sizes come from a
-size fit. It must be absent when the \code{plants} argument is given; the
-counts then come from its rows.
+size fit. It must be absent when \code{size_census} is given; the counts then
+come from its rows.
 }
 
 A survey paired with a drone flight also has \code{plot_area_m2} (the plot
@@ -48,12 +50,12 @@ polygon, m², > 0), over which the drone cover is measured, \code{canopy_area_m2
 (the canopy delineated within it, m², \verb{>= 0} and at most \code{plot_area_m2}), and
 \code{tide_height_m} (the tide height at the flight, m, chart datum). The three are
 given together or left missing together. When the whole plot is surveyed,
-\code{survey_area_m2} equals \code{plot_area_m2}. Each combination of \code{site},
-\code{plot_id}, and \code{date} appears once. Other columns are ignored.
+\code{survey_area_m2} equals \code{plot_area_m2}. Other columns, such as \code{region}, are
+ignored, and can be named in \code{pool_by}.
 }
 \examples{
 kb_check_data_survey(data_survey_sim_nereo)
-kb_check_data_survey(data_survey_sim_macro, data_plants_sim_macro)
+kb_check_data_survey(data_survey_sim_macro, data_size_census_sim_macro)
 }
 \seealso{
 Other data checks:
@@ -61,9 +63,9 @@ Other data checks:
 \code{\link[=kb_check_data_carbon_nereo]{kb_check_data_carbon_nereo()}},
 \code{\link[=kb_check_data_cover_calibration_macro]{kb_check_data_cover_calibration_macro()}},
 \code{\link[=kb_check_data_cover_calibration_nereo]{kb_check_data_cover_calibration_nereo()}},
-\code{\link[=kb_check_data_plants_macro]{kb_check_data_plants_macro()}},
-\code{\link[=kb_check_data_plants_nereo]{kb_check_data_plants_nereo()}},
-\code{\link[=kb_check_data_size_nereo]{kb_check_data_size_nereo()}},
+\code{\link[=kb_check_data_size_census_macro]{kb_check_data_size_census_macro()}},
+\code{\link[=kb_check_data_size_census_nereo]{kb_check_data_size_census_nereo()}},
+\code{\link[=kb_check_data_size_sample_nereo]{kb_check_data_size_sample_nereo()}},
 \code{\link[=kb_check_data_weight_macro]{kb_check_data_weight_macro()}},
 \code{\link[=kb_check_data_weight_nereo]{kb_check_data_weight_nereo()}},
 \code{\link[=kb_check_data_wetdry_macro]{kb_check_data_wetdry_macro()}},

@@ -42,7 +42,7 @@ reference:
   contents:
     - kb_check_data_weight_nereo
     - kb_check_data_weight_macro
-    - kb_check_data_size_nereo
+    - kb_check_data_size_sample_nereo
     - kb_check_data_wetdry_nereo
     - kb_check_data_wetdry_macro
     - kb_check_data_carbon_nereo
@@ -50,21 +50,21 @@ reference:
     - kb_check_data_cover_calibration_nereo
     - kb_check_data_cover_calibration_macro
     - kb_check_data_survey
-    - kb_check_data_plants_nereo
-    - kb_check_data_plants_macro
+    - kb_check_data_size_census_nereo
+    - kb_check_data_size_census_macro
 - title: "Example data and fits"
   desc: "Simulated datasets and pre-fit models for examples."
   contents:
     - data_weight_sim_nereo
     - data_weight_sim_macro
-    - data_size_sim_nereo
+    - data_size_sample_sim_nereo
     - data_wetdry_sim_nereo
     - data_wetdry_sim_macro
     - data_carbon_sim_nereo
     - data_carbon_sim_macro
     - data_survey_sim_nereo
     - data_survey_sim_macro
-    - data_plants_sim_macro
+    - data_size_census_sim_macro
     - data_canopy_sim_nereo
     - data_canopy_sim_macro
     - fit_weight_sim_nereo

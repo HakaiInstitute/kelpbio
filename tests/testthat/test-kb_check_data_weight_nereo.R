@@ -3,7 +3,7 @@ test_that("valid weight data passes invisibly", {
     diameter_mm = c(20, 35),
     weight_kg = c(0.5, 2),
     site = factor(c("a", "b")),
-    date = as.Date(c("2020-08-01", "2021-08-01"))
+    year = c("2020", "2021")
   )
   expect_silent(kb_check_data_weight_nereo(data))
   expect_identical(kb_check_data_weight_nereo(data), data)
@@ -14,7 +14,7 @@ test_that("character site is accepted", {
     diameter_mm = 20,
     weight_kg = 0.5,
     site = "a",
-    date = as.Date("2020-08-01"),
+    year = "2020",
     stringsAsFactors = FALSE
   )
   expect_silent(kb_check_data_weight_nereo(data))
@@ -25,7 +25,7 @@ test_that("unsuffixed column names error naming the suffixed column", {
     diameter = 20,
     weight = 0.5,
     site = factor("a"),
-    date = as.Date("2020-08-01")
+    year = "2020"
   )
   expect_error(kb_check_data_weight_nereo(data), "diameter_mm")
 })
@@ -35,10 +35,10 @@ test_that("missing, mistyped, and impossible values error", {
     diameter_mm = 20,
     weight_kg = 0.5,
     site = factor("a"),
-    date = as.Date("2020-08-01")
+    year = "2020"
   )
   expect_snapshot(
-    kb_check_data_weight_nereo(good[c("weight_kg", "site", "date")]),
+    kb_check_data_weight_nereo(good[c("weight_kg", "site", "year")]),
     error = TRUE
   )
   bad_type <- good
@@ -73,9 +73,13 @@ test_that("x_name must be a string", {
   expect_error(kb_check_data_weight_nereo(data.frame(), x_name = 1), "x_name")
 })
 
-test_that("a date given as text or a contradicting year errors", {
-  good <- data_weight_sim_nereo[1:2, ]
-  expect_error(kb_check_data_weight_nereo(transform(good, date = as.character(date))), "Date")
-  expect_error(kb_check_data_weight_nereo(transform(good, year = "1999")), "year")
-  expect_silent(kb_check_data_weight_nereo(transform(good, year = format(date, "%Y"))))
+test_that("a numeric year is accepted, a fractional one errors", {
+  good <- data.frame(diameter_mm = 30, weight_kg = 1, fronds = 3, site = "a", year = 2020)
+  expect_silent(kb_check_data_weight_nereo(good))
+  expect_error(kb_check_data_weight_nereo(transform(good, year = 2020.5)), "year")
+})
+
+test_that("a date without a year errors naming year", {
+  good <- data.frame(diameter_mm = 30, weight_kg = 1, fronds = 3, site = "a", date = as.Date("2020-08-01"))
+  expect_error(kb_check_data_weight_nereo(good), "year")
 })

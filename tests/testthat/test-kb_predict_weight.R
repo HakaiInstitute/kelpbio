@@ -146,3 +146,12 @@ test_that("new_data far outside the fitted range warns but still predicts", {
   )
   expect_equal(nrow(p), 1L)
 })
+
+test_that("a numeric year in new_data matches the fitted year", {
+  year <- levels(factor(weight_nereo_fit$data$year))[1]
+  rows <- data.frame(site = weight_nereo_fit$data$site[1], diameter_mm = 40)
+  numeric_year <- kb_predict_weight(weight_nereo_fit, transform(rows, year = as.numeric(year)))
+  character_year <- kb_predict_weight(weight_nereo_fit, transform(rows, year = year))
+  expect_identical(numeric_year$estimate, character_year$estimate)
+  expect_identical(numeric_year$upper, character_year$upper)
+})

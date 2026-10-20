@@ -19,8 +19,8 @@ kb_fit_size_nereo(
 )
 }
 \arguments{
-\item{data}{A data frame of size observations, one row per plant (see
-\code{\link[=kb_check_data_size_nereo]{kb_check_data_size_nereo()}} for the required columns).}
+\item{data}{A data frame of a size sample, one row per measured plant (see
+\code{\link[=kb_check_data_size_sample_nereo]{kb_check_data_size_sample_nereo()}} for the required columns).}
 
 \item{priors}{A named list of prior objects (see \code{\link[=kb_priors_size_nereo]{kb_priors_size_nereo()}}),
 or \code{NULL} to use the defaults. Entries not supplied keep their defaults.}
@@ -99,7 +99,7 @@ do.
 # A pre-fit example model is included with the package:
 tidy(fit_size_sim_nereo)
 \dontshow{if (interactive()) withAutoprint(\{ # examplesIf}
-fit <- kb_fit_size_nereo(data_size_sim_nereo)
+fit <- kb_fit_size_nereo(data_size_sample_sim_nereo)
 tidy(fit)
 \dontshow{\}) # examplesIf}
 }

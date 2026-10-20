@@ -7,9 +7,9 @@
 \format{
 A data frame with columns:
 \describe{
+\item{survey_id}{Survey identifier, a character string.}
 \item{site}{Survey site, a factor (10 levels).}
-\item{plot_id}{Plot within the site, a character string.}
-\item{date}{Survey date, a \code{Date}.}
+\item{year}{Survey year, a factor (4 levels).}
 \item{survey_area_m2}{Surveyed area (m²), a positive number.}
 \item{plot_area_m2}{Plot polygon (m²), or \code{NA} without a flight.}
 \item{canopy_area_m2}{Drone canopy within the plot (m²), or \code{NA} without
@@ -22,10 +22,10 @@ flight.}
 data_survey_sim_macro
 }
 \description{
-A small simulated dataset of in situ surveys, one row per survey of a plot,
-for runnable examples: the plants listed in \link{data_plants_sim_macro}, and the
-drone cover of the surveys paired with a flight. Some site-years hold two plots, one plot is
-surveyed twice in a year, and one survey counted no plants.
+A small simulated dataset of in situ surveys, one row per survey,
+for runnable examples: the plants listed in \link{data_size_census_sim_macro}, and the
+drone cover of the surveys paired with a flight. Some site-years hold more
+than one survey, and one survey counted no plants.
 }
 \seealso{
 \code{\link[=kb_check_data_survey]{kb_check_data_survey()}} for the columns.
@@ -35,8 +35,8 @@ Other example datasets:
 \code{\link{data_canopy_sim_nereo}},
 \code{\link{data_carbon_sim_macro}},
 \code{\link{data_carbon_sim_nereo}},
-\code{\link{data_plants_sim_macro}},
-\code{\link{data_size_sim_nereo}},
+\code{\link{data_size_census_sim_macro}},
+\code{\link{data_size_sample_sim_nereo}},
 \code{\link{data_survey_sim_nereo}},
 \code{\link{data_weight_sim_macro}},
 \code{\link{data_weight_sim_nereo}},

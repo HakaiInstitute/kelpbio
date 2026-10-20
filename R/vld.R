@@ -56,17 +56,8 @@
   all(x >= 1)
 }
 
-.vld_date <- function(x) {
-  inherits(x, "Date") && !anyNA(x)
-}
-
-# Run after checking `date`. A survey table need not carry `year`.
-.vld_date_year <- function(x) {
-  !"year" %in% names(x) || identical(as.character(x$year), date_year(x$date))
-}
-
 .vld_unique_surveys <- function(x) {
-  !anyDuplicated(survey_key(x$site, x$plot_id, x$date))
+  !anyDuplicated(as.character(x$survey_id))
 }
 
 # The drone pairing of a survey: all three columns given or all missing on each
@@ -97,11 +88,8 @@
   is.logical(x) && !anyNA(x)
 }
 
-.vld_plants_join <- function(plants, survey) {
-  all(
-    survey_key(plants$site, plants$plot_id, plants$date) %in%
-      survey_key(survey$site, survey$plot_id, survey$date)
-  )
+.vld_census_join <- function(size_census, survey) {
+  all(as.character(size_census$survey_id) %in% as.character(survey$survey_id))
 }
 
 .vld_new_data_weight_macro <- function(x) {
@@ -184,13 +172,22 @@
     !anyNA(x$tide_height_m) &&
     .vld_finite(x$tide_height_m) &&
     .vld_group_column(x$site) &&
-    .vld_group_column(x$year) &&
+    .vld_id_column(x$year, "year") &&
     .vld_positive_measure(x$classified_area_m2) &&
     all(x$canopy_area_m2 <= x$classified_area_m2)
 }
 
 .vld_group_column <- function(x) {
   (is.character(x) || is.factor(x)) && !anyNA(x)
+}
+
+# A grouping or identifier column named `col`: `year` may also be whole numbers,
+# and `survey_id` any finite numbers.
+.vld_id_column <- function(x, col) {
+  if (is.numeric(x) && col %in% c("year", "survey_id")) {
+    return(.vld_finite(x) && !anyNA(x) && (col != "year" || all(x == round(x))))
+  }
+  .vld_group_column(x)
 }
 
 .vld_census_size <- function(weight, plants) {

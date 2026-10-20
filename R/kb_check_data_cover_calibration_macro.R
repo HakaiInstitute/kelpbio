@@ -28,7 +28,7 @@
 #' @examples
 #' biomass <- kb_predict_biomass_survey(
 #'   fit_weight_sim_macro,
-#'   data_plants_sim_macro,
+#'   data_size_census_sim_macro,
 #'   data_survey_sim_macro,
 #'   progress = "none"
 #' )

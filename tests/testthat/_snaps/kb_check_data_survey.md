@@ -6,41 +6,31 @@
       Error in `kb_check_data_survey()`:
       ! `survey()[0, ]` must have at least one row.
 
-# a bad or contradicting date errors
+# year and survey_id may be numeric
 
     Code
-      kb_check_data_survey(transform(survey(), date = "2021-08-01"))
+      kb_check_data_survey(transform(survey(), year = 2021.5))
     Condition
       Error in `kb_check_data_survey()`:
-      ! Column `date` of `transform(survey(), date = "2021-08-01")` must be a <Date>.
-      i Convert it with `as.Date()`, giving the `format` of the text.
-
----
-
-    Code
-      kb_check_data_survey(survey(year = "2020"))
-    Condition
-      Error in `kb_check_data_survey()`:
-      ! Column `year` of `survey(year = "2020")` must be the year of date.
-      i Drop year: it is taken from date.
+      ! Column `year` of `transform(survey(), year = 2021.5)` must be a whole numeric vector (integer vector or double equivalent).
 
 # counts must come from one place
 
     Code
-      kb_check_data_survey(survey(), plants())
+      kb_check_data_survey(survey(), size_census())
     Condition
       Error in `kb_check_data_survey()`:
-      ! `survey()` must not have a plants column when plant rows are given.
-      i The counts come from the plant rows.
+      ! `survey()` must not have a plants column when a size census is given.
+      i The counts come from the size census rows.
 
-# repeated surveys and unmatched plants error
+# repeated survey ids and unmatched plants error
 
     Code
       kb_check_data_survey(rbind(survey(), survey()[1, ]))
     Condition
       Error in `kb_check_data_survey()`:
-      ! `rbind(survey(), survey()[1, ])` must have one row per site, plot_id, and date.
-      i Repeated: "a:1:2021-08-01".
+      ! Column `survey_id` of `rbind(survey(), survey()[1, ])` must identify each survey once.
+      i Repeated: "s1".
 
 ---
 
@@ -49,8 +39,8 @@
     Condition
       Error in `kb_check_data_survey()`:
       ! 1 plant in `p` matches no survey.
-      i Plants join to their survey by site, plot_id, and date.
-      i Unmatched: "a:9:2021-08-01".
+      i Plants join to their survey by survey_id.
+      i Unmatched survey_id: "s9".
 
 # the drone columns are given together
 

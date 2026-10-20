@@ -1,7 +1,7 @@
-# `data` with `year` taken from `date`, as a factor in date order, after `site`.
-# The weight and size fits run at site-year resolution, so dates enter as years.
+# `data` with `year` as a factor after `site`, a numeric year taking its
+# character level.
 with_year <- function(data) {
-  data <- tibble::as_tibble(data)
-  data$year <- factor(date_year(data$date))
+  data <- ids_as_character(tibble::as_tibble(data))
+  data$year <- factor(data$year)
   dplyr::relocate(data, "year", .after = "site")
 }

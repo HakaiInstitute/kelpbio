@@ -474,7 +474,7 @@ grep("^kb_fit_", getNamespaceExports("kelpbio"), value = TRUE) |> sort()
 
 # The site:year effect is always fitted; a pure helper reports which effects
 # the data cannot separate from it (the fit then warns), testable without MCMC:
-weight_data <- kelpbio:::with_year(data_weight_sim_nereo) # year from date
+weight_data <- kelpbio:::with_year(data_weight_sim_nereo)
 one_year <- filter(weight_data, year == "2019") |> droplevels()
 kelpbio:::site_year_aliasing(weight_data) # none
 kelpbio:::site_year_aliasing(one_year) # "year"

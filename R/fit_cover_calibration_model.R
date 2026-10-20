@@ -102,7 +102,7 @@ fit_cover_calibration_model <- function(
 # mean (`biomass_kg_m2`) and SD (`biomass_sd_kg_m2`), so the fit stores no
 # draws per observation. Silent when progress = "none".
 survey_calibration_rows <- function(data, progress = "bar") {
-  data <- tibble::as_tibble(data)
+  data <- ids_as_character(tibble::as_tibble(data))
   covered <- !is.na(data$canopy_area_m2)
   n <- sum(!covered)
   if (n > 0L && !identical(progress, "none")) {

@@ -26,7 +26,7 @@
 #' Example Macrocystis cover calibration fit
 #'
 #' A fit of [kb_fit_cover_calibration_macro()] to the survey biomass from
-#' [kb_predict_biomass_survey()] with [fit_weight_sim_macro], [data_plants_sim_macro], and
+#' [kb_predict_biomass_survey()] with [fit_weight_sim_macro], [data_size_census_sim_macro], and
 #' [data_survey_sim_macro], with fewer draws than the default, for exploring the
 #' fit methods without running the sampler.
 #'
@@ -53,11 +53,11 @@
 # Built by data-raw/fit_size_sim_nereo.R.
 #' Example Nereocystis size fit
 #'
-#' A fit of [kb_fit_size_nereo()] to [data_size_sim_nereo] with fewer draws than
+#' A fit of [kb_fit_size_nereo()] to [data_size_sample_sim_nereo] with fewer draws than
 #' the default, for exploring the fit methods without running the sampler.
 #'
 #' @format An object of class `c("kb_fit_size_nereo", "kb_fit_size", "kb_fit")`.
-#' @seealso [kb_fit_size_nereo()] and [data_size_sim_nereo].
+#' @seealso [kb_fit_size_nereo()] and [data_size_sample_sim_nereo].
 #' @family example fits
 "fit_size_sim_nereo"
 
