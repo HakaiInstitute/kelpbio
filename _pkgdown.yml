@@ -52,6 +52,7 @@ reference:
     - kb_check_data_survey
     - kb_check_data_size_census_nereo
     - kb_check_data_size_census_macro
+    - kb_check_data_canopy
 - title: "Example data and fits"
   desc: "Simulated datasets and pre-fit models for examples."
   contents:
@@ -112,6 +113,7 @@ reference:
     - summary.kb_fit
     - augment.kb_fit
     - kb_converged
+    - kb_plot_trace
     - kb_sensitivity
     - kb_influence
     - create_priorsense_data.kb_fit

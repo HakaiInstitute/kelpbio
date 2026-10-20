@@ -34,6 +34,7 @@ priorsense::powerscale_sensitivity(fit_wetdry_sim_nereo)
 Other diagnostics:
 \code{\link[=kb_converged]{kb_converged()}},
 \code{\link[=kb_influence]{kb_influence()}},
+\code{\link[=kb_plot_trace]{kb_plot_trace()}},
 \code{\link[=kb_sensitivity]{kb_sensitivity()}},
 \code{\link[=loo.kb_fit]{loo.kb_fit()}},
 \code{\link[=pp_check.kb_fit]{pp_check.kb_fit()}}

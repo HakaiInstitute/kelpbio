@@ -44,6 +44,7 @@ kb_check_data_size_census_macro(data_size_census_sim_macro)
 tallied rather than measured.
 
 Other data checks:
+\code{\link[=kb_check_data_canopy]{kb_check_data_canopy()}},
 \code{\link[=kb_check_data_carbon_macro]{kb_check_data_carbon_macro()}},
 \code{\link[=kb_check_data_carbon_nereo]{kb_check_data_carbon_nereo()}},
 \code{\link[=kb_check_data_cover_calibration_macro]{kb_check_data_cover_calibration_macro()}},

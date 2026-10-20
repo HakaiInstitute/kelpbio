@@ -50,6 +50,7 @@ Other diagnostics:
 \code{\link[=create_priorsense_data.kb_fit]{create_priorsense_data.kb_fit()}},
 \code{\link[=kb_converged]{kb_converged()}},
 \code{\link[=kb_influence]{kb_influence()}},
+\code{\link[=kb_plot_trace]{kb_plot_trace()}},
 \code{\link[=kb_sensitivity]{kb_sensitivity()}},
 \code{\link[=pp_check.kb_fit]{pp_check.kb_fit()}}
 }

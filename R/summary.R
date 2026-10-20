@@ -28,7 +28,14 @@
 #'     of central posterior summaries.}
 #'   \item{`ess_tail`}{the tail effective sample size, governing the reliability
 #'     of the interval limits.}
+#'   \item{`converged`}{whether the term meets the Rhat and effective sample size
+#'     thresholds of [kb_converged()] at `rhat` and `ess`. A term with no Rhat,
+#'     such as a constant, is not judged on it.}
 #' }
+#'
+#' The header's convergence verdict is [kb_converged()] at the same `rhat` and
+#' `ess`. It also covers the group-level deviations and the divergent
+#' transitions, so it can be `FALSE` when every term shown has converged.
 #'
 #' Population-level coefficients and random-effect standard deviations are
 #' always shown. The group-level deviations are included only when
@@ -38,24 +45,32 @@
 #'
 #' @returns A `summary_kb_fit` object: a list of fit metadata and a
 #'   `coefficients` tibble with columns `term`, `estimate`, `lower`, `upper`,
-#'   `rhat`, `ess_bulk`, and `ess_tail`.
+#'   `rhat`, `ess_bulk`, `ess_tail`, and `converged`.
 #' @family fit methods
 #' @exportS3Method base::summary
 #' @examples
 #' summary(fit_weight_sim_nereo)
+#'
+#' # Looser thresholds, for a quick exploratory fit:
+#' summary(fit_weight_sim_nereo, rhat = 1.05, ess = 50)
 summary.kb_fit <- function(
   object,
   ...,
   conf_level = 0.95,
   estimate = stats::median,
   sig_fig = 3,
-  include_random_effects = FALSE
+  include_random_effects = FALSE,
+  rhat = 1.01,
+  ess = 100
 ) {
   .with_call(
     {
       rlang::check_dots_empty()
       .chk_summary_args(conf_level, estimate, sig_fig)
       chk::chk_flag(include_random_effects)
+      chk::chk_number(rhat)
+      chk::chk_number(ess)
+      chk::chk_gte(ess, value = 0)
     },
     # error_call() names the generic, not the method.
     rlang::error_call(rlang::current_env())
@@ -74,20 +89,37 @@ summary.kb_fit <- function(
   coefficients$rhat <- round(diag$rhat[idx], 3)
   coefficients$ess_bulk <- round(diag$ess_bulk[idx])
   coefficients$ess_tail <- round(diag$ess_tail[idx])
+  coefficients$converged <- .term_converged(
+    diag[idx, ],
+    rhat = rhat,
+    min_ess = ess * posterior::nchains(object$draws)
+  )
+  header <- .kb_fit_header(object)
+  header$converged <- kb_converged(object, rhat = rhat, ess = ess)
 
   structure(
     c(
-      .kb_fit_header(object),
+      header,
       list(
         perc_divergent = object$diagnostics$perc_divergent,
         perc_max_treedepth = object$diagnostics$perc_max_treedepth,
         ebfmi = object$diagnostics$ebfmi,
         conf_level = conf_level,
+        rhat = rhat,
+        ess = ess,
         coefficients = coefficients
       )
     ),
     class = "summary_kb_fit"
   )
+}
+
+# Per-term form of the kb_converged() thresholds: a missing Rhat or effective
+# sample size (a constant term) is not judged on it.
+.term_converged <- function(diag, rhat, min_ess) {
+  (is.na(diag$rhat) | diag$rhat < rhat) &
+    (is.na(diag$ess_bulk) | diag$ess_bulk >= min_ess) &
+    (is.na(diag$ess_tail) | diag$ess_tail >= min_ess)
 }
 
 # The class before the "kb_fit" root, e.g. "weight".

@@ -4,7 +4,7 @@ test_that("summary returns a classed object with a coefficient table", {
   expect_s3_class(s$coefficients, "tbl_df")
   expect_named(
     s$coefficients,
-    c("term", "estimate", "lower", "upper", "rhat", "ess_bulk", "ess_tail")
+    c("term", "estimate", "lower", "upper", "rhat", "ess_bulk", "ess_tail", "converged")
   )
 })
 
@@ -14,6 +14,49 @@ test_that("summary diagnostic columns agree with the stored diagnostics", {
   idx <- match(s$coefficients$term, diag$variable)
   expect_equal(s$coefficients$rhat, round(diag$rhat[idx], 3))
   expect_equal(s$coefficients$ess_bulk, round(diag$ess_bulk[idx]))
+})
+
+test_that("converged applies the kb_converged() thresholds to each term", {
+  s <- summary(weight_nereo_fit)
+  diag <- weight_nereo_fit$diagnostics$summary
+  d <- diag[match(s$coefficients$term, diag$variable), ]
+  min_ess <- 100 * posterior::nchains(weight_nereo_fit$draws)
+  expect_type(s$coefficients$converged, "logical")
+  expect_identical(
+    s$coefficients$converged,
+    d$rhat < 1.01 & d$ess_bulk >= min_ess & d$ess_tail >= min_ess
+  )
+})
+
+test_that("rhat and ess set both the column and the header verdict", {
+  strict <- summary(weight_nereo_fit, rhat = 1, ess = 1e6)
+  expect_false(any(strict$coefficients$converged))
+  expect_false(strict$converged)
+  loose <- summary(weight_nereo_fit, rhat = 10, ess = 0)
+  expect_true(all(loose$coefficients$converged))
+  expect_identical(
+    loose$converged,
+    kb_converged(weight_nereo_fit, rhat = 10, ess = 0)
+  )
+  expect_identical(c(loose$rhat, loose$ess), c(10, 0))
+})
+
+test_that("a term with no Rhat is not judged on it", {
+  diag <- data.frame(
+    rhat = c(NA, 1.001, 1.2),
+    ess_bulk = c(NA, 500, 500),
+    ess_tail = c(NA, 500, 500)
+  )
+  expect_identical(
+    .term_converged(diag, rhat = 1.01, min_ess = 400),
+    c(TRUE, TRUE, FALSE)
+  )
+})
+
+test_that("summary validates rhat and ess", {
+  expect_error(summary(weight_nereo_fit, rhat = "a"), "rhat")
+  expect_error(summary(weight_nereo_fit, ess = -1), "ess")
+  expect_error(summary(weight_nereo_fit, 1.05), "must be empty")
 })
 
 test_that("summary carries the slim fit metadata (no structure lines)", {
