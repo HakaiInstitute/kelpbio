@@ -763,6 +763,51 @@ try(kb_predict_biomass_survey(
   data_survey_sim_macro
 ))
 
+# representative_site: a vector applies to every fit and must be in each; a
+# list names the sites per fit. fog_islet is in the size fit but not the
+# weight fit, so its weight_support is "year".
+survey_fog <- filter(data_survey_sim_nereo, site == "fog_islet")
+setdiff(fit_size_sim_nereo$meta$site_levels, fit_weight_sim_nereo$meta$site_levels)
+set.seed(1)
+kb_predict_biomass_survey(
+  fit_weight_sim_nereo,
+  fit_size_sim_nereo,
+  survey_fog
+) # weight effect sampled: wider intervals
+set.seed(1)
+kb_predict_biomass_survey(
+  fit_weight_sim_nereo,
+  fit_size_sim_nereo,
+  survey_fog,
+  representative_site = list(weight = "otter_cove")
+) # weighed like otter_cove, sized as fog_islet
+kb_predict_mean_weight(
+  fit_weight_sim_nereo,
+  fit_size_sim_nereo,
+  tibble(site = "fog_islet", year = "2021"),
+  representative_site = list(weight = c("otter_cove", "gull_rock"))
+) # several sites: their effects averaged per draw
+# a vector must be in both fits; a list must name weight and/or size; a size
+# census has no site effects to stand in for
+try(kb_predict_biomass_survey(
+  fit_weight_sim_nereo,
+  fit_size_sim_nereo,
+  survey_fog,
+  representative_site = "fog_islet"
+))
+try(kb_predict_biomass_survey(
+  fit_weight_sim_nereo,
+  fit_size_sim_nereo,
+  survey_fog,
+  representative_site = list("otter_cove")
+))
+try(kb_predict_biomass_survey(
+  fit_weight_sim_macro,
+  data_size_census_sim_macro,
+  data_survey_sim_macro,
+  representative_site = list(size = "seal_ledge")
+))
+
 # =============================================================================
 # COVER CALIBRATION MODELS
 # =============================================================================
