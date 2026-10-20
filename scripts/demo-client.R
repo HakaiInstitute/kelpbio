@@ -1,15 +1,18 @@
 # The main kelpbio workflow, from input data to biomass totals, in three
-# scenarios. Run block by block after devtools::install(). The fitting blocks
-# run MCMC, so expect them to take a little time. For every argument and edge
-# case, see scripts/demo-api-test.R.
+# scenarios, then a short tour of how the results work with other packages.
+# Run block by block after devtools::install(). The fitting blocks run MCMC, so
+# expect them to take a little time. For every argument and edge case, see
+# scripts/demo-api-test.R.
 #
 # 1. Full workflow (Nereocystis): fit every model, calibrate drone cover, and
 #    total the biomass over the mapped canopy.
-# 2. A pre-fit weight model: no harvests of one's own, so the weight model comes
-#    from elsewhere (here the bundled fit_weight_sim_nereo).
+# 2. Reference fits: no harvests or tissue samples of one's own, so the weight,
+#    wet/dry, and carbon models come from the bundled reference fits.
 # 3. A census with no drone cover: every plant on the plots measured, so the
 #    biomass of the surveyed area comes straight from the plants, with no size
 #    model and no calibration.
+# 4. Interoperability and advanced use: tidy summaries, posterior draws,
+#    model checks, and custom summaries of the draws.
 
 library(kelpbio)
 library(dplyr)
@@ -135,52 +138,58 @@ kb_predict_biomass_canopy(
   kb_plot_predictions()
 
 # =============================================================================
-# 2. A PRE-FIT WEIGHT MODEL
+# 2. REFERENCE FITS
 # =============================================================================
-# Without harvests, a weight model fitted elsewhere stands in. Its sites and
-# years are those of the data it was fitted to, so the surveyed site-years it
-# lacks take a sampled effect: weight_support says so. The fits combined must
-# have the same number of draws, so the size model is fitted with the
-# pre-fit's chains and draws (3 chains of 500).
+# Without harvests, a reference weight fit stands in: here the coastwide
+# Nereocystis fit, compiled from harvests from Alaska to California. Without
+# tissue samples, the Hakai Institute wet/dry and carbon fits stand in too.
+# Reference fits have 4000 draws, as a fit with the default sampler settings
+# does, so they combine with the size fit from scenario 1.
 
-fit_weight_prefit <- fit_weight_sim_nereo
-fit_weight_prefit
-posterior::ndraws(fit_weight_prefit)
+fit_weight_coastwide_nereo
+count(fit_weight_coastwide_nereo$data, study, region)
+kb_predict_weight(
+  fit_weight_coastwide_nereo,
+  kb_new_data(fit_weight_coastwide_nereo)
+) |>
+  kb_plot_predictions()
 
-fit_size_matched <- kb_fit_size_nereo(
-  data_size_sample_sim_nereo,
-  chains = 3L,
-  niters = 500L
-)
-posterior::ndraws(fit_size_matched)
-
-biomass_prefit <- kb_predict_biomass_survey(
-  fit_weight_prefit,
-  fit_size_matched,
+# none of the surveyed sites is in the reference data, so each site takes a
+# sampled weight effect from the variation among the coastwide sites:
+# weight_support says so, and the intervals are wide
+biomass_ref <- kb_predict_biomass_survey(
+  fit_weight_coastwide_nereo,
+  fit_size,
   data_survey_sim_nereo
 )
-count(biomass_prefit, weight_support)
+count(biomass_ref, weight_support)
+biomass_ref
 
-# the rest of the workflow is as in scenario 1
-fit_cover_prefit <- kb_fit_cover_calibration_nereo(
-  biomass_prefit,
-  chains = 3L,
-  niters = 500L
+# Where the surveyed sites are judged to resemble particular reference sites,
+# representative_site gives them those sites' weight effects (averaged when
+# several are named). The size fit keeps its own site estimates.
+distinct(kb_new_data(fit_weight_coastwide_nereo, by = "site"), site) # sites to choose from
+central_coast <- c("pontier:North", "pontier:Second", "pontier:Triquetta")
+biomass_rep <- kb_predict_biomass_survey(
+  fit_weight_coastwide_nereo,
+  fit_size,
+  data_survey_sim_nereo,
+  representative_site = list(weight = central_coast)
 )
+biomass_rep
+
+# the rest of the workflow is as in scenario 1, with dry and carbon biomass
+# from the Hakai Institute reference fits
+fit_cover_rep <- kb_fit_cover_calibration_nereo(biomass_rep)
 kb_predict_biomass_canopy(
-  fit_cover_prefit,
+  fit_cover_rep,
   data_canopy_sim_nereo,
+  fit_wetdry_hakai_nereo,
+  fit_carbon_hakai_nereo,
+  measure = "carbon",
   pool_by = "year"
-)
-
-# a weight model whose sites match none of the surveys: borrow one site's
-# effects for every new site rather than sampling them
-kb_predict_mean_weight(
-  fit_weight_prefit,
-  fit_size_matched,
-  tibble::tibble(site = "my_site", year = "2021"),
-  representative_site = "otter_cove"
-)
+) |>
+  kb_plot_predictions()
 
 # =============================================================================
 # 3. A CENSUS WITH NO DRONE COVER
@@ -244,3 +253,40 @@ kb_predict_biomass_survey(
   per_area = FALSE,
   pool_by = "site"
 )
+
+# =============================================================================
+# 4. INTEROPERABILITY AND ADVANCED USE
+# =============================================================================
+# Fits and predictions work with the broom, posterior, bayesplot, loo, and
+# ggplot2 packages. See vignette("advanced") for more.
+
+# tidy summaries of the estimates and the fit (broom)
+tidy(fit_weight)
+glance(fit_weight)
+
+# the posterior draws of the estimates (posterior)
+draws <- kb_samples(fit_weight)
+draws
+posterior::summarise_draws(draws)
+
+# model checks: replicate data against observed (bayesplot), and the
+# out-of-sample predictive accuracy of a model (loo)
+pp_check(fit_size)
+loo(fit_weight)
+
+# predictions plot with ggplot2's autoplot() and take ggplot2 layers
+autoplot(mean_weight) +
+  labs(title = "Mean plant weight by site-year")
+
+# Every prediction keeps its draws in the response column, so any summary
+# is computed draw by draw: here the change in total biomass between the
+# first and last year, and the probability that biomass increased.
+by_year <- kb_predict_biomass_canopy(
+  fit_cover,
+  data_canopy_sim_nereo,
+  pool_by = "year"
+)
+change <- by_year$biomass_kg[nrow(by_year)] - by_year$biomass_kg[1]
+change
+posterior::quantile2(change, probs = c(0.025, 0.5, 0.975))
+mean(change > 0)

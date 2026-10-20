@@ -5,7 +5,8 @@
 # then advanced functionality (priors, custom-prior/prior-only fits, control,
 # progress, site:year edge cases, raw posterior draws) further down, then the
 # Macrocystis weight model, the size, wet/dry, and carbon models, survey biomass
-# and mean weight, the cover calibration, and biomass over canopy.
+# and mean weight, the reference fits, the cover calibration, and biomass over
+# canopy.
 #
 # Orientation: pair this with decisions/architecture.md (the design overview);
 # the behavioural contract lives in openspec/specs/, and the rendered pkgdown
@@ -807,6 +808,58 @@ try(kb_predict_biomass_survey(
   data_survey_sim_macro,
   representative_site = list(size = "seal_ledge")
 ))
+
+# =============================================================================
+# REFERENCE FITS
+# =============================================================================
+# Fits to real data that stand in where a user has none of their own: Hakai
+# Institute weight, size, wet/dry, and carbon fits for both species, and a
+# coastwide Nereocystis weight fit. They are ordinary kb_fit objects, so every
+# accessor and verb above applies. Each has 4000 draws (4 chains of 1000), as a
+# fit with the default sampler settings does, so they combine with the user's
+# own fits.
+
+fit_weight_coastwide_nereo
+glance(fit_weight_coastwide_nereo)
+tidy(fit_weight_coastwide_nereo)
+count(fit_weight_coastwide_nereo$data, study, region) # contributing programmes
+distinct(kb_new_data(fit_weight_coastwide_nereo, by = "site"), site) # sites to choose from
+posterior::ndraws(fit_weight_coastwide_nereo)
+c(
+  fit_weight_hakai_nereo = posterior::ndraws(fit_weight_hakai_nereo),
+  fit_size_hakai_nereo = posterior::ndraws(fit_size_hakai_nereo),
+  fit_wetdry_hakai_nereo = posterior::ndraws(fit_wetdry_hakai_nereo),
+  fit_carbon_hakai_nereo = posterior::ndraws(fit_carbon_hakai_nereo),
+  fit_weight_hakai_macro = posterior::ndraws(fit_weight_hakai_macro),
+  fit_wetdry_hakai_macro = posterior::ndraws(fit_wetdry_hakai_macro),
+  fit_carbon_hakai_macro = posterior::ndraws(fit_carbon_hakai_macro)
+)
+
+# the coastwide and Hakai weight curves at a typical site
+kb_predict_weight(fit_weight_coastwide_nereo, kb_new_data(fit_weight_coastwide_nereo))
+kb_predict_weight(fit_weight_hakai_nereo, kb_new_data(fit_weight_hakai_nereo))
+kb_predict_wetdry(fit_wetdry_hakai_nereo)
+kb_predict_carbon(fit_carbon_hakai_nereo)
+
+# The coastwide site names carry the programme prefix, so the Hakai size fit's
+# sites are new to the coastwide weight fit (weight_support "year").
+# A per-fit representative_site weighs a site's plants like its coastwide
+# counterpart, while sizes keep the size fit's own estimates.
+set.seed(1)
+kb_predict_mean_weight(
+  fit_weight_coastwide_nereo,
+  fit_size_hakai_nereo,
+  tibble(site = "Owen", year = "2021")
+)
+kb_predict_mean_weight(
+  fit_weight_coastwide_nereo,
+  fit_size_hakai_nereo,
+  tibble(site = "Owen", year = "2021"),
+  representative_site = list(weight = "pontier:Owen")
+)
+# fits with different numbers of draws: an error (the simulated pre-fits
+# have 1500)
+try(kb_predict_mean_weight(fit_weight_coastwide_nereo, fit_size_sim_nereo))
 
 # =============================================================================
 # COVER CALIBRATION MODELS
