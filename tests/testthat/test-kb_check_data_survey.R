@@ -56,7 +56,7 @@ test_that("the drone columns are given together", {
   expect_error(kb_check_data_survey(transform(survey(), canopy_area_m2 = c(300, NA, 0))), "canopy_area_m2")
 })
 
-test_that("a searched area above the plot area warns", {
+test_that("a surveyed area above the plot area warns", {
   expect_warning(kb_check_data_survey(transform(survey(), survey_area_m2 = 250)), "survey_area_m2")
 })
 

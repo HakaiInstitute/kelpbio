@@ -6,9 +6,9 @@
 #'
 #' @details
 #' A row's total is the expected biomass per m² of bed for its site and year
-#' (the calibration at full cover) times its tide-corrected canopy area: the
-#' canopy divided by one minus the tide slope times the tide height, capped at
-#' `site_area_m2` where given. The mapped canopy is taken as the extent of the
+#' (the calibration at full cover) times its tide-corrected canopy area. The
+#' tide-corrected canopy area is `canopy_area_m2 / (1 - tide_height_slope *
+#' tide_height_m)`, capped at `site_area_m2` where given. The mapped canopy is taken as the extent of the
 #' bed, so no biomass is counted outside it. The interval is for the expected
 #' total: it carries the uncertainty in the parameters and the site and year
 #' effects, not variation between flights. With `per_area = TRUE` the total is
@@ -16,21 +16,20 @@
 #'
 #' Dry biomass is the wet total times the expected dry:wet ratio from `wetdry`,
 #' and carbon the dry total times the expected carbon fraction from `carbon`.
+#' The fits must be of the same species and have the same number of draws.
 #'
-#' Totals are pooled within `pool_by` groups on each draw, so do not sum
-#' per-row estimates or limits. Sum at most one row per site-year; a group with
-#' more warns.
+#' Pool totals with `pool_by` rather than summing per-row estimates or limits.
+#' Pool at most one row per site-year; a group with more warns.
 #'
 #' @inheritParams derived_params
 #' @inheritParams params
 #' @param fit A `kb_fit_cover_calibration` object.
-#' @param new_data A data frame with one row per mapped canopy: `site`, `year`,
-#'   `canopy_area_m2` (the canopy mapped within the site, m²), and
-#'   `tide_height_m` (tide height at the flight, m), and optionally
+#' @param new_data A data frame of mapped canopy, one row per site-year, with
+#'   `site`, `year`, `canopy_area_m2` (the canopy mapped within the site, m²),
+#'   `tide_height_m` (the tide height at the flight, m), and optionally
 #'   `site_area_m2` (the area within the site boundary, m²), which caps the
-#'   tide-corrected canopy. Other columns are kept, and can be named in `pool_by`.
-#' @param measure A string, one of `"wet"`, `"dry"`, or `"carbon"`, giving the
-#'   biomass to predict.
+#'   tide-corrected canopy. Other columns are kept and can be named in
+#'   `pool_by`.
 #' @param per_area A flag specifying whether to give biomass per m² of
 #'   tide-corrected canopy, or else the total over the canopy.
 #'
@@ -54,9 +53,13 @@
 #' set.seed(1)
 #' kb_predict_biomass_canopy(fit, data_canopy_sim_nereo)
 #'
-#' # Wet totals by year
+#' # Wet totals by region and year
 #' set.seed(1)
-#' kb_predict_biomass_canopy(fit, data_canopy_sim_nereo, pool_by = "year")
+#' kb_predict_biomass_canopy(
+#'   fit,
+#'   data_canopy_sim_nereo,
+#'   pool_by = c("region", "year")
+#' )
 #'
 #' # Carbon stock by year
 #' set.seed(1)

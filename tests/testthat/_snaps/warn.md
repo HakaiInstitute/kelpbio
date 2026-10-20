@@ -88,14 +88,14 @@
       Warning:
       1 value of fronds lies far outside the fitted range (1 to 20).
 
-# a searched area above the plot area warns
+# a surveyed area above the plot area warns
 
     Code
       warn_survey_area(d, "`d`")
     Condition
       Warning:
       1 survey in `d` has a survey_area_m2 above its plot_area_m2.
-      i survey_area_m2 is the area searched and plot_area_m2 the plot polygon; check that they are not swapped.
+      i survey_area_m2 is the surveyed area and plot_area_m2 the plot polygon; check that they are not swapped.
 
 # a pool_by group holding one site-year twice warns
 

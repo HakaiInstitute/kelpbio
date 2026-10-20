@@ -78,9 +78,8 @@ sites and years, the wet biomass of a plot with no delineated canopy. Its SD
 is \code{sqrt(sd_residual^2 + (cv_residual * mu)^2 + biomass_sd^2)}, where
 \code{biomass_sd} is the SD of the survey's biomass draws, from plant weight.
 
-\code{cover} is the canopy area divided by one minus \code{tide_height_slope} times the
-tide height, since less of the canopy is visible at the surface at higher
-tides, over the plot area and capped at 1. The default prior on
+\code{cover} is the tide-corrected canopy area over the plot area, capped at 1,
+where the tide-corrected canopy area is \code{canopy_area_m2 / (1 - tide_height_slope * tide_height_m)}. The default prior on
 \code{tide_height_slope} is informative and largely sets the tide correction,
 because calibration data rarely separate tide height from other
 differences between surveys.
@@ -93,7 +92,7 @@ context.
 
 The sampler runs with \code{adapt_delta = 0.95} by default, which reduces
 divergences at the cost of slightly longer runtime. Override it, or set any
-other sampler control, by passing a \code{control} list through \code{...}, e.g.
+other sampler control, by passing a \code{control} list through \code{...}, for example
 \code{control = list(adapt_delta = 0.99)}; only the entries supplied are changed.
 See the \code{control} argument of \code{\link[rstan:stan]{rstan::stan()}} for the full set of entries.
 

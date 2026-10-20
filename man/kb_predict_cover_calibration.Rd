@@ -18,10 +18,10 @@ kb_predict_cover_calibration(
 \arguments{
 \item{fit}{A \code{kb_fit_cover_calibration} object.}
 
-\item{new_data}{A data frame with \code{canopy_area_m2} (canopy area in the plot,
-m²), \code{plot_area_m2} (plot area, m²), and \code{tide_height_m} (tide height, m)
-columns and optional \code{site} and \code{year} columns, one row per prediction, or
-\code{NULL} to predict at the observed surveys.}
+\item{new_data}{A data frame of the rows to predict at, with
+\code{canopy_area_m2} (the canopy area in the plot, m²), \code{plot_area_m2} (the
+plot area, m²), \code{tide_height_m} (the tide height, m), and optionally \code{site}
+and \code{year}, or \code{NULL} for the observed surveys.}
 
 \item{...}{These dots are for future extensions and must be empty.}
 
@@ -48,7 +48,7 @@ default) to follow \code{new_levels}.}
 compatibility-interval level.}
 
 \item{estimate}{A function that reduces a numeric vector of posterior draws to
-a scalar point estimate (e.g. \code{median} or \code{mean}).}
+a single estimate, such as \code{median} or \code{mean}.}
 
 \item{sig_fig}{A whole number of significant figures for summary output.}
 }
@@ -58,28 +58,27 @@ A \code{kb_predictions} object: the rows of \code{new_data} with added
 distribution of the expected wet biomass per m² of plot.
 }
 \description{
-Predict the expected wet biomass (kg/m²) of a plot from its canopy area, plot
-area, and tide height, at each row of \code{new_data}, or at the observed surveys
-when \code{new_data = NULL}.
+Predict the expected wet biomass (kg/m²) of a plot from its drone canopy
+cover.
 }
 \details{
 Cover is tide-corrected and capped at 1. A row with no canopy predicts the
 biomass floor, which is the same for every site and year.
 
-The prediction is \code{mu}, the mean before censoring at zero, the quantity that
-totals over canopy use. When \code{new_data = NULL}, the survey biomass columns
+The prediction is \code{mu}, the mean before censoring at zero, as used by
+\code{\link[=kb_predict_biomass_canopy]{kb_predict_biomass_canopy()}}. When \code{new_data = NULL}, the survey biomass columns
 are kept; use \code{\link[=augment]{augment()}} for the fitted values next to them.
 }
 \examples{
 fit <- fit_cover_calibration_sim_nereo
 
-# At the observed surveys:
+# At the observed surveys
 kb_predict_cover_calibration(fit)
 
-# Curves over tide-corrected cover by site:
+# Curves over tide-corrected cover by site
 kb_predict_cover_calibration(fit, kb_new_data(fit, by = "site"))
 
-# At new surveys, including a new site:
+# At new surveys, including a new site
 kb_predict_cover_calibration(
   fit,
   data.frame(

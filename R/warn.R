@@ -84,7 +84,7 @@ warn_implausible_units <- function(data, x_name) {
   invisible(data)
 }
 
-# Searching beyond the plot polygon is possible, but swapped area columns are
+# Surveying beyond the plot polygon is possible, but swapped area columns are
 # the likelier cause.
 warn_survey_area <- function(data, x_name) {
   if (!all(c("survey_area_m2", "plot_area_m2") %in% names(data))) {
@@ -94,7 +94,7 @@ warn_survey_area <- function(data, x_name) {
   if (n > 0L) {
     cli::cli_warn(c(
       "{n} survey{?s} in {x_name} {cli::qty(n)}{?has a/have} {.field survey_area_m2} above {?its/their} {.field plot_area_m2}.",
-      i = "{.field survey_area_m2} is the area searched and {.field plot_area_m2} the plot polygon; check that they are not swapped."
+      i = "{.field survey_area_m2} is the surveyed area and {.field plot_area_m2} the plot polygon; check that they are not swapped."
     ))
   }
   invisible(data)

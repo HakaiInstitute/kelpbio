@@ -22,7 +22,7 @@ versions, and a pre-fit model is not a special case (`decisions/prediction-engin
 The package fits weight, wet/dry, carbon, and cover calibration models for
 *Nereocystis luetkeana* and *Macrocystis pyrifera*, and a size model for
 *Nereocystis*. It composes them into the biomass of in situ surveys (each
-counted plant's expected weight, summed over the area searched) and into biomass
+counted plant's expected weight, summed over the surveyed area) and into biomass
 over drone-mapped canopy (the cover calibration applied to canopy area).
 
 ## Models, verbs, and data
@@ -65,8 +65,8 @@ calibration. In every dated table (weight, size, survey, plants) `year` comes
 from `date`. A survey's plants come from the plant rows,
 joined by `site`, `plot_id`, and `date`, when every plant was measured, and from
 its tallied `plants` column when sizes come from a size fit; a survey with no
-plant rows is zero. Biomass per m² divides by `survey_area_m2`, the area
-searched; cover divides canopy by `plot_area_m2`, and the calibration takes a
+plant rows is zero. Biomass per m² divides by `survey_area_m2`, the surveyed
+area; cover divides canopy by `plot_area_m2`, and the calibration takes a
 survey's biomass per m² as its plot's. "Plant" stands for one
 individual (sporophyte) identified by its holdfast, in both species.
 

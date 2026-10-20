@@ -46,7 +46,7 @@ progress for \code{\link[=kb_progress]{kb_progress()}}, or \code{NULL} (the defa
 compatibility-interval level.}
 
 \item{estimate}{A function that reduces a numeric vector of posterior draws to
-a scalar point estimate (e.g. \code{median} or \code{mean}).}
+a single estimate, such as \code{median} or \code{mean}.}
 
 \item{sig_fig}{A whole number of significant figures for summary output.}
 
@@ -106,7 +106,7 @@ context.
 
 The sampler runs with \code{adapt_delta = 0.95} by default, which reduces
 divergences at the cost of slightly longer runtime. Override it, or set any
-other sampler control, by passing a \code{control} list through \code{...}, e.g.
+other sampler control, by passing a \code{control} list through \code{...}, for example
 \code{control = list(adapt_delta = 0.99)}; only the entries supplied are changed.
 See the \code{control} argument of \code{\link[rstan:stan]{rstan::stan()}} for the full set of entries.
 

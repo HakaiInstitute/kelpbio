@@ -10,7 +10,8 @@ A data frame with columns:
 \item{site}{Survey site, a factor (10 levels).}
 \item{plot_id}{Plot within the site, a character string.}
 \item{date}{Survey date, a \code{Date}.}
-\item{fronds}{Fronds reaching 1 m above the holdfast, a positive whole number.}
+\item{fronds}{Fronds reaching 1 m above the holdfast, a positive whole
+number.}
 \item{partial}{Whether the plant is counted as half, a logical.}
 }
 }

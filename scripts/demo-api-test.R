@@ -691,8 +691,8 @@ kb_predict_carbon(kb_fit_carbon_macro(data_carbon_sim_macro))
 # MEAN WEIGHT AND SURVEY BIOMASS
 # =============================================================================
 # A plant is one individual (sporophyte), identified by its holdfast. A survey
-# is one in situ count of a plot on a date: site, plot_id, date, and the area
-# searched (survey_area_m2). Plant sizes come from a size fit when plants were
+# is one in situ count of a plot on a date: site, plot_id, date, and the surveyed
+# area (survey_area_m2). Plant sizes come from a size fit when plants were
 # tallied (Nereocystis: `plants` on the survey row), or from a table of every
 # counted plant (Macrocystis: data_plants_sim_macro, with partial plants as
 # half). A survey paired with a drone flight also carries plot_area_m2,
@@ -721,7 +721,7 @@ kb_predict_mean_weight(
 ) |>
   kb_plot_predictions()
 
-# survey biomass per m2 of the area searched, one row per survey, with its draws
+# survey biomass per m2 of the surveyed area, one row per survey, with its draws
 set.seed(1)
 biomass_n <- kb_predict_biomass_survey(
   fit_weight_sim_nereo,
@@ -734,7 +734,7 @@ biomass_m <- kb_predict_biomass_survey(
   data_plants_sim_macro,
   data_survey_sim_macro
 )
-# pooled by site-year (total kg over total area), or kg in the area searched
+# pooled by site-year (total kg over total area), or kg in the surveyed area
 kb_predict_biomass_survey(
   fit_weight_sim_macro,
   data_plants_sim_macro,

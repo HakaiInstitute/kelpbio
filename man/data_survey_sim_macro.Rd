@@ -10,10 +10,12 @@ A data frame with columns:
 \item{site}{Survey site, a factor (10 levels).}
 \item{plot_id}{Plot within the site, a character string.}
 \item{date}{Survey date, a \code{Date}.}
-\item{survey_area_m2}{Area searched (m²), a positive number.}
+\item{survey_area_m2}{Surveyed area (m²), a positive number.}
 \item{plot_area_m2}{Plot polygon (m²), or \code{NA} without a flight.}
-\item{canopy_area_m2}{Drone canopy within the plot (m²), or \code{NA} without a flight.}
-\item{tide_height_m}{Tide height at the flight (m), or \code{NA} without a flight.}
+\item{canopy_area_m2}{Drone canopy within the plot (m²), or \code{NA} without
+a flight.}
+\item{tide_height_m}{Tide height at the flight (m), or \code{NA} without a
+flight.}
 }
 }
 \usage{
@@ -21,8 +23,8 @@ data_survey_sim_macro
 }
 \description{
 A small simulated dataset of in situ surveys, one row per survey of a plot,
-for runnable examples: the plants listed in \link{data_plants_sim_macro}, and the drone cover of the
-surveys paired with a flight. Some site-years hold two plots, one plot is
+for runnable examples: the plants listed in \link{data_plants_sim_macro}, and the
+drone cover of the surveys paired with a flight. Some site-years hold two plots, one plot is
 surveyed twice in a year, and one survey counted no plants.
 }
 \seealso{

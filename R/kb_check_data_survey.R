@@ -12,19 +12,19 @@
 #'   site.
 #' - `date`, a `Date`. The year of the survey is the year of `date`; a `year`
 #'   column, if present, must agree with it.
-#' - `survey_area_m2`, the area searched (m², > 0), such as a dive's transects.
+#' - `survey_area_m2`, the surveyed area (m², > 0), such as a dive's transects.
 #'   Biomass per m² is the biomass counted over this area.
 #' - `plants`, the number of plants counted (`>= 0`), when sizes come from a
-#'   size fit. It must be absent when `plants` (the plant table) is supplied,
-#'   since the counts then come from the plant rows.
+#'   size fit. It must be absent when the `plants` argument is given; the
+#'   counts then come from its rows.
 #'
 #' A survey paired with a drone flight also has `plot_area_m2` (the plot
 #' polygon, m², > 0), over which the drone cover is measured, `canopy_area_m2`
 #' (the canopy delineated within it, m², `>= 0` and at most `plot_area_m2`), and
 #' `tide_height_m` (the tide height at the flight, m, chart datum). The three are
-#' given together or left missing together. For a full census of the plot,
-#' `survey_area_m2` equals `plot_area_m2`. Each `site`, `plot_id`, and `date`
-#' appears once. Other columns are ignored.
+#' given together or left missing together. When the whole plot is surveyed,
+#' `survey_area_m2` equals `plot_area_m2`. Each combination of `site`,
+#' `plot_id`, and `date` appears once. Other columns are ignored.
 #'
 #' @inheritParams params
 #' @param data A data frame of in situ surveys, one row per survey of a plot.

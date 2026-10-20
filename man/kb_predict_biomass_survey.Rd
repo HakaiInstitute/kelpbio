@@ -29,7 +29,8 @@ kb_predict_biomass_survey(
 
 \item{size}{A \code{kb_fit_size} object, when plants were tallied, or a data
 frame of every counted plant, one row per plant (see
-\code{\link[=kb_check_data_plants_nereo]{kb_check_data_plants_nereo()}} and \code{\link[=kb_check_data_plants_macro]{kb_check_data_plants_macro()}}).}
+\code{\link[=kb_check_data_plants_nereo]{kb_check_data_plants_nereo()}} and \code{\link[=kb_check_data_plants_macro]{kb_check_data_plants_macro()}} for the
+columns).}
 
 \item{survey}{A data frame of in situ surveys, one row per survey of a plot
 (see \code{\link[=kb_check_data_survey]{kb_check_data_survey()}} for the columns).}
@@ -45,12 +46,12 @@ or \code{NULL}.}
 \item{measure}{A string, one of \code{"wet"}, \code{"dry"}, or \code{"carbon"}, giving the
 biomass to predict.}
 
-\item{per_area}{A flag specifying whether to give biomass per m² of the area
-searched, or else the biomass in that area.}
+\item{per_area}{A flag specifying whether to give biomass per m² of the surveyed
+area, or else the biomass in that area.}
 
 \item{pool_by}{A character vector naming character or factor columns whose
-combinations group the rows, \code{character(0)} to pool all rows, or \code{NULL}
-(the default) for one row per input row. Rows are pooled on each draw:
+combinations group the rows, such as \code{c("site", "year")}, \code{character(0)}
+to pool all rows, or \code{NULL} (the default) for one row per input row. Rows are pooled on each draw:
 \itemize{
 \item \code{per_area = FALSE}: the biomass of the group is the sum of its rows'
 biomass (kg).
@@ -88,7 +89,7 @@ slower. Not used with a table of counted plants.}
 compatibility-interval level.}
 
 \item{estimate}{A function that reduces a numeric vector of posterior draws to
-a scalar point estimate (e.g. \code{median} or \code{mean}).}
+a single estimate, such as \code{median} or \code{mean}.}
 
 \item{sig_fig}{A whole number of significant figures for summary output.}
 
@@ -100,8 +101,8 @@ progress for \code{\link[=kb_progress]{kb_progress()}}, or \code{NULL} (the defa
 }
 \value{
 A \code{kb_predictions} object. Without \code{pool_by}, the rows of \code{survey}
-with added \code{year} (from \code{date}), \code{weight_support}, \code{size_support} (with a
-size fit), the draws of the biomass in a column named for it
+with added \code{year} (from \code{date}), \code{weight_support} and, with a size fit,
+\code{size_support} (as in \code{kb_predict_mean_weight()}), the draws of the biomass in a column named for it
 (\code{biomass_kg_m2}, \code{dry_biomass_kg_m2}, or \code{carbon_biomass_g_m2} per m², and
 \code{biomass_kg}, \code{dry_biomass_kg}, or \code{carbon_biomass_kg} in total), and
 \code{estimate}, \code{lower}, and \code{upper}; with \code{pool_by}, one row per group with its
@@ -109,7 +110,7 @@ size fit), the draws of the biomass in a column named for it
 }
 \description{
 Combine a weight fit with the plants counted by each in situ survey into
-the biomass of the area searched: wet or dry (kg/m² or kg) or carbon
+the biomass of the surveyed area: wet or dry (kg/m² or kg) or carbon
 (g C/m² or kg C).
 }
 \details{
@@ -124,10 +125,6 @@ is the sum of its plants' expected weights, half for a \code{partial} plant. A
 survey with no plant rows has no biomass, and a message lists such
 surveys.
 }
-
-Biomass per m² divides by \code{survey_area_m2}, the area searched. A survey's
-drone cover is measured over \code{plot_area_m2}, the plot polygon; for a full
-census of the plot the two are equal.
 
 Dry biomass is wet biomass times the expected dry:wet ratio from \code{wetdry},
 and carbon dry biomass times the expected carbon fraction from \code{carbon}. The

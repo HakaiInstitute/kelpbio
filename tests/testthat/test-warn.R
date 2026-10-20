@@ -113,7 +113,7 @@ test_that("nothing is compared for a fit with no observations", {
   expect_no_warning(warn_outside_range(fit, 1000, "diameter_mm"))
 })
 
-test_that("a searched area above the plot area warns", {
+test_that("a surveyed area above the plot area warns", {
   d <- data.frame(survey_area_m2 = c(120, 300), plot_area_m2 = c(200, 200))
   expect_snapshot(warn_survey_area(d, "`d`"))
   expect_no_warning(warn_survey_area(transform(d, survey_area_m2 = 120), "`d`"))

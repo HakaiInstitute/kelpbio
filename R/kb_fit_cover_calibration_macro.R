@@ -19,9 +19,9 @@
 #' is `sqrt(sd_residual^2 + (cv_residual * mu)^2 + biomass_sd^2)`, where
 #' `biomass_sd` is the SD of the survey's biomass draws, from plant weight.
 #'
-#' `cover` is the canopy area divided by one minus `tide_height_slope` times the
-#' tide height, since less of the canopy is visible at the surface at higher
-#' tides, over the plot area and capped at 1. The default prior on
+#' `cover` is the tide-corrected canopy area over the plot area, capped at 1,
+#' where the tide-corrected canopy area is `canopy_area_m2 / (1 -
+#' tide_height_slope * tide_height_m)`. The default prior on
 #' `tide_height_slope` is informative and largely sets the tide correction,
 #' because calibration data rarely separate tide height from other
 #' differences between surveys.

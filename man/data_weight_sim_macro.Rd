@@ -7,7 +7,8 @@
 \format{
 A data frame with columns:
 \describe{
-\item{fronds}{Fronds reaching 1 m above the holdfast, a positive whole number.}
+\item{fronds}{Fronds reaching 1 m above the holdfast, a positive whole
+number.}
 \item{weight_kg}{Wet weight (kg), a positive number.}
 \item{site}{Survey site, a factor (10 levels).}
 \item{date}{Date of the harvest, a \code{Date} (2019 to 2022).}

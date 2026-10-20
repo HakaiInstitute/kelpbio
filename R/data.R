@@ -62,7 +62,8 @@
 #'
 #' @format A data frame with columns:
 #' \describe{
-#'   \item{fronds}{Fronds reaching 1 m above the holdfast, a positive whole number.}
+#'   \item{fronds}{Fronds reaching 1 m above the holdfast, a positive whole
+#'     number.}
 #'   \item{weight_kg}{Wet weight (kg), a positive number.}
 #'   \item{site}{Survey site, a factor (10 levels).}
 #'   \item{date}{Date of the harvest, a `Date` (2019 to 2022).}
@@ -127,8 +128,9 @@
 #' Simulated Nereocystis in situ survey data
 #'
 #' A small simulated dataset of in situ surveys, one row per survey of a plot,
-#' for runnable examples: the plants tallied, with sizes from [fit_size_sim_nereo], and the drone cover of the
-#' surveys paired with a flight. Some site-years hold two plots, one plot is
+#' for runnable examples: the plants tallied, with sizes from
+#' [fit_size_sim_nereo], and the drone cover of the surveys paired with a
+#' flight. Some site-years hold two plots, one plot is
 #' surveyed twice in a year, and one survey counted no plants.
 #'
 #' @format A data frame with columns:
@@ -136,11 +138,13 @@
 #'   \item{site}{Survey site, a factor (10 levels).}
 #'   \item{plot_id}{Plot within the site, a character string.}
 #'   \item{date}{Survey date, a `Date`.}
-#'   \item{survey_area_m2}{Area searched (m²), a positive number.}
+#'   \item{survey_area_m2}{Surveyed area (m²), a positive number.}
 #'   \item{plants}{Plants counted, a whole number of at least 0.}
 #'   \item{plot_area_m2}{Plot polygon (m²), or `NA` without a flight.}
-#'   \item{canopy_area_m2}{Drone canopy within the plot (m²), or `NA` without a flight.}
-#'   \item{tide_height_m}{Tide height at the flight (m), or `NA` without a flight.}
+#'   \item{canopy_area_m2}{Drone canopy within the plot (m²), or `NA` without
+#'     a flight.}
+#'   \item{tide_height_m}{Tide height at the flight (m), or `NA` without a
+#'     flight.}
 #' }
 #' @seealso [kb_check_data_survey()] for the columns.
 #' @family example datasets
@@ -169,8 +173,8 @@
 #' Simulated Macrocystis in situ survey data
 #'
 #' A small simulated dataset of in situ surveys, one row per survey of a plot,
-#' for runnable examples: the plants listed in [data_plants_sim_macro], and the drone cover of the
-#' surveys paired with a flight. Some site-years hold two plots, one plot is
+#' for runnable examples: the plants listed in [data_plants_sim_macro], and the
+#' drone cover of the surveys paired with a flight. Some site-years hold two plots, one plot is
 #' surveyed twice in a year, and one survey counted no plants.
 #'
 #' @format A data frame with columns:
@@ -178,10 +182,12 @@
 #'   \item{site}{Survey site, a factor (10 levels).}
 #'   \item{plot_id}{Plot within the site, a character string.}
 #'   \item{date}{Survey date, a `Date`.}
-#'   \item{survey_area_m2}{Area searched (m²), a positive number.}
+#'   \item{survey_area_m2}{Surveyed area (m²), a positive number.}
 #'   \item{plot_area_m2}{Plot polygon (m²), or `NA` without a flight.}
-#'   \item{canopy_area_m2}{Drone canopy within the plot (m²), or `NA` without a flight.}
-#'   \item{tide_height_m}{Tide height at the flight (m), or `NA` without a flight.}
+#'   \item{canopy_area_m2}{Drone canopy within the plot (m²), or `NA` without
+#'     a flight.}
+#'   \item{tide_height_m}{Tide height at the flight (m), or `NA` without a
+#'     flight.}
 #' }
 #' @seealso [kb_check_data_survey()] for the columns.
 #' @family example datasets
@@ -217,7 +223,8 @@
 #'   \item{site}{Survey site, a factor (10 levels).}
 #'   \item{plot_id}{Plot within the site, a character string.}
 #'   \item{date}{Survey date, a `Date`.}
-#'   \item{fronds}{Fronds reaching 1 m above the holdfast, a positive whole number.}
+#'   \item{fronds}{Fronds reaching 1 m above the holdfast, a positive whole
+#'     number.}
 #'   \item{partial}{Whether the plant is counted as half, a logical.}
 #' }
 #' @seealso [kb_check_data_plants_macro()] for the columns.

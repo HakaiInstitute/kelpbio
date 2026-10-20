@@ -25,10 +25,8 @@
 #'   or `NULL` for the site-years in the size fit's data.
 #' @param measure A string, one of `"wet"` (kg), `"dry"` (kg), or `"carbon"`
 #'   (g C), giving the weight to predict.
-#' @param progress_dir A string giving an existing directory in which to record
-#'   progress for [kb_progress()], or `NULL` (the default) to record none.
 #'
-#' @returns A `kb_predictions` object: the rows with added `weight_support` and
+#' @returns A `kb_predictions` object: the rows of `new_data` with added `weight_support` and
 #'   `size_support`, the draws of the mean weight in a `weight_kg`,
 #'   `dry_weight_kg`, or `carbon_weight_g` column, and `estimate`, `lower`, and
 #'   `upper`.

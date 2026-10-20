@@ -21,7 +21,7 @@ kb_predict_carbon(
 compatibility-interval level.}
 
 \item{estimate}{A function that reduces a numeric vector of posterior draws to
-a scalar point estimate (e.g. \code{median} or \code{mean}).}
+a single estimate, such as \code{median} or \code{mean}.}
 
 \item{sig_fig}{A whole number of significant figures for summary output.}
 }

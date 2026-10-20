@@ -18,10 +18,10 @@
 \arguments{
 \item{object}{A \code{kb_fit_cover_calibration} object.}
 
-\item{new_data}{A data frame with \code{canopy_area_m2} (canopy area in the plot,
-m²), \code{plot_area_m2} (plot area, m²), and \code{tide_height_m} (tide height, m)
-columns and optional \code{site} and \code{year} columns, one row per prediction, or
-\code{NULL} to predict at the observed surveys.}
+\item{new_data}{A data frame of the rows to predict at, with
+\code{canopy_area_m2} (the canopy area in the plot, m²), \code{plot_area_m2} (the
+plot area, m²), \code{tide_height_m} (the tide height, m), and optionally \code{site}
+and \code{year}, or \code{NULL} for the observed surveys.}
 
 \item{...}{These dots are for future extensions and must be empty.}
 
@@ -48,7 +48,7 @@ default) to follow \code{new_levels}.}
 compatibility-interval level.}
 
 \item{estimate}{A function that reduces a numeric vector of posterior draws to
-a scalar point estimate (e.g. \code{median} or \code{mean}).}
+a single estimate, such as \code{median} or \code{mean}.}
 
 \item{sig_fig}{A whole number of significant figures for summary output.}
 }

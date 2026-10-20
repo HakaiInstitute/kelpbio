@@ -1,23 +1,22 @@
 #' Predict biomass from canopy cover
 #'
-#' Predict the expected wet biomass (kg/m²) of a plot from its canopy area, plot
-#' area, and tide height, at each row of `new_data`, or at the observed surveys
-#' when `new_data = NULL`.
+#' Predict the expected wet biomass (kg/m²) of a plot from its drone canopy
+#' cover.
 #'
 #' @details
 #' Cover is tide-corrected and capped at 1. A row with no canopy predicts the
 #' biomass floor, which is the same for every site and year.
 #'
-#' The prediction is `mu`, the mean before censoring at zero, the quantity that
-#' totals over canopy use. When `new_data = NULL`, the survey biomass columns
+#' The prediction is `mu`, the mean before censoring at zero, as used by
+#' [kb_predict_biomass_canopy()]. When `new_data = NULL`, the survey biomass columns
 #' are kept; use [augment()] for the fitted values next to them.
 #'
 #' @inheritParams params
 #' @param fit A `kb_fit_cover_calibration` object.
-#' @param new_data A data frame with `canopy_area_m2` (canopy area in the plot,
-#'   m²), `plot_area_m2` (plot area, m²), and `tide_height_m` (tide height, m)
-#'   columns and optional `site` and `year` columns, one row per prediction, or
-#'   `NULL` to predict at the observed surveys.
+#' @param new_data A data frame of the rows to predict at, with
+#'   `canopy_area_m2` (the canopy area in the plot, m²), `plot_area_m2` (the
+#'   plot area, m²), `tide_height_m` (the tide height, m), and optionally `site`
+#'   and `year`, or `NULL` for the observed surveys.
 #'
 #' @returns A `kb_predictions` object: the rows of `new_data` with added
 #'   `estimate`, `lower`, and `upper` columns summarising the posterior
@@ -30,13 +29,13 @@
 #' @examples
 #' fit <- fit_cover_calibration_sim_nereo
 #'
-#' # At the observed surveys:
+#' # At the observed surveys
 #' kb_predict_cover_calibration(fit)
 #'
-#' # Curves over tide-corrected cover by site:
+#' # Curves over tide-corrected cover by site
 #' kb_predict_cover_calibration(fit, kb_new_data(fit, by = "site"))
 #'
-#' # At new surveys, including a new site:
+#' # At new surveys, including a new site
 #' kb_predict_cover_calibration(
 #'   fit,
 #'   data.frame(

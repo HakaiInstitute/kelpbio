@@ -64,7 +64,7 @@ test_that("census surveys sum each plant's expected weight, half for a partial p
   expect_false("size_support" %in% names(p))
 })
 
-test_that("per_area divides by the area searched", {
+test_that("per_area divides by the surveyed area", {
   withr::local_seed(1)
   per_m2 <- kb_predict_biomass_survey(
     weight_macro_fit, data_plants_sim_macro, data_survey_sim_macro,

@@ -23,11 +23,12 @@ kb_predict_biomass_canopy(
 \arguments{
 \item{fit}{A \code{kb_fit_cover_calibration} object.}
 
-\item{new_data}{A data frame with one row per mapped canopy: \code{site}, \code{year},
-\code{canopy_area_m2} (the canopy mapped within the site, m²), and
-\code{tide_height_m} (tide height at the flight, m), and optionally
+\item{new_data}{A data frame of mapped canopy, one row per site-year, with
+\code{site}, \code{year}, \code{canopy_area_m2} (the canopy mapped within the site, m²),
+\code{tide_height_m} (the tide height at the flight, m), and optionally
 \code{site_area_m2} (the area within the site boundary, m²), which caps the
-tide-corrected canopy. Other columns are kept, and can be named in \code{pool_by}.}
+tide-corrected canopy. Other columns are kept and can be named in
+\code{pool_by}.}
 
 \item{wetdry}{A \code{kb_fit_wetdry} object, required for dry and carbon biomass,
 or \code{NULL}.}
@@ -44,8 +45,8 @@ biomass to predict.}
 tide-corrected canopy, or else the total over the canopy.}
 
 \item{pool_by}{A character vector naming character or factor columns whose
-combinations group the rows, \code{character(0)} to pool all rows, or \code{NULL}
-(the default) for one row per input row. Rows are pooled on each draw:
+combinations group the rows, such as \code{c("site", "year")}, \code{character(0)}
+to pool all rows, or \code{NULL} (the default) for one row per input row. Rows are pooled on each draw:
 \itemize{
 \item \code{per_area = FALSE}: the biomass of the group is the sum of its rows'
 biomass (kg).
@@ -79,7 +80,7 @@ default) to follow \code{new_levels}.}
 compatibility-interval level.}
 
 \item{estimate}{A function that reduces a numeric vector of posterior draws to
-a scalar point estimate (e.g. \code{median} or \code{mean}).}
+a single estimate, such as \code{median} or \code{mean}.}
 
 \item{sig_fig}{A whole number of significant figures for summary output.}
 }
@@ -100,9 +101,8 @@ optionally pooled over groups of rows.
 }
 \details{
 A row's total is the expected biomass per m² of bed for its site and year
-(the calibration at full cover) times its tide-corrected canopy area: the
-canopy divided by one minus the tide slope times the tide height, capped at
-\code{site_area_m2} where given. The mapped canopy is taken as the extent of the
+(the calibration at full cover) times its tide-corrected canopy area. The
+tide-corrected canopy area is \code{canopy_area_m2 / (1 - tide_height_slope * tide_height_m)}, capped at \code{site_area_m2} where given. The mapped canopy is taken as the extent of the
 bed, so no biomass is counted outside it. The interval is for the expected
 total: it carries the uncertainty in the parameters and the site and year
 effects, not variation between flights. With \code{per_area = TRUE} the total is
@@ -110,10 +110,10 @@ divided by the tide-corrected canopy area, giving the biomass per m² of bed.
 
 Dry biomass is the wet total times the expected dry:wet ratio from \code{wetdry},
 and carbon the dry total times the expected carbon fraction from \code{carbon}.
+The fits must be of the same species and have the same number of draws.
 
-Totals are pooled within \code{pool_by} groups on each draw, so do not sum
-per-row estimates or limits. Sum at most one row per site-year; a group with
-more warns.
+Pool totals with \code{pool_by} rather than summing per-row estimates or limits.
+Pool at most one row per site-year; a group with more warns.
 }
 \examples{
 fit <- fit_cover_calibration_sim_nereo
@@ -122,9 +122,13 @@ fit <- fit_cover_calibration_sim_nereo
 set.seed(1)
 kb_predict_biomass_canopy(fit, data_canopy_sim_nereo)
 
-# Wet totals by year
+# Wet totals by region and year
 set.seed(1)
-kb_predict_biomass_canopy(fit, data_canopy_sim_nereo, pool_by = "year")
+kb_predict_biomass_canopy(
+  fit,
+  data_canopy_sim_nereo,
+  pool_by = c("region", "year")
+)
 
 # Carbon stock by year
 set.seed(1)

@@ -36,20 +36,20 @@ Required columns:
 site.
 \item \code{date}, a \code{Date}. The year of the survey is the year of \code{date}; a \code{year}
 column, if present, must agree with it.
-\item \code{survey_area_m2}, the area searched (m², > 0), such as a dive's transects.
+\item \code{survey_area_m2}, the surveyed area (m², > 0), such as a dive's transects.
 Biomass per m² is the biomass counted over this area.
 \item \code{plants}, the number of plants counted (\verb{>= 0}), when sizes come from a
-size fit. It must be absent when \code{plants} (the plant table) is supplied,
-since the counts then come from the plant rows.
+size fit. It must be absent when the \code{plants} argument is given; the
+counts then come from its rows.
 }
 
 A survey paired with a drone flight also has \code{plot_area_m2} (the plot
 polygon, m², > 0), over which the drone cover is measured, \code{canopy_area_m2}
 (the canopy delineated within it, m², \verb{>= 0} and at most \code{plot_area_m2}), and
 \code{tide_height_m} (the tide height at the flight, m, chart datum). The three are
-given together or left missing together. For a full census of the plot,
-\code{survey_area_m2} equals \code{plot_area_m2}. Each \code{site}, \code{plot_id}, and \code{date}
-appears once. Other columns are ignored.
+given together or left missing together. When the whole plot is surveyed,
+\code{survey_area_m2} equals \code{plot_area_m2}. Each combination of \code{site},
+\code{plot_id}, and \code{date} appears once. Other columns are ignored.
 }
 \examples{
 kb_check_data_survey(data_survey_sim_nereo)

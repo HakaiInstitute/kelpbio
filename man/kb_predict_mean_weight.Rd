@@ -67,7 +67,7 @@ mean plant weight; larger values are more precise and slower.}
 compatibility-interval level.}
 
 \item{estimate}{A function that reduces a numeric vector of posterior draws to
-a scalar point estimate (e.g. \code{median} or \code{mean}).}
+a single estimate, such as \code{median} or \code{mean}.}
 
 \item{sig_fig}{A whole number of significant figures for summary output.}
 
@@ -78,7 +78,7 @@ bar) or \code{"none"} (silent).}
 progress for \code{\link[=kb_progress]{kb_progress()}}, or \code{NULL} (the default) to record none.}
 }
 \value{
-A \code{kb_predictions} object: the rows with added \code{weight_support} and
+A \code{kb_predictions} object: the rows of \code{new_data} with added \code{weight_support} and
 \code{size_support}, the draws of the mean weight in a \code{weight_kg},
 \code{dry_weight_kg}, or \code{carbon_weight_g} column, and \code{estimate}, \code{lower}, and
 \code{upper}.

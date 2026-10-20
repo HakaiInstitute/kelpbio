@@ -1,7 +1,7 @@
 #' Predict the biomass of in situ surveys
 #'
 #' Combine a weight fit with the plants counted by each in situ survey into
-#' the biomass of the area searched: wet or dry (kg/m² or kg) or carbon
+#' the biomass of the surveyed area: wet or dry (kg/m² or kg) or carbon
 #' (g C/m² or kg C).
 #'
 #' @details
@@ -16,10 +16,6 @@
 #'   survey with no plant rows has no biomass, and a message lists such
 #'   surveys.
 #'
-#' Biomass per m² divides by `survey_area_m2`, the area searched. A survey's
-#' drone cover is measured over `plot_area_m2`, the plot polygon; for a full
-#' census of the plot the two are equal.
-#'
 #' Dry biomass is wet biomass times the expected dry:wet ratio from `wetdry`,
 #' and carbon dry biomass times the expected carbon fraction from `carbon`. The
 #' fits must be of the same species and have the same number of draws.
@@ -28,22 +24,19 @@
 #' @inheritParams params
 #' @param size A `kb_fit_size` object, when plants were tallied, or a data
 #'   frame of every counted plant, one row per plant (see
-#'   [kb_check_data_plants_nereo()] and [kb_check_data_plants_macro()]).
+#'   [kb_check_data_plants_nereo()] and [kb_check_data_plants_macro()] for the
+#'   columns).
 #' @param survey A data frame of in situ surveys, one row per survey of a plot
 #'   (see [kb_check_data_survey()] for the columns).
-#' @param measure A string, one of `"wet"`, `"dry"`, or `"carbon"`, giving the
-#'   biomass to predict.
-#' @param per_area A flag specifying whether to give biomass per m² of the area
-#'   searched, or else the biomass in that area.
+#' @param per_area A flag specifying whether to give biomass per m² of the surveyed
+#'   area, or else the biomass in that area.
 #' @param n_plants A whole number of sizes averaged per draw to compute the
 #'   mean plant weight from a size fit; larger values are more precise and
 #'   slower. Not used with a table of counted plants.
-#' @param progress_dir A string giving an existing directory in which to record
-#'   progress for [kb_progress()], or `NULL` (the default) to record none.
 #'
 #' @returns A `kb_predictions` object. Without `pool_by`, the rows of `survey`
-#'   with added `year` (from `date`), `weight_support`, `size_support` (with a
-#'   size fit), the draws of the biomass in a column named for it
+#'   with added `year` (from `date`), `weight_support` and, with a size fit,
+#'   `size_support` (as in `kb_predict_mean_weight()`), the draws of the biomass in a column named for it
 #'   (`biomass_kg_m2`, `dry_biomass_kg_m2`, or `carbon_biomass_g_m2` per m², and
 #'   `biomass_kg`, `dry_biomass_kg`, or `carbon_biomass_kg` in total), and
 #'   `estimate`, `lower`, and `upper`; with `pool_by`, one row per group with its

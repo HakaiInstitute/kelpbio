@@ -29,8 +29,8 @@ set.seed(42)
 str(data_weight_sim_nereo)
 # measured plants: the size distribution of each site-year
 str(data_size_sim_nereo)
-# in situ surveys: one row per survey of a plot (site, plot_id, date), the area
-# searched, the plants tallied, and, where a drone flew, the plot polygon,
+# in situ surveys: one row per survey of a plot (site, plot_id, date), the surveyed
+# area, the plants tallied, and, where a drone flew, the plot polygon,
 # canopy, and tide height
 str(data_survey_sim_nereo)
 # drone-mapped canopy of each site-year, for totals
@@ -74,7 +74,7 @@ kb_plot_predictions(mean_weight)
 
 # --- survey biomass ---------------------------------------------------------------
 # each survey's plants times its site-year's mean plant weight, per m2 of the
-# area searched; the draws travel in the biomass_kg_m2 column
+# surveyed area; the draws travel in the biomass_kg_m2 column
 biomass <- kb_predict_biomass_survey(
   fit_weight,
   fit_size,

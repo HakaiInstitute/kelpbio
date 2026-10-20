@@ -12,6 +12,9 @@ or \code{NULL}.}
 \item{carbon}{A \code{kb_fit_carbon} object, required for carbon biomass, or
 \code{NULL}.}
 
+\item{measure}{A string, one of \code{"wet"}, \code{"dry"}, or \code{"carbon"}, giving the
+biomass to predict.}
+
 \item{n_plants}{A whole number of sizes averaged per draw to compute the
 mean plant weight; larger values are more precise and slower.}
 
@@ -33,8 +36,8 @@ in the typical value only. Use it to describe an average site or year.
 }}
 
 \item{pool_by}{A character vector naming character or factor columns whose
-combinations group the rows, \code{character(0)} to pool all rows, or \code{NULL}
-(the default) for one row per input row. Rows are pooled on each draw:
+combinations group the rows, such as \code{c("site", "year")}, \code{character(0)}
+to pool all rows, or \code{NULL} (the default) for one row per input row. Rows are pooled on each draw:
 \itemize{
 \item \code{per_area = FALSE}: the biomass of the group is the sum of its rows'
 biomass (kg).
