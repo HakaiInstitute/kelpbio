@@ -41,7 +41,7 @@
 #'   named in `pool_by`.
 #'
 #' @returns A `kb_predictions` object. Without `pool_by`, the rows of `new_data`
-#'   with added `cover_support` (`"site, year"`, `"site"`, `"year"`, or
+#'   (a numeric `year` as character) with added `cover_support` (`"site, year"`, `"site"`, `"year"`, or
 #'   `"none"`: the data the calibration fit has for the row's site and year), the
 #'   draws of the total in a column named for it (`biomass_kg`,
 #'   `dry_biomass_kg`, or `carbon_biomass_kg`), and `estimate`,
@@ -103,18 +103,10 @@ kb_predict_biomass_canopy <- function(
   new_levels <- rlang::arg_match(new_levels)
   .with_call(
     {
-      .chk_site_surveys(new_data, x_name = "`new_data`")
+      .chk_canopy_maps(new_data, x_name = "`new_data`")
       .chk_rows(new_data, "`new_data`")
     },
     rlang::current_env()
-  )
-  warn_implausible_units(new_data, "`new_data`")
-  warn_tide_cap(
-    tide_cap_share(new_data$canopy_area_m2, new_data$tide_height_m, fit$draws$tide_height_slope),
-    "`new_data`",
-    rows = "row",
-    cap = "the classified area",
-    basis = "on more than 5% of draws"
   )
   new_data <- ids_as_character(new_data)
   .chk_pool_by(pool_by, new_data)
@@ -123,6 +115,14 @@ kb_predict_biomass_canopy <- function(
   .chk_derived_fits(list(fit = fit, wetdry = wetdry, carbon = carbon))
   .chk_representative_site(fit, representative_site)
   .chk_summary_args(conf_level, estimate, sig_fig)
+  warn_implausible_units(new_data, "`new_data`")
+  warn_tide_cap(
+    tide_cap_share(new_data$canopy_area_m2, new_data$tide_height_m, fit$draws$tide_height_slope),
+    "`new_data`",
+    rows = "row",
+    cap = "the classified area",
+    basis = "on more than 5% of draws"
+  )
 
   grid <- tibble::as_tibble(new_data)
   draws <- canopy_biomass_draws(fit, grid, new_levels, representative_site) *

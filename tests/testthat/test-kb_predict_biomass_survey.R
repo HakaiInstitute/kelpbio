@@ -272,3 +272,31 @@ test_that("pool_by sums kg on the draws when per_area is FALSE", {
     )
   }
 })
+
+test_that("numeric survey ids and years come back as character and pool by year", {
+  survey <- transform(
+    survey_nereo(),
+    survey_id = seq_along(survey_id),
+    year = as.integer(as.character(year))
+  )
+  withr::local_seed(1)
+  p <- kb_predict_biomass_survey(
+    weight_nereo_fit, size_nereo_fit, survey,
+    new_levels = "average", progress = "none"
+  )
+  expect_identical(p$survey_id, as.character(survey$survey_id))
+  expect_identical(p$year, as.character(survey$year))
+  withr::local_seed(1)
+  pooled <- kb_predict_biomass_survey(
+    weight_nereo_fit, size_nereo_fit, survey,
+    new_levels = "average", progress = "none", pool_by = "year"
+  )
+  expect_identical(pooled$year, sort(unique(as.character(survey$year))))
+})
+
+test_that("a numeric survey id joins a census id written in full", {
+  survey <- tibble::tibble(survey_id = 100000, site = "seal_ledge", year = 2019, survey_area_m2 = 100)
+  census <- tibble::tibble(survey_id = "100000", fronds = c(4, 10))
+  p <- kb_predict_biomass_survey(weight_macro_fit, census, survey, new_levels = "average")
+  expect_true(all(posterior::draws_of(p$biomass_kg_m2) > 0))
+})

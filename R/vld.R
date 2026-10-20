@@ -43,9 +43,10 @@
   nrow(x) > 0L
 }
 
-# Any site or year column of new_data. A numeric year names a level.
+# Any site or year column of new_data; a year may be whole numbers.
 .vld_new_data_groups <- function(x) {
-  !anyNA(x[intersect(.group_vars(), names(x))])
+  groups <- intersect(.group_vars(), names(x))
+  !anyNA(x[groups]) && (!"year" %in% groups || .vld_id_column(x$year, "year"))
 }
 
 .vld_frond_count <- function(x) {
@@ -57,7 +58,7 @@
 }
 
 .vld_unique_surveys <- function(x) {
-  !anyDuplicated(as.character(x$survey_id))
+  !anyDuplicated(id_text(x$survey_id))
 }
 
 # The drone pairing of a survey: all three columns given or all missing on each
@@ -89,7 +90,7 @@
 }
 
 .vld_census_join <- function(size_census, survey) {
-  all(as.character(size_census$survey_id) %in% as.character(survey$survey_id))
+  all(id_text(size_census$survey_id) %in% id_text(survey$survey_id))
 }
 
 .vld_new_data_weight_macro <- function(x) {
@@ -161,7 +162,7 @@
 }
 
 # Mapped canopy for canopy totals.
-.vld_site_surveys <- function(x) {
+.vld_canopy_maps <- function(x) {
   is.data.frame(x) &&
     all(c("canopy_area_m2", "tide_height_m", "site", "year", "classified_area_m2") %in% names(x)) &&
     is.numeric(x$canopy_area_m2) &&
@@ -190,8 +191,8 @@
   .vld_group_column(x)
 }
 
-.vld_census_size <- function(weight, plants) {
-  weight$meta$predictor %in% names(plants)
+.vld_census_size <- function(weight, size_census) {
+  weight$meta$predictor %in% names(size_census)
 }
 
 .vld_measure_fits <- function(measure, wetdry, carbon) {

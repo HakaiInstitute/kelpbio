@@ -213,7 +213,8 @@ tallied_biomass_draws <- function(
 }
 
 # Wet kg per survey (D x N) from every counted plant's own size. Group effects
-# are resolved per site-year, so the plants of one site-year share them.
+# are resolved per site-year, so the plants of one site-year share them; each
+# plant takes its survey's site and year.
 census_biomass_draws <- function(
   weight,
   size_census,
@@ -222,14 +223,14 @@ census_biomass_draws <- function(
   representative_site,
   progress
 ) {
-  plants <- ids_as_character(tibble::as_tibble(size_census))
+  census <- tibble::as_tibble(size_census)
   predictor <- weight$meta$predictor
-  warn_outside_range(weight, plants[[predictor]], predictor)
+  warn_outside_range(weight, census[[predictor]], predictor)
 
   kg <- matrix(0, nrow = posterior::ndraws(weight$draws), ncol = nrow(grid))
-  survey <- match(as.character(plants$survey_id), as.character(grid$survey_id))
-  plants$site <- grid$site[survey]
-  plants$year <- grid$year[survey]
+  survey <- match(id_text(census$survey_id), id_text(grid$survey_id))
+  census$site <- grid$site[survey]
+  census$year <- grid$year[survey]
   if (length(survey)) {
     sy_key <- site_year_key(grid$site, grid$year)
     first <- !duplicated(sy_key)
@@ -239,11 +240,11 @@ census_biomass_draws <- function(
       new_levels,
       representative_site
     )
-    plant_sy <- match(site_year_key(plants$site, plants$year), sy_key[first])
-    lp <- .linpred(weight, plants, new_levels, effects = effects[plant_sy])
+    plant_sy <- match(site_year_key(census$site, census$year), sy_key[first])
+    lp <- .linpred(weight, census, new_levels, effects = effects[plant_sy])
     plant_kg <- posterior::draws_of(.epred(weight, lp))
-    if ("partial" %in% names(plants)) {
-      plant_kg <- sweep(plant_kg, 2L, ifelse(plants$partial, 0.5, 1), "*")
+    if ("partial" %in% names(census)) {
+      plant_kg <- sweep(plant_kg, 2L, ifelse(census$partial, 0.5, 1), "*")
     }
     kg[, sort(unique(survey))] <- t(rowsum(t(plant_kg), survey))
   }
@@ -257,7 +258,7 @@ notify_empty_surveys <- function(grid, empty, progress = "bar") {
   if (identical(progress, "none") || n == 0L) {
     return(invisible(empty))
   }
-  surveys <- as.character(grid$survey_id[empty])
+  surveys <- id_text(grid$survey_id[empty])
   cli::cli_inform(c(
     i = "{n} survey{?s} with no size census rows {cli::qty(n)}{?has/have} no biomass.",
     " " = "Survey{?s}: {.val {surveys}}."

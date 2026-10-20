@@ -37,7 +37,7 @@
   <path class="edge" d="M 560 79 C 610 79 600 155 643 155"/>
   <path class="edge" d="M 560 169 L 643 169"/>
   <path class="edge" d="M 240 259 L 585 259 C 620 259 608 183 643 183"/>
-  <text class="label" x="412" y="250">plants and area searched</text>
+  <text class="label" x="412" y="250">plants and surveyed area</text>
   <path class="edge dashed" d="M 765 198 C 765 290 640 336 567 336"/>
   <text class="label" x="655" y="278" text-anchor="end">with plot drone cover</text>
   <path class="edge" d="M 560 362 C 600 362 605 385 643 385"/>
@@ -53,16 +53,16 @@
   <text class="sub" x="135" y="92">one row per harvested plant</text>
 
   <rect rx="8" ry="8" class="box data" x="30" y="140" width="210" height="58"/>
-  <text class="title data-text" x="135" y="161">Size data</text>
+  <text class="title data-text" x="135" y="161">Size sample</text>
   <text class="sub" x="135" y="182">one row per measured plant</text>
 
   <rect rx="8" ry="8" class="box data" x="30" y="230" width="210" height="58"/>
   <text class="title data-text" x="135" y="251">Survey data</text>
-  <text class="sub" x="135" y="272">one row per survey of a plot</text>
+  <text class="sub" x="135" y="272">one row per survey</text>
 
   <rect rx="8" ry="8" class="box data" x="30" y="410" width="210" height="58"/>
   <text class="title data-text" x="135" y="431">Canopy data</text>
-  <text class="sub" x="135" y="452">one row per mapped site-year</text>
+  <text class="sub" x="135" y="452">one row per canopy map</text>
 
   <rect rx="8" ry="8" class="box data" x="30" y="514" width="210" height="58"/>
   <text class="title data-text" x="135" y="535">Tissue samples</text>

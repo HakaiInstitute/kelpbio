@@ -255,17 +255,17 @@ test_that(".chk_cover_survey checks biomass_sd_kg_m2 where present", {
   expect_snapshot(error = TRUE, .chk_cover_survey(transform(good, biomass_sd_kg_m2 = -1)))
 })
 
-test_that(".chk_site_surveys errors name the survey column", {
+test_that(".chk_canopy_maps errors name the survey column", {
   good <- data.frame(
     site = "a", year = "2020", canopy_area_m2 = 100, tide_height_m = 0.5, classified_area_m2 = 1e4
   )
-  expect_invisible(.chk_site_surveys(good))
-  expect_error(.chk_site_surveys(good[setdiff(names(good), "classified_area_m2")]), "classified_area_m2")
-  expect_snapshot(error = TRUE, .chk_site_surveys(good[c("site", "year", "canopy_area_m2")]))
-  expect_snapshot(error = TRUE, .chk_site_surveys(transform(good, classified_area_m2 = 50)))
-  expect_error(.chk_site_surveys(transform(good, classified_area_m2 = 0)), "classified_area_m2")
-  expect_error(.chk_site_surveys(transform(good, year = NA)), "year")
-  expect_error(.chk_site_surveys(1), "must be a data frame")
+  expect_invisible(.chk_canopy_maps(good))
+  expect_error(.chk_canopy_maps(good[setdiff(names(good), "classified_area_m2")]), "classified_area_m2")
+  expect_snapshot(error = TRUE, .chk_canopy_maps(good[c("site", "year", "canopy_area_m2")]))
+  expect_snapshot(error = TRUE, .chk_canopy_maps(transform(good, classified_area_m2 = 50)))
+  expect_error(.chk_canopy_maps(transform(good, classified_area_m2 = 0)), "classified_area_m2")
+  expect_error(.chk_canopy_maps(transform(good, year = NA)), "year")
+  expect_error(.chk_canopy_maps(1), "must be a data frame")
 })
 
 test_that(".chk_pool_by names a missing or non-grouping column", {
@@ -372,4 +372,12 @@ test_that(".chk_fit_inputs checks sampler arguments, data, then rows, naming the
   expect_identical(err$call, call)
   err <- expect_error(inputs(data[0, , drop = FALSE]), "prior_only")
   expect_identical(err$call, call)
+})
+
+test_that(".chk_id_column allows numeric year and survey_id only", {
+  expect_invisible(.chk_id_column(2021, "year"))
+  expect_invisible(.chk_id_column(1.5, "survey_id"))
+  expect_error(.chk_id_column(2021.5, "year", "`year`"), "year")
+  expect_error(.chk_id_column(TRUE, "survey_id", "`survey_id`"), "character, factor, or numeric")
+  expect_error(.chk_id_column(1, "site", "`site`"), "site")
 })

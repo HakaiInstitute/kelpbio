@@ -326,13 +326,15 @@ kb_model_describe <- function(fit, ..., prose = FALSE) {
       sd_site = pri$sd_site
     ),
     truncated = c("biomass_floor", "cv_residual"),
-    bounded = c(tide_height_slope = " T[0, 0.5]"),
+    bounded = c(tide_height_slope = paste0(" T[0, ", TIDE_SLOPE_UPPER, "]")),
     prose = paste0(
       "The mean wet biomass of each in situ survey was modelled as a biomass ",
       "floor, common to all sites and years, plus a term proportional to the ",
       "tide-corrected canopy cover of the survey's plot, whose slope varied by ",
-      "site and year. Canopy area was divided by one minus a fixed share per ",
-      "metre of tide height, and cover was capped at 1. The likelihood was ",
+      "site and year. Canopy area was divided by one minus an estimated share ",
+      "per metre of tide height, and cover was capped at 1; plots with canopy ",
+      "at or above the tide height where that share reaches 1 were fully ",
+      "covered. The likelihood was ",
       "Normal, censored below at zero so that surveys with no plants counted ",
       "contributed the probability of zero or less, with a standard deviation ",
       "combining a constant, a part proportional to the mean, and the ",

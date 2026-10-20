@@ -71,3 +71,10 @@ test_that("a surveyed area above the plot area warns", {
 test_that("a size census without a size column errors", {
   expect_error(kb_check_data_survey(census(), size_census()["survey_id"]), "diameter_mm")
 })
+
+test_that("numeric and text survey ids compare by the same text", {
+  numbered <- transform(census(), survey_id = c(100000, 2, 3))
+  expect_silent(kb_check_data_survey(numbered, data.frame(survey_id = "100000", fronds = 3)))
+  long <- transform(survey(), survey_id = c(1234567890123456, 1234567890123457, 1))
+  expect_silent(kb_check_data_survey(long))
+})

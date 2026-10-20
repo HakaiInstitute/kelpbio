@@ -40,6 +40,9 @@ on the edge of a transect. Other columns are ignored.
 kb_check_data_size_census_macro(data_size_census_sim_macro)
 }
 \seealso{
+\code{\link[=kb_fit_size_nereo]{kb_fit_size_nereo()}} for sizes from a sample when plants were
+tallied rather than measured.
+
 Other data checks:
 \code{\link[=kb_check_data_carbon_macro]{kb_check_data_carbon_macro()}},
 \code{\link[=kb_check_data_carbon_nereo]{kb_check_data_carbon_nereo()}},

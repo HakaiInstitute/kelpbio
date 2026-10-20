@@ -40,12 +40,21 @@ tide_cap_share <- function(canopy_area_m2, tide_height_m, tide_height_slope) {
 }
 
 # The probability that each row is past the tide limit under a Normal prior on
-# the slope truncated to [0, upper], the support in
-# inst/stan/cover_calibration.stan.
-tide_cap_prior_share <- function(canopy_area_m2, tide_height_m, prior, upper = 0.5) {
+# the slope truncated to its support [0, TIDE_SLOPE_UPPER]. A prior with no
+# mass on the support, to numerical precision, is a point mass at the nearer
+# bound.
+tide_cap_prior_share <- function(canopy_area_m2, tide_height_m, prior) {
+  upper <- TIDE_SLOPE_UPPER
   limit <- pmin(1 / pmax(tide_height_m, 0), upper)
   mass <- function(x) stats::pnorm(x, prior$mean, prior$sd)
-  share <- (mass(upper) - mass(limit)) / (mass(upper) - mass(0))
+  support <- mass(upper) - mass(0)
+  share <- if (support > 0) {
+    (mass(upper) - mass(limit)) / support
+  } else if (prior$mean > upper) {
+    as.numeric(upper * tide_height_m >= 1)
+  } else {
+    rep(0, length(tide_height_m))
+  }
   ifelse(canopy_area_m2 > 0, share, 0)
 }
 
