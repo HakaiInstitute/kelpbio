@@ -219,14 +219,15 @@
       The mean wet biomass of each in situ survey was modelled as a biomass
       floor, common to all sites and years, plus a term proportional to the
       tide-corrected canopy cover of the survey's plot, whose slope varied by
-      site and year. Canopy area was divided by one minus a fixed share per metre
-      of tide height, and cover was capped at 1. The likelihood was Normal,
-      censored below at zero so that surveys with no plants counted contributed
-      the probability of zero or less, with a standard deviation combining a
-      constant, a part proportional to the mean, and the survey's standard
-      deviation from plant weight. Regularising priors were placed on all
-      parameters, with an informative prior on the tide correction (see the
-      notation form for the hyperparameters).
+      site and year. Canopy area was divided by one minus an estimated share per
+      metre of tide height, and cover was capped at 1; plots with canopy at or
+      above the tide height where that share reaches 1 were fully covered. The
+      likelihood was Normal, censored below at zero so that surveys with no
+      plants counted contributed the probability of zero or less, with a standard
+      deviation combining a constant, a part proportional to the mean, and the
+      survey's standard deviation from plant weight. Regularising priors were
+      placed on all parameters, with an informative prior on the tide correction
+      (see the notation form for the hyperparameters).
 
 # kb_model_describe follows the power-law form
 

@@ -4,11 +4,8 @@
 # is divided by one minus that share, and capped at `cap`. Past one over the
 # slope the division has no finite value, so positive canopy takes the cap, its
 # limit as the share seen falls to zero; zero canopy stays zero.
-# `tide_height_slope` may be an rvar, which gives an rvar of length N.
+# `tide_height_slope` is an rvar of draws; the result is an rvar of length N.
 tide_corrected_canopy <- function(canopy_area_m2, tide_height_m, tide_height_slope, cap) {
-  if (!posterior::is_rvar(tide_height_slope)) {
-    return(cap_canopy(canopy_area_m2, 1 - tide_height_slope * tide_height_m, cap))
-  }
   slope <- as.vector(posterior::draws_of(tide_height_slope))
   n_draw <- length(slope)
   n <- length(canopy_area_m2)
@@ -25,3 +22,7 @@ cap_canopy <- function(canopy, seen, cap) {
   corrected[canopy == 0] <- 0
   corrected
 }
+
+# The upper bound of the tide slope's support, as declared for
+# `tide_height_slope` in inst/stan/cover_calibration.stan; keep the two equal.
+TIDE_SLOPE_UPPER <- 0.5

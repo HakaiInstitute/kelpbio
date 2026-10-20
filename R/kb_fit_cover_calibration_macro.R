@@ -21,11 +21,11 @@
 #'
 #' `cover` is `canopy_area_m2 / (1 - tide_height_slope * tide_height_m)` over
 #' the plot area, capped at 1 (Timmer et al. 2024); a survey with canopy at a
-#' tide height at or above `1 / tide_height_slope` is fully covered, and warns
-#' when that holds on more than 5% of the prior. The default prior on
-#' `tide_height_slope` largely sets the correction: raise its mean for beds in
-#' strong current. Flights at 2 m or below keep the correction within the tides
-#' the prior was estimated at. Pass canopy already corrected for tide with
+#' tide height at or above `1 / tide_height_slope` is fully covered, and the fit
+#' warns when that holds with more than 5% prior probability. The default prior
+#' on `tide_height_slope` largely sets the correction: raise its mean for beds in
+#' strong current. Flights at 2 m or below follow published practice and stay
+#' below the tide limit. Pass canopy already corrected for tide with
 #' `tide_height_m = 0`.
 #'
 #' @inheritSection params Sampling

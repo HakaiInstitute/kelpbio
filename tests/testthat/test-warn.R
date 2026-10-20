@@ -148,3 +148,12 @@ test_that("tide_cap_prior_share is the truncated Normal tail beyond one over the
   expect_equal(tide_cap_prior_share(1, 3, prior), mean(x >= 1 / 3), tolerance = 0.01)
   expect_equal(tide_cap_prior_share(1, -1, prior), 0)
 })
+
+test_that("tide_cap_prior_share treats a prior off the support as its nearer bound", {
+  high <- kb_prior_normal(mean = 2, sd = 0.01)
+  # at the upper bound of 0.5, the tide limit is 2 m
+  expect_equal(tide_cap_prior_share(c(1, 1, 0), c(1, 3, 3), high), c(0, 1, 0))
+  low <- kb_prior_normal(mean = -1, sd = 0.01)
+  expect_equal(tide_cap_prior_share(c(1, 1), c(1, 3), low), c(0, 0))
+  expect_silent(warn_tide_cap(tide_cap_prior_share(1, 1, high), "`data`", "survey", "x", "y"))
+})
