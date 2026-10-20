@@ -76,8 +76,9 @@ site-year (`R/mock-example.R`).
    visible (`R/mod_model.R:205-211`).
 4. **Settings.** The prior cards follow `kb_priors_cover_calibration_*()`:
    `error_scaling` goes, `sd_residual` and `cv_residual` arrive.
-5. **Estimates.** Mean weight by site-year (*Nereocystis*), survey biomass,
-   and totals over canopy (`kb_predict_biomass_canopy()`), with `per_area`.
+5. **Estimates.** Mean weight by site-year (*Nereocystis*), survey biomass
+   (with `per_area`), and totals over canopy (`kb_predict_biomass_canopy()`,
+   kg only).
 6. **Renames.** `kb_fit_cover_biomass_*()` to `kb_fit_cover_calibration_*()`,
    `kb_predict_site_biomass()` to `kb_predict_biomass_canopy()`,
    `kb_predict_plot_biomass()` to `kb_predict_biomass_survey()`, `stipes` to

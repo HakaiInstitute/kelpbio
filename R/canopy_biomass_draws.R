@@ -1,5 +1,4 @@
-# Total wet biomass (kg) per row and the tide-corrected canopy area (m^2), each
-# D x N: the bed biomass per m^2 (the calibration's mean at a fully covered
+# Total wet biomass (kg) per row, D x N: the bed biomass per m^2 (the calibration's mean at a fully covered
 # unit plot at zero tide height, so the floor applies over the canopy only)
 # times the tide-corrected canopy, capped at `site_area_m2` where given.
 canopy_biomass_draws <- function(fit, grid, new_levels, representative_site) {
@@ -17,8 +16,5 @@ canopy_biomass_draws <- function(fit, grid, new_levels, representative_site) {
   if ("site_area_m2" %in% names(grid)) {
     canopy <- rvar_pmin(canopy, grid$site_area_m2)
   }
-  list(
-    biomass = posterior::draws_of(density * canopy),
-    canopy = posterior::draws_of(canopy)
-  )
+  posterior::draws_of(density * canopy)
 }

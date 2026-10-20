@@ -53,7 +53,7 @@ flowchart TB
     DPL[/"plants: one row per counted plant<br/>site · plot_id · date<br/>diameter_mm or fronds · partial?"/] -->|"sizes observed<br/>(a census)"| VBP
     DSU[/"survey: one row per survey of a plot<br/>site · plot_id · date · survey_area_m2<br/>plants (tallied, with a size fit)<br/>plot_area_m2? · canopy_area_m2? · tide_height_m?<br/>grouping columns?"/] --> VBP["kb_predict_biomass_survey(weight, size, survey)<br/>per_area = TRUE: kg/m² surveyed<br/>FALSE: kg in the surveyed area"]
     VBP -->|"rows with drone cover"| FCC["kb_fit_cover_calibration_*(data)"]
-    FCC --> VCA["kb_predict_biomass_canopy(fit, new_data)<br/>per_area = FALSE: kg over the canopy<br/>TRUE: kg/m² of canopy"]
+    FCC --> VCA["kb_predict_biomass_canopy(fit, new_data)<br/>kg over the canopy"]
     DCA[/"canopy: one row per mapped site-year<br/>site · year · canopy_area_m2 · tide_height_m<br/>site_area_m2? · grouping columns?"/] --> VCA
 ```
 

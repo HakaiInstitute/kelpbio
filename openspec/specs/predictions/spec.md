@@ -258,7 +258,7 @@ Each model SHALL have one prediction verb, `kb_predict_<model>()`, returning a `
 
 ### Requirement: Pooling over groups
 
-`kb_predict_biomass_survey()` and `kb_predict_biomass_canopy()` SHALL take a name-only `pool_by`. With `NULL` (the default) they SHALL return one row per input row with the support columns. With a character vector of input columns they SHALL return one row per combination of those columns present, with those columns, the summary columns, and the response column, ordered by the columns' factor levels or, for character columns, alphabetically ignoring case; `character(0)` SHALL give one row for all rows. On each draw, biomass SHALL be summed in kg within each group and, when `per_area = TRUE`, divided by the group's summed area (the surveyed area for surveys, the tide-corrected canopy for canopy). Each `pool_by` column SHALL be character or factor with no missing values; another column, or one the input does not have, SHALL error naming it. A sampled new site or year effect SHALL be shared by every row of that level, so a sum carries the among-site variation once per site.
+`kb_predict_biomass_survey()` and `kb_predict_biomass_canopy()` SHALL take a name-only `pool_by`. With `NULL` (the default) they SHALL return one row per input row with the support columns. With a character vector of input columns they SHALL return one row per combination of those columns present, with those columns, the summary columns, and the response column, ordered by the columns' factor levels or, for character columns, alphabetically ignoring case; `character(0)` SHALL give one row for all rows. On each draw, biomass SHALL be summed in kg within each group and, for survey biomass with `per_area = TRUE`, divided by the group's summed `survey_area_m2`. Each `pool_by` column SHALL be character or factor with no missing values; another column, or one the input does not have, SHALL error naming it. A sampled new site or year effect SHALL be shared by every row of that level, so a sum carries the among-site variation once per site.
 
 #### Scenario: Sums are taken on the draws
 - **WHEN** `pool_by = "year"` is given
@@ -339,10 +339,6 @@ Each model SHALL have one prediction verb, `kb_predict_<model>()`, returning a `
 #### Scenario: The site area caps the corrected canopy
 - **WHEN** a row's tide-corrected canopy would exceed its `site_area_m2`
 - **THEN** its total is the bed biomass per m² times `site_area_m2`, and without `site_area_m2` the canopy is not capped
-
-#### Scenario: Per m² of canopy is bed biomass
-- **WHEN** it is called with `per_area = TRUE`
-- **THEN** each draw equals the total over the row's tide-corrected canopy area
 
 #### Scenario: A canopy larger than its site errors
 - **WHEN** a row's `canopy_area_m2` exceeds its `site_area_m2`, or `new_data` lacks `canopy_area_m2` or `tide_height_m`

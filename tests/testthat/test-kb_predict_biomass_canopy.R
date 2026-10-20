@@ -52,7 +52,7 @@ test_that("dry and carbon are per-draw conversions of wet", {
     surveys(),
     "sample",
     NULL
-  )$biomass
+  )
   expect_equal(dry$estimate, apply(totals * ratio, 2, stats::median))
   expect_equal(
     carbon$estimate,
@@ -67,7 +67,7 @@ test_that("sums are taken on the draws, not the summaries", {
   p <- kb_predict_biomass_canopy(fit, surveys(), pool_by = "region", sig_fig = 10)
   expect_named(p, c("region", "biomass_kg", "estimate", "lower", "upper"))
   expect_identical(attr(p, "kb_group_vars"), "region")
-  totals <- canopy_biomass_draws(fit, surveys(), "sample", NULL)$biomass
+  totals <- canopy_biomass_draws(fit, surveys(), "sample", NULL)
   expect_equal(
     p$estimate[1],
     stats::median(totals[, 1] + totals[, 2]),
@@ -130,22 +130,13 @@ test_that("missing, invalid, and mismatched inputs error", {
   expect_error(kb_predict_biomass_canopy(fit, transform(surveys(), tide_height_m = Inf)), "finite")
 })
 
-test_that("per_area gives biomass per m2 of tide-corrected canopy", {
+test_that("a repeated pool_by column pools as if named once", {
   fit <- cover_calibration_nereo_fit
-  res <- canopy_biomass_draws(fit, surveys(), "average", NULL)
-  p <- kb_predict_biomass_canopy(fit, surveys(), per_area = TRUE, sig_fig = 10)
-  expect_identical(attr(p, "kb_response"), "biomass_kg_m2")
-  expect_equal(
-    p$estimate,
-    apply(res$biomass / res$canopy, 2, stats::median),
-    ignore_attr = TRUE
-  )
-  summed <- kb_predict_biomass_canopy(fit, surveys(), per_area = TRUE, pool_by = "region", sig_fig = 10)
-  expect_equal(
-    summed$estimate[1],
-    stats::median((res$biomass[, 1] + res$biomass[, 2]) / (res$canopy[, 1] + res$canopy[, 2])),
-    ignore_attr = TRUE
-  )
+  withr::local_seed(1)
+  once <- kb_predict_biomass_canopy(fit, surveys(), pool_by = "region")
+  withr::local_seed(1)
+  twice <- kb_predict_biomass_canopy(fit, surveys(), pool_by = c("region", "region"))
+  expect_identical(twice, once)
 })
 
 test_that("a pool_by group holding one site-year twice warns", {

@@ -123,9 +123,6 @@ kb_predict_biomass_canopy(
   pool_by = c("region", "year")
 )
 
-# biomass per m2 of canopy (bed biomass)
-kb_predict_biomass_canopy(fit_cover, data_canopy_sim_nereo, per_area = TRUE)
-
 # carbon stock (kg C) by year
 kb_predict_biomass_canopy(
   fit_cover,

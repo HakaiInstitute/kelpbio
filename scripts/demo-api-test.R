@@ -815,8 +815,6 @@ set.seed(1)
 kb_predict_biomass_canopy(fit_cv, data_canopy_sim_nereo)
 kb_predict_biomass_canopy(fit_cv, data_canopy_sim_nereo) |>
   kb_plot_predictions()
-# biomass per m2 of canopy (bed biomass)
-kb_predict_biomass_canopy(fit_cv, data_canopy_sim_nereo, per_area = TRUE)
 # totals summed on the draws: by region, by year, and over all rows
 kb_predict_biomass_canopy(fit_cv, data_canopy_sim_nereo, pool_by = "region")
 kb_predict_biomass_canopy(fit_cv, data_canopy_sim_nereo, pool_by = "year")

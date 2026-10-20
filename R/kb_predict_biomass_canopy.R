@@ -1,49 +1,48 @@
 #' Predict biomass over mapped canopy
 #'
 #' Predict the biomass over each row's drone-mapped canopy from a cover
-#' calibration fit: wet or dry (kg or kg/m²) or carbon (kg C or g C/m²),
-#' optionally pooled over groups of rows.
+#' calibration fit: wet or dry (kg) or carbon (kg C), optionally pooled over
+#' groups of rows.
 #'
 #' @details
 #' A row's total is the expected biomass per m² of bed for its site and year
 #' (the calibration at full cover) times its tide-corrected canopy area. The
 #' tide-corrected canopy area is `canopy_area_m2 / (1 - tide_height_slope *
-#' tide_height_m)`, capped at `site_area_m2` where given. The mapped canopy is taken as the extent of the
-#' bed, so no biomass is counted outside it. The interval is for the expected
-#' total: it carries the uncertainty in the parameters and the site and year
-#' effects, not variation between flights. With `per_area = TRUE` the total is
-#' divided by the tide-corrected canopy area, giving the biomass per m² of bed.
+#' tide_height_m)`, capped at `site_area_m2` where given. The mapped canopy is
+#' taken as the extent of the bed, so no biomass is counted outside it. The
+#' interval is for the expected total: it carries the uncertainty in the
+#' parameters and the site and year effects, not variation between flights.
 #'
 #' Dry biomass is the wet total times the expected dry:wet ratio from `wetdry`,
 #' and carbon the dry total times the expected carbon fraction from `carbon`.
 #' The fits must be of the same species and have the same number of draws.
 #'
 #' Pool totals with `pool_by` rather than summing per-row estimates or limits.
-#' Pool at most one row per site-year; a group with more warns.
+#' A site-year may have several rows, such as flights weeks apart, but pooling
+#' two maps of one site-year counts its bed twice, so a group with more than one
+#' row per site-year warns.
 #'
 #' @inheritParams derived_params
 #' @inheritParams params
 #' @param fit A `kb_fit_cover_calibration` object.
-#' @param new_data A data frame of mapped canopy, one row per site-year, with
+#' @param new_data A data frame of mapped canopy, one row per map of a site's
+#'   canopy (summed over the map's polygons), with
 #'   `site`, `year`, `canopy_area_m2` (the canopy mapped within the site, m²),
 #'   `tide_height_m` (the tide height at the flight, m), and optionally
 #'   `site_area_m2` (the area within the site boundary, m²), which caps the
 #'   tide-corrected canopy. Other columns are kept and can be named in
 #'   `pool_by`.
-#' @param per_area A flag specifying whether to give biomass per m² of
-#'   tide-corrected canopy, or else the total over the canopy.
 #'
 #' @returns A `kb_predictions` object. Without `pool_by`, the rows of `new_data`
 #'   with added `cover_support` (`"site, year"`, `"site"`, `"year"`, or
 #'   `"none"`: the data the calibration fit has for the row's site and year), the
-#'   draws of the biomass in a column named for it (`biomass_kg`,
-#'   `dry_biomass_kg`, or `carbon_biomass_kg` in total, and `biomass_kg_m2`,
-#'   `dry_biomass_kg_m2`, or `carbon_biomass_g_m2` per m²), and `estimate`,
+#'   draws of the total in a column named for it (`biomass_kg`,
+#'   `dry_biomass_kg`, or `carbon_biomass_kg`), and `estimate`,
 #'   `lower`, and `upper`; with `pool_by`, one row per group with its `pool_by`
 #'   columns, the draws, and the summary.
 #' @family prediction functions
 #' @seealso [kb_predict_cover_calibration()] for biomass per m² of a plot at a
-#'   given cover.
+#'   given cover; at full cover and zero tide height, the biomass per m² of bed.
 #' @export
 #'
 #' @examples
@@ -78,7 +77,6 @@ kb_predict_biomass_canopy <- function(
   carbon = NULL,
   ...,
   measure = c("wet", "dry", "carbon"),
-  per_area = FALSE,
   pool_by = NULL,
   new_levels = c("sample", "average"),
   representative_site = NULL,
@@ -91,7 +89,6 @@ kb_predict_biomass_canopy <- function(
   rlang::check_required(new_data)
   measure <- rlang::arg_match(measure)
   new_levels <- rlang::arg_match(new_levels)
-  chk::chk_flag(per_area)
   .with_call(
     {
       .chk_site_surveys(new_data, x_name = "`new_data`")
@@ -101,24 +98,21 @@ kb_predict_biomass_canopy <- function(
   )
   warn_implausible_units(new_data, "`new_data`")
   .chk_pool_by(pool_by, new_data)
+  pool_by <- unique(pool_by)
   .chk_measure_fits(measure, wetdry, carbon)
   .chk_derived_fits(list(fit = fit, wetdry = wetdry, carbon = carbon))
   .chk_representative_site(fit, representative_site)
   .chk_summary_args(conf_level, estimate, sig_fig)
 
   grid <- tibble::as_tibble(new_data)
-  canopy <- canopy_biomass_draws(fit, grid, new_levels, representative_site)
-  carbon_scale <- if (per_area) 1000 else 1
-  totals <- canopy$biomass *
-    measure_factor(measure, wetdry, carbon, carbon_scale = carbon_scale)
-  area <- if (per_area) canopy$canopy
+  draws <- canopy_biomass_draws(fit, grid, new_levels, representative_site) *
+    measure_factor(measure, wetdry, carbon)
 
   if (is.null(pool_by)) {
     grid$cover_support <- cover_support(fit, grid$site, grid$year)
-    draws <- if (per_area) totals / area else totals
     group_vars <- .group_vars()
   } else {
-    pooled <- pool_draws_by(grid, totals, pool_by, area = area)
+    pooled <- pool_draws_by(grid, draws, pool_by)
     warn_overlapping_canopy(grid, pooled$id)
     grid <- pooled$groups
     draws <- pooled$draws
@@ -133,7 +127,7 @@ kb_predict_biomass_canopy <- function(
     sig_fig = sig_fig,
     curve = FALSE,
     predictor = NULL,
-    response = derived_response(measure, per_area),
+    response = derived_response(measure, per_area = FALSE),
     keep_draws = TRUE
   )
 }

@@ -11,7 +11,6 @@ kb_predict_biomass_canopy(
   carbon = NULL,
   ...,
   measure = c("wet", "dry", "carbon"),
-  per_area = FALSE,
   pool_by = NULL,
   new_levels = c("sample", "average"),
   representative_site = NULL,
@@ -23,7 +22,8 @@ kb_predict_biomass_canopy(
 \arguments{
 \item{fit}{A \code{kb_fit_cover_calibration} object.}
 
-\item{new_data}{A data frame of mapped canopy, one row per site-year, with
+\item{new_data}{A data frame of mapped canopy, one row per map of a site's
+canopy (summed over the map's polygons), with
 \code{site}, \code{year}, \code{canopy_area_m2} (the canopy mapped within the site, m²),
 \code{tide_height_m} (the tide height at the flight, m), and optionally
 \code{site_area_m2} (the area within the site boundary, m²), which caps the
@@ -41,20 +41,10 @@ or \code{NULL}.}
 \item{measure}{A string, one of \code{"wet"}, \code{"dry"}, or \code{"carbon"}, giving the
 biomass to predict.}
 
-\item{per_area}{A flag specifying whether to give biomass per m² of
-tide-corrected canopy, or else the total over the canopy.}
-
 \item{pool_by}{A character vector naming character or factor columns whose
 combinations group the rows, such as \code{c("site", "year")}, \code{character(0)}
-to pool all rows, or \code{NULL} (the default) for one row per input row. Rows are pooled on each draw:
-\itemize{
-\item \code{per_area = FALSE}: the biomass of the group is the sum of its rows'
-biomass (kg).
-\item \code{per_area = TRUE}: the biomass of the group is the sum of its rows'
-biomass divided by the sum of their areas, the biomass per m² of the
-pooled area (an area-weighted mean, not the mean of the rows' values).
-}
-
+to pool all rows, or \code{NULL} (the default) for one row per input row. On
+each draw, the biomass of a group is the sum of its rows' biomass (kg).
 For another summary, such as an unweighted mean of rows, summarise the
 draws column (see \code{vignette("advanced")}).}
 
@@ -88,32 +78,32 @@ a single estimate, such as \code{median} or \code{mean}.}
 A \code{kb_predictions} object. Without \code{pool_by}, the rows of \code{new_data}
 with added \code{cover_support} (\code{"site, year"}, \code{"site"}, \code{"year"}, or
 \code{"none"}: the data the calibration fit has for the row's site and year), the
-draws of the biomass in a column named for it (\code{biomass_kg},
-\code{dry_biomass_kg}, or \code{carbon_biomass_kg} in total, and \code{biomass_kg_m2},
-\code{dry_biomass_kg_m2}, or \code{carbon_biomass_g_m2} per m²), and \code{estimate},
+draws of the total in a column named for it (\code{biomass_kg},
+\code{dry_biomass_kg}, or \code{carbon_biomass_kg}), and \code{estimate},
 \code{lower}, and \code{upper}; with \code{pool_by}, one row per group with its \code{pool_by}
 columns, the draws, and the summary.
 }
 \description{
 Predict the biomass over each row's drone-mapped canopy from a cover
-calibration fit: wet or dry (kg or kg/m²) or carbon (kg C or g C/m²),
-optionally pooled over groups of rows.
+calibration fit: wet or dry (kg) or carbon (kg C), optionally pooled over
+groups of rows.
 }
 \details{
 A row's total is the expected biomass per m² of bed for its site and year
 (the calibration at full cover) times its tide-corrected canopy area. The
-tide-corrected canopy area is \code{canopy_area_m2 / (1 - tide_height_slope * tide_height_m)}, capped at \code{site_area_m2} where given. The mapped canopy is taken as the extent of the
-bed, so no biomass is counted outside it. The interval is for the expected
-total: it carries the uncertainty in the parameters and the site and year
-effects, not variation between flights. With \code{per_area = TRUE} the total is
-divided by the tide-corrected canopy area, giving the biomass per m² of bed.
+tide-corrected canopy area is \code{canopy_area_m2 / (1 - tide_height_slope * tide_height_m)}, capped at \code{site_area_m2} where given. The mapped canopy is
+taken as the extent of the bed, so no biomass is counted outside it. The
+interval is for the expected total: it carries the uncertainty in the
+parameters and the site and year effects, not variation between flights.
 
 Dry biomass is the wet total times the expected dry:wet ratio from \code{wetdry},
 and carbon the dry total times the expected carbon fraction from \code{carbon}.
 The fits must be of the same species and have the same number of draws.
 
 Pool totals with \code{pool_by} rather than summing per-row estimates or limits.
-Pool at most one row per site-year; a group with more warns.
+A site-year may have several rows, such as flights weeks apart, but pooling
+two maps of one site-year counts its bed twice, so a group with more than one
+row per site-year warns.
 }
 \examples{
 fit <- fit_cover_calibration_sim_nereo
@@ -143,7 +133,7 @@ kb_predict_biomass_canopy(
 }
 \seealso{
 \code{\link[=kb_predict_cover_calibration]{kb_predict_cover_calibration()}} for biomass per m² of a plot at a
-given cover.
+given cover; at full cover and zero tide height, the biomass per m² of bed.
 
 Other prediction functions:
 \code{\link[=autoplot.kb_predictions]{autoplot.kb_predictions()}},

@@ -122,13 +122,8 @@ params <- function(...) NULL
 #'     in the typical value only. Use it to describe an average site or year.
 #' @param pool_by A character vector naming character or factor columns whose
 #'   combinations group the rows, such as `c("site", "year")`, `character(0)`
-#'   to pool all rows, or `NULL` (the default) for one row per input row. Rows are pooled on each draw:
-#'   - `per_area = FALSE`: the biomass of the group is the sum of its rows'
-#'     biomass (kg).
-#'   - `per_area = TRUE`: the biomass of the group is the sum of its rows'
-#'     biomass divided by the sum of their areas, the biomass per m² of the
-#'     pooled area (an area-weighted mean, not the mean of the rows' values).
-#'
+#'   to pool all rows, or `NULL` (the default) for one row per input row. On
+#'   each draw, the biomass of a group is the sum of its rows' biomass (kg).
 #'   For another summary, such as an unweighted mean of rows, summarise the
 #'   draws column (see `vignette("advanced")`).
 #' @keywords internal

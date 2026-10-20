@@ -20,6 +20,10 @@
 #' and carbon dry biomass times the expected carbon fraction from `carbon`. The
 #' fits must be of the same species and have the same number of draws.
 #'
+#' With `pool_by` and `per_area = TRUE`, a group's biomass per m² is its summed
+#' biomass over its summed `survey_area_m2`: an area-weighted mean, not the
+#' mean of its surveys' values.
+#'
 #' @inheritParams derived_params
 #' @inheritParams params
 #' @param size A `kb_fit_size` object, when plants were tallied, or a data
@@ -28,17 +32,18 @@
 #'   columns).
 #' @param survey A data frame of in situ surveys, one row per survey of a plot
 #'   (see [kb_check_data_survey()] for the columns).
-#' @param per_area A flag specifying whether to give biomass per m² of the surveyed
-#'   area, or else the biomass in that area.
+#' @param per_area A flag specifying whether to give biomass per m² of the
+#'   surveyed area, or else the biomass in that area.
 #' @param n_plants A whole number of sizes averaged per draw to compute the
 #'   mean plant weight from a size fit; larger values are more precise and
 #'   slower. Not used with a table of counted plants.
 #'
 #' @returns A `kb_predictions` object. Without `pool_by`, the rows of `survey`
 #'   with added `year` (from `date`), `weight_support` and, with a size fit,
-#'   `size_support` (as in `kb_predict_mean_weight()`), the draws of the biomass in a column named for it
-#'   (`biomass_kg_m2`, `dry_biomass_kg_m2`, or `carbon_biomass_g_m2` per m², and
-#'   `biomass_kg`, `dry_biomass_kg`, or `carbon_biomass_kg` in total), and
+#'   `size_support` (as in `kb_predict_mean_weight()`), the draws of the
+#'   biomass in a column named for it (`biomass_kg_m2`, `dry_biomass_kg_m2`, or
+#'   `carbon_biomass_g_m2` per m², and `biomass_kg`, `dry_biomass_kg`, or
+#'   `carbon_biomass_kg` in total), and
 #'   `estimate`, `lower`, and `upper`; with `pool_by`, one row per group with its
 #'   `pool_by` columns, the draws, and the summary.
 #' @family prediction functions
