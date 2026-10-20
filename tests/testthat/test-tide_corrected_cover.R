@@ -17,3 +17,10 @@ test_that("zero tide height leaves the raw cover", {
   cover <- tide_corrected_cover(grid, posterior::rvar(c(0.2, 0.3)))
   expect_equal(posterior::draws_of(cover)[, 1], c(0.15, 0.15), ignore_attr = TRUE)
 })
+
+test_that("a plot past the tide limit is fully covered unless it has no canopy", {
+  grid <- data.frame(canopy_area_m2 = c(20, 0), plot_area_m2 = 200, tide_height_m = 5)
+  cover <- posterior::draws_of(tide_corrected_cover(grid, posterior::rvar(c(0.2, 0.3))))
+  expect_equal(cover[, 1], c(1, 1), ignore_attr = TRUE)
+  expect_equal(cover[, 2], c(0, 0), ignore_attr = TRUE)
+})

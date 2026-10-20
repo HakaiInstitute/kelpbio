@@ -13,75 +13,79 @@ namespace model_cover_calibration_namespace {
 using stan::model::model_base_crtp;
 using namespace stan::math;
 stan::math::profile_map profiles__;
-static constexpr std::array<const char*, 68> locations_array__ =
+static constexpr std::array<const char*, 72> locations_array__ =
   {" (found before start of program)",
-  " (in 'cover_calibration', line 39, column 2 to column 28)",
-  " (in 'cover_calibration', line 40, column 2 to column 30)",
-  " (in 'cover_calibration', line 41, column 2 to column 45)",
-  " (in 'cover_calibration', line 42, column 2 to column 28)",
-  " (in 'cover_calibration', line 43, column 2 to column 28)",
-  " (in 'cover_calibration', line 44, column 2 to column 24)",
-  " (in 'cover_calibration', line 45, column 2 to column 24)",
+  " (in 'cover_calibration', line 41, column 2 to column 28)",
+  " (in 'cover_calibration', line 42, column 2 to column 30)",
+  " (in 'cover_calibration', line 43, column 2 to column 45)",
+  " (in 'cover_calibration', line 44, column 2 to column 28)",
+  " (in 'cover_calibration', line 45, column 2 to column 28)",
   " (in 'cover_calibration', line 46, column 2 to column 24)",
   " (in 'cover_calibration', line 47, column 2 to column 24)",
-  " (in 'cover_calibration', line 50, column 2 to column 48)",
-  " (in 'cover_calibration', line 51, column 2 to column 48)",
-  " (in 'cover_calibration', line 54, column 2 to column 78)",
-  " (in 'cover_calibration', line 55, column 2 to column 75)",
-  " (in 'cover_calibration', line 56, column 2 to column 87)",
-  " (in 'cover_calibration', line 57, column 2 to column 52)",
-  " (in 'cover_calibration', line 58, column 2 to column 69)",
-  " (in 'cover_calibration', line 59, column 2 to column 44)",
-  " (in 'cover_calibration', line 60, column 2 to column 44)",
-  " (in 'cover_calibration', line 61, column 2 to column 24)",
-  " (in 'cover_calibration', line 62, column 2 to column 24)",
-  " (in 'cover_calibration', line 65, column 6 to line 68, column 26)",
-  " (in 'cover_calibration', line 69, column 6 to line 70, column 81)",
-  " (in 'cover_calibration', line 71, column 6 to line 73, column 8)",
-  " (in 'cover_calibration', line 77, column 8 to column 54)",
-  " (in 'cover_calibration', line 76, column 13 to line 78, column 7)",
-  " (in 'cover_calibration', line 75, column 8 to column 45)",
-  " (in 'cover_calibration', line 74, column 24 to line 76, column 7)",
-  " (in 'cover_calibration', line 74, column 6 to line 78, column 7)",
-  " (in 'cover_calibration', line 64, column 23 to line 79, column 5)",
-  " (in 'cover_calibration', line 64, column 4 to line 79, column 5)",
-  " (in 'cover_calibration', line 63, column 23 to line 80, column 3)",
-  " (in 'cover_calibration', line 63, column 2 to line 80, column 3)",
-  " (in 'cover_calibration', line 14, column 2 to column 21)",
-  " (in 'cover_calibration', line 15, column 2 to column 22)",
-  " (in 'cover_calibration', line 16, column 2 to column 22)",
-  " (in 'cover_calibration', line 17, column 8 to column 13)",
-  " (in 'cover_calibration', line 17, column 2 to column 47)",
-  " (in 'cover_calibration', line 18, column 8 to column 13)",
-  " (in 'cover_calibration', line 18, column 2 to column 47)",
-  " (in 'cover_calibration', line 19, column 18 to column 23)",
-  " (in 'cover_calibration', line 19, column 2 to column 40)",
-  " (in 'cover_calibration', line 20, column 18 to column 23)",
-  " (in 'cover_calibration', line 20, column 2 to column 38)",
-  " (in 'cover_calibration', line 21, column 9 to column 14)",
-  " (in 'cover_calibration', line 21, column 2 to column 30)",
+  " (in 'cover_calibration', line 48, column 2 to column 24)",
+  " (in 'cover_calibration', line 49, column 2 to column 24)",
+  " (in 'cover_calibration', line 52, column 2 to column 48)",
+  " (in 'cover_calibration', line 53, column 2 to column 48)",
+  " (in 'cover_calibration', line 56, column 2 to column 78)",
+  " (in 'cover_calibration', line 57, column 2 to column 75)",
+  " (in 'cover_calibration', line 58, column 2 to column 87)",
+  " (in 'cover_calibration', line 59, column 2 to column 52)",
+  " (in 'cover_calibration', line 60, column 2 to column 69)",
+  " (in 'cover_calibration', line 61, column 2 to column 44)",
+  " (in 'cover_calibration', line 62, column 2 to column 44)",
+  " (in 'cover_calibration', line 63, column 2 to column 24)",
+  " (in 'cover_calibration', line 64, column 2 to column 24)",
+  " (in 'cover_calibration', line 67, column 6 to column 59)",
+  " (in 'cover_calibration', line 68, column 6 to column 21)",
+  " (in 'cover_calibration', line 70, column 8 to line 72, column 14)",
+  " (in 'cover_calibration', line 69, column 33 to line 73, column 7)",
+  " (in 'cover_calibration', line 69, column 6 to line 73, column 7)",
+  " (in 'cover_calibration', line 74, column 6 to line 75, column 81)",
+  " (in 'cover_calibration', line 76, column 6 to line 78, column 8)",
+  " (in 'cover_calibration', line 82, column 8 to column 54)",
+  " (in 'cover_calibration', line 81, column 13 to line 83, column 7)",
+  " (in 'cover_calibration', line 80, column 8 to column 45)",
+  " (in 'cover_calibration', line 79, column 24 to line 81, column 7)",
+  " (in 'cover_calibration', line 79, column 6 to line 83, column 7)",
+  " (in 'cover_calibration', line 66, column 23 to line 84, column 5)",
+  " (in 'cover_calibration', line 66, column 4 to line 84, column 5)",
+  " (in 'cover_calibration', line 65, column 23 to line 85, column 3)",
+  " (in 'cover_calibration', line 65, column 2 to line 85, column 3)",
+  " (in 'cover_calibration', line 16, column 2 to column 21)",
+  " (in 'cover_calibration', line 17, column 2 to column 22)",
+  " (in 'cover_calibration', line 18, column 2 to column 22)",
+  " (in 'cover_calibration', line 19, column 8 to column 13)",
+  " (in 'cover_calibration', line 19, column 2 to column 47)",
+  " (in 'cover_calibration', line 20, column 8 to column 13)",
+  " (in 'cover_calibration', line 20, column 2 to column 47)",
+  " (in 'cover_calibration', line 21, column 18 to column 23)",
+  " (in 'cover_calibration', line 21, column 2 to column 40)",
   " (in 'cover_calibration', line 22, column 18 to column 23)",
-  " (in 'cover_calibration', line 22, column 2 to column 33)",
-  " (in 'cover_calibration', line 23, column 18 to column 23)",
-  " (in 'cover_calibration', line 23, column 2 to column 36)",
-  " (in 'cover_calibration', line 24, column 8 to column 13)",
-  " (in 'cover_calibration', line 24, column 2 to column 42)",
-  " (in 'cover_calibration', line 25, column 2 to column 33)",
-  " (in 'cover_calibration', line 26, column 2 to column 40)",
-  " (in 'cover_calibration', line 27, column 2 to column 32)",
-  " (in 'cover_calibration', line 28, column 2 to column 39)",
-  " (in 'cover_calibration', line 29, column 2 to column 36)",
-  " (in 'cover_calibration', line 30, column 2 to column 43)",
-  " (in 'cover_calibration', line 31, column 2 to column 39)",
-  " (in 'cover_calibration', line 32, column 2 to column 30)",
-  " (in 'cover_calibration', line 33, column 2 to column 37)",
-  " (in 'cover_calibration', line 34, column 2 to column 35)",
-  " (in 'cover_calibration', line 35, column 2 to column 35)",
+  " (in 'cover_calibration', line 22, column 2 to column 38)",
+  " (in 'cover_calibration', line 23, column 9 to column 14)",
+  " (in 'cover_calibration', line 23, column 2 to column 30)",
+  " (in 'cover_calibration', line 24, column 18 to column 23)",
+  " (in 'cover_calibration', line 24, column 2 to column 33)",
+  " (in 'cover_calibration', line 25, column 18 to column 23)",
+  " (in 'cover_calibration', line 25, column 2 to column 36)",
+  " (in 'cover_calibration', line 26, column 8 to column 13)",
+  " (in 'cover_calibration', line 26, column 2 to column 42)",
+  " (in 'cover_calibration', line 27, column 2 to column 33)",
+  " (in 'cover_calibration', line 28, column 2 to column 40)",
+  " (in 'cover_calibration', line 29, column 2 to column 32)",
+  " (in 'cover_calibration', line 30, column 2 to column 39)",
+  " (in 'cover_calibration', line 31, column 2 to column 36)",
+  " (in 'cover_calibration', line 32, column 2 to column 43)",
+  " (in 'cover_calibration', line 33, column 2 to column 39)",
+  " (in 'cover_calibration', line 34, column 2 to column 30)",
+  " (in 'cover_calibration', line 35, column 2 to column 37)",
   " (in 'cover_calibration', line 36, column 2 to column 35)",
-  " (in 'cover_calibration', line 46, column 9 to column 15)",
-  " (in 'cover_calibration', line 47, column 9 to column 15)",
-  " (in 'cover_calibration', line 50, column 9 to column 15)",
-  " (in 'cover_calibration', line 51, column 9 to column 15)"};
+  " (in 'cover_calibration', line 37, column 2 to column 35)",
+  " (in 'cover_calibration', line 38, column 2 to column 35)",
+  " (in 'cover_calibration', line 48, column 9 to column 15)",
+  " (in 'cover_calibration', line 49, column 9 to column 15)",
+  " (in 'cover_calibration', line 52, column 9 to column 15)",
+  " (in 'cover_calibration', line 53, column 9 to column 15)"};
 #include <stan_meta_header.hpp>
 class model_cover_calibration final : public model_base_crtp<model_cover_calibration> {
 private:
@@ -135,58 +139,58 @@ public:
     try {
       int pos__ = std::numeric_limits<int>::min();
       pos__ = 1;
-      current_statement__ = 33;
+      current_statement__ = 37;
       context__.validate_dims("data initialization", "n_obs", "int",
         std::vector<size_t>{});
       n_obs = std::numeric_limits<int>::min();
-      current_statement__ = 33;
+      current_statement__ = 37;
       n_obs = context__.vals_i("n_obs")[(1 - 1)];
-      current_statement__ = 33;
+      current_statement__ = 37;
       stan::math::check_greater_or_equal(function__, "n_obs", n_obs, 0);
-      current_statement__ = 34;
+      current_statement__ = 38;
       context__.validate_dims("data initialization", "n_site", "int",
         std::vector<size_t>{});
       n_site = std::numeric_limits<int>::min();
-      current_statement__ = 34;
+      current_statement__ = 38;
       n_site = context__.vals_i("n_site")[(1 - 1)];
-      current_statement__ = 34;
+      current_statement__ = 38;
       stan::math::check_greater_or_equal(function__, "n_site", n_site, 1);
-      current_statement__ = 35;
+      current_statement__ = 39;
       context__.validate_dims("data initialization", "n_year", "int",
         std::vector<size_t>{});
       n_year = std::numeric_limits<int>::min();
-      current_statement__ = 35;
+      current_statement__ = 39;
       n_year = context__.vals_i("n_year")[(1 - 1)];
-      current_statement__ = 35;
+      current_statement__ = 39;
       stan::math::check_greater_or_equal(function__, "n_year", n_year, 1);
-      current_statement__ = 36;
+      current_statement__ = 40;
       stan::math::validate_non_negative_index("site", "n_obs", n_obs);
-      current_statement__ = 37;
+      current_statement__ = 41;
       context__.validate_dims("data initialization", "site", "int",
         std::vector<size_t>{static_cast<size_t>(n_obs)});
       site = std::vector<int>(n_obs, std::numeric_limits<int>::min());
-      current_statement__ = 37;
+      current_statement__ = 41;
       site = context__.vals_i("site");
-      current_statement__ = 37;
+      current_statement__ = 41;
       stan::math::check_greater_or_equal(function__, "site", site, 1);
-      current_statement__ = 37;
+      current_statement__ = 41;
       stan::math::check_less_or_equal(function__, "site", site, n_site);
-      current_statement__ = 38;
+      current_statement__ = 42;
       stan::math::validate_non_negative_index("year", "n_obs", n_obs);
-      current_statement__ = 39;
+      current_statement__ = 43;
       context__.validate_dims("data initialization", "year", "int",
         std::vector<size_t>{static_cast<size_t>(n_obs)});
       year = std::vector<int>(n_obs, std::numeric_limits<int>::min());
-      current_statement__ = 39;
+      current_statement__ = 43;
       year = context__.vals_i("year");
-      current_statement__ = 39;
+      current_statement__ = 43;
       stan::math::check_greater_or_equal(function__, "year", year, 1);
-      current_statement__ = 39;
+      current_statement__ = 43;
       stan::math::check_less_or_equal(function__, "year", year, n_year);
-      current_statement__ = 40;
+      current_statement__ = 44;
       stan::math::validate_non_negative_index("canopy_area_m2", "n_obs",
         n_obs);
-      current_statement__ = 41;
+      current_statement__ = 45;
       context__.validate_dims("data initialization", "canopy_area_m2",
         "double", std::vector<size_t>{static_cast<size_t>(n_obs)});
       canopy_area_m2_data__ = Eigen::Matrix<double,-1,1>::Constant(n_obs,
@@ -196,7 +200,7 @@ public:
         n_obs);
       {
         std::vector<local_scalar_t__> canopy_area_m2_flat__;
-        current_statement__ = 41;
+        current_statement__ = 45;
         canopy_area_m2_flat__ = context__.vals_r("canopy_area_m2");
         pos__ = 1;
         for (int sym1__ = 1; sym1__ <= n_obs; ++sym1__) {
@@ -206,12 +210,12 @@ public:
           pos__ = (pos__ + 1);
         }
       }
-      current_statement__ = 41;
+      current_statement__ = 45;
       stan::math::check_greater_or_equal(function__, "canopy_area_m2",
         canopy_area_m2, 0);
-      current_statement__ = 42;
+      current_statement__ = 46;
       stan::math::validate_non_negative_index("plot_area_m2", "n_obs", n_obs);
-      current_statement__ = 43;
+      current_statement__ = 47;
       context__.validate_dims("data initialization", "plot_area_m2",
         "double", std::vector<size_t>{static_cast<size_t>(n_obs)});
       plot_area_m2_data__ = Eigen::Matrix<double,-1,1>::Constant(n_obs,
@@ -221,7 +225,7 @@ public:
         n_obs);
       {
         std::vector<local_scalar_t__> plot_area_m2_flat__;
-        current_statement__ = 43;
+        current_statement__ = 47;
         plot_area_m2_flat__ = context__.vals_r("plot_area_m2");
         pos__ = 1;
         for (int sym1__ = 1; sym1__ <= n_obs; ++sym1__) {
@@ -230,12 +234,12 @@ public:
           pos__ = (pos__ + 1);
         }
       }
-      current_statement__ = 43;
+      current_statement__ = 47;
       stan::math::check_greater_or_equal(function__, "plot_area_m2",
         plot_area_m2, 0);
-      current_statement__ = 44;
+      current_statement__ = 48;
       stan::math::validate_non_negative_index("tide_height_m", "n_obs", n_obs);
-      current_statement__ = 45;
+      current_statement__ = 49;
       context__.validate_dims("data initialization", "tide_height_m",
         "double", std::vector<size_t>{static_cast<size_t>(n_obs)});
       tide_height_m_data__ = Eigen::Matrix<double,-1,1>::Constant(n_obs,
@@ -245,7 +249,7 @@ public:
         n_obs);
       {
         std::vector<local_scalar_t__> tide_height_m_flat__;
-        current_statement__ = 45;
+        current_statement__ = 49;
         tide_height_m_flat__ = context__.vals_r("tide_height_m");
         pos__ = 1;
         for (int sym1__ = 1; sym1__ <= n_obs; ++sym1__) {
@@ -255,9 +259,9 @@ public:
           pos__ = (pos__ + 1);
         }
       }
-      current_statement__ = 46;
+      current_statement__ = 50;
       stan::math::validate_non_negative_index("biomass", "n_obs", n_obs);
-      current_statement__ = 47;
+      current_statement__ = 51;
       context__.validate_dims("data initialization", "biomass", "double",
         std::vector<size_t>{static_cast<size_t>(n_obs)});
       biomass_data__ = Eigen::Matrix<double,-1,1>::Constant(n_obs,
@@ -266,7 +270,7 @@ public:
         Eigen::Map<Eigen::Matrix<double,-1,1>>(biomass_data__.data(), n_obs);
       {
         std::vector<local_scalar_t__> biomass_flat__;
-        current_statement__ = 47;
+        current_statement__ = 51;
         biomass_flat__ = context__.vals_r("biomass");
         pos__ = 1;
         for (int sym1__ = 1; sym1__ <= n_obs; ++sym1__) {
@@ -275,11 +279,11 @@ public:
           pos__ = (pos__ + 1);
         }
       }
-      current_statement__ = 47;
+      current_statement__ = 51;
       stan::math::check_greater_or_equal(function__, "biomass", biomass, 0);
-      current_statement__ = 48;
+      current_statement__ = 52;
       stan::math::validate_non_negative_index("biomass_sd", "n_obs", n_obs);
-      current_statement__ = 49;
+      current_statement__ = 53;
       context__.validate_dims("data initialization", "biomass_sd", "double",
         std::vector<size_t>{static_cast<size_t>(n_obs)});
       biomass_sd_data__ = Eigen::Matrix<double,-1,1>::Constant(n_obs,
@@ -289,7 +293,7 @@ public:
         n_obs);
       {
         std::vector<local_scalar_t__> biomass_sd_flat__;
-        current_statement__ = 49;
+        current_statement__ = 53;
         biomass_sd_flat__ = context__.vals_r("biomass_sd");
         pos__ = 1;
         for (int sym1__ = 1; sym1__ <= n_obs; ++sym1__) {
@@ -298,135 +302,135 @@ public:
           pos__ = (pos__ + 1);
         }
       }
-      current_statement__ = 49;
+      current_statement__ = 53;
       stan::math::check_greater_or_equal(function__, "biomass_sd",
         biomass_sd, 0);
-      current_statement__ = 50;
+      current_statement__ = 54;
       stan::math::validate_non_negative_index("zero", "n_obs", n_obs);
-      current_statement__ = 51;
+      current_statement__ = 55;
       context__.validate_dims("data initialization", "zero", "int",
         std::vector<size_t>{static_cast<size_t>(n_obs)});
       zero = std::vector<int>(n_obs, std::numeric_limits<int>::min());
-      current_statement__ = 51;
+      current_statement__ = 55;
       zero = context__.vals_i("zero");
-      current_statement__ = 51;
+      current_statement__ = 55;
       stan::math::check_greater_or_equal(function__, "zero", zero, 0);
-      current_statement__ = 51;
+      current_statement__ = 55;
       stan::math::check_less_or_equal(function__, "zero", zero, 1);
-      current_statement__ = 52;
+      current_statement__ = 56;
       context__.validate_dims("data initialization",
         "prior_cover_slope_meanlog", "double", std::vector<size_t>{});
       prior_cover_slope_meanlog = std::numeric_limits<double>::quiet_NaN();
-      current_statement__ = 52;
+      current_statement__ = 56;
       prior_cover_slope_meanlog = context__.vals_r("prior_cover_slope_meanlog")[(1
         - 1)];
-      current_statement__ = 53;
+      current_statement__ = 57;
       context__.validate_dims("data initialization",
         "prior_cover_slope_sdlog", "double", std::vector<size_t>{});
       prior_cover_slope_sdlog = std::numeric_limits<double>::quiet_NaN();
-      current_statement__ = 53;
+      current_statement__ = 57;
       prior_cover_slope_sdlog = context__.vals_r("prior_cover_slope_sdlog")[(1
         - 1)];
-      current_statement__ = 53;
+      current_statement__ = 57;
       stan::math::check_greater_or_equal(function__,
         "prior_cover_slope_sdlog", prior_cover_slope_sdlog, 0);
-      current_statement__ = 54;
+      current_statement__ = 58;
       context__.validate_dims("data initialization",
         "prior_biomass_floor_mean", "double", std::vector<size_t>{});
       prior_biomass_floor_mean = std::numeric_limits<double>::quiet_NaN();
-      current_statement__ = 54;
+      current_statement__ = 58;
       prior_biomass_floor_mean = context__.vals_r("prior_biomass_floor_mean")[(1
         - 1)];
-      current_statement__ = 55;
+      current_statement__ = 59;
       context__.validate_dims("data initialization",
         "prior_biomass_floor_sd", "double", std::vector<size_t>{});
       prior_biomass_floor_sd = std::numeric_limits<double>::quiet_NaN();
-      current_statement__ = 55;
+      current_statement__ = 59;
       prior_biomass_floor_sd = context__.vals_r("prior_biomass_floor_sd")[(1
         - 1)];
-      current_statement__ = 55;
+      current_statement__ = 59;
       stan::math::check_greater_or_equal(function__,
         "prior_biomass_floor_sd", prior_biomass_floor_sd, 0);
-      current_statement__ = 56;
+      current_statement__ = 60;
       context__.validate_dims("data initialization",
         "prior_tide_height_slope_mean", "double", std::vector<size_t>{});
       prior_tide_height_slope_mean = std::numeric_limits<double>::quiet_NaN();
-      current_statement__ = 56;
+      current_statement__ = 60;
       prior_tide_height_slope_mean = context__.vals_r("prior_tide_height_slope_mean")[(1
         - 1)];
-      current_statement__ = 57;
+      current_statement__ = 61;
       context__.validate_dims("data initialization",
         "prior_tide_height_slope_sd", "double", std::vector<size_t>{});
       prior_tide_height_slope_sd = std::numeric_limits<double>::quiet_NaN();
-      current_statement__ = 57;
+      current_statement__ = 61;
       prior_tide_height_slope_sd = context__.vals_r("prior_tide_height_slope_sd")[(1
         - 1)];
-      current_statement__ = 57;
+      current_statement__ = 61;
       stan::math::check_greater_or_equal(function__,
         "prior_tide_height_slope_sd", prior_tide_height_slope_sd, 0);
-      current_statement__ = 58;
+      current_statement__ = 62;
       context__.validate_dims("data initialization",
         "prior_sd_residual_rate", "double", std::vector<size_t>{});
       prior_sd_residual_rate = std::numeric_limits<double>::quiet_NaN();
-      current_statement__ = 58;
+      current_statement__ = 62;
       prior_sd_residual_rate = context__.vals_r("prior_sd_residual_rate")[(1
         - 1)];
-      current_statement__ = 58;
+      current_statement__ = 62;
       stan::math::check_greater_or_equal(function__,
         "prior_sd_residual_rate", prior_sd_residual_rate, 0);
-      current_statement__ = 59;
+      current_statement__ = 63;
       context__.validate_dims("data initialization",
         "prior_cv_residual_mean", "double", std::vector<size_t>{});
       prior_cv_residual_mean = std::numeric_limits<double>::quiet_NaN();
-      current_statement__ = 59;
+      current_statement__ = 63;
       prior_cv_residual_mean = context__.vals_r("prior_cv_residual_mean")[(1
         - 1)];
-      current_statement__ = 60;
+      current_statement__ = 64;
       context__.validate_dims("data initialization", "prior_cv_residual_sd",
         "double", std::vector<size_t>{});
       prior_cv_residual_sd = std::numeric_limits<double>::quiet_NaN();
-      current_statement__ = 60;
+      current_statement__ = 64;
       prior_cv_residual_sd = context__.vals_r("prior_cv_residual_sd")[(1 -
         1)];
-      current_statement__ = 60;
+      current_statement__ = 64;
       stan::math::check_greater_or_equal(function__, "prior_cv_residual_sd",
         prior_cv_residual_sd, 0);
-      current_statement__ = 61;
+      current_statement__ = 65;
       context__.validate_dims("data initialization", "prior_sd_site_rate",
         "double", std::vector<size_t>{});
       prior_sd_site_rate = std::numeric_limits<double>::quiet_NaN();
-      current_statement__ = 61;
+      current_statement__ = 65;
       prior_sd_site_rate = context__.vals_r("prior_sd_site_rate")[(1 - 1)];
-      current_statement__ = 61;
+      current_statement__ = 65;
       stan::math::check_greater_or_equal(function__, "prior_sd_site_rate",
         prior_sd_site_rate, 0);
-      current_statement__ = 62;
+      current_statement__ = 66;
       context__.validate_dims("data initialization", "prior_sd_year_rate",
         "double", std::vector<size_t>{});
       prior_sd_year_rate = std::numeric_limits<double>::quiet_NaN();
-      current_statement__ = 62;
+      current_statement__ = 66;
       prior_sd_year_rate = context__.vals_r("prior_sd_year_rate")[(1 - 1)];
-      current_statement__ = 62;
+      current_statement__ = 66;
       stan::math::check_greater_or_equal(function__, "prior_sd_year_rate",
         prior_sd_year_rate, 0);
-      current_statement__ = 63;
+      current_statement__ = 67;
       context__.validate_dims("data initialization", "prior_only", "int",
         std::vector<size_t>{});
       prior_only = std::numeric_limits<int>::min();
-      current_statement__ = 63;
+      current_statement__ = 67;
       prior_only = context__.vals_i("prior_only")[(1 - 1)];
-      current_statement__ = 63;
+      current_statement__ = 67;
       stan::math::check_greater_or_equal(function__, "prior_only",
         prior_only, 0);
-      current_statement__ = 63;
-      stan::math::check_less_or_equal(function__, "prior_only", prior_only, 1);
-      current_statement__ = 64;
-      stan::math::validate_non_negative_index("z_site", "n_site", n_site);
-      current_statement__ = 65;
-      stan::math::validate_non_negative_index("z_year", "n_year", n_year);
-      current_statement__ = 66;
-      stan::math::validate_non_negative_index("site_effect", "n_site", n_site);
       current_statement__ = 67;
+      stan::math::check_less_or_equal(function__, "prior_only", prior_only, 1);
+      current_statement__ = 68;
+      stan::math::validate_non_negative_index("z_site", "n_site", n_site);
+      current_statement__ = 69;
+      stan::math::validate_non_negative_index("z_year", "n_year", n_year);
+      current_statement__ = 70;
+      stan::math::validate_non_negative_index("site_effect", "n_site", n_site);
+      current_statement__ = 71;
       stan::math::validate_non_negative_index("year_effect", "n_year", n_year);
     } catch (const std::exception& e) {
       stan::lang::rethrow_located(e, locations_array__[current_statement__]);
@@ -535,25 +539,41 @@ public:
         lp_accum__.add(stan::math::std_normal_lpdf<propto__>(z_site));
         current_statement__ = 20;
         lp_accum__.add(stan::math::std_normal_lpdf<propto__>(z_year));
-        current_statement__ = 32;
+        current_statement__ = 36;
         if (stan::math::logical_eq(prior_only, 0)) {
-          current_statement__ = 30;
+          current_statement__ = 34;
           for (int i = 1; i <= n_obs; ++i) {
-            local_scalar_t__ cover = DUMMY_VAR__;
+            local_scalar_t__ seen = DUMMY_VAR__;
             current_statement__ = 21;
-            cover = (stan::math::fmin(
-                       stan::model::rvalue(plot_area_m2, "plot_area_m2",
-                         stan::model::index_uni(i)),
-                       (stan::model::rvalue(canopy_area_m2, "canopy_area_m2",
-                          stan::model::index_uni(i)) / (1 -
-                       (tide_height_slope *
-                       stan::model::rvalue(tide_height_m, "tide_height_m",
-                         stan::model::index_uni(i))))))
-              /
-              stan::model::rvalue(plot_area_m2, "plot_area_m2",
-                stan::model::index_uni(i)));
-            local_scalar_t__ mu = DUMMY_VAR__;
+            seen = (1 - (tide_height_slope *
+              stan::model::rvalue(tide_height_m, "tide_height_m",
+                stan::model::index_uni(i))));
+            local_scalar_t__ cover = DUMMY_VAR__;
             current_statement__ = 22;
+            cover = stan::math::promote_scalar<local_scalar_t__>(0);
+            current_statement__ = 25;
+            if (stan::math::logical_gt(
+                  stan::model::rvalue(canopy_area_m2, "canopy_area_m2",
+                    stan::model::index_uni(i)), 0)) {
+              current_statement__ = 23;
+              cover = (stan::math::logical_gt(seen, 0) ? (stan::math::fmin(
+                                                            stan::model::rvalue(
+                                                              plot_area_m2,
+                                                              "plot_area_m2",
+                                                              stan::model::index_uni(
+                                                                i)),
+                                                            (stan::model::rvalue(
+                                                               canopy_area_m2,
+                                                               "canopy_area_m2",
+                                                               stan::model::index_uni(
+                                                                 i)) / seen))
+                /
+                stan::model::rvalue(plot_area_m2, "plot_area_m2",
+                  stan::model::index_uni(i))) : stan::math::promote_scalar<
+                                                  local_scalar_t__>(1));
+            }
+            local_scalar_t__ mu = DUMMY_VAR__;
+            current_statement__ = 26;
             mu = (biomass_floor + ((cover_slope *
               stan::math::exp(
                 (stan::model::rvalue(site_effect, "site_effect",
@@ -566,21 +586,21 @@ public:
                       stan::model::index_uni(i)))))))
               * cover));
             local_scalar_t__ sigma = DUMMY_VAR__;
-            current_statement__ = 23;
+            current_statement__ = 27;
             sigma = stan::math::sqrt(((stan::math::square(sd_residual) +
                       stan::math::square((cv_residual * mu))) +
                       stan::math::square(
                         stan::model::rvalue(biomass_sd, "biomass_sd",
                           stan::model::index_uni(i)))));
-            current_statement__ = 28;
+            current_statement__ = 32;
             if (stan::math::logical_eq(
                   stan::model::rvalue(zero, "zero", stan::model::index_uni(i)),
                   1)) {
-              current_statement__ = 26;
+              current_statement__ = 30;
               lp_accum__.add(stan::math::normal_lcdf(static_cast<double>(0),
                                mu, sigma));
             } else {
-              current_statement__ = 24;
+              current_statement__ = 28;
               lp_accum__.add(stan::math::normal_lpdf<false>(
                                stan::model::rvalue(biomass, "biomass",
                                  stan::model::index_uni(i)), mu, sigma));
@@ -689,25 +709,41 @@ public:
         lp_accum__.add(stan::math::std_normal_lpdf<propto__>(z_site));
         current_statement__ = 20;
         lp_accum__.add(stan::math::std_normal_lpdf<propto__>(z_year));
-        current_statement__ = 32;
+        current_statement__ = 36;
         if (stan::math::logical_eq(prior_only, 0)) {
-          current_statement__ = 30;
+          current_statement__ = 34;
           for (int i = 1; i <= n_obs; ++i) {
-            local_scalar_t__ cover = DUMMY_VAR__;
+            local_scalar_t__ seen = DUMMY_VAR__;
             current_statement__ = 21;
-            cover = (stan::math::fmin(
-                       stan::model::rvalue(plot_area_m2, "plot_area_m2",
-                         stan::model::index_uni(i)),
-                       (stan::model::rvalue(canopy_area_m2, "canopy_area_m2",
-                          stan::model::index_uni(i)) / (1 -
-                       (tide_height_slope *
-                       stan::model::rvalue(tide_height_m, "tide_height_m",
-                         stan::model::index_uni(i))))))
-              /
-              stan::model::rvalue(plot_area_m2, "plot_area_m2",
-                stan::model::index_uni(i)));
-            local_scalar_t__ mu = DUMMY_VAR__;
+            seen = (1 - (tide_height_slope *
+              stan::model::rvalue(tide_height_m, "tide_height_m",
+                stan::model::index_uni(i))));
+            local_scalar_t__ cover = DUMMY_VAR__;
             current_statement__ = 22;
+            cover = stan::math::promote_scalar<local_scalar_t__>(0);
+            current_statement__ = 25;
+            if (stan::math::logical_gt(
+                  stan::model::rvalue(canopy_area_m2, "canopy_area_m2",
+                    stan::model::index_uni(i)), 0)) {
+              current_statement__ = 23;
+              cover = (stan::math::logical_gt(seen, 0) ? (stan::math::fmin(
+                                                            stan::model::rvalue(
+                                                              plot_area_m2,
+                                                              "plot_area_m2",
+                                                              stan::model::index_uni(
+                                                                i)),
+                                                            (stan::model::rvalue(
+                                                               canopy_area_m2,
+                                                               "canopy_area_m2",
+                                                               stan::model::index_uni(
+                                                                 i)) / seen))
+                /
+                stan::model::rvalue(plot_area_m2, "plot_area_m2",
+                  stan::model::index_uni(i))) : stan::math::promote_scalar<
+                                                  local_scalar_t__>(1));
+            }
+            local_scalar_t__ mu = DUMMY_VAR__;
+            current_statement__ = 26;
             mu = (biomass_floor + ((cover_slope *
               stan::math::exp(
                 (stan::model::rvalue(site_effect, "site_effect",
@@ -720,21 +756,21 @@ public:
                       stan::model::index_uni(i)))))))
               * cover));
             local_scalar_t__ sigma = DUMMY_VAR__;
-            current_statement__ = 23;
+            current_statement__ = 27;
             sigma = stan::math::sqrt(((stan::math::square(sd_residual) +
                       stan::math::square((cv_residual * mu))) +
                       stan::math::square(
                         stan::model::rvalue(biomass_sd, "biomass_sd",
                           stan::model::index_uni(i)))));
-            current_statement__ = 28;
+            current_statement__ = 32;
             if (stan::math::logical_eq(
                   stan::model::rvalue(zero, "zero", stan::model::index_uni(i)),
                   1)) {
-              current_statement__ = 26;
+              current_statement__ = 30;
               lp_accum__.add(stan::math::normal_lcdf(static_cast<double>(0),
                                mu, sigma));
             } else {
-              current_statement__ = 24;
+              current_statement__ = 28;
               lp_accum__.add(stan::math::normal_lpdf<false>(
                                stan::model::rvalue(biomass, "biomass",
                                  stan::model::index_uni(i)), mu, sigma));

@@ -25,10 +25,11 @@ kb_predict_biomass_canopy(
 \item{new_data}{A data frame of mapped canopy, one row per map of a site's
 canopy (summed over the map's polygons), with
 \code{site}, \code{year}, \code{canopy_area_m2} (the canopy mapped within the site, m²),
-\code{tide_height_m} (the tide height at the flight, m), and optionally
-\code{site_area_m2} (the area within the site boundary, m²), which caps the
-tide-corrected canopy. Other columns are kept and can be named in
-\code{pool_by}.}
+\code{tide_height_m} (the tide height at the flight, m), and
+\code{classified_area_m2} (the water area within the site that the canopy
+classification covered, including water where no canopy was found, m²),
+which caps the tide-corrected canopy. Other columns are kept and can be
+named in \code{pool_by}.}
 
 \item{wetdry}{A \code{kb_fit_wetdry} object, required for dry and carbon biomass,
 or \code{NULL}.}
@@ -91,10 +92,16 @@ groups of rows.
 \details{
 A row's total is the expected biomass per m² of bed for its site and year
 (the calibration at full cover) times its tide-corrected canopy area. The
-tide-corrected canopy area is \code{canopy_area_m2 / (1 - tide_height_slope * tide_height_m)}, capped at \code{site_area_m2} where given. The mapped canopy is
-taken as the extent of the bed, so no biomass is counted outside it. The
-interval is for the expected total: it carries the uncertainty in the
-parameters and the site and year effects, not variation between flights.
+mapped canopy is taken as the extent of the bed, so no biomass is counted
+outside it. The interval is for the expected total: it carries the
+uncertainty in the parameters and the site and year effects, not variation
+between flights.
+
+The tide-corrected canopy area is \code{canopy_area_m2 / (1 - tide_height_slope * tide_height_m)} (Timmer et al. 2024), capped at \code{classified_area_m2}; at a
+tide height at or above \code{1 / tide_height_slope} it is \code{classified_area_m2}.
+A row past that limit on more than 5\% of draws warns, since its total is
+then set by the classified area rather than the canopy mapped. Canopy
+already corrected for tide is passed with \code{tide_height_m = 0}.
 
 Dry biomass is the wet total times the expected dry:wet ratio from \code{wetdry},
 and carbon the dry total times the expected carbon fraction from \code{carbon}.
@@ -130,6 +137,13 @@ kb_predict_biomass_canopy(
   measure = "carbon",
   pool_by = "year"
 )
+}
+\references{
+Timmer, B., Reshitnyk, L. Y., Hessing-Lewis, M., Juanes, F.,
+Gendall, L., and Costa, M. (2024). Capturing accurate kelp canopy extent:
+integrating tides, currents, and species-level morphology in kelp remote
+sensing. \emph{Frontiers in Environmental Science}, 12, 1338483.
+\doi{10.3389/fenvs.2024.1338483}
 }
 \seealso{
 \code{\link[=kb_predict_cover_calibration]{kb_predict_cover_calibration()}} for biomass per m² of a plot at a

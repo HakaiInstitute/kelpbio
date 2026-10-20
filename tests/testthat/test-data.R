@@ -53,9 +53,9 @@ test_that("data_canopy_sim_nereo and data_canopy_sim_macro have the expected col
   for (canopy in list(data_canopy_sim_nereo, data_canopy_sim_macro)) {
     expect_named(
       canopy,
-      c("site", "year", "canopy_area_m2", "tide_height_m", "site_area_m2", "region")
+      c("site", "year", "canopy_area_m2", "tide_height_m", "classified_area_m2", "region")
     )
-    expect_true(all(canopy$canopy_area_m2 <= canopy$site_area_m2))
+    expect_true(all(canopy$canopy_area_m2 <= canopy$classified_area_m2))
   }
 })
 

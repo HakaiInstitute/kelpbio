@@ -16,6 +16,39 @@ warn_carbon_fraction <- function(data, x_name) {
   invisible(data)
 }
 
+# Past the tide limit (positive canopy at a tide height of at least one over
+# the slope) the corrected canopy is the cap, not the canopy measured. A row
+# warns when that holds on more than 5% of the slope's distribution, the share
+# beyond each 95% limit, so the cap reaches into its interval.
+warn_tide_cap <- function(share, x_name, rows, cap, basis) {
+  n <- sum(share > 0.05)
+  if (n > 0L) {
+    rows <- if (n == 1L) rows else paste0(rows, "s")
+    cli::cli_warn(c(
+      "{n} {rows} in {x_name} {cli::qty(n)}{?is/are} past the tide limit ({.field tide_height_m} at least 1 / {.field tide_height_slope}) {basis}.",
+      i = "There the corrected canopy is {cap}, not the canopy measured. Fly at lower tides where possible."
+    ))
+  }
+  invisible(share)
+}
+
+# The share of slope draws on which each row is past the tide limit.
+tide_cap_share <- function(canopy_area_m2, tide_height_m, tide_height_slope) {
+  slope <- as.vector(posterior::draws_of(tide_height_slope))
+  past <- outer(slope, tide_height_m) >= 1
+  ifelse(canopy_area_m2 > 0, colMeans(past), 0)
+}
+
+# The probability that each row is past the tide limit under a Normal prior on
+# the slope truncated to [0, upper], the support in
+# inst/stan/cover_calibration.stan.
+tide_cap_prior_share <- function(canopy_area_m2, tide_height_m, prior, upper = 0.5) {
+  limit <- pmin(1 / pmax(tide_height_m, 0), upper)
+  mass <- function(x) stats::pnorm(x, prior$mean, prior$sd)
+  share <- (mass(upper) - mass(limit)) / (mass(upper) - mass(0))
+  ifelse(canopy_area_m2 > 0, share, 0)
+}
+
 # The bounds lie in natural gaps of the Hakai Institute lab data (no ratios
 # between 0.021 and 0.038, or between 0.21 and 0.46).
 warn_dry_wet_ratio <- function(data, x_name) {
@@ -58,7 +91,7 @@ warn_implausible_units <- function(data, x_name) {
     weight_kg = c(-Inf, 100),
     survey_area_m2 = c(1, 5000),
     plot_area_m2 = c(1, 1e6),
-    site_area_m2 = c(10, 1e9),
+    classified_area_m2 = c(10, 1e9),
     tide_height_m = c(-1, 5),
     wet_mass_g = c(-Inf, 1000),
     dry_mass_g = c(-Inf, 1000)

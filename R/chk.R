@@ -882,7 +882,7 @@
   }
   chk::chk_superset(
     names(x),
-    c("canopy_area_m2", "tide_height_m", "site", "year"),
+    c("canopy_area_m2", "tide_height_m", "site", "year", "classified_area_m2"),
     x_name = x_name
   )
   nm <- column_xname(x_name, "canopy_area_m2")
@@ -895,12 +895,14 @@
   chk::chk_not_any_na(x$tide_height_m, x_name = nm)
   .chk_finite(x$tide_height_m, nm)
   .chk_group_columns(x, x_name)
-  # Every other column passed, so site_area_m2 is present and either invalid or
-  # smaller than the canopy.
-  .chk_positive_measure(x$site_area_m2, x_name = column_xname(x_name, "site_area_m2"))
+  .chk_positive_measure(
+    x$classified_area_m2,
+    x_name = column_xname(x_name, "classified_area_m2")
+  )
+  # Every other column passed, so the canopy exceeds the classified area.
   cli::cli_abort(c(
-    "{column_xname(x_name, 'canopy_area_m2')} must not exceed {.field site_area_m2}.",
-    i = "The canopy is the area mapped within the site boundary."
+    "{column_xname(x_name, 'canopy_area_m2')} must not exceed {.field classified_area_m2}.",
+    i = "The canopy is found within the area the classification covered."
   ))
 }
 

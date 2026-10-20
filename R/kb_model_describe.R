@@ -309,7 +309,8 @@ kb_model_describe <- function(fit, ..., prose = FALSE) {
     mean_lhs = "mu",
     mean_terms = c("biomass_floor", "cover_slope * exp(year_effect[year] + site_effect[site]) * cover"),
     centering = paste0(
-      "cover = min(1, canopy_area_m2 / (1 - tide_height_slope * tide_height_m) / plot_area_m2)"
+      "cover = min(1, canopy_area_m2 / (1 - tide_height_slope * tide_height_m) / plot_area_m2), ",
+      "and 1 where canopy_area_m2 > 0 and tide_height_m >= 1 / tide_height_slope"
     ),
     random = list(
       list(term = "year_effect[year]", sd = "sd_year", gloss = "year effect on log(cover_slope)"),

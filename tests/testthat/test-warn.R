@@ -84,10 +84,10 @@ test_that("the median, not an extreme value, decides", {
 
 test_that("a site area in hectares warns", {
   expect_warning(
-    warn_implausible_units(data.frame(site_area_m2 = c(5, 8)), "`d`"),
-    "site_area_m2"
+    warn_implausible_units(data.frame(classified_area_m2 = c(5, 8)), "`d`"),
+    "classified_area_m2"
   )
-  expect_no_warning(warn_implausible_units(data.frame(site_area_m2 = 5e4), "`d`"))
+  expect_no_warning(warn_implausible_units(data.frame(classified_area_m2 = 5e4), "`d`"))
 })
 
 fit_with <- function(...) list(data = data.frame(...))
@@ -124,4 +124,27 @@ test_that("a pool_by group holding one site-year twice warns", {
   grid <- tibble::tibble(site = c("a", "a"), year = "2020")
   expect_snapshot(warn_overlapping_canopy(grid, c(1L, 1L)))
   expect_no_warning(warn_overlapping_canopy(grid, c(1L, 2L)))
+})
+
+test_that("rows past the tide limit on more than 5% of draws warn", {
+  expect_snapshot(
+    warn_tide_cap(c(0.2, 0.01, 0.5), "`d`", rows = "row", cap = "the classified area", basis = "on more than 5% of draws")
+  )
+  expect_no_warning(warn_tide_cap(c(0, 0.05), "`d`", rows = "row", cap = "x", basis = "y"))
+})
+
+test_that("tide_cap_share counts the draws past the tide limit, zero canopy excepted", {
+  slope <- posterior::rvar(c(0.2, 0.3, 0.4, 0.5))
+  # one over the slope is 5, 3.33, 2.5, and 2
+  expect_equal(tide_cap_share(c(10, 10, 10, 0), c(1, 2.5, 5, 5), slope), c(0, 0.5, 1, 0))
+})
+
+test_that("tide_cap_prior_share is the truncated Normal tail beyond one over the tide", {
+  prior <- kb_prior_normal(mean = 0.276, sd = 0.04)
+  expect_equal(tide_cap_prior_share(c(1, 1, 0), c(1, 2, 5), prior), c(0, 0, 0))
+  set.seed(1)
+  x <- stats::rnorm(1e6, 0.276, 0.04)
+  x <- x[x >= 0 & x <= 0.5]
+  expect_equal(tide_cap_prior_share(1, 3, prior), mean(x >= 1 / 3), tolerance = 0.01)
+  expect_equal(tide_cap_prior_share(1, -1, prior), 0)
 })

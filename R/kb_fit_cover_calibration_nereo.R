@@ -19,12 +19,14 @@
 #' is `sqrt(sd_residual^2 + (cv_residual * mu)^2 + biomass_sd^2)`, where
 #' `biomass_sd` is the SD of the survey's biomass draws, from plant weight.
 #'
-#' `cover` is the tide-corrected canopy area over the plot area, capped at 1,
-#' where the tide-corrected canopy area is `canopy_area_m2 / (1 -
-#' tide_height_slope * tide_height_m)`. The default prior on
-#' `tide_height_slope` is informative and largely sets the tide correction,
-#' because calibration data rarely separate tide height from other
-#' differences between surveys.
+#' `cover` is `canopy_area_m2 / (1 - tide_height_slope * tide_height_m)` over
+#' the plot area, capped at 1 (Timmer et al. 2024); a survey with canopy at a
+#' tide height at or above `1 / tide_height_slope` is fully covered, and warns
+#' when that holds on more than 5% of the prior. The default prior on
+#' `tide_height_slope` largely sets the correction: raise its mean for beds in
+#' strong current. Flights at 2 m or below keep the correction within the tides
+#' the prior was estimated at. Pass canopy already corrected for tide with
+#' `tide_height_m = 0`.
 #'
 #' @inheritSection params Sampling
 #' @inheritParams kb_fit_weight_nereo
@@ -38,6 +40,11 @@
 #' @returns A `kb_fit_cover_calibration_nereo` object (a `kb_fit`). Its `data`
 #'   holds the fitted surveys, with `biomass_kg_m2` the mean of each survey's
 #'   draws and `biomass_sd_kg_m2` their SD.
+#' @references Timmer, B., Reshitnyk, L. Y., Hessing-Lewis, M., Juanes, F.,
+#'   Gendall, L., and Costa, M. (2024). Capturing accurate kelp canopy extent:
+#'   integrating tides, currents, and species-level morphology in kelp remote
+#'   sensing. *Frontiers in Environmental Science*, 12, 1338483.
+#'   \doi{10.3389/fenvs.2024.1338483}
 #' @family fit functions
 #' @export
 #'

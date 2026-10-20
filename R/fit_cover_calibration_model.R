@@ -46,6 +46,13 @@ fit_cover_calibration_model <- function(
     )
   }
   priors <- resolve_priors(priors, defaults, call = call)
+  warn_tide_cap(
+    tide_cap_prior_share(data$canopy_area_m2, data$tide_height_m, priors$tide_height_slope),
+    "`data`",
+    rows = "survey",
+    cap = "the plot area (full cover)",
+    basis = "with more than 5% probability under the tide prior"
+  )
   stan_data <- assemble_cover_calibration_data(
     data,
     priors,

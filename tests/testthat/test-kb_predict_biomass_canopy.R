@@ -1,9 +1,10 @@
-surveys <- function(...) {
+surveys <- function(classified_area_m2 = 1e5, ...) {
   data.frame(
     site = fitted_sites(cover_calibration_nereo_fit, 3),
     year = "2019",
     canopy_area_m2 = c(200, 400, 800),
     tide_height_m = 0.5,
+    classified_area_m2 = classified_area_m2,
     region = c("north", "north", "south"),
     ...
   )
@@ -19,6 +20,7 @@ test_that("kb_predict_biomass_canopy gives one total per survey", {
       "year",
       "canopy_area_m2",
       "tide_height_m",
+      "classified_area_m2",
       "region",
       "cover_support",
       "biomass_kg",
@@ -110,7 +112,7 @@ test_that("missing, invalid, and mismatched inputs error", {
     error = TRUE
   )
   expect_snapshot(
-    kb_predict_biomass_canopy(fit, surveys(site_area_m2 = 300)),
+    kb_predict_biomass_canopy(fit, surveys(classified_area_m2 = 300)),
     error = TRUE
   )
   expect_snapshot(
@@ -145,4 +147,36 @@ test_that("a pool_by group holding one site-year twice warns", {
     kb_predict_biomass_canopy(cover_calibration_nereo_fit, twice, pool_by = "region"),
     "overlap"
   )
+})
+
+test_that("high tides give finite, non-negative totals capped at the classified area", {
+  fit <- cover_calibration_nereo_fit
+  rows <- data.frame(
+    site = fitted_sites(fit), year = "2019", canopy_area_m2 = 100,
+    tide_height_m = c(0, 2, 3.5, 5), classified_area_m2 = 400
+  )
+  expect_warning(
+    p <- kb_predict_biomass_canopy(fit, rows, new_levels = "average"),
+    "past the tide limit"
+  )
+  draws <- posterior::draws_of(p$biomass_kg)
+  expect_true(all(is.finite(draws) & draws >= 0))
+  capped <- kb_predict_biomass_canopy(
+    fit,
+    transform(rows[1, ], canopy_area_m2 = 400),
+    new_levels = "average"
+  )
+  expect_equal(draws[, 4], posterior::draws_of(capped$biomass_kg)[, 1], ignore_attr = TRUE)
+})
+
+test_that("canopy at zero tide height is used as given, and no canopy stays zero", {
+  fit <- cover_calibration_nereo_fit
+  rows <- data.frame(
+    site = fitted_sites(fit), year = "2019", canopy_area_m2 = c(100, 0),
+    tide_height_m = c(0, 5), classified_area_m2 = 400
+  )
+  p <- suppressWarnings(kb_predict_biomass_canopy(fit, rows, new_levels = "average"))
+  totals <- canopy_biomass_draws(fit, rows[1, ], "average", NULL)
+  expect_equal(posterior::draws_of(p$biomass_kg)[, 1], totals[, 1], ignore_attr = TRUE)
+  expect_true(all(posterior::draws_of(p$biomass_kg)[, 2] == 0))
 })

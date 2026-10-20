@@ -62,8 +62,12 @@ Predict the expected wet biomass (kg/m²) of a plot from its drone canopy
 cover.
 }
 \details{
-Cover is tide-corrected and capped at 1. A row with no canopy predicts the
-biomass floor, which is the same for every site and year.
+Cover is tide-corrected and capped at 1, as in the fit; a row with canopy at
+a tide height at or above \code{1 / tide_height_slope} is fully covered, and a
+row past that limit on more than 5\% of draws warns. Canopy already corrected
+for tide is passed with
+\code{tide_height_m = 0}. A row with no canopy predicts the biomass floor, which
+is the same for every site and year.
 
 The prediction is \code{mu}, the mean before censoring at zero, as used by
 \code{\link[=kb_predict_biomass_canopy]{kb_predict_biomass_canopy()}}. When \code{new_data = NULL}, the survey biomass

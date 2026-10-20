@@ -172,10 +172,10 @@
   is.numeric(x) && !anyNA(x) && .vld_finite(x) && all(x >= 0)
 }
 
-# Drone surveys of sites for site totals; `site_area_m2` is optional.
+# Mapped canopy for canopy totals.
 .vld_site_surveys <- function(x) {
   is.data.frame(x) &&
-    all(c("canopy_area_m2", "tide_height_m", "site", "year") %in% names(x)) &&
+    all(c("canopy_area_m2", "tide_height_m", "site", "year", "classified_area_m2") %in% names(x)) &&
     is.numeric(x$canopy_area_m2) &&
     !anyNA(x$canopy_area_m2) &&
     .vld_finite(x$canopy_area_m2) &&
@@ -185,9 +185,8 @@
     .vld_finite(x$tide_height_m) &&
     .vld_group_column(x$site) &&
     .vld_group_column(x$year) &&
-    (!"site_area_m2" %in% names(x) ||
-      (.vld_positive_measure(x$site_area_m2) &&
-        all(x$canopy_area_m2 <= x$site_area_m2)))
+    .vld_positive_measure(x$classified_area_m2) &&
+    all(x$canopy_area_m2 <= x$classified_area_m2)
 }
 
 .vld_group_column <- function(x) {
