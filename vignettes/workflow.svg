@@ -37,7 +37,7 @@
   <path class="edge" d="M 560 79 C 610 79 600 155 643 155"/>
   <path class="edge" d="M 560 169 L 643 169"/>
   <path class="edge" d="M 240 259 L 585 259 C 620 259 608 183 643 183"/>
-  <text class="label" x="412" y="250">plants and area searched</text>
+  <text class="label" x="412" y="250">plants and surveyed area</text>
   <path class="edge dashed" d="M 765 198 C 765 290 640 336 567 336"/>
   <text class="label" x="655" y="278" text-anchor="end">with plot drone cover</text>
   <path class="edge" d="M 560 362 C 600 362 605 385 643 385"/>

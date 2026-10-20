@@ -36,8 +36,8 @@ it, so its uncertainty carries through to the totals.
   used for convenience, as in Reed et al. (2009).
 - **Plot**: a fixed area at a site. Drone canopy within the plot is measured
   over its polygon (`plot_area_m2`).
-- **Survey**: one in situ count, identified by `survey_id`, over the area
-  searched (`survey_area_m2`), for example a dive's transects. The area searched
+- **Survey**: one in situ count, identified by `survey_id`, over the surveyed
+  area (`survey_area_m2`), for example a dive's transects. The surveyed area
   may be smaller than the plot.
 
 Estimates are for the peak season, at site-year resolution:
@@ -82,8 +82,8 @@ fit_weight <- kb_fit_weight_nereo(data_weight_sim_nereo)
 fit_size <- kb_fit_size_nereo(data_size_sample_sim_nereo)
 ```
 
-Survey biomass is the expected weight of each survey's plants per m² of the area
-searched.
+Survey biomass is the expected weight of each survey's plants per m² of the surveyed
+area.
 
 Sites and years without weight or size data take a sampled effect, so a seed
 makes the results reproducible.
