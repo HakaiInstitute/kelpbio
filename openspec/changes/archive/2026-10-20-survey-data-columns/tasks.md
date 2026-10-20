@@ -37,4 +37,4 @@
 
 ## 7. Archive
 
-- [ ] 7.1 Once this branch has the archived `bound-tide-correction` and CI passes, `openspec archive survey-data-columns --yes`. The deltas drop the date and plot-key scenarios on purpose, which the archive refuses for a MODIFIED requirement: first copy the modified "Input data" and "Survey biomass" blocks into `openspec/specs/`, then archive.
+- [x] 7.1 Once this branch has the archived `bound-tide-correction` and CI passes, `openspec archive survey-data-columns --yes`. The deltas drop the date and plot-key scenarios on purpose, which the archive refuses for a MODIFIED requirement: first copy the modified "Input data" and "Survey biomass" blocks into `openspec/specs/`, then archive.
