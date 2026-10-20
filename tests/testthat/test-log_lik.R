@@ -125,6 +125,20 @@ test_that("cover log_lik is the censored Normal density of the survey biomass", 
   expect_equal(log_lik(fit), expected, tolerance = 1e-10, ignore_attr = TRUE)
 })
 
+test_that("cover log_lik past the tide limit is finite and equals full cover", {
+  fit <- cover_calibration_nereo_fit
+  i <- which(fit$data$canopy_area_m2 > 0)[1]
+  # one over the smallest slope draw, so every draw is past the limit
+  limit <- 1 / min(posterior::draws_of(fit$draws$tide_height_slope))
+  high <- fit
+  high$data$tide_height_m[i] <- limit + 0.1
+  full <- fit
+  full$data$canopy_area_m2[i] <- full$data$plot_area_m2[i]
+  full$data$tide_height_m[i] <- 0
+  expect_true(all(is.finite(log_lik(high)[, i])))
+  expect_equal(log_lik(high)[, i], log_lik(full)[, i])
+})
+
 test_that("log_lik agrees with the Stan model's likelihood for every model", {
   skip_on_cran()
   fits <- list(

@@ -6,8 +6,10 @@
 //   sigma = sqrt(sd_residual^2 + (cv_residual * mu)^2 + biomass_sd^2)
 //   cover = min(plot_area_m2, canopy_area_m2 / (1 - tide_height_slope * tide_height_m))
 //           / plot_area_m2
-// biomass_sd is each survey's SD from plant weight (the count is a census of
-// the area searched). A survey with nothing counted enters as the probability
+// Past one over the slope the division has no finite value, so a plot with
+// canopy is fully covered (the limit of the capped value) and one without stays
+// at zero. biomass_sd is each survey's SD from plant weight (the count is a
+// census of the surveyed area). A survey with nothing counted enters as the probability
 // of a value at or below zero. The group effects scale the canopy term only.
 // tide_height_slope is the share of the zero-tide canopy lost per metre of tide.
 data {
@@ -64,10 +66,13 @@ model {
   z_year ~ std_normal();
   if (prior_only == 0) {
     for (i in 1:n_obs) {
-      real cover = fmin(
-        plot_area_m2[i],
-        canopy_area_m2[i] / (1 - tide_height_slope * tide_height_m[i])
-      ) / plot_area_m2[i];
+      real seen = 1 - tide_height_slope * tide_height_m[i];
+      real cover = 0;
+      if (canopy_area_m2[i] > 0) {
+        cover = seen > 0
+          ? fmin(plot_area_m2[i], canopy_area_m2[i] / seen) / plot_area_m2[i]
+          : 1;
+      }
       real mu = biomass_floor
         + cover_slope * exp(site_effect[site[i]] + year_effect[year[i]]) * cover;
       real sigma = sqrt(
