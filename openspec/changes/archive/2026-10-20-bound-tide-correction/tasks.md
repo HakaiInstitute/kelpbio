@@ -35,4 +35,4 @@
 
 ## 7. Archive
 
-- [ ] 7.1 `openspec archive bound-tide-correction --yes` once CI passes.
+- [x] 7.1 `openspec archive bound-tide-correction --yes` once CI passes.
