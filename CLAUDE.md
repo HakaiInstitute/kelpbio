@@ -9,7 +9,7 @@ R package for Bayesian kelp biomass estimation. All exported functions use the `
 | Routine build + QC | `Rscript scripts/build.R` (runs `rstan_config()` → `install()` → `document()` → `test()`) |
 | Full check (slow) | `Rscript scripts/build.R --check` (`R CMD check` in place of `test()`, since check runs the tests) |
 | pkgdown site | `Rscript scripts/build.R --site` (CI builds the site and runs `R CMD check` on every PR, so neither is needed locally for routine work) |
-| Rebuild pre-fit objects + fixtures (slow, MCMC) | `Rscript scripts/build.R --fits` re-fits every `data/fit_*_sim_*` and `tests/testthat/fixtures/*.rds`; `--fits=size,wetdry` only those models'. Run after changing the fit object structure (all models) or a model (that model) |
+| Rebuild pre-fit objects + fixtures (slow, MCMC) | `Rscript scripts/build.R --fits` re-fits every `data/fit_*` (simulated, plus the Hakai Institute and coastwide reference fits from `data-raw/real/`) and `tests/testthat/fixtures/*.rds`; `--fits=size,wetdry` only those models'. Run after changing the fit object structure (all models) or a model (that model) |
 | Run all tests | `devtools::test()` |
 | Run one test file | `testthat::test_file("tests/testthat/test-<name>.R")` or `devtools::test_active_file()` |
 | Document | `devtools::document()` |
@@ -107,7 +107,7 @@ predict.kb_fit_weight  # model tier: wraps the model-named kb_predict_weight()
 # Dispatch" in decisions/architecture.md for the rule that decides which.
 ```
 
-Access via `$`: `x$draws`, `x$data`, `x$meta`; `kb_samples(x)` and `posterior::as_draws(x)` return a `posterior` `draws_rvars` object of the estimated effects. Predictions and summaries are computed from the stored draws with `posterior` `rvar` arithmetic; read the `predictions`/`summaries` specs and `decisions/prediction-engine.md` before touching any `kb_predict_*`, summary, or biomass code. kelpbio ships via R-universe (not CRAN); its `data/` holds only simulated data and slim pre-fit models, and real data and coastwide fits belong in the companion package `kelpbiodata`.
+Access via `$`: `x$draws`, `x$data`, `x$meta`; `kb_samples(x)` and `posterior::as_draws(x)` return a `posterior` `draws_rvars` object of the estimated effects. Predictions and summaries are computed from the stored draws with `posterior` `rvar` arithmetic; read the `predictions`/`summaries` specs and `decisions/prediction-engine.md` before touching any `kb_predict_*`, summary, or biomass code. kelpbio ships via R-universe (not CRAN); its `data/` holds simulated data and slim pre-fit models, plus, temporarily for the kelpbioshiny demo, reference fits to Hakai Institute and coastwide data (`fit_*_hakai_*`, `fit_weight_coastwide_nereo`; data in `data-raw/real/`, built by `data-raw/data_hakai.R`). Real data and reference fits belong in the companion package `kelpbiodata` and move there once it exists.
 
 ## Package Conventions
 

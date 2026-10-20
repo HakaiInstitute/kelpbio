@@ -108,3 +108,116 @@
 #' @seealso [kb_fit_wetdry_nereo()] and [data_wetdry_sim_nereo].
 #' @family example fits
 "fit_wetdry_sim_nereo"
+
+# Built by data-raw/fit_carbon_hakai_macro.R.
+#' Hakai Institute Macrocystis carbon fit
+#'
+#' A fit of [kb_fit_carbon_macro()] to Hakai Institute tissue samples in British
+#' Columbia, all months and tissues pooled, for
+#' converting dry biomass to carbon without fitting a carbon model.
+#'
+#' @format An object of class
+#'   `c("kb_fit_carbon_macro", "kb_fit_carbon", "kb_fit")`. The data are in
+#'   `fit$data`.
+#' @seealso [kb_fit_carbon_macro()].
+#' @family reference fits
+"fit_carbon_hakai_macro"
+
+# Built by data-raw/fit_carbon_hakai_nereo.R.
+#' Hakai Institute Nereocystis carbon fit
+#'
+#' A fit of [kb_fit_carbon_nereo()] to Hakai Institute tissue samples in British
+#' Columbia, all months and tissues pooled, for
+#' converting dry biomass to carbon without fitting a carbon model.
+#'
+#' @format An object of class
+#'   `c("kb_fit_carbon_nereo", "kb_fit_carbon", "kb_fit")`. The data are in
+#'   `fit$data`.
+#' @seealso [kb_fit_carbon_nereo()].
+#' @family reference fits
+"fit_carbon_hakai_nereo"
+
+# Built by data-raw/fit_size_hakai_nereo.R.
+#' Hakai Institute Nereocystis size fit
+#'
+#' A fit of [kb_fit_size_nereo()] to maximum sub-bulb diameters measured in
+#' Hakai Institute surveys in British Columbia.
+#'
+#' @format An object of class `c("kb_fit_size_nereo", "kb_fit_size", "kb_fit")`.
+#'   The data are in `fit$data`.
+#' @seealso [kb_fit_size_nereo()].
+#' @family reference fits
+"fit_size_hakai_nereo"
+
+# Built by data-raw/fit_weight_coastwide_nereo.R.
+#' Coastwide Nereocystis weight fit
+#'
+#' A fit of [kb_fit_weight_nereo()] to a coastwide compilation of harvested
+#' plants from Alaska to California, measured at the maximum sub-bulb
+#' diameter. Site names are prefixed with the contributing programme
+#' (`"<programme>:<site>"`).
+#'
+#' @format An object of class
+#'   `c("kb_fit_weight_nereo", "kb_fit_weight", "kb_fit")`. The data are in
+#'   `fit$data`, with the extra columns `study` (contributing programme) and
+#'   `region`.
+#' @seealso [kb_fit_weight_nereo()] and [fit_weight_hakai_nereo] for the Hakai
+#'   Institute harvests alone.
+#' @family reference fits
+"fit_weight_coastwide_nereo"
+
+# Built by data-raw/fit_weight_hakai_macro.R.
+#' Hakai Institute Macrocystis weight fit
+#'
+#' A fit of [kb_fit_weight_macro()] to plants harvested by the Hakai Institute
+#' in British Columbia.
+#'
+#' @format An object of class
+#'   `c("kb_fit_weight_macro", "kb_fit_weight", "kb_fit")`. The data are in
+#'   `fit$data`.
+#' @seealso [kb_fit_weight_macro()].
+#' @family reference fits
+"fit_weight_hakai_macro"
+
+# Built by data-raw/fit_weight_hakai_nereo.R.
+#' Hakai Institute Nereocystis weight fit
+#'
+#' A fit of [kb_fit_weight_nereo()] to plants harvested by the Hakai Institute
+#' in British Columbia after day of year 140, measured at the maximum sub-bulb
+#' diameter.
+#'
+#' @format An object of class
+#'   `c("kb_fit_weight_nereo", "kb_fit_weight", "kb_fit")`. The data are in
+#'   `fit$data`.
+#' @seealso [kb_fit_weight_nereo()] and [fit_weight_coastwide_nereo] for the
+#'   coastwide compilation.
+#' @family reference fits
+"fit_weight_hakai_nereo"
+
+# Built by data-raw/fit_wetdry_hakai_macro.R.
+#' Hakai Institute Macrocystis wet/dry fit
+#'
+#' A fit of [kb_fit_wetdry_macro()] to Hakai Institute tissue samples in British
+#' Columbia, all months and tissues pooled, for
+#' converting wet biomass to dry without fitting a wet/dry model.
+#'
+#' @format An object of class
+#'   `c("kb_fit_wetdry_macro", "kb_fit_wetdry", "kb_fit")`. The data are in
+#'   `fit$data`.
+#' @seealso [kb_fit_wetdry_macro()].
+#' @family reference fits
+"fit_wetdry_hakai_macro"
+
+# Built by data-raw/fit_wetdry_hakai_nereo.R.
+#' Hakai Institute Nereocystis wet/dry fit
+#'
+#' A fit of [kb_fit_wetdry_nereo()] to Hakai Institute tissue samples in British
+#' Columbia, all months and tissues pooled, for
+#' converting wet biomass to dry without fitting a wet/dry model.
+#'
+#' @format An object of class
+#'   `c("kb_fit_wetdry_nereo", "kb_fit_wetdry", "kb_fit")`. The data are in
+#'   `fit$data`.
+#' @seealso [kb_fit_wetdry_nereo()].
+#' @family reference fits
+"fit_wetdry_hakai_nereo"
