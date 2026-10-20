@@ -4,8 +4,12 @@
 #' cover.
 #'
 #' @details
-#' Cover is tide-corrected and capped at 1. A row with no canopy predicts the
-#' biomass floor, which is the same for every site and year.
+#' Cover is tide-corrected and capped at 1, as in the fit; a row with canopy at
+#' a tide height at or above `1 / tide_height_slope` is fully covered, and a
+#' row past that limit on more than 5% of draws warns. Canopy already corrected
+#' for tide is passed with
+#' `tide_height_m = 0`. A row with no canopy predicts the biomass floor, which
+#' is the same for every site and year.
 #'
 #' The prediction is `mu`, the mean before censoring at zero, as used by
 #' [kb_predict_biomass_canopy()]. When `new_data = NULL`, the survey biomass
@@ -57,7 +61,7 @@ kb_predict_cover_calibration <- function(
 ) {
   .chk_kb_fit(fit, "kb_fit_cover_calibration")
   rlang::check_dots_empty()
-  predict_rows(
+  predictions <- predict_rows(
     fit,
     new_data,
     new_levels,
@@ -66,4 +70,14 @@ kb_predict_cover_calibration <- function(
     estimate,
     sig_fig
   )
+  if (!is.null(new_data)) {
+    warn_tide_cap(
+      tide_cap_share(new_data$canopy_area_m2, new_data$tide_height_m, fit$draws$tide_height_slope),
+      "`new_data`",
+      rows = "row",
+      cap = "the plot area (full cover)",
+      basis = "on more than 5% of draws"
+    )
+  }
+  predictions
 }

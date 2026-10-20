@@ -107,3 +107,13 @@
       i Each row is a map of the site-year's bed, so the sum counts it once per map.
       i Repeated: "a:2020".
 
+# rows past the tide limit on more than 5% of draws warn
+
+    Code
+      warn_tide_cap(c(0.2, 0.01, 0.5), "`d`", rows = "row", cap = "the classified area",
+      basis = "on more than 5% of draws")
+    Condition
+      Warning:
+      2 rows in `d` are past the tide limit (tide_height_m at least 1 / tide_height_slope) on more than 5% of draws.
+      i There the corrected canopy is the classified area, not the canopy measured. Fly at lower tides where possible.
+

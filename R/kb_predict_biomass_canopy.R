@@ -7,11 +7,17 @@
 #' @details
 #' A row's total is the expected biomass per m² of bed for its site and year
 #' (the calibration at full cover) times its tide-corrected canopy area. The
-#' tide-corrected canopy area is `canopy_area_m2 / (1 - tide_height_slope *
-#' tide_height_m)`, capped at `site_area_m2` where given. The mapped canopy is
-#' taken as the extent of the bed, so no biomass is counted outside it. The
-#' interval is for the expected total: it carries the uncertainty in the
-#' parameters and the site and year effects, not variation between flights.
+#' mapped canopy is taken as the extent of the bed, so no biomass is counted
+#' outside it. The interval is for the expected total: it carries the
+#' uncertainty in the parameters and the site and year effects, not variation
+#' between flights.
+#'
+#' The tide-corrected canopy area is `canopy_area_m2 / (1 - tide_height_slope *
+#' tide_height_m)` (Timmer et al. 2024), capped at `classified_area_m2`; at a
+#' tide height at or above `1 / tide_height_slope` it is `classified_area_m2`.
+#' A row past that limit on more than 5% of draws warns, since its total is
+#' then set by the classified area rather than the canopy mapped. Canopy
+#' already corrected for tide is passed with `tide_height_m = 0`.
 #'
 #' Dry biomass is the wet total times the expected dry:wet ratio from `wetdry`,
 #' and carbon the dry total times the expected carbon fraction from `carbon`.
@@ -28,10 +34,11 @@
 #' @param new_data A data frame of mapped canopy, one row per map of a site's
 #'   canopy (summed over the map's polygons), with
 #'   `site`, `year`, `canopy_area_m2` (the canopy mapped within the site, m²),
-#'   `tide_height_m` (the tide height at the flight, m), and optionally
-#'   `site_area_m2` (the area within the site boundary, m²), which caps the
-#'   tide-corrected canopy. Other columns are kept and can be named in
-#'   `pool_by`.
+#'   `tide_height_m` (the tide height at the flight, m), and
+#'   `classified_area_m2` (the water area within the site that the canopy
+#'   classification covered, including water where no canopy was found, m²),
+#'   which caps the tide-corrected canopy. Other columns are kept and can be
+#'   named in `pool_by`.
 #'
 #' @returns A `kb_predictions` object. Without `pool_by`, the rows of `new_data`
 #'   with added `cover_support` (`"site, year"`, `"site"`, `"year"`, or
@@ -40,6 +47,11 @@
 #'   `dry_biomass_kg`, or `carbon_biomass_kg`), and `estimate`,
 #'   `lower`, and `upper`; with `pool_by`, one row per group with its `pool_by`
 #'   columns, the draws, and the summary.
+#' @references Timmer, B., Reshitnyk, L. Y., Hessing-Lewis, M., Juanes, F.,
+#'   Gendall, L., and Costa, M. (2024). Capturing accurate kelp canopy extent:
+#'   integrating tides, currents, and species-level morphology in kelp remote
+#'   sensing. *Frontiers in Environmental Science*, 12, 1338483.
+#'   \doi{10.3389/fenvs.2024.1338483}
 #' @family prediction functions
 #' @seealso [kb_predict_cover_calibration()] for biomass per m² of a plot at a
 #'   given cover; at full cover and zero tide height, the biomass per m² of bed.
@@ -97,6 +109,13 @@ kb_predict_biomass_canopy <- function(
     rlang::current_env()
   )
   warn_implausible_units(new_data, "`new_data`")
+  warn_tide_cap(
+    tide_cap_share(new_data$canopy_area_m2, new_data$tide_height_m, fit$draws$tide_height_slope),
+    "`new_data`",
+    rows = "row",
+    cap = "the classified area",
+    basis = "on more than 5% of draws"
+  )
   .chk_pool_by(pool_by, new_data)
   pool_by <- unique(pool_by)
   .chk_measure_fits(measure, wetdry, carbon)
