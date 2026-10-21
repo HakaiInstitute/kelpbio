@@ -19,6 +19,7 @@ BugReports: https://github.com/HakaiInstitute/kelpbio/issues
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 Suggests:
+    kelpbiodata,
     knitr,
     priorsense,
     rmarkdown,
@@ -27,6 +28,8 @@ Suggests:
     withr
 VignetteBuilder: knitr
 Config/testthat/edition: 3
+Remotes:
+    HakaiInstitute/kelpbiodata
 Biarch: true
 Depends:
     R (>= 4.2.0)

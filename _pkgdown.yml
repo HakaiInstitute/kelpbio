@@ -77,17 +77,6 @@ reference:
     - fit_carbon_sim_macro
     - fit_cover_calibration_sim_nereo
     - fit_cover_calibration_sim_macro
-- title: "Reference fits"
-  desc: "Pre-fit models on Hakai Institute and coastwide data."
-  contents:
-    - fit_weight_hakai_nereo
-    - fit_weight_coastwide_nereo
-    - fit_weight_hakai_macro
-    - fit_size_hakai_nereo
-    - fit_wetdry_hakai_nereo
-    - fit_wetdry_hakai_macro
-    - fit_carbon_hakai_nereo
-    - fit_carbon_hakai_macro
 - title: "Predictions and plotting"
   desc: "Predict and visualise model output."
   contents:

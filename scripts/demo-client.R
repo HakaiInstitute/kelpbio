@@ -7,7 +7,7 @@
 # 1. Full workflow (Nereocystis): fit every model, calibrate drone cover, and
 #    total the biomass over the mapped canopy.
 # 2. Reference fits: no harvests or tissue samples of one's own, so the weight,
-#    wet/dry, and carbon models come from the bundled reference fits.
+#    wet/dry, and carbon models come from the kelpbiodata reference fits.
 # 3. A census with no drone cover: every plant on the plots measured, so the
 #    biomass of the surveyed area comes straight from the plants, with no size
 #    model and no calibration.
@@ -15,6 +15,7 @@
 #    model checks, and custom summaries of the draws.
 
 library(kelpbio)
+library(kelpbiodata)
 library(dplyr)
 library(ggplot2)
 

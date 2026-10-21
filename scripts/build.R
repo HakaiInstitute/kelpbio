@@ -64,16 +64,14 @@ devtools::document()
 # Each script runs in a fresh R process and load_all()s the current source.
 if (rebuild_fits) {
   for (model in fit_models) {
-    for (source in c("sim", "hakai", "coastwide")) {
-      for (species in c("nereo", "macro")) {
-        script <- paste0("data-raw/fit_", model, "_", source, "_", species, ".R")
-        # Not every model has every source and species.
-        if (!file.exists(script)) {
-          next
-        }
-        message("Rebuilding via ", script)
-        callr::rscript(script, show = TRUE)
+    for (species in c("nereo", "macro")) {
+      script <- paste0("data-raw/fit_", model, "_sim_", species, ".R")
+      # Not every model has both species.
+      if (!file.exists(script)) {
+        next
       }
+      message("Rebuilding via ", script)
+      callr::rscript(script, show = TRUE)
     }
   }
   message("Rebuilding fixtures for ", paste(fit_models, collapse = ", "))
