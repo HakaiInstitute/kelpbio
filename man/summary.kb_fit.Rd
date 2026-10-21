@@ -10,7 +10,9 @@
   conf_level = 0.95,
   estimate = stats::median,
   sig_fig = 3,
-  include_random_effects = FALSE
+  include_random_effects = FALSE,
+  rhat = 1.01,
+  ess = 100
 )
 }
 \arguments{
@@ -28,11 +30,16 @@ a single estimate, such as \code{median} or \code{mean}.}
 
 \item{include_random_effects}{A flag specifying whether to include the
 group-level random-effect terms in the output.}
+
+\item{rhat}{A number giving the maximum acceptable Rhat.}
+
+\item{ess}{A number giving the minimum acceptable bulk and tail effective
+sample size per chain.}
 }
 \value{
 A \code{summary_kb_fit} object: a list of fit metadata and a
 \code{coefficients} tibble with columns \code{term}, \code{estimate}, \code{lower}, \code{upper},
-\code{rhat}, \code{ess_bulk}, and \code{ess_tail}.
+\code{rhat}, \code{ess_bulk}, \code{ess_tail}, and \code{converged}.
 }
 \description{
 A model fit's metadata paired with a per-term posterior summary table.
@@ -63,7 +70,14 @@ within-chain variance; values near 1 indicate convergence.}
 of central posterior summaries.}
 \item{\code{ess_tail}}{the tail effective sample size, governing the reliability
 of the interval limits.}
+\item{\code{converged}}{whether the term meets the Rhat and effective sample size
+thresholds of \code{\link[=kb_converged]{kb_converged()}} at \code{rhat} and \code{ess}. A term with no Rhat,
+such as a constant, is not judged on it.}
 }
+
+The header's convergence verdict is \code{\link[=kb_converged]{kb_converged()}} at the same \code{rhat} and
+\code{ess}. It also covers the group-level deviations and the divergent
+transitions, so it can be \code{FALSE} when every term shown has converged.
 
 Population-level coefficients and random-effect standard deviations are
 always shown. The group-level deviations are included only when
@@ -71,6 +85,9 @@ always shown. The group-level deviations are included only when
 }
 \examples{
 summary(fit_weight_sim_nereo)
+
+# Looser thresholds, for a quick exploratory fit:
+summary(fit_weight_sim_nereo, rhat = 1.05, ess = 50)
 }
 \seealso{
 Other fit methods:

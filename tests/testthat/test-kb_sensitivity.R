@@ -21,12 +21,31 @@ test_that("kb_sensitivity returns one row per paired parameter for every model",
         "prior_cjs",
         "likelihood_cjs",
         "weak_prior",
-        "strong_data"
+        "strong_data",
+        "informative_prior"
       )
     )
     expect_identical(out$term, fit$meta$terms$fixed)
     expect_true(all(out$term %in% names(fit$meta$priors)))
   }
+})
+
+test_that("only the cover calibration tide slope is informative by design", {
+  skip_if_not_installed("priorsense")
+  for (fit in list(cover_calibration_nereo_fit, cover_calibration_macro_fit)) {
+    out <- kb_sensitivity(fit)
+    expect_identical(out$informative_prior, out$term == "tide_height_slope")
+  }
+  for (fit in list(weight_nereo_fit, size_nereo_fit, carbon_macro_fit)) {
+    expect_false(any(kb_sensitivity(fit)$informative_prior))
+  }
+})
+
+test_that("a fit without the record marks no prior informative", {
+  skip_if_not_installed("priorsense")
+  fit <- cover_calibration_nereo_fit
+  fit$meta$informative_priors <- NULL
+  expect_false(any(kb_sensitivity(fit)$informative_prior))
 })
 
 test_that("each term names an entry of the model's default priors", {

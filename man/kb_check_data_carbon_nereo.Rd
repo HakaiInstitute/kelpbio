@@ -40,6 +40,7 @@ kb_check_data_carbon_nereo(data)
 }
 \seealso{
 Other data checks:
+\code{\link[=kb_check_data_canopy]{kb_check_data_canopy()}},
 \code{\link[=kb_check_data_carbon_macro]{kb_check_data_carbon_macro()}},
 \code{\link[=kb_check_data_cover_calibration_macro]{kb_check_data_cover_calibration_macro()}},
 \code{\link[=kb_check_data_cover_calibration_nereo]{kb_check_data_cover_calibration_nereo()}},

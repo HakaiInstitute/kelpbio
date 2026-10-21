@@ -46,6 +46,7 @@ kb_check_data_size_census_nereo(size_census)
 size model.
 
 Other data checks:
+\code{\link[=kb_check_data_canopy]{kb_check_data_canopy()}},
 \code{\link[=kb_check_data_carbon_macro]{kb_check_data_carbon_macro()}},
 \code{\link[=kb_check_data_carbon_nereo]{kb_check_data_carbon_nereo()}},
 \code{\link[=kb_check_data_cover_calibration_macro]{kb_check_data_cover_calibration_macro()}},

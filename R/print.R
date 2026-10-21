@@ -98,6 +98,13 @@ print.summary_kb_fit <- function(x, ...) {
   cli::cat_line(cli::col_grey(
     "ess_bulk, ess_tail: bulk and tail effective sample sizes."
   ))
+  cli::cat_line(cli::col_grey(
+    "converged: rhat below ",
+    format(x$rhat),
+    " and ess_bulk, ess_tail at least ",
+    format(x$ess),
+    " per chain."
+  ))
   # Rounded for display only; the fit stores them unrounded.
   cli::cat_line(cli::col_grey(
     .fmt_perc(x$perc_divergent),

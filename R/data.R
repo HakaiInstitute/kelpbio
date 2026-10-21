@@ -44,8 +44,8 @@
 #' @format A data frame with columns:
 #' \describe{
 #'   \item{diameter_mm}{Maximum sub-bulb diameter (mm), a positive number.}
-#'   \item{site}{Survey site, a factor (10 levels).}
-#'   \item{year}{Survey year, a factor (4 levels).}
+#'   \item{site}{Survey site, a factor (12 levels).}
+#'   \item{year}{Survey year, a factor (5 levels).}
 #' }
 #' @seealso [fit_size_sim_nereo] for a fit to this dataset.
 #' @family example datasets
@@ -65,8 +65,8 @@
 #'   \item{fronds}{Fronds reaching 1 m above the holdfast, a positive whole
 #'     number.}
 #'   \item{weight_kg}{Wet weight (kg), a positive number.}
-#'   \item{site}{Survey site, a factor (10 levels).}
-#'   \item{year}{Harvest year, a factor (4 levels).}
+#'   \item{site}{Survey site, a factor (12 levels).}
+#'   \item{year}{Harvest year, a factor (5 levels).}
 #' }
 #' @seealso [fit_weight_sim_macro] for a fit to this dataset.
 #' @family example datasets
@@ -85,8 +85,8 @@
 #' \describe{
 #'   \item{diameter_mm}{Sub-bulb diameter (mm), a positive number.}
 #'   \item{weight_kg}{Wet weight (kg), a positive number.}
-#'   \item{site}{Survey site, a factor (10 levels).}
-#'   \item{year}{Harvest year, a factor (4 levels).}
+#'   \item{site}{Survey site, a factor (12 levels).}
+#'   \item{year}{Harvest year, a factor (5 levels).}
 #' }
 #' @seealso [fit_weight_sim_nereo] for a fit to this dataset.
 #' @family example datasets
@@ -136,8 +136,8 @@
 #' @format A data frame with columns:
 #' \describe{
 #'   \item{survey_id}{Survey identifier, a character string.}
-#'   \item{site}{Survey site, a factor (10 levels).}
-#'   \item{year}{Survey year, a factor (4 levels).}
+#'   \item{site}{Survey site, a factor (12 levels).}
+#'   \item{year}{Survey year, a factor (5 levels).}
 #'   \item{survey_area_m2}{Surveyed area (m²), a positive number.}
 #'   \item{plants}{Plants counted, a whole number of at least 0.}
 #'   \item{plot_area_m2}{Plot polygon (m²), or `NA` without a flight.}
@@ -158,8 +158,8 @@
 #'
 #' @format A data frame with columns:
 #' \describe{
-#'   \item{site}{Survey site, a factor (10 levels).}
-#'   \item{year}{Survey year, a factor (4 levels).}
+#'   \item{site}{Survey site, a factor (12 levels).}
+#'   \item{year}{Survey year, a factor (5 levels).}
 #'   \item{canopy_area_m2}{Canopy mapped within the site (m²).}
 #'   \item{tide_height_m}{Tide height at the flight (m).}
 #'   \item{classified_area_m2}{Water area the canopy classification covered
@@ -181,8 +181,8 @@
 #' @format A data frame with columns:
 #' \describe{
 #'   \item{survey_id}{Survey identifier, a character string.}
-#'   \item{site}{Survey site, a factor (10 levels).}
-#'   \item{year}{Survey year, a factor (4 levels).}
+#'   \item{site}{Survey site, a factor (12 levels).}
+#'   \item{year}{Survey year, a factor (5 levels).}
 #'   \item{survey_area_m2}{Surveyed area (m²), a positive number.}
 #'   \item{plot_area_m2}{Plot polygon (m²), or `NA` without a flight.}
 #'   \item{canopy_area_m2}{Drone canopy within the plot (m²), or `NA` without
@@ -202,8 +202,8 @@
 #'
 #' @format A data frame with columns:
 #' \describe{
-#'   \item{site}{Survey site, a factor (10 levels).}
-#'   \item{year}{Survey year, a factor (4 levels).}
+#'   \item{site}{Survey site, a factor (12 levels).}
+#'   \item{year}{Survey year, a factor (5 levels).}
 #'   \item{canopy_area_m2}{Canopy mapped within the site (m²).}
 #'   \item{tide_height_m}{Tide height at the flight (m).}
 #'   \item{classified_area_m2}{Water area the canopy classification covered

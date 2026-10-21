@@ -21,7 +21,8 @@ below it has a weak prior.}
 A tibble with one row per parameter that has a prior and columns
 \code{term} (the parameter, which is also its prior entry), \code{prior_cjs} and
 \code{likelihood_cjs} (the sensitivity to the prior and to the likelihood),
-\code{weak_prior}, and \code{strong_data}.
+\code{weak_prior}, \code{strong_data}, and \code{informative_prior} (whether the prior is
+informative by design).
 }
 \description{
 Assess how much each parameter's posterior depends on its prior and on the
@@ -45,6 +46,13 @@ The estimate reflects the prior, so the prior needs a justification.
 parameter the data identify only weakly.
 }
 
+A prior that is informative by design is expected to dominate, so a
+parameter with \code{informative_prior = TRUE} and neither flag is not a problem.
+The only such parameter is the cover calibration's \code{tide_height_slope}: its
+default prior is the published response of canopy area to tide height
+(Timmer et al. 2024), and few surveys span enough tide range to estimate it.
+It is marked whatever prior the fit used.
+
 Each \code{term} is also the name of its prior's entry in the list from the
 model's \verb{kb_priors_*()} function, so to change a flagged prior, edit that
 entry and refit. Random-effect levels are not assessed; their standard
@@ -63,12 +71,19 @@ kb_sensitivity(fit_weight_sim_nereo)
 Kallioinen, N., Paananen, T., Bürkner, P.-C., and Vehtari, A. (2024).
 Detecting and diagnosing prior and likelihood sensitivity with power-scaling.
 Statistics and Computing, 34, 57.
+
+Timmer, B., Reshitnyk, L. Y., Hessing-Lewis, M., Juanes, F., Gendall, L.,
+and Costa, M. (2024). Capturing accurate kelp canopy extent: integrating
+tides, currents, and species-level morphology in kelp remote sensing.
+\emph{Frontiers in Environmental Science}, 12, 1338483.
+\doi{10.3389/fenvs.2024.1338483}
 }
 \seealso{
 Other diagnostics:
 \code{\link[=create_priorsense_data.kb_fit]{create_priorsense_data.kb_fit()}},
 \code{\link[=kb_converged]{kb_converged()}},
 \code{\link[=kb_influence]{kb_influence()}},
+\code{\link[=kb_plot_trace]{kb_plot_trace()}},
 \code{\link[=loo.kb_fit]{loo.kb_fit()}},
 \code{\link[=pp_check.kb_fit]{pp_check.kb_fit()}}
 }

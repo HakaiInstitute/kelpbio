@@ -13,7 +13,7 @@
                    + site_effect[site]
                    + year_effect[year]
                    + site_year_effect[site, year]
-        x = diameter_mm / d0,  d0 = 23.4  (geometric mean diameter)
+        x = diameter_mm / d0,  d0 = 19.7  (geometric mean diameter)
       
       Random effects
         site_effect[site]            ~ Normal(0, sd_site)       site effect on log(alpha)
@@ -44,7 +44,7 @@
                    + site_effect[site]
                    + year_effect[year]
                    + site_year_effect[site, year]
-        x = fronds / f0,  f0 = 4.61  (geometric mean frond count)
+        x = fronds / f0,  f0 = 4.43  (geometric mean frond count)
       
       Random effects
         site_effect[site]            ~ Normal(0, sd_site)       site effect on log(alpha)
@@ -67,7 +67,7 @@
       Wet weight was modelled on the log scale with a Normal likelihood as an
       allometric function of sub-bulb diameter. The expected log weight was
       log(mu), where mu followed a three-parameter power function (Packard 2023)
-      of diameter relative to the geometric mean diameter (23.4), in which
+      of diameter relative to the geometric mean diameter (19.7), in which
       weight_floor is the weight as diameter approaches zero, alpha the weight
       above the floor at the reference diameter, and diameter_power the
       allometric exponent. The log of alpha varied by site, by year, and by
@@ -244,7 +244,7 @@
                    + site_effect[site]
                    + year_effect[year]
                    + site_year_effect[site, year]
-        x = diameter_mm / d0,  d0 = 23.4  (geometric mean diameter)
+        x = diameter_mm / d0,  d0 = 19.7  (geometric mean diameter)
       
       Random effects
         site_effect[site]            ~ Normal(0, sd_site)       site effect on log(alpha)
@@ -267,7 +267,7 @@
       Wet weight was modelled on the log scale with a Normal likelihood as an
       allometric function of sub-bulb diameter. The expected log weight was
       log(mu), where mu followed a power law in diameter relative to the
-      geometric mean diameter (23.4), in which alpha is the weight at the
+      geometric mean diameter (19.7), in which alpha is the weight at the
       reference diameter and diameter_power the allometric exponent. The log of
       alpha varied by site, by year, and by site:year. Regularising priors were
       placed on all parameters (see the notation form for the hyperparameters).

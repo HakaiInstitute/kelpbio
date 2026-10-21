@@ -64,7 +64,7 @@ An effect the fit omitted (the weight floor of a power-law fit) SHALL NOT appear
 
 ### Requirement: Print and summary
 
-`print(fit)` SHALL show a header with the model and species, the predictor and its reference value (for a model with a predictor), the observation count and any group counts, the sampler settings, the convergence verdict, and a prior-only note when applicable, followed by a pointer to `kb_model_describe()`, with no parameter estimates. `summary(fit)` SHALL return an object whose print shows the same header, a table of `term`, `estimate`, `lower`, `upper`, `rhat`, `ess_bulk`, and `ess_tail` (per-level effects only with `include_random_effects = TRUE`), and a footer with the divergence rate, treedepth-saturation rate, and minimum E-BFMI. The output is pinned by `tests/testthat/_snaps/print.md` and `tests/testthat/_snaps/summary.md`.
+`print(fit)` SHALL show a header with the model and species, the predictor and its reference value (for a model with a predictor), the observation count and any group counts, the sampler settings, the convergence verdict, and a prior-only note when applicable, followed by a pointer to `kb_model_describe()`, with no parameter estimates. `summary(fit)` SHALL return an object whose print shows the same header, a table of `term`, `estimate`, `lower`, `upper`, `rhat`, `ess_bulk`, `ess_tail`, and `converged` (per-level effects only with `include_random_effects = TRUE`), and a footer with the divergence rate, treedepth-saturation rate, and minimum E-BFMI. A term's `converged` SHALL be `TRUE` when its Rhat is below `rhat` and its bulk and tail effective sample sizes are at least `ess` times the number of chains, with the thresholds and missing-value handling of `kb_converged()`. `summary()` SHALL take name-only `rhat` (default 1.01) and `ess` (default 100), and its header's convergence verdict SHALL use the same values. The output is pinned by `tests/testthat/_snaps/print.md` and `tests/testthat/_snaps/summary.md`.
 
 #### Scenario: print shows no estimates
 - **WHEN** `print(fit)` is called
@@ -81,6 +81,14 @@ An effect the fit omitted (the weight floor of a power-law fit) SHALL NOT appear
 #### Scenario: A wet/dry fit has no predictor or group line
 - **WHEN** `print()` is called on a wet/dry fit whose data have no `site` or `year` column
 - **THEN** the header shows the observation count with no predictor or group counts
+
+#### Scenario: Per-term convergence agrees with the verdict
+- **WHEN** a term in the `summary(fit)` table has `converged` of `FALSE`
+- **THEN** the header verdict is `FALSE`
+
+#### Scenario: Thresholds are passed through
+- **WHEN** `summary(fit, rhat = 1.05, ess = 10)` is called
+- **THEN** each term's `converged` and the header verdict use those thresholds
 
 ### Requirement: Model description
 
@@ -140,7 +148,7 @@ A kelpbio function taking a fit (`kb_model_describe()`, `kb_stancode()`, `kb_sam
 
 ### Requirement: Prior sensitivity
 
-`kb_sensitivity(fit, ..., prior_threshold = 0.1, likelihood_threshold = 0.05)` SHALL return a tibble with one row per estimated parameter that has a prior, and columns `term` (the parameter, as in `tidy()`, which is also the name of its prior's entry in the model's `kb_priors_*()` list), `prior_cjs` and `likelihood_cjs` (the power-scaling sensitivity of the parameter's posterior to the prior and to the likelihood, as computed by priorsense), `weak_prior` (`prior_cjs` less than `prior_threshold`), and `strong_data` (`likelihood_cjs` greater than or equal to `likelihood_threshold`). Random-effect levels and derived quantities SHALL NOT be reported. The result SHALL be computed from the stored fit, without refitting. `prior_threshold` and `likelihood_threshold` SHALL be numbers greater than 0, and `...` SHALL be empty.
+`kb_sensitivity(fit, ..., prior_threshold = 0.1, likelihood_threshold = 0.05)` SHALL return a tibble with one row per estimated parameter that has a prior, and columns `term` (the parameter, as in `tidy()`, which is also the name of its prior's entry in the model's `kb_priors_*()` list), `prior_cjs` and `likelihood_cjs` (the power-scaling sensitivity of the parameter's posterior to the prior and to the likelihood, as computed by priorsense), `weak_prior` (`prior_cjs` less than `prior_threshold`), `strong_data` (`likelihood_cjs` greater than or equal to `likelihood_threshold`), and `informative_prior` (`TRUE` for a parameter whose prior is informative by design, so that its prior dominating the data is expected rather than a problem). The cover calibration's `tide_height_slope`, whose default prior comes from published estimates, SHALL be the only such parameter, whatever prior was used; the documentation SHALL say which parameters are marked and why. Random-effect levels and derived quantities SHALL NOT be reported. The result SHALL be computed from the stored fit, without refitting. `prior_threshold` and `likelihood_threshold` SHALL be numbers greater than 0, and `...` SHALL be empty.
 
 priorsense's functions SHALL accept a `kb_fit` directly, giving the same sensitivity values as `kb_sensitivity()`, when priorsense is installed.
 
@@ -167,6 +175,10 @@ priorsense's functions SHALL accept a `kb_fit` directly, giving the same sensiti
 #### Scenario: priorsense is required
 - **WHEN** `kb_sensitivity()` is called and priorsense is not installed
 - **THEN** it errors naming priorsense and how to install it
+
+#### Scenario: Priors informative by design are marked
+- **WHEN** `kb_sensitivity()` is called on a cover calibration fit
+- **THEN** `informative_prior` is `TRUE` for `tide_height_slope` and `FALSE` for every other term, and on every other model's fit it is `FALSE` for every term
 
 ### Requirement: Posterior predictive check
 
@@ -243,3 +255,16 @@ priorsense's functions SHALL accept a `kb_fit` directly, giving the same sensiti
 #### Scenario: A fit without a likelihood errors
 - **WHEN** `kb_influence()` is called on a fit made with `prior_only = TRUE` or with no observations
 - **THEN** it errors stating that the fit has no likelihood to cross-validate
+
+### Requirement: Trace plot
+
+`kb_plot_trace(fit, ...)` SHALL return a `ggplot` of the draws of each term `tidy(fit)` reports, against iteration, one panel per term in `ncol` columns (a name-only whole number, default 2), each with its own y-axis, and one line per chain, coloured by chain with a legend titled "Chain" and the x-axis titled "Iteration". It SHALL set no theme, so the active theme applies. `...` SHALL be empty, and `fit` SHALL be a kelpbio fit.
+
+#### Scenario: One panel per term
+- **WHEN** `kb_plot_trace(fit)` is called
+- **THEN** it returns a `ggplot` with one panel for each term of `tidy(fit)` and one line per chain
+
+#### Scenario: A non-fit errors
+- **WHEN** `kb_plot_trace(1)` is called
+- **THEN** it errors stating the required class
+

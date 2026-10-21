@@ -17,7 +17,11 @@
 #' densities, and biomass often span orders of magnitude; `log_axis = "y"` shows
 #' them on a log scale, and `log_axis = "xy"` also log-scales a numeric x-axis,
 #' as for a weight curve. A log axis says so in its title. Values on a log axis
-#' must be positive.
+#' must be positive. Numeric axes are labelled as plain numbers with thousands
+#' separators (`200,000`, not `2e+05`).
+#'
+#' The plot sets no theme, so it takes the active one
+#' ([ggplot2::theme_get()]); add a theme with `+` to change it.
 #'
 #' Only the predictions are drawn; add raw data as a ggplot2 layer.
 #'
@@ -159,12 +163,17 @@ kb_plot_predictions <- function(
   }
   gg <- switch(
     log_axis,
-    none = gg + ggplot2::expand_limits(y = 0),
-    y = gg + ggplot2::scale_y_log10(labels = log_labels),
+    none = gg +
+      ggplot2::expand_limits(y = 0) +
+      ggplot2::scale_y_continuous(labels = plain_labels),
+    y = gg + ggplot2::scale_y_log10(labels = plain_labels),
     xy = gg +
-      ggplot2::scale_x_log10(labels = log_labels) +
-      ggplot2::scale_y_log10(labels = log_labels)
+      ggplot2::scale_x_log10(labels = plain_labels) +
+      ggplot2::scale_y_log10(labels = plain_labels)
   )
+  if (log_axis != "xy" && is.numeric(predictions[[x]])) {
+    gg <- gg + ggplot2::scale_x_continuous(labels = plain_labels)
+  }
   gg +
     ggplot2::labs(
       x = axis_label(x, log = log_axis == "xy"),
@@ -173,7 +182,7 @@ kb_plot_predictions <- function(
 }
 
 # Plain numbers (0.1, 1, 10) in place of the default 1e-01 style.
-log_labels <- function(breaks) {
+plain_labels <- function(breaks) {
   format(
     breaks,
     big.mark = ",",

@@ -8,8 +8,8 @@
 A data frame with columns:
 \describe{
 \item{diameter_mm}{Maximum sub-bulb diameter (mm), a positive number.}
-\item{site}{Survey site, a factor (10 levels).}
-\item{year}{Survey year, a factor (4 levels).}
+\item{site}{Survey site, a factor (12 levels).}
+\item{year}{Survey year, a factor (5 levels).}
 }
 }
 \usage{

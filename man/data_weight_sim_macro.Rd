@@ -10,8 +10,8 @@ A data frame with columns:
 \item{fronds}{Fronds reaching 1 m above the holdfast, a positive whole
 number.}
 \item{weight_kg}{Wet weight (kg), a positive number.}
-\item{site}{Survey site, a factor (10 levels).}
-\item{year}{Harvest year, a factor (4 levels).}
+\item{site}{Survey site, a factor (12 levels).}
+\item{year}{Harvest year, a factor (5 levels).}
 }
 }
 \usage{

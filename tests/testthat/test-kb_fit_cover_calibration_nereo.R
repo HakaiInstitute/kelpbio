@@ -45,6 +45,7 @@ test_that("the fit records the species, response, predictor, and no site:year", 
   # curves run over tide-corrected cover, which the data do not hold
   expect_identical(fit$meta[["predictor"]], "cover")
   expect_identical(fit$meta$predictor_range, c(0, 1))
+  expect_identical(fit$meta$informative_priors, "tide_height_slope")
   expect_false(fit$meta$site_year_on)
   expect_identical(fit$meta$terms$random, c("site_effect", "year_effect"))
 })
