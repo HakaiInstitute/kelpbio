@@ -19,8 +19,8 @@
     Output
       <kb_fit_weight_nereo>
       Model:     Weight (Nereocystis luetkeana)
-      Predictor: diameter_mm, reference 23.4 (geometric mean)
-      Data:      240 observations; groups: site (4), year (4), site:year (12)
+      Predictor: diameter_mm, reference 19.7 (geometric mean)
+      Data:      320 observations; groups: site (4), year (5), site:year (16)
       Draws:     2 chains, 300 post-warmup draws each (thin = 5), 600 total
       Converged: TRUE
       See kb_model_describe(fit) for the model equation and priors.
@@ -32,8 +32,8 @@
     Output
       <kb_fit_weight_macro>
       Model:     Weight (Macrocystis pyrifera)
-      Predictor: fronds, reference 4.61 (geometric mean)
-      Data:      180 observations; groups: site (4), year (3), site:year (9)
+      Predictor: fronds, reference 4.43 (geometric mean)
+      Data:      200 observations; groups: site (4), year (3), site:year (10)
       Draws:     2 chains, 300 post-warmup draws each (thin = 5), 600 total
       Converged: TRUE
       See kb_model_describe(fit) for the model equation and priors.
@@ -45,7 +45,7 @@
     Output
       <kb_fit_size_nereo>
       Model:     Size (Nereocystis luetkeana)
-      Data:      280 observations; groups: site (4), year (4), site:year (14)
+      Data:      360 observations; groups: site (4), year (5), site:year (18)
       Draws:     2 chains, 300 post-warmup draws each (thin = 5), 600 total
       Converged: TRUE
       See kb_model_describe(fit) for the model equation and priors.
@@ -81,7 +81,7 @@
     Output
       <kb_fit_cover_calibration_nereo>
       Model:     Cover calibration (Nereocystis luetkeana)
-      Data:      12 observations; groups: site (4), year (4), site:year (11)
+      Data:      15 observations; groups: site (4), year (5), site:year (13)
       Draws:     2 chains, 300 post-warmup draws each (thin = 5), 600 total
       Converged: TRUE
       See kb_model_describe(fit) for the model equation and priors.
