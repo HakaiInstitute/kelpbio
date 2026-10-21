@@ -44,16 +44,16 @@ test_that("tidy uses the macro term list for a macro fit", {
 })
 
 test_that("tidy forwards conf_level/estimate/sig_fig to the summariser", {
-  wide <- tidy(weight_nereo_fit, conf_level = 0.99)
-  narrow <- tidy(weight_nereo_fit, conf_level = 0.80)
-  i <- match("intercept", wide$term)
-  expect_gt(wide$upper[i] - wide$lower[i], narrow$upper[i] - narrow$lower[i])
-  expect_false(isTRUE(all.equal(
-    tidy(weight_nereo_fit, estimate = mean)$estimate,
-    tidy(weight_nereo_fit)$estimate
-  )))
-  t2 <- tidy(weight_nereo_fit, sig_fig = 2)
-  expect_equal(t2$estimate, signif(t2$estimate, 2))
+  expect_identical(
+    tidy(weight_nereo_fit, conf_level = 0.8, estimate = mean, sig_fig = 2),
+    summarise_draws_terms(
+      weight_nereo_fit$draws,
+      variables = weight_nereo_fit$meta$terms$fixed,
+      conf_level = 0.8,
+      estimate = mean,
+      sig_fig = 2
+    )
+  )
 })
 
 test_that("tidy reports exactly the recorded terms, at both levels", {

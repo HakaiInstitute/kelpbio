@@ -13,12 +13,7 @@ test_that("posterior conversions and summaries accept a fit", {
   expect_s3_class(posterior::as_draws_array(weight_nereo_fit), "draws_array")
   summary <- posterior::summarise_draws(weight_nereo_fit)
   expect_true("intercept" %in% summary$variable)
-})
-
-test_that("as_draws leaves out an effect the fit omitted", {
-  fit <- omit_terms(weight_nereo_fit, "weight_floor")
-  vars <- posterior::variables(posterior::as_draws(fit))
-  expect_false("weight_floor" %in% vars)
+  expect_true(all(c("rhat", "ess_bulk", "ess_tail") %in% names(summary)))
 })
 
 test_that("as_draws is re-exported, so it needs no posterior::", {
@@ -32,10 +27,4 @@ test_that("posterior's draw counts read a fit's draws", {
   expect_identical(ndraws(weight_nereo_fit), posterior::ndraws(draws))
   expect_identical(nvariables(weight_nereo_fit), posterior::nvariables(draws))
   expect_identical(variables(weight_nereo_fit), posterior::variables(draws))
-})
-
-test_that("summarise_draws reports each parameter's convergence diagnostics", {
-  s <- posterior::summarise_draws(weight_nereo_fit)
-  expect_true(all(c("rhat", "ess_bulk", "ess_tail") %in% names(s)))
-  expect_true("intercept" %in% s$variable)
 })

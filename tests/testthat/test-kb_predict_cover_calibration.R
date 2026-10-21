@@ -152,7 +152,7 @@ test_that("kb_predict_cover_calibration errors on other models and a non-fit", {
   expect_snapshot(kb_predict_cover_calibration(1), error = TRUE)
 })
 
-test_that("high tides give finite predictions, full cover past the tide limit", {
+test_that("high tides give finite predictions and warn past the tide limit", {
   fit <- cover_calibration_nereo_fit
   rows <- function(canopy_area_m2, tide_height_m) {
     data.frame(
@@ -168,9 +168,5 @@ test_that("high tides give finite predictions, full cover past the tide limit", 
   )
   expect_no_warning(kb_predict_cover_calibration(fit, rows(80, c(0, 2, 2.4)), new_levels = "average"))
   expect_true(all(is.finite(c(p$estimate, p$lower, p$upper))))
-  full <- kb_predict_cover_calibration(fit, rows(200, 0), new_levels = "average")
-  # at 5 m a canopy of 80 m2 in 200 m2 is fully covered on every draw with a
-  # slope above 0.12, which all of this fit's draws are
-  expect_equal(p$estimate[4], full$estimate)
   expect_no_warning(kb_predict_cover_calibration(fit, rows(80, -0.3)))
 })

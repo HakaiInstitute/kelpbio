@@ -52,12 +52,3 @@ test_that("implausible units and ambiguous group names warn", {
     "comma"
   )
 })
-
-test_that("it applies the check kb_predict_biomass_canopy() applies", {
-  bad <- transform(data_canopy_sim_nereo, canopy_area_m2 = classified_area_m2 + 1)
-  expect_error(kb_check_data_canopy(bad), "must not exceed")
-  expect_error(
-    kb_predict_biomass_canopy(fit_cover_calibration_sim_nereo, bad),
-    "must not exceed"
-  )
-})

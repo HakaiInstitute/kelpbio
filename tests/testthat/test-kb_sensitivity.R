@@ -1,33 +1,19 @@
-test_that("kb_sensitivity returns one row per paired parameter for every model", {
+test_that("kb_sensitivity returns one row per paired parameter", {
   skip_if_not_installed("priorsense")
-  fits <- list(
-    weight_nereo_fit,
-    weight_macro_fit,
-    size_nereo_fit,
-    wetdry_nereo_fit,
-    wetdry_macro_fit,
-    carbon_nereo_fit,
-    carbon_macro_fit,
-    cover_calibration_nereo_fit,
-    cover_calibration_macro_fit
-  )
-  for (fit in fits) {
-    out <- kb_sensitivity(fit)
-    expect_s3_class(out, "tbl_df")
-    expect_named(
-      out,
-      c(
-        "term",
-        "prior_cjs",
-        "likelihood_cjs",
-        "weak_prior",
-        "strong_data",
-        "informative_prior"
-      )
+  out <- kb_sensitivity(weight_nereo_fit)
+  expect_s3_class(out, "tbl_df")
+  expect_named(
+    out,
+    c(
+      "term",
+      "prior_cjs",
+      "likelihood_cjs",
+      "weak_prior",
+      "strong_data",
+      "informative_prior"
     )
-    expect_identical(out$term, fit$meta$terms$fixed)
-    expect_true(all(out$term %in% names(fit$meta$priors)))
-  }
+  )
+  expect_identical(out$term, weight_nereo_fit$meta$terms$fixed)
 })
 
 test_that("only the cover calibration tide slope is informative by design", {

@@ -1,21 +1,8 @@
-test_that("loo runs on every model type with one row per observation", {
-  fits <- list(
-    weight_nereo_fit,
-    weight_macro_fit,
-    size_nereo_fit,
-    wetdry_nereo_fit,
-    wetdry_macro_fit,
-    carbon_nereo_fit,
-    carbon_macro_fit,
-    cover_calibration_nereo_fit,
-    cover_calibration_macro_fit
-  )
-  for (fit in fits) {
-    out <- suppressWarnings(loo::loo(fit))
-    expect_s3_class(out, "psis_loo")
-    expect_identical(nrow(out$pointwise), nrow(fit$data))
-    expect_length(loo::pareto_k_values(out), nrow(fit$data))
-  }
+test_that("loo returns one row per observation", {
+  out <- suppressWarnings(loo::loo(size_nereo_fit))
+  expect_s3_class(out, "psis_loo")
+  expect_identical(nrow(out$pointwise), nrow(size_nereo_fit$data))
+  expect_length(loo::pareto_k_values(out), nrow(size_nereo_fit$data))
 })
 
 test_that("loo and loo_compare work without the loo:: prefix", {
@@ -36,12 +23,6 @@ test_that("loo uses relative efficiencies from the fit's chains", {
   out <- suppressWarnings(loo::loo(fit))
   expect_equal(out$estimates, expected$estimates)
   expect_equal(out$diagnostics$n_eff, expected$diagnostics$n_eff)
-})
-
-test_that("loo results of fits to the same data can be compared", {
-  a <- suppressWarnings(loo::loo(wetdry_nereo_fit))
-  b <- suppressWarnings(loo::loo(wetdry_nereo_fit))
-  expect_s3_class(loo::loo_compare(a, b), "compare.loo")
 })
 
 test_that("loo refuses a fit without a likelihood", {

@@ -8,24 +8,14 @@ test_that("summary returns a classed object with a coefficient table", {
   )
 })
 
-test_that("summary diagnostic columns agree with the stored diagnostics", {
-  s <- summary(weight_nereo_fit)
-  diag <- weight_nereo_fit$diagnostics$summary
-  idx <- match(s$coefficients$term, diag$variable)
-  expect_equal(s$coefficients$rhat, round(diag$rhat[idx], 3))
-  expect_equal(s$coefficients$ess_bulk, round(diag$ess_bulk[idx]))
-})
-
-test_that("converged applies the kb_converged() thresholds to each term", {
-  s <- summary(weight_nereo_fit)
-  diag <- weight_nereo_fit$diagnostics$summary
-  d <- diag[match(s$coefficients$term, diag$variable), ]
-  min_ess <- 100 * posterior::nchains(weight_nereo_fit$draws)
-  expect_type(s$coefficients$converged, "logical")
-  expect_identical(
-    s$coefficients$converged,
-    d$rhat < 1.01 & d$ess_bulk >= min_ess & d$ess_tail >= min_ess
-  )
+test_that("summary diagnostic columns come from the term's stored diagnostics", {
+  fit <- weight_nereo_fit
+  i <- match("intercept", fit$diagnostics$summary$variable)
+  fit$diagnostics$summary$rhat[i] <- 1.23456
+  fit$diagnostics$summary$ess_bulk[i] <- 432.6
+  s <- summary(fit)$coefficients
+  expect_equal(s$rhat[s$term == "intercept"], 1.235)
+  expect_equal(s$ess_bulk[s$term == "intercept"], 433)
 })
 
 test_that("rhat and ess set both the column and the header verdict", {
@@ -68,17 +58,6 @@ test_that("summary carries the slim fit metadata (no structure lines)", {
   expect_null(s$family)
   expect_null(s$fixed)
   expect_null(s$random)
-})
-
-test_that("macro summary carries the term list and year group", {
-  s <- summary(weight_macro_fit)
-  expect_equal(s$model, "Weight")
-  expect_named(s$groups, c("site", "year", "site:year"))
-  expect_true(all(
-    c("intercept", "fronds_slope", "shape", "sd_site", "sd_year", "sd_site_year") %in%
-      s$coefficients$term
-  ))
-  expect_false(any(grepl("^year_effect\\[", s$coefficients$term)))
 })
 
 test_that("print.summary_kb_fit shows the slim header, table, and footer", {

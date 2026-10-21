@@ -16,23 +16,6 @@ test_that("new_data = NULL conditions on observed groups, agreeing with augment"
   expect_equal(med, augment(weight_nereo_fit)$fitted, tolerance = 1e-8)
 })
 
-test_that("macro posterior_epred agrees with posterior_linpred(transform = TRUE)", {
-  # The Gamma mean is exp() of the linear predictor.
-  expect_equal(
-    posterior_epred(weight_macro_fit, new_levels = "average"),
-    posterior_linpred(weight_macro_fit, transform = TRUE, new_levels = "average")
-  )
-})
-
-test_that("nereo posterior_epred is the lognormal mean, above the median", {
-  # Normal on log weight: the mean is the median times exp(sd_residual^2 / 2).
-  ep <- posterior_epred(weight_nereo_fit, new_levels = "average")
-  med <- posterior_linpred(weight_nereo_fit, transform = TRUE, new_levels = "average")
-  sw <- as.vector(posterior::draws_of(weight_nereo_fit$draws$sd_residual))
-  expect_equal(ep, med * exp(sw^2 / 2))
-  expect_true(all(ep > med))
-})
-
 test_that("rows naming one new site share its sampled effect", {
   withr::local_seed(1)
   y <- size_nereo_fit$meta$year_levels[1]

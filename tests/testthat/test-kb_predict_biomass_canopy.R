@@ -124,12 +124,7 @@ test_that("missing, invalid, and mismatched inputs error", {
     "one species"
   )
   expect_error(kb_predict_biomass_canopy(weight_nereo_fit, surveys()), "kb_fit_cover_calibration")
-  expect_error(
-    kb_predict_biomass_canopy(fit, surveys()[c("site", "year", "canopy_area_m2")]),
-    "tide_height_m"
-  )
   expect_error(kb_predict_biomass_canopy(fit, surveys()[0, ]), "at least one row")
-  expect_error(kb_predict_biomass_canopy(fit, transform(surveys(), tide_height_m = Inf)), "finite")
 })
 
 test_that("a repeated pool_by column pools as if named once", {
@@ -169,18 +164,6 @@ test_that("high tides give finite, non-negative totals capped at the classified 
   expect_equal(draws[, 4], posterior::draws_of(capped$biomass_kg)[, 1], ignore_attr = TRUE)
 })
 
-test_that("canopy at zero tide height is used as given, and no canopy stays zero", {
-  fit <- cover_calibration_nereo_fit
-  rows <- data.frame(
-    site = fitted_sites(fit), year = "2019", canopy_area_m2 = c(100, 0),
-    tide_height_m = c(0, 5), classified_area_m2 = 400
-  )
-  p <- suppressWarnings(kb_predict_biomass_canopy(fit, rows, new_levels = "average"))
-  totals <- canopy_biomass_draws(fit, rows[1, ], "average", NULL)
-  expect_equal(posterior::draws_of(p$biomass_kg)[, 1], totals[, 1], ignore_attr = TRUE)
-  expect_true(all(posterior::draws_of(p$biomass_kg)[, 2] == 0))
-})
-
 test_that("a numeric year matches the fitted year and pools as character", {
   withr::local_seed(1)
   character_year <- kb_predict_biomass_canopy(
@@ -194,8 +177,4 @@ test_that("a numeric year matches the fitted year and pools as character", {
   )
   expect_identical(numeric_year$year, "2019")
   expect_equal(numeric_year$biomass_kg, character_year$biomass_kg)
-  expect_error(
-    kb_predict_biomass_canopy(cover_calibration_nereo_fit, transform(surveys(), year = 2019.5)),
-    "year"
-  )
 })

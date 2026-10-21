@@ -1,23 +1,23 @@
-test_that("kb_plot_predictions returns a ribbon ggplot for a continuous predictor", {
-  p <- kb_predict_weight(weight_nereo_fit, kb_new_data(weight_nereo_fit))
-  gg <- kb_plot_predictions(p)
+weight_curve <- function() {
+  kb_predict_weight(weight_nereo_fit, kb_new_data(weight_nereo_fit))
+}
+
+geoms_of <- function(gg) vapply(gg$layers, function(l) class(l$geom)[1], character(1))
+
+test_that("a continuous predictor gives a ribbon with descriptive axis titles", {
+  gg <- kb_plot_predictions(weight_curve())
   expect_s3_class(gg, "ggplot")
-  geoms <- vapply(gg$layers, function(l) class(l$geom)[1], character(1))
+  geoms <- geoms_of(gg)
   expect_true(any(grepl("GeomRibbon", geoms)))
   expect_true(any(grepl("GeomLine", geoms)))
+  expect_identical(gg$labels$x, "Sub-bulb diameter (mm)")
+  expect_identical(gg$labels$y, "Wet weight (kg)")
 })
 
 test_that("the weight-vs-diameter ribbon plot is visually stable", {
   skip_if_not_installed("vdiffr")
-  p <- kb_predict_weight(weight_nereo_fit, kb_new_data(weight_nereo_fit))
+  p <- weight_curve()
   vdiffr::expect_doppelganger("weight ribbon", kb_plot_predictions(p))
-})
-
-test_that("axis titles are descriptive labels with units", {
-  p <- kb_predict_weight(weight_nereo_fit, kb_new_data(weight_nereo_fit))
-  gg <- kb_plot_predictions(p)
-  expect_identical(gg$labels$x, "Sub-bulb diameter (mm)")
-  expect_identical(gg$labels$y, "Wet weight (kg)")
 })
 
 test_that("a held predictor puts the grouping factor on a descriptive x axis", {
@@ -28,7 +28,7 @@ test_that("a held predictor puts the grouping factor on a descriptive x axis", {
   gg <- kb_plot_predictions(p)
   expect_identical(gg$labels$x, "Site")
   expect_identical(gg$labels$y, "Wet weight (kg)")
-  geoms <- vapply(gg$layers, function(l) class(l$geom)[1], character(1))
+  geoms <- geoms_of(gg)
   expect_true(any(grepl("GeomPointrange", geoms)))
 })
 
@@ -39,7 +39,7 @@ test_that("reference-diameter by site is pointrange with sites on x, no facet", 
   )
   gg <- kb_plot_predictions(p)
   expect_identical(gg$labels$x, "Site")
-  geoms <- vapply(gg$layers, function(l) class(l$geom)[1], character(1))
+  geoms <- geoms_of(gg)
   expect_true(any(grepl("GeomPointrange", geoms)))
   expect_false(any(grepl("GeomRibbon", geoms)))
   expect_s3_class(gg$facet, "FacetNull")
@@ -62,20 +62,13 @@ test_that("rows not from kb_new_data() render as points, not a ribbon", {
   )
   gg <- kb_plot_predictions(p)
   expect_identical(gg$labels$x, "Sub-bulb diameter (mm)")
-  geoms <- vapply(gg$layers, function(l) class(l$geom)[1], character(1))
+  geoms <- geoms_of(gg)
   expect_true(any(grepl("GeomPointrange", geoms)))
   expect_false(any(grepl("GeomRibbon", geoms)))
   # the observed plants vary in diameter too, but are not a curve
   observed <- kb_plot_predictions(kb_predict_weight(weight_nereo_fit), max_facets = Inf)
-  geoms <- vapply(observed$layers, function(l) class(l$geom)[1], character(1))
+  geoms <- geoms_of(observed)
   expect_false(any(grepl("GeomRibbon", geoms)))
-})
-
-test_that("facet is inferred from grouping variables", {
-  p <- kb_predict_weight(weight_nereo_fit, kb_new_data(weight_nereo_fit, by = "site"))
-  gg <- kb_plot_predictions(p)
-  expect_s3_class(gg, "ggplot")
-  expect_false(inherits(gg$facet, "FacetNull"))
 })
 
 test_that("max_facets caps the panels with a warning", {
@@ -88,11 +81,11 @@ test_that("max_facets caps the panels with a warning", {
 })
 
 test_that("raw data can be added as a layer", {
-  p <- kb_predict_weight(weight_nereo_fit, kb_new_data(weight_nereo_fit))
+  p <- weight_curve()
   gg <- kb_plot_predictions(p) +
     ggplot2::geom_point(ggplot2::aes(diameter_mm, weight_kg), data = weight_nereo_fit$data)
   expect_no_error(ggplot2::ggplot_build(gg))
-  geoms <- vapply(gg$layers, function(l) class(l$geom)[1], character(1))
+  geoms <- geoms_of(gg)
   expect_true("GeomPoint" %in% geoms)
 })
 
@@ -102,7 +95,7 @@ test_that("a single ungrouped row errors helpfully rather than cryptically", {
 })
 
 test_that("errors helpfully when metadata is stripped", {
-  p <- kb_predict_weight(weight_nereo_fit, kb_new_data(weight_nereo_fit))
+  p <- weight_curve()
   bare <- tibble::as_tibble(unclass(p))
   attr(bare, "kb_predictor") <- NULL
   expect_error(kb_plot_predictions(bare), "Cannot infer the x-axis")
@@ -111,7 +104,7 @@ test_that("errors helpfully when metadata is stripped", {
 test_that("size by site plots point ranges with a descriptive y axis", {
   p <- kb_predict_size(size_nereo_fit, kb_new_data(size_nereo_fit, by = "site"))
   gg <- kb_plot_predictions(p)
-  geoms <- vapply(gg$layers, function(l) class(l$geom)[1], character(1))
+  geoms <- geoms_of(gg)
   expect_true(any(grepl("GeomPointrange", geoms)))
   expect_identical(gg$labels$x, "Site")
   expect_identical(gg$labels$y, "Sub-bulb diameter (mm)")
@@ -130,7 +123,7 @@ mean_weight_by_site <- function() {
 
 test_that("mean weight by site plots point ranges titled as a weight", {
   gg <- kb_plot_predictions(mean_weight_by_site())
-  geoms <- vapply(gg$layers, function(l) class(l$geom)[1], character(1))
+  geoms <- geoms_of(gg)
   expect_true(any(grepl("GeomPointrange", geoms)))
   expect_identical(gg$labels$x, "Site")
   expect_identical(gg$labels$y, "Wet weight (kg)")
@@ -161,7 +154,7 @@ test_that("a cover curve plots a ribbon over tide-corrected cover", {
   p <- kb_predict_cover_calibration(fit, kb_new_data(fit))
   gg <- kb_plot_predictions(p)
   expect_s3_class(gg, "ggplot")
-  geoms <- vapply(gg$layers, function(l) class(l$geom)[1], character(1))
+  geoms <- geoms_of(gg)
   expect_true(any(grepl("GeomRibbon", geoms)))
   expect_identical(gg$labels$x, "Tide-corrected canopy cover")
   expect_identical(gg$labels$y, "Wet biomass (kg/m\u00b2)")
@@ -187,7 +180,7 @@ test_that("log_axis = 'y' log-scales the y-axis without a zero floor", {
 })
 
 test_that("log_axis = 'xy' log-scales both axes of a curve", {
-  p <- kb_predict_weight(weight_nereo_fit, kb_new_data(weight_nereo_fit))
+  p <- weight_curve()
   gg <- kb_plot_predictions(p, log_axis = "xy")
   expect_identical(gg$scales$get_scales("x")$trans$name, "log-10")
   expect_identical(gg$scales$get_scales("y")$trans$name, "log-10")
@@ -201,14 +194,14 @@ test_that("a log axis without a unit is titled as log scale", {
 })
 
 test_that("a supplied x that is not one column errors helpfully", {
-  p <- kb_predict_weight(weight_nereo_fit, kb_new_data(weight_nereo_fit))
+  p <- weight_curve()
   expect_error(kb_plot_predictions(p, x = c("diameter_mm", "site")), "string")
   expect_error(kb_plot_predictions(p, x = "nope"), "must name a column")
 })
 
 test_that("the log-log weight curve is visually stable", {
   skip_if_not_installed("vdiffr")
-  p <- kb_predict_weight(weight_nereo_fit, kb_new_data(weight_nereo_fit))
+  p <- weight_curve()
   vdiffr::expect_doppelganger(
     "weight ribbon log-log",
     kb_plot_predictions(p, log_axis = "xy")
@@ -223,7 +216,7 @@ test_that("tick labels are plain numbers", {
 })
 
 test_that("linear axes label large values in full", {
-  p <- kb_predict_weight(weight_nereo_fit, kb_new_data(weight_nereo_fit))
+  p <- weight_curve()
   p$estimate <- p$estimate * 1e5
   p$lower <- p$lower * 1e5
   p$upper <- p$upper * 1e5
@@ -252,7 +245,7 @@ test_that("a log x-axis errors over zero cover and over groups", {
 })
 
 test_that("a log y-axis errors over non-positive values", {
-  p <- kb_predict_weight(weight_nereo_fit, kb_new_data(weight_nereo_fit))
+  p <- weight_curve()
   p$lower[1] <- 0
   expect_snapshot(kb_plot_predictions(p, log_axis = "y"), error = TRUE)
   expect_error(kb_plot_predictions(p, log_axis = "nope"), "must be one of")

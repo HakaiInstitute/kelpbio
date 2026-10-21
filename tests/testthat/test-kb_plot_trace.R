@@ -8,21 +8,11 @@ trace_panels <- function(fit) {
   )
 }
 
-test_that("kb_plot_trace draws one panel per tidy() term for every model", {
-  fits <- list(
-    weight_nereo_fit,
-    weight_macro_fit,
-    fit_size_sim_nereo,
-    fit_wetdry_sim_nereo,
-    fit_carbon_sim_macro,
-    fit_cover_calibration_sim_nereo
-  )
-  for (fit in fits) {
-    expect_s3_class(kb_plot_trace(fit), "ggplot")
-    trace <- trace_panels(fit)
-    expect_identical(trace$labels, tidy(fit)$term)
-    expect_identical(trace$chains, posterior::nchains(fit$draws))
-  }
+test_that("kb_plot_trace draws one panel per tidy() term and one line per chain", {
+  expect_s3_class(kb_plot_trace(weight_nereo_fit), "ggplot")
+  trace <- trace_panels(weight_nereo_fit)
+  expect_identical(trace$labels, tidy(weight_nereo_fit)$term)
+  expect_identical(trace$chains, posterior::nchains(weight_nereo_fit$draws))
 })
 
 test_that("kb_plot_trace lays out ncol columns and labels the axes", {

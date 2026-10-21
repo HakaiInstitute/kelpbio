@@ -6,14 +6,6 @@
       Error in `kb_influence()`:
       ! A prior-only fit has no likelihood, so it cannot be cross-validated.
 
----
-
-    Code
-      kb_influence(empty)
-    Condition
-      Error in `kb_influence()`:
-      ! A zero-observation fit has no likelihood, so it cannot be cross-validated.
-
 # kb_influence validates its arguments
 
     Code

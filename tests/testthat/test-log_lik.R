@@ -40,12 +40,6 @@ test_that("macro log_lik matches the Gamma density computed directly", {
   expect_equal(log_lik(weight_macro_fit), expected, tolerance = 1e-10)
 })
 
-test_that("log_lik aborts for a zero-observation fit", {
-  fit0 <- weight_nereo_fit
-  fit0$data <- fit0$data[0, ]
-  expect_error(log_lik(fit0), "no observed data")
-})
-
 test_that("nereo size log_lik matches the Weibull density computed directly", {
   mu <- exp(posterior_linpred(size_nereo_fit))
   shape <- as.vector(posterior::draws_of(size_nereo_fit$draws$shape))

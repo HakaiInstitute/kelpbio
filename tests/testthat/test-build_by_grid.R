@@ -5,6 +5,18 @@ test_that("build_by_grid spans the observed predictor range by default", {
   expect_equal(range(grid$diameter_mm), range(weight_nereo_fit$data$diameter_mm))
 })
 
+test_that("a default frond sequence takes whole numbers", {
+  grid <- build_by_grid(weight_macro_fit, character(0))
+  expect_true(all(grid$fronds == round(grid$fronds)))
+  expect_equal(range(grid$fronds), range(weight_macro_fit$data$fronds))
+})
+
+test_that("a diameter sequence keeps 30 values when the data are whole millimetres", {
+  fit <- weight_nereo_fit
+  fit$data$diameter_mm <- round(fit$data$diameter_mm)
+  expect_equal(nrow(build_by_grid(fit, character(0))), 30L)
+})
+
 test_that("build_by_grid names the predictor column from the fit", {
   grid <- build_by_grid(weight_macro_fit, character(0), values = c(2, 5))
   expect_named(grid, "fronds")

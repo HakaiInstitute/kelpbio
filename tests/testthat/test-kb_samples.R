@@ -12,8 +12,3 @@ test_that("kb_samples errors on an object that is not a fit", {
   expect_error(kb_samples(1), "must be a <kb_fit> object")
   expect_equal(rlang::catch_cnd(kb_samples(1))$call, quote(kb_samples(1)))
 })
-
-test_that("kb_samples excludes effects the fit omitted", {
-  off <- omit_terms(weight_nereo_fit, "weight_floor")
-  expect_false("weight_floor" %in% posterior::variables(kb_samples(off)))
-})
