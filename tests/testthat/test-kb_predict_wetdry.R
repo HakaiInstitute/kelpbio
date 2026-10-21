@@ -28,3 +28,8 @@ test_that("kb_predict_wetdry errors on other models, and the result has no plot"
     "Cannot infer the x-axis"
   )
 })
+
+test_that("wet/dry predictions match their snapshots", {
+  expect_snapshot_data(kb_predict_wetdry(wetdry_nereo_fit), "nereo")
+  expect_snapshot_data(kb_predict_wetdry(wetdry_macro_fit), "macro")
+})

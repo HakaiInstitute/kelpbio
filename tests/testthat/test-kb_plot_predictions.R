@@ -250,3 +250,43 @@ test_that("a log y-axis errors over non-positive values", {
   expect_snapshot(kb_plot_predictions(p, log_axis = "y"), error = TRUE)
   expect_error(kb_plot_predictions(p, log_axis = "nope"), "must be one of")
 })
+
+test_that("each layout is visually stable", {
+  skip_if_not_installed("vdiffr")
+  site_year <- kb_predict_weight(
+    weight_nereo_fit,
+    kb_new_data(weight_nereo_fit, by = c("site", "year"), diameter_mm = 50)
+  )
+  vdiffr::expect_doppelganger(
+    "weight by site-year",
+    kb_plot_predictions(site_year, max_facets = Inf)
+  )
+  points <- kb_predict_weight(weight_nereo_fit, data.frame(diameter_mm = c(20, 40, 60)))
+  vdiffr::expect_doppelganger("weight points", kb_plot_predictions(points))
+  vdiffr::expect_doppelganger(
+    "weight ribbon with data",
+    kb_plot_predictions(weight_curve()) +
+      ggplot2::geom_point(ggplot2::aes(diameter_mm, weight_kg), data = weight_nereo_fit$data)
+  )
+  cover <- kb_predict_cover_calibration(
+    cover_calibration_nereo_fit,
+    kb_new_data(cover_calibration_nereo_fit)
+  )
+  vdiffr::expect_doppelganger("cover ribbon", kb_plot_predictions(cover))
+  vdiffr::expect_doppelganger(
+    "mean weight by site log-y",
+    kb_plot_predictions(mean_weight_by_site(), log_axis = "y")
+  )
+  withr::local_seed(1)
+  survey <- kb_predict_biomass_survey(
+    weight_nereo_fit,
+    size_nereo_fit,
+    data_survey_sim_nereo,
+    pool_by = c("site", "year"),
+    progress = "none"
+  )
+  vdiffr::expect_doppelganger(
+    "survey biomass by site-year",
+    kb_plot_predictions(survey, max_facets = Inf)
+  )
+})

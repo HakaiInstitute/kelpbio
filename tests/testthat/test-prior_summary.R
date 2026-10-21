@@ -4,3 +4,7 @@ test_that("prior_summary returns the resolved priors", {
   expect_named(ps, names(kb_priors_weight_nereo()))
   expect_s3_class(ps$intercept, "kb_prior")
 })
+
+test_that("prior_summary prints the resolved priors", {
+  expect_snapshot(prior_summary(weight_nereo_fit))
+})

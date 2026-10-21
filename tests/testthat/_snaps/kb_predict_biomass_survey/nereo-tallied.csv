@@ -1,0 +1,64 @@
+"survey_id","site","year","survey_area_m2","plants","plot_area_m2","canopy_area_m2","tide_height_m","weight_support","size_support","estimate","lower","upper"
+"otter_cove-2019-1","otter_cove","2019",200,291,216,8.58,1.55,"site-year","site-year",1.31,0.89,2.12
+"gull_rock-2019-1","gull_rock","2019",140,165,NA,NA,NA,"site-year","site-year",0.498,0.355,0.733
+"cedar_bay-2019-1","cedar_bay","2019",100,0,198,0,1.45,"site-year","site, year",0,0,0
+"cedar_bay-2019-2","cedar_bay","2019",100,43,196,21.2,0.35,"site-year","site, year",0.345,0.127,1.13
+"heron_reef-2019-1","heron_reef","2019",239,429,239,123,0.75,"site-year","site-year",3.62,2.29,5.92
+"urchin_shoal-2019-1","urchin_shoal","2019",160,66,NA,NA,NA,"year","year",0.329,0.0854,1.7
+"sculpin_head-2019-1","sculpin_head","2019",220,430,277,33.5,1.15,"year","year",1.55,0.383,8.03
+"eagle_spit-2019-1","eagle_spit","2019",80,158,203,13.2,1.55,"year","year",1.69,0.391,8.11
+"eagle_spit-2019-2","eagle_spit","2019",120,272,226,19.2,0.55,"year","year",1.94,0.449,9.31
+"fog_islet-2019-1","fog_islet","2019",220,265,NA,NA,NA,"year","year",1.01,0.25,5.07
+"raven_reef-2019-1","raven_reef","2019",214,102,214,12.6,1.4,"year","year",0.384,0.0975,2.32
+"sea_lion_rock-2019-1","sea_lion_rock","2019",200,386,NA,NA,NA,"year","year",1.65,0.387,7.87
+"kelp_point-2019-1","kelp_point","2019",180,131,254,6.65,1.5,"year","year",0.568,0.142,3.22
+"otter_cove-2020-1","otter_cove","2020",140,90,NA,NA,NA,"site, year","site-year",0.379,0.221,0.756
+"otter_cove-2020-2","otter_cove","2020",120,95,NA,NA,NA,"site, year","site-year",0.467,0.272,0.93
+"gull_rock-2020-1","gull_rock","2020",180,374,214,17.8,1.45,"site-year","site, year",0.798,0.38,2.73
+"cedar_bay-2020-1","cedar_bay","2020",140,90,182,5,0.5,"site-year","site-year",0.254,0.188,0.376
+"heron_reef-2020-1","heron_reef","2020",260,84,NA,NA,NA,"site-year","site-year",0.126,0.0872,0.196
+"urchin_shoal-2020-1","urchin_shoal","2020",203,141,203,9.94,0,"year","year",0.368,0.118,1.99
+"sculpin_head-2020-1","sculpin_head","2020",220,150,247,39.1,0.9,"year","year",0.328,0.109,2.02
+"eagle_spit-2020-1","eagle_spit","2020",180,333,NA,NA,NA,"year","year",0.94,0.325,6
+"fog_islet-2020-1","fog_islet","2020",160,128,250,6.44,1.45,"year","year",0.424,0.137,2.28
+"tidepool_bluff-2020-1","tidepool_bluff","2020",200,110,277,9.11,1.1,"year","year",0.305,0.0986,1.63
+"raven_reef-2020-1","raven_reef","2020",220,260,NA,NA,NA,"year","year",0.647,0.199,3.89
+"sea_lion_rock-2020-1","sea_lion_rock","2020",200,101,275,8.29,0.55,"year","year",0.276,0.0906,1.44
+"kelp_point-2020-1","kelp_point","2020",198,161,198,10.2,0.4,"year","year",0.405,0.139,2.63
+"otter_cove-2021-1","otter_cove","2021",180,155,192,10.2,0.55,"site-year","site-year",0.814,0.533,1.27
+"gull_rock-2021-1","gull_rock","2021",208,143,208,4.52,1.55,"site, year","site-year",0.216,0.151,0.376
+"cedar_bay-2021-1","cedar_bay","2021",120,139,NA,NA,NA,"site-year","site-year",0.788,0.535,1.28
+"cedar_bay-2021-2","cedar_bay","2021",60,38,NA,NA,NA,"site-year","site-year",0.431,0.293,0.701
+"heron_reef-2021-1","heron_reef","2021",140,159,224,8.12,1.25,"site-year","site-year",1.1,0.732,1.8
+"heron_reef-2021-2","heron_reef","2021",80,104,239,7.83,1.4,"site-year","site-year",1.25,0.838,2.06
+"urchin_shoal-2021-1","urchin_shoal","2021",220,269,241,34.4,0.55,"year","year",0.787,0.252,3.73
+"sculpin_head-2021-1","sculpin_head","2021",180,484,NA,NA,NA,"year","year",1.68,0.484,9.37
+"eagle_spit-2021-1","eagle_spit","2021",160,218,221,2.69,1.55,"year","year",0.888,0.257,4.13
+"fog_islet-2021-1","fog_islet","2021",140,102,260,12.1,1.6,"year","year",0.507,0.138,2.5
+"tidepool_bluff-2021-1","tidepool_bluff","2021",260,404,NA,NA,NA,"year","year",1.07,0.316,5.05
+"raven_reef-2021-1","raven_reef","2021",229,178,229,7.44,0.55,"year","year",0.513,0.147,2.71
+"sea_lion_rock-2021-1","sea_lion_rock","2021",220,667,280,20.7,0.75,"year","year",1.98,0.573,10.7
+"kelp_point-2021-1","kelp_point","2021",220,61,NA,NA,NA,"year","year",0.185,0.0521,1.06
+"otter_cove-2022-1","otter_cove","2022",200,149,232,23.8,0.7,"site-year","site-year",1.12,0.739,1.75
+"gull_rock-2022-1","gull_rock","2022",340,565,NA,NA,NA,"site-year","site-year",1.05,0.746,1.69
+"cedar_bay-2022-1","cedar_bay","2022",260,164,272,14.2,0.35,"site, year","site-year",0.362,0.216,0.693
+"heron_reef-2022-1","heron_reef","2022",180,229,197,21.4,0.15,"site-year","site-year",1.46,0.932,2.41
+"urchin_shoal-2022-1","urchin_shoal","2022",300,92,NA,NA,NA,"year","year",0.243,0.0588,1.34
+"sculpin_head-2022-1","sculpin_head","2022",160,220,199,38.6,0.65,"year","year",1.14,0.257,5.89
+"eagle_spit-2022-1","eagle_spit","2022",180,781,215,24,1.5,"year","year",3.65,0.875,17.1
+"fog_islet-2022-1","fog_islet","2022",180,516,NA,NA,NA,"year","year",2.23,0.521,13.5
+"tidepool_bluff-2022-1","tidepool_bluff","2022",252,184,252,6.45,1.05,"year","year",0.593,0.164,2.95
+"sea_lion_rock-2022-1","sea_lion_rock","2022",180,97,NA,NA,NA,"year","year",0.432,0.103,2.44
+"kelp_point-2022-1","kelp_point","2022",183,87,183,22.6,0.75,"year","year",0.388,0.0916,2.11
+"otter_cove-2023-1","otter_cove","2023",200,227,NA,NA,NA,"site-year","site-year",0.792,0.54,1.41
+"gull_rock-2023-1","gull_rock","2023",180,973,224,41,1.25,"site-year","site-year",6.39,4.19,10.6
+"cedar_bay-2023-1","cedar_bay","2023",209,514,209,48.3,1.05,"site-year","site-year",3.72,2.42,5.96
+"heron_reef-2023-1","heron_reef","2023",200,233,NA,NA,NA,"site, year","site-year",3.21,1.55,6.31
+"urchin_shoal-2023-1","urchin_shoal","2023",180,154,226,29.4,0.95,"year","year",0.894,0.186,4.1
+"sculpin_head-2023-1","sculpin_head","2023",260,784,260,167,0.5,"year","year",3.12,0.598,15.2
+"eagle_spit-2023-1","eagle_spit","2023",180,192,NA,NA,NA,"year","year",1.14,0.25,4.79
+"fog_islet-2023-1","fog_islet","2023",160,557,193,54.9,1.3,"year","year",3.43,0.826,19.4
+"tidepool_bluff-2023-1","tidepool_bluff","2023",200,164,254,71.3,0.15,"year","year",0.869,0.206,4.4
+"raven_reef-2023-1","raven_reef","2023",160,381,NA,NA,NA,"year","year",2.65,0.506,12.4
+"sea_lion_rock-2023-1","sea_lion_rock","2023",200,561,218,137,0.35,"year","year",3.08,0.641,13.8
+"kelp_point-2023-1","kelp_point","2023",200,196,223,62.8,1,"year","year",0.999,0.214,5.51

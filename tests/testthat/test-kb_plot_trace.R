@@ -34,3 +34,8 @@ test_that("kb_plot_trace validates its arguments", {
   expect_error(kb_plot_trace(weight_nereo_fit, ncol = 1.5), "ncol")
   expect_error(kb_plot_trace(weight_nereo_fit, ncol = 0), "ncol")
 })
+
+test_that("the trace plot is visually stable", {
+  skip_if_not_installed("vdiffr")
+  vdiffr::expect_doppelganger("weight nereo trace", kb_plot_trace(weight_nereo_fit))
+})

@@ -90,3 +90,12 @@ test_that("supplied predictor values are checked like the model's data", {
   expect_error(kb_new_data(weight_macro_fit, fronds = 2.5), "whole number")
   expect_error(kb_new_data(cover_calibration_nereo_fit, cover = 1.2), "between 0 and 1")
 })
+
+test_that("kb_new_data grids match their snapshots", {
+  expect_snapshot_data(kb_new_data(weight_nereo_fit), "weight-nereo-curve")
+  expect_snapshot_data(kb_new_data(cover_calibration_nereo_fit), "cover-nereo-curve")
+  expect_snapshot_data(
+    kb_new_data(weight_macro_fit, by = c("site", "year"), fronds = 10),
+    "weight-macro-site-year"
+  )
+})

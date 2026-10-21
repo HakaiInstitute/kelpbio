@@ -351,3 +351,22 @@ test_that("a numeric survey id joins a census id written in full", {
   p <- kb_predict_biomass_survey(weight_macro_fit, census, survey, new_levels = "average")
   expect_true(all(posterior::draws_of(p$biomass_kg_m2) > 0))
 })
+
+test_that("survey biomass predictions match their snapshots", {
+  withr::local_seed(1)
+  expect_snapshot_data(
+    kb_predict_biomass_survey(
+      weight_nereo_fit, size_nereo_fit, data_survey_sim_nereo,
+      progress = "none"
+    ),
+    "nereo-tallied"
+  )
+  withr::local_seed(1)
+  expect_snapshot_data(
+    kb_predict_biomass_survey(
+      weight_macro_fit, data_size_census_sim_macro, data_survey_sim_macro,
+      pool_by = "site", progress = "none"
+    ),
+    "macro-census-site"
+  )
+})

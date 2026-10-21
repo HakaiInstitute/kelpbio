@@ -79,3 +79,9 @@ test_that("argument errors name tidy()", {
   err <- expect_error(tidy(weight_nereo_fit, conf_level = 2))
   expect_identical(err$call[[1]], quote(tidy))
 })
+
+test_that("tidy output matches its snapshot for every model", {
+  for (name in names(fixture_fits)) {
+    expect_snapshot_data(tidy(fixture_fits[[name]]), name)
+  }
+})

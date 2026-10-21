@@ -87,3 +87,16 @@ calibration_input <- function(fit, ndraws = 100L) {
     d[c("plot_area_m2", "canopy_area_m2", "tide_height_m")]
   out
 }
+
+# Every fixture fit, named for its model and species.
+fixture_fits <- list(
+  weight_nereo = weight_nereo_fit,
+  weight_macro = weight_macro_fit,
+  size_nereo = size_nereo_fit,
+  wetdry_nereo = wetdry_nereo_fit,
+  wetdry_macro = wetdry_macro_fit,
+  carbon_nereo = carbon_nereo_fit,
+  carbon_macro = carbon_macro_fit,
+  cover_calibration_nereo = cover_calibration_nereo_fit,
+  cover_calibration_macro = cover_calibration_macro_fit
+)

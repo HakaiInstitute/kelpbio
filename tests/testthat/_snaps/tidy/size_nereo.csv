@@ -1,0 +1,6 @@
+"term","estimate","lower","upper"
+"intercept",3.04,2.7,3.29
+"shape",2.81,2.59,3.05
+"sd_site",0.149,0.012,0.626
+"sd_year",0.105,0.00669,0.454
+"sd_site_year",0.194,0.118,0.322

@@ -28,3 +28,8 @@ test_that("kb_predict_carbon errors on other models, and the result has no plot"
     "Cannot infer the x-axis"
   )
 })
+
+test_that("carbon predictions match their snapshots", {
+  expect_snapshot_data(kb_predict_carbon(carbon_nereo_fit), "nereo")
+  expect_snapshot_data(kb_predict_carbon(carbon_macro_fit), "macro")
+})

@@ -151,3 +151,21 @@ test_that("a fractional year in new_data errors naming year", {
   rows <- data.frame(site = weight_nereo_fit$data$site[1], year = 2021.5, diameter_mm = 40)
   expect_error(kb_predict_weight(weight_nereo_fit, rows), "year")
 })
+
+test_that("weight predictions match their snapshots", {
+  expect_snapshot_data(
+    kb_predict_weight(weight_nereo_fit, kb_new_data(weight_nereo_fit)),
+    "nereo-curve"
+  )
+  expect_snapshot_data(
+    kb_predict_weight(
+      weight_nereo_fit,
+      kb_new_data(weight_nereo_fit, by = c("site", "year"), diameter_mm = 50)
+    ),
+    "nereo-site-year"
+  )
+  expect_snapshot_data(
+    kb_predict_weight(weight_macro_fit, kb_new_data(weight_macro_fit, by = "site", fronds = 10)),
+    "macro-site"
+  )
+})
