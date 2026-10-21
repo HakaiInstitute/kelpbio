@@ -117,6 +117,38 @@ test_that("per_area divides by the surveyed area", {
   )
 })
 
+test_that("carbon biomass is grams per m2 per area and kg as a total", {
+  survey <- tibble::tibble(
+    survey_id = "s1", site = "seal_ledge", year = "2019", survey_area_m2 = 100
+  )
+  plants <- tibble::tibble(survey_id = "s1", fronds = c(4, 10), partial = FALSE)
+  predict <- function(...) {
+    kb_predict_biomass_survey(
+      weight_macro_fit, plants, survey, ...,
+      wetdry = wetdry_macro_fit, carbon = carbon_macro_fit,
+      new_levels = "average", progress = "none"
+    )
+  }
+  wet_kg <- posterior::draws_of(predict(per_area = FALSE)$biomass_kg)
+  factor <- measure_factor("carbon", wetdry_macro_fit, carbon_macro_fit)
+
+  per_m2 <- predict(measure = "carbon")
+  expect_identical(attr(per_m2, "kb_response"), "carbon_biomass_g_m2")
+  expect_equal(
+    posterior::draws_of(per_m2$carbon_biomass_g_m2),
+    wet_kg * factor * 1000 / survey$survey_area_m2,
+    ignore_attr = TRUE
+  )
+
+  total <- predict(measure = "carbon", per_area = FALSE)
+  expect_identical(attr(total, "kb_response"), "carbon_biomass_kg")
+  expect_equal(
+    posterior::draws_of(total$carbon_biomass_kg),
+    wet_kg * factor,
+    ignore_attr = TRUE
+  )
+})
+
 test_that("pool_by pools surveys as total kg over total area", {
   withr::local_seed(1)
   rows <- kb_predict_biomass_survey(
