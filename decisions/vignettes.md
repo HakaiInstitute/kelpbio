@@ -2,7 +2,7 @@
 
 Vignettes and vignette sections to add in the README/vignette pass. Each entry
 gives the reader question it answers and the points it must cover. Wording here
-is notes, not reader-facing text; follow `STYLE.md` when writing the vignette.
+is notes, not reader-facing text; follow `.claude/STYLE.md` when writing the vignette.
 
 ## Surface surveys from a boat or kayak (*Nereocystis*)
 

@@ -11,7 +11,7 @@ against that statement. Upstream documentation:
 |---|---|
 | `openspec/specs/` (`fitting`, `predictions`, `summaries`) | What a user can rely on: arguments, returned values, validation, messages, errors |
 | Code, tests, snapshots | The exact model (`tests/testthat/_snaps/kb_model_describe.md`), outputs, and parameter and prior lists |
-| `CLAUDE.md` | Coding, testing, and documentation conventions; commands |
+| `.claude/CLAUDE.md` | Coding, testing, and documentation conventions; commands |
 | `openspec/config.yaml` | Rules for writing change artifacts |
 | `decisions/` | Rationale that outlives a change (engine choice, prediction engine, species as variants, architecture) |
 | A change's `design.md` | Rationale for that change, archived with it |
