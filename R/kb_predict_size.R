@@ -14,7 +14,7 @@
 #' columns.
 #'
 #' With `representative_site`, a new site also takes the named sites'
-#' site:year effect in a year in which they were surveyed.
+#' site:year effect in a year in which they have data.
 #'
 #' @inheritParams params
 #' @param fit A `kb_fit_size` object.

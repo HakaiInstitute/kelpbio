@@ -4,7 +4,7 @@
 #' *Nereocystis luetkeana* cover calibration model.
 #'
 #' @details
-#' `data` is the output of [kb_predict_biomass_survey()] with its defaults, one
+#' `data` is the output of [kb_predict_biomass_in_situ()] with its defaults, one
 #' row per in situ survey. Required columns:
 #'
 #' - `biomass_kg_m2`, the draws of the survey's wet biomass per m² (finite,
@@ -26,10 +26,10 @@
 #' @export
 #'
 #' @examples
-#' biomass <- kb_predict_biomass_survey(
+#' biomass <- kb_predict_biomass_in_situ(
 #'   fit_weight_sim_nereo,
 #'   fit_size_sim_nereo,
-#'   data_survey_sim_nereo,
+#'   data_in_situ_sim_nereo,
 #'   progress = "none"
 #' )
 #' kb_check_data_cover_calibration_nereo(biomass)

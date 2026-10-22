@@ -1,7 +1,7 @@
 #' Check in situ survey data
 #'
 #' Check that `data` has the columns and values needed to predict the biomass
-#' of in situ surveys with [kb_predict_biomass_survey()].
+#' of in situ surveys with [kb_predict_biomass_in_situ()].
 #'
 #' @details
 #' Each row of `data` is one survey: one count of the plants in a surveyed
@@ -40,9 +40,9 @@
 #' @export
 #'
 #' @examples
-#' kb_check_data_survey(data_survey_sim_nereo)
-#' kb_check_data_survey(data_survey_sim_macro, data_size_census_sim_macro)
-kb_check_data_survey <- function(
+#' kb_check_data_in_situ(data_in_situ_sim_nereo)
+#' kb_check_data_in_situ(data_in_situ_sim_macro, data_size_census_sim_macro)
+kb_check_data_in_situ <- function(
   data,
   size_census = NULL,
   x_name = chk::deparse_backtick_chk(substitute(data))

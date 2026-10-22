@@ -22,7 +22,7 @@ Survey design:
   adjacent sides, not the other two).
 - Sum counts and areas over each cluster of quadrats (along a line or in a
   group) to one survey row (`plants`, `survey_area_m2` in
-  `kb_check_data_survey()`), giving each cluster its own `survey_id`.
+  `kb_check_data_in_situ()`), giving each cluster its own `survey_id`.
   Independently placed quadrats are one row each.
 - Survey at low slack tide, so the fewest bulbs are submerged.
 - Size: measure every plant in each quadrat (or a random subset), using the

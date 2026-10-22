@@ -1,5 +1,5 @@
 # Build the simulated Nereocystis datasets: data_weight_sim_nereo,
-# data_size_sample_sim_nereo, data_survey_sim_nereo, and data_canopy_sim_nereo, for
+# data_size_sample_sim_nereo, data_in_situ_sim_nereo, and data_canopy_sim_nereo, for
 # fast tests and runnable examples. Not for inference.
 #
 # All four come from one set of true site-year values, so they agree: survey
@@ -178,7 +178,7 @@ survey$canopy_area_m2 <- ifelse(drone, canopy_area_m2, NA_real_)
 survey$tide_height_m <- ifelse(drone, tide_height_m, NA_real_)
 survey$survey_area_m2 <- pmin(survey$survey_area_m2, ifelse(drone, plot_area_m2, Inf))
 
-data_survey_sim_nereo <- survey[c(
+data_in_situ_sim_nereo <- survey[c(
   "survey_id", "site", "year", "survey_area_m2", "plants",
   "plot_area_m2", "canopy_area_m2", "tide_height_m"
 )]
@@ -210,7 +210,7 @@ as_sim <- function(data) {
 }
 data_weight_sim_nereo <- as_sim(data_weight_sim_nereo)
 data_size_sample_sim_nereo <- as_sim(data_size_sample_sim_nereo)
-data_survey_sim_nereo <- as_sim(data_survey_sim_nereo)
+data_in_situ_sim_nereo <- as_sim(data_in_situ_sim_nereo)
 data_canopy_sim_nereo <- as_sim(data_canopy_sim_nereo)
 
 message(
@@ -224,5 +224,5 @@ message(
 
 usethis::use_data(data_weight_sim_nereo, overwrite = TRUE)
 usethis::use_data(data_size_sample_sim_nereo, overwrite = TRUE)
-usethis::use_data(data_survey_sim_nereo, overwrite = TRUE)
+usethis::use_data(data_in_situ_sim_nereo, overwrite = TRUE)
 usethis::use_data(data_canopy_sim_nereo, overwrite = TRUE)

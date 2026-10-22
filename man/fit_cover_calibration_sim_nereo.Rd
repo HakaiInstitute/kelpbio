@@ -13,12 +13,12 @@ fit_cover_calibration_sim_nereo
 }
 \description{
 A fit of \code{\link[=kb_fit_cover_calibration_nereo]{kb_fit_cover_calibration_nereo()}} to the survey biomass from
-\code{\link[=kb_predict_biomass_survey]{kb_predict_biomass_survey()}} with \link{fit_weight_sim_nereo}, \link{fit_size_sim_nereo}, and
-\link{data_survey_sim_nereo}, with fewer draws than the default, for exploring the
+\code{\link[=kb_predict_biomass_in_situ]{kb_predict_biomass_in_situ()}} with \link{fit_weight_sim_nereo}, \link{fit_size_sim_nereo}, and
+\link{data_in_situ_sim_nereo}, with fewer draws than the default, for exploring the
 fit methods without running the sampler.
 }
 \seealso{
-\code{\link[=kb_fit_cover_calibration_nereo]{kb_fit_cover_calibration_nereo()}} and \link{data_survey_sim_nereo}.
+\code{\link[=kb_fit_cover_calibration_nereo]{kb_fit_cover_calibration_nereo()}} and \link{data_in_situ_sim_nereo}.
 
 Other example fits:
 \code{\link{fit_carbon_sim_macro}},

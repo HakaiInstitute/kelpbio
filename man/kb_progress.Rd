@@ -15,12 +15,12 @@ A number between 0 and 1.
 }
 \description{
 The proportion completed by a fit, \code{\link[=kb_predict_mean_weight]{kb_predict_mean_weight()}}, or
-\code{\link[=kb_predict_biomass_survey]{kb_predict_biomass_survey()}} writing to \code{progress_dir}, as a number from 0
+\code{\link[=kb_predict_biomass_in_situ]{kb_predict_biomass_in_situ()}} writing to \code{progress_dir}, as a number from 0
 to 1.
 }
 \details{
 Pass the same directory given as \code{progress_dir} to a \verb{kb_fit_*} function,
-\code{kb_predict_mean_weight()}, or \code{kb_predict_biomass_survey()}. This reads
+\code{kb_predict_mean_weight()}, or \code{kb_predict_biomass_in_situ()}. This reads
 progress from another R process: for
 example, a Shiny app can run the task in the background and poll
 \code{kb_progress()} from the main session to drive a progress indicator. It

@@ -20,14 +20,14 @@ kb_check_data_size_census_nereo(
 \description{
 Check that \code{data} has the columns and values of a census of every
 \emph{Nereocystis luetkeana} plant counted by in situ surveys, for
-\code{\link[=kb_predict_biomass_survey]{kb_predict_biomass_survey()}}.
+\code{\link[=kb_predict_biomass_in_situ]{kb_predict_biomass_in_situ()}}.
 }
 \details{
 Each row is one counted plant, an individual (sporophyte) identified by its
 holdfast. Required columns:
 \itemize{
 \item \code{survey_id}, the survey the plant was counted in (see
-\code{\link[=kb_check_data_survey]{kb_check_data_survey()}}), which gives the plant's site and year.
+\code{\link[=kb_check_data_in_situ]{kb_check_data_in_situ()}}), which gives the plant's site and year.
 \item \code{diameter_mm}, the maximum sub-bulb diameter (mm, > 0), the predictor of
 the weight model (\code{\link[=kb_fit_weight_nereo]{kb_fit_weight_nereo()}}).
 }
@@ -51,9 +51,9 @@ Other data checks:
 \code{\link[=kb_check_data_carbon_nereo]{kb_check_data_carbon_nereo()}},
 \code{\link[=kb_check_data_cover_calibration_macro]{kb_check_data_cover_calibration_macro()}},
 \code{\link[=kb_check_data_cover_calibration_nereo]{kb_check_data_cover_calibration_nereo()}},
+\code{\link[=kb_check_data_in_situ]{kb_check_data_in_situ()}},
 \code{\link[=kb_check_data_size_census_macro]{kb_check_data_size_census_macro()}},
 \code{\link[=kb_check_data_size_sample_nereo]{kb_check_data_size_sample_nereo()}},
-\code{\link[=kb_check_data_survey]{kb_check_data_survey()}},
 \code{\link[=kb_check_data_weight_macro]{kb_check_data_weight_macro()}},
 \code{\link[=kb_check_data_weight_nereo]{kb_check_data_weight_nereo()}},
 \code{\link[=kb_check_data_wetdry_macro]{kb_check_data_wetdry_macro()}},

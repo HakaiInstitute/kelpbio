@@ -64,7 +64,7 @@ Fit a calibration of in situ survey biomass on drone canopy cover for
 \emph{Nereocystis luetkeana} via Stan.
 }
 \details{
-\code{data} is the output of \code{\link[=kb_predict_biomass_survey]{kb_predict_biomass_survey()}} with its defaults: wet
+\code{data} is the output of \code{\link[=kb_predict_biomass_in_situ]{kb_predict_biomass_in_situ()}} with its defaults: wet
 biomass per m² of each in situ survey, with the survey's drone cover on its
 row. Each survey with drone cover is one observation; surveys without it
 are not fitted, and a message gives their number. The calibration takes each
@@ -106,10 +106,10 @@ Check convergence with \code{\link[=kb_converged]{kb_converged()}}, \code{\link[
 # A pre-fit example model is included with the package:
 tidy(fit_cover_calibration_sim_nereo)
 \dontshow{if (interactive()) withAutoprint(\{ # examplesIf}
-biomass <- kb_predict_biomass_survey(
+biomass <- kb_predict_biomass_in_situ(
   fit_weight_sim_nereo,
   fit_size_sim_nereo,
-  data_survey_sim_nereo
+  data_in_situ_sim_nereo
 )
 fit <- kb_fit_cover_calibration_nereo(biomass)
 tidy(fit)

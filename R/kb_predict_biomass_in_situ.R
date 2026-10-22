@@ -32,7 +32,7 @@
 #'   [kb_check_data_size_census_nereo()] and
 #'   [kb_check_data_size_census_macro()] for the columns).
 #' @param survey A data frame of in situ surveys, one row per survey (see
-#'   [kb_check_data_survey()] for the columns).
+#'   [kb_check_data_in_situ()] for the columns).
 #' @param per_area A flag specifying whether to give biomass per m² of the
 #'   surveyed area, or else the biomass in that area.
 #' @param n_plants A whole number of sizes averaged per draw to compute the
@@ -57,30 +57,30 @@
 #' @examples
 #' # Tallied plants, sizes from a size fit
 #' set.seed(1)
-#' kb_predict_biomass_survey(
+#' kb_predict_biomass_in_situ(
 #'   fit_weight_sim_nereo,
 #'   fit_size_sim_nereo,
-#'   data_survey_sim_nereo
+#'   data_in_situ_sim_nereo
 #' )
 #'
 #' # A site the weight fit has no data for, weighed like a fitted site
 #' set.seed(1)
-#' kb_predict_biomass_survey(
+#' kb_predict_biomass_in_situ(
 #'   fit_weight_sim_nereo,
 #'   fit_size_sim_nereo,
-#'   subset(data_survey_sim_nereo, site == "fog_islet"),
+#'   subset(data_in_situ_sim_nereo, site == "fog_islet"),
 #'   representative_site = list(weight = "otter_cove")
 #' )
 #'
 #' # Every counted plant measured
 #' set.seed(1)
-#' kb_predict_biomass_survey(
+#' kb_predict_biomass_in_situ(
 #'   fit_weight_sim_macro,
 #'   data_size_census_sim_macro,
-#'   data_survey_sim_macro,
+#'   data_in_situ_sim_macro,
 #'   pool_by = c("site", "year")
 #' )
-kb_predict_biomass_survey <- function(
+kb_predict_biomass_in_situ <- function(
   weight,
   size,
   survey,

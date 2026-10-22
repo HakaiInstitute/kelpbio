@@ -4,7 +4,7 @@
 #' *Macrocystis pyrifera* via Stan.
 #'
 #' @details
-#' `data` is the output of [kb_predict_biomass_survey()] with its defaults: wet
+#' `data` is the output of [kb_predict_biomass_in_situ()] with its defaults: wet
 #' biomass per m² of each in situ survey, with the survey's drone cover on its
 #' row. Each survey with drone cover is one observation; surveys without it
 #' are not fitted, and a message gives their number. The calibration takes each
@@ -52,10 +52,10 @@
 #' # A pre-fit example model is included with the package:
 #' tidy(fit_cover_calibration_sim_macro)
 #' @examplesIf interactive()
-#' biomass <- kb_predict_biomass_survey(
+#' biomass <- kb_predict_biomass_in_situ(
 #'   fit_weight_sim_macro,
 #'   data_size_census_sim_macro,
-#'   data_survey_sim_macro
+#'   data_in_situ_sim_macro
 #' )
 #' fit <- kb_fit_cover_calibration_macro(biomass)
 #' tidy(fit)

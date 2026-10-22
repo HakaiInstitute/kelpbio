@@ -47,7 +47,7 @@ A draws-by-observations (\verb{D x N}) matrix.
 }
 \description{
 Draws from the posterior predictive distribution: replicate responses
-(weights, plant sizes, dry:wet ratios, carbon fractions, or survey biomass)
+(weights, plant sizes, dry:wet ratios, carbon fractions, or in situ survey biomass)
 carrying both parameter uncertainty and observation noise from the model's
 likelihood. With \code{new_data = NULL} the replicates are at the observed data,
 as plotted by \link[=pp_check.kb_fit]{pp_check()}.

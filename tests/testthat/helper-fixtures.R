@@ -47,7 +47,7 @@ local_fit_stan_stub <- function(fit, env = parent.frame()) {
   )
 }
 
-# Survey biomass rows as kb_predict_biomass_survey() returns them: drone columns
+# Survey biomass rows as kb_predict_biomass_in_situ() returns them: drone columns
 # and a column of draws with the given means and SDs (an SD of 0 gives a fixed
 # value, such as an empty survey's 0).
 survey_biomass <- function(

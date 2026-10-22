@@ -623,10 +623,10 @@
 }
 
 # The calibration data shared by both species: survey biomass from
-# kb_predict_biomass_survey() with each survey's drone cover on its row.
+# kb_predict_biomass_in_situ() with each survey's drone cover on its row.
 .chk_cover_calibration_data <- function(data, x_name, call = rlang::caller_env()) {
   chk::chk_data(data, x_name = x_name)
-  hint <- "Use the output of {.fn kb_predict_biomass_survey} with its defaults: wet biomass per m\u00b2, one row per survey."
+  hint <- "Use the output of {.fn kb_predict_biomass_in_situ} with its defaults: wet biomass per m\u00b2, one row per survey."
   if (!"biomass_kg_m2" %in% names(data)) {
     cli::cli_abort(
       c("{x_name} must have a {.field biomass_kg_m2} column.", i = hint),

@@ -1,6 +1,6 @@
 # Build fit_cover_calibration_sim_macro, a slim pre-fit cover calibration model
 # for runnable examples and tests. Fitted to the survey biomass from
-# fit_weight_sim_macro, data_size_census_sim_macro, and data_survey_sim_macro, with reduced chains
+# fit_weight_sim_macro, data_size_census_sim_macro, and data_in_situ_sim_macro, with reduced chains
 # and draws so the object stays small; its size is set by the draw count alone,
 # since no per-observation quantities are stored. Not for inference.
 # Reproducibility comes from set.seed() for the survey biomass and the sampler
@@ -15,10 +15,10 @@
 devtools::load_all(quiet = TRUE)
 
 set.seed(42)
-biomass <- kb_predict_biomass_survey(
+biomass <- kb_predict_biomass_in_situ(
   fit_weight_sim_macro,
   data_size_census_sim_macro,
-  data_survey_sim_macro,
+  data_in_situ_sim_macro,
   progress = "none"
 )
 

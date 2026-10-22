@@ -49,7 +49,7 @@ reference:
     - kb_check_data_carbon_macro
     - kb_check_data_cover_calibration_nereo
     - kb_check_data_cover_calibration_macro
-    - kb_check_data_survey
+    - kb_check_data_in_situ
     - kb_check_data_size_census_nereo
     - kb_check_data_size_census_macro
     - kb_check_data_canopy
@@ -63,8 +63,8 @@ reference:
     - data_wetdry_sim_macro
     - data_carbon_sim_nereo
     - data_carbon_sim_macro
-    - data_survey_sim_nereo
-    - data_survey_sim_macro
+    - data_in_situ_sim_nereo
+    - data_in_situ_sim_macro
     - data_size_census_sim_macro
     - data_canopy_sim_nereo
     - data_canopy_sim_macro
@@ -87,7 +87,7 @@ reference:
     - kb_predict_carbon
     - kb_predict_cover_calibration
     - kb_predict_mean_weight
-    - kb_predict_biomass_survey
+    - kb_predict_biomass_in_situ
     - kb_predict_biomass_canopy
     - kb_plot_predictions
 - title: "Fit summaries and diagnostics"

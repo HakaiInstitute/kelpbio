@@ -123,7 +123,7 @@ kb_predict_weight(fit, plants)                             # your own rows
   mean of the size distribution). The distribution itself is reached through
   `posterior_predict()`; mean plant weight draws from it per draw rather than
   through a prediction verb.
-- Derived verbs (`kb_predict_mean_weight()`, `kb_predict_biomass_survey()`,
+- Derived verbs (`kb_predict_mean_weight()`, `kb_predict_biomass_in_situ()`,
   `kb_predict_biomass_canopy()`) combine fits with the user's data and are named
   for what the biomass estimate covers, not for a model. They return their
   response as an `rvar` column next to the summary, so one verb's output feeds

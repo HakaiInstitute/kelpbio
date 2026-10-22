@@ -700,15 +700,15 @@ kb_predict_carbon(kb_fit_carbon_macro(data_carbon_sim_macro))
 # with partial plants as half). A survey paired with a drone flight also carries plot_area_m2,
 # canopy_area_m2, and tide_height_m.
 
-str(data_survey_sim_nereo)
-kb_check_data_survey(data_survey_sim_nereo)
-kb_check_data_survey(data_survey_sim_macro, data_size_census_sim_macro)
+str(data_in_situ_sim_nereo)
+kb_check_data_in_situ(data_in_situ_sim_nereo)
+kb_check_data_in_situ(data_in_situ_sim_macro, data_size_census_sim_macro)
 kb_check_data_size_census_macro(data_size_census_sim_macro)
 # a numeric year is accepted; a repeated survey_id, or a tally next to a size
 # census: errors
-kb_check_data_survey(mutate(data_survey_sim_nereo, year = as.integer(as.character(year))))
-try(kb_check_data_survey(rbind(data_survey_sim_nereo, data_survey_sim_nereo[1, ])))
-try(kb_check_data_survey(data_survey_sim_nereo, data_size_census_sim_macro))
+kb_check_data_in_situ(mutate(data_in_situ_sim_nereo, year = as.integer(as.character(year))))
+try(kb_check_data_in_situ(rbind(data_in_situ_sim_nereo, data_in_situ_sim_nereo[1, ])))
+try(kb_check_data_in_situ(data_in_situ_sim_nereo, data_size_census_sim_macro))
 
 # mean plant weight of each site-year from the weight and size fits; new
 # site-years are sampled by default (every row is a particular site-year)
@@ -724,60 +724,60 @@ kb_predict_mean_weight(
 
 # survey biomass per m2 of the surveyed area, one row per survey, with its draws
 set.seed(1)
-biomass_n <- kb_predict_biomass_survey(
+biomass_n <- kb_predict_biomass_in_situ(
   fit_weight_sim_nereo,
   fit_size_sim_nereo,
-  data_survey_sim_nereo
+  data_in_situ_sim_nereo
 )
 biomass_n
-biomass_m <- kb_predict_biomass_survey(
+biomass_m <- kb_predict_biomass_in_situ(
   fit_weight_sim_macro,
   data_size_census_sim_macro,
-  data_survey_sim_macro
+  data_in_situ_sim_macro
 )
 # pooled by site-year (total kg over total area), or kg in the surveyed area
-kb_predict_biomass_survey(
+kb_predict_biomass_in_situ(
   fit_weight_sim_macro,
   data_size_census_sim_macro,
-  data_survey_sim_macro,
+  data_in_situ_sim_macro,
   pool_by = c("site", "year")
 ) |>
   kb_plot_predictions()
-kb_predict_biomass_survey(
+kb_predict_biomass_in_situ(
   fit_weight_sim_macro,
   data_size_census_sim_macro,
-  data_survey_sim_macro,
+  data_in_situ_sim_macro,
   per_area = FALSE
 )
 # carbon per m2 (g C/m2)
-kb_predict_biomass_survey(
+kb_predict_biomass_in_situ(
   fit_weight_sim_macro,
   data_size_census_sim_macro,
-  data_survey_sim_macro,
+  data_in_situ_sim_macro,
   fit_wetdry_sim_macro,
   fit_carbon_sim_macro,
   measure = "carbon"
 )
 # fits of different species: an error
-try(kb_predict_biomass_survey(
+try(kb_predict_biomass_in_situ(
   fit_weight_sim_nereo,
   data_size_census_sim_macro,
-  data_survey_sim_macro
+  data_in_situ_sim_macro
 ))
 
 # representative_site: a vector applies to every fit and must be in each; a
 # list names the sites per fit. fog_islet is in the size fit but not the
 # weight fit, so its weight_support is "year".
-survey_fog <- filter(data_survey_sim_nereo, site == "fog_islet")
+survey_fog <- filter(data_in_situ_sim_nereo, site == "fog_islet")
 setdiff(fit_size_sim_nereo$meta$site_levels, fit_weight_sim_nereo$meta$site_levels)
 set.seed(1)
-kb_predict_biomass_survey(
+kb_predict_biomass_in_situ(
   fit_weight_sim_nereo,
   fit_size_sim_nereo,
   survey_fog
 ) # weight effect sampled: wider intervals
 set.seed(1)
-kb_predict_biomass_survey(
+kb_predict_biomass_in_situ(
   fit_weight_sim_nereo,
   fit_size_sim_nereo,
   survey_fog,
@@ -791,22 +791,22 @@ kb_predict_mean_weight(
 ) # several sites: their effects averaged per draw
 # a vector must be in both fits; a list must name weight and/or size; a size
 # census has no site effects to stand in for
-try(kb_predict_biomass_survey(
+try(kb_predict_biomass_in_situ(
   fit_weight_sim_nereo,
   fit_size_sim_nereo,
   survey_fog,
   representative_site = "fog_islet"
 ))
-try(kb_predict_biomass_survey(
+try(kb_predict_biomass_in_situ(
   fit_weight_sim_nereo,
   fit_size_sim_nereo,
   survey_fog,
   representative_site = list("otter_cove")
 ))
-try(kb_predict_biomass_survey(
+try(kb_predict_biomass_in_situ(
   fit_weight_sim_macro,
   data_size_census_sim_macro,
-  data_survey_sim_macro,
+  data_in_situ_sim_macro,
   representative_site = list(size = "seal_ledge")
 ))
 
@@ -865,7 +865,7 @@ try(kb_predict_mean_weight(fit_weight_coastwide_nereo, fit_size_sim_nereo))
 # =============================================================================
 # COVER CALIBRATION MODELS
 # =============================================================================
-# The calibration takes survey biomass from kb_predict_biomass_survey() with
+# The calibration takes survey biomass from kb_predict_biomass_in_situ() with
 # its defaults. Each survey with drone cover is one observation; the others are
 # left out with a message. Biomass is a floor plus a term proportional to
 # tide-corrected cover, Normal censored at zero, with an SD combining a

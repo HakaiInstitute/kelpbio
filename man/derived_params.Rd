@@ -44,6 +44,6 @@ draws column (see \code{vignette("advanced")}).}
 }
 \description{
 Parameter descriptions shared by \code{\link[=kb_predict_mean_weight]{kb_predict_mean_weight()}},
-\code{\link[=kb_predict_biomass_survey]{kb_predict_biomass_survey()}}, and \code{\link[=kb_predict_biomass_canopy]{kb_predict_biomass_canopy()}}.
+\code{\link[=kb_predict_biomass_in_situ]{kb_predict_biomass_in_situ()}}, and \code{\link[=kb_predict_biomass_canopy]{kb_predict_biomass_canopy()}}.
 }
 \keyword{internal}

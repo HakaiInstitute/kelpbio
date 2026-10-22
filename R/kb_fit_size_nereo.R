@@ -11,6 +11,11 @@
 #' year_effect + site_year_effect`, so `intercept` is the log expected
 #' diameter at a typical site and year.
 #'
+#' Plants grow through the season and the model has no month effect, so
+#' plants measured in different months of a site-year are pooled into one
+#' distribution. To estimate sizes for the peak season, fit the model to plants
+#' measured in the peak season only.
+#'
 #' @inheritSection params Sampling
 #' @inheritSection params Site and year interaction
 #' @inheritParams kb_fit_weight_nereo

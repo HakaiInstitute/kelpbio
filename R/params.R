@@ -24,9 +24,9 @@
 #' The site:year effect lets each site depart from the year-to-year pattern
 #' shared by all sites, so a site can have a good year while others have a poor
 #' one. Separating it from the site and year effects needs at least one site
-#' surveyed in more than one year and at least one year with more than one
+#' with data in more than one year and at least one year with more than one
 #' site. Without that, as with data from a single year, the fit warns:
-#' estimates for the surveyed site-years are unaffected, but the site or year
+#' estimates for the site-years in the data are unaffected, but the site or year
 #' effects, and predictions for other site-years or new sites and years, depend
 #' on the `sd_site_year` prior. Use [kb_sensitivity()] to check how much they
 #' do.
@@ -97,7 +97,7 @@ params <- function(...) NULL
 #' Parameter Descriptions for the Derived Verbs
 #'
 #' Parameter descriptions shared by [kb_predict_mean_weight()],
-#' [kb_predict_biomass_survey()], and [kb_predict_biomass_canopy()].
+#' [kb_predict_biomass_in_situ()], and [kb_predict_biomass_canopy()].
 #'
 #' @param weight A `kb_fit_weight` object.
 #' @param wetdry A `kb_fit_wetdry` object, required for dry and carbon biomass,
@@ -136,7 +136,7 @@ derived_params <- function(...) NULL
 #' Parameter Descriptions for the Two-Fit Derived Verbs
 #'
 #' Parameter descriptions shared by [kb_predict_mean_weight()] and
-#' [kb_predict_biomass_survey()].
+#' [kb_predict_biomass_in_situ()].
 #'
 #' @param representative_site A character vector of sites whose effects a new
 #'   site takes in every fit (averaged when several are named), a list naming

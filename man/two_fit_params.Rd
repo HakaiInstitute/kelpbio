@@ -11,6 +11,6 @@ follows \code{new_levels}, or \code{NULL} (the default) to follow \code{new_leve
 }
 \description{
 Parameter descriptions shared by \code{\link[=kb_predict_mean_weight]{kb_predict_mean_weight()}} and
-\code{\link[=kb_predict_biomass_survey]{kb_predict_biomass_survey()}}.
+\code{\link[=kb_predict_biomass_in_situ]{kb_predict_biomass_in_situ()}}.
 }
 \keyword{internal}

@@ -154,7 +154,7 @@ Other prediction functions:
 \code{\link[=autoplot.kb_predictions]{autoplot.kb_predictions()}},
 \code{\link[=kb_new_data]{kb_new_data()}},
 \code{\link[=kb_plot_predictions]{kb_plot_predictions()}},
-\code{\link[=kb_predict_biomass_survey]{kb_predict_biomass_survey()}},
+\code{\link[=kb_predict_biomass_in_situ]{kb_predict_biomass_in_situ()}},
 \code{\link[=kb_predict_carbon]{kb_predict_carbon()}},
 \code{\link[=kb_predict_cover_calibration]{kb_predict_cover_calibration()}},
 \code{\link[=kb_predict_mean_weight]{kb_predict_mean_weight()}},

@@ -11,7 +11,7 @@ test_that("rows without drone cover and extra columns pass", {
   expect_silent(kb_check_data_cover_calibration_nereo(data))
 })
 
-test_that("data without biomass draws errors, pointing to kb_predict_biomass_survey()", {
+test_that("data without biomass draws errors, pointing to kb_predict_biomass_in_situ()", {
   data <- survey_biomass()
   expect_snapshot(
     kb_check_data_cover_calibration_nereo(data[setdiff(names(data), "biomass_kg_m2")]),
@@ -50,5 +50,5 @@ test_that("x_name must be a string", {
 
 test_that("summed survey biomass errors, pointing to the defaults", {
   summed <- survey_biomass()[c("site", "year", "biomass_kg_m2")]
-  expect_error(kb_check_data_cover_calibration_nereo(summed), "kb_predict_biomass_survey")
+  expect_error(kb_check_data_cover_calibration_nereo(summed), "kb_predict_biomass_in_situ")
 })

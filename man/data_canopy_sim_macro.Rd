@@ -7,8 +7,8 @@
 \format{
 A data frame with columns:
 \describe{
-\item{site}{Survey site, a factor (12 levels).}
-\item{year}{Survey year, a factor (5 levels).}
+\item{site}{Site, a factor (12 levels).}
+\item{year}{Year, a factor (5 levels).}
 \item{canopy_area_m2}{Canopy mapped within the site (m²).}
 \item{tide_height_m}{Tide height at the flight (m).}
 \item{classified_area_m2}{Water area the canopy classification covered
@@ -30,10 +30,10 @@ Other example datasets:
 \code{\link{data_canopy_sim_nereo}},
 \code{\link{data_carbon_sim_macro}},
 \code{\link{data_carbon_sim_nereo}},
+\code{\link{data_in_situ_sim_macro}},
+\code{\link{data_in_situ_sim_nereo}},
 \code{\link{data_size_census_sim_macro}},
 \code{\link{data_size_sample_sim_nereo}},
-\code{\link{data_survey_sim_macro}},
-\code{\link{data_survey_sim_nereo}},
 \code{\link{data_weight_sim_macro}},
 \code{\link{data_weight_sim_nereo}},
 \code{\link{data_wetdry_sim_macro}},

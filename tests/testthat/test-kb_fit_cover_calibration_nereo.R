@@ -3,8 +3,8 @@ input <- function() calibration_input(cover_calibration_nereo_fit)
 test_that("kb_fit_cover_calibration_nereo returns a correctly-structured object", {
   skip_on_cran()
   withr::local_seed(1)
-  survey <- subset(data_survey_sim_nereo, as.integer(site) <= 4)
-  biomass <- kb_predict_biomass_survey(
+  survey <- subset(data_in_situ_sim_nereo, as.integer(site) <= 4)
+  biomass <- kb_predict_biomass_in_situ(
     fit_weight_sim_nereo,
     fit_size_sim_nereo,
     survey,
