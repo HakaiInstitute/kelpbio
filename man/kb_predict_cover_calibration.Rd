@@ -56,7 +56,9 @@ a single estimate, such as \code{median} or \code{mean}.}
 \value{
 A \code{kb_predictions} object: the rows of \code{new_data} with added
 \code{estimate}, \code{lower}, and \code{upper} columns summarising the posterior
-distribution of the expected wet biomass per m² of plot.
+distribution of the expected wet biomass per m² of plot. When the rows
+have \code{site} and \code{year}, a \code{cover_support} column (as in
+\code{\link[=kb_predict_biomass_canopy]{kb_predict_biomass_canopy()}}) precedes the summary.
 }
 \description{
 Predict the expected wet biomass (kg/m²) of a plot from its drone canopy

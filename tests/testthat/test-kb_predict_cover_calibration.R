@@ -26,6 +26,7 @@ test_that("predictions are returned at the supplied rows", {
       "tide_height_m",
       "site",
       "year",
+      "cover_support",
       "estimate",
       "lower",
       "upper"

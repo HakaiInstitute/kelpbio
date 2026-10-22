@@ -47,7 +47,8 @@
 #'   `carbon_biomass_g_m2` per m², and `biomass_kg`, `dry_biomass_kg`, or
 #'   `carbon_biomass_kg` in total), and
 #'   `estimate`, `lower`, and `upper`; with `pool_by`, one row per group with its
-#'   `pool_by` columns, the draws, and the summary.
+#'   `pool_by` columns, the support columns when `pool_by` includes `site` and
+#'   `year`, the draws, and the summary.
 #' @family prediction functions
 #' @seealso [kb_fit_cover_calibration_nereo()] to calibrate drone cover on the
 #'   result.
@@ -150,10 +151,6 @@ kb_predict_biomass_survey <- function(
     pool_by <- unique(pool_by)
   }
   grid <- dplyr::relocate(grid, "year", .after = "site")
-  grid$weight_support <- data_support(weight, grid$site, grid$year)
-  if (!census) {
-    grid$size_support <- data_support(size, grid$site, grid$year)
-  }
 
   kg <- if (census) {
     census_biomass_draws(weight, size, grid, new_levels, representative_site, progress)
@@ -182,6 +179,10 @@ kb_predict_biomass_survey <- function(
     grid <- pooled$groups
     draws <- pooled$draws
     group_vars <- pool_by
+  }
+  grid <- with_support(grid, weight)
+  if (!census) {
+    grid <- with_support(grid, size)
   }
   summarise_draws_rows(
     grid,

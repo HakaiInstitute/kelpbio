@@ -21,7 +21,7 @@ predict_rows <- function(
   )
   summarise_predictions(
     fit,
-    res$grid,
+    with_support(res$grid, fit),
     res$linpred,
     res$group_vars,
     conf_level = conf_level,

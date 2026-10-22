@@ -23,7 +23,9 @@
 #'
 #' @returns A `kb_predictions` object: the rows of `new_data` with added
 #'   `estimate`, `lower`, and `upper` columns summarising the posterior
-#'   distribution of expected size.
+#'   distribution of expected size. When the rows have `site` and `year`, a
+#'   `size_support` column (as in [kb_predict_mean_weight()]) precedes the
+#'   summary.
 #' @family prediction functions
 #' @seealso [kb_new_data()] to build rows by site or year, and
 #'   [posterior_predict()] for draws of individual plant sizes.

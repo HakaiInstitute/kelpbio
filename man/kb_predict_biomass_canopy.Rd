@@ -82,7 +82,8 @@ A \code{kb_predictions} object. Without \code{pool_by}, the rows of \code{new_da
 draws of the total in a column named for it (\code{biomass_kg},
 \code{dry_biomass_kg}, or \code{carbon_biomass_kg}), and \code{estimate},
 \code{lower}, and \code{upper}; with \code{pool_by}, one row per group with its \code{pool_by}
-columns, the draws, and the summary.
+columns, \code{cover_support} when \code{pool_by} includes \code{site} and \code{year}, the
+draws, and the summary.
 }
 \description{
 Predict the biomass over each row's drone-mapped canopy from a cover

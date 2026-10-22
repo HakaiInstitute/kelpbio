@@ -127,6 +127,15 @@ test_that("missing, invalid, and mismatched inputs error", {
   expect_error(kb_predict_biomass_canopy(fit, surveys()[0, ]), "at least one row")
 })
 
+test_that("pooling by site and year keeps cover_support", {
+  p <- kb_predict_biomass_canopy(
+    cover_calibration_nereo_fit,
+    surveys(),
+    pool_by = c("site", "year")
+  )
+  expect_identical(p$cover_support, rep("site, year", 3))
+})
+
 test_that("a repeated pool_by column pools as if named once", {
   fit <- cover_calibration_nereo_fit
   withr::local_seed(1)
