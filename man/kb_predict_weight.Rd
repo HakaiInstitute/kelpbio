@@ -55,7 +55,9 @@ a single estimate, such as \code{median} or \code{mean}.}
 \value{
 A \code{kb_predictions} object: the rows of \code{new_data} with added
 \code{estimate}, \code{lower}, and \code{upper} columns summarising the posterior
-distribution of expected weight.
+distribution of expected weight. When the rows have \code{site} and \code{year}, a
+\code{weight_support} column (as in \code{\link[=kb_predict_mean_weight]{kb_predict_mean_weight()}}) precedes the
+summary.
 }
 \description{
 Predict the expected wet weight (kg) of a plant at each row of \code{new_data}, or

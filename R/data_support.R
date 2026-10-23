@@ -21,3 +21,19 @@ cover_support <- function(fit, site, year) {
   support[support == "site-year"] <- "site, year"
   support
 }
+
+# Adds the fit's support column (`weight_support`, `size_support`, or
+# `cover_support`) when the rows name both a site and a year.
+with_support <- function(grid, fit) {
+  if (!all(c("site", "year") %in% names(grid))) {
+    return(grid)
+  }
+  if (inherits(fit, "kb_fit_cover_calibration")) {
+    grid$cover_support <- cover_support(fit, grid$site, grid$year)
+  } else if (inherits(fit, "kb_fit_weight")) {
+    grid$weight_support <- data_support(fit, grid$site, grid$year)
+  } else {
+    grid$size_support <- data_support(fit, grid$site, grid$year)
+  }
+  grid
+}

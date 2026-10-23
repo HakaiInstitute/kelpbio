@@ -102,7 +102,8 @@ biomass in a column named for it (\code{biomass_kg_m2}, \code{dry_biomass_kg_m2}
 \code{carbon_biomass_g_m2} per m², and \code{biomass_kg}, \code{dry_biomass_kg}, or
 \code{carbon_biomass_kg} in total), and
 \code{estimate}, \code{lower}, and \code{upper}; with \code{pool_by}, one row per group with its
-\code{pool_by} columns, the draws, and the summary.
+\code{pool_by} columns, the support columns when \code{pool_by} includes \code{site} and
+\code{year}, the draws, and the summary.
 }
 \description{
 Combine a weight fit with the plants counted by each in situ survey into

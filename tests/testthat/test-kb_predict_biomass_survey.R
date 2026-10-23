@@ -160,7 +160,14 @@ test_that("pool_by pools surveys as total kg over total area", {
     weight_macro_fit, data_size_census_sim_macro, data_survey_sim_macro,
     pool_by = c("site", "year"), progress = "none"
   )
-  expect_named(pooled, c("site", "year", "biomass_kg_m2", "estimate", "lower", "upper"))
+  expect_named(
+    pooled,
+    c("site", "year", "weight_support", "biomass_kg_m2", "estimate", "lower", "upper")
+  )
+  expect_identical(
+    pooled$weight_support,
+    data_support(weight_macro_fit, pooled$site, pooled$year)
+  )
   key <- paste(rows$site, rows$year)
   k <- key[1]
   draws <- posterior::draws_of(rows$biomass_kg)[, key == k, drop = FALSE]
@@ -314,6 +321,7 @@ test_that("pool_by sums kg on the draws when per_area is FALSE", {
   rows <- do.call(kb_predict_biomass_survey, args)
   pooled <- do.call(kb_predict_biomass_survey, c(args, list(pool_by = "site")))
   expect_identical(attr(pooled, "kb_response"), "biomass_kg")
+  expect_false("weight_support" %in% names(pooled))
   draws <- posterior::draws_of(rows$biomass_kg)
   for (s in as.character(pooled$site)) {
     expect_equal(

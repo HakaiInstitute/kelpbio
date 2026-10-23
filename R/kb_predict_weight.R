@@ -15,7 +15,9 @@
 #'
 #' @returns A `kb_predictions` object: the rows of `new_data` with added
 #'   `estimate`, `lower`, and `upper` columns summarising the posterior
-#'   distribution of expected weight.
+#'   distribution of expected weight. When the rows have `site` and `year`, a
+#'   `weight_support` column (as in [kb_predict_mean_weight()]) precedes the
+#'   summary.
 #' @family prediction functions
 #' @seealso [kb_new_data()] to build rows by site or year over a predictor
 #'   sequence, and [posterior_predict()] for draws of individual plant weights.

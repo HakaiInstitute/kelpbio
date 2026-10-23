@@ -9,7 +9,7 @@ context: |
   Homes (one fact, one home; see openspec/workflow.md):
   - openspec/specs/: observable behaviour (fitting, predictions, summaries).
   - code, tests, snapshots: the exact models, outputs, parameter and prior lists.
-  - CLAUDE.md: coding, testing, and documentation conventions.
+  - .claude/CLAUDE.md: coding, testing, and documentation conventions.
   - decisions/: rationale that outlives a change.
   - a change's design.md: rationale for that change.
 

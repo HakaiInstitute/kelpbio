@@ -8,7 +8,9 @@
 .RProfile
 .httr-oauth
 
-.claude/
+.claude/*
+!.claude/CLAUDE.md
+!.claude/STYLE.md
 
 *.html
 # but keep the pkgdown navbar template (a tracked source file, not rendered output)

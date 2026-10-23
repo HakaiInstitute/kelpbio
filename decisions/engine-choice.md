@@ -41,7 +41,7 @@ motivates cmdstanr does not bite.
 
 - Recompile is triggered by editing a `.stan` file, upgrading rstan/StanHeaders,
   or changing `Makevars`. `devtools::load_all()` does not pick up Stan changes;
-  use `devtools::install()`. (The working rules are in `CLAUDE.md`.)
+  use `devtools::install()`. (The working rules are in `.claude/CLAUDE.md`.)
 - Runtime flexibility comes from priors-as-data, binary structural flags, and
   separate Stan files per major variant. Species is one such variant axis: each
   species gets its own `.stan` and its own `kb_fit_<model>_<species>()` wrapper

@@ -24,7 +24,9 @@
 #'
 #' @returns A `kb_predictions` object: the rows of `new_data` with added
 #'   `estimate`, `lower`, and `upper` columns summarising the posterior
-#'   distribution of the expected wet biomass per m² of plot.
+#'   distribution of the expected wet biomass per m² of plot. When the rows
+#'   have `site` and `year`, a `cover_support` column (as in
+#'   [kb_predict_biomass_canopy()]) precedes the summary.
 #' @family prediction functions
 #' @seealso [kb_new_data()] to build rows by site or year over tide-corrected
 #'   cover.

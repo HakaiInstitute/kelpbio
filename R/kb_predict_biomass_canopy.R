@@ -46,7 +46,8 @@
 #'   draws of the total in a column named for it (`biomass_kg`,
 #'   `dry_biomass_kg`, or `carbon_biomass_kg`), and `estimate`,
 #'   `lower`, and `upper`; with `pool_by`, one row per group with its `pool_by`
-#'   columns, the draws, and the summary.
+#'   columns, `cover_support` when `pool_by` includes `site` and `year`, the
+#'   draws, and the summary.
 #' @references Timmer, B., Reshitnyk, L. Y., Hessing-Lewis, M., Juanes, F.,
 #'   Gendall, L., and Costa, M. (2024). Capturing accurate kelp canopy extent:
 #'   integrating tides, currents, and species-level morphology in kelp remote
@@ -129,7 +130,6 @@ kb_predict_biomass_canopy <- function(
     measure_factor(measure, wetdry, carbon)
 
   if (is.null(pool_by)) {
-    grid$cover_support <- cover_support(fit, grid$site, grid$year)
     group_vars <- .group_vars()
   } else {
     pooled <- pool_draws_by(grid, draws, pool_by)
@@ -138,6 +138,7 @@ kb_predict_biomass_canopy <- function(
     draws <- pooled$draws
     group_vars <- pool_by
   }
+  grid <- with_support(grid, fit)
   summarise_draws_rows(
     grid,
     posterior::rvar(draws, nchains = posterior::nchains(fit$draws)),

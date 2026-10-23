@@ -16,8 +16,6 @@
 ^README\.Rmd$
 ^openspec$
 ^\.claude$
-^CLAUDE\.md$
-^STYLE\.md$
 ^jarl\.toml$
 ^[.]?air[.]toml$
 ^\.vscode$
