@@ -22,7 +22,7 @@ pattern. kelpbio does not use that: each fit lists its terms explicitly.
 Every parameter takes a readable snake_case name, chosen by fixed rules rather
 than case by case, and every prior entry takes the name of the parameter it
 sets. Stan data fields that pass an input column through take the column's
-name. The rules are in CLAUDE.md ("Parameter names", "Stan data names").
+name. The rules are below.
 
 The rules apply even where no name would collide (`diameter_power`, not
 `power`), so a new sub-model's names follow from the rules and the names stay
@@ -35,6 +35,22 @@ because `floor` is a Stan function.
 `dispersion` keeps kelpbio's direction (variance `mu + dispersion * mu^2`, zero
 for the Poisson), which matches Stan's naming of phi as the precision and the
 `theta` of the extras package; MASS and glmmTMB name the inverse quantity.
+
+
+## Rules
+
+Parameter names are snake_case, applied by rule even where nothing would collide:
+
+1. The intercept of a linear predictor is `intercept`.
+2. A parameter tied to a predictor is `<predictor>_<role>`, `<predictor>` being the Stan data field it acts on without its unit suffix: `<predictor>_slope` for a coefficient (`fronds_slope`, `tide_height_slope`, `cover_slope`), `<predictor>_power` for an exponent (`diameter_power`).
+3. Group-level terms are `sd_<group>`, `<group>_effect`, and `z_<group>` (non-centred deviates) for `site`, `year`, and `site_year`.
+4. Distribution parameters take their standard names: `shape`, `dispersion` (negative binomial, variance `mu + dispersion * mu^2`), `precision` (Beta), `sd_residual`.
+5. A floor is `<quantity>_floor` (`weight_floor`, `biomass_floor`).
+6. Link-scale terms of a linear predictor take no scale prefix; a standalone scalar stored on a transformed scale takes `log_` or `logit_` (`logit_zero_inflation`).
+7. No parameter shares a name with a data field, an input column, a Stan reserved word (`lower`, `upper`, `offset`, `multiplier`, `target`), or a Stan function (`floor`, `gamma`, `beta`, `log`, `exp`).
+8. A parameter's prior entry in `kb_priors_*()` has the parameter's name.
+
+Stan data names: a field passing an input column through takes the column's name (`diameter_mm`, `area_m2`, `tide_height_m`); a derived field is named for its quantity (`log_biomass`, `dry_wet_ratio`); sizes are `n_obs`, `n_site`, `n_year`; flags keep `<effect>_on`.
 
 ## Alternatives considered
 

@@ -141,3 +141,11 @@ test_that("representative_site can name sites for the weight fit only", {
     error = TRUE
   )
 })
+
+test_that("mean weight predictions match their snapshot", {
+  withr::local_seed(1)
+  expect_snapshot_data(
+    kb_predict_mean_weight(weight_nereo_fit, size_nereo_fit, progress = "none"),
+    "nereo"
+  )
+})

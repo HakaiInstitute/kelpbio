@@ -2,6 +2,22 @@
 
 R package for Bayesian kelp biomass estimation. All exported functions use the `kb_` prefix.
 
+## Repositories and issues
+
+- Development (branches, commits, pull requests) happens in the HakaiInstitute repo (`HakaiInstitute/kelpbio`), never in the poissonconsulting fork.
+- GitHub issues go in the poissonconsulting fork (`poissonconsulting/kelpbio`), not the HakaiInstitute repo, to keep them out of the client's repo. The fork is public, so its issues are still publicly visible: write nothing in them that should stay internal.
+- The fork does not track the HakaiInstitute repo: sync it only once in a while, as it mostly holds the issues.
+
+## Development workflow
+
+- New work goes on a new branch in the main checkout (`~/Code/HakaiInstitute/kelpbio`), not a worktree unless asked: the user reviews diffs and accepts snapshots there. Other sessions may share the checkout, so stage only the files this session changed and list any others instead of committing them.
+- Branches are stacked by default. Branch from the tip of the open PR stack (the open PR's branch that no other PR targets, from `gh pr list`) and confirm the tip before branching. When a change could stand apart from the stack, ask whether to stack it or base it on `dev`; never pick `dev` unasked. Each PR targets the branch below it, and only the bottom PR of a stack targets `dev`. Merge in stack order, retargeting each PR as its base merges.
+- Commit and push only when asked, to `origin`; a request to push includes the build and `jarl check .` below. Never amend a pushed commit. After a push, show the stack (PR, branch, base, CI) and update the title and description of every PR whose contents changed.
+- Before pushing, run `Rscript scripts/build.R` and `jarl check .`. CI runs R CMD check and jarl on every push to a PR, and lint is what fails most often: CI installs the latest jarl, so keep the local one current (`jarl --version`), and never assign inside a call (`out <- expect_no_warning(f())`, not `expect_no_warning(out <- f())`).
+- Planned work goes in an issue on `poissonconsulting/kelpbio`, not session memory, so the next session can find it.
+- Before opening or pushing a PR, scan the open issues (`gh issue list --repo poissonconsulting/kelpbio`, and the other two repos' forks for cross-repo work) for any the PR resolves, and list each in the PR description as `Closes poissonconsulting/kelpbio#<n>`. GitHub closes them only when the PR merges into the default branch, so a stacked PR's issues close once the stack reaches `main`; close any left open by hand after merging.
+- Draft vignettes, simulation and side-analysis scripts, and review exports (`review/`) are never committed; ask when unsure whether a new file belongs in history.
+
 ## Common Commands
 
 | Task | Command |
@@ -9,17 +25,24 @@ R package for Bayesian kelp biomass estimation. All exported functions use the `
 | Routine build + QC | `Rscript scripts/build.R` (runs `rstan_config()` → `install()` → `document()` → `test()`) |
 | Full check (slow) | `Rscript scripts/build.R --check` (`R CMD check` in place of `test()`, since check runs the tests) |
 | pkgdown site | `Rscript scripts/build.R --site` (CI builds the site and runs `R CMD check` on every PR, so neither is needed locally for routine work) |
-| Rebuild pre-fit objects + fixtures (slow, MCMC) | `Rscript scripts/build.R --fits` re-fits every `data/fit_*` (simulated) and `tests/testthat/fixtures/*.rds`; `--fits=size,wetdry` only those models'. Run after changing the fit object structure (all models) or a model (that model) |
+| Rebuild pre-fit objects + fixtures (slow, MCMC) | `Rscript scripts/build.R --fits` re-fits every `data/fit_*` (simulated) and `tests/testthat/fixtures/*.rds`; `--fits=size,wetdry` only those models' (when: see Tests or rebuilt fits) |
 | Run all tests | `devtools::test()` |
 | Run one test file | `testthat::test_file("tests/testthat/test-<name>.R")` or `devtools::test_active_file()` |
 | Document | `devtools::document()` |
 
 The build runs are also Positron/VS Code tasks (Command Palette > "Tasks: Run Task" > "kelpbio: ...", `.vscode/tasks.json`). Flags combine (`--fits=wetdry --check`); `--help` lists them.
 
-- **After editing any `inst/stan/*.stan` file**: run `rstantools::rstan_config()` (regenerates `src/stanExports_*` and `R/stanmodels.R`), then `devtools::install()`. `devtools::load_all()`/`test()` compile from the generated C++ but do NOT re-transpile the Stan source, so `.stan` edits are silently missed without `rstan_config()` first. A fit stores its Stan source (`kb_stancode()`), so any `.stan` edit, comments included, also means rebuilding the pre-fits and fixtures (`--fits`) in the same PR.
+- **After editing any `inst/stan/*.stan` file**: run `rstantools::rstan_config()` (regenerates `src/stanExports_*` and `R/stanmodels.R`), then `devtools::install()`. `devtools::load_all()`/`test()` compile from the generated C++ but do NOT re-transpile the Stan source, so `.stan` edits are silently missed without `rstan_config()` first. Then rebuild that model's fits (see Tests or rebuilt fits).
 - When a change removes exports, run `devtools::document()` before `devtools::install()`: install reads NAMESPACE and fails on exports that no longer exist.
 - Generated files (`R/stanmodels.R`, `src/stanExports_*`, `src/RcppExports.cpp`) are never hand-edited and are excluded from styling and linting.
-- **Linting** runs in CI via jarl (`.github/workflows/lint-with-jarl.yaml`, config `jarl.toml`); the build script does not lint.
+- `install()` writes to the user's library, which kelpbioshiny and kelpbiodata use: never build while the user's own build is running.
+
+## Tests or rebuilt fits
+
+- Any change: `Rscript scripts/build.R` runs the tests. It never refits.
+- Rebuild a model's pre-fit and test fixture (`--fits=<model>`) when its `.stan` file changes (comments included, as a fit stores its Stan source), when what its fit stores changes (data assembly, default priors, `meta`), or when the simulated data it is fitted to change. Rebuild all of them (`--fits`) when the shared fit object changes (`new_kb_fit()`, shared `meta` or diagnostics).
+- A refit is Stan MCMC: confirm before running one, unless it is part of a change the user approved, then report the snapshot diffs. A design that needs a refit is fine when it is better.
+- The same triggers mean kelpbiodata's reference fits need rebuilding, and a change to the simulated data means kelpbioshiny's example workbooks do.
 
 ## Where Things Live
 
@@ -35,15 +58,18 @@ The build runs are also Positron/VS Code tasks (Command Palette > "Tasks: Run Ta
 
 One fact, one home: behaviour in the specs, the exact models and outputs in code, tests, and snapshots, conventions here, lasting rationale in `decisions/`, per-change rationale in that change's `design.md`. When implementing any feature, read the corresponding analysis project script and Stan file first; the analysis project contains the final, validated model code that kelpbio adapts.
 
-## Change Workflow
+## Change Workflow (OpenSpec)
 
-Follow `openspec/workflow.md`. In addition:
+@openspec/workflow.md
 
-- **A change folder only for user-visible behaviour or model changes.** Fixes, refactors, tests, and docs go straight through, with `Spec impact: none` in the PR.
-- **Definition of done, all in the same PR:** code + tests green in CI, reader docs (roxygen / README / vignette) updated, specs and reader docs checked against the code, and the change archived. Do not defer archiving. Exception until the pending README and vignette pass lands: README and vignette updates wait for that one pass; roxygen, `_pkgdown.yml`, specs, and the demo scripts still update per PR.
-- **One open change per capability.** Two unarchived changes rewriting the same requirement regress the spec when the second is archived.
-- **Trust the test suite + green CI as the "done" signal**, not `tasks.md` checkboxes.
-- **Stacked PRs.** Each change gets its own branch and PR, based on the previous branch in the stack (the first bases on `dev`). Every PR must pass CI on its own before review is requested on the whole stack; merge in stack order, retargeting each PR to `dev` as its base merges.
+In addition:
+
+- **One change, one branch, one PR.** An OpenSpec change is proposed, implemented and archived (`openspec archive <name> --yes`) on its own branch in the stack, and archived before review is requested; never leave archiving to a later PR.
+- **README and vignettes wait** for the one pending pass over them; roxygen, `_pkgdown.yml`, specs and the demo scripts still update in each PR.
+- **Trust the test suite + green CI as the "done" signal**, not `tasks.md` checkboxes. Every PR in the stack passes CI on its own before review is requested on the whole stack.
+- **The analysis project wins**: when a spec and the analysis project's model code disagree, follow the analysis project.
+- **Simplest design**: optimise for one reviewer; prefer the design with less code, and report the net lines added or removed.
+- **Pre-release** (version `0.0.0.9000`): no NEWS entries, version bumps, deprecations or backward compatibility; rename freely. From the first release, follow the tidyverse release process: a NEWS bullet for each user-facing change, semantic versions set with `usethis::use_version()`, and lifecycle for deprecations.
 - **`decisions/` are live documents**: overwrite them to describe the current design rather than appending dated revisions. Git keeps the history.
 
 ## Analysis Project Structure
@@ -68,76 +94,26 @@ Adaptations from the analysis Stan models: prior hyperparameters are passed thro
 - **Backend**: `rstan` + `rstantools`; Stan models in `inst/stan/` are pre-compiled at `R CMD INSTALL`. Users need no `cmdstanr` or Stan installation. Why: `decisions/engine-choice.md`.
 - **Priors as data**: hyperparameters go in the Stan `data` block as `prior_<entry>_<argument>` (built by `prior_data()`); the prior family is fixed at compile time. Users set priors with `kb_prior_normal()` / `kb_prior_exponential()` / `kb_prior_lognormal()` in the list from `kb_priors_*()`.
 - **Structural flags**: small effects are toggled by 0/1 data flags (`floor_on`, `prior_only`) that the fitting layer sets from the data or from a model-choice argument (`form`), never exposed as flag arguments themselves. Use a separate `.stan` only for a different likelihood or major variant; each species is such a variant (`decisions/species-as-variant.md`).
-- **Parameter names** (snake_case, applied by rule even where nothing would collide; rationale and the mapping from the analysis names in `decisions/parameter-naming.md`):
-  1. The intercept of a linear predictor is `intercept`.
-  2. A parameter tied to a predictor is `<predictor>_<role>`, `<predictor>` being the Stan data field it acts on without its unit suffix: `<predictor>_slope` for a coefficient (`fronds_slope`, `tide_height_slope`, `cover_slope`), `<predictor>_power` for an exponent (`diameter_power`).
-  3. Group-level terms are `sd_<group>`, `<group>_effect`, and `z_<group>` (non-centred deviates) for `site`, `year`, and `site_year`.
-  4. Distribution parameters take their standard names: `shape`, `dispersion` (negative binomial, variance `mu + dispersion * mu^2`), `precision` (Beta), `sd_residual`.
-  5. A floor is `<quantity>_floor` (`weight_floor`, `biomass_floor`).
-  6. Link-scale terms of a linear predictor take no scale prefix; a standalone scalar stored on a transformed scale takes `log_` or `logit_` (`logit_zero_inflation`).
-  7. No parameter shares a name with a data field, an input column, a Stan reserved word (`lower`, `upper`, `offset`, `multiplier`, `target`), or a Stan function (`floor`, `gamma`, `beta`, `log`, `exp`).
-  8. A parameter's prior entry in `kb_priors_*()` has the parameter's name.
-- **Stan data names**: a field passing an input column through takes the column's name (`diameter_mm`, `area_m2`, `tide_height_m`); a derived field is named for its quantity (`log_biomass`, `dry_wet_ratio`); sizes are `n_obs`, `n_site`, `n_year`; flags keep `<effect>_on`.
+- **Parameter and Stan data names** follow the rules in `decisions/parameter-naming.md`: read them before adding or renaming a parameter, prior entry or Stan data field.
 - **Stan code**: non-centred random effects (`site_effect = z_site * sd_site`); the mean is a local in the `model` block and there are no generated quantities, since `log_lik` and replicates are computed in R from the stored draws.
 - **Sampling** defaults: 4 chains, `adapt_delta = 0.95`, thinning by `nthin`.
 
 ## Fit Objects and S3 Pattern (following bboutools)
 
-```r
-# Construction (internal only, new_kb_fit()). Store EXTRACTED posterior draws, NOT
-# the live stanfit (portable, small, rstan-version-robust; makes pre-fit models a
-# non-special case).
-fit <- list(draws = <posterior draws>, diagnostics = <sampler diag>, data = data, meta = meta)
-class(fit) <- c("kb_fit_weight_nereo", "kb_fit_weight", "kb_fit")
-
-# Public method bodies live at the highest class tier at which they are invariant:
-augment.kb_fit         # kb_fit: model-agnostic (also coef/glance/converged/
-                       #   summary/tidy/fitted/residuals/log_lik/posterior_*)
-predict.kb_fit_weight  # model tier: wraps the model-named kb_predict_weight()
-
-# Whatever varies goes into an internal generic, in its own file (R/linpred.R,
-# R/epred.R, R/obs_family.R) or the file of the public generic it serves. None
-# that feeds a number has a total default: each aborts via .abort_no_method(), so
-# a sub-model added without its methods fails loudly. .fit_descriptor is the one exception, supplying print()'s header
-# fields, where a missing method degrades a display rather than a number.
-.epred.kb_fit_weight              # model tier (nereo overrides for the lognormal mean)
-.linpred.kb_fit_weight_nereo      # leaf: also .obs_family/.chk_new_data
-# Per-model facts that are values, not behaviour, live in meta instead (terms,
-# predictor, predictor_ref, form, and the site_year_on flag). See "Meta Versus
-# Dispatch" in decisions/architecture.md for the rule that decides which.
-```
+A fit is a list of `draws` (extracted posterior draws, never the live stanfit), `diagnostics`, `data` and `meta`, built only by the internal `new_kb_fit()` and classed `c("kb_fit_<model>_<species>", "kb_fit_<model>", "kb_fit")`. Public method bodies live at the highest class tier at which they are invariant (most on `kb_fit`); what varies goes to an internal generic (`.linpred`, `.epred`, `.obs_family`, each in its own file) whose default aborts. Whether a per-model fact is a `meta` value or a generic: `decisions/architecture.md` ("Meta Versus Dispatch").
 
 Access via `$`: `x$draws`, `x$data`, `x$meta`; `kb_samples(x)` and `posterior::as_draws(x)` return a `posterior` `draws_rvars` object of the estimated effects. Predictions and summaries are computed from the stored draws with `posterior` `rvar` arithmetic; read the `predictions`/`summaries` specs and `decisions/prediction-engine.md` before touching any `kb_predict_*`, summary, or biomass code. kelpbio ships via R-universe (not CRAN); its `data/` holds only simulated data and slim pre-fit models. Real data and the reference fits to Hakai Institute and coastwide data (`fit_*_hakai_*`, `fit_weight_coastwide_nereo`) live in the companion package `kelpbiodata` (in Suggests with no `Remotes` pin: while the packages are in development each is installed from a local build, and CI skips it); kelpbioshiny reads them from there. Code in kelpbio that uses them (README, examples, vignettes) guards on `rlang::is_installed("kelpbiodata")` and calls them as `kelpbiodata::fit_*`.
 
 ## Package Conventions
 
-- **Prefix**: all exported functions use `kb_`
 - **Plain functions, not generics**: kelpbio's own exported functions (`kb_predict_*()`, `kb_samples()`, `kb_stancode()`, `kb_model_describe()`) are plain functions that check the fit class; every fit inherits `kb_fit`, so dispatch would add nothing. S3 methods are for generics owned by other packages (`tidy`, `predict`, `posterior_*`, `posterior::as_draws`) and for internal generics where behaviour varies by model.
-- **Validation**: all exported function arguments validated with `chk`; user-facing messages via `cli`. Bespoke internal validators follow the bboutools `.vld_`/`.chk_` split: a `.vld_<name>()` in `R/vld.R` is a pure predicate returning a logical scalar (minimal args, no messaging); its `.chk_<name>()` partner in `R/chk.R` calls it and either returns the input invisibly or aborts via `cli`. Every bespoke `.chk_` has a matching `.vld_` (multi-arg `chk::` bundles like `.chk_sampler_args()` are exempt: no single predicate to pair). The `.chk_` may layer `chk::` primitives or re-derive granular messages where one boolean would be too coarse. Both are internal (leading dot, unexported). Errors name the function the user called: `chk::` errors name whichever function called the `chk_*()`, so an exported function (or a shared fit body, via its `call`) runs a check bundle inside `.with_call(..., rlang::current_env())`, and a bundle that aborts via `cli` takes a `call` argument. Example:
-
-  ```r
-  # R/vld.R
-  .vld_count <- function(x) {
-    all(is.na(x)) || (is.numeric(x) && all(x >= 0, na.rm = TRUE))
-  }
-  # R/chk.R
-  .chk_count <- function(x, x_name = deparse(substitute(x))) {
-    if (.vld_count(x)) {
-      return(invisible(x))
-    }
-    if (!is.numeric(x)) {
-      cli::cli_abort("{x_name} must be numeric.")
-    }
-    cli::cli_abort("{x_name} must be greater than or equal to 0.")
-  }
-  ```
+- **Validation**: all exported function arguments validated with `chk`; user-facing messages via `cli`. Bespoke internal validators follow the bboutools `.vld_`/`.chk_` split: a `.vld_<name>()` in `R/vld.R` is a pure predicate returning a logical scalar (minimal args, no messaging); its `.chk_<name>()` partner in `R/chk.R` calls it and either returns the input invisibly or aborts via `cli`. Every bespoke `.chk_` has a matching `.vld_` (multi-arg `chk::` bundles like `.chk_sampler_args()` are exempt: no single predicate to pair). The `.chk_` may layer `chk::` primitives or re-derive granular messages where one boolean would be too coarse. Both are internal (leading dot, unexported). Errors name the function the user called: `chk::` errors name whichever function called the `chk_*()`, so an exported function (or a shared fit body, via its `call`) runs a check bundle inside `.with_call(..., rlang::current_env())`, and a bundle that aborts via `cli` takes a `call` argument. (`.vld_kb_fit()` and `.chk_kb_fit()` are the pattern to follow).
 - **Input columns**: a column measured in a unit names it as a suffix (`diameter_mm`, `weight_kg`, `survey_area_m2`); counts (`fronds`, `plants`) and grouping columns (`site`, `year`) take none. A column shared by sub-models keeps one name and unit (`column_units`). Units are fixed, never converted; the plausibility warnings back them. Stan data fields that pass a column through keep its name and suffix; parameters and prior entries are not columns and take no unit suffix (`fronds_slope`, `diameter_power`).
 - **Output columns**: summaries use `term` / `estimate` / `lower` / `upper` (following bboutools).
-- **Documentation**: roxygen2 with markdown; shared parameters and sections live in `R/params.R` (`@inheritParams params`, `@inheritSection params`). Every reader-facing text (roxygen, `_pkgdown.yml`, README, vignettes) follows `STYLE.md`: topic structure, argument and return wording, vocabulary, examples, and templates per topic type.
+- **Documentation**: roxygen2 with markdown; shared parameters and sections live in `R/params.R` (`@inheritParams params`, `@inheritSection params`). Wording follows `STYLE.md`.
 - **Arguments**: name by type, not by dispatch: `data` for input data, `fit` for a fit object (including `kb_stancode()` and `kb_samples()`), `predictions` for a `kb_predictions` frame. S3 methods must keep the generic's first-arg name (`object` for base/stats/rstantools/ggplot2, `x` for generics/posterior), which `R CMD check` enforces, so `object`/`x`/`fit` all naming the same fit is expected, not an inconsistency to fix. Multi-word names are snake_case (`new_data`, `new_levels`, `conf_level`); take the ecosystem spelling only where a generic fixes it (e.g. `transform` in `posterior_linpred`). Order follows the tidyverse data-descriptors-details shape: primary object, then descriptor arguments meant to be passed positionally (`new_data`, `by`, `priors`, then any model choice such as `form`, after `priors` so `priors` stays second in every fit function; the derived verbs take their fits first, then their data, then the optional conversion fits `wetdry` and `carbon`), then `...`, then every optional detail knob as a name-only argument after `...` (`measure`, `per_area`, `pool_by`, `new_levels`, `representative_site`, `conf_level`, `estimate`, `sig_fig`, `include_random_effects`, `rhat`, `ess`, sampler config) so details cannot be set positionally; guard an empty `...` with `rlang::check_dots_empty()`. The exception is `kb_new_data()`, whose `...` takes the predictor by its column name (`diameter_mm`, `fronds`, or `cover`) and levels of `site` or `year` not in `by`, checked against the fit. The summary trio `conf_level, estimate, sig_fig` keeps that order everywhere. `@param` wording follows `STYLE.md`.
-- **Writing** (docs, README, vignettes, roxygen, specs, PR/commit text): follow the writing style in `~/.claude/CLAUDE.md` (and `STYLE.md` for documentation); in particular no em-dashes or en-dashes (use hyphens, commas, or colons) and no mid-sentence bold for emphasis; concise technical register
+- **Writing**: every reader-facing text (roxygen, `_pkgdown.yml`, README, vignettes, specs, PR and commit text) follows `STYLE.md`.
 - **File layout**: one function per file, file named after the function (`kb_fit_weight_nereo()` → `R/kb_fit_weight_nereo.R`). S3 methods grouped one file per generic, named after the generic (`R/print.R` holds all `print.*` methods, `R/tidy.R` all `tidy.*`, etc.). Internal functions that share one contract go in one family file named for the family: `chk.R` (`.chk_*`), `vld.R` (`.vld_*`), `warn.R` (plausibility warnings on user data), `structural_flags.R` (`.site_year_on()`, `.floor_on()`), and one file per distribution for the extras-style `log_lik_*`/`res_*`/`ran_*` functions (`weibull.R`). Dataset documentation lives in `R/data.R` (simulated datasets) and `R/fits.R` (pre-fit models). A computation and the notifier that reports it share a file (`site_year_aliasing()` and `notify_site_year()`). Other internal helpers go in clearly-named files, never a catch-all `utils.R`.
-- **Testing**: testthat 3e; strict 1:1 test mirroring (`R/<name>.R` ↔ `tests/testthat/test-<name>.R`). Test the wrapper, not the model's numbers. Snapshot print methods + messages; NEVER snapshot MCMC numerics (test structure + invariants instead). **Never accept snapshot changes** (`testthat::snapshot_accept()`, or accepting via any other route): snapshots are the user's review surface. Run the tests, report what changed and why, and leave the `.new` files in place for the user to review locally with `testthat::snapshot_review()`. Small pre-built fits in `tests/testthat/fixtures/` (built with `rstan::sampling(seed=)`, not `set.seed`); they test structure, not inference, and may not meet the strict `converged()` thresholds. Slow end-to-end fits `skip_on_cran()`. Factor pure logic (data/prior assembly) out of fit functions for MCMC-free testing.
+- **Testing**: testthat 3e; strict 1:1 test mirroring (`R/<name>.R` ↔ `tests/testthat/test-<name>.R`). A change in behaviour adds or updates a test in the mirrored file; a bug fix adds a test that fails before the fix. Extend an existing test before adding one, and test nothing that cannot happen. Test the wrapper, not the model's numbers. Snapshot messages, print methods, plots (`vdiffr::expect_doppelganger()`) and output tables (`expect_snapshot_data()`, a CSV rounded to 3 significant figures) computed from the fixtures: their draws are stored, so these change only when the code or a fixture does, and a refit's snapshot diffs are reviewed with it. Relationships between outputs (per area is total over area, dry is wet times the ratio) stay as expectations, and printed values a refit can flip (`Converged`) are redacted. **Never accept snapshot changes** (`testthat::snapshot_accept()`, or accepting via any other route): snapshots are the user's review surface. Run the tests, report what changed and why, and leave the `.new` files in place for the user to review locally with `testthat::snapshot_review()`. Small pre-built fits in `tests/testthat/fixtures/` (built with `rstan::sampling(seed=)`, not `set.seed`); they test structure, not inference, and may not meet the strict `converged()` thresholds. Slow end-to-end fits `skip_on_cran()`. Factor pure logic (data/prior assembly) out of fit functions for MCMC-free testing.
 - **Code style**: tidyverse; no lubridate, reshape2, plyr, or data.table
 - **No `library()` calls** in package code; use `@importFrom` or `pkg::fun()`
-- **Do not run Stan MCMC** during a session without confirming first; fitting is slow

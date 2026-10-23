@@ -1,12 +1,12 @@
 # kelpbio documentation style
 
-How kelpbio's reader-facing text is written: roxygen, `_pkgdown.yml` descriptions, DESCRIPTION, README, and vignettes. It follows the [tidyverse style guide](https://style.tidyverse.org/documentation.html) and [*R Packages*, "Function documentation"](https://r-pkgs.org/man.html), with kelpbio rules for vocabulary, units, and models. Argument naming and order are API conventions and live in CLAUDE.md.
+How kelpbio's reader-facing text is written: roxygen, `_pkgdown.yml` descriptions, DESCRIPTION, README, and vignettes; specs and PR and commit text follow its principles and mechanics. kelpbiodata and kelpbioshiny build on this file. It follows the [tidyverse style guide](https://style.tidyverse.org/documentation.html) and [*R Packages*, "Function documentation"](https://r-pkgs.org/man.html), with kelpbio rules for vocabulary, units, and models. Argument naming and order are API conventions and live in CLAUDE.md.
 
 ## Principles
 
 1. Write for a first-time reader. Each sentence tells the reader what the function does, what to pass, what comes back, or something they could get wrong. Nothing else.
 2. Brevity over completeness. One fact, stated once, in its one home.
-3. No rationale, history, mechanism, or comparison with alternatives, and no development or testing jargon (for example `snapshot-safe`, `load_all()`). Design reasons go in code comments, `decisions/`, or a change's `design.md`.
+3. No rationale, history, mechanism, or comparison with alternatives, and no development or testing jargon (for example `snapshot-safe`, `load_all()`). Describe current behaviour only, never the discussion or design change behind it ("always", "now", "no longer", "is invented"). Design reasons go in code comments, `decisions/`, or a change's `design.md`.
 4. Technical, concise, scientific register; third person, present tense; no "you" or "your" (including example comments). Spelling is -ise (summarise, standardised, modelled) with "centred".
 
 ## Topic structure

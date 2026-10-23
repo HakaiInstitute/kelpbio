@@ -7,3 +7,7 @@ test_that("augment appends fitted and residual columns matching the methods", {
   expect_equal(a$fitted, fitted(weight_nereo_fit))
   expect_equal(a$residual, residuals(weight_nereo_fit))
 })
+
+test_that("augment output matches its snapshot", {
+  expect_snapshot_data(augment(cover_calibration_nereo_fit), "cover-calibration-nereo")
+})

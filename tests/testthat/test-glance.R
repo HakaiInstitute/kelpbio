@@ -54,3 +54,9 @@ test_that("argument errors name glance()", {
   err <- expect_error(glance(weight_nereo_fit, rhat = "a"))
   expect_identical(err$call[[1]], quote(glance))
 })
+
+test_that("glance output matches its snapshot for every model", {
+  for (name in names(fixture_fits)) {
+    expect_snapshot_data(glance(fixture_fits[[name]]), name)
+  }
+})

@@ -170,3 +170,20 @@ test_that("high tides give finite predictions and warn past the tide limit", {
   expect_true(all(is.finite(c(p$estimate, p$lower, p$upper))))
   expect_no_warning(kb_predict_cover_calibration(fit, rows(80, -0.3)))
 })
+
+test_that("cover calibration predictions match their snapshots", {
+  expect_snapshot_data(
+    kb_predict_cover_calibration(
+      cover_calibration_nereo_fit,
+      kb_new_data(cover_calibration_nereo_fit)
+    ),
+    "nereo-curve"
+  )
+  expect_snapshot_data(
+    kb_predict_cover_calibration(
+      cover_calibration_macro_fit,
+      kb_new_data(cover_calibration_macro_fit, by = "site", cover = 0.5)
+    ),
+    "macro-site"
+  )
+})

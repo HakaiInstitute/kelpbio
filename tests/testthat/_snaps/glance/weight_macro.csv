@@ -1,0 +1,2 @@
+"n","K","nchains","niters","nthin","ess_bulk","ess_tail","rhat","perc_divergent","converged"
+200,6,2,300,5,402,463,1.01,0,TRUE

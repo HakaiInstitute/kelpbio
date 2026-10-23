@@ -11,3 +11,23 @@ redact_fit_print <- function(lines) {
     lines
   )
 }
+
+# Snapshot a table as a CSV file, one per name in the test file's _snaps
+# folder. Columns of draws are dropped (their summaries are the estimate,
+# lower and upper columns) and doubles rounded, so the file changes only when
+# the code or the fixtures do.
+expect_snapshot_data <- function(x, name, digits = 3) {
+  x <- tibble::as_tibble(x)
+  x <- dplyr::select(x, !dplyr::where(posterior::is_rvar))
+  x <- dplyr::mutate(
+    x,
+    dplyr::across(dplyr::where(is.double), function(col) signif(col, digits))
+  )
+  path <- withr::local_tempfile(fileext = ".csv")
+  utils::write.csv(x, path, row.names = FALSE)
+  testthat::expect_snapshot_file(
+    path,
+    paste0(name, ".csv"),
+    compare = testthat::compare_file_text
+  )
+}

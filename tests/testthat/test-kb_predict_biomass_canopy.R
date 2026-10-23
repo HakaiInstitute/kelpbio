@@ -178,3 +178,14 @@ test_that("a numeric year matches the fitted year and pools as character", {
   expect_identical(numeric_year$year, "2019")
   expect_equal(numeric_year$biomass_kg, character_year$biomass_kg)
 })
+
+test_that("canopy biomass predictions match their snapshots", {
+  expect_snapshot_data(
+    kb_predict_biomass_canopy(cover_calibration_nereo_fit, surveys()),
+    "nereo"
+  )
+  expect_snapshot_data(
+    kb_predict_biomass_canopy(cover_calibration_nereo_fit, surveys(), pool_by = "region"),
+    "nereo-region"
+  )
+})
