@@ -3,7 +3,7 @@
 #' Plot a `kb_predictions` object, as [kb_plot_predictions()] does.
 #'
 #' @param object A `kb_predictions` object.
-#' @param ... Passed to [kb_plot_predictions()] (e.g. `x`, `log_axis`, `max_facets`).
+#' @param ... Passed to [kb_plot_predictions()] (for example `x`, `log_axis`, `max_facets`).
 #'
 #' @returns A `ggplot` object.
 #' @family prediction functions

@@ -7,7 +7,7 @@
 \format{
 A data frame with columns:
 \describe{
-\item{diameter_mm}{Maximum sub-bulb diameter (mm), a positive number.}
+\item{diameter_mm}{Plant diameter (mm), a positive number.}
 \item{site}{Site, a factor (12 levels).}
 \item{year}{Year, a factor (5 levels).}
 }
@@ -16,7 +16,7 @@ A data frame with columns:
 data_size_sample_sim_nereo
 }
 \description{
-A small simulated dataset of maximum sub-bulb diameter, one row per plant of
+A small simulated dataset of plant diameter, one row per plant of
 a sample measured for the size model, for runnable examples. One of four
 simulated \emph{Nereocystis} datasets with shared sites and years, so their fits
 can be combined into in situ survey biomass (see \code{\link[=kb_predict_biomass_in_situ]{kb_predict_biomass_in_situ()}}). Some

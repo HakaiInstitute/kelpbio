@@ -54,8 +54,7 @@ bar), \code{"verbose"} (rstan's per-iteration output and diagnostic warnings), o
 progress for \code{\link[=kb_progress]{kb_progress()}}, or \code{NULL} (the default) to record none.}
 }
 \value{
-An object of class
-\code{c("kb_fit_carbon_macro", "kb_fit_carbon", "kb_fit")}.
+A \code{kb_fit_carbon_macro} object (a \code{kb_fit}).
 }
 \description{
 Fit a carbon-fraction model for \emph{Macrocystis pyrifera} via Stan.

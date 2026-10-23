@@ -1,6 +1,6 @@
 #' Predict the dry:wet ratio
 #'
-#' Summarise the expected dry:wet mass ratio for the population of samples the
+#' Summarise the expected dry:wet ratio for the population of samples the
 #' model was fitted to.
 #'
 #' @details

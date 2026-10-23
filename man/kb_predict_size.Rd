@@ -63,8 +63,8 @@ Predict the expected plant size at each row of \code{new_data}, or at the observ
 data when \code{new_data = NULL}.
 }
 \details{
-The expected size is the mean of the fitted size distribution: maximum
-sub-bulb diameter (mm) for \emph{Nereocystis}, and the number of fronds reaching
+The expected size is the mean of the fitted size distribution: plant
+diameter (mm) for \emph{Nereocystis}, and the number of fronds reaching
 1 m above the holdfast for \emph{Macrocystis}, among plants with at least one such
 frond.
 

@@ -19,7 +19,7 @@ prior, pass a list of the entries to change to the \code{priors} argument of
 \details{
 Each entry is named after the parameter it sets, as reported by \code{\link[=tidy]{tidy()}} and
 \code{\link[=kb_model_describe]{kb_model_describe()}}. The prior family of each entry is fixed (the intercept is Normal, the Weibull
-shape and standard deviations are Exponential); only the hyperparameters can be
+shape and standard deviations are Exponential); only its arguments can be
 changed.
 }
 \examples{

@@ -26,7 +26,10 @@ Required columns: numeric \code{diameter_mm} (mm, > 0), numeric \code{weight_kg}
 (kg, > 0), factor or character \code{site}, and \code{year} (factor, character, or
 whole numbers), with no missing values.
 
-A numeric \code{year} is used as its character level. Other columns are ignored.
+\code{diameter_mm} is a plant diameter that relates to weight as a power law,
+such as the maximum sub-bulb diameter, the diameter 15 cm below the
+sub-bulb, or the bulb diameter. Size data must use the same diameter. A
+numeric \code{year} is used as its character level. Other columns are ignored.
 }
 \examples{
 data <- data.frame(

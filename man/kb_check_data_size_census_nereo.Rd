@@ -28,8 +28,8 @@ holdfast. Required columns:
 \itemize{
 \item \code{survey_id}, the survey the plant was counted in (see
 \code{\link[=kb_check_data_in_situ]{kb_check_data_in_situ()}}), which gives the plant's site and year.
-\item \code{diameter_mm}, the maximum sub-bulb diameter (mm, > 0), the predictor of
-the weight model (\code{\link[=kb_fit_weight_nereo]{kb_fit_weight_nereo()}}).
+\item \code{diameter_mm}, the plant diameter (mm, > 0), the same diameter as in the
+weight data (\code{\link[=kb_check_data_weight_nereo]{kb_check_data_weight_nereo()}}).
 }
 
 An optional logical \code{partial} marks plants counted as half, such as plants

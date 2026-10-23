@@ -44,8 +44,8 @@ Predictions over a grid of predictor values (as from \code{\link[=kb_new_data]{k
 drawn as a line and compatibility-interval ribbon; others as points with
 intervals. Override the chosen x-axis with \code{x}.
 
-Axes are linear by default, with the y-axis extended to zero. Weights,
-densities, and biomass often span orders of magnitude; \code{log_axis = "y"} shows
+Axes are linear by default, with the y-axis extended to zero. Weights and
+biomass often span orders of magnitude; \code{log_axis = "y"} shows
 them on a log scale, and \code{log_axis = "xy"} also log-scales a numeric x-axis,
 as for a weight curve. A log axis says so in its title. Values on a log axis
 must be positive. Numeric axes are labelled as plain numbers with thousands

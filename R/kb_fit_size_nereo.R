@@ -3,7 +3,7 @@
 #' Fit a size-distribution model for *Nereocystis luetkeana* via Stan.
 #'
 #' @details
-#' Maximum sub-bulb diameter (mm) is modelled with a Weibull likelihood with
+#' Plant diameter (mm) is modelled with a Weibull likelihood with
 #' mean `mu` and shape `shape`, common to all plants, so `mu` is the expected
 #' diameter.
 #'
@@ -25,7 +25,7 @@
 #' @param priors A named list of prior objects (see [kb_priors_size_nereo()]),
 #'   or `NULL` to use the defaults. Entries not supplied keep their defaults.
 #'
-#' @returns An object of class `c("kb_fit_size_nereo", "kb_fit_size", "kb_fit")`.
+#' @returns A `kb_fit_size_nereo` object (a `kb_fit`).
 #' @family fit functions
 #' @export
 #'

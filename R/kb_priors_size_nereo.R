@@ -6,7 +6,7 @@
 #'
 #' Each entry is named after the parameter it sets, as reported by [tidy()] and
 #' [kb_model_describe()]. The prior family of each entry is fixed (the intercept is Normal, the Weibull
-#' shape and standard deviations are Exponential); only the hyperparameters can be
+#' shape and standard deviations are Exponential); only its arguments can be
 #' changed.
 #'
 #' @returns A named list of prior objects with entries `intercept` (the log mean

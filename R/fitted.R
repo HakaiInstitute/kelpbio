@@ -1,7 +1,7 @@
 #' Fitted values
 #'
 #' Posterior medians of the expected response at each observed row, matching
-#' [augment()]'s `fitted` column: wet weight (kg) for weight fits, sub-bulb
+#' [augment()]'s `fitted` column: wet weight (kg) for weight fits, plant
 #' diameter (mm) for size fits, the dry:wet ratio for wet/dry fits, the carbon
 #' fraction of dry mass for carbon fits, and wet biomass (kg/m²) for cover
 #' calibration fits. For the full posterior, use [posterior_epred()].

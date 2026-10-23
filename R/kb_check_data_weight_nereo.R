@@ -8,7 +8,10 @@
 #' whole numbers), with no missing values.
 #'
 #' @details
-#' A numeric `year` is used as its character level. Other columns are ignored.
+#' `diameter_mm` is a plant diameter that relates to weight as a power law,
+#' such as the maximum sub-bulb diameter, the diameter 15 cm below the
+#' sub-bulb, or the bulb diameter. Size data must use the same diameter. A
+#' numeric `year` is used as its character level. Other columns are ignored.
 #'
 #' @inheritParams params
 #' @param data A data frame of weight observations, one row per plant.
