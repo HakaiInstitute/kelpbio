@@ -698,7 +698,7 @@ kb_predict_carbon(kb_fit_carbon_macro(data_carbon_sim_macro))
 # (Nereocystis: `plants` on the survey row), or from a size census of every
 # counted plant joined by survey_id (Macrocystis: data_size_census_sim_macro,
 # with partial plants as half). A survey paired with a drone flight also carries plot_area_m2,
-# canopy_area_m2, and tide_height_m.
+# canopy_area_m2, and canopy_tide_height_m.
 
 str(data_in_situ_sim_nereo)
 kb_check_data_in_situ(data_in_situ_sim_nereo)
@@ -891,7 +891,7 @@ kb_predict_cover_calibration(
   data.frame(
     canopy_area_m2 = c(0, 50, 150),
     plot_area_m2 = 200,
-    tide_height_m = 0.5
+    canopy_tide_height_m = 0.5
   )
 )
 # curves over tide-corrected cover (0 to 1 by default) by site: each grid row is
@@ -906,7 +906,7 @@ fit_cvm <- kb_fit_cover_calibration_macro(biomass_m)
 # kb_predict_biomass_canopy() turns a cover calibration fit and mapped canopy
 # into total biomass: the expected biomass per m2 of bed (floor included) times
 # each row's tide-corrected canopy area, in kg (wet, dry) or kg C. The rows need
-# site, year, canopy_area_m2, tide_height_m, and classified_area_m2, which caps
+# site, year, canopy_area_m2, canopy_tide_height_m, and classified_area_m2, which caps
 # the corrected canopy. Unseen sites and years are sampled by default.
 
 set.seed(1)

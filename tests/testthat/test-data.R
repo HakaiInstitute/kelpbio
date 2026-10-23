@@ -13,7 +13,7 @@ test_that("data_carbon_sim_nereo has the expected columns and passes validation"
 test_that("data_in_situ_sim_macro and data_size_census_sim_macro pass validation together", {
   expect_named(
     data_in_situ_sim_macro,
-    c("survey_id", "site", "year", "survey_area_m2", "plot_area_m2", "canopy_area_m2", "tide_height_m")
+    c("survey_id", "site", "year", "survey_area_m2", "plot_area_m2", "canopy_area_m2", "canopy_tide_height_m")
   )
   expect_named(data_size_census_sim_macro, c("survey_id", "fronds", "partial"))
   expect_silent(kb_check_data_in_situ(data_in_situ_sim_macro, data_size_census_sim_macro))
@@ -26,7 +26,7 @@ test_that("data_in_situ_sim_nereo has the expected columns and passes validation
     data_in_situ_sim_nereo,
     c(
       "survey_id", "site", "year", "survey_area_m2", "plants",
-      "plot_area_m2", "canopy_area_m2", "tide_height_m"
+      "plot_area_m2", "canopy_area_m2", "canopy_tide_height_m"
     )
   )
   expect_silent(kb_check_data_in_situ(data_in_situ_sim_nereo))
@@ -47,7 +47,7 @@ test_that("data_canopy_sim_nereo and data_canopy_sim_macro have the expected col
   for (canopy in list(data_canopy_sim_nereo, data_canopy_sim_macro)) {
     expect_named(
       canopy,
-      c("site", "year", "canopy_area_m2", "tide_height_m", "classified_area_m2", "region")
+      c("site", "year", "canopy_area_m2", "canopy_tide_height_m", "classified_area_m2", "region")
     )
     expect_true(all(canopy$canopy_area_m2 <= canopy$classified_area_m2))
   }
@@ -76,7 +76,7 @@ test_that("survey biomass from the bundled fits agrees with the bundled calibrat
     b <- b[!is.na(b$canopy_area_m2) & b$estimate > 0, ]
     fitted <- kb_predict_cover_calibration(
       fits[[sp]],
-      b[c("site", "year", "plot_area_m2", "canopy_area_m2", "tide_height_m")]
+      b[c("site", "year", "plot_area_m2", "canopy_area_m2", "canopy_tide_height_m")]
     )
     ratio <- fitted$estimate / b$estimate
     expect_gte(stats::median(ratio), 0.5, label = sp)

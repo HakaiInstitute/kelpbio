@@ -1,6 +1,6 @@
 # The corrected canopy at a single slope, as a numeric vector.
-corrected <- function(canopy_area_m2, tide_height_m, slope, cap) {
-  out <- tide_corrected_canopy(canopy_area_m2, tide_height_m, posterior::rvar(slope), cap)
+corrected <- function(canopy_area_m2, canopy_tide_height_m, slope, cap) {
+  out <- tide_corrected_canopy(canopy_area_m2, canopy_tide_height_m, posterior::rvar(slope), cap)
   as.vector(posterior::draws_of(out))
 }
 

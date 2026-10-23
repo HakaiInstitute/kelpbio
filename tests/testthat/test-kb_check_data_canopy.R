@@ -3,7 +3,7 @@ canopy <- function(...) {
     site = c("a", "a", "b"),
     year = c("2021", "2021", "2022"),
     canopy_area_m2 = c(1200, 0, 800),
-    tide_height_m = c(0.4, 1.1, 0.8),
+    canopy_tide_height_m = c(0.4, 1.1, 0.8),
     classified_area_m2 = c(5000, 5000, 3000),
     ...
   )
@@ -27,11 +27,11 @@ test_that("a canopy larger than its classified area errors", {
 })
 
 test_that("a missing or invalid column errors naming it", {
-  for (col in c("site", "year", "canopy_area_m2", "tide_height_m", "classified_area_m2")) {
+  for (col in c("site", "year", "canopy_area_m2", "canopy_tide_height_m", "classified_area_m2")) {
     expect_error(kb_check_data_canopy(canopy()[setdiff(names(canopy()), col)]), col)
   }
   expect_error(kb_check_data_canopy(transform(canopy(), canopy_area_m2 = -1)), "canopy_area_m2")
-  expect_error(kb_check_data_canopy(transform(canopy(), tide_height_m = NA)), "tide_height_m")
+  expect_error(kb_check_data_canopy(transform(canopy(), canopy_tide_height_m = NA)), "canopy_tide_height_m")
   expect_error(kb_check_data_canopy(transform(canopy(), classified_area_m2 = 0)), "classified_area_m2")
   expect_error(kb_check_data_canopy(transform(canopy(), year = 2021.5)), "year")
 })
@@ -44,8 +44,8 @@ test_that("errors name the data", {
 
 test_that("implausible units and ambiguous group names warn", {
   expect_warning(
-    kb_check_data_canopy(transform(canopy(), tide_height_m = c(40, 110, 80))),
-    "tide_height_m"
+    kb_check_data_canopy(transform(canopy(), canopy_tide_height_m = c(40, 110, 80))),
+    "canopy_tide_height_m"
   )
   expect_warning(
     kb_check_data_canopy(transform(canopy(), site = c("a,b", "a,b", "c"))),

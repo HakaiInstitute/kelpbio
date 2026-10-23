@@ -8,7 +8,7 @@ test_that("assemble_cover_calibration_data maps data to the Stan data block", {
   expect_equal(sd$n_obs, 3L)
   expect_equal(sd$canopy_area_m2, d$canopy_area_m2)
   expect_equal(sd$plot_area_m2, d$plot_area_m2)
-  expect_equal(sd$tide_height_m, d$tide_height_m)
+  expect_equal(sd$canopy_tide_height_m, d$canopy_tide_height_m)
   expect_equal(sd$biomass, d$biomass_kg_m2)
   expect_equal(sd$biomass_sd, d$biomass_sd_kg_m2)
   expect_equal(sd$zero, c(0L, 1L, 0L))

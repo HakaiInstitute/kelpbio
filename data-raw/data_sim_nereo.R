@@ -166,21 +166,21 @@ i_grid <- match(paste(survey$site, survey$year), key)
 drone <- grid$drone[i_grid]
 n <- nrow(survey)
 plot_area_m2 <- round(stats::runif(n, 180, 280), 1)
-tide_height_m <- sample(seq(0, 1.6, by = 0.05), n, replace = TRUE)
+canopy_tide_height_m <- sample(seq(0, 1.6, by = 0.05), n, replace = TRUE)
 cover <- (grid$plot_biomass[i_grid] - b_cover_floor) /
   (b_canopy * exp(grid$e_cover[i_grid])) * exp(stats::rnorm(n, 0, 0.1))
 clipped <- cover > 0.95
 cover <- pmin(pmax(cover, 0), 0.95)
 cover[survey$plot_id == "3"] <- 0
-canopy_area_m2 <- round(cover * plot_area_m2 * (1 - b_tide * tide_height_m), 2)
+canopy_area_m2 <- round(cover * plot_area_m2 * (1 - b_tide * canopy_tide_height_m), 2)
 survey$plot_area_m2 <- ifelse(drone, plot_area_m2, NA_real_)
 survey$canopy_area_m2 <- ifelse(drone, canopy_area_m2, NA_real_)
-survey$tide_height_m <- ifelse(drone, tide_height_m, NA_real_)
+survey$canopy_tide_height_m <- ifelse(drone, canopy_tide_height_m, NA_real_)
 survey$survey_area_m2 <- pmin(survey$survey_area_m2, ifelse(drone, plot_area_m2, Inf))
 
 data_in_situ_sim_nereo <- survey[c(
   "survey_id", "site", "year", "survey_area_m2", "plants",
-  "plot_area_m2", "canopy_area_m2", "tide_height_m"
+  "plot_area_m2", "canopy_area_m2", "canopy_tide_height_m"
 )]
 
 # 6. Mapped canopy for totals ----------------------------------------------------
@@ -188,7 +188,7 @@ data_in_situ_sim_nereo <- survey[c(
 canopy <- grid[grid$drone, c("site", "year")]
 m <- nrow(canopy)
 canopy$canopy_area_m2 <- round(stats::runif(m, 500, 12000))
-canopy$tide_height_m <- sample(seq(0, 1.6, by = 0.05), m, replace = TRUE)
+canopy$canopy_tide_height_m <- sample(seq(0, 1.6, by = 0.05), m, replace = TRUE)
 canopy$classified_area_m2 <- round(canopy$canopy_area_m2 * stats::runif(m, 1.5, 3))
 canopy$region <- factor(
   ifelse(match(canopy$site, sites) <= 6, "north", "south"),

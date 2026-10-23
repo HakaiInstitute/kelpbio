@@ -40,11 +40,11 @@ test_that("a cover grid is unit-plot surveys over cover from 0 to 1", {
   grid <- kb_new_data(cover_calibration_nereo_fit, by = "site")
   expect_named(
     grid,
-    c("site", "cover", "canopy_area_m2", "plot_area_m2", "tide_height_m")
+    c("site", "cover", "canopy_area_m2", "plot_area_m2", "canopy_tide_height_m")
   )
   expect_equal(range(grid$cover), c(0, 1))
   expect_equal(grid$canopy_area_m2, grid$cover)
-  expect_true(all(grid$plot_area_m2 == 1 & grid$tide_height_m == 0))
+  expect_true(all(grid$plot_area_m2 == 1 & grid$canopy_tide_height_m == 0))
   expect_true(attr(grid, "kb_curve"))
   expect_error(kb_new_data(cover_calibration_nereo_fit, cover = 1.5), "cover")
   expect_error(kb_new_data(cover_calibration_nereo_fit, cover = NA_real_), "cover")

@@ -12,7 +12,7 @@ test_that("column_units names the unit of each unit-bearing column", {
       "canopy_area_m2",
       "plot_area_m2",
       "classified_area_m2",
-      "tide_height_m"
+      "canopy_tide_height_m"
     )
   )
   expect_identical(column_units[["diameter_mm"]], "millimetres")

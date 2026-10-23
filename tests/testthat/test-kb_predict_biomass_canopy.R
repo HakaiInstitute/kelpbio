@@ -3,7 +3,7 @@ surveys <- function(classified_area_m2 = 1e5, ...) {
     site = fitted_sites(cover_calibration_nereo_fit, 3),
     year = "2019",
     canopy_area_m2 = c(200, 400, 800),
-    tide_height_m = 0.5,
+    canopy_tide_height_m = 0.5,
     classified_area_m2 = classified_area_m2,
     region = c("north", "north", "south"),
     ...
@@ -19,7 +19,7 @@ test_that("kb_predict_biomass_canopy gives one total per survey", {
       "site",
       "year",
       "canopy_area_m2",
-      "tide_height_m",
+      "canopy_tide_height_m",
       "classified_area_m2",
       "region",
       "cover_support",
@@ -157,7 +157,7 @@ test_that("high tides give finite, non-negative totals capped at the classified 
   fit <- cover_calibration_nereo_fit
   rows <- data.frame(
     site = fitted_sites(fit), year = "2019", canopy_area_m2 = 100,
-    tide_height_m = c(0, 2, 3.5, 5), classified_area_m2 = 400
+    canopy_tide_height_m = c(0, 2, 3.5, 5), classified_area_m2 = 400
   )
   expect_warning(
     p <- kb_predict_biomass_canopy(fit, rows, new_levels = "average"),

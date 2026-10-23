@@ -129,8 +129,8 @@
 #'
 #' A small simulated dataset of in situ surveys, one row per survey,
 #' for runnable examples: the plants tallied, with sizes from
-#' [fit_size_sim_nereo], and the drone cover of the surveys paired with a
-#' flight. Some site-years hold more than one survey, and one survey counted no
+#' [fit_size_sim_nereo], and the drone cover of the surveys with canopy
+#' imagery. Some site-years hold more than one survey, and one survey counted no
 #' plants.
 #'
 #' @format A data frame with columns:
@@ -140,11 +140,11 @@
 #'   \item{year}{Year, a factor (5 levels).}
 #'   \item{survey_area_m2}{Surveyed area (m²), a positive number.}
 #'   \item{plants}{Plants counted, a whole number of at least 0.}
-#'   \item{plot_area_m2}{Plot polygon (m²), or `NA` without a flight.}
+#'   \item{plot_area_m2}{Plot polygon (m²), or `NA` without canopy imagery.}
 #'   \item{canopy_area_m2}{Drone canopy within the plot (m²), or `NA` without
-#'     a flight.}
-#'   \item{tide_height_m}{Tide height at the flight (m), or `NA` without a
-#'     flight.}
+#'     canopy imagery.}
+#'   \item{canopy_tide_height_m}{Tide height when the canopy was imaged (m), or `NA` without canopy
+#'     imagery.}
 #' }
 #' @seealso [kb_check_data_in_situ()] for the columns.
 #' @family example datasets
@@ -161,7 +161,7 @@
 #'   \item{site}{Site, a factor (12 levels).}
 #'   \item{year}{Year, a factor (5 levels).}
 #'   \item{canopy_area_m2}{Canopy mapped within the site (m²).}
-#'   \item{tide_height_m}{Tide height at the flight (m).}
+#'   \item{canopy_tide_height_m}{Tide height when the canopy was imaged (m).}
 #'   \item{classified_area_m2}{Water area the canopy classification covered
 #'     (m²), including water with no canopy.}
 #'   \item{region}{Region of the site, a factor (`"north"`, `"south"`).}
@@ -175,7 +175,7 @@
 #'
 #' A small simulated dataset of in situ surveys, one row per survey,
 #' for runnable examples: the plants listed in [data_size_census_sim_macro], and the
-#' drone cover of the surveys paired with a flight. Some site-years hold more
+#' drone cover of the surveys with canopy imagery. Some site-years hold more
 #' than one survey, and one survey counted no plants.
 #'
 #' @format A data frame with columns:
@@ -184,11 +184,11 @@
 #'   \item{site}{Site, a factor (12 levels).}
 #'   \item{year}{Year, a factor (5 levels).}
 #'   \item{survey_area_m2}{Surveyed area (m²), a positive number.}
-#'   \item{plot_area_m2}{Plot polygon (m²), or `NA` without a flight.}
+#'   \item{plot_area_m2}{Plot polygon (m²), or `NA` without canopy imagery.}
 #'   \item{canopy_area_m2}{Drone canopy within the plot (m²), or `NA` without
-#'     a flight.}
-#'   \item{tide_height_m}{Tide height at the flight (m), or `NA` without a
-#'     flight.}
+#'     canopy imagery.}
+#'   \item{canopy_tide_height_m}{Tide height when the canopy was imaged (m), or `NA` without canopy
+#'     imagery.}
 #' }
 #' @seealso [kb_check_data_in_situ()] for the columns.
 #' @family example datasets
@@ -205,7 +205,7 @@
 #'   \item{site}{Site, a factor (12 levels).}
 #'   \item{year}{Year, a factor (5 levels).}
 #'   \item{canopy_area_m2}{Canopy mapped within the site (m²).}
-#'   \item{tide_height_m}{Tide height at the flight (m).}
+#'   \item{canopy_tide_height_m}{Tide height when the canopy was imaged (m).}
 #'   \item{classified_area_m2}{Water area the canopy classification covered
 #'     (m²), including water with no canopy.}
 #'   \item{region}{Region of the site, a factor (`"north"`, `"south"`).}

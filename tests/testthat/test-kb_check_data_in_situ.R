@@ -7,7 +7,7 @@ survey <- function(...) {
     plants = c(10, 0, 4),
     plot_area_m2 = c(200, NA, 210),
     canopy_area_m2 = c(50, NA, 0),
-    tide_height_m = c(0.8, NA, 1.1),
+    canopy_tide_height_m = c(0.8, NA, 1.1),
     ...
   )
 }
@@ -57,7 +57,7 @@ test_that("repeat surveys in a site-year pass", {
 
 test_that("the drone columns are given together", {
   expect_snapshot(
-    kb_check_data_in_situ(transform(survey(), tide_height_m = c(0.8, NA, NA))),
+    kb_check_data_in_situ(transform(survey(), canopy_tide_height_m = c(0.8, NA, NA))),
     error = TRUE
   )
   expect_error(kb_check_data_in_situ(survey()[setdiff(names(survey()), "plot_area_m2")]), "plot_area_m2")

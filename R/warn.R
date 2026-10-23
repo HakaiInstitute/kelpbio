@@ -25,7 +25,7 @@ warn_tide_cap <- function(share, x_name, rows, cap, basis) {
   if (n > 0L) {
     rows <- if (n == 1L) rows else paste0(rows, "s")
     cli::cli_warn(c(
-      "{n} {rows} in {x_name} {cli::qty(n)}{?is/are} past the tide limit ({.field tide_height_m} at least 1 / {.field tide_height_slope}) {basis}.",
+      "{n} {rows} in {x_name} {cli::qty(n)}{?is/are} past the tide limit ({.field canopy_tide_height_m} at least 1 / {.field tide_height_slope}) {basis}.",
       i = "There the corrected canopy is {cap}, not the canopy measured. Fly at lower tides where possible."
     ))
   }
@@ -33,9 +33,9 @@ warn_tide_cap <- function(share, x_name, rows, cap, basis) {
 }
 
 # The share of slope draws on which each row is past the tide limit.
-tide_cap_share <- function(canopy_area_m2, tide_height_m, tide_height_slope) {
+tide_cap_share <- function(canopy_area_m2, canopy_tide_height_m, tide_height_slope) {
   slope <- as.vector(posterior::draws_of(tide_height_slope))
-  past <- outer(slope, tide_height_m) >= 1
+  past <- outer(slope, canopy_tide_height_m) >= 1
   ifelse(canopy_area_m2 > 0, colMeans(past), 0)
 }
 
@@ -43,17 +43,17 @@ tide_cap_share <- function(canopy_area_m2, tide_height_m, tide_height_slope) {
 # the slope truncated to its support [0, TIDE_SLOPE_UPPER]. A prior with no
 # mass on the support, to numerical precision, is a point mass at the nearer
 # bound.
-tide_cap_prior_share <- function(canopy_area_m2, tide_height_m, prior) {
+tide_cap_prior_share <- function(canopy_area_m2, canopy_tide_height_m, prior) {
   upper <- TIDE_SLOPE_UPPER
-  limit <- pmin(1 / pmax(tide_height_m, 0), upper)
+  limit <- pmin(1 / pmax(canopy_tide_height_m, 0), upper)
   mass <- function(x) stats::pnorm(x, prior$mean, prior$sd)
   support <- mass(upper) - mass(0)
   share <- if (support > 0) {
     (mass(upper) - mass(limit)) / support
   } else if (prior$mean > upper) {
-    as.numeric(upper * tide_height_m >= 1)
+    as.numeric(upper * canopy_tide_height_m >= 1)
   } else {
-    rep(0, length(tide_height_m))
+    rep(0, length(canopy_tide_height_m))
   }
   ifelse(canopy_area_m2 > 0, share, 0)
 }
@@ -101,7 +101,7 @@ warn_implausible_units <- function(data, x_name) {
     survey_area_m2 = c(1, 5000),
     plot_area_m2 = c(1, 1e6),
     classified_area_m2 = c(10, 1e9),
-    tide_height_m = c(-1, 5),
+    canopy_tide_height_m = c(-1, 5),
     wet_mass_g = c(-Inf, 1000),
     dry_mass_g = c(-Inf, 1000)
   )

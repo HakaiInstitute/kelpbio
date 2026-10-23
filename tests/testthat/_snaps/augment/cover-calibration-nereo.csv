@@ -1,4 +1,4 @@
-"survey_id","site","year","survey_area_m2","plants","plot_area_m2","canopy_area_m2","tide_height_m","weight_support","size_support","biomass_kg_m2","biomass_sd_kg_m2","fitted","residual"
+"survey_id","site","year","survey_area_m2","plants","plot_area_m2","canopy_area_m2","canopy_tide_height_m","weight_support","size_support","biomass_kg_m2","biomass_sd_kg_m2","fitted","residual"
 "otter_cove-2019-1","otter_cove","2019",200,291,216,8.58,1.55,"site-year","site-year",1.42,0.366,0.603,1.57
 "cedar_bay-2019-1","cedar_bay","2019",100,0,198,0,1.45,"site-year","site, year",0,0,0.0535,-1.36
 "cedar_bay-2019-2","cedar_bay","2019",100,43,196,21.2,0.35,"site-year","site, year",0.403,0.229,0.775,-0.78

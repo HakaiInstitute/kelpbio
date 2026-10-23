@@ -19,14 +19,14 @@
 #' is `sqrt(sd_residual^2 + (cv_residual * mu)^2 + biomass_sd^2)`, where
 #' `biomass_sd` is the SD of the survey's biomass draws, from plant weight.
 #'
-#' `cover` is `canopy_area_m2 / (1 - tide_height_slope * tide_height_m)` over
+#' `cover` is `canopy_area_m2 / (1 - tide_height_slope * canopy_tide_height_m)` over
 #' the plot area, capped at 1 (Timmer et al. 2024); a survey with canopy at a
 #' tide height at or above `1 / tide_height_slope` is fully covered, and the fit
 #' warns when that holds with more than 5% prior probability. The default prior
 #' on `tide_height_slope` largely sets the correction: raise its mean for beds in
-#' strong current. Flights at 2 m or below follow published practice and stay
+#' strong current. Imagery at a tide of 2 m or below follows published practice and stays
 #' below the tide limit. Pass canopy already corrected for tide with
-#' `tide_height_m = 0`.
+#' `canopy_tide_height_m = 0`.
 #'
 #' @inheritSection params Sampling
 #' @inheritParams kb_fit_weight_nereo

@@ -22,7 +22,7 @@
 #' @inheritParams params
 #' @param new_data A data frame with the fit's predictor column (and optional
 #'   `site` and `year` columns; `canopy_area_m2`, `plot_area_m2`, and
-#'   `tide_height_m` for a cover calibration fit), or `NULL` to predict at the
+#'   `canopy_tide_height_m` for a cover calibration fit), or `NULL` to predict at the
 #'   observed data.
 #'
 #' @returns A draws-by-observations (`D x N`) matrix.

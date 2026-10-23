@@ -20,7 +20,7 @@
 
 \item{new_data}{A data frame of the rows to predict at, with
 \code{canopy_area_m2} (the canopy area in the plot, m²), \code{plot_area_m2} (the
-plot area, m²), \code{tide_height_m} (the tide height, m), and optionally \code{site}
+plot area, m²), \code{canopy_tide_height_m} (the tide height, m), and optionally \code{site}
 and \code{year}, or \code{NULL} for the observed surveys.}
 
 \item{...}{These dots are for future extensions and must be empty.}
@@ -64,7 +64,7 @@ at the observed data when \code{new_data = NULL}. Equivalent to
 \examples{
 predict(
   fit_cover_calibration_sim_macro,
-  data.frame(canopy_area_m2 = 120, plot_area_m2 = 200, tide_height_m = 0.5)
+  data.frame(canopy_area_m2 = 120, plot_area_m2 = 200, canopy_tide_height_m = 0.5)
 )
 }
 \seealso{

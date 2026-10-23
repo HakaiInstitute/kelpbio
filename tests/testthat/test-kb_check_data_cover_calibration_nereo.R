@@ -6,7 +6,7 @@ test_that("valid nereo calibration data passes invisibly, including zero canopy 
 
 test_that("rows without drone cover and extra columns pass", {
   data <- survey_biomass()
-  data[2, c("plot_area_m2", "canopy_area_m2", "tide_height_m")] <- NA
+  data[2, c("plot_area_m2", "canopy_area_m2", "canopy_tide_height_m")] <- NA
   data$region <- "north"
   expect_silent(kb_check_data_cover_calibration_nereo(data))
 })
@@ -27,8 +27,8 @@ test_that("bad drone columns error naming the column", {
   bad$canopy_area_m2[1] <- 250
   expect_error(kb_check_data_cover_calibration_nereo(bad), "canopy_area_m2")
   bad <- good
-  bad$tide_height_m[1] <- NA
-  expect_error(kb_check_data_cover_calibration_nereo(bad), "tide_height_m")
+  bad$canopy_tide_height_m[1] <- NA
+  expect_error(kb_check_data_cover_calibration_nereo(bad), "canopy_tide_height_m")
   bad <- good
   bad$site[1] <- NA
   expect_error(kb_check_data_cover_calibration_nereo(bad), "site")
@@ -40,8 +40,8 @@ test_that("bad drone columns error naming the column", {
 
 test_that("a tide height in centimetres warns", {
   data <- survey_biomass()
-  data$tide_height_m <- c(50, 120, 80)
-  expect_warning(kb_check_data_cover_calibration_nereo(data), "tide_height_m")
+  data$canopy_tide_height_m <- c(50, 120, 80)
+  expect_warning(kb_check_data_cover_calibration_nereo(data), "canopy_tide_height_m")
 })
 
 test_that("x_name must be a string", {

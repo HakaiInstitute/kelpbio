@@ -168,7 +168,7 @@ predict.kb_fit_carbon <- function(
 #' @examples
 #' predict(
 #'   fit_cover_calibration_sim_macro,
-#'   data.frame(canopy_area_m2 = 120, plot_area_m2 = 200, tide_height_m = 0.5)
+#'   data.frame(canopy_area_m2 = 120, plot_area_m2 = 200, canopy_tide_height_m = 0.5)
 #' )
 predict.kb_fit_cover_calibration <- function(
   object,

@@ -10,7 +10,7 @@ A data frame with columns:
 \item{site}{Site, a factor (12 levels).}
 \item{year}{Year, a factor (5 levels).}
 \item{canopy_area_m2}{Canopy mapped within the site (m²).}
-\item{tide_height_m}{Tide height at the flight (m).}
+\item{canopy_tide_height_m}{Tide height when the canopy was imaged (m).}
 \item{classified_area_m2}{Water area the canopy classification covered
 (m²), including water with no canopy.}
 \item{region}{Region of the site, a factor (\code{"north"}, \code{"south"}).}

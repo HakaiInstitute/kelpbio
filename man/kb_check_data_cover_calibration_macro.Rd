@@ -30,7 +30,7 @@ row per in situ survey. Required columns:
 \item \code{site} and \code{year}, factor or character.
 \item \code{plot_area_m2} (the plot polygon, m², > 0), \code{canopy_area_m2} (the drone
 canopy delineated within it, m², \verb{>= 0} and at most \code{plot_area_m2}), and
-\code{tide_height_m} (the tide height at the flight, m, chart datum), given
+\code{canopy_tide_height_m} (the tide height when the canopy was imaged, m, chart datum), given
 together or missing together on each row. A row without them has no drone
 cover and is not fitted.
 }

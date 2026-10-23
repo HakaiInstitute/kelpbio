@@ -12,11 +12,11 @@ A data frame with columns:
 \item{year}{Year, a factor (5 levels).}
 \item{survey_area_m2}{Surveyed area (m²), a positive number.}
 \item{plants}{Plants counted, a whole number of at least 0.}
-\item{plot_area_m2}{Plot polygon (m²), or \code{NA} without a flight.}
+\item{plot_area_m2}{Plot polygon (m²), or \code{NA} without canopy imagery.}
 \item{canopy_area_m2}{Drone canopy within the plot (m²), or \code{NA} without
-a flight.}
-\item{tide_height_m}{Tide height at the flight (m), or \code{NA} without a
-flight.}
+canopy imagery.}
+\item{canopy_tide_height_m}{Tide height when the canopy was imaged (m), or \code{NA} without canopy
+imagery.}
 }
 }
 \usage{
@@ -25,8 +25,8 @@ data_in_situ_sim_nereo
 \description{
 A small simulated dataset of in situ surveys, one row per survey,
 for runnable examples: the plants tallied, with sizes from
-\link{fit_size_sim_nereo}, and the drone cover of the surveys paired with a
-flight. Some site-years hold more than one survey, and one survey counted no
+\link{fit_size_sim_nereo}, and the drone cover of the surveys with canopy
+imagery. Some site-years hold more than one survey, and one survey counted no
 plants.
 }
 \seealso{

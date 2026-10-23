@@ -5,7 +5,7 @@
         canopy_area_m2 = 1, plot_area_m2 = 2))
     Condition
       Error in `kb_predict_cover_calibration()`:
-      ! `new_data` must include 'tide_height_m'.
+      ! `new_data` must include 'canopy_tide_height_m'.
 
 # kb_predict_cover_calibration errors on other models and a non-fit
 

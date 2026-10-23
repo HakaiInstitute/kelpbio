@@ -17,7 +17,7 @@
 
 \item{new_data}{A data frame with the fit's predictor column (and optional
 \code{site} and \code{year} columns; \code{canopy_area_m2}, \code{plot_area_m2}, and
-\code{tide_height_m} for a cover calibration fit), or \code{NULL} to predict at the
+\code{canopy_tide_height_m} for a cover calibration fit), or \code{NULL} to predict at the
 observed data.}
 
 \item{...}{These dots are for future extensions and must be empty.}

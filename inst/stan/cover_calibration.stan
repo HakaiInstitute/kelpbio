@@ -4,7 +4,7 @@
 //   biomass ~ normal(mu, sigma), censored below at 0
 //   mu = biomass_floor + cover_slope * exp(site_effect[site] + year_effect[year]) * cover
 //   sigma = sqrt(sd_residual^2 + (cv_residual * mu)^2 + biomass_sd^2)
-//   seen = 1 - tide_height_slope * tide_height_m
+//   seen = 1 - tide_height_slope * canopy_tide_height_m
 //   cover = 0                                            if canopy_area_m2 = 0
 //         = min(plot_area_m2, canopy_area_m2 / seen) / plot_area_m2   if seen > 0
 //         = 1                                            otherwise
@@ -23,7 +23,7 @@ data {
   array[n_obs] int<lower=1, upper=n_year> year;
   vector<lower=0>[n_obs] canopy_area_m2;
   vector<lower=0>[n_obs] plot_area_m2;
-  vector[n_obs] tide_height_m;
+  vector[n_obs] canopy_tide_height_m;
   vector<lower=0>[n_obs] biomass;          // mean survey wet biomass (kg/m^2)
   vector<lower=0>[n_obs] biomass_sd;
   array[n_obs] int<lower=0, upper=1> zero;
@@ -69,7 +69,7 @@ model {
   z_year ~ std_normal();
   if (prior_only == 0) {
     for (i in 1:n_obs) {
-      real seen = 1 - tide_height_slope * tide_height_m[i];
+      real seen = 1 - tide_height_slope * canopy_tide_height_m[i];
       real cover = 0;
       if (canopy_area_m2[i] > 0) {
         cover = seen > 0

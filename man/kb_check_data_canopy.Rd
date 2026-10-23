@@ -25,13 +25,13 @@ its \code{new_data}.
 \details{
 Each row of \code{data} is one map of a site's canopy. Required columns: \code{site}
 (factor or character), \code{year} (factor, character, or whole numbers), numeric
-\code{canopy_area_m2} (the canopy area, m², \verb{>= 0}), numeric \code{tide_height_m} (the
-tide height at the flight, m, chart datum), and numeric \code{classified_area_m2}
+\code{canopy_area_m2} (the canopy area, m², \verb{>= 0}), numeric \code{canopy_tide_height_m} (the
+tide height when the canopy was imaged, m, chart datum), and numeric \code{classified_area_m2}
 (the water area the canopy classification covered, including water where no
 canopy was found, m², > 0 and at least \code{canopy_area_m2}), with no missing
 values.
 
-A site-year may have several maps, such as flights weeks apart. A numeric
+A site-year may have several maps, such as from imagery weeks apart. A numeric
 \code{year} is used as its character level. Other columns, such as \code{region}, are
 ignored, and can be named in \code{pool_by}.
 }

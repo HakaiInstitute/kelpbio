@@ -19,13 +19,13 @@
 #'   size fit. It must be absent when `size_census` is given; the counts then
 #'   come from its rows.
 #'
-#' A survey paired with a drone flight also has `plot_area_m2` (the plot
-#' polygon, m², > 0), over which the drone cover is measured, `canopy_area_m2`
-#' (the canopy delineated within it, m², `>= 0` and at most `plot_area_m2`), and
-#' `tide_height_m` (the tide height at the flight, m, chart datum). The three are
-#' given together or left missing together. When the whole plot is surveyed,
-#' `survey_area_m2` equals `plot_area_m2`. Other columns, such as `region`, are
-#' ignored, and can be named in `pool_by`.
+#' A survey with canopy imagery also has `plot_area_m2` (the plot polygon,
+#' m², > 0), over which the drone cover is measured, `canopy_area_m2` (the
+#' canopy delineated within it, m², `>= 0` and at most `plot_area_m2`), and
+#' `canopy_tide_height_m` (the tide height when the canopy was imaged, m, chart
+#' datum). The three are given together or left missing together. When the
+#' whole plot is surveyed, `survey_area_m2` equals `plot_area_m2`. Other
+#' columns, such as `region`, are ignored, and can be named in `pool_by`.
 #'
 #' @inheritParams params
 #' @param data A data frame of in situ surveys, one row per survey.

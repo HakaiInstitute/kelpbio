@@ -11,5 +11,5 @@ column_units <- c(
   canopy_area_m2 = "square metres",
   plot_area_m2 = "square metres",
   classified_area_m2 = "square metres",
-  tide_height_m = "metres"
+  canopy_tide_height_m = "metres"
 )

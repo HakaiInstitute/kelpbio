@@ -65,7 +65,7 @@ site-year (`R/mock-example.R`).
 
 1. **Data.** One survey sheet (survey_id, site, year, survey_area_m2, plants for
    *Nereocystis*, and the drone columns plot_area_m2, canopy_area_m2,
-   tide_height_m on the same row), a counted-plant sheet for *Macrocystis*
+   canopy_tide_height_m on the same row), a counted-plant sheet for *Macrocystis*
    (survey_id, fronds, partial; sheet `size_census`), and a canopy sheet for totals. The
    density sheet and the separate cover sheet go.
 2. **Dependencies.** The cover fit needs survey biomass from

@@ -78,7 +78,7 @@
 # The drone pairing of a survey: all three columns given or all missing on each
 # row, or the columns absent.
 .vld_drone_columns <- function(x) {
-  cols <- c("plot_area_m2", "canopy_area_m2", "tide_height_m")
+  cols <- c("plot_area_m2", "canopy_area_m2", "canopy_tide_height_m")
   present <- intersect(cols, names(x))
   if (!length(present)) {
     return(TRUE)
@@ -158,16 +158,16 @@
 # The survey columns of cover calibration data and new_data.
 .vld_cover_survey <- function(x) {
   is.data.frame(x) &&
-    all(c("canopy_area_m2", "plot_area_m2", "tide_height_m") %in% names(x)) &&
+    all(c("canopy_area_m2", "plot_area_m2", "canopy_tide_height_m") %in% names(x)) &&
     is.numeric(x$canopy_area_m2) &&
     !anyNA(x$canopy_area_m2) &&
     .vld_finite(x$canopy_area_m2) &&
     all(x$canopy_area_m2 >= 0) &&
     .vld_positive_measure(x$plot_area_m2) &&
     all(x$canopy_area_m2 <= x$plot_area_m2) &&
-    is.numeric(x$tide_height_m) &&
-    !anyNA(x$tide_height_m) &&
-    .vld_finite(x$tide_height_m) &&
+    is.numeric(x$canopy_tide_height_m) &&
+    !anyNA(x$canopy_tide_height_m) &&
+    .vld_finite(x$canopy_tide_height_m) &&
     (!"biomass_sd_kg_m2" %in% names(x) || .vld_biomass_sd(x$biomass_sd_kg_m2))
 }
 
@@ -178,14 +178,14 @@
 # Mapped canopy for canopy totals.
 .vld_canopy_maps <- function(x) {
   is.data.frame(x) &&
-    all(c("canopy_area_m2", "tide_height_m", "site", "year", "classified_area_m2") %in% names(x)) &&
+    all(c("canopy_area_m2", "canopy_tide_height_m", "site", "year", "classified_area_m2") %in% names(x)) &&
     is.numeric(x$canopy_area_m2) &&
     !anyNA(x$canopy_area_m2) &&
     .vld_finite(x$canopy_area_m2) &&
     all(x$canopy_area_m2 >= 0) &&
-    is.numeric(x$tide_height_m) &&
-    !anyNA(x$tide_height_m) &&
-    .vld_finite(x$tide_height_m) &&
+    is.numeric(x$canopy_tide_height_m) &&
+    !anyNA(x$canopy_tide_height_m) &&
+    .vld_finite(x$canopy_tide_height_m) &&
     .vld_group_column(x$site) &&
     .vld_id_column(x$year, "year") &&
     .vld_positive_measure(x$classified_area_m2) &&

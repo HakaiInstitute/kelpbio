@@ -98,6 +98,6 @@ kb_new_data <- function(fit, by = NULL, ...) {
 .grid_columns.kb_fit_cover_calibration <- function(fit, grid) {
   grid$canopy_area_m2 <- grid$cover
   grid$plot_area_m2 <- 1
-  grid$tide_height_m <- 0
+  grid$canopy_tide_height_m <- 0
   grid
 }

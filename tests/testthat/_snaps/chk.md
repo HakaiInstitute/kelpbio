@@ -176,7 +176,7 @@
       .chk_cover_survey(good[c("canopy_area_m2", "plot_area_m2")], x_name = "`new_data`")
     Condition
       Error in `.chk_cover_survey()`:
-      ! `new_data` must include 'tide_height_m'.
+      ! `new_data` must include 'canopy_tide_height_m'.
 
 ---
 
@@ -201,7 +201,7 @@
       .chk_canopy_maps(good[c("site", "year", "canopy_area_m2")], x_name = "`new_data`")
     Condition
       Error in `.chk_canopy_maps()`:
-      ! `new_data` must include 'classified_area_m2' and 'tide_height_m'.
+      ! `new_data` must include 'canopy_tide_height_m' and 'classified_area_m2'.
 
 ---
 

@@ -256,7 +256,7 @@ test_that(".chk_kb_fit with class kb_fit_cover_calibration passes a cover calibr
 })
 
 test_that(".chk_cover_survey errors name the survey column", {
-  good <- data.frame(canopy_area_m2 = 40, plot_area_m2 = 200, tide_height_m = 0.5)
+  good <- data.frame(canopy_area_m2 = 40, plot_area_m2 = 200, canopy_tide_height_m = 0.5)
   expect_invisible(.chk_cover_survey(good))
   expect_snapshot(
     error = TRUE,
@@ -266,13 +266,13 @@ test_that(".chk_cover_survey errors name the survey column", {
   bad$canopy_area_m2 <- 300
   expect_snapshot(error = TRUE, .chk_cover_survey(bad, x_name = "`new_data`"))
   bad <- good
-  bad$tide_height_m <- "low"
-  expect_error(.chk_cover_survey(bad), "tide_height_m")
+  bad$canopy_tide_height_m <- "low"
+  expect_error(.chk_cover_survey(bad), "canopy_tide_height_m")
   expect_error(.chk_cover_survey(1), "must be a data frame")
 })
 
 test_that(".chk_cover_survey checks biomass_sd_kg_m2 where present", {
-  good <- data.frame(canopy_area_m2 = 40, plot_area_m2 = 200, tide_height_m = 0.5)
+  good <- data.frame(canopy_area_m2 = 40, plot_area_m2 = 200, canopy_tide_height_m = 0.5)
   expect_invisible(.chk_cover_survey(transform(good, biomass_sd_kg_m2 = 0.2)))
   expect_snapshot(
     error = TRUE,
@@ -282,7 +282,7 @@ test_that(".chk_cover_survey checks biomass_sd_kg_m2 where present", {
 
 test_that(".chk_canopy_maps errors name the survey column", {
   good <- data.frame(
-    site = "a", year = "2020", canopy_area_m2 = 100, tide_height_m = 0.5, classified_area_m2 = 1e4
+    site = "a", year = "2020", canopy_area_m2 = 100, canopy_tide_height_m = 0.5, classified_area_m2 = 1e4
   )
   expect_invisible(.chk_canopy_maps(good))
   expect_error(.chk_canopy_maps(good[setdiff(names(good), "classified_area_m2")]), "classified_area_m2")

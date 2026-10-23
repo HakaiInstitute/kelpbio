@@ -6,12 +6,12 @@ canopy_biomass_draws <- function(fit, grid, new_levels, representative_site) {
   bed <- grid[intersect(.group_vars(), names(grid))]
   bed$canopy_area_m2 <- 1
   bed$plot_area_m2 <- 1
-  bed$tide_height_m <- 0
+  bed$canopy_tide_height_m <- 0
   density <- .epred(fit, .linpred(fit, bed, new_levels, representative_site))
 
   canopy <- tide_corrected_canopy(
     grid$canopy_area_m2,
-    grid$tide_height_m,
+    grid$canopy_tide_height_m,
     fit$draws$tide_height_slope,
     cap = grid$classified_area_m2
   )

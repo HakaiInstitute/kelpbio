@@ -45,9 +45,9 @@
 # the drone columns are given together
 
     Code
-      kb_check_data_in_situ(transform(survey(), tide_height_m = c(0.8, NA, NA)))
+      kb_check_data_in_situ(transform(survey(), canopy_tide_height_m = c(0.8, NA, NA)))
     Condition
       Error in `kb_check_data_in_situ()`:
-      ! Column `tide_height_m` of `transform(survey(), tide_height_m = c(0.8, NA, NA))` must not be missing where the other drone columns are given.
-      i Give plot_area_m2, canopy_area_m2, and tide_height_m together, or leave all three missing for a survey without drone cover.
+      ! Column `canopy_tide_height_m` of `transform(survey(), canopy_tide_height_m = c(0.8, NA, NA))` must not be missing where the other drone columns are given.
+      i Give plot_area_m2, canopy_area_m2, and canopy_tide_height_m together, or leave all three missing for a survey without drone cover.
 

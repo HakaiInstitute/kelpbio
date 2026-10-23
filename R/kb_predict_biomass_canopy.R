@@ -10,21 +10,21 @@
 #' mapped canopy is taken as the extent of the bed, so no biomass is counted
 #' outside it. The interval is for the expected total: it carries the
 #' uncertainty in the parameters and the site and year effects, not variation
-#' between flights.
+#' between canopy maps.
 #'
 #' The tide-corrected canopy area is `canopy_area_m2 / (1 - tide_height_slope *
-#' tide_height_m)` (Timmer et al. 2024), capped at `classified_area_m2`; at a
+#' canopy_tide_height_m)` (Timmer et al. 2024), capped at `classified_area_m2`; at a
 #' tide height at or above `1 / tide_height_slope` it is `classified_area_m2`.
 #' A row past that limit on more than 5% of draws warns, since its total is
 #' then set by the classified area rather than the canopy mapped. Canopy
-#' already corrected for tide is passed with `tide_height_m = 0`.
+#' already corrected for tide is passed with `canopy_tide_height_m = 0`.
 #'
 #' Dry biomass is the wet total times the expected dry:wet ratio from `wetdry`,
 #' and carbon the dry total times the expected carbon fraction from `carbon`.
 #' The fits must be of the same species and have the same number of draws.
 #'
 #' Pool totals with `pool_by` rather than summing per-row estimates or limits.
-#' A site-year may have several rows, such as flights weeks apart, but pooling
+#' A site-year may have several rows, such as from imagery weeks apart, but pooling
 #' two maps of one site-year counts its bed twice, so a group with more than one
 #' row per site-year warns.
 #'
@@ -34,7 +34,7 @@
 #' @param new_data A data frame of mapped canopy, one row per map of a site's
 #'   canopy (summed over the map's polygons), with
 #'   `site`, `year`, `canopy_area_m2` (the canopy mapped within the site, m²),
-#'   `tide_height_m` (the tide height at the flight, m), and
+#'   `canopy_tide_height_m` (the tide height when the canopy was imaged, m), and
 #'   `classified_area_m2` (the water area within the site that the canopy
 #'   classification covered, including water where no canopy was found, m²),
 #'   which caps the tide-corrected canopy. Other columns are kept and can be
@@ -118,7 +118,7 @@ kb_predict_biomass_canopy <- function(
   .chk_summary_args(conf_level, estimate, sig_fig)
   warn_implausible_units(new_data, "`new_data`")
   warn_tide_cap(
-    tide_cap_share(new_data$canopy_area_m2, new_data$tide_height_m, fit$draws$tide_height_slope),
+    tide_cap_share(new_data$canopy_area_m2, new_data$canopy_tide_height_m, fit$draws$tide_height_slope),
     "`new_data`",
     rows = "row",
     cap = "the classified area",

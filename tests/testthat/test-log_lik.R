@@ -125,10 +125,10 @@ test_that("cover log_lik past the tide limit is finite and equals full cover", {
   # one over the smallest slope draw, so every draw is past the limit
   limit <- 1 / min(posterior::draws_of(fit$draws$tide_height_slope))
   high <- fit
-  high$data$tide_height_m[i] <- limit + 0.1
+  high$data$canopy_tide_height_m[i] <- limit + 0.1
   full <- fit
   full$data$canopy_area_m2[i] <- full$data$plot_area_m2[i]
-  full$data$tide_height_m[i] <- 0
+  full$data$canopy_tide_height_m[i] <- 0
   expect_true(all(is.finite(log_lik(high)[, i])))
   expect_equal(log_lik(high)[, i], log_lik(full)[, i])
 })

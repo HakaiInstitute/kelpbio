@@ -20,7 +20,7 @@ kb_predict_cover_calibration(
 
 \item{new_data}{A data frame of the rows to predict at, with
 \code{canopy_area_m2} (the canopy area in the plot, m²), \code{plot_area_m2} (the
-plot area, m²), \code{tide_height_m} (the tide height, m), and optionally \code{site}
+plot area, m²), \code{canopy_tide_height_m} (the tide height, m), and optionally \code{site}
 and \code{year}, or \code{NULL} for the observed surveys.}
 
 \item{...}{These dots are for future extensions and must be empty.}
@@ -69,7 +69,7 @@ Cover is tide-corrected and capped at 1, as in the fit; a row with canopy at
 a tide height at or above \code{1 / tide_height_slope} is fully covered, and a
 row past that limit on more than 5\% of draws warns. Canopy already corrected
 for tide is passed with
-\code{tide_height_m = 0}. A row with no canopy predicts the biomass floor, which
+\code{canopy_tide_height_m = 0}. A row with no canopy predicts the biomass floor, which
 is the same for every site and year.
 
 The prediction is \code{mu}, the mean before censoring at zero, as used by
@@ -92,7 +92,7 @@ kb_predict_cover_calibration(
     site = c("otter_cove", "new_site"),
     canopy_area_m2 = 80,
     plot_area_m2 = 200,
-    tide_height_m = 0.5
+    canopy_tide_height_m = 0.5
   )
 )
 }

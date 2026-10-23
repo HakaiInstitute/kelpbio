@@ -25,7 +25,7 @@ kb_predict_biomass_canopy(
 \item{new_data}{A data frame of mapped canopy, one row per map of a site's
 canopy (summed over the map's polygons), with
 \code{site}, \code{year}, \code{canopy_area_m2} (the canopy mapped within the site, m²),
-\code{tide_height_m} (the tide height at the flight, m), and
+\code{canopy_tide_height_m} (the tide height when the canopy was imaged, m), and
 \code{classified_area_m2} (the water area within the site that the canopy
 classification covered, including water where no canopy was found, m²),
 which caps the tide-corrected canopy. Other columns are kept and can be
@@ -96,20 +96,20 @@ A row's total is the expected biomass per m² of bed for its site and year
 mapped canopy is taken as the extent of the bed, so no biomass is counted
 outside it. The interval is for the expected total: it carries the
 uncertainty in the parameters and the site and year effects, not variation
-between flights.
+between canopy maps.
 
-The tide-corrected canopy area is \code{canopy_area_m2 / (1 - tide_height_slope * tide_height_m)} (Timmer et al. 2024), capped at \code{classified_area_m2}; at a
+The tide-corrected canopy area is \code{canopy_area_m2 / (1 - tide_height_slope * canopy_tide_height_m)} (Timmer et al. 2024), capped at \code{classified_area_m2}; at a
 tide height at or above \code{1 / tide_height_slope} it is \code{classified_area_m2}.
 A row past that limit on more than 5\% of draws warns, since its total is
 then set by the classified area rather than the canopy mapped. Canopy
-already corrected for tide is passed with \code{tide_height_m = 0}.
+already corrected for tide is passed with \code{canopy_tide_height_m = 0}.
 
 Dry biomass is the wet total times the expected dry:wet ratio from \code{wetdry},
 and carbon the dry total times the expected carbon fraction from \code{carbon}.
 The fits must be of the same species and have the same number of draws.
 
 Pool totals with \code{pool_by} rather than summing per-row estimates or limits.
-A site-year may have several rows, such as flights weeks apart, but pooling
+A site-year may have several rows, such as from imagery weeks apart, but pooling
 two maps of one site-year counts its bed twice, so a group with more than one
 row per site-year warns.
 }

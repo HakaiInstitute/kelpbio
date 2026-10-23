@@ -1,4 +1,4 @@
-"survey_id","site","year","survey_area_m2","plants","plot_area_m2","canopy_area_m2","tide_height_m","weight_support","size_support","estimate","lower","upper"
+"survey_id","site","year","survey_area_m2","plants","plot_area_m2","canopy_area_m2","canopy_tide_height_m","weight_support","size_support","estimate","lower","upper"
 "otter_cove-2019-1","otter_cove","2019",200,291,216,8.58,1.55,"site-year","site-year",1.31,0.89,2.12
 "gull_rock-2019-1","gull_rock","2019",140,165,NA,NA,NA,"site-year","site-year",0.498,0.355,0.733
 "cedar_bay-2019-1","cedar_bay","2019",100,0,198,0,1.45,"site-year","site, year",0,0,0

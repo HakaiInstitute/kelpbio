@@ -146,7 +146,7 @@ Each model SHALL have one prediction verb, `kb_predict_<model>()`, returning a `
 
 - Weight: `kb_predict_weight(fit, new_data)` predicts expected weight (kg). `new_data` SHALL have the species predictor column (`diameter_mm` for *Nereocystis*, `fronds` for *Macrocystis*). New data SHALL use the predictor reference stored at fit time.
 - Size: `kb_predict_size(fit, new_data)` predicts expected size, the mean of the *Nereocystis* sub-bulb diameter distribution (mm). `new_data` needs no columns.
-- Cover calibration: `kb_predict_cover_calibration(fit, new_data)` predicts the expected wet biomass per m² of a plot from its `canopy_area_m2`, `plot_area_m2`, and `tide_height_m`, which `new_data` SHALL carry.
+- Cover calibration: `kb_predict_cover_calibration(fit, new_data)` predicts the expected wet biomass per m² of a plot from its `canopy_area_m2`, `plot_area_m2`, and `canopy_tide_height_m`, which `new_data` SHALL carry.
 - Wet/dry: `kb_predict_wetdry(fit)` predicts the expected dry:wet mass ratio, one row for the population of samples. The model has no grouping factors or predictor, so the verb takes no `new_data`; the same summary arguments apply.
 - Carbon: `kb_predict_carbon(fit)` predicts the expected carbon fraction of dry mass, one row for the population of samples, on the same terms as wet/dry.
 
@@ -157,7 +157,7 @@ Each model SHALL have one prediction verb, `kb_predict_<model>()`, returning a `
 - **THEN** it returns one prediction per observed row, whose `estimate` equals `augment(fit)$fitted`
 
 #### Scenario: Predict at supplied rows
-- **WHEN** `new_data` carries the columns the model needs (the species predictor for weight, none for size, `canopy_area_m2`, `plot_area_m2`, and `tide_height_m` for the cover calibration)
+- **WHEN** `new_data` carries the columns the model needs (the species predictor for weight, none for size, `canopy_area_m2`, `plot_area_m2`, and `canopy_tide_height_m` for the cover calibration)
 - **THEN** predictions are returned at exactly those rows, in their order
 
 #### Scenario: Zero cover predicts the floor
@@ -190,7 +190,7 @@ Each model SHALL have one prediction verb, `kb_predict_<model>()`, returning a `
 
 ### Requirement: Prediction grids
 
-`kb_new_data(fit, by = NULL, ...)` SHALL return a data frame for use as `new_data` with a weight, size, or cover calibration fit: one row per level of the factors named in `by` (`NULL` for a single row with no grouping columns, `"site"`, `"year"`, or `c("site", "year")`, the last taking only the combinations in the fitted data), in the fit's level order. Levels of `site` or `year` not named in `by` MAY be supplied by name in `...` (character, factor, or numeric), and each SHALL be crossed with the rest of the grid; a level the fit has not seen SHALL be accepted and resolved at prediction as a new level. For a weight fit the rows SHALL be crossed with values of the species predictor, supplied as a named numeric vector of any length (`diameter_mm` for *Nereocystis*, `fronds` for *Macrocystis*) and defaulting to 30 evenly spaced values over the observed range, rounded to whole numbers for `fronds`; the predictor column SHALL take the input column's name. For a cover calibration fit the rows SHALL be crossed with values of tide-corrected cover, supplied as `cover` (proportions from 0 to 1) and defaulting to 30 evenly spaced values from 0 to 1, each row being a unit plot at zero tide height with the `canopy_area_m2`, `plot_area_m2`, and `tide_height_m` columns the prediction reads. It SHALL error, naming the valid values, for an unknown `by` value, a `cover` outside 0 to 1, a predictor value the model's data could not hold (a missing, infinite, or non-positive diameter, or fronds that are not a positive whole number), an argument in `...` that is neither the fit's predictor nor `site` or `year` (such as the other species' predictor, or any predictor for a size fit), a grouping factor both named in `by` and given values, missing grouping values, or a fit with no grouping factors.
+`kb_new_data(fit, by = NULL, ...)` SHALL return a data frame for use as `new_data` with a weight, size, or cover calibration fit: one row per level of the factors named in `by` (`NULL` for a single row with no grouping columns, `"site"`, `"year"`, or `c("site", "year")`, the last taking only the combinations in the fitted data), in the fit's level order. Levels of `site` or `year` not named in `by` MAY be supplied by name in `...` (character, factor, or numeric), and each SHALL be crossed with the rest of the grid; a level the fit has not seen SHALL be accepted and resolved at prediction as a new level. For a weight fit the rows SHALL be crossed with values of the species predictor, supplied as a named numeric vector of any length (`diameter_mm` for *Nereocystis*, `fronds` for *Macrocystis*) and defaulting to 30 evenly spaced values over the observed range, rounded to whole numbers for `fronds`; the predictor column SHALL take the input column's name. For a cover calibration fit the rows SHALL be crossed with values of tide-corrected cover, supplied as `cover` (proportions from 0 to 1) and defaulting to 30 evenly spaced values from 0 to 1, each row being a unit plot at zero tide height with the `canopy_area_m2`, `plot_area_m2`, and `canopy_tide_height_m` columns the prediction reads. It SHALL error, naming the valid values, for an unknown `by` value, a `cover` outside 0 to 1, a predictor value the model's data could not hold (a missing, infinite, or non-positive diameter, or fronds that are not a positive whole number), an argument in `...` that is neither the fit's predictor nor `site` or `year` (such as the other species' predictor, or any predictor for a size fit), a grouping factor both named in `by` and given values, missing grouping values, or a fit with no grouping factors.
 
 #### Scenario: Curves over a named predictor
 - **WHEN** `kb_new_data(fit, by = "site", diameter_mm = c(20, 40))` is called on a *Nereocystis* weight fit
@@ -201,7 +201,7 @@ Each model SHALL have one prediction verb, `kb_predict_<model>()`, returning a `
 - **THEN** it returns one row per fitted site, each at 50 mm
 
 #### Scenario: Cover grids agree with survey rows
-- **WHEN** `kb_predict_cover_calibration(fit, kb_new_data(fit, by = "site", cover = 0.5))` is called, and `kb_predict_cover_calibration()` at the same sites with `canopy_area_m2 = 50`, `plot_area_m2 = 100`, and `tide_height_m = 0`
+- **WHEN** `kb_predict_cover_calibration(fit, kb_new_data(fit, by = "site", cover = 0.5))` is called, and `kb_predict_cover_calibration()` at the same sites with `canopy_area_m2 = 50`, `plot_area_m2 = 100`, and `canopy_tide_height_m = 0`
 - **THEN** the estimates are equal
 
 #### Scenario: A default predictor sequence
@@ -226,7 +226,7 @@ Each model SHALL have one prediction verb, `kb_predict_<model>()`, returning a `
 
 ### Requirement: New data are validated
 
-`new_data` SHALL be validated before prediction: it SHALL be a data frame; for weight, *Nereocystis* `diameter_mm` SHALL be numeric, greater than 0, with no missing values, and *Macrocystis* `fronds` a positive whole number with no missing values; for the cover calibration, `canopy_area_m2` (`>= 0`), `plot_area_m2` (> 0 and at least `canopy_area_m2`), and `tide_height_m` SHALL be present, numeric, with no missing values. Size `new_data` needs no columns, and wet/dry and carbon take no `new_data`. An invalid value SHALL error with a message naming the column, pinned by `tests/testthat/_snaps/chk.md`.
+`new_data` SHALL be validated before prediction: it SHALL be a data frame; for weight, *Nereocystis* `diameter_mm` SHALL be numeric, greater than 0, with no missing values, and *Macrocystis* `fronds` a positive whole number with no missing values; for the cover calibration, `canopy_area_m2` (`>= 0`), `plot_area_m2` (> 0 and at least `canopy_area_m2`), and `canopy_tide_height_m` SHALL be present, numeric, with no missing values. Size `new_data` needs no columns, and wet/dry and carbon take no `new_data`. An invalid value SHALL error with a message naming the column, pinned by `tests/testthat/_snaps/chk.md`.
 
 #### Scenario: An impossible diameter errors
 - **WHEN** weight `new_data` has a `diameter_mm` that is zero, negative, missing, or not numeric
@@ -241,7 +241,7 @@ Each model SHALL have one prediction verb, `kb_predict_<model>()`, returning a `
 - **THEN** it returns one prediction per row
 
 #### Scenario: Cover new data need the plot columns
-- **WHEN** `kb_predict_cover_calibration(fit, new_data)` is called with `new_data` lacking `tide_height_m`, or with a `canopy_area_m2` above its `plot_area_m2`
+- **WHEN** `kb_predict_cover_calibration(fit, new_data)` is called with `new_data` lacking `canopy_tide_height_m`, or with a `canopy_area_m2` above its `plot_area_m2`
 - **THEN** prediction errors naming the column
 
 ### Requirement: Derived verbs share their arguments and output
@@ -314,7 +314,7 @@ Each model SHALL have one prediction verb, `kb_predict_<model>()`, returning a `
 
 ### Requirement: Canopy biomass
 
-`kb_predict_biomass_canopy(fit, new_data, wetdry = NULL, carbon = NULL, ...)` SHALL take a cover calibration fit and a required `new_data` with one row per map of a site's canopy (a site-year MAY have several, such as flights weeks apart), with `canopy_area_m2` (`>= 0`), `tide_height_m`, `site`, `year`, and `classified_area_m2`, the water area within the site that the canopy classification covered, including water where no canopy was found (`> 0` and at least `canopy_area_m2`), each with no missing values. Per draw, a row's wet total SHALL be the expected biomass per m² of bed, the floor plus the canopy term at full cover with the row's site and year effects, times its tide-corrected canopy area: the canopy divided by one minus the tide slope times the tide height, capped at `classified_area_m2`, and equal to `classified_area_m2` where the canopy is positive and the tide height is at or above one over the tide slope. A row with no canopy SHALL have no corrected canopy at any tide height. The floor SHALL apply over the canopy area only. No observation-level variation SHALL be added. The response column SHALL be `biomass_kg`, `dry_biomass_kg`, or `carbon_biomass_kg`. Each row SHALL carry `cover_support`: `"site, year"` where both its site and its year are in the fit's data, else `"site"` or `"year"` where only one is, else `"none"`. Within a `pool_by` group, more than one row for the same site and year SHALL warn that their totals overlap.
+`kb_predict_biomass_canopy(fit, new_data, wetdry = NULL, carbon = NULL, ...)` SHALL take a cover calibration fit and a required `new_data` with one row per map of a site's canopy (a site-year MAY have several, such as from imagery weeks apart), with `canopy_area_m2` (`>= 0`), `canopy_tide_height_m`, `site`, `year`, and `classified_area_m2`, the water area within the site that the canopy classification covered, including water where no canopy was found (`> 0` and at least `canopy_area_m2`), each with no missing values. Per draw, a row's wet total SHALL be the expected biomass per m² of bed, the floor plus the canopy term at full cover with the row's site and year effects, times its tide-corrected canopy area: the canopy divided by one minus the tide slope times the tide height, capped at `classified_area_m2`, and equal to `classified_area_m2` where the canopy is positive and the tide height is at or above one over the tide slope. A row with no canopy SHALL have no corrected canopy at any tide height. The floor SHALL apply over the canopy area only. No observation-level variation SHALL be added. The response column SHALL be `biomass_kg`, `dry_biomass_kg`, or `carbon_biomass_kg`. Each row SHALL carry `cover_support`: `"site, year"` where both its site and its year are in the fit's data, else `"site"` or `"year"` where only one is, else `"none"`. Within a `pool_by` group, more than one row for the same site and year SHALL warn that their totals overlap.
 
 #### Scenario: One total per row
 - **WHEN** `kb_predict_biomass_canopy(fit, new_data)` is called
@@ -322,7 +322,7 @@ Each model SHALL have one prediction verb, `kb_predict_<model>()`, returning a `
 
 #### Scenario: The total is bed biomass times canopy area
 - **WHEN** a row has a fitted site and year and zero tide height
-- **THEN** each draw of its total equals the calibration fit's `posterior_epred()` at a fully covered unit plot (`canopy_area_m2 = 1`, `plot_area_m2 = 1`, `tide_height_m = 0`) of that site and year, times the row's `canopy_area_m2`
+- **THEN** each draw of its total equals the calibration fit's `posterior_epred()` at a fully covered unit plot (`canopy_area_m2 = 1`, `plot_area_m2 = 1`, `canopy_tide_height_m = 0`) of that site and year, times the row's `canopy_area_m2`
 
 #### Scenario: Totals scale with canopy area
 - **WHEN** two rows differ only in `canopy_area_m2`, with neither capped by `classified_area_m2`
@@ -337,7 +337,7 @@ Each model SHALL have one prediction verb, `kb_predict_<model>()`, returning a `
 - **THEN** that draw of its total is the bed biomass per m² times `classified_area_m2`
 
 #### Scenario: Missing or inconsistent columns error
-- **WHEN** a row's `canopy_area_m2` exceeds its `classified_area_m2`, or `new_data` lacks `canopy_area_m2`, `tide_height_m`, or `classified_area_m2`
+- **WHEN** a row's `canopy_area_m2` exceeds its `classified_area_m2`, or `new_data` lacks `canopy_area_m2`, `canopy_tide_height_m`, or `classified_area_m2`
 - **THEN** it errors naming the column
 
 #### Scenario: Overlapping rows in a sum warn
@@ -365,7 +365,7 @@ Every prediction from a cover calibration fit (`kb_predict_cover_calibration()`,
 - **THEN** its corrected canopy and canopy total are zero on every draw
 
 #### Scenario: Canopy at zero tide height is used as given
-- **WHEN** a row has `tide_height_m` of 0, as for canopy already corrected for tide
+- **WHEN** a row has `canopy_tide_height_m` of 0, as for canopy already corrected for tide
 - **THEN** its corrected canopy equals its `canopy_area_m2`, capped at the plot area or `classified_area_m2`, on every draw
 
 #### Scenario: A negative tide height shrinks the corrected canopy

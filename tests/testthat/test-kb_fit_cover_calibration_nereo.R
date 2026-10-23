@@ -53,7 +53,7 @@ test_that("the fit records the species, response, predictor, and no site:year", 
 test_that("surveys without drone cover are not fitted, with a message", {
   local_fit_stan_stub(cover_calibration_nereo_fit)
   data <- input()
-  data[1, c("plot_area_m2", "canopy_area_m2", "tide_height_m")] <- NA
+  data[1, c("plot_area_m2", "canopy_area_m2", "canopy_tide_height_m")] <- NA
   expect_snapshot(fit <- kb_fit_cover_calibration_nereo(data))
   expect_equal(nobs(fit), nrow(data) - 1L)
   expect_no_message(kb_fit_cover_calibration_nereo(data, progress = "none"))
@@ -63,7 +63,7 @@ test_that("surveys past the tide limit under the prior warn at fit time", {
   local_fit_stan_stub(cover_calibration_nereo_fit)
   data <- input()
   expect_no_warning(kb_fit_cover_calibration_nereo(data, progress = "none"))
-  data$tide_height_m[1] <- 3.5
+  data$canopy_tide_height_m[1] <- 3.5
   expect_warning(kb_fit_cover_calibration_nereo(data, progress = "none"), "tide prior")
 })
 

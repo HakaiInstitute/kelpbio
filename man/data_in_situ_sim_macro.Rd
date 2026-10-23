@@ -11,11 +11,11 @@ A data frame with columns:
 \item{site}{Site, a factor (12 levels).}
 \item{year}{Year, a factor (5 levels).}
 \item{survey_area_m2}{Surveyed area (m²), a positive number.}
-\item{plot_area_m2}{Plot polygon (m²), or \code{NA} without a flight.}
+\item{plot_area_m2}{Plot polygon (m²), or \code{NA} without canopy imagery.}
 \item{canopy_area_m2}{Drone canopy within the plot (m²), or \code{NA} without
-a flight.}
-\item{tide_height_m}{Tide height at the flight (m), or \code{NA} without a
-flight.}
+canopy imagery.}
+\item{canopy_tide_height_m}{Tide height when the canopy was imaged (m), or \code{NA} without canopy
+imagery.}
 }
 }
 \usage{
@@ -24,7 +24,7 @@ data_in_situ_sim_macro
 \description{
 A small simulated dataset of in situ surveys, one row per survey,
 for runnable examples: the plants listed in \link{data_size_census_sim_macro}, and the
-drone cover of the surveys paired with a flight. Some site-years hold more
+drone cover of the surveys with canopy imagery. Some site-years hold more
 than one survey, and one survey counted no plants.
 }
 \seealso{

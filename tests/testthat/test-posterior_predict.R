@@ -43,7 +43,7 @@ test_that("posterior_predict at new data is wider than posterior_epred", {
 })
 
 test_that("cover posterior_predict draws biomass of at least zero", {
-  nd <- data.frame(canopy_area_m2 = c(0, 40), plot_area_m2 = 200, tide_height_m = 0.5)
+  nd <- data.frame(canopy_area_m2 = c(0, 40), plot_area_m2 = 200, canopy_tide_height_m = 0.5)
   withr::local_seed(1)
   pp <- posterior_predict(cover_calibration_nereo_fit, nd)
   expect_equal(ncol(pp), 2L)

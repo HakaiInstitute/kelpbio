@@ -594,7 +594,7 @@
   }
   chk::chk_superset(
     names(x),
-    c("canopy_area_m2", "plot_area_m2", "tide_height_m"),
+    c("canopy_area_m2", "plot_area_m2", "canopy_tide_height_m"),
     x_name = x_name
   )
   nm <- column_xname(x_name, "canopy_area_m2")
@@ -609,10 +609,10 @@
       i = "The canopy is the area delineated within the plot."
     ))
   }
-  nm <- column_xname(x_name, "tide_height_m")
-  chk::chk_numeric(x$tide_height_m, x_name = nm)
-  chk::chk_not_any_na(x$tide_height_m, x_name = nm)
-  .chk_finite(x$tide_height_m, nm)
+  nm <- column_xname(x_name, "canopy_tide_height_m")
+  chk::chk_numeric(x$canopy_tide_height_m, x_name = nm)
+  chk::chk_not_any_na(x$canopy_tide_height_m, x_name = nm)
+  .chk_finite(x$canopy_tide_height_m, nm)
   if ("biomass_sd_kg_m2" %in% names(x)) {
     nm <- column_xname(x_name, "biomass_sd_kg_m2")
     chk::chk_numeric(x$biomass_sd_kg_m2, x_name = nm)
@@ -640,7 +640,7 @@
     )
   }
   missing <- setdiff(
-    c("site", "year", "plot_area_m2", "canopy_area_m2", "tide_height_m"),
+    c("site", "year", "plot_area_m2", "canopy_area_m2", "canopy_tide_height_m"),
     names(data)
   )
   if (length(missing)) {
@@ -737,7 +737,7 @@
   if (.vld_drone_columns(x)) {
     return(invisible(x))
   }
-  cols <- c("plot_area_m2", "canopy_area_m2", "tide_height_m")
+  cols <- c("plot_area_m2", "canopy_area_m2", "canopy_tide_height_m")
   absent <- setdiff(cols, names(x))
   if (length(absent)) {
     cli::cli_abort(c(
@@ -763,9 +763,9 @@
   if (any(d$canopy_area_m2 > d$plot_area_m2)) {
     cli::cli_abort("{nm} must not exceed {.field plot_area_m2}.")
   }
-  nm <- column_xname(x_name, "tide_height_m")
-  chk::chk_numeric(d$tide_height_m, x_name = nm)
-  .chk_finite(d$tide_height_m, nm)
+  nm <- column_xname(x_name, "canopy_tide_height_m")
+  chk::chk_numeric(d$canopy_tide_height_m, x_name = nm)
+  .chk_finite(d$canopy_tide_height_m, nm)
   invisible(x)
 }
 
@@ -895,7 +895,7 @@
   }
   chk::chk_superset(
     names(x),
-    c("canopy_area_m2", "tide_height_m", "site", "year", "classified_area_m2"),
+    c("canopy_area_m2", "canopy_tide_height_m", "site", "year", "classified_area_m2"),
     x_name = x_name
   )
   nm <- column_xname(x_name, "canopy_area_m2")
@@ -903,10 +903,10 @@
   chk::chk_not_any_na(x$canopy_area_m2, x_name = nm)
   .chk_finite(x$canopy_area_m2, nm)
   chk::chk_gte(x$canopy_area_m2, value = 0, x_name = nm)
-  nm <- column_xname(x_name, "tide_height_m")
-  chk::chk_numeric(x$tide_height_m, x_name = nm)
-  chk::chk_not_any_na(x$tide_height_m, x_name = nm)
-  .chk_finite(x$tide_height_m, nm)
+  nm <- column_xname(x_name, "canopy_tide_height_m")
+  chk::chk_numeric(x$canopy_tide_height_m, x_name = nm)
+  chk::chk_not_any_na(x$canopy_tide_height_m, x_name = nm)
+  .chk_finite(x$canopy_tide_height_m, nm)
   .chk_group_columns(x, x_name)
   .chk_positive_measure(
     x$classified_area_m2,

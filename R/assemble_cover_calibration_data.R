@@ -20,7 +20,7 @@ assemble_cover_calibration_data <- function(data, priors, prior_only = FALSE) {
       n_obs = nrow(data),
       canopy_area_m2 = as.numeric(data$canopy_area_m2),
       plot_area_m2 = as.numeric(data$plot_area_m2),
-      tide_height_m = as.numeric(data$tide_height_m),
+      canopy_tide_height_m = as.numeric(data$canopy_tide_height_m),
       biomass = biomass,
       biomass_sd = as.numeric(data$biomass_sd_kg_m2),
       zero = as.integer(biomass == 0),
