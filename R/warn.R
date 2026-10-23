@@ -135,8 +135,8 @@ warn_survey_area <- function(data, x_name) {
   n <- sum(data$survey_area_m2 > data$plot_area_m2, na.rm = TRUE)
   if (n > 0L) {
     cli::cli_warn(c(
-      "{n} survey{?s} in {x_name} {cli::qty(n)}{?has a/have} {.field survey_area_m2} above {?its/their} {.field plot_area_m2}.",
-      i = "{.field survey_area_m2} is the surveyed area and {.field plot_area_m2} the plot polygon; check that they are not swapped."
+      "{n} survey{?s} in {x_name} {cli::qty(n)}{?has/have} {.field survey_area_m2} > {.field plot_area_m2}.",
+      i = "Check that the two columns are not swapped."
     ))
   }
   invisible(data)

@@ -94,8 +94,8 @@
       warn_survey_area(d, "`d`")
     Condition
       Warning:
-      1 survey in `d` has a survey_area_m2 above its plot_area_m2.
-      i survey_area_m2 is the surveyed area and plot_area_m2 the plot polygon; check that they are not swapped.
+      1 survey in `d` has survey_area_m2 > plot_area_m2.
+      i Check that the two columns are not swapped.
 
 # a pool_by group holding one site-year twice warns
 

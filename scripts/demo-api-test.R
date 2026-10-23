@@ -14,6 +14,7 @@
 # MCMC, so expect them to take a little time.
 
 library(kelpbio)
+library(kelpbiodata)
 library(ggplot2)
 library(dplyr)
 library(bayesplot)
@@ -812,9 +813,9 @@ try(kb_predict_biomass_survey(
 # =============================================================================
 # REFERENCE FITS
 # =============================================================================
-# Fits to real data that stand in where a user has none of their own: Hakai
-# Institute weight, size, wet/dry, and carbon fits for both species, and a
-# coastwide Nereocystis weight fit. They are ordinary kb_fit objects, so every
+# Fits to real data, from kelpbiodata, that stand in where a user has none of
+# their own: Hakai Institute weight, size, wet/dry, and carbon fits for both
+# species, and a coastwide Nereocystis weight fit. They are ordinary kb_fit objects, so every
 # accessor and verb above applies. Each has 4000 draws (4 chains of 1000), as a
 # fit with the default sampler settings does, so they combine with the user's
 # own fits.

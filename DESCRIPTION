@@ -19,6 +19,7 @@ BugReports: https://github.com/HakaiInstitute/kelpbio/issues
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 Suggests:
+    kelpbiodata,
     knitr,
     priorsense,
     rmarkdown,
