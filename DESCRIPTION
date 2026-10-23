@@ -28,8 +28,6 @@ Suggests:
     withr
 VignetteBuilder: knitr
 Config/testthat/edition: 3
-Remotes:
-    HakaiInstitute/kelpbiodata
 Biarch: true
 Depends:
     R (>= 4.2.0)
