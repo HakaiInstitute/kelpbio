@@ -29,6 +29,9 @@ jobs:
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
       R_KEEP_PKG_SOURCE: yes
+      # kelpbiodata is suggested but not on a repository while the packages
+      # are in development; nothing the check runs uses it.
+      _R_CHECK_FORCE_SUGGESTS_: false
       # Compiles the Stan models in parallel; they dominate the install time.
       MAKEFLAGS: -j4
 
@@ -56,6 +59,7 @@ jobs:
         with:
           extra-packages: >-
             any::rcmdcheck
+            kelpbiodata=?ignore
           needs: check
 
       - uses: r-lib/actions/check-r-package@v2
