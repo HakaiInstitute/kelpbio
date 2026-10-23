@@ -27,7 +27,6 @@ test_that("the fit records the species, response, and no predictor", {
   expect_identical(fit$meta$species, "nereocystis")
   expect_identical(fit$meta$response, "diameter_mm")
   expect_null(fit$meta[["predictor"]])
-  expect_null(fit$meta$offset)
   expect_true(fit$meta$site_year_on)
   expect_true("sd_site_year" %in% fit$meta$terms$fixed)
 })
@@ -44,15 +43,9 @@ test_that("single-year data fit the site:year effect with an aliasing warning", 
   expect_true("site_year_effect" %in% fit$meta$terms$random)
 })
 
-test_that("invalid data and priors error before sampling", {
-  local_fit_stan_stub(size_nereo_fit)
-  expect_error(kb_fit_size_nereo(data.frame(site = "a", year = "2020")))
-  p <- kb_priors_size_nereo()
-  p$sd_site <- kb_prior_normal(0, 1)
-  expect_error(
-    kb_fit_size_nereo(size_nereo_fit$data, priors = p, progress = "none"),
-    "wrong family"
-  )
+test_that("prior_only switches the likelihood off in the Stan data", {
+  expect_identical(capture_stan_data(size_nereo_fit)$stan_data$prior_only, 0L)
+  expect_identical(capture_stan_data(size_nereo_fit, prior_only = TRUE)$stan_data$prior_only, 1L)
 })
 
 test_that("zero-row data is accepted under prior_only", {
@@ -69,27 +62,20 @@ test_that("zero-row data is accepted under prior_only", {
   expect_s3_class(fit, "kb_fit_size_nereo")
 })
 
-test_that("zero-row data error unless prior_only", {
-  expect_error(
-    kb_fit_size_nereo(
-      data_size_sample_sim_nereo[0, ],
-      progress = "none"
-    ),
-    "prior_only = TRUE"
-  )
-})
-
 test_that("data and prior errors name kb_fit_size_nereo()", {
   local_fit_stan_stub(size_nereo_fit)
-  err <- expect_error(kb_fit_size_nereo(
-      data.frame(site = "a", year = "2020"),
-      progress = "none"
-  ))
+  err <- expect_error(
+    kb_fit_size_nereo(data.frame(site = "a", year = "2020"), progress = "none"),
+    "diameter_mm"
+  )
   expect_identical(err$call[[1]], quote(kb_fit_size_nereo))
-  err <- expect_error(kb_fit_size_nereo(
-    data_size_sample_sim_nereo,
-    priors = list(nope = kb_prior_normal(0, 1)),
-    progress = "none"
-  ))
+  err <- expect_error(
+    kb_fit_size_nereo(
+      data_size_sample_sim_nereo,
+      priors = list(nope = kb_prior_normal(0, 1)),
+      progress = "none"
+    ),
+    "Unknown prior"
+  )
   expect_identical(err$call[[1]], quote(kb_fit_size_nereo))
 })

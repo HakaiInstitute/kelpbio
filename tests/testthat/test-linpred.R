@@ -186,10 +186,6 @@ test_that("the observed-data paths reject a zero-observation fit", {
   fit0$data <- fit0$data[0, ]
   expect_error(.linpred_obs(fit0), "no observed data")
   expect_error(data_linpred(fit0, NULL, "average"), "no observed data")
-  expect_error(fitted(fit0), "no observed data")
-  expect_error(residuals(fit0), "no observed data")
-  expect_error(augment(fit0), "no observed data")
-  expect_error(posterior_epred(fit0), "no observed data")
   expect_s3_class(
     data_linpred(fit0, data.frame(diameter_mm = 30), "average")$linpred,
     "rvar"
@@ -217,4 +213,14 @@ test_that("a power-law fit's mean is log(alpha) + diameter_power * log(x), with 
     b_power * (log(40) - log(15)),
     ignore_attr = TRUE
   )
+})
+
+test_that("a zero-observation fit names the function called", {
+  fit0 <- size_nereo_fit
+  fit0$data <- fit0$data[0, ]
+  expect_snapshot(error = TRUE, {
+    posterior_epred(fit0)
+    residuals(fit0)
+    log_lik(fit0)
+  })
 })

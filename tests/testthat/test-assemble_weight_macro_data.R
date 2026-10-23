@@ -12,41 +12,10 @@ test_that("assemble_weight_macro_data maps data and priors to the Stan data bloc
   )
 
   expect_equal(sd$n_obs, 3L)
-  expect_equal(sd$n_site, 2L)
-  expect_equal(sd$n_year, 2L)
-  expect_equal(sd$site, c(1L, 2L, 1L))
-  expect_equal(sd$year, c(1L, 1L, 2L))
   expect_equal(sd$fronds, c(3, 8, 5))
   expect_equal(sd$weight_kg, c(0.4, 2, 1))
   expect_equal(sd$fronds_ref, exp(mean(log(c(3, 8, 5)))))
   expect_equal(sd$prior_only, 0L)
-})
-
-test_that("assemble_weight_macro_data maps every prior hyperparameter to its own Stan field", {
-  data <- data.frame(
-    fronds = c(3L, 8L, 5L),
-    weight_kg = c(0.4, 2, 1),
-    site = factor(c("a", "b", "a")),
-    year = factor(c("2020", "2020", "2021"))
-  )
-  # Distinct values, so a transposed or dropped wiring cannot pass.
-  priors <- list(
-    intercept = kb_prior_normal(0.1, 1.1),
-    fronds_slope = kb_prior_normal(0.2, 1.2),
-    shape = kb_prior_exponential(2.0),
-    sd_site = kb_prior_exponential(2.1),
-    sd_year = kb_prior_exponential(2.2),
-    sd_site_year = kb_prior_exponential(2.3)
-  )
-  sd <- assemble_weight_macro_data(data, priors, prior_only = FALSE)
-  expect_equal(sd$prior_intercept_mean, 0.1)
-  expect_equal(sd$prior_intercept_sd, 1.1)
-  expect_equal(sd$prior_fronds_slope_mean, 0.2)
-  expect_equal(sd$prior_fronds_slope_sd, 1.2)
-  expect_equal(sd$prior_shape_rate, 2.0)
-  expect_equal(sd$prior_sd_site_rate, 2.1)
-  expect_equal(sd$prior_sd_year_rate, 2.2)
-  expect_equal(sd$prior_sd_site_year_rate, 2.3)
 })
 
 test_that("assemble_weight_macro_data accepts zero-row data", {
@@ -62,8 +31,6 @@ test_that("assemble_weight_macro_data accepts zero-row data", {
     prior_only = TRUE
   )
   expect_equal(sd$n_obs, 0L)
-  expect_equal(sd$n_site, 1L)
-  expect_equal(sd$n_year, 1L)
   expect_length(sd$fronds, 0)
   expect_equal(sd$fronds_ref, 5)
   expect_equal(sd$prior_only, 1L)

@@ -53,15 +53,6 @@
       Error in `kb_predict_biomass_survey()`:
       ! `size` must be a <kb_fit_size> object or a size census data frame.
 
-# representative_site lends a fitted site's effects on both paths
-
-    Code
-      tallied("new_reef", representative_site = "nowhere")
-    Condition
-      Error in `kb_predict_biomass_survey()`:
-      ! Invalid `representative_site` value: "nowhere".
-      i Available sites: "otter_cove", "gull_rock", "cedar_bay", and "heron_reef".
-
 # representative_site can name sites per fit on both paths
 
     Code

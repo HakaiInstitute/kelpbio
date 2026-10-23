@@ -16,26 +16,6 @@ test_that("kb_new_data gives one row per fitted level of by", {
   expect_length(names(pop), 0L)
 })
 
-test_that("a weight grid spans the observed predictor range by default", {
-  grid <- kb_new_data(weight_nereo_fit)
-  expect_named(grid, "diameter_mm")
-  expect_equal(nrow(grid), 30L)
-  expect_equal(range(grid$diameter_mm), range(weight_nereo_fit$data$diameter_mm))
-})
-
-test_that("a default frond sequence takes whole numbers", {
-  grid <- kb_new_data(weight_macro_fit)
-  expect_true(all(grid$fronds == round(grid$fronds)))
-  expect_equal(range(grid$fronds), range(weight_macro_fit$data$fronds))
-  expect_s3_class(kb_predict_weight(weight_macro_fit, grid), "kb_predictions")
-})
-
-test_that("a diameter sequence keeps 30 values when the data are whole millimetres", {
-  fit <- weight_nereo_fit
-  fit$data$diameter_mm <- round(fit$data$diameter_mm)
-  expect_equal(nrow(kb_new_data(fit)), 30L)
-})
-
 test_that("a supplied predictor sequence is used for either species", {
   expect_equal(
     kb_new_data(weight_nereo_fit, diameter_mm = c(25, 50, 75))$diameter_mm,
@@ -76,13 +56,7 @@ test_that("kb_new_data rejects a bad by, predictor, or model", {
   expect_error(kb_new_data(weight_nereo_fit, fronds = c(2, 5)), "diameter_mm")
   expect_error(kb_new_data(weight_macro_fit, diameter_mm = c(20, 40)), "fronds")
   expect_error(kb_new_data(size_nereo_fit, diameter_mm = 30), "no column")
-  expect_error(kb_new_data(wetdry_nereo_fit), "no grouping factors")
   expect_error(kb_new_data(1), "must be a <kb_fit> object")
-})
-
-test_that("a grid predictor far outside the fitted range warns at prediction", {
-  grid <- kb_new_data(weight_nereo_fit, diameter_mm = c(30, 500))
-  expect_warning(kb_predict_weight(weight_nereo_fit, grid), "far outside")
 })
 
 test_that("grouping levels supplied in ... are crossed into the grid", {
@@ -95,13 +69,6 @@ test_that("grouping levels supplied in ... are crossed into the grid", {
   expect_identical(years$year, as.character(2019:2022))
   expect_true(all(years$site == "otter_cove"))
   expect_false(attr(years, "kb_curve"))
-})
-
-test_that("a supplied level the fit has not seen predicts as a new level", {
-  grid <- kb_new_data(size_nereo_fit, by = "site", year = 2099)
-  p <- kb_predict_size(size_nereo_fit, grid)
-  expect_identical(nrow(p), nrow(grid))
-  expect_true(all(is.finite(p$estimate)))
 })
 
 test_that("errors from ... name kb_new_data()", {

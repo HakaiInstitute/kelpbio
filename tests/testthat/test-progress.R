@@ -80,20 +80,6 @@ test_that("the no-op reporter methods run silently", {
   expect_silent(r$finish())
 })
 
-test_that("the bar reporter runs its lifecycle without error", {
-  # Force cli to render, so the format string is evaluated in the reporter's
-  # environment.
-  withr::local_options(cli.dynamic = TRUE, cli.progress_show_after = 0)
-  r <- bar_reporter()
-  expect_no_error({
-    r$start(10)
-    r$update(5)
-    r$update(10) # reaches total: cli auto-terminates the bar here
-    r$update(10) # tolerated no-op on the since-terminated bar
-    r$finish()
-  })
-})
-
 test_that("a prediction record is written whole and read as a fraction", {
   d <- withr::local_tempdir()
   expect_null(read_prediction_progress(d))
@@ -108,14 +94,17 @@ test_that("no prediction record is written without a directory", {
   expect_null(write_prediction_progress(NULL, 1L, 2L))
 })
 
-test_that("the bar reporter takes the task's label", {
+test_that("the bar reporter takes the task's label and runs its lifecycle", {
+  # Force cli to render, so the format string is evaluated in the reporter's
+  # environment.
   withr::local_options(cli.dynamic = TRUE, cli.progress_show_after = 0)
   r <- progress_reporter("bar", "Predicting biomass")
   expect_s3_class(r, "kb_reporter_bar")
   expect_no_error({
-    r$start(2)
-    r$update(1)
-    r$update(2)
+    r$start(10)
+    r$update(5)
+    r$update(10) # reaches total: cli auto-terminates the bar here
+    r$update(10) # tolerated no-op on the since-terminated bar
     r$finish()
   })
 })

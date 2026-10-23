@@ -157,10 +157,22 @@ test_that(".chk_fit_rows points zero-row data to prior_only", {
 })
 
 test_that(".chk_new_data errors name the invalid predictor column", {
-  expect_snapshot(error = TRUE, .chk_new_data_weight_nereo(data.frame(diameter_mm = 0)))
-  expect_snapshot(error = TRUE, .chk_new_data_weight_nereo(data.frame(diameter_mm = "30")))
-  expect_snapshot(error = TRUE, .chk_new_data_weight_nereo(data.frame(diameter_mm = NA_real_)))
-  expect_snapshot(error = TRUE, .chk_new_data_weight_macro(data.frame(fronds = 2.5)))
+  expect_error(
+    .chk_new_data_weight_nereo(data.frame(diameter_mm = 0)),
+    "`diameter_mm` .* must be greater than 0"
+  )
+  expect_error(
+    .chk_new_data_weight_nereo(data.frame(diameter_mm = "30")),
+    "`diameter_mm` .* must be numeric"
+  )
+  expect_error(
+    .chk_new_data_weight_nereo(data.frame(diameter_mm = NA_real_)),
+    "`diameter_mm` .* must not have missing values"
+  )
+  expect_error(
+    .chk_new_data_weight_macro(data.frame(fronds = 2.5)),
+    "`fronds` .* must be a whole number"
+  )
 })
 
 test_that(".chk_kb_fit with class kb_fit_size passes a size fit through and errors otherwise", {
@@ -246,10 +258,13 @@ test_that(".chk_kb_fit with class kb_fit_cover_calibration passes a cover calibr
 test_that(".chk_cover_survey errors name the survey column", {
   good <- data.frame(canopy_area_m2 = 40, plot_area_m2 = 200, tide_height_m = 0.5)
   expect_invisible(.chk_cover_survey(good))
-  expect_snapshot(error = TRUE, .chk_cover_survey(good[c("canopy_area_m2", "plot_area_m2")]))
+  expect_snapshot(
+    error = TRUE,
+    .chk_cover_survey(good[c("canopy_area_m2", "plot_area_m2")], x_name = "`new_data`")
+  )
   bad <- good
   bad$canopy_area_m2 <- 300
-  expect_snapshot(error = TRUE, .chk_cover_survey(bad))
+  expect_snapshot(error = TRUE, .chk_cover_survey(bad, x_name = "`new_data`"))
   bad <- good
   bad$tide_height_m <- "low"
   expect_error(.chk_cover_survey(bad), "tide_height_m")
@@ -259,7 +274,10 @@ test_that(".chk_cover_survey errors name the survey column", {
 test_that(".chk_cover_survey checks biomass_sd_kg_m2 where present", {
   good <- data.frame(canopy_area_m2 = 40, plot_area_m2 = 200, tide_height_m = 0.5)
   expect_invisible(.chk_cover_survey(transform(good, biomass_sd_kg_m2 = 0.2)))
-  expect_snapshot(error = TRUE, .chk_cover_survey(transform(good, biomass_sd_kg_m2 = -1)))
+  expect_snapshot(
+    error = TRUE,
+    .chk_cover_survey(transform(good, biomass_sd_kg_m2 = -1), x_name = "`new_data`")
+  )
 })
 
 test_that(".chk_canopy_maps errors name the survey column", {
@@ -268,8 +286,14 @@ test_that(".chk_canopy_maps errors name the survey column", {
   )
   expect_invisible(.chk_canopy_maps(good))
   expect_error(.chk_canopy_maps(good[setdiff(names(good), "classified_area_m2")]), "classified_area_m2")
-  expect_snapshot(error = TRUE, .chk_canopy_maps(good[c("site", "year", "canopy_area_m2")]))
-  expect_snapshot(error = TRUE, .chk_canopy_maps(transform(good, classified_area_m2 = 50)))
+  expect_snapshot(
+    error = TRUE,
+    .chk_canopy_maps(good[c("site", "year", "canopy_area_m2")], x_name = "`new_data`")
+  )
+  expect_snapshot(
+    error = TRUE,
+    .chk_canopy_maps(transform(good, classified_area_m2 = 50), x_name = "`new_data`")
+  )
   expect_error(.chk_canopy_maps(transform(good, classified_area_m2 = 0)), "classified_area_m2")
   expect_error(.chk_canopy_maps(transform(good, year = NA)), "year")
   expect_error(.chk_canopy_maps(1), "must be a data frame")

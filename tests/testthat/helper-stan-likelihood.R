@@ -30,7 +30,9 @@ stan_log_lik <- function(fit, ndraws = 5L, seed = 1L) {
   list(fit = fit, lp = lp)
 }
 
-capture_stan_data <- function(fit) {
+# The model and Stan data the fit function builds from `fit`'s data and priors,
+# with `...` passed on to it, captured before sampling.
+capture_stan_data <- function(fit, ...) {
   local_mocked_bindings(
     fit_stan = function(stanmodel, stan_data, ...) {
       rlang::abort(
@@ -50,6 +52,7 @@ capture_stan_data <- function(fit) {
   if (inherits(fit, "kb_fit_weight_nereo")) {
     args$form <- fit$meta$form
   }
+  args <- c(args, list(...))
   args$progress <- "none"
   tryCatch(
     suppressWarnings(rlang::exec(fit_fun, !!!args)),

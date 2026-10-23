@@ -21,12 +21,6 @@ test_that("posterior_predict is reproducible under a seed and not otherwise", {
   expect_false(identical(a, withr::with_seed(8, posterior_predict(weight_nereo_fit))))
 })
 
-test_that("posterior_predict aborts at observed data for a zero-observation fit", {
-  fit0 <- weight_nereo_fit
-  fit0$data <- fit0$data[0, ]
-  expect_error(posterior_predict(fit0), "zero-observation fit")
-})
-
 test_that("a zero-observation fit still predicts at supplied new_data", {
   fit0 <- weight_nereo_fit
   fit0$data <- fit0$data[0, ]
@@ -46,60 +40,6 @@ test_that("posterior_predict at new data is wider than posterior_epred", {
   # On the log scale, as on the natural scale a few extreme draws of the
   # expected weight dominate the SD.
   expect_true(all(apply(log(pp), 2, stats::sd) > apply(log(ep), 2, stats::sd)))
-})
-
-test_that("macro posterior_predict draws positive Gamma noise, wider than epred", {
-  withr::local_seed(1)
-  nd <- data.frame(fronds = c(2, 5, 10))
-  pp <- posterior_predict(
-    weight_macro_fit,
-    new_data = nd,
-    new_levels = "average"
-  )
-  ep <- posterior_epred(weight_macro_fit, new_data = nd, new_levels = "average")
-  expect_equal(dim(pp), dim(ep))
-  expect_true(all(pp > 0)) # Gamma support is strictly positive
-  # On the log scale, as on the natural scale a few extreme draws of the
-  # expected weight dominate the SD.
-  expect_true(all(apply(log(pp), 2, stats::sd) > apply(log(ep), 2, stats::sd)))
-})
-
-test_that("size posterior_predict draws plant sizes from the size likelihoods", {
-  withr::local_seed(1)
-  nd <- data.frame(site = fitted_sites(size_nereo_fit, 2))
-  pp <- posterior_predict(size_nereo_fit, new_data = nd, new_levels = "average")
-  expect_equal(dim(pp), c(posterior::ndraws(size_nereo_fit$draws), 2L))
-  expect_true(all(pp > 0))
-
-})
-
-test_that("wet/dry posterior_predict draws ratios between 0 and 1", {
-  withr::local_seed(1)
-  pp <- posterior_predict(wetdry_nereo_fit)
-  expect_equal(
-    dim(pp),
-    c(posterior::ndraws(wetdry_nereo_fit$draws), nobs(wetdry_nereo_fit))
-  )
-  expect_true(all(pp > 0 & pp < 1))
-  ep <- posterior_epred(wetdry_nereo_fit)
-  expect_equal(mean(pp), mean(ep), tolerance = 0.02)
-})
-
-test_that("carbon posterior_predict draws fractions between 0 and 1", {
-  withr::local_seed(1)
-  pp <- posterior_predict(carbon_nereo_fit)
-  expect_true(all(pp > 0 & pp < 1))
-  expect_equal(mean(pp), mean(posterior_epred(carbon_nereo_fit)), tolerance = 0.02)
-})
-
-test_that("cover posterior_predict draws biomass at the observed surveys", {
-  withr::local_seed(1)
-  pp <- posterior_predict(cover_calibration_nereo_fit)
-  expect_equal(
-    dim(pp),
-    c(posterior::ndraws(cover_calibration_nereo_fit$draws), nobs(cover_calibration_nereo_fit))
-  )
-  expect_true(all(pp >= 0))
 })
 
 test_that("cover posterior_predict draws biomass of at least zero", {

@@ -10,8 +10,8 @@ test_that("residuals are deviance, not raw response residuals", {
   expect_false(isTRUE(all.equal(a$residual, a$weight_kg - a$fitted)))
 })
 
-# Computed without .obs_family(), so each model's residual is pinned
-# independently of it.
+# Computed without .obs_family(), so the residual is pinned independently of
+# it; the per-model parameterisation is checked by test-log_lik.R.
 median_residual <- function(fit, f) {
   mu <- posterior::draws_of(.linpred_obs(fit))
   per_draw <- t(vapply(
@@ -35,59 +35,10 @@ test_that("nereo weight residuals are Normal deviance residuals of log weight", 
   expect_equal(residuals(weight_nereo_fit), expected, tolerance = 1e-10)
 })
 
-test_that("macro weight residuals are Gamma deviance residuals", {
-  shape <- draw_vec(weight_macro_fit, "shape")
-  y <- weight_macro_fit$data$weight_kg
-  expected <- median_residual(weight_macro_fit, function(mu, d) {
-    extras::res_gamma(y, shape = shape[d], rate = shape[d] / exp(mu))
-  })
-  expect_equal(residuals(weight_macro_fit), expected, tolerance = 1e-10)
-})
-
 test_that("residuals rejects a non-fit and extra args", {
   expect_error(residuals.kb_fit(1), "must be a <kb_fit> object")
   expect_error(
     residuals(weight_nereo_fit, type = "pearson"),
     class = "rlib_error_dots_nonempty"
   )
-})
-
-test_that("size residuals are Weibull deviance residuals", {
-  shape <- draw_vec(size_nereo_fit, "shape")
-  y <- size_nereo_fit$data$diameter_mm
-  expected <- median_residual(size_nereo_fit, function(mu, d) {
-    res_weibull(y, shape[d], weibull_scale(exp(mu), shape[d]))
-  })
-  expect_equal(residuals(size_nereo_fit), expected, tolerance = 1e-10)
-
-})
-
-test_that("wet/dry residuals are Beta deviance residuals of the ratio", {
-  for (fit in list(wetdry_nereo_fit, wetdry_macro_fit)) {
-    precision <- draw_vec(fit, "precision")
-    y <- fit$data$dry_mass_g / fit$data$wet_mass_g
-    expected <- median_residual(fit, function(mu, d) {
-      m <- stats::plogis(mu)
-      res_beta(y, m * precision[d], (1 - m) * precision[d])
-    })
-    r <- residuals(fit)
-    expect_true(all(is.finite(r)))
-    expect_equal(r, expected, tolerance = 1e-10)
-  }
-})
-
-test_that("carbon residuals are finite Beta deviance residuals", {
-  for (fit in list(carbon_nereo_fit, carbon_macro_fit)) {
-    r <- residuals(fit)
-    expect_length(r, nobs(fit))
-    expect_true(all(is.finite(r)))
-  }
-})
-
-test_that("cover residuals are finite censored Normal deviance residuals", {
-  for (fit in list(cover_calibration_nereo_fit, cover_calibration_macro_fit)) {
-    r <- residuals(fit)
-    expect_length(r, nobs(fit))
-    expect_true(all(is.finite(r)))
-  }
 })

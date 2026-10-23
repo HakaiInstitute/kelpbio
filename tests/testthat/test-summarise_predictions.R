@@ -76,3 +76,27 @@ test_that("summarise_predictions honours conf_level and the curve flag", {
     "kb_curve"
   ))
 })
+
+test_that("summarise_draws_rows keeps the draws and applies estimate and sig_fig", {
+  grid <- tibble::tibble(site = c("a", "b"))
+  draws <- posterior::rvar(matrix(c(1:9 + 0.123456, 10 * (1:9)), ncol = 2))
+  out <- summarise_draws_rows(
+    grid,
+    draws,
+    group_vars = "site",
+    conf_level = 0.95,
+    estimate = max,
+    sig_fig = 3,
+    curve = FALSE,
+    predictor = NULL,
+    response = "weight_kg",
+    keep_draws = TRUE
+  )
+  expect_identical(out$weight_kg, draws)
+  expect_equal(out$estimate, c(9.12, 90))
+  expect_equal(out$lower, signif(unname(posterior::quantile2(draws, 0.025)), 3))
+  expect_false("weight_kg" %in% names(summarise_draws_rows(
+    grid, draws, "site", 0.95, max, 3,
+    curve = FALSE, predictor = NULL, response = "weight_kg"
+  )))
+})

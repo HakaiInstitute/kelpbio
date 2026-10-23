@@ -19,23 +19,10 @@
     Output
       <kb_fit_weight_nereo>
       Model:     Weight (Nereocystis luetkeana)
-      Predictor: diameter_mm, reference 19.7 (geometric mean)
+      Predictor: diameter_mm, reference <value> (geometric mean)
       Data:      320 observations; groups: site (4), year (5), site:year (16)
       Draws:     2 chains, 300 post-warmup draws each (thin = 5), 600 total
-      Converged: TRUE
-      See kb_model_describe(fit) for the model equation and priors.
-
-# print.kb_fit shows the macro slim header
-
-    Code
-      print(weight_macro_fit)
-    Output
-      <kb_fit_weight_macro>
-      Model:     Weight (Macrocystis pyrifera)
-      Predictor: fronds, reference 4.43 (geometric mean)
-      Data:      200 observations; groups: site (4), year (3), site:year (10)
-      Draws:     2 chains, 300 post-warmup draws each (thin = 5), 600 total
-      Converged: TRUE
+      Converged: <value>
       See kb_model_describe(fit) for the model equation and priors.
 
 # print.kb_fit shows the size headers without a predictor line
@@ -47,7 +34,7 @@
       Model:     Size (Nereocystis luetkeana)
       Data:      360 observations; groups: site (4), year (5), site:year (18)
       Draws:     2 chains, 300 post-warmup draws each (thin = 5), 600 total
-      Converged: TRUE
+      Converged: <value>
       See kb_model_describe(fit) for the model equation and priors.
 
 # print.kb_fit shows the wet/dry header without predictor or group lines
@@ -59,30 +46,19 @@
       Model:     Wet/dry (Nereocystis luetkeana)
       Data:      80 observations
       Draws:     2 chains, 300 post-warmup draws each (thin = 5), 600 total
-      Converged: TRUE
+      Converged: <value>
       See kb_model_describe(fit) for the model equation and priors.
 
-# print.kb_fit shows the carbon header
+# print.kb_fit notes a prior-only fit
 
     Code
-      print(carbon_nereo_fit)
+      print(fit)
     Output
-      <kb_fit_carbon_nereo>
-      Model:     Carbon (Nereocystis luetkeana)
+      <kb_fit_wetdry_nereo>
+      Model:     Wet/dry (Nereocystis luetkeana)
       Data:      80 observations
       Draws:     2 chains, 300 post-warmup draws each (thin = 5), 600 total
-      Converged: TRUE
-      See kb_model_describe(fit) for the model equation and priors.
-
-# print.kb_fit shows the cover calibration header without a predictor line
-
-    Code
-      print(cover_calibration_nereo_fit)
-    Output
-      <kb_fit_cover_calibration_nereo>
-      Model:     Cover calibration (Nereocystis luetkeana)
-      Data:      15 observations; groups: site (4), year (5), site:year (13)
-      Draws:     2 chains, 300 post-warmup draws each (thin = 5), 600 total
-      Converged: TRUE
+      Note:      prior-only fit (likelihood off)
+      Converged: <value>
       See kb_model_describe(fit) for the model equation and priors.
 

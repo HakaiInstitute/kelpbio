@@ -83,38 +83,6 @@
       ! `data` must have at least one row.
       i Set `prior_only = TRUE` to sample from the priors alone.
 
-# .chk_new_data errors name the invalid predictor column
-
-    Code
-      .chk_new_data_weight_nereo(data.frame(diameter_mm = 0))
-    Condition
-      Error in `.chk_positive_measure()`:
-      ! Column `diameter_mm` of `data.frame(diameter_mm = 0)` must be greater than 0.
-
----
-
-    Code
-      .chk_new_data_weight_nereo(data.frame(diameter_mm = "30"))
-    Condition
-      Error in `.chk_positive_measure()`:
-      ! Column `diameter_mm` of `data.frame(diameter_mm = "30")` must be numeric.
-
----
-
-    Code
-      .chk_new_data_weight_nereo(data.frame(diameter_mm = NA_real_))
-    Condition
-      Error in `.chk_positive_measure()`:
-      ! Column `diameter_mm` of `data.frame(diameter_mm = NA_real_)` must not have missing values.
-
----
-
-    Code
-      .chk_new_data_weight_macro(data.frame(fronds = 2.5))
-    Condition
-      Error in `.chk_frond_count()`:
-      ! Column `fronds` of `data.frame(fronds = 2.5)` must be a whole number.
-
 # .chk_kb_fit_grouped errors for a non-fit and a model without groups
 
     Code
@@ -205,43 +173,43 @@
 # .chk_cover_survey errors name the survey column
 
     Code
-      .chk_cover_survey(good[c("canopy_area_m2", "plot_area_m2")])
+      .chk_cover_survey(good[c("canopy_area_m2", "plot_area_m2")], x_name = "`new_data`")
     Condition
       Error in `.chk_cover_survey()`:
-      ! Good[c("canopy_area_m2", "plot_area_m2")] must include 'tide_height_m'.
+      ! `new_data` must include 'tide_height_m'.
 
 ---
 
     Code
-      .chk_cover_survey(bad)
+      .chk_cover_survey(bad, x_name = "`new_data`")
     Condition
       Error in `.chk_cover_survey()`:
-      ! Column `canopy_area_m2` of bad must not exceed plot_area_m2.
+      ! Column `canopy_area_m2` of `new_data` must not exceed plot_area_m2.
       i The canopy is the area delineated within the plot.
 
 # .chk_cover_survey checks biomass_sd_kg_m2 where present
 
     Code
-      .chk_cover_survey(transform(good, biomass_sd_kg_m2 = -1))
+      .chk_cover_survey(transform(good, biomass_sd_kg_m2 = -1), x_name = "`new_data`")
     Condition
       Error in `.chk_cover_survey()`:
-      ! Column `biomass_sd_kg_m2` of transform(good, biomass_sd_kg_m2 = -1) must be greater than or equal to 0, not -1.
+      ! Column `biomass_sd_kg_m2` of `new_data` must be greater than or equal to 0, not -1.
 
 # .chk_canopy_maps errors name the survey column
 
     Code
-      .chk_canopy_maps(good[c("site", "year", "canopy_area_m2")])
+      .chk_canopy_maps(good[c("site", "year", "canopy_area_m2")], x_name = "`new_data`")
     Condition
       Error in `.chk_canopy_maps()`:
-      ! Good[c("site", "year", "canopy_area_m2")] must include 'classified_area_m2' and 'tide_height_m'.
+      ! `new_data` must include 'classified_area_m2' and 'tide_height_m'.
 
 ---
 
     Code
-      .chk_canopy_maps(transform(good, classified_area_m2 = 50))
+      .chk_canopy_maps(transform(good, classified_area_m2 = 50), x_name = "`new_data`")
     Condition
       Error in `.chk_canopy_maps()`:
-      ! Column `canopy_area_m2` of transform(good, classified_area_m2 = 50) must not exceed classified_area_m2.
+      ! Column `canopy_area_m2` of `new_data` must not exceed classified_area_m2.
       i The canopy is found within the area the classification covered.
 
 # .chk_pool_by names a missing or non-grouping column

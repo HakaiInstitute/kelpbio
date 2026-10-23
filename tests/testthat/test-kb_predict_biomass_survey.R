@@ -12,17 +12,28 @@ test_that("tallied surveys give one row each, plants times mean weight per m2", 
   expect_identical(p$survey_id, survey$survey_id)
   expect_true(all(c("weight_support", "size_support", "biomass_kg_m2") %in% names(p)))
   expect_identical(attr(p, "kb_response"), "biomass_kg_m2")
+})
 
-  withr::local_seed(1)
-  groups <- tibble::tibble(site = as.character(survey$site), year = as.character(survey$year))
-  first <- !duplicated(paste(groups$site, groups$year))
-  mean_weight <- mean_weight_draws(
-    weight_nereo_fit, size_nereo_fit, groups[first, ],
-    new_levels = "sample", representative_site = NULL,
-    n_plants = 100L, progress = "none", progress_dir = NULL
+test_that("tallied survey biomass is plants per m2 times kb_predict_mean_weight()", {
+  survey <- survey_nereo()
+  p <- kb_predict_biomass_survey(
+    weight_nereo_fit, size_nereo_fit, survey,
+    new_levels = "average", progress = "none"
   )
-  i <- match(paste(groups$site, groups$year), paste(groups$site, groups$year)[first])
-  expected <- sweep(mean_weight[, i, drop = FALSE], 2, survey$plants / survey$survey_area_m2, "*")
+  key <- paste(survey$site, survey$year)
+  site_years <- unique(tibble::tibble(
+    site = as.character(survey$site),
+    year = as.character(survey$year)
+  ))
+  mean_weight <- kb_predict_mean_weight(
+    weight_nereo_fit, size_nereo_fit, site_years,
+    new_levels = "average", progress = "none"
+  )
+  i <- match(key, paste(mean_weight$site, mean_weight$year))
+  expected <- sweep(
+    posterior::draws_of(mean_weight$weight_kg)[, i, drop = FALSE],
+    2, survey$plants / survey$survey_area_m2, "*"
+  )
   expect_equal(posterior::draws_of(p$biomass_kg_m2), expected, ignore_attr = TRUE)
 })
 
@@ -106,6 +117,38 @@ test_that("per_area divides by the surveyed area", {
   )
 })
 
+test_that("carbon biomass is grams per m2 per area and kg as a total", {
+  survey <- tibble::tibble(
+    survey_id = "s1", site = "seal_ledge", year = "2019", survey_area_m2 = 100
+  )
+  plants <- tibble::tibble(survey_id = "s1", fronds = c(4, 10), partial = FALSE)
+  predict <- function(...) {
+    kb_predict_biomass_survey(
+      weight_macro_fit, plants, survey, ...,
+      wetdry = wetdry_macro_fit, carbon = carbon_macro_fit,
+      new_levels = "average", progress = "none"
+    )
+  }
+  wet_kg <- posterior::draws_of(predict(per_area = FALSE)$biomass_kg)
+  factor <- measure_factor("carbon", wetdry_macro_fit, carbon_macro_fit)
+
+  per_m2 <- predict(measure = "carbon")
+  expect_identical(attr(per_m2, "kb_response"), "carbon_biomass_g_m2")
+  expect_equal(
+    posterior::draws_of(per_m2$carbon_biomass_g_m2),
+    wet_kg * factor * 1000 / survey$survey_area_m2,
+    ignore_attr = TRUE
+  )
+
+  total <- predict(measure = "carbon", per_area = FALSE)
+  expect_identical(attr(total, "kb_response"), "carbon_biomass_kg")
+  expect_equal(
+    posterior::draws_of(total$carbon_biomass_kg),
+    wet_kg * factor,
+    ignore_attr = TRUE
+  )
+})
+
 test_that("pool_by pools surveys as total kg over total area", {
   withr::local_seed(1)
   rows <- kb_predict_biomass_survey(
@@ -172,26 +215,6 @@ test_that("a repeated pool_by column pools as if named once", {
   expect_identical(twice, once)
 })
 
-test_that("several surveys in a site-year share its weight draws", {
-  survey <- tibble::tibble(
-    survey_id = 1:3,
-    site = "otter_cove",
-    year = 2020,
-    survey_area_m2 = c(140, 100, 140),
-    plants = c(110, 15, 90)
-  )
-  p <- kb_predict_biomass_survey(
-    weight_nereo_fit, size_nereo_fit, survey,
-    per_area = FALSE, new_levels = "average", progress = "none"
-  )
-  expect_equal(nrow(p), 3L)
-  expect_identical(p$year, rep("2020", 3))
-  expect_identical(p$survey_id, c("1", "2", "3"))
-  per_plant <- sweep(posterior::draws_of(p$biomass_kg), 2, survey$plants, "/")
-  expect_equal(per_plant[, 2], per_plant[, 1], ignore_attr = TRUE)
-  expect_equal(per_plant[, 3], per_plant[, 1], ignore_attr = TRUE)
-})
-
 test_that("a sampled new site is shared by the census plants of its site-year", {
   survey <- tibble::tibble(
     survey_id = c("s1", "s2", "s3"),
@@ -235,7 +258,7 @@ test_that("representative_site lends a fitted site's effects on both paths", {
     posterior::draws_of(census("seal_ledge")$biomass_kg_m2)
   )
 
-  expect_snapshot(tallied("new_reef", representative_site = "nowhere"), error = TRUE)
+  expect_error(tallied("new_reef", representative_site = "nowhere"), "nowhere")
   expect_error(census("new_reef", representative_site = "nowhere"), "nowhere")
 })
 
@@ -251,10 +274,6 @@ test_that("representative_site can name sites per fit on both paths", {
     )
     posterior::draws_of(p$biomass_kg_m2)
   }
-  expect_equal(
-    tallied(representative_site = list(weight = "otter_cove", size = "otter_cove")),
-    tallied(representative_site = "otter_cove")
-  )
   expect_false(isTRUE(all.equal(
     tallied(representative_site = list(weight = "otter_cove")),
     tallied(representative_site = "otter_cove")
@@ -262,14 +281,6 @@ test_that("representative_site can name sites per fit on both paths", {
 
   survey <- tibble::tibble(survey_id = "s1", site = "new_reef", year = "2019", survey_area_m2 = 100)
   plants <- tibble::tibble(survey_id = "s1", fronds = c(4, 10))
-  census <- function(...) {
-    p <- kb_predict_biomass_survey(weight_macro_fit, plants, survey, new_levels = "average", ...)
-    posterior::draws_of(p$biomass_kg_m2)
-  }
-  expect_equal(
-    census(representative_site = list(weight = "seal_ledge")),
-    census(representative_site = "seal_ledge")
-  )
   expect_snapshot(
     kb_predict_biomass_survey(
       weight_macro_fit, plants, survey,

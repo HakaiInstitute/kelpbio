@@ -39,6 +39,17 @@ test_that("dry and carbon weight are per-draw conversions of wet", {
     ignore_attr = TRUE
   )
   expect_identical(attr(carbon, "kb_response"), "carbon_weight_g")
+  withr::local_seed(1)
+  dry <- do.call(
+    kb_predict_mean_weight,
+    c(args, measure = "dry", new_levels = "average", progress = "none")
+  )
+  expect_equal(
+    posterior::draws_of(dry$dry_weight_kg),
+    posterior::draws_of(wet$weight_kg) * population_draws(wetdry_nereo_fit),
+    ignore_attr = TRUE
+  )
+  expect_identical(attr(dry, "kb_response"), "dry_weight_kg")
 })
 
 test_that("mismatched and missing inputs error", {

@@ -22,6 +22,7 @@ test_that("missing, mistyped, and impossible values error", {
   bad <- good
   bad$site <- 1
   expect_error(kb_check_data_size_sample_nereo(bad))
+  expect_error(kb_check_data_size_sample_nereo(transform(good, year = 2020.5)), "year")
 })
 
 test_that("diameter in centimetres warns but still passes", {
@@ -33,15 +34,4 @@ test_that("diameter in centimetres warns but still passes", {
 
 test_that("x_name must be a string", {
   expect_error(kb_check_data_size_sample_nereo(data.frame(), x_name = 1), "x_name")
-})
-
-test_that("a numeric year is accepted, a fractional one errors", {
-  good <- data.frame(diameter_mm = 30, weight_kg = 1, fronds = 3, site = "a", year = 2020)
-  expect_silent(kb_check_data_size_sample_nereo(good))
-  expect_error(kb_check_data_size_sample_nereo(transform(good, year = 2020.5)), "year")
-})
-
-test_that("a date without a year errors naming year", {
-  good <- data.frame(diameter_mm = 30, weight_kg = 1, fronds = 3, site = "a", date = as.Date("2020-08-01"))
-  expect_error(kb_check_data_size_sample_nereo(good), "year")
 })

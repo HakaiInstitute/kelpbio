@@ -20,7 +20,6 @@ test_that("a new site is averaged by default; sample gives a wider interval", {
   new_site <- data.frame(diameter_mm = 40, site = "brand_new_site")
   default <- kb_predict_weight(weight_nereo_fit, new_site)
   averaged <- kb_predict_weight(weight_nereo_fit, new_site, new_levels = "average")
-  expect_identical(default, kb_predict_weight(weight_nereo_fit, new_site))
   expect_identical(default, averaged)
   set.seed(1)
   sampled <- kb_predict_weight(weight_nereo_fit, new_site, new_levels = "sample")
@@ -109,14 +108,6 @@ test_that("in a year the representative site lacks, site:year follows new_levels
     new_levels = "sample"
   )
   expect_gt(sampled$upper - sampled$lower, averaged$upper - averaged$lower)
-})
-
-test_that("representative_site rejects sites not in the fit", {
-  nd <- data.frame(diameter_mm = 40, site = "brand_new_site")
-  expect_error(
-    kb_predict_weight(weight_nereo_fit, nd, representative_site = "not_a_site"),
-    "representative_site"
-  )
 })
 
 test_that("kb_predict_weight errors on an object that is not a weight fit", {

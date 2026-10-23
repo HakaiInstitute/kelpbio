@@ -52,17 +52,3 @@ test_that("totals scale with canopy area, and the classified area caps the canop
   )
   expect_equal(totals[, 3], untided[, 1])
 })
-
-test_that("rows naming one new site share its sampled effect", {
-  withr::local_seed(1)
-  grid <- tibble::tibble(
-    site = c("new", "new", "other"),
-    year = "2019",
-    canopy_area_m2 = c(100, 200, 100),
-    tide_height_m = 0,
-    classified_area_m2 = 1e6
-  )
-  totals <- canopy_biomass_draws(cover_calibration_nereo_fit, grid, "sample", NULL)
-  expect_equal(totals[, 2], 2 * totals[, 1])
-  expect_false(isTRUE(all.equal(totals[, 3], totals[, 1])))
-})

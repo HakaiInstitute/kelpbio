@@ -11,5 +11,6 @@
       kb_fit_cover_calibration_nereo(data, progress = "none")
     Condition
       Error in `kb_fit_cover_calibration_nereo()`:
-      ! Column `plot_area_m2` of `data` must be numeric.
+      ! No survey in `data` has drone cover.
+      i A survey has drone cover when plot_area_m2, canopy_area_m2, and tide_height_m are given.
 
