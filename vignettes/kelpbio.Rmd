@@ -52,8 +52,8 @@ Estimates are for the peak season, at site-year resolution:
 |---|---|---|---|
 | Weight | harvested plant | `site`, `year` | `kb_fit_weight_nereo()`, `kb_fit_weight_macro()` |
 | Size sample (*Nereocystis*) | measured plant | `site`, `year` | `kb_fit_size_nereo()` |
-| Survey | survey | `survey_id` (with `site`, `year`) | `kb_predict_biomass_survey()` |
-| Size census | counted plant | `survey_id` | `kb_predict_biomass_survey()` |
+| Survey | survey | `survey_id` (with `site`, `year`) | `kb_predict_biomass_in_situ()` |
+| Size census | counted plant | `survey_id` | `kb_predict_biomass_in_situ()` |
 | Canopy | map of a site's canopy | `site`, `year` | `kb_predict_biomass_canopy()` |
 
 `year` may be a factor, character, or whole numbers. The models work at
@@ -69,7 +69,7 @@ Plant sizes come from one of two sources:
   with no census rows has no biomass.
 
 ```{r}
-data_survey_sim_nereo
+data_in_situ_sim_nereo
 ```
 
 ## Workflow
@@ -90,19 +90,19 @@ makes the results reproducible.
 
 ```{r}
 set.seed(1)
-biomass <- kb_predict_biomass_survey(
+biomass <- kb_predict_biomass_in_situ(
   fit_weight_sim_nereo,
   fit_size_sim_nereo,
-  data_survey_sim_nereo
+  data_in_situ_sim_nereo
 )
 biomass
 ```
 
 ```{r}
-biomass_site_year <- kb_predict_biomass_survey(
+biomass_site_year <- kb_predict_biomass_in_situ(
   fit_weight_sim_nereo,
   fit_size_sim_nereo,
-  data_survey_sim_nereo,
+  data_in_situ_sim_nereo,
   pool_by = c("site", "year")
 )
 kb_plot_predictions(biomass_site_year)
@@ -155,10 +155,10 @@ Every counted *Macrocystis* plant has its fronds at 1 m recorded, so a size
 census takes the place of a size fit.
 
 ```{r}
-biomass_macro <- kb_predict_biomass_survey(
+biomass_macro <- kb_predict_biomass_in_situ(
   fit_weight_sim_macro,
   data_size_census_sim_macro,
-  data_survey_sim_macro
+  data_in_situ_sim_macro
 )
 ```
 
@@ -173,7 +173,7 @@ The calibration and totals then follow as for *Nereocystis*.
 - **Mean plant weight**: `kb_predict_mean_weight()` combines the weight and size
   fits per site-year.
 - **Censused sites**: where every plant in a site is counted and measured,
-  `kb_predict_biomass_survey(per_area = FALSE)` gives its total biomass with no
+  `kb_predict_biomass_in_situ(per_area = FALSE)` gives its total biomass with no
   drone calibration.
 - **Other size measures**: the *Nereocystis* weight and size models accept any
   plant diameter in `diameter_mm`, such as bulb diameter or sub-bulb diameter

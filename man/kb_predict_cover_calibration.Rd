@@ -20,7 +20,7 @@ kb_predict_cover_calibration(
 
 \item{new_data}{A data frame of the rows to predict at, with
 \code{canopy_area_m2} (the canopy area in the plot, m²), \code{plot_area_m2} (the
-plot area, m²), \code{tide_height_m} (the tide height, m), and optionally \code{site}
+plot area, m²), \code{canopy_tide_height_m} (the tide height, m), and optionally \code{site}
 and \code{year}, or \code{NULL} for the observed surveys.}
 
 \item{...}{These dots are for future extensions and must be empty.}
@@ -69,11 +69,11 @@ Cover is tide-corrected and capped at 1, as in the fit; a row with canopy at
 a tide height at or above \code{1 / tide_height_slope} is fully covered, and a
 row past that limit on more than 5\% of draws warns. Canopy already corrected
 for tide is passed with
-\code{tide_height_m = 0}. A row with no canopy predicts the biomass floor, which
+\code{canopy_tide_height_m = 0}. A row with no canopy predicts the biomass floor, which
 is the same for every site and year.
 
 The prediction is \code{mu}, the mean before censoring at zero, as used by
-\code{\link[=kb_predict_biomass_canopy]{kb_predict_biomass_canopy()}}. When \code{new_data = NULL}, the survey biomass
+\code{\link[=kb_predict_biomass_canopy]{kb_predict_biomass_canopy()}}. When \code{new_data = NULL}, the in situ survey biomass
 columns are kept; use \code{\link[=augment]{augment()}} for the fitted values next to them.
 }
 \examples{
@@ -92,7 +92,7 @@ kb_predict_cover_calibration(
     site = c("otter_cove", "new_site"),
     canopy_area_m2 = 80,
     plot_area_m2 = 200,
-    tide_height_m = 0.5
+    canopy_tide_height_m = 0.5
   )
 )
 }
@@ -105,7 +105,7 @@ Other prediction functions:
 \code{\link[=kb_new_data]{kb_new_data()}},
 \code{\link[=kb_plot_predictions]{kb_plot_predictions()}},
 \code{\link[=kb_predict_biomass_canopy]{kb_predict_biomass_canopy()}},
-\code{\link[=kb_predict_biomass_survey]{kb_predict_biomass_survey()}},
+\code{\link[=kb_predict_biomass_in_situ]{kb_predict_biomass_in_situ()}},
 \code{\link[=kb_predict_carbon]{kb_predict_carbon()}},
 \code{\link[=kb_predict_mean_weight]{kb_predict_mean_weight()}},
 \code{\link[=kb_predict_size]{kb_predict_size()}},

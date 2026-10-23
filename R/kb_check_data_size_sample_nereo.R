@@ -9,7 +9,7 @@
 #'
 #' @details
 #' Each row is one plant of a sample measured for the size model, which need
-#' not be linked to any survey. `diameter_mm` is the maximum sub-bulb diameter,
+#' not be linked to any in situ survey. `diameter_mm` is the maximum sub-bulb diameter,
 #' the same measurement as the predictor of the weight model
 #' ([kb_fit_weight_nereo()]). A numeric `year` is used as its character level.
 #' Other columns are ignored.

@@ -25,7 +25,7 @@ test_that("the model verbs add a support column for rows with site and year", {
       year = "2019",
       canopy_area_m2 = 80,
       plot_area_m2 = 200,
-      tide_height_m = 0.5
+      canopy_tide_height_m = 0.5
     )
   )
   expect_identical(cover$cover_support, "site, year")

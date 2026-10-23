@@ -17,7 +17,7 @@
 
 \item{new_data}{A data frame with the fit's predictor column (and optional
 \code{site} and \code{year} columns; \code{canopy_area_m2}, \code{plot_area_m2}, and
-\code{tide_height_m} for a cover calibration fit), or \code{NULL} to predict at the
+\code{canopy_tide_height_m} for a cover calibration fit), or \code{NULL} to predict at the
 observed data.}
 
 \item{...}{These dots are for future extensions and must be empty.}
@@ -47,7 +47,7 @@ A draws-by-observations (\verb{D x N}) matrix.
 }
 \description{
 Draws from the posterior predictive distribution: replicate responses
-(weights, plant sizes, dry:wet ratios, carbon fractions, or survey biomass)
+(weights, plant sizes, dry:wet ratios, carbon fractions, or in situ survey biomass)
 carrying both parameter uncertainty and observation noise from the model's
 likelihood. With \code{new_data = NULL} the replicates are at the observed data,
 as plotted by \link[=pp_check.kb_fit]{pp_check()}.

@@ -5,13 +5,13 @@
 # slope the division has no finite value, so positive canopy takes the cap, its
 # limit as the share seen falls to zero; zero canopy stays zero.
 # `tide_height_slope` is an rvar of draws; the result is an rvar of length N.
-tide_corrected_canopy <- function(canopy_area_m2, tide_height_m, tide_height_slope, cap) {
+tide_corrected_canopy <- function(canopy_area_m2, canopy_tide_height_m, tide_height_slope, cap) {
   slope <- as.vector(posterior::draws_of(tide_height_slope))
   n_draw <- length(slope)
   n <- length(canopy_area_m2)
   corrected <- cap_canopy(
     matrix(canopy_area_m2, n_draw, n, byrow = TRUE),
-    1 - outer(slope, tide_height_m),
+    1 - outer(slope, canopy_tide_height_m),
     matrix(cap, n_draw, n, byrow = TRUE)
   )
   posterior::rvar(corrected, nchains = posterior::nchains(tide_height_slope))

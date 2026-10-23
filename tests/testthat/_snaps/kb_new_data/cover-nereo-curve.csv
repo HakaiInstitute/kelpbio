@@ -1,4 +1,4 @@
-"cover","canopy_area_m2","plot_area_m2","tide_height_m"
+"cover","canopy_area_m2","plot_area_m2","canopy_tide_height_m"
 0,0,1,0
 0.0345,0.0345,1,0
 0.069,0.069,1,0

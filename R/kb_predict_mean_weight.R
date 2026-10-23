@@ -32,7 +32,7 @@
 #'   `weight_kg`, `dry_weight_kg`, or `carbon_weight_g` column, and `estimate`,
 #'   `lower`, and `upper`.
 #' @family prediction functions
-#' @seealso [kb_predict_biomass_survey()] for the biomass of in situ surveys.
+#' @seealso [kb_predict_biomass_in_situ()] for the biomass of in situ surveys.
 #' @export
 #'
 #' @examples

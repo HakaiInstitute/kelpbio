@@ -39,7 +39,7 @@ flowchart LR
     DS[/"size sample (nereo)<br/>site · year · diameter_mm"/] --> FS["kb_fit_size_nereo()"] --> MS["kb_predict_size()<br/>mean diameter"]
     DWD[/"wet/dry data<br/>wet_mass_g · dry_mass_g"/] --> FWD["kb_fit_wetdry_*()"] --> MWD["kb_predict_wetdry()<br/>dry:wet ratio"]
     DC[/"carbon data<br/>sample_mass_mg · carbon_mass_ug"/] --> FC["kb_fit_carbon_*()"] --> MC["kb_predict_carbon()<br/>carbon fraction"]
-    BIO(["kb_predict_biomass_survey() output<br/>one row per survey, with drone cover"]) --> FCC["kb_fit_cover_calibration_*(data)"] --> MCC["kb_predict_cover_calibration()<br/>kg/m² of plot at a cover"]
+    BIO(["kb_predict_biomass_in_situ() output<br/>one row per survey, with drone cover"]) --> FCC["kb_fit_cover_calibration_*(data)"] --> MCC["kb_predict_cover_calibration()<br/>kg/m² of plot at a cover"]
 ```
 
 Biomass (derived verbs):
@@ -51,16 +51,16 @@ flowchart TB
     FW --> VBP
     FS -->|"sizes modelled<br/>(tallied plants)"| VBP
     DPL[/"size census: one row per counted plant<br/>survey_id<br/>diameter_mm or fronds · partial?"/] -->|"sizes observed<br/>(a census)"| VBP
-    DSU[/"survey: one row per survey<br/>survey_id · site · year · survey_area_m2<br/>plants (tallied, with a size fit)<br/>plot_area_m2? · canopy_area_m2? · tide_height_m?<br/>grouping columns?"/] --> VBP["kb_predict_biomass_survey(weight, size, survey)<br/>per_area = TRUE: kg/m² surveyed<br/>FALSE: kg in the surveyed area"]
+    DSU[/"survey: one row per survey<br/>survey_id · site · year · survey_area_m2<br/>plants (tallied, with a size fit)<br/>plot_area_m2? · canopy_area_m2? · canopy_tide_height_m?<br/>grouping columns?"/] --> VBP["kb_predict_biomass_in_situ(weight, size, survey)<br/>per_area = TRUE: kg/m² surveyed<br/>FALSE: kg in the surveyed area"]
     VBP -->|"rows with drone cover"| FCC["kb_fit_cover_calibration_*(data)"]
     FCC --> VCA["kb_predict_biomass_canopy(fit, new_data)<br/>kg over the canopy"]
-    DCA[/"canopy: one row per map of a site<br/>site · year · canopy_area_m2 · tide_height_m<br/>classified_area_m2 · grouping columns?"/] --> VCA
+    DCA[/"canopy: one row per map of a site<br/>site · year · canopy_area_m2 · canopy_tide_height_m<br/>classified_area_m2 · grouping columns?"/] --> VCA
 ```
 
 Estimates are for the peak season at site-year resolution: every model has site
 and year effects only. A site-year may hold several surveys, keyed by `survey_id`;
 each survey with drone cover (`plot_area_m2`, `canopy_area_m2`, and
-`tide_height_m` on its row) is one observation in the cover calibration. Every
+`canopy_tide_height_m` on its row) is one observation in the cover calibration. Every
 input table gives `year` directly (a numeric year is used as its character
 level). A survey's plants come from the size census, joined by `survey_id`, when
 every plant was measured, and from its tallied `plants` column when sizes come
@@ -74,7 +74,7 @@ carbon), `new_levels` (default `"sample"`), `representative_site`, and the
 summary trio. Their output carries the response as an `rvar` column of draws
 next to `estimate`, `lower`, and `upper`, so one verb's output can feed another:
 the cover calibration fit reads the mean and SD of `biomass_kg_m2` from
-unsummed `kb_predict_biomass_survey()` output. `kb_predict_mean_weight()` takes
+unsummed `kb_predict_biomass_in_situ()` output. `kb_predict_mean_weight()` takes
 fits only and has no `pool_by`. The two biomass verbs take `pool_by`: `NULL` gives
 one row per input row; column names give one row per group, with kg summed and,
 per area, divided by the summed area, draw by draw.

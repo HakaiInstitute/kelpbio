@@ -24,4 +24,4 @@
 
 ## 5. Archive
 
-- [ ] 5.1 Once CI passes, `openspec archive per-fit-representative-site --yes`.
+- [x] 5.1 Once CI passes, `openspec archive per-fit-representative-site --yes`.

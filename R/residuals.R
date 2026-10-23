@@ -8,7 +8,7 @@
 #' median. The likelihoods are Normal on log weight (*Nereocystis* weight),
 #' Gamma on weight (*Macrocystis* weight), Weibull on diameter (*Nereocystis*
 #' size), Beta on the dry:wet ratio (wet/dry) and the carbon fraction
-#' (carbon), and Normal on survey biomass censored at zero (cover
+#' (carbon), and Normal on in situ survey biomass censored at zero (cover
 #' calibration), where a survey with no plants takes minus the root of minus
 #' twice its log probability.
 #'

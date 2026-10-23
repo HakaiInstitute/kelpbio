@@ -74,6 +74,8 @@ One term per concept, used everywhere:
 | Point summary | estimate (the posterior median by default) | point estimate (in prose) |
 | Spread terms | standard deviation (SD after first use) | hyperparameter |
 | Wet/dry | dry:wet ratio | wet-to-dry, dry:wet mass ratio |
+| A count of plants over a searched area, by divers or from a boat or kayak | in situ survey (survey after first use in a topic) | dive survey, transect, field survey, ground truth |
+| A map of a site's canopy from drone or other remote-sensing imagery | canopy map; the canopy imagery it is mapped from | drone survey, aerial survey, flight |
 | Model inputs from the sub-models | combine | compose |
 
 Model parameters are written exactly as `tidy()` reports them (`intercept`, `sd_site`, `logit_zero_inflation`). Any other symbol (such as `mu`, `alpha`, or `x`) is defined once where it first appears.

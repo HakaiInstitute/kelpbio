@@ -38,14 +38,14 @@
 #' A small simulated dataset of maximum sub-bulb diameter, one row per plant of
 #' a sample measured for the size model, for runnable examples. One of four
 #' simulated *Nereocystis* datasets with shared sites and years, so their fits
-#' can be combined into survey biomass (see [kb_predict_biomass_survey()]). Some
+#' can be combined into in situ survey biomass (see [kb_predict_biomass_in_situ()]). Some
 #' site-years have no size data.
 #'
 #' @format A data frame with columns:
 #' \describe{
 #'   \item{diameter_mm}{Maximum sub-bulb diameter (mm), a positive number.}
-#'   \item{site}{Survey site, a factor (12 levels).}
-#'   \item{year}{Survey year, a factor (5 levels).}
+#'   \item{site}{Site, a factor (12 levels).}
+#'   \item{year}{Year, a factor (5 levels).}
 #' }
 #' @seealso [fit_size_sim_nereo] for a fit to this dataset.
 #' @family example datasets
@@ -57,7 +57,7 @@
 #' A small simulated dataset of frond count and wet weight, one row per
 #' harvested plant, for runnable examples. One of four simulated *Macrocystis*
 #' datasets with shared sites and years, so their fits can be combined into
-#' survey biomass (see [kb_predict_biomass_survey()]). Some site-years have no
+#' survey biomass (see [kb_predict_biomass_in_situ()]). Some site-years have no
 #' weight data.
 #'
 #' @format A data frame with columns:
@@ -65,7 +65,7 @@
 #'   \item{fronds}{Fronds reaching 1 m above the holdfast, a positive whole
 #'     number.}
 #'   \item{weight_kg}{Wet weight (kg), a positive number.}
-#'   \item{site}{Survey site, a factor (12 levels).}
+#'   \item{site}{Site, a factor (12 levels).}
 #'   \item{year}{Harvest year, a factor (5 levels).}
 #' }
 #' @seealso [fit_weight_sim_macro] for a fit to this dataset.
@@ -78,14 +78,14 @@
 #' A small simulated dataset of sub-bulb diameter and wet weight, one row per
 #' harvested plant, for runnable examples. One of four simulated *Nereocystis*
 #' datasets with shared sites and years, so their fits can be combined into
-#' survey biomass (see [kb_predict_biomass_survey()]). Some site-years have no
+#' survey biomass (see [kb_predict_biomass_in_situ()]). Some site-years have no
 #' weight data.
 #'
 #' @format A data frame with columns:
 #' \describe{
 #'   \item{diameter_mm}{Sub-bulb diameter (mm), a positive number.}
 #'   \item{weight_kg}{Wet weight (kg), a positive number.}
-#'   \item{site}{Survey site, a factor (12 levels).}
+#'   \item{site}{Site, a factor (12 levels).}
 #'   \item{year}{Harvest year, a factor (5 levels).}
 #' }
 #' @seealso [fit_weight_sim_nereo] for a fit to this dataset.
@@ -129,26 +129,26 @@
 #'
 #' A small simulated dataset of in situ surveys, one row per survey,
 #' for runnable examples: the plants tallied, with sizes from
-#' [fit_size_sim_nereo], and the drone cover of the surveys paired with a
-#' flight. Some site-years hold more than one survey, and one survey counted no
+#' [fit_size_sim_nereo], and the drone cover of the surveys with canopy
+#' imagery. Some site-years hold more than one survey, and one survey counted no
 #' plants.
 #'
 #' @format A data frame with columns:
 #' \describe{
 #'   \item{survey_id}{Survey identifier, a character string.}
-#'   \item{site}{Survey site, a factor (12 levels).}
-#'   \item{year}{Survey year, a factor (5 levels).}
+#'   \item{site}{Site, a factor (12 levels).}
+#'   \item{year}{Year, a factor (5 levels).}
 #'   \item{survey_area_m2}{Surveyed area (m²), a positive number.}
 #'   \item{plants}{Plants counted, a whole number of at least 0.}
-#'   \item{plot_area_m2}{Plot polygon (m²), or `NA` without a flight.}
+#'   \item{plot_area_m2}{Plot polygon (m²), or `NA` without canopy imagery.}
 #'   \item{canopy_area_m2}{Drone canopy within the plot (m²), or `NA` without
-#'     a flight.}
-#'   \item{tide_height_m}{Tide height at the flight (m), or `NA` without a
-#'     flight.}
+#'     canopy imagery.}
+#'   \item{canopy_tide_height_m}{Tide height when the canopy was imaged (m), or `NA` without canopy
+#'     imagery.}
 #' }
-#' @seealso [kb_check_data_survey()] for the columns.
+#' @seealso [kb_check_data_in_situ()] for the columns.
 #' @family example datasets
-"data_survey_sim_nereo"
+"data_in_situ_sim_nereo"
 
 # Built by data-raw/data_sim_nereo.R.
 #' Simulated Nereocystis canopy data
@@ -158,10 +158,10 @@
 #'
 #' @format A data frame with columns:
 #' \describe{
-#'   \item{site}{Survey site, a factor (12 levels).}
-#'   \item{year}{Survey year, a factor (5 levels).}
+#'   \item{site}{Site, a factor (12 levels).}
+#'   \item{year}{Year, a factor (5 levels).}
 #'   \item{canopy_area_m2}{Canopy mapped within the site (m²).}
-#'   \item{tide_height_m}{Tide height at the flight (m).}
+#'   \item{canopy_tide_height_m}{Tide height when the canopy was imaged (m).}
 #'   \item{classified_area_m2}{Water area the canopy classification covered
 #'     (m²), including water with no canopy.}
 #'   \item{region}{Region of the site, a factor (`"north"`, `"south"`).}
@@ -175,24 +175,24 @@
 #'
 #' A small simulated dataset of in situ surveys, one row per survey,
 #' for runnable examples: the plants listed in [data_size_census_sim_macro], and the
-#' drone cover of the surveys paired with a flight. Some site-years hold more
+#' drone cover of the surveys with canopy imagery. Some site-years hold more
 #' than one survey, and one survey counted no plants.
 #'
 #' @format A data frame with columns:
 #' \describe{
 #'   \item{survey_id}{Survey identifier, a character string.}
-#'   \item{site}{Survey site, a factor (12 levels).}
-#'   \item{year}{Survey year, a factor (5 levels).}
+#'   \item{site}{Site, a factor (12 levels).}
+#'   \item{year}{Year, a factor (5 levels).}
 #'   \item{survey_area_m2}{Surveyed area (m²), a positive number.}
-#'   \item{plot_area_m2}{Plot polygon (m²), or `NA` without a flight.}
+#'   \item{plot_area_m2}{Plot polygon (m²), or `NA` without canopy imagery.}
 #'   \item{canopy_area_m2}{Drone canopy within the plot (m²), or `NA` without
-#'     a flight.}
-#'   \item{tide_height_m}{Tide height at the flight (m), or `NA` without a
-#'     flight.}
+#'     canopy imagery.}
+#'   \item{canopy_tide_height_m}{Tide height when the canopy was imaged (m), or `NA` without canopy
+#'     imagery.}
 #' }
-#' @seealso [kb_check_data_survey()] for the columns.
+#' @seealso [kb_check_data_in_situ()] for the columns.
 #' @family example datasets
-"data_survey_sim_macro"
+"data_in_situ_sim_macro"
 
 # Built by data-raw/data_sim_macro.R.
 #' Simulated Macrocystis canopy data
@@ -202,10 +202,10 @@
 #'
 #' @format A data frame with columns:
 #' \describe{
-#'   \item{site}{Survey site, a factor (12 levels).}
-#'   \item{year}{Survey year, a factor (5 levels).}
+#'   \item{site}{Site, a factor (12 levels).}
+#'   \item{year}{Year, a factor (5 levels).}
 #'   \item{canopy_area_m2}{Canopy mapped within the site (m²).}
-#'   \item{tide_height_m}{Tide height at the flight (m).}
+#'   \item{canopy_tide_height_m}{Tide height when the canopy was imaged (m).}
 #'   \item{classified_area_m2}{Water area the canopy classification covered
 #'     (m²), including water with no canopy.}
 #'   \item{region}{Region of the site, a factor (`"north"`, `"south"`).}
@@ -218,7 +218,7 @@
 #' Simulated Macrocystis size census data
 #'
 #' A small simulated dataset of every plant counted by the surveys in
-#' [data_survey_sim_macro], one row per plant, for runnable examples.
+#' [data_in_situ_sim_macro], one row per plant, for runnable examples.
 #'
 #' @format A data frame with columns:
 #' \describe{

@@ -65,11 +65,11 @@
 ---
 
     Code
-      warn_implausible_units(data.frame(tide_height_m = c(50, 120)), "`d`")
+      warn_implausible_units(data.frame(canopy_tide_height_m = c(50, 120)), "`d`")
     Condition
       Warning:
-      Column `tide_height_m` of `d` has median 85, which is unusually large for metres.
-      i Check that tide_height_m is in metres.
+      Column `canopy_tide_height_m` of `d` has median 85, which is unusually large for metres.
+      i Check that canopy_tide_height_m is in metres.
 
 # values beyond half the minimum or twice the maximum warn
 
@@ -114,6 +114,6 @@
       basis = "on more than 5% of draws")
     Condition
       Warning:
-      2 rows in `d` are past the tide limit (tide_height_m at least 1 / tide_height_slope) on more than 5% of draws.
+      2 rows in `d` are past the tide limit (canopy_tide_height_m at least 1 / tide_height_slope) on more than 5% of draws.
       i There the corrected canopy is the classified area, not the canopy measured. Fly at lower tides where possible.
 

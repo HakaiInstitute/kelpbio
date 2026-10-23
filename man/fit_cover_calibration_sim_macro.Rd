@@ -13,12 +13,12 @@ fit_cover_calibration_sim_macro
 }
 \description{
 A fit of \code{\link[=kb_fit_cover_calibration_macro]{kb_fit_cover_calibration_macro()}} to the survey biomass from
-\code{\link[=kb_predict_biomass_survey]{kb_predict_biomass_survey()}} with \link{fit_weight_sim_macro}, \link{data_size_census_sim_macro}, and
-\link{data_survey_sim_macro}, with fewer draws than the default, for exploring the
+\code{\link[=kb_predict_biomass_in_situ]{kb_predict_biomass_in_situ()}} with \link{fit_weight_sim_macro}, \link{data_size_census_sim_macro}, and
+\link{data_in_situ_sim_macro}, with fewer draws than the default, for exploring the
 fit methods without running the sampler.
 }
 \seealso{
-\code{\link[=kb_fit_cover_calibration_macro]{kb_fit_cover_calibration_macro()}} and \link{data_survey_sim_macro}.
+\code{\link[=kb_fit_cover_calibration_macro]{kb_fit_cover_calibration_macro()}} and \link{data_in_situ_sim_macro}.
 
 Other example fits:
 \code{\link{fit_carbon_sim_macro}},

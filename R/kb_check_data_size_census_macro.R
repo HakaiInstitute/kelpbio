@@ -2,14 +2,14 @@
 #'
 #' Check that `data` has the columns and values of a census of every
 #' *Macrocystis pyrifera* plant counted by in situ surveys, for
-#' [kb_predict_biomass_survey()].
+#' [kb_predict_biomass_in_situ()].
 #'
 #' @details
 #' Each row is one counted plant, an individual (sporophyte) identified by its
 #' holdfast. Required columns:
 #'
 #' - `survey_id`, the survey the plant was counted in (see
-#'   [kb_check_data_survey()]), which gives the plant's site and year.
+#'   [kb_check_data_in_situ()]), which gives the plant's site and year.
 #' - `fronds`, the number of fronds reaching 1 m above the holdfast (a whole
 #'   number of at least 1), the predictor of the weight model
 #'   ([kb_fit_weight_macro()]).

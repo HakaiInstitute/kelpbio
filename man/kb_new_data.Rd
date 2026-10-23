@@ -43,7 +43,7 @@ by \code{new_levels}: with the default \code{"average"}, the typical site or yea
 
 For a cover calibration fit, the predictor \code{cover} is the tide-corrected
 proportion of the plot covered by canopy (0 to 1); each row is then a unit
-plot at zero tide height, with the survey columns that give that cover. A
+plot at zero tide height, with the in situ survey columns that give that cover. A
 single predictor value gives one row per group at that value.
 
 To fix a grouping factor at chosen levels, supply them by name in \code{...}, for
@@ -74,7 +74,7 @@ Other prediction functions:
 \code{\link[=autoplot.kb_predictions]{autoplot.kb_predictions()}},
 \code{\link[=kb_plot_predictions]{kb_plot_predictions()}},
 \code{\link[=kb_predict_biomass_canopy]{kb_predict_biomass_canopy()}},
-\code{\link[=kb_predict_biomass_survey]{kb_predict_biomass_survey()}},
+\code{\link[=kb_predict_biomass_in_situ]{kb_predict_biomass_in_situ()}},
 \code{\link[=kb_predict_carbon]{kb_predict_carbon()}},
 \code{\link[=kb_predict_cover_calibration]{kb_predict_cover_calibration()}},
 \code{\link[=kb_predict_mean_weight]{kb_predict_mean_weight()}},

@@ -1,7 +1,7 @@
 #' Check in situ survey data
 #'
 #' Check that `data` has the columns and values needed to predict the biomass
-#' of in situ surveys with [kb_predict_biomass_survey()].
+#' of in situ surveys with [kb_predict_biomass_in_situ()].
 #'
 #' @details
 #' Each row of `data` is one survey: one count of the plants in a surveyed
@@ -19,13 +19,13 @@
 #'   size fit. It must be absent when `size_census` is given; the counts then
 #'   come from its rows.
 #'
-#' A survey paired with a drone flight also has `plot_area_m2` (the plot
-#' polygon, m², > 0), over which the drone cover is measured, `canopy_area_m2`
-#' (the canopy delineated within it, m², `>= 0` and at most `plot_area_m2`), and
-#' `tide_height_m` (the tide height at the flight, m, chart datum). The three are
-#' given together or left missing together. When the whole plot is surveyed,
-#' `survey_area_m2` equals `plot_area_m2`. Other columns, such as `region`, are
-#' ignored, and can be named in `pool_by`.
+#' A survey with canopy imagery also has `plot_area_m2` (the plot polygon,
+#' m², > 0), over which the drone cover is measured, `canopy_area_m2` (the
+#' canopy delineated within it, m², `>= 0` and at most `plot_area_m2`), and
+#' `canopy_tide_height_m` (the tide height when the canopy was imaged, m, chart
+#' datum). The three are given together or left missing together. When the
+#' whole plot is surveyed, `survey_area_m2` equals `plot_area_m2`. Other
+#' columns, such as `region`, are ignored, and can be named in `pool_by`.
 #'
 #' @inheritParams params
 #' @param data A data frame of in situ surveys, one row per survey.
@@ -40,9 +40,9 @@
 #' @export
 #'
 #' @examples
-#' kb_check_data_survey(data_survey_sim_nereo)
-#' kb_check_data_survey(data_survey_sim_macro, data_size_census_sim_macro)
-kb_check_data_survey <- function(
+#' kb_check_data_in_situ(data_in_situ_sim_nereo)
+#' kb_check_data_in_situ(data_in_situ_sim_macro, data_size_census_sim_macro)
+kb_check_data_in_situ <- function(
   data,
   size_census = NULL,
   x_name = chk::deparse_backtick_chk(substitute(data))

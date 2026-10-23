@@ -89,7 +89,7 @@
   <!-- Predictions -->
   <rect rx="8" ry="8" class="box output" x="650" y="140" width="230" height="58"/>
   <text class="title output-text" x="765" y="161">Survey biomass</text>
-  <text class="fn output-text" x="765" y="182">kb_predict_biomass_survey()</text>
+  <text class="fn output-text" x="765" y="182">kb_predict_biomass_in_situ()</text>
 
   <rect rx="8" ry="8" class="box output" x="650" y="366" width="230" height="58"/>
   <text class="title output-text" x="765" y="387">Total canopy biomass</text>

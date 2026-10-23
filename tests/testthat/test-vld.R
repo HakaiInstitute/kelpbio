@@ -129,17 +129,17 @@ test_that(".vld_kb_fit with class kb_fit_cover_calibration recognises a cover ca
 })
 
 test_that(".vld_cover_survey accepts zero canopy within the plot", {
-  good <- data.frame(canopy_area_m2 = c(0, 40), plot_area_m2 = 200, tide_height_m = -0.3)
+  good <- data.frame(canopy_area_m2 = c(0, 40), plot_area_m2 = 200, canopy_tide_height_m = -0.3)
   expect_true(.vld_cover_survey(good))
   expect_false(.vld_cover_survey(transform(good, canopy_area_m2 = 300)))
   expect_false(.vld_cover_survey(transform(good, plot_area_m2 = 0)))
-  expect_false(.vld_cover_survey(transform(good, tide_height_m = NA)))
-  expect_false(.vld_cover_survey(transform(good, tide_height_m = -Inf)))
+  expect_false(.vld_cover_survey(transform(good, canopy_tide_height_m = NA)))
+  expect_false(.vld_cover_survey(transform(good, canopy_tide_height_m = -Inf)))
   expect_false(.vld_cover_survey(good[c("canopy_area_m2", "plot_area_m2")]))
 })
 
 test_that(".vld_cover_survey checks biomass_sd_kg_m2 where present", {
-  good <- data.frame(canopy_area_m2 = 40, plot_area_m2 = 200, tide_height_m = 0.5)
+  good <- data.frame(canopy_area_m2 = 40, plot_area_m2 = 200, canopy_tide_height_m = 0.5)
   expect_true(.vld_cover_survey(transform(good, biomass_sd_kg_m2 = 0)))
   expect_false(.vld_cover_survey(transform(good, biomass_sd_kg_m2 = -1)))
   expect_false(.vld_cover_survey(transform(good, biomass_sd_kg_m2 = NA_real_)))
@@ -161,14 +161,14 @@ test_that(".vld_measure_fits needs the conversion fits the measure uses", {
 
 test_that(".vld_canopy_maps needs canopy, tide, site, year, and a large enough classified area", {
   good <- data.frame(
-    site = "a", year = "2020", canopy_area_m2 = 100, tide_height_m = 0.5, classified_area_m2 = 1e4
+    site = "a", year = "2020", canopy_area_m2 = 100, canopy_tide_height_m = 0.5, classified_area_m2 = 1e4
   )
   expect_true(.vld_canopy_maps(good))
   expect_false(.vld_canopy_maps(good[setdiff(names(good), "classified_area_m2")]))
   expect_false(.vld_canopy_maps(transform(good, classified_area_m2 = 50)))
   expect_false(.vld_canopy_maps(transform(good, canopy_area_m2 = -1)))
   expect_false(.vld_canopy_maps(transform(good, site = NA)))
-  expect_false(.vld_canopy_maps(transform(good, tide_height_m = Inf)))
+  expect_false(.vld_canopy_maps(transform(good, canopy_tide_height_m = Inf)))
   expect_false(.vld_canopy_maps(good[c("site", "year", "canopy_area_m2")]))
   expect_false(.vld_canopy_maps(list(good)))
 })
@@ -256,13 +256,13 @@ test_that(".vld_new_data_groups rejects NA in any site or year column", {
 test_that("the survey validators recognise valid survey and census tables", {
   s <- data.frame(
     survey_id = c("s1", "s2"), site = "a", year = "2021",
-    plot_area_m2 = c(200, NA), canopy_area_m2 = c(50, NA), tide_height_m = c(0.5, NA)
+    plot_area_m2 = c(200, NA), canopy_area_m2 = c(50, NA), canopy_tide_height_m = c(0.5, NA)
   )
   expect_true(.vld_unique_surveys(s))
   expect_false(.vld_unique_surveys(transform(s, survey_id = "s1")))
   expect_true(.vld_drone_columns(s))
   expect_true(.vld_drone_columns(s["site"]))
-  expect_false(.vld_drone_columns(transform(s, tide_height_m = NA)[-6]))
+  expect_false(.vld_drone_columns(transform(s, canopy_tide_height_m = NA)[-6]))
   expect_false(.vld_drone_columns(transform(s, canopy_area_m2 = c(300, NA))))
   expect_true(.vld_partial(c(TRUE, FALSE)))
   expect_false(.vld_partial(c(TRUE, NA)))

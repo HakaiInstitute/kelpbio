@@ -26,13 +26,13 @@
 #' Example Macrocystis cover calibration fit
 #'
 #' A fit of [kb_fit_cover_calibration_macro()] to the survey biomass from
-#' [kb_predict_biomass_survey()] with [fit_weight_sim_macro], [data_size_census_sim_macro], and
-#' [data_survey_sim_macro], with fewer draws than the default, for exploring the
+#' [kb_predict_biomass_in_situ()] with [fit_weight_sim_macro], [data_size_census_sim_macro], and
+#' [data_in_situ_sim_macro], with fewer draws than the default, for exploring the
 #' fit methods without running the sampler.
 #'
 #' @format An object of class
 #'   `c("kb_fit_cover_calibration_macro", "kb_fit_cover_calibration", "kb_fit")`.
-#' @seealso [kb_fit_cover_calibration_macro()] and [data_survey_sim_macro].
+#' @seealso [kb_fit_cover_calibration_macro()] and [data_in_situ_sim_macro].
 #' @family example fits
 "fit_cover_calibration_sim_macro"
 
@@ -40,13 +40,13 @@
 #' Example Nereocystis cover calibration fit
 #'
 #' A fit of [kb_fit_cover_calibration_nereo()] to the survey biomass from
-#' [kb_predict_biomass_survey()] with [fit_weight_sim_nereo], [fit_size_sim_nereo], and
-#' [data_survey_sim_nereo], with fewer draws than the default, for exploring the
+#' [kb_predict_biomass_in_situ()] with [fit_weight_sim_nereo], [fit_size_sim_nereo], and
+#' [data_in_situ_sim_nereo], with fewer draws than the default, for exploring the
 #' fit methods without running the sampler.
 #'
 #' @format An object of class
 #'   `c("kb_fit_cover_calibration_nereo", "kb_fit_cover_calibration", "kb_fit")`.
-#' @seealso [kb_fit_cover_calibration_nereo()] and [data_survey_sim_nereo].
+#' @seealso [kb_fit_cover_calibration_nereo()] and [data_in_situ_sim_nereo].
 #' @family example fits
 "fit_cover_calibration_sim_nereo"
 

@@ -96,7 +96,7 @@ This reverses the prior "species enters as data, not a variant" rule in
 - API surface grows to one fit function per model and species. The cost is
   accepted: the functions have honest, fixed data contracts and match how Hakai
   biologists think ("I have nereo data" / "I have macro data").
-- The derived verbs (`kb_predict_mean_weight()`, `kb_predict_biomass_survey()`,
+- The derived verbs (`kb_predict_mean_weight()`, `kb_predict_biomass_in_situ()`,
   `kb_predict_biomass_canopy()`) validate that the fits they combine share
   `meta$species`.
 - Per-species priors and data validators are independent, so species can carry

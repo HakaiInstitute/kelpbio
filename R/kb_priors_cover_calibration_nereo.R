@@ -25,10 +25,10 @@
 #' kb_priors_cover_calibration_nereo()
 #' @examplesIf interactive()
 #' # Change one prior; the others keep their defaults:
-#' biomass <- kb_predict_biomass_survey(
+#' biomass <- kb_predict_biomass_in_situ(
 #'   fit_weight_sim_nereo,
 #'   fit_size_sim_nereo,
-#'   data_survey_sim_nereo
+#'   data_in_situ_sim_nereo
 #' )
 #' kb_fit_cover_calibration_nereo(
 #'   biomass,

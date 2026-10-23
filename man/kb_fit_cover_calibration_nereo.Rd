@@ -64,7 +64,7 @@ Fit a calibration of in situ survey biomass on drone canopy cover for
 \emph{Nereocystis luetkeana} via Stan.
 }
 \details{
-\code{data} is the output of \code{\link[=kb_predict_biomass_survey]{kb_predict_biomass_survey()}} with its defaults: wet
+\code{data} is the output of \code{\link[=kb_predict_biomass_in_situ]{kb_predict_biomass_in_situ()}} with its defaults: wet
 biomass per m² of each in situ survey, with the survey's drone cover on its
 row. Each survey with drone cover is one observation; surveys without it
 are not fitted, and a message gives their number. The calibration takes each
@@ -78,14 +78,14 @@ sites and years, the wet biomass of a plot with no delineated canopy. Its SD
 is \code{sqrt(sd_residual^2 + (cv_residual * mu)^2 + biomass_sd^2)}, where
 \code{biomass_sd} is the SD of the survey's biomass draws, from plant weight.
 
-\code{cover} is \code{canopy_area_m2 / (1 - tide_height_slope * tide_height_m)} over
+\code{cover} is \code{canopy_area_m2 / (1 - tide_height_slope * canopy_tide_height_m)} over
 the plot area, capped at 1 (Timmer et al. 2024); a survey with canopy at a
 tide height at or above \code{1 / tide_height_slope} is fully covered, and the fit
 warns when that holds with more than 5\% prior probability. The default prior
 on \code{tide_height_slope} largely sets the correction: raise its mean for beds in
-strong current. Flights at 2 m or below follow published practice and stay
+strong current. Imagery at a tide of 2 m or below follows published practice and stays
 below the tide limit. Pass canopy already corrected for tide with
-\code{tide_height_m = 0}.
+\code{canopy_tide_height_m = 0}.
 }
 \section{Sampling}{
 
@@ -106,10 +106,10 @@ Check convergence with \code{\link[=kb_converged]{kb_converged()}}, \code{\link[
 # A pre-fit example model is included with the package:
 tidy(fit_cover_calibration_sim_nereo)
 \dontshow{if (interactive()) withAutoprint(\{ # examplesIf}
-biomass <- kb_predict_biomass_survey(
+biomass <- kb_predict_biomass_in_situ(
   fit_weight_sim_nereo,
   fit_size_sim_nereo,
-  data_survey_sim_nereo
+  data_in_situ_sim_nereo
 )
 fit <- kb_fit_cover_calibration_nereo(biomass)
 tidy(fit)

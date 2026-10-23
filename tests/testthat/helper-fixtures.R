@@ -47,7 +47,7 @@ local_fit_stan_stub <- function(fit, env = parent.frame()) {
   )
 }
 
-# Survey biomass rows as kb_predict_biomass_survey() returns them: drone columns
+# Survey biomass rows as kb_predict_biomass_in_situ() returns them: drone columns
 # and a column of draws with the given means and SDs (an SD of 0 gives a fixed
 # value, such as an empty survey's 0).
 survey_biomass <- function(
@@ -66,7 +66,7 @@ survey_biomass <- function(
     year = year,
     plot_area_m2 = 200,
     canopy_area_m2 = c(60, 0, 120)[seq_along(mean)],
-    tide_height_m = c(0.5, -0.2, 1)[seq_along(mean)],
+    canopy_tide_height_m = c(0.5, -0.2, 1)[seq_along(mean)],
     biomass_kg_m2 = posterior::rvar(draws)
   )
 }
@@ -83,8 +83,8 @@ calibration_input <- function(fit, ndraws = 100L) {
     year = d$year,
     ndraws = ndraws
   )
-  out[c("plot_area_m2", "canopy_area_m2", "tide_height_m")] <-
-    d[c("plot_area_m2", "canopy_area_m2", "tide_height_m")]
+  out[c("plot_area_m2", "canopy_area_m2", "canopy_tide_height_m")] <-
+    d[c("plot_area_m2", "canopy_area_m2", "canopy_tide_height_m")]
   out
 }
 

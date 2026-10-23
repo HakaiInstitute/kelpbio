@@ -131,10 +131,10 @@ test_that("mean weight by site plots point ranges titled as a weight", {
 
 test_that("survey biomass by site-year plots point ranges titled as a biomass", {
   withr::local_seed(1)
-  p <- kb_predict_biomass_survey(
+  p <- kb_predict_biomass_in_situ(
     weight_nereo_fit,
     size_nereo_fit,
-    data_survey_sim_nereo,
+    data_in_situ_sim_nereo,
     pool_by = c("site", "year"),
     progress = "none"
   )
@@ -278,10 +278,10 @@ test_that("each layout is visually stable", {
     kb_plot_predictions(mean_weight_by_site(), log_axis = "y")
   )
   withr::local_seed(1)
-  survey <- kb_predict_biomass_survey(
+  survey <- kb_predict_biomass_in_situ(
     weight_nereo_fit,
     size_nereo_fit,
-    data_survey_sim_nereo,
+    data_in_situ_sim_nereo,
     pool_by = c("site", "year"),
     progress = "none"
   )

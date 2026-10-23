@@ -7,7 +7,7 @@ text.
 ## Done in the cover-calibration change
 
 Approach C of the analysis project's `decisions/cover-count-calibration.md` is
-in: `kb_predict_mean_weight()` (quick win 1), `kb_predict_biomass_survey()`
+in: `kb_predict_mean_weight()` (quick win 1), `kb_predict_biomass_in_situ()`
 (quick wins 2 and 3: the biomass of counted plants, tallied or censused, with
 `pool_by` and `per_area`), the cover calibration on survey biomass with zeros
 (quick win 4), and the dividing tide correction in the totals (quick win 5).
@@ -17,7 +17,7 @@ question of how intermediate quantities chain.
 ## Still open
 
 - Mean weight of counted plants (a census), for example as a third scale of
-  `kb_predict_biomass_survey()`; `kb_predict_mean_weight()` takes fits only.
+  `kb_predict_biomass_in_situ()`; `kb_predict_mean_weight()` takes fits only.
 - Floor support in totals: over canopy area (now), or a footprint or pixel area.
 - No tide correction for sites with weak tides.
 - The weight error shared through the level of the allometry is treated as
@@ -65,11 +65,11 @@ site-year (`R/mock-example.R`).
 
 1. **Data.** One survey sheet (survey_id, site, year, survey_area_m2, plants for
    *Nereocystis*, and the drone columns plot_area_m2, canopy_area_m2,
-   tide_height_m on the same row), a counted-plant sheet for *Macrocystis*
+   canopy_tide_height_m on the same row), a counted-plant sheet for *Macrocystis*
    (survey_id, fronds, partial; sheet `size_census`), and a canopy sheet for totals. The
    density sheet and the separate cover sheet go.
 2. **Dependencies.** The cover fit needs survey biomass from
-   `kb_predict_biomass_survey()`, so the weight fit (and the *Nereocystis* size
+   `kb_predict_biomass_in_situ()`, so the weight fit (and the *Nereocystis* size
    fit) must come first. The density fit and the *Macrocystis* size fit go. The
    fit-queue rules (`cover_blocked`, `fit_all_plan`, `invalidate_cover`,
    `start_next`; `R/state.R:34-83, 163-204, 772-796`) change accordingly.
@@ -82,7 +82,7 @@ site-year (`R/mock-example.R`).
    kg only).
 6. **Renames.** `kb_fit_cover_biomass_*()` to `kb_fit_cover_calibration_*()`,
    `kb_predict_site_biomass()` to `kb_predict_biomass_canopy()`,
-   `kb_predict_plot_biomass()` to `kb_predict_biomass_survey()`, `stipes` to
+   `kb_predict_plot_biomass()` to `kb_predict_biomass_in_situ()`, `stipes` to
    `plants`; help text, mocks, and snapshots follow.
 
 **Found in passing, not checked yet:**

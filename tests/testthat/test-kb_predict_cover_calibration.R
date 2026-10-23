@@ -1,5 +1,5 @@
 cover_rows <- function(...) {
-  data.frame(canopy_area_m2 = 80, plot_area_m2 = 200, tide_height_m = 0.5, ...)
+  data.frame(canopy_area_m2 = 80, plot_area_m2 = 200, canopy_tide_height_m = 0.5, ...)
 }
 
 test_that("kb_predict_cover_calibration at the observed data matches augment", {
@@ -23,7 +23,7 @@ test_that("predictions are returned at the supplied rows", {
     c(
       "canopy_area_m2",
       "plot_area_m2",
-      "tide_height_m",
+      "canopy_tide_height_m",
       "site",
       "year",
       "cover_support",
@@ -41,7 +41,7 @@ test_that("zero canopy predicts the floor for every site and year", {
     data.frame(
       canopy_area_m2 = 0,
       plot_area_m2 = 200,
-      tide_height_m = 0.5,
+      canopy_tide_height_m = 0.5,
       site = fitted_sites(cover_calibration_macro_fit, 3),
       year = c("2019", "2020", "2021")
     ),
@@ -58,7 +58,7 @@ test_that("biomass increases with canopy and with tide height", {
     data.frame(
       canopy_area_m2 = c(20, 80, 80),
       plot_area_m2 = 200,
-      tide_height_m = c(0, 0, 1.5),
+      canopy_tide_height_m = c(0, 0, 1.5),
       site = fitted_sites(cover_calibration_nereo_fit),
       year = "2019"
     ),
@@ -76,7 +76,7 @@ test_that("new_data must carry valid survey columns", {
   expect_error(
     kb_predict_cover_calibration(
       cover_calibration_nereo_fit,
-      data.frame(canopy_area_m2 = 3, plot_area_m2 = 2, tide_height_m = 0)
+      data.frame(canopy_area_m2 = 3, plot_area_m2 = 2, canopy_tide_height_m = 0)
     ),
     "canopy_area_m2"
   )
@@ -133,7 +133,7 @@ test_that("a cover grid agrees with unit-plot surveys at zero tide height", {
       site = grid$site,
       canopy_area_m2 = 50,
       plot_area_m2 = 100,
-      tide_height_m = 0
+      canopy_tide_height_m = 0
     ),
     sig_fig = 8
   )
@@ -155,10 +155,10 @@ test_that("kb_predict_cover_calibration errors on other models and a non-fit", {
 
 test_that("high tides give finite predictions and warn past the tide limit", {
   fit <- cover_calibration_nereo_fit
-  rows <- function(canopy_area_m2, tide_height_m) {
+  rows <- function(canopy_area_m2, canopy_tide_height_m) {
     data.frame(
       site = fitted_sites(fit), year = "2019", canopy_area_m2 = canopy_area_m2,
-      plot_area_m2 = 200, tide_height_m = tide_height_m
+      plot_area_m2 = 200, canopy_tide_height_m = canopy_tide_height_m
     )
   }
   # this fit's slope draws run from 0.17 to 0.40, so 3.5 m is past the limit on

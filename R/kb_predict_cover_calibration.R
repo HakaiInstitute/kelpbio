@@ -8,18 +8,18 @@
 #' a tide height at or above `1 / tide_height_slope` is fully covered, and a
 #' row past that limit on more than 5% of draws warns. Canopy already corrected
 #' for tide is passed with
-#' `tide_height_m = 0`. A row with no canopy predicts the biomass floor, which
+#' `canopy_tide_height_m = 0`. A row with no canopy predicts the biomass floor, which
 #' is the same for every site and year.
 #'
 #' The prediction is `mu`, the mean before censoring at zero, as used by
-#' [kb_predict_biomass_canopy()]. When `new_data = NULL`, the survey biomass
+#' [kb_predict_biomass_canopy()]. When `new_data = NULL`, the in situ survey biomass
 #' columns are kept; use [augment()] for the fitted values next to them.
 #'
 #' @inheritParams params
 #' @param fit A `kb_fit_cover_calibration` object.
 #' @param new_data A data frame of the rows to predict at, with
 #'   `canopy_area_m2` (the canopy area in the plot, m²), `plot_area_m2` (the
-#'   plot area, m²), `tide_height_m` (the tide height, m), and optionally `site`
+#'   plot area, m²), `canopy_tide_height_m` (the tide height, m), and optionally `site`
 #'   and `year`, or `NULL` for the observed surveys.
 #'
 #' @returns A `kb_predictions` object: the rows of `new_data` with added
@@ -48,7 +48,7 @@
 #'     site = c("otter_cove", "new_site"),
 #'     canopy_area_m2 = 80,
 #'     plot_area_m2 = 200,
-#'     tide_height_m = 0.5
+#'     canopy_tide_height_m = 0.5
 #'   )
 #' )
 kb_predict_cover_calibration <- function(
@@ -74,7 +74,7 @@ kb_predict_cover_calibration <- function(
   )
   if (!is.null(new_data)) {
     warn_tide_cap(
-      tide_cap_share(new_data$canopy_area_m2, new_data$tide_height_m, fit$draws$tide_height_slope),
+      tide_cap_share(new_data$canopy_area_m2, new_data$canopy_tide_height_m, fit$draws$tide_height_slope),
       "`new_data`",
       rows = "row",
       cap = "the plot area (full cover)",

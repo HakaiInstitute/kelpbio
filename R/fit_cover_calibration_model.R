@@ -40,14 +40,14 @@ fit_cover_calibration_model <- function(
     cli::cli_abort(
       c(
         "No survey in {.arg data} has drone cover.",
-        i = "A survey has drone cover when {.field plot_area_m2}, {.field canopy_area_m2}, and {.field tide_height_m} are given."
+        i = "A survey has drone cover when {.field plot_area_m2}, {.field canopy_area_m2}, and {.field canopy_tide_height_m} are given."
       ),
       call = call
     )
   }
   priors <- resolve_priors(priors, defaults, call = call)
   warn_tide_cap(
-    tide_cap_prior_share(data$canopy_area_m2, data$tide_height_m, priors$tide_height_slope),
+    tide_cap_prior_share(data$canopy_area_m2, data$canopy_tide_height_m, priors$tide_height_slope),
     "`data`",
     rows = "survey",
     cap = "the plot area (full cover)",

@@ -4,7 +4,7 @@ test_that("a survey's total is the bed biomass per m2 times its canopy area", {
     site = fitted_sites(fit),
     year = "2019",
     canopy_area_m2 = 250,
-    tide_height_m = 0,
+    canopy_tide_height_m = 0,
     classified_area_m2 = 1e6
   )
   totals <- canopy_biomass_draws(fit, grid, "average", NULL)
@@ -23,7 +23,7 @@ test_that("the canopy is divided by one minus each draw's tide share", {
     site = fitted_sites(fit),
     year = "2019",
     canopy_area_m2 = 100,
-    tide_height_m = c(0, 1),
+    canopy_tide_height_m = c(0, 1),
     classified_area_m2 = 1e6
   )
   totals <- canopy_biomass_draws(fit, grid, "average", NULL)
@@ -37,7 +37,7 @@ test_that("totals scale with canopy area, and the classified area caps the canop
     site = fitted_sites(fit, 2)[2],
     year = "2020",
     canopy_area_m2 = c(100, 300, 300),
-    tide_height_m = 1,
+    canopy_tide_height_m = 1,
     classified_area_m2 = c(1e4, 1e4, 300)
   )
   totals <- canopy_biomass_draws(fit, grid, "average", NULL)
@@ -46,7 +46,7 @@ test_that("totals scale with canopy area, and the classified area caps the canop
   # classified: the bed biomass per m2 times 300.
   untided <- canopy_biomass_draws(
     fit,
-    transform(grid[3, ], tide_height_m = 0),
+    transform(grid[3, ], canopy_tide_height_m = 0),
     "average",
     NULL
   )

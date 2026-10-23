@@ -28,7 +28,7 @@ The rules apply even where no name would collide (`diameter_power`, not
 `power`), so a new sub-model's names follow from the rules and the names stay
 predictable. Two of them avoid collisions that the plain role names would
 cause: a slope carries its predictor's name (`fronds_slope`), because
-`fronds`, `canopy_area_m2`, and `tide_height_m` are already Stan data fields or
+`fronds`, `canopy_area_m2`, and `canopy_tide_height_m` are already Stan data fields or
 input columns, and a floor carries its quantity (`weight_floor`, `biomass_floor`),
 because `floor` is a Stan function.
 
@@ -50,7 +50,7 @@ Parameter names are snake_case, applied by rule even where nothing would collide
 7. No parameter shares a name with a data field, an input column, a Stan reserved word (`lower`, `upper`, `offset`, `multiplier`, `target`), or a Stan function (`floor`, `gamma`, `beta`, `log`, `exp`).
 8. A parameter's prior entry in `kb_priors_*()` has the parameter's name.
 
-Stan data names: a field passing an input column through takes the column's name (`diameter_mm`, `area_m2`, `tide_height_m`); a derived field is named for its quantity (`log_biomass`, `dry_wet_ratio`); sizes are `n_obs`, `n_site`, `n_year`; flags keep `<effect>_on`.
+Stan data names: a field passing an input column through takes the column's name (`diameter_mm`, `area_m2`, `canopy_tide_height_m`); a derived field is named for its quantity (`log_biomass`, `dry_wet_ratio`); sizes are `n_obs`, `n_site`, `n_year`; flags keep `<effect>_on`.
 
 ## Alternatives considered
 

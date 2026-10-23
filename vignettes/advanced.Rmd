@@ -30,7 +30,7 @@ shown but not run.
 
 ### The draws column
 
-The derived verbs (`kb_predict_mean_weight()`, `kb_predict_biomass_survey()`,
+The derived verbs (`kb_predict_mean_weight()`, `kb_predict_biomass_in_situ()`,
 and `kb_predict_biomass_canopy()`) return their response as a column of
 posterior draws, a `posterior` `rvar`, next to `estimate`, `lower`, and
 `upper`. Arithmetic on an `rvar` is done draw by draw, so any quantity built
@@ -38,10 +38,10 @@ from it carries the full posterior uncertainty.
 
 ```{r}
 set.seed(1)
-biomass <- kb_predict_biomass_survey(
+biomass <- kb_predict_biomass_in_situ(
   fit_weight_sim_nereo,
   fit_size_sim_nereo,
-  data_survey_sim_nereo,
+  data_in_situ_sim_nereo,
   progress = "none"
 )
 biomass$biomass_kg_m2[1:3]

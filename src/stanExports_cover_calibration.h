@@ -35,7 +35,7 @@ static constexpr std::array<const char*, 72> locations_array__ =
   " (in 'cover_calibration', line 65, column 2 to column 44)",
   " (in 'cover_calibration', line 66, column 2 to column 24)",
   " (in 'cover_calibration', line 67, column 2 to column 24)",
-  " (in 'cover_calibration', line 70, column 6 to column 59)",
+  " (in 'cover_calibration', line 70, column 6 to column 66)",
   " (in 'cover_calibration', line 71, column 6 to column 21)",
   " (in 'cover_calibration', line 73, column 8 to line 75, column 14)",
   " (in 'cover_calibration', line 72, column 33 to line 76, column 7)",
@@ -63,7 +63,7 @@ static constexpr std::array<const char*, 72> locations_array__ =
   " (in 'cover_calibration', line 25, column 18 to column 23)",
   " (in 'cover_calibration', line 25, column 2 to column 38)",
   " (in 'cover_calibration', line 26, column 9 to column 14)",
-  " (in 'cover_calibration', line 26, column 2 to column 30)",
+  " (in 'cover_calibration', line 26, column 2 to column 37)",
   " (in 'cover_calibration', line 27, column 18 to column 23)",
   " (in 'cover_calibration', line 27, column 2 to column 33)",
   " (in 'cover_calibration', line 28, column 18 to column 23)",
@@ -96,7 +96,7 @@ private:
   std::vector<int> year;
   Eigen::Matrix<double,-1,1> canopy_area_m2_data__;
   Eigen::Matrix<double,-1,1> plot_area_m2_data__;
-  Eigen::Matrix<double,-1,1> tide_height_m_data__;
+  Eigen::Matrix<double,-1,1> canopy_tide_height_m_data__;
   Eigen::Matrix<double,-1,1> biomass_data__;
   Eigen::Matrix<double,-1,1> biomass_sd_data__;
   std::vector<int> zero;
@@ -114,7 +114,7 @@ private:
   int prior_only;
   Eigen::Map<Eigen::Matrix<double,-1,1>> canopy_area_m2{nullptr, 0};
   Eigen::Map<Eigen::Matrix<double,-1,1>> plot_area_m2{nullptr, 0};
-  Eigen::Map<Eigen::Matrix<double,-1,1>> tide_height_m{nullptr, 0};
+  Eigen::Map<Eigen::Matrix<double,-1,1>> canopy_tide_height_m{nullptr, 0};
   Eigen::Map<Eigen::Matrix<double,-1,1>> biomass{nullptr, 0};
   Eigen::Map<Eigen::Matrix<double,-1,1>> biomass_sd{nullptr, 0};
 public:
@@ -238,23 +238,25 @@ public:
       stan::math::check_greater_or_equal(function__, "plot_area_m2",
         plot_area_m2, 0);
       current_statement__ = 48;
-      stan::math::validate_non_negative_index("tide_height_m", "n_obs", n_obs);
+      stan::math::validate_non_negative_index("canopy_tide_height_m",
+        "n_obs", n_obs);
       current_statement__ = 49;
-      context__.validate_dims("data initialization", "tide_height_m",
+      context__.validate_dims("data initialization", "canopy_tide_height_m",
         "double", std::vector<size_t>{static_cast<size_t>(n_obs)});
-      tide_height_m_data__ = Eigen::Matrix<double,-1,1>::Constant(n_obs,
-                               std::numeric_limits<double>::quiet_NaN());
-      new (&tide_height_m)
-        Eigen::Map<Eigen::Matrix<double,-1,1>>(tide_height_m_data__.data(),
+      canopy_tide_height_m_data__ = Eigen::Matrix<double,-1,1>::Constant(n_obs,
+                                      std::numeric_limits<double>::quiet_NaN());
+      new (&canopy_tide_height_m)
+        Eigen::Map<Eigen::Matrix<double,-1,1>>(canopy_tide_height_m_data__.data(),
         n_obs);
       {
-        std::vector<local_scalar_t__> tide_height_m_flat__;
+        std::vector<local_scalar_t__> canopy_tide_height_m_flat__;
         current_statement__ = 49;
-        tide_height_m_flat__ = context__.vals_r("tide_height_m");
+        canopy_tide_height_m_flat__ = context__.vals_r("canopy_tide_height_m");
         pos__ = 1;
         for (int sym1__ = 1; sym1__ <= n_obs; ++sym1__) {
-          stan::model::assign(tide_height_m, tide_height_m_flat__[(pos__ -
-            1)], "assigning variable tide_height_m",
+          stan::model::assign(canopy_tide_height_m,
+            canopy_tide_height_m_flat__[(pos__ - 1)],
+            "assigning variable canopy_tide_height_m",
             stan::model::index_uni(sym1__));
           pos__ = (pos__ + 1);
         }
@@ -546,8 +548,8 @@ public:
             local_scalar_t__ seen = DUMMY_VAR__;
             current_statement__ = 21;
             seen = (1 - (tide_height_slope *
-              stan::model::rvalue(tide_height_m, "tide_height_m",
-                stan::model::index_uni(i))));
+              stan::model::rvalue(canopy_tide_height_m,
+                "canopy_tide_height_m", stan::model::index_uni(i))));
             local_scalar_t__ cover = DUMMY_VAR__;
             current_statement__ = 22;
             cover = stan::math::promote_scalar<local_scalar_t__>(0);
@@ -716,8 +718,8 @@ public:
             local_scalar_t__ seen = DUMMY_VAR__;
             current_statement__ = 21;
             seen = (1 - (tide_height_slope *
-              stan::model::rvalue(tide_height_m, "tide_height_m",
-                stan::model::index_uni(i))));
+              stan::model::rvalue(canopy_tide_height_m,
+                "canopy_tide_height_m", stan::model::index_uni(i))));
             local_scalar_t__ cover = DUMMY_VAR__;
             current_statement__ = 22;
             cover = stan::math::promote_scalar<local_scalar_t__>(0);

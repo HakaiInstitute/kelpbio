@@ -50,7 +50,7 @@ A prior that is informative by design is expected to dominate, so a
 parameter with \code{informative_prior = TRUE} and neither flag is not a problem.
 The only such parameter is the cover calibration's \code{tide_height_slope}: its
 default prior is the published response of canopy area to tide height
-(Timmer et al. 2024), and few surveys span enough tide range to estimate it.
+(Timmer et al. 2024), and few in situ surveys span enough tide range to estimate it.
 It is marked whatever prior the fit used.
 
 Each \code{term} is also the name of its prior's entry in the list from the

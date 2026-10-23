@@ -19,7 +19,7 @@ data_size_census_sim_macro
 }
 \description{
 A small simulated dataset of every plant counted by the surveys in
-\link{data_survey_sim_macro}, one row per plant, for runnable examples.
+\link{data_in_situ_sim_macro}, one row per plant, for runnable examples.
 }
 \seealso{
 \code{\link[=kb_check_data_size_census_macro]{kb_check_data_size_census_macro()}} for the columns.
@@ -29,9 +29,9 @@ Other example datasets:
 \code{\link{data_canopy_sim_nereo}},
 \code{\link{data_carbon_sim_macro}},
 \code{\link{data_carbon_sim_nereo}},
+\code{\link{data_in_situ_sim_macro}},
+\code{\link{data_in_situ_sim_nereo}},
 \code{\link{data_size_sample_sim_nereo}},
-\code{\link{data_survey_sim_macro}},
-\code{\link{data_survey_sim_nereo}},
 \code{\link{data_weight_sim_macro}},
 \code{\link{data_weight_sim_nereo}},
 \code{\link{data_wetdry_sim_macro}},

@@ -27,7 +27,7 @@ Required columns: numeric \code{diameter_mm} (mm, > 0), factor or character
 values.
 
 Each row is one plant of a sample measured for the size model, which need
-not be linked to any survey. \code{diameter_mm} is the maximum sub-bulb diameter,
+not be linked to any in situ survey. \code{diameter_mm} is the maximum sub-bulb diameter,
 the same measurement as the predictor of the weight model
 (\code{\link[=kb_fit_weight_nereo]{kb_fit_weight_nereo()}}). A numeric \code{year} is used as its character level.
 Other columns are ignored.
@@ -48,9 +48,9 @@ Other data checks:
 \code{\link[=kb_check_data_carbon_nereo]{kb_check_data_carbon_nereo()}},
 \code{\link[=kb_check_data_cover_calibration_macro]{kb_check_data_cover_calibration_macro()}},
 \code{\link[=kb_check_data_cover_calibration_nereo]{kb_check_data_cover_calibration_nereo()}},
+\code{\link[=kb_check_data_in_situ]{kb_check_data_in_situ()}},
 \code{\link[=kb_check_data_size_census_macro]{kb_check_data_size_census_macro()}},
 \code{\link[=kb_check_data_size_census_nereo]{kb_check_data_size_census_nereo()}},
-\code{\link[=kb_check_data_survey]{kb_check_data_survey()}},
 \code{\link[=kb_check_data_weight_macro]{kb_check_data_weight_macro()}},
 \code{\link[=kb_check_data_weight_nereo]{kb_check_data_weight_nereo()}},
 \code{\link[=kb_check_data_wetdry_macro]{kb_check_data_wetdry_macro()}},

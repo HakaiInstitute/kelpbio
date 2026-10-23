@@ -168,7 +168,7 @@
         sigma = sqrt(sd_residual^2 + (cv_residual * mu)^2 + biomass_sd_kg_m2^2)
         mu = biomass_floor
            + cover_slope * exp(year_effect[year] + site_effect[site]) * cover
-        cover = min(1, canopy_area_m2 / (1 - tide_height_slope * tide_height_m) / plot_area_m2), and 1 where canopy_area_m2 > 0 and tide_height_m >= 1 / tide_height_slope
+        cover = min(1, canopy_area_m2 / (1 - tide_height_slope * canopy_tide_height_m) / plot_area_m2), and 1 where canopy_area_m2 > 0 and canopy_tide_height_m >= 1 / tide_height_slope
       
       Random effects
         year_effect[year] ~ Normal(0, sd_year)  year effect on log(cover_slope)
@@ -196,7 +196,7 @@
         sigma = sqrt(sd_residual^2 + (cv_residual * mu)^2 + biomass_sd_kg_m2^2)
         mu = biomass_floor
            + cover_slope * exp(year_effect[year] + site_effect[site]) * cover
-        cover = min(1, canopy_area_m2 / (1 - tide_height_slope * tide_height_m) / plot_area_m2), and 1 where canopy_area_m2 > 0 and tide_height_m >= 1 / tide_height_slope
+        cover = min(1, canopy_area_m2 / (1 - tide_height_slope * canopy_tide_height_m) / plot_area_m2), and 1 where canopy_area_m2 > 0 and canopy_tide_height_m >= 1 / tide_height_slope
       
       Random effects
         year_effect[year] ~ Normal(0, sd_year)  year effect on log(cover_slope)

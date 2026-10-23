@@ -12,7 +12,7 @@
 #'
 #' For a cover calibration fit, the predictor `cover` is the tide-corrected
 #' proportion of the plot covered by canopy (0 to 1); each row is then a unit
-#' plot at zero tide height, with the survey columns that give that cover. A
+#' plot at zero tide height, with the in situ survey columns that give that cover. A
 #' single predictor value gives one row per group at that value.
 #'
 #' To fix a grouping factor at chosen levels, supply them by name in `...`, for
@@ -98,6 +98,6 @@ kb_new_data <- function(fit, by = NULL, ...) {
 .grid_columns.kb_fit_cover_calibration <- function(fit, grid) {
   grid$canopy_area_m2 <- grid$cover
   grid$plot_area_m2 <- 1
-  grid$tide_height_m <- 0
+  grid$canopy_tide_height_m <- 0
   grid
 }

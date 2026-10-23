@@ -146,10 +146,10 @@ if ("cover_calibration" %in% selected) {
     d
   }
   set.seed(42)
-  biomass_nereo <- kb_predict_biomass_survey(
+  biomass_nereo <- kb_predict_biomass_in_situ(
     fit_weight_sim_nereo,
     fit_size_sim_nereo,
-    survey_subset(data_survey_sim_nereo),
+    survey_subset(data_in_situ_sim_nereo),
     progress = "none"
   )
   cover_calibration_nereo_fit <- kb_fit_cover_calibration_nereo(
@@ -166,12 +166,12 @@ if ("cover_calibration" %in% selected) {
   message("Wrote tests/testthat/fixtures/cover_calibration_nereo_fit.rds")
 
   set.seed(42)
-  survey_macro <- survey_subset(data_survey_sim_macro)
+  survey_macro <- survey_subset(data_in_situ_sim_macro)
   size_census <- subset(
     data_size_census_sim_macro,
     survey_id %in% survey_macro$survey_id
   )
-  biomass_macro <- kb_predict_biomass_survey(
+  biomass_macro <- kb_predict_biomass_in_situ(
     fit_weight_sim_macro,
     size_census,
     survey_macro,

@@ -10,7 +10,7 @@ A data frame with columns:
 \item{fronds}{Fronds reaching 1 m above the holdfast, a positive whole
 number.}
 \item{weight_kg}{Wet weight (kg), a positive number.}
-\item{site}{Survey site, a factor (12 levels).}
+\item{site}{Site, a factor (12 levels).}
 \item{year}{Harvest year, a factor (5 levels).}
 }
 }
@@ -21,7 +21,7 @@ data_weight_sim_macro
 A small simulated dataset of frond count and wet weight, one row per
 harvested plant, for runnable examples. One of four simulated \emph{Macrocystis}
 datasets with shared sites and years, so their fits can be combined into
-survey biomass (see \code{\link[=kb_predict_biomass_survey]{kb_predict_biomass_survey()}}). Some site-years have no
+survey biomass (see \code{\link[=kb_predict_biomass_in_situ]{kb_predict_biomass_in_situ()}}). Some site-years have no
 weight data.
 }
 \seealso{
@@ -32,10 +32,10 @@ Other example datasets:
 \code{\link{data_canopy_sim_nereo}},
 \code{\link{data_carbon_sim_macro}},
 \code{\link{data_carbon_sim_nereo}},
+\code{\link{data_in_situ_sim_macro}},
+\code{\link{data_in_situ_sim_nereo}},
 \code{\link{data_size_census_sim_macro}},
 \code{\link{data_size_sample_sim_nereo}},
-\code{\link{data_survey_sim_macro}},
-\code{\link{data_survey_sim_nereo}},
 \code{\link{data_weight_sim_nereo}},
 \code{\link{data_wetdry_sim_macro}},
 \code{\link{data_wetdry_sim_nereo}}

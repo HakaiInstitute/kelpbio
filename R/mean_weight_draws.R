@@ -3,7 +3,7 @@
 # site-year's Weibull size distribution, truncated above at the largest size in
 # the size fit's data. Effects are resolved over all rows at once, so a sampled
 # new site or year is one draw throughout. Shared by kb_predict_mean_weight()
-# and the tallied path of kb_predict_biomass_survey(), so the two agree.
+# and the tallied path of kb_predict_biomass_in_situ(), so the two agree.
 mean_weight_draws <- function(
   weight,
   size,
