@@ -26,7 +26,7 @@
 #'
 #' In order, try the following:
 #' 1. Increase `adapt_delta` through the `control` argument of the `kb_fit_*()`
-#'    functions (e.g., `kb_fit_*(df, control = list(adapt_delta = 0.99))`). The
+#'    functions (for example, `kb_fit_*(df, control = list(adapt_delta = 0.99))`). The
 #'    default `adapt_delta` value is 0.95. Higher values reduce divergent
 #'    transitions and can also resolve Rhat and effective sample size issues,
 #'    at the cost of a longer runtime.

@@ -35,7 +35,7 @@
 # Built by data-raw/data_sim_nereo.R.
 #' Simulated Nereocystis size sample data
 #'
-#' A small simulated dataset of maximum sub-bulb diameter, one row per plant of
+#' A small simulated dataset of plant diameter, one row per plant of
 #' a sample measured for the size model, for runnable examples. One of four
 #' simulated *Nereocystis* datasets with shared sites and years, so their fits
 #' can be combined into in situ survey biomass (see [kb_predict_biomass_in_situ()]). Some
@@ -43,7 +43,7 @@
 #'
 #' @format A data frame with columns:
 #' \describe{
-#'   \item{diameter_mm}{Maximum sub-bulb diameter (mm), a positive number.}
+#'   \item{diameter_mm}{Plant diameter (mm), a positive number.}
 #'   \item{site}{Site, a factor (12 levels).}
 #'   \item{year}{Year, a factor (5 levels).}
 #' }
@@ -75,7 +75,7 @@
 # Built by data-raw/data_sim_nereo.R.
 #' Simulated Nereocystis weight data
 #'
-#' A small simulated dataset of sub-bulb diameter and wet weight, one row per
+#' A small simulated dataset of plant diameter and wet weight, one row per
 #' harvested plant, for runnable examples. One of four simulated *Nereocystis*
 #' datasets with shared sites and years, so their fits can be combined into
 #' survey biomass (see [kb_predict_biomass_in_situ()]). Some site-years have no
@@ -83,7 +83,7 @@
 #'
 #' @format A data frame with columns:
 #' \describe{
-#'   \item{diameter_mm}{Sub-bulb diameter (mm), a positive number.}
+#'   \item{diameter_mm}{Plant diameter (mm), a positive number.}
 #'   \item{weight_kg}{Wet weight (kg), a positive number.}
 #'   \item{site}{Site, a factor (12 levels).}
 #'   \item{year}{Harvest year, a factor (5 levels).}

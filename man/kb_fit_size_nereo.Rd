@@ -54,13 +54,13 @@ bar), \code{"verbose"} (rstan's per-iteration output and diagnostic warnings), o
 progress for \code{\link[=kb_progress]{kb_progress()}}, or \code{NULL} (the default) to record none.}
 }
 \value{
-An object of class \code{c("kb_fit_size_nereo", "kb_fit_size", "kb_fit")}.
+A \code{kb_fit_size_nereo} object (a \code{kb_fit}).
 }
 \description{
 Fit a size-distribution model for \emph{Nereocystis luetkeana} via Stan.
 }
 \details{
-Maximum sub-bulb diameter (mm) is modelled with a Weibull likelihood with
+Plant diameter (mm) is modelled with a Weibull likelihood with
 mean \code{mu} and shape \code{shape}, common to all plants, so \code{mu} is the expected
 diameter.
 

@@ -31,7 +31,7 @@ and \code{upper} columns summarising the posterior distribution of the expected
 dry:wet ratio.
 }
 \description{
-Summarise the expected dry:wet mass ratio for the population of samples the
+Summarise the expected dry:wet ratio for the population of samples the
 model was fitted to.
 }
 \details{

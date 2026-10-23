@@ -21,8 +21,7 @@
 #' @param priors A named list of prior objects (see [kb_priors_carbon_nereo()]),
 #'   or `NULL` to use the defaults. Entries not supplied keep their defaults.
 #'
-#' @returns An object of class
-#'   `c("kb_fit_carbon_nereo", "kb_fit_carbon", "kb_fit")`.
+#' @returns A `kb_fit_carbon_nereo` object (a `kb_fit`).
 #' @family fit functions
 #' @export
 #'

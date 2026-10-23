@@ -7,7 +7,7 @@
 #' (class) of the default it replaces (the prior family is fixed).
 #'
 #' @param priors A named list of prior objects, or `NULL` for the defaults.
-#' @param defaults The default named prior list (e.g. from [kb_priors_weight_nereo()]).
+#' @param defaults The default named prior list (for example from [kb_priors_weight_nereo()]).
 #' @param call The call named in errors: the fit function the user called.
 #'
 #' @returns A named list of prior objects with the same names as `defaults`.

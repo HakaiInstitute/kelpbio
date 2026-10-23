@@ -4,8 +4,8 @@
 #' data when `new_data = NULL`.
 #'
 #' @details
-#' The expected size is the mean of the fitted size distribution: maximum
-#' sub-bulb diameter (mm) for *Nereocystis*, and the number of fronds reaching
+#' The expected size is the mean of the fitted size distribution: plant
+#' diameter (mm) for *Nereocystis*, and the number of fronds reaching
 #' 1 m above the holdfast for *Macrocystis*, among plants with at least one such
 #' frond.
 #'

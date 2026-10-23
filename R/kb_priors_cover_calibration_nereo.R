@@ -7,8 +7,8 @@
 #' Each entry is named after the parameter it sets, as reported by [tidy()] and
 #' [kb_model_describe()]. The prior family of each entry is fixed (the cover
 #' slope prior is lognormal, the floor, tide, and `cv_residual` priors are
-#' Normal, and the standard deviations are Exponential); only the
-#' hyperparameters can be changed. The floor and `cv_residual` priors are
+#' Normal, and the standard deviations are Exponential); only its
+#' arguments can be changed. The floor and `cv_residual` priors are
 #' truncated at zero, and the tide prior at 0 and 0.5.
 #'
 #' @returns A named list of prior objects with entries `cover_slope` (the wet

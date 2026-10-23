@@ -54,11 +54,10 @@ bar), \code{"verbose"} (rstan's per-iteration output and diagnostic warnings), o
 progress for \code{\link[=kb_progress]{kb_progress()}}, or \code{NULL} (the default) to record none.}
 }
 \value{
-An object of class
-\code{c("kb_fit_wetdry_nereo", "kb_fit_wetdry", "kb_fit")}.
+A \code{kb_fit_wetdry_nereo} object (a \code{kb_fit}).
 }
 \description{
-Fit a dry:wet mass ratio model for \emph{Nereocystis luetkeana} via Stan.
+Fit a dry:wet ratio model for \emph{Nereocystis luetkeana} via Stan.
 }
 \details{
 The dry:wet ratio of each sample, \code{dry_mass_g / wet_mass_g}, is modelled

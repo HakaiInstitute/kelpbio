@@ -13,8 +13,8 @@
 #' drawn as a line and compatibility-interval ribbon; others as points with
 #' intervals. Override the chosen x-axis with `x`.
 #'
-#' Axes are linear by default, with the y-axis extended to zero. Weights,
-#' densities, and biomass often span orders of magnitude; `log_axis = "y"` shows
+#' Axes are linear by default, with the y-axis extended to zero. Weights and
+#' biomass often span orders of magnitude; `log_axis = "y"` shows
 #' them on a log scale, and `log_axis = "xy"` also log-scales a numeric x-axis,
 #' as for a weight curve. A log axis says so in its title. Values on a log axis
 #' must be positive. Numeric axes are labelled as plain numbers with thousands
@@ -208,7 +208,7 @@ axis_label <- function(name, log = FALSE) {
 base_axis_label <- function(name) {
   switch(
     name,
-    diameter_mm = "Sub-bulb diameter (mm)",
+    diameter_mm = "Diameter (mm)",
     fronds = "Fronds",
     weight_kg = "Wet weight (kg)",
     dry_weight_kg = "Dry weight (kg)",

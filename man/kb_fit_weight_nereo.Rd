@@ -58,7 +58,7 @@ bar), \code{"verbose"} (rstan's per-iteration output and diagnostic warnings), o
 progress for \code{\link[=kb_progress]{kb_progress()}}, or \code{NULL} (the default) to record none.}
 }
 \value{
-An object of class \code{c("kb_fit_weight_nereo", "kb_fit_weight", "kb_fit")}.
+A \code{kb_fit_weight_nereo} object (a \code{kb_fit}).
 }
 \description{
 Fit an allometric weight model for \emph{Nereocystis luetkeana} via Stan.
@@ -66,7 +66,7 @@ Fit an allometric weight model for \emph{Nereocystis luetkeana} via Stan.
 \details{
 Log wet weight (kg) is modelled with a Normal likelihood with mean \code{log(mu)}
 and standard deviation \code{sd_residual}, so \code{log(mu)} is the expected log
-weight. \code{form} sets \code{mu} as a function of sub-bulb diameter, with \code{x} the
+weight. \code{form} sets \code{mu} as a function of plant diameter, with \code{x} the
 \code{diameter_mm} divided by the geometric mean diameter of the data:
 \itemize{
 \item \code{"packard_floor"} (the default):

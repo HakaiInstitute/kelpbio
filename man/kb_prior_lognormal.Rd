@@ -21,7 +21,7 @@ list passed to the \code{priors} argument of the \verb{kb_fit_*()} functions. Us
 positive parameters whose plausible values span orders of magnitude.
 }
 \details{
-The hyperparameters are on the log scale: a lognormal prior with \code{meanlog} and
+\code{meanlog} and \code{sdlog} are on the log scale: a lognormal prior with \code{meanlog} and
 \code{sdlog} is a Normal prior with that mean and standard deviation on the log of
 the parameter, so its median is \code{exp(meanlog)}.
 }

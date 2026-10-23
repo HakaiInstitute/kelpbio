@@ -103,7 +103,7 @@ kb_model_describe <- function(fit, ..., prose = FALSE) {
     title = "Weight allometry",
     species = .species_label(fit$meta$species),
     response_desc = "wet weight (kg)",
-    predictor_desc = "sub-bulb diameter (mm)",
+    predictor_desc = "plant diameter (mm)",
     likelihood = paste0(
       "log(weight_kg) ~ Normal(log(mu), sd_residual)",
       if (floor) "\n  mu = weight_floor + alpha * x^diameter_power" else "\n  mu = alpha * x^diameter_power"
@@ -116,11 +116,11 @@ kb_model_describe <- function(fit, ..., prose = FALSE) {
     truncated = c("diameter_power", if (floor) "weight_floor"),
     prose = paste0(
       "Wet weight was modelled on the log scale with a Normal likelihood as an ",
-      "allometric function of sub-bulb diameter. ",
+      "allometric function of plant diameter. ",
       form_prose,
       " The log of alpha varied by site, by year, and by site:year.",
       " Regularising priors were placed on all parameters (see the notation ",
-      "form for the hyperparameters)."
+      "form for the prior arguments)."
     )
   )
 }
@@ -176,7 +176,7 @@ kb_model_describe <- function(fit, ..., prose = FALSE) {
         "(%s), in which alpha is the expected weight at the geometric mean ",
         "frond count and fronds_slope the allometric exponent. The log of alpha ",
         "varied by %s. Regularising priors were placed on all parameters (see ",
-        "the notation form for the hyperparameters)."
+        "the notation form for the prior arguments)."
       ),
       format(f0),
       "site, by year, and by site:year"
@@ -217,7 +217,7 @@ kb_model_describe <- function(fit, ..., prose = FALSE) {
   list(
     title = "Size distribution",
     species = .species_label(fit$meta$species),
-    response_desc = "maximum sub-bulb diameter (mm)",
+    response_desc = "plant diameter (mm)",
     likelihood = paste0(
       "diameter_mm ~ Weibull(shape, mu / gamma(1 + 1 / shape))"
     ),
@@ -230,10 +230,10 @@ kb_model_describe <- function(fit, ..., prose = FALSE) {
     ),
     prose = sprintf(
       paste0(
-        "Maximum sub-bulb diameter was modelled with a Weibull likelihood ",
+        "Plant diameter was modelled with a Weibull likelihood ",
         "parameterised by its mean, mu, with a shape common to all plants. ",
         "The log of mu varied by %s. Regularising priors were placed on all ",
-        "parameters (see the notation form for the hyperparameters)."
+        "parameters (see the notation form for the prior arguments)."
       ),
       eff$groups
     )
@@ -286,7 +286,7 @@ kb_model_describe <- function(fit, ..., prose = FALSE) {
       "and precision, both common to all samples. Samples were pooled over the ",
       "months, sites, and tissues they came from. Regularising priors were ",
       "placed on all parameters (see the notation form for the ",
-      "hyperparameters)."
+      "prior arguments)."
     )
   )
 }
@@ -340,7 +340,7 @@ kb_model_describe <- function(fit, ..., prose = FALSE) {
       "combining a constant, a part proportional to the mean, and the ",
       "survey's standard deviation from plant weight. Regularising priors were ",
       "placed on all parameters, with an informative prior on the tide ",
-      "correction (see the notation form for the hyperparameters)."
+      "correction (see the notation form for the prior arguments)."
     )
   )
 }
