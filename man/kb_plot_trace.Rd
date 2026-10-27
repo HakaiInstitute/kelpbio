@@ -33,7 +33,6 @@ kb_plot_trace(fit_weight_sim_nereo)
 }
 \seealso{
 Other diagnostics:
-\code{\link[=create_priorsense_data.kb_fit]{create_priorsense_data.kb_fit()}},
 \code{\link[=kb_converged]{kb_converged()}},
 \code{\link[=kb_influence]{kb_influence()}},
 \code{\link[=kb_sensitivity]{kb_sensitivity()}},

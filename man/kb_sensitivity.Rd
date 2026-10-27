@@ -60,7 +60,8 @@ deviations (\code{sd_site}, \code{sd_year}, \code{sd_site_year}) carry the sensi
 each random effect.
 
 Requires the priorsense package. Its functions, such as
-\code{priorsense::powerscale_plot_dens()}, also accept a fit directly.
+\code{priorsense::powerscale_sensitivity()} and \code{priorsense::powerscale_plot_dens()},
+also accept a fit directly, over the same parameters.
 }
 \examples{
 \dontshow{if (rlang::is_installed("priorsense")) withAutoprint(\{ # examplesIf}
@@ -80,7 +81,6 @@ tides, currents, and species-level morphology in kelp remote sensing.
 }
 \seealso{
 Other diagnostics:
-\code{\link[=create_priorsense_data.kb_fit]{create_priorsense_data.kb_fit()}},
 \code{\link[=kb_converged]{kb_converged()}},
 \code{\link[=kb_influence]{kb_influence()}},
 \code{\link[=kb_plot_trace]{kb_plot_trace()}},

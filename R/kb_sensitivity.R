@@ -34,7 +34,8 @@
 #' each random effect.
 #'
 #' Requires the priorsense package. Its functions, such as
-#' `priorsense::powerscale_plot_dens()`, also accept a fit directly.
+#' `priorsense::powerscale_sensitivity()` and `priorsense::powerscale_plot_dens()`,
+#' also accept a fit directly, over the same parameters.
 #'
 #' @inheritParams params
 #' @param prior_threshold A number greater than 0: a parameter with `prior_cjs`
