@@ -16,15 +16,17 @@ concurrency:
 jobs:
   R-CMD-check:
     runs-on: ${{ matrix.config.os }}
+    # R-devel can take 40 min when its package cache is empty.
+    timeout-minutes: ${{ matrix.config.full && 60 || 30 }}
 
     name: ${{ matrix.config.os }} (${{ matrix.config.r }})
 
     strategy:
       fail-fast: false
-      # Pull requests check on Ubuntu release only; pushes to dev and main run
-      # the full matrix.
+      # main (pushes and pull requests into it) runs the full matrix with the
+      # vignettes built; everything else checks on Ubuntu release only.
       matrix:
-        config: ${{ fromJSON(github.event_name == 'pull_request' && '[{"os":"ubuntu-latest","r":"release"}]' || '[{"os":"macos-latest","r":"release"},{"os":"windows-latest","r":"release"},{"os":"ubuntu-latest","r":"devel","http-user-agent":"release"},{"os":"ubuntu-latest","r":"release"},{"os":"ubuntu-latest","r":"oldrel-1"}]') }}
+        config: ${{ fromJSON((github.ref == 'refs/heads/main' || github.base_ref == 'main') && '[{"os":"macos-latest","r":"release","full":true},{"os":"windows-latest","r":"release","full":true},{"os":"ubuntu-latest","r":"devel","http-user-agent":"release","full":true},{"os":"ubuntu-latest","r":"release","full":true},{"os":"ubuntu-latest","r":"oldrel-1","full":true}]' || '[{"os":"ubuntu-latest","r":"release","full":false}]') }}
 
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
@@ -65,7 +67,7 @@ jobs:
       - uses: r-lib/actions/check-r-package@v2
         with:
           upload-snapshots: true
-          # Vignettes are not built here: building them installs the package
-          # a second time, and the pkgdown workflow renders them on every PR.
-          build_args: 'c("--no-manual","--no-build-vignettes")'
-          args: 'c("--no-manual","--as-cran","--ignore-vignettes")'
+          # Outside main the vignettes are not built: building them installs the
+          # package a second time, and the pkgdown workflow renders them on every PR.
+          build_args: ${{ matrix.config.full && 'c("--no-manual")' || 'c("--no-manual","--no-build-vignettes")' }}
+          args: ${{ matrix.config.full && 'c("--no-manual","--as-cran")' || 'c("--no-manual","--as-cran","--ignore-vignettes")' }}
