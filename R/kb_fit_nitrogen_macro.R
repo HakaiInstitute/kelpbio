@@ -2,20 +2,8 @@
 #'
 #' Fit a nitrogen-fraction model for *Macrocystis pyrifera* via Stan.
 #'
-#' @details
-#' The nitrogen fraction of each dried sample, its nitrogen mass divided by its
-#' mass (`nitrogen_mass_ug` converted to mg, divided by `sample_mass_mg`), is
-#' modelled with a Beta likelihood with mean `mu` and precision `precision`,
-#' both common to all samples, so `mu` is the expected fraction and
-#' `logit(mu) = intercept`.
-#'
-#' Samples are pooled over the months, sites, and tissues they come from. To
-#' estimate the fraction for a particular season, fit the model to that
-#' season's samples only.
-#'
-#' @inheritSection params Sampling
-#' @inheritParams kb_fit_weight_nereo
-#' @inheritParams params
+#' @inherit kb_fit_nitrogen_nereo details sections
+#' @inheritParams kb_fit_nitrogen_nereo
 #' @param data A data frame of nitrogen observations, one row per sample (see
 #'   [kb_check_data_nitrogen_macro()] for the required columns).
 #' @param priors A named list of prior objects (see [kb_priors_nitrogen_macro()]),

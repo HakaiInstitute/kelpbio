@@ -3,11 +3,11 @@
 #' Check that `data` contains the columns required to fit the
 #' *Nereocystis luetkeana* carbon model, with appropriate types and values.
 #'
+#' @details
 #' Required columns: numeric `sample_mass_mg` (mg, > 0) and `carbon_mass_ug`
 #' (µg, > 0), with no missing values and the carbon mass less than the sample
 #' mass.
 #'
-#' @details
 #' Each row is one dried tissue sample: `sample_mass_mg` is the mass of the
 #' sample analysed and `carbon_mass_ug` the carbon measured in it. The
 #' model's response is the carbon fraction, the carbon mass divided by the
