@@ -36,15 +36,7 @@ fit_cover_calibration_model <- function(
     call = call
   )
   data <- survey_calibration_rows(data, progress = progress)
-  if (!nrow(data) && !prior_only) {
-    cli::cli_abort(
-      c(
-        "No survey in {.arg data} has drone cover.",
-        i = "A survey has drone cover when {.field plot_area_m2}, {.field canopy_area_m2}, and {.field canopy_tide_height_m} are given."
-      ),
-      call = call
-    )
-  }
+  .chk_drone_cover(data, prior_only, call = call)
   .chk_occupied_survey(data, prior_only, call = call)
   # A Gamma cannot take a zero, so a survey with nothing counted needs the
   # presence part; without one there is nothing for it to fit.
@@ -121,12 +113,7 @@ fit_cover_calibration_model <- function(
 survey_calibration_rows <- function(data, progress = "bar") {
   data <- ids_as_character(tibble::as_tibble(data))
   covered <- !is.na(data$canopy_area_m2)
-  n <- sum(!covered)
-  if (n > 0L && !identical(progress, "none")) {
-    cli::cli_inform(c(
-      i = "{n} survey{?s} without drone cover {cli::qty(n)}{?is/are} not fitted."
-    ))
-  }
+  notify_uncovered_surveys(sum(!covered), progress)
   data <- data[covered, , drop = FALSE]
   draws <- posterior::draws_of(data$biomass_kg_m2)
   dim(draws) <- c(nrow(draws), nrow(data))
@@ -136,4 +123,13 @@ survey_calibration_rows <- function(data, progress = "bar") {
   # predictions, and its attributes describe that prediction, not these data.
   data <- data[setdiff(names(data), c("estimate", "lower", "upper"))]
   tibble::as_tibble(as.data.frame(data))
+}
+
+notify_uncovered_surveys <- function(n, progress = "bar") {
+  if (n > 0L && !identical(progress, "none")) {
+    cli::cli_inform(c(
+      i = "{n} survey{?s} without drone cover {cli::qty(n)}{?is/are} not fitted."
+    ))
+  }
+  invisible(n)
 }

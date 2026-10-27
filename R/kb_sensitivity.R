@@ -74,7 +74,7 @@ kb_sensitivity <- function(
   chk::chk_gt(prior_threshold)
   chk::chk_number(likelihood_threshold)
   chk::chk_gt(likelihood_threshold)
-  .chk_sensitivity_fit(fit)
+  .chk_likelihood_fit(fit, "its prior sensitivity cannot be assessed")
   rlang::check_installed("priorsense", reason = "to assess prior sensitivity.")
 
   terms <- fit$meta$terms$fixed

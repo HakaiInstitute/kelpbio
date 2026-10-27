@@ -1,7 +1,7 @@
 # warn_carbon_fraction counts samples outside 0.10 to 0.50 and keeps them
 
     Code
-      out <- warn_carbon_fraction(odd, "`d`")
+      out <- warn_tissue_ratio(odd, "carbon", "`d`")
     Condition
       Warning:
       2 samples in `d` have carbon fractions outside 0.10 to 0.50, the plausible range for kelp tissue.
@@ -10,7 +10,7 @@
 # warn_nitrogen_fraction counts samples outside 0.002 to 0.05 and keeps them
 
     Code
-      out <- warn_nitrogen_fraction(odd, "`d`")
+      out <- warn_tissue_ratio(odd, "nitrogen", "`d`")
     Condition
       Warning:
       2 samples in `d` have nitrogen fractions outside 0.002 to 0.05, the plausible range for kelp tissue.
@@ -19,10 +19,10 @@
 # warn_dry_wet_ratio counts samples outside 0.02 to 0.5 and keeps them
 
     Code
-      out <- warn_dry_wet_ratio(odd, "`d`")
+      out <- warn_tissue_ratio(odd, "dry_wet", "`d`")
     Condition
       Warning:
-      2 samples in `d` have dry:wet mass ratios outside 0.02 to 0.5, the plausible range for kelp tissue.
+      2 samples in `d` have dry:wet mass ratios outside 0.02 to 0.50, the plausible range for kelp tissue.
       i Check the wet and dry masses for transcription or weighing errors.
 
 # a site or year with a comma or bracket warns, naming the values

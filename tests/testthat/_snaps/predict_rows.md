@@ -4,7 +4,7 @@
       kb_predict_weight(weight_nereo_fit, data.frame(site = "a"))
     Condition
       Error in `kb_predict_weight()`:
-      ! `new_data` must have a diameter_mm column.
+      ! `new_data` must include 'diameter_mm'.
     Code
       kb_predict_weight(weight_nereo_fit, conf_level = 2)
     Condition

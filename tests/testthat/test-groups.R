@@ -10,18 +10,6 @@ test_that(".fit_levels reads a factor's fitted levels, empty when unused", {
   expect_length(.fit_levels(none, "year"), 0L)
 })
 
-test_that("validate_by normalises NULL and passes a valid grouping through", {
-  expect_identical(validate_by(NULL), character(0))
-  expect_identical(validate_by("site"), "site")
-  expect_identical(validate_by("year"), "year")
-  expect_identical(validate_by(c("site", "year")), c("site", "year"))
-})
-
-test_that("validate_by rejects a factor no model groups by", {
-  expect_error(validate_by("bogus"), "Invalid")
-  expect_error(validate_by(1), "character")
-})
-
 test_that("site_year_key joins site and year with a colon", {
   expect_identical(
     site_year_key(factor(c("a", "b")), c(2020, 2021)),

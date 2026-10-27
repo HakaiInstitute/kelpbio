@@ -13,7 +13,7 @@
       .chk_new_data_weight_nereo(not_df)
     Condition
       Error in `.chk_new_data_weight_nereo()`:
-      ! `not_df` must be a data frame.
+      ! `not_df` must be a data.frame.
 
 ---
 
@@ -21,7 +21,7 @@
       .chk_new_data_weight_nereo(no_diameter)
     Condition
       Error in `.chk_new_data_weight_nereo()`:
-      ! `no_diameter` must have a diameter_mm column.
+      ! `no_diameter` must include 'diameter_mm'.
 
 # .chk_progress passes a valid mode through invisibly and errors otherwise
 

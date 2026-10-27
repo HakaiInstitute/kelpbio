@@ -80,7 +80,7 @@ test_that("new_data must carry valid survey columns", {
     ),
     "canopy_area_m2"
   )
-  expect_error(kb_predict_cover_calibration(cover_calibration_nereo_fit, 1), "must be a data frame")
+  expect_error(kb_predict_cover_calibration(cover_calibration_nereo_fit, 1), "must be a data.frame")
 })
 
 test_that("a new site is sampled or averaged, and a representative site stands in", {

@@ -152,7 +152,8 @@ sample_with_bar <- function(
 ) {
   if (is.null(stanmodel_name)) {
     cli::cli_abort(
-      "Internal: {.code progress = \"bar\"} requires {.arg stanmodel_name}."
+      "{.code progress = \"bar\"} requires {.arg stanmodel_name}.",
+      .internal = TRUE
     )
   }
   # niters isn't in sampling_args (rstan folds it into iter); the rest are.

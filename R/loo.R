@@ -37,7 +37,11 @@
 loo.kb_fit <- function(x, ...) {
   .chk_kb_fit(x)
   # error_call() names the generic, not the method.
-  .chk_loo_fit(x, call = rlang::error_call(rlang::current_env()))
+  .chk_likelihood_fit(
+    x,
+    "it cannot be cross-validated",
+    call = rlang::error_call(rlang::current_env())
+  )
   ll <- log_lik(x)
   # Stored draws are chain-major, so rows map onto the same chains.
   chain_id <- rep(

@@ -49,7 +49,7 @@ kb_influence <- function(fit, ..., threshold = NULL) {
     chk::chk_number(threshold)
     chk::chk_gt(threshold)
   }
-  .chk_loo_fit(fit)
+  .chk_likelihood_fit(fit, "it cannot be cross-validated")
   # loo's sample-size-dependent threshold, which loo does not export.
   threshold <- threshold %||% min(1 - 1 / log10(posterior::ndraws(fit$draws)), 0.7)
 

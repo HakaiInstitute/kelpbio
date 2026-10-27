@@ -20,7 +20,7 @@
 #' priorsense::powerscale_sensitivity(fit_wetdry_sim_nereo)
 create_priorsense_data.kb_fit <- function(x, ...) {
   .chk_kb_fit(x)
-  .chk_sensitivity_fit(x)
+  .chk_likelihood_fit(x, "its prior sensitivity cannot be assessed")
   nchains <- posterior::nchains(x$draws)
   # Stored draws are chain-major, so rows map onto the same chains.
   as_chains <- function(name, values) {

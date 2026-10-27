@@ -32,7 +32,7 @@ log_prior <- function(fit) {
 #' @export
 .log_prior_density.default <- function(prior, x) {
   cli::cli_abort(
-    "Internal error: no log density for a {.cls {class(prior)[1]}} prior.",
+    "No log density for a {.cls {class(prior)[1]}} prior.",
     .internal = TRUE
   )
 }

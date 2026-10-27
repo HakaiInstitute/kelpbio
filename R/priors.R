@@ -25,27 +25,9 @@ resolve_priors <- function(priors, defaults, call = rlang::caller_env()) {
     call
   )
 
-  extra <- setdiff(names(priors), names(defaults))
-  if (length(extra)) {
-    cli::cli_abort(c(
-      "Unknown prior{?s} in {.arg priors}: {.field {extra}}.",
-      i = "Valid entries are {.field {names(defaults)}}."
-    ), call = call)
-  }
-
+  .chk_prior_entries(priors, defaults, call = call)
   out <- defaults
-  for (nm in names(priors)) {
-    prior <- priors[[nm]]
-    family <- class(defaults[[nm]])[1]
-    if (!inherits(prior, family)) {
-      cli::cli_abort(c(
-        "Prior {.field {nm}} has the wrong family.",
-        i = "Expected {.cls {family}}, not {.cls {class(prior)[1]}}.",
-        i = "The prior family is fixed; a family change needs a different model."
-      ), call = call)
-    }
-    out[[nm]] <- prior
-  }
+  out[names(priors)] <- priors
   out
 }
 

@@ -1,24 +1,24 @@
 test_that("warn_carbon_fraction counts samples outside 0.10 to 0.50 and keeps them", {
   ok <- data.frame(sample_mass_mg = c(2, 2), carbon_mass_ug = c(500, 700))
-  expect_no_warning(warn_carbon_fraction(ok, "`d`"))
+  expect_no_warning(warn_tissue_ratio(ok, "carbon", "`d`"))
   odd <- data.frame(sample_mass_mg = c(2, 2, 2), carbon_mass_ug = c(500, 1200, 100))
-  expect_snapshot(out <- warn_carbon_fraction(odd, "`d`"))
+  expect_snapshot(out <- warn_tissue_ratio(odd, "carbon", "`d`"))
   expect_identical(out, odd)
 })
 
 test_that("warn_nitrogen_fraction counts samples outside 0.002 to 0.05 and keeps them", {
   ok <- data.frame(sample_mass_mg = c(2, 2), nitrogen_mass_ug = c(30, 50))
-  expect_no_warning(warn_nitrogen_fraction(ok, "`d`"))
+  expect_no_warning(warn_tissue_ratio(ok, "nitrogen", "`d`"))
   odd <- data.frame(sample_mass_mg = c(2, 2, 2), nitrogen_mass_ug = c(30, 200, 2))
-  expect_snapshot(out <- warn_nitrogen_fraction(odd, "`d`"))
+  expect_snapshot(out <- warn_tissue_ratio(odd, "nitrogen", "`d`"))
   expect_identical(out, odd)
 })
 
 test_that("warn_dry_wet_ratio counts samples outside 0.02 to 0.5 and keeps them", {
   ok <- data.frame(wet_mass_g = c(4, 10), dry_mass_g = c(0.4, 0.8))
-  expect_no_warning(warn_dry_wet_ratio(ok, "`d`"))
+  expect_no_warning(warn_tissue_ratio(ok, "dry_wet", "`d`"))
   odd <- data.frame(wet_mass_g = c(4, 4, 4), dry_mass_g = c(0.4, 2.8, 0.04))
-  expect_snapshot(out <- warn_dry_wet_ratio(odd, "`d`"))
+  expect_snapshot(out <- warn_tissue_ratio(odd, "dry_wet", "`d`"))
   expect_identical(out, odd)
 })
 

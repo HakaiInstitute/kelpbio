@@ -1,35 +1,6 @@
 # Plausibility warnings warn rather than abort, so unusual but valid data are
 # never blocked.
 
-# 0.10 to 0.50 is the stoichiometric range for kelp tissue (Pessarrodona et al.
-# 2023); values outside it usually mean a unit mistake or a failed analysis.
-warn_carbon_fraction <- function(data, x_name) {
-  fraction <- carbon_fraction(data)
-  n <- sum(fraction < 0.10 | fraction > 0.50)
-  if (n > 0L) {
-    # cli::qty(n) restates the count for the verb, since x_name sits between them.
-    cli::cli_warn(c(
-      "{n} sample{?s} in {x_name} {cli::qty(n)}{?has a/have} carbon fraction{?s} outside 0.10 to 0.50, the plausible range for kelp tissue.",
-      i = "Check that {.field carbon_mass_ug} is in micrograms and {.field sample_mass_mg} in milligrams."
-    ))
-  }
-  invisible(data)
-}
-
-# 0.002 to 0.05 is the range of brown-algal tissue nitrogen (Duarte 1992;
-# Rosell and Srivastava 1985), the analysis project's exclusion bounds.
-warn_nitrogen_fraction <- function(data, x_name) {
-  fraction <- nitrogen_fraction(data)
-  n <- sum(fraction < 0.002 | fraction > 0.05)
-  if (n > 0L) {
-    cli::cli_warn(c(
-      "{n} sample{?s} in {x_name} {cli::qty(n)}{?has a/have} nitrogen fraction{?s} outside 0.002 to 0.05, the plausible range for kelp tissue.",
-      i = "Check that {.field nitrogen_mass_ug} is in micrograms and {.field sample_mass_mg} in milligrams."
-    ))
-  }
-  invisible(data)
-}
-
 # Past the tide limit (positive canopy at a tide height of at least one over
 # the slope) the corrected canopy is the cap, not the canopy measured. A row
 # warns when that holds on more than 5% of the slope's distribution, the share
@@ -87,16 +58,45 @@ tide_cap_prior_share <- function(canopy_area_m2, canopy_tide_height_m, prior) {
   ifelse(canopy_area_m2 > 0, share, 0)
 }
 
-# The bounds lie in natural gaps of the Hakai Institute lab data (no ratios
-# between 0.021 and 0.038, or between 0.21 and 0.46).
-warn_dry_wet_ratio <- function(data, x_name) {
-  ratio <- data$dry_mass_g / data$wet_mass_g
-  n <- sum(ratio < 0.02 | ratio > 0.5)
+# The plausible range of each tissue ratio for kelp; values outside it usually
+# mean a unit mistake, a failed analysis, or a transcription error.
+# - carbon: 0.10 to 0.50, the stoichiometric range for kelp tissue
+#   (Pessarrodona et al. 2023).
+# - nitrogen: 0.002 to 0.05, the range of brown-algal tissue nitrogen (Duarte
+#   1992; Rosell and Srivastava 1985), the analysis project's exclusion bounds.
+# - dry_wet: 0.02 to 0.50, bounds in natural gaps of the Hakai Institute lab
+#   data (no ratios between 0.021 and 0.038, or between 0.21 and 0.46).
+TISSUE_RATIO_RANGES <- list(
+  carbon = c(0.10, 0.50),
+  nitrogen = c(0.002, 0.05),
+  dry_wet = c(0.02, 0.50)
+)
+
+warn_tissue_ratio <- function(data, ratio, x_name) {
+  value <- switch(
+    ratio,
+    carbon = carbon_fraction(data),
+    nitrogen = nitrogen_fraction(data),
+    dry_wet = data$dry_mass_g / data$wet_mass_g
+  )
+  range <- TISSUE_RATIO_RANGES[[ratio]]
+  n <- sum(value < range[1] | value > range[2])
   if (n > 0L) {
+    label <- c(
+      carbon = "carbon fraction",
+      nitrogen = "nitrogen fraction",
+      dry_wet = "dry:wet mass ratio"
+    )[[ratio]]
+    shown <- vapply(range, format, character(1), nsmall = 2)
+    hint <- if (ratio == "dry_wet") {
+      "Check the wet and dry masses for transcription or weighing errors."
+    } else {
+      "Check that {.field {ratio}_mass_ug} is in micrograms and {.field sample_mass_mg} in milligrams."
+    }
     # cli::qty(n) restates the count for the verb, since x_name sits between them.
     cli::cli_warn(c(
-      "{n} sample{?s} in {x_name} {cli::qty(n)}{?has a/have} dry:wet mass ratio{?s} outside 0.02 to 0.5, the plausible range for kelp tissue.",
-      i = "Check the wet and dry masses for transcription or weighing errors."
+      "{n} sample{?s} in {x_name} {cli::qty(n)}{?has a/have} {label}{cli::qty(n)}{?s} outside {shown[1]} to {shown[2]}, the plausible range for kelp tissue.",
+      i = hint
     ))
   }
   invisible(data)

@@ -32,7 +32,7 @@ kb_check_data_nitrogen_macro <- function(
   .with_call(
     {
       chk::chk_string(x_name)
-      .chk_nitrogen_data(data, x_name)
+      .chk_element_data(data, "nitrogen", x_name)
     },
     rlang::current_env()
   )

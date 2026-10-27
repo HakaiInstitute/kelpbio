@@ -60,7 +60,7 @@ test_that("a new site is sampled or averaged, and a representative site stands i
 
 test_that("kb_predict_size errors on another model's fit and non-data-frame new_data", {
   expect_error(kb_predict_size(weight_nereo_fit), "must be a <kb_fit_size> object")
-  expect_error(kb_predict_size(size_nereo_fit, 1), "must be a data frame")
+  expect_error(kb_predict_size(size_nereo_fit, 1), "must be a data.frame")
 })
 
 test_that("size predictions match their snapshot", {
