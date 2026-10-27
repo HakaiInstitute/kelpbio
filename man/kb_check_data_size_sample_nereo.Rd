@@ -22,13 +22,17 @@ Check that \code{data} contains the columns required to fit the \emph{Nereocysti
 luetkeana} size model, with appropriate types and values.
 }
 \details{
-Required columns: numeric \code{diameter_mm} (mm, > 0), factor or character
-\code{site}, and \code{year} (factor, character, or whole numbers), with no missing
-values.
-
 Each row is one plant of a sample measured for the size model, which need
-not be linked to any in situ survey. \code{diameter_mm} is the same plant diameter
-as in the weight data (\code{\link[=kb_check_data_weight_nereo]{kb_check_data_weight_nereo()}}). A numeric \code{year} is used as its character level.
+not be linked to any in situ survey. Required columns, with no missing
+values:
+\itemize{
+\item \code{diameter_mm}, the plant diameter (mm, > 0), the same diameter as in the
+weight data (\code{\link[=kb_check_data_weight_nereo]{kb_check_data_weight_nereo()}}).
+\item \code{site}, factor or character.
+\item \code{year}, factor, character, or whole numbers. A numeric \code{year} is used as
+its character level.
+}
+
 Other columns are ignored.
 }
 \examples{

@@ -22,17 +22,18 @@ Check that \code{data} contains the columns required to fit the
 \emph{Nereocystis luetkeana} nitrogen model, with appropriate types and values.
 }
 \details{
-Required columns: numeric \code{sample_mass_mg} (mg, > 0) and \code{nitrogen_mass_ug}
-(µg, > 0), with no missing values and the nitrogen mass less than the sample
-mass.
+Each row is one dried tissue sample. Required columns, with no missing
+values:
+\itemize{
+\item \code{sample_mass_mg}, the mass of the sample analysed (mg, > 0).
+\item \code{nitrogen_mass_ug}, the nitrogen measured in it (µg, > 0 and less than the sample
+mass).
+}
 
-Each row is one dried tissue sample: \code{sample_mass_mg} is the mass of the
-sample analysed and \code{nitrogen_mass_ug} the nitrogen measured in it. The
-model's response is the nitrogen fraction, the nitrogen mass divided by the
-sample mass (\code{nitrogen_mass_ug} converted to mg). A warning gives the number
-of samples whose nitrogen fraction falls outside 0.002 to 0.05, the plausible
-range for kelp tissue; they are kept, not removed. Other columns are
-ignored.
+The model's response is the nitrogen fraction, the nitrogen mass divided by the
+sample mass (\code{nitrogen_mass_ug} converted to mg). A warning gives the number of
+samples whose nitrogen fraction falls outside 0.002 to 0.05, the plausible range for
+kelp tissue; they are kept, not removed. Other columns are ignored.
 }
 \examples{
 data <- data.frame(sample_mass_mg = c(2.5, 2.3), nitrogen_mass_ug = c(48, 41))
