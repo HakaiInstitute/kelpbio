@@ -130,7 +130,7 @@ test_that("carbon biomass is grams per m2 per area and kg as a total", {
     )
   }
   wet_kg <- posterior::draws_of(predict(per_area = FALSE)$biomass_kg)
-  factor <- measure_factor("carbon", wetdry_macro_fit, carbon_macro_fit)
+  factor <- measure_factor("carbon", wetdry_macro_fit, carbon_macro_fit, NULL)
 
   per_m2 <- predict(measure = "carbon")
   expect_identical(attr(per_m2, "kb_response"), "carbon_biomass_g_m2")
@@ -145,6 +145,29 @@ test_that("carbon biomass is grams per m2 per area and kg as a total", {
   expect_equal(
     posterior::draws_of(total$carbon_biomass_kg),
     wet_kg * factor,
+    ignore_attr = TRUE
+  )
+})
+
+test_that("nitrogen biomass is grams per m2, as carbon is", {
+  survey <- tibble::tibble(
+    survey_id = "s1", site = "seal_ledge", year = "2019", survey_area_m2 = 100
+  )
+  plants <- tibble::tibble(survey_id = "s1", fronds = c(4, 10), partial = FALSE)
+  predict <- function(...) {
+    kb_predict_biomass_in_situ(
+      weight_macro_fit, plants, survey, ...,
+      wetdry = wetdry_macro_fit, nitrogen = nitrogen_macro_fit,
+      new_levels = "average", progress = "none"
+    )
+  }
+  wet_kg <- posterior::draws_of(predict(per_area = FALSE)$biomass_kg)
+  per_m2 <- predict(measure = "nitrogen")
+  expect_identical(attr(per_m2, "kb_response"), "nitrogen_biomass_g_m2")
+  expect_equal(
+    posterior::draws_of(per_m2$nitrogen_biomass_g_m2),
+    wet_kg * measure_factor("nitrogen", wetdry_macro_fit, NULL, nitrogen_macro_fit) *
+      1000 / survey$survey_area_m2,
     ignore_attr = TRUE
   )
 })

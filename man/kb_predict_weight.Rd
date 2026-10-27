@@ -100,10 +100,12 @@ Other prediction functions:
 \code{\link[=kb_predict_carbon]{kb_predict_carbon()}},
 \code{\link[=kb_predict_cover_calibration]{kb_predict_cover_calibration()}},
 \code{\link[=kb_predict_mean_weight]{kb_predict_mean_weight()}},
+\code{\link[=kb_predict_nitrogen]{kb_predict_nitrogen()}},
 \code{\link[=kb_predict_size]{kb_predict_size()}},
 \code{\link[=kb_predict_wetdry]{kb_predict_wetdry()}},
 \code{\link[=predict.kb_fit_carbon]{predict.kb_fit_carbon()}},
 \code{\link[=predict.kb_fit_cover_calibration]{predict.kb_fit_cover_calibration()}},
+\code{\link[=predict.kb_fit_nitrogen]{predict.kb_fit_nitrogen()}},
 \code{\link[=predict.kb_fit_size]{predict.kb_fit_size()}},
 \code{\link[=predict.kb_fit_weight]{predict.kb_fit_weight()}},
 \code{\link[=predict.kb_fit_wetdry]{predict.kb_fit_wetdry()}}

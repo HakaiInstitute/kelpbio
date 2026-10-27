@@ -62,6 +62,15 @@ test_that("dry and carbon are per-draw conversions of wet", {
   )
   expect_identical(attr(carbon, "kb_response"), "carbon_biomass_kg")
   expect_true(all(wet$estimate > dry$estimate))
+  nitrogen <- do.call(
+    kb_predict_biomass_canopy,
+    c(args, nitrogen = list(nitrogen_nereo_fit), measure = "nitrogen")
+  )
+  expect_equal(
+    nitrogen$estimate,
+    apply(totals * ratio * population_draws(nitrogen_nereo_fit), 2, stats::median)
+  )
+  expect_identical(attr(nitrogen, "kb_response"), "nitrogen_biomass_kg")
 })
 
 test_that("sums are taken on the draws, not the summaries", {

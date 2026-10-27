@@ -1,7 +1,7 @@
 #' Predict biomass over mapped canopy
 #'
 #' Predict the biomass over each row's drone-mapped canopy from a cover
-#' calibration fit: wet or dry (kg) or carbon (kg C), optionally pooled over
+#' calibration fit: wet, dry, carbon, or nitrogen (kg), optionally pooled over
 #' groups of rows.
 #'
 #' @details
@@ -20,7 +20,8 @@
 #' already corrected for tide is passed with `canopy_tide_height_m = 0`.
 #'
 #' Dry biomass is the wet total times the expected dry:wet ratio from `wetdry`,
-#' and carbon the dry total times the expected carbon fraction from `carbon`.
+#' and carbon or nitrogen the dry total times the expected carbon fraction from
+#' `carbon` or nitrogen fraction from `nitrogen`.
 #' The fits must be of the same species and have the same number of draws.
 #'
 #' Pool totals with `pool_by` rather than summing per-row estimates or limits.
@@ -44,7 +45,8 @@
 #'   (a numeric `year` as character) with added `cover_support` (`"site, year"`, `"site"`, `"year"`, or
 #'   `"none"`: the data the calibration fit has for the row's site and year), the
 #'   draws of the total in a column named for it (`biomass_kg`,
-#'   `dry_biomass_kg`, or `carbon_biomass_kg`), and `estimate`,
+#'   `dry_biomass_kg`, `carbon_biomass_kg`, or `nitrogen_biomass_kg`), and
+#'   `estimate`,
 #'   `lower`, and `upper`; with `pool_by`, one row per group with its `pool_by`
 #'   columns, `cover_support` when `pool_by` includes `site` and `year`, the
 #'   draws, and the summary.
@@ -88,8 +90,9 @@ kb_predict_biomass_canopy <- function(
   new_data,
   wetdry = NULL,
   carbon = NULL,
+  nitrogen = NULL,
   ...,
-  measure = c("wet", "dry", "carbon"),
+  measure = c("wet", "dry", "carbon", "nitrogen"),
   pool_by = NULL,
   new_levels = c("sample", "average"),
   representative_site = NULL,
@@ -112,8 +115,13 @@ kb_predict_biomass_canopy <- function(
   new_data <- ids_as_character(new_data)
   .chk_pool_by(pool_by, new_data)
   pool_by <- unique(pool_by)
-  .chk_measure_fits(measure, wetdry, carbon)
-  .chk_derived_fits(list(fit = fit, wetdry = wetdry, carbon = carbon))
+  .chk_measure_fits(measure, wetdry, carbon, nitrogen)
+  .chk_derived_fits(list(
+    fit = fit,
+    wetdry = wetdry,
+    carbon = carbon,
+    nitrogen = nitrogen
+  ))
   .chk_representative_site(fit, representative_site)
   .chk_summary_args(conf_level, estimate, sig_fig)
   warn_implausible_units(new_data, "`new_data`")
@@ -127,7 +135,7 @@ kb_predict_biomass_canopy <- function(
 
   grid <- tibble::as_tibble(new_data)
   draws <- canopy_biomass_draws(fit, grid, new_levels, representative_site) *
-    measure_factor(measure, wetdry, carbon)
+    measure_factor(measure, wetdry, carbon, nitrogen)
 
   if (is.null(pool_by)) {
     group_vars <- .group_vars()

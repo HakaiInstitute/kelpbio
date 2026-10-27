@@ -209,11 +209,13 @@
   weight$meta$predictor %in% names(size_census)
 }
 
-.vld_measure_fits <- function(measure, wetdry, carbon) {
-  (!measure %in% c("dry", "carbon") || !is.null(wetdry)) &&
+.vld_measure_fits <- function(measure, wetdry, carbon, nitrogen) {
+  (!measure %in% c("dry", "carbon", "nitrogen") || !is.null(wetdry)) &&
     (measure != "carbon" || !is.null(carbon)) &&
+    (measure != "nitrogen" || !is.null(nitrogen)) &&
     (is.null(wetdry) || .vld_kb_fit(wetdry, "kb_fit_wetdry")) &&
-    (is.null(carbon) || .vld_kb_fit(carbon, "kb_fit_carbon"))
+    (is.null(carbon) || .vld_kb_fit(carbon, "kb_fit_carbon")) &&
+    (is.null(nitrogen) || .vld_kb_fit(nitrogen, "kb_fit_nitrogen"))
 }
 
 .vld_pool_by <- function(pool_by, data) {

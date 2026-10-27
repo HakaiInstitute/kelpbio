@@ -9,7 +9,7 @@
 # Flags combine (--fits=wetdry --check). Also available as Positron / VS Code
 # tasks "kelpbio: ..." (.vscode/tasks.json).
 
-models <- c("weight", "size", "wetdry", "carbon", "cover_calibration")
+models <- c("weight", "size", "wetdry", "carbon", "nitrogen", "cover_calibration")
 usage <- paste(
   "Usage: Rscript scripts/build.R [--fits[=<models>]] [--check] [--site]",
   "  --fits           also rebuild the pre-fit models and test fixtures (Stan MCMC)",

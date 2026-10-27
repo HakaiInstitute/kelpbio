@@ -100,12 +100,14 @@ params <- function(...) NULL
 #' [kb_predict_biomass_in_situ()], and [kb_predict_biomass_canopy()].
 #'
 #' @param weight A `kb_fit_weight` object.
-#' @param wetdry A `kb_fit_wetdry` object, required for dry and carbon biomass,
-#'   or `NULL`.
+#' @param wetdry A `kb_fit_wetdry` object, required for dry, carbon, and
+#'   nitrogen biomass, or `NULL`.
 #' @param carbon A `kb_fit_carbon` object, required for carbon biomass, or
 #'   `NULL`.
-#' @param measure A string, one of `"wet"`, `"dry"`, or `"carbon"`, giving the
-#'   biomass to predict.
+#' @param nitrogen A `kb_fit_nitrogen` object, required for nitrogen biomass,
+#'   or `NULL`.
+#' @param measure A string, one of `"wet"`, `"dry"`, `"carbon"`, or
+#'   `"nitrogen"`, giving the biomass to predict.
 #' @param n_plants A whole number of sizes averaged per draw to compute the
 #'   mean plant weight; larger values are more precise and slower.
 #' @param progress A string, one of `"bar"` (the default, a console progress

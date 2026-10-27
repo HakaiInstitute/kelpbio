@@ -9,8 +9,9 @@ kb_predict_biomass_canopy(
   new_data,
   wetdry = NULL,
   carbon = NULL,
+  nitrogen = NULL,
   ...,
-  measure = c("wet", "dry", "carbon"),
+  measure = c("wet", "dry", "carbon", "nitrogen"),
   pool_by = NULL,
   new_levels = c("sample", "average"),
   representative_site = NULL,
@@ -31,16 +32,19 @@ classification covered, including water where no canopy was found, m²),
 which caps the tide-corrected canopy. Other columns are kept and can be
 named in \code{pool_by}.}
 
-\item{wetdry}{A \code{kb_fit_wetdry} object, required for dry and carbon biomass,
-or \code{NULL}.}
+\item{wetdry}{A \code{kb_fit_wetdry} object, required for dry, carbon, and
+nitrogen biomass, or \code{NULL}.}
 
 \item{carbon}{A \code{kb_fit_carbon} object, required for carbon biomass, or
 \code{NULL}.}
 
+\item{nitrogen}{A \code{kb_fit_nitrogen} object, required for nitrogen biomass,
+or \code{NULL}.}
+
 \item{...}{These dots are for future extensions and must be empty.}
 
-\item{measure}{A string, one of \code{"wet"}, \code{"dry"}, or \code{"carbon"}, giving the
-biomass to predict.}
+\item{measure}{A string, one of \code{"wet"}, \code{"dry"}, \code{"carbon"}, or
+\code{"nitrogen"}, giving the biomass to predict.}
 
 \item{pool_by}{A character vector naming character or factor columns whose
 combinations group the rows, such as \code{c("site", "year")}, \code{character(0)}
@@ -80,14 +84,15 @@ A \code{kb_predictions} object. Without \code{pool_by}, the rows of \code{new_da
 (a numeric \code{year} as character) with added \code{cover_support} (\code{"site, year"}, \code{"site"}, \code{"year"}, or
 \code{"none"}: the data the calibration fit has for the row's site and year), the
 draws of the total in a column named for it (\code{biomass_kg},
-\code{dry_biomass_kg}, or \code{carbon_biomass_kg}), and \code{estimate},
+\code{dry_biomass_kg}, \code{carbon_biomass_kg}, or \code{nitrogen_biomass_kg}), and
+\code{estimate},
 \code{lower}, and \code{upper}; with \code{pool_by}, one row per group with its \code{pool_by}
 columns, \code{cover_support} when \code{pool_by} includes \code{site} and \code{year}, the
 draws, and the summary.
 }
 \description{
 Predict the biomass over each row's drone-mapped canopy from a cover
-calibration fit: wet or dry (kg) or carbon (kg C), optionally pooled over
+calibration fit: wet, dry, carbon, or nitrogen (kg), optionally pooled over
 groups of rows.
 }
 \details{
@@ -105,7 +110,8 @@ then set by the classified area rather than the canopy mapped. Canopy
 already corrected for tide is passed with \code{canopy_tide_height_m = 0}.
 
 Dry biomass is the wet total times the expected dry:wet ratio from \code{wetdry},
-and carbon the dry total times the expected carbon fraction from \code{carbon}.
+and carbon or nitrogen the dry total times the expected carbon fraction from
+\code{carbon} or nitrogen fraction from \code{nitrogen}.
 The fits must be of the same species and have the same number of draws.
 
 Pool totals with \code{pool_by} rather than summing per-row estimates or limits.
@@ -158,11 +164,13 @@ Other prediction functions:
 \code{\link[=kb_predict_carbon]{kb_predict_carbon()}},
 \code{\link[=kb_predict_cover_calibration]{kb_predict_cover_calibration()}},
 \code{\link[=kb_predict_mean_weight]{kb_predict_mean_weight()}},
+\code{\link[=kb_predict_nitrogen]{kb_predict_nitrogen()}},
 \code{\link[=kb_predict_size]{kb_predict_size()}},
 \code{\link[=kb_predict_weight]{kb_predict_weight()}},
 \code{\link[=kb_predict_wetdry]{kb_predict_wetdry()}},
 \code{\link[=predict.kb_fit_carbon]{predict.kb_fit_carbon()}},
 \code{\link[=predict.kb_fit_cover_calibration]{predict.kb_fit_cover_calibration()}},
+\code{\link[=predict.kb_fit_nitrogen]{predict.kb_fit_nitrogen()}},
 \code{\link[=predict.kb_fit_size]{predict.kb_fit_size()}},
 \code{\link[=predict.kb_fit_weight]{predict.kb_fit_weight()}},
 \code{\link[=predict.kb_fit_wetdry]{predict.kb_fit_wetdry()}}

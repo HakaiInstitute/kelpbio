@@ -6,14 +6,17 @@
 \arguments{
 \item{weight}{A \code{kb_fit_weight} object.}
 
-\item{wetdry}{A \code{kb_fit_wetdry} object, required for dry and carbon biomass,
-or \code{NULL}.}
+\item{wetdry}{A \code{kb_fit_wetdry} object, required for dry, carbon, and
+nitrogen biomass, or \code{NULL}.}
 
 \item{carbon}{A \code{kb_fit_carbon} object, required for carbon biomass, or
 \code{NULL}.}
 
-\item{measure}{A string, one of \code{"wet"}, \code{"dry"}, or \code{"carbon"}, giving the
-biomass to predict.}
+\item{nitrogen}{A \code{kb_fit_nitrogen} object, required for nitrogen biomass,
+or \code{NULL}.}
+
+\item{measure}{A string, one of \code{"wet"}, \code{"dry"}, \code{"carbon"}, or
+\code{"nitrogen"}, giving the biomass to predict.}
 
 \item{n_plants}{A whole number of sizes averaged per draw to compute the
 mean plant weight; larger values are more precise and slower.}

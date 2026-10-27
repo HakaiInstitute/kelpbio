@@ -10,8 +10,9 @@ kb_predict_mean_weight(
   new_data = NULL,
   wetdry = NULL,
   carbon = NULL,
+  nitrogen = NULL,
   ...,
-  measure = c("wet", "dry", "carbon"),
+  measure = c("wet", "dry", "carbon", "nitrogen"),
   new_levels = c("sample", "average"),
   representative_site = NULL,
   n_plants = 100L,
@@ -31,16 +32,19 @@ kb_predict_mean_weight(
 \code{year} columns (either may be absent, as in a grid from \code{\link[=kb_new_data]{kb_new_data()}}),
 or \code{NULL} for the site-years in the size fit's data.}
 
-\item{wetdry}{A \code{kb_fit_wetdry} object, required for dry and carbon biomass,
-or \code{NULL}.}
+\item{wetdry}{A \code{kb_fit_wetdry} object, required for dry, carbon, and
+nitrogen biomass, or \code{NULL}.}
 
 \item{carbon}{A \code{kb_fit_carbon} object, required for carbon biomass, or
 \code{NULL}.}
 
+\item{nitrogen}{A \code{kb_fit_nitrogen} object, required for nitrogen biomass,
+or \code{NULL}.}
+
 \item{...}{These dots are for future extensions and must be empty.}
 
-\item{measure}{A string, one of \code{"wet"} (kg), \code{"dry"} (kg), or \code{"carbon"}
-(g C), giving the weight to predict.}
+\item{measure}{A string, one of \code{"wet"} (kg), \code{"dry"} (kg), \code{"carbon"}
+(g C), or \code{"nitrogen"} (g N), giving the weight to predict.}
 
 \item{new_levels}{A string giving how uncertainty is shown for a site or
 year not in the fit. Sites and years in the fit always use their own
@@ -81,20 +85,21 @@ progress for \code{\link[=kb_progress]{kb_progress()}}, or \code{NULL} (the defa
 \value{
 A \code{kb_predictions} object: the rows of \code{new_data} with added
 \code{weight_support} and \code{size_support}, the draws of the mean weight in a
-\code{weight_kg}, \code{dry_weight_kg}, or \code{carbon_weight_g} column, and \code{estimate},
-\code{lower}, and \code{upper}.
+\code{weight_kg}, \code{dry_weight_kg}, \code{carbon_weight_g}, or \code{nitrogen_weight_g}
+column, and \code{estimate}, \code{lower}, and \code{upper}.
 }
 \description{
 Combine a weight and a size fit into the expected weight per plant of each
-site-year: wet or dry (kg) or carbon (g C).
+site-year: wet or dry (kg), or carbon or nitrogen (g).
 }
 \details{
 For each posterior draw, mean plant weight is the expected weight at size
 averaged over the site-year's size distribution. The size distribution is
 truncated above at the largest size in the size fit's data; above the
 largest weighed size, the weight allometry is extrapolated. Dry weight is
-wet weight times the expected dry:wet ratio from \code{wetdry}, and carbon dry
-weight times the expected carbon fraction from \code{carbon}.
+wet weight times the expected dry:wet ratio from \code{wetdry}, and carbon or
+nitrogen dry weight times the expected carbon fraction from \code{carbon} or
+nitrogen fraction from \code{nitrogen}.
 
 \code{weight_support} and \code{size_support} show the data each fit has for the
 site-year, from most to least local: \code{"site-year"}, \code{"site, year"} (its site
@@ -125,11 +130,13 @@ Other prediction functions:
 \code{\link[=kb_predict_biomass_in_situ]{kb_predict_biomass_in_situ()}},
 \code{\link[=kb_predict_carbon]{kb_predict_carbon()}},
 \code{\link[=kb_predict_cover_calibration]{kb_predict_cover_calibration()}},
+\code{\link[=kb_predict_nitrogen]{kb_predict_nitrogen()}},
 \code{\link[=kb_predict_size]{kb_predict_size()}},
 \code{\link[=kb_predict_weight]{kb_predict_weight()}},
 \code{\link[=kb_predict_wetdry]{kb_predict_wetdry()}},
 \code{\link[=predict.kb_fit_carbon]{predict.kb_fit_carbon()}},
 \code{\link[=predict.kb_fit_cover_calibration]{predict.kb_fit_cover_calibration()}},
+\code{\link[=predict.kb_fit_nitrogen]{predict.kb_fit_nitrogen()}},
 \code{\link[=predict.kb_fit_size]{predict.kb_fit_size()}},
 \code{\link[=predict.kb_fit_weight]{predict.kb_fit_weight()}},
 \code{\link[=predict.kb_fit_wetdry]{predict.kb_fit_wetdry()}}

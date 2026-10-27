@@ -87,6 +87,17 @@
 }
 
 #' @export
+.linpred.kb_fit_nitrogen <- function(
+  fit,
+  grid,
+  new_levels,
+  representative_site = NULL,
+  effects = NULL
+) {
+  fit$draws$intercept + rep(0, nrow(grid))
+}
+
+#' @export
 .linpred.kb_fit_cover_calibration <- function(
   fit,
   grid,

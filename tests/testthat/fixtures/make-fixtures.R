@@ -4,7 +4,7 @@
 
 devtools::load_all(quiet = TRUE)
 
-models <- c("weight", "size", "wetdry", "carbon", "cover_calibration")
+models <- c("weight", "size", "wetdry", "carbon", "nitrogen", "cover_calibration")
 selected <- commandArgs(trailingOnly = TRUE)
 if (!length(selected)) {
   selected <- models
@@ -136,6 +136,33 @@ if ("carbon" %in% selected) {
   )
   saveRDS(carbon_macro_fit, "tests/testthat/fixtures/carbon_macro_fit.rds")
   message("Wrote tests/testthat/fixtures/carbon_macro_fit.rds")
+}
+
+if ("nitrogen" %in% selected) {
+  # No grouping factors to subset by.
+  nitrogen_nereo_fit <- kb_fit_nitrogen_nereo(
+    data_nitrogen_sim_nereo[1:80, ],
+    chains = 2L,
+    niters = 300L,
+    nthin = 5L,
+    cores = 2L,
+    progress = "none",
+    seed = 42L
+  )
+  saveRDS(nitrogen_nereo_fit, "tests/testthat/fixtures/nitrogen_nereo_fit.rds")
+  message("Wrote tests/testthat/fixtures/nitrogen_nereo_fit.rds")
+
+  nitrogen_macro_fit <- kb_fit_nitrogen_macro(
+    data_nitrogen_sim_macro[1:80, ],
+    chains = 2L,
+    niters = 300L,
+    nthin = 5L,
+    cores = 2L,
+    progress = "none",
+    seed = 42L
+  )
+  saveRDS(nitrogen_macro_fit, "tests/testthat/fixtures/nitrogen_macro_fit.rds")
+  message("Wrote tests/testthat/fixtures/nitrogen_macro_fit.rds")
 }
 
 if ("cover_calibration" %in% selected) {

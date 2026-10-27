@@ -151,12 +151,15 @@ test_that(".vld_census_size needs the weight fit's predictor", {
 })
 
 test_that(".vld_measure_fits needs the conversion fits the measure uses", {
-  expect_true(.vld_measure_fits("wet", NULL, NULL))
-  expect_true(.vld_measure_fits("dry", wetdry_nereo_fit, NULL))
-  expect_true(.vld_measure_fits("carbon", wetdry_nereo_fit, carbon_nereo_fit))
-  expect_false(.vld_measure_fits("dry", NULL, NULL))
-  expect_false(.vld_measure_fits("carbon", wetdry_nereo_fit, NULL))
-  expect_false(.vld_measure_fits("wet", carbon_nereo_fit, NULL))
+  expect_true(.vld_measure_fits("wet", NULL, NULL, NULL))
+  expect_true(.vld_measure_fits("dry", wetdry_nereo_fit, NULL, NULL))
+  expect_true(.vld_measure_fits("carbon", wetdry_nereo_fit, carbon_nereo_fit, NULL))
+  expect_true(.vld_measure_fits("nitrogen", wetdry_nereo_fit, NULL, nitrogen_nereo_fit))
+  expect_false(.vld_measure_fits("dry", NULL, NULL, NULL))
+  expect_false(.vld_measure_fits("carbon", wetdry_nereo_fit, NULL, NULL))
+  expect_false(.vld_measure_fits("nitrogen", wetdry_nereo_fit, NULL, NULL))
+  expect_false(.vld_measure_fits("wet", carbon_nereo_fit, NULL, NULL))
+  expect_false(.vld_measure_fits("wet", NULL, NULL, carbon_nereo_fit))
 })
 
 test_that(".vld_canopy_maps needs canopy, tide, site, year, and a large enough classified area", {

@@ -198,6 +198,9 @@
   if (!is.null(fits$carbon)) {
     .chk_kb_fit(fits$carbon, "kb_fit_carbon", x_name = "carbon", call = call)
   }
+  if (!is.null(fits$nitrogen)) {
+    .chk_kb_fit(fits$nitrogen, "kb_fit_nitrogen", x_name = "nitrogen", call = call)
+  }
   .chk_same_species(fits, call = call)
   .chk_same_ndraws(fits, call = call)
   invisible(fits)
@@ -584,6 +587,11 @@
   .chk_new_data_size(new_data)
 }
 
+#' @export
+.chk_new_data.kb_fit_nitrogen <- function(fit, new_data) {
+  .chk_new_data_size(new_data)
+}
+
 # `x_name` names the data frame; column messages name the column within it.
 .chk_cover_survey <- function(x, x_name = deparse(substitute(x))) {
   if (.vld_cover_survey(x)) {
@@ -718,6 +726,26 @@
     ))
   }
   warn_carbon_fraction(data, x_name)
+  invisible(data)
+}
+
+# The nitrogen data of either species.
+.chk_nitrogen_data <- function(data, x_name) {
+  chk::chk_data(data, x_name = x_name)
+  chk::chk_superset(
+    names(data),
+    c("sample_mass_mg", "nitrogen_mass_ug"),
+    x_name = x_name
+  )
+  .chk_measure_columns(data, c("sample_mass_mg", "nitrogen_mass_ug"), x_name)
+  # The nitrogen fraction must lie in (0, 1) for the Beta likelihood.
+  if (any(nitrogen_fraction(data) >= 1)) {
+    cli::cli_abort(c(
+      "{column_xname(x_name, 'nitrogen_mass_ug')} must be less than the sample mass.",
+      i = "Check that {.field nitrogen_mass_ug} is in micrograms and {.field sample_mass_mg} in milligrams."
+    ))
+  }
+  warn_nitrogen_fraction(data, x_name)
   invisible(data)
 }
 
@@ -942,21 +970,33 @@
   )
 }
 
-.chk_measure_fits <- function(measure, wetdry, carbon, call = rlang::caller_env()) {
-  if (.vld_measure_fits(measure, wetdry, carbon)) {
+.chk_measure_fits <- function(
+  measure,
+  wetdry,
+  carbon,
+  nitrogen,
+  call = rlang::caller_env()
+) {
+  if (.vld_measure_fits(measure, wetdry, carbon, nitrogen)) {
     return(invisible(NULL))
   }
-  if (measure %in% c("dry", "carbon") && is.null(wetdry)) {
+  if (measure %in% c("dry", "carbon", "nitrogen") && is.null(wetdry)) {
     cli::cli_abort("{.arg wetdry} is required for {measure} biomass.", call = call)
   }
   if (measure == "carbon" && is.null(carbon)) {
     cli::cli_abort("{.arg carbon} is required for carbon biomass.", call = call)
+  }
+  if (measure == "nitrogen" && is.null(nitrogen)) {
+    cli::cli_abort("{.arg nitrogen} is required for nitrogen biomass.", call = call)
   }
   if (!is.null(wetdry)) {
     .chk_kb_fit(wetdry, "kb_fit_wetdry", call = call)
   }
   if (!is.null(carbon)) {
     .chk_kb_fit(carbon, "kb_fit_carbon", call = call)
+  }
+  if (!is.null(nitrogen)) {
+    .chk_kb_fit(nitrogen, "kb_fit_nitrogen", call = call)
   }
   invisible(NULL)
 }

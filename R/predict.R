@@ -152,6 +152,41 @@ predict.kb_fit_carbon <- function(
   )
 }
 
+#' Predict method for nitrogen fits
+#'
+#' Summarise the expected nitrogen fraction of dry mass as a single estimate.
+#' Equivalent to [kb_predict_nitrogen()].
+#'
+#' @inheritParams params
+#' @param object A `kb_fit_nitrogen` object.
+#'
+#' @returns A `kb_predictions` object.
+#' @family prediction functions
+#' @exportS3Method stats::predict
+#' @examples
+#' predict(fit_nitrogen_sim_macro)
+predict.kb_fit_nitrogen <- function(
+  object,
+  ...,
+  conf_level = 0.95,
+  estimate = stats::median,
+  sig_fig = 3
+) {
+  # error_call() names the generic, not the wrapped verb.
+  .with_call(
+    {
+      rlang::check_dots_empty()
+      kb_predict_nitrogen(
+        object,
+        conf_level = conf_level,
+        estimate = estimate,
+        sig_fig = sig_fig
+      )
+    },
+    rlang::error_call(rlang::current_env())
+  )
+}
+
 #' Predict method for cover calibration fits
 #'
 #' Predict the expected wet biomass per m² of plot at the rows of `new_data`, or

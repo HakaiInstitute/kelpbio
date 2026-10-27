@@ -11,6 +11,7 @@ test_that("predict wraps each model's prediction verb", {
   )
   expect_identical(predict(wetdry_nereo_fit), kb_predict_wetdry(wetdry_nereo_fit))
   expect_identical(predict(carbon_nereo_fit), kb_predict_carbon(carbon_nereo_fit))
+  expect_identical(predict(nitrogen_nereo_fit), kb_predict_nitrogen(nitrogen_nereo_fit))
 })
 
 test_that("predict wraps kb_predict_cover_calibration", {

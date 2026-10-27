@@ -130,6 +130,8 @@ Other fit functions:
 \code{\link[=kb_fit_carbon_nereo]{kb_fit_carbon_nereo()}},
 \code{\link[=kb_fit_cover_calibration_macro]{kb_fit_cover_calibration_macro()}},
 \code{\link[=kb_fit_cover_calibration_nereo]{kb_fit_cover_calibration_nereo()}},
+\code{\link[=kb_fit_nitrogen_macro]{kb_fit_nitrogen_macro()}},
+\code{\link[=kb_fit_nitrogen_nereo]{kb_fit_nitrogen_nereo()}},
 \code{\link[=kb_fit_size_nereo]{kb_fit_size_nereo()}},
 \code{\link[=kb_fit_weight_macro]{kb_fit_weight_macro()}},
 \code{\link[=kb_fit_wetdry_macro]{kb_fit_wetdry_macro()}},

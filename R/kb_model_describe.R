@@ -240,7 +240,7 @@ kb_model_describe <- function(fit, ..., prose = FALSE) {
   )
 }
 
-# Wet/dry and carbon share one Beta model; only the response differs.
+# Wet/dry, carbon, and nitrogen share one Beta model; only the response differs.
 #' @export
 .model_spec.kb_fit_wetdry <- function(fit) {
   .model_spec_beta(
@@ -263,6 +263,20 @@ kb_model_describe <- function(fit, ..., prose = FALSE) {
       "converted to mg, divided by sample_mass_mg)"
     ),
     subject = "The carbon fraction of each dried sample"
+  )
+}
+
+#' @export
+.model_spec.kb_fit_nitrogen <- function(fit) {
+  .model_spec_beta(
+    fit,
+    title = "Nitrogen fraction",
+    response = "nitrogen_fraction",
+    response_desc = paste0(
+      "nitrogen_fraction, the nitrogen mass divided by the sample mass (nitrogen_mass_ug ",
+      "converted to mg, divided by sample_mass_mg)"
+    ),
+    subject = "The nitrogen fraction of each dried sample"
   )
 }
 

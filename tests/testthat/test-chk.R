@@ -308,10 +308,12 @@ test_that(".chk_pool_by names a missing or non-grouping column", {
 })
 
 test_that(".chk_measure_fits requires the fits a measure needs", {
-  expect_invisible(.chk_measure_fits("wet", NULL, NULL))
-  expect_error(.chk_measure_fits("dry", NULL, NULL), "wetdry")
-  expect_error(.chk_measure_fits("carbon", wetdry_nereo_fit, NULL), "carbon")
-  expect_error(.chk_measure_fits("dry", carbon_nereo_fit, NULL), "kb_fit_wetdry")
+  expect_invisible(.chk_measure_fits("wet", NULL, NULL, NULL))
+  expect_error(.chk_measure_fits("dry", NULL, NULL, NULL), "wetdry")
+  expect_error(.chk_measure_fits("carbon", wetdry_nereo_fit, NULL, NULL), "carbon")
+  expect_error(.chk_measure_fits("nitrogen", wetdry_nereo_fit, NULL, NULL), "nitrogen")
+  expect_error(.chk_measure_fits("dry", carbon_nereo_fit, NULL, NULL), "kb_fit_wetdry")
+  expect_error(.chk_measure_fits("wet", NULL, NULL, carbon_nereo_fit), "kb_fit_nitrogen")
 })
 
 test_that(".chk_sampling_dots rejects sampler arguments kelpbio sets, naming the replacement", {

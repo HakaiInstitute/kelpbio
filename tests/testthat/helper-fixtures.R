@@ -11,6 +11,8 @@ wetdry_nereo_fit <- fixture("wetdry_nereo_fit.rds")
 wetdry_macro_fit <- fixture("wetdry_macro_fit.rds")
 carbon_nereo_fit <- fixture("carbon_nereo_fit.rds")
 carbon_macro_fit <- fixture("carbon_macro_fit.rds")
+nitrogen_nereo_fit <- fixture("nitrogen_nereo_fit.rds")
+nitrogen_macro_fit <- fixture("nitrogen_macro_fit.rds")
 cover_calibration_nereo_fit <- fixture("cover_calibration_nereo_fit.rds")
 cover_calibration_macro_fit <- fixture("cover_calibration_macro_fit.rds")
 
@@ -97,6 +99,8 @@ fixture_fits <- list(
   wetdry_macro = wetdry_macro_fit,
   carbon_nereo = carbon_nereo_fit,
   carbon_macro = carbon_macro_fit,
+  nitrogen_nereo = nitrogen_nereo_fit,
+  nitrogen_macro = nitrogen_macro_fit,
   cover_calibration_nereo = cover_calibration_nereo_fit,
   cover_calibration_macro = cover_calibration_macro_fit
 )
