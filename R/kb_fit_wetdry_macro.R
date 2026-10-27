@@ -1,6 +1,6 @@
 #' Fit a Macrocystis wet/dry model
 #'
-#' Fit a dry:wet mass ratio model for *Macrocystis pyrifera* via Stan.
+#' Fit a dry:wet ratio model for *Macrocystis pyrifera* via Stan.
 #'
 #' @details
 #' The dry:wet ratio of each sample, `dry_mass_g / wet_mass_g`, is modelled
@@ -20,8 +20,7 @@
 #' @param priors A named list of prior objects (see [kb_priors_wetdry_macro()]),
 #'   or `NULL` to use the defaults. Entries not supplied keep their defaults.
 #'
-#' @returns An object of class
-#'   `c("kb_fit_wetdry_macro", "kb_fit_wetdry", "kb_fit")`.
+#' @returns A `kb_fit_wetdry_macro` object (a `kb_fit`).
 #' @family fit functions
 #' @export
 #'

@@ -23,7 +23,7 @@
 #' @param priors A named list of prior objects (see [kb_priors_weight_macro()]),
 #'   or `NULL` to use the defaults. Entries not supplied keep their defaults.
 #'
-#' @returns An object of class `c("kb_fit_weight_macro", "kb_fit_weight", "kb_fit")`.
+#' @returns A `kb_fit_weight_macro` object (a `kb_fit`).
 #' @family fit functions
 #' @export
 #'

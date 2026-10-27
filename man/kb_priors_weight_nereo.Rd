@@ -18,8 +18,8 @@ argument of \code{\link[=kb_fit_weight_nereo]{kb_fit_weight_nereo()}}; the other
 }
 \details{
 Each entry is named after the parameter it sets, as reported by \code{\link[=tidy]{tidy()}} and
-\code{\link[=kb_model_describe]{kb_model_describe()}}. The prior family of each entry is fixed; only the
-hyperparameters can be changed. \code{intercept} is on the log of the weight above
+\code{\link[=kb_model_describe]{kb_model_describe()}}. The prior family of each entry is fixed; only its
+arguments can be changed. \code{intercept} is on the log of the weight above
 the floor at the geometric mean diameter of the data, \code{diameter_power} is the
 allometric exponent, and \code{weight_floor} is the weight (kg) as diameter
 approaches zero, used only by \code{form = "packard_floor"}. The priors on

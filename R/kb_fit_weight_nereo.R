@@ -5,7 +5,7 @@
 #' @details
 #' Log wet weight (kg) is modelled with a Normal likelihood with mean `log(mu)`
 #' and standard deviation `sd_residual`, so `log(mu)` is the expected log
-#' weight. `form` sets `mu` as a function of sub-bulb diameter, with `x` the
+#' weight. `form` sets `mu` as a function of plant diameter, with `x` the
 #' `diameter_mm` divided by the geometric mean diameter of the data:
 #'
 #' - `"packard_floor"` (the default):
@@ -34,7 +34,7 @@
 #' @param ... Additional arguments passed to [rstan::sampling()], such as
 #'   `control`.
 #'
-#' @returns An object of class `c("kb_fit_weight_nereo", "kb_fit_weight", "kb_fit")`.
+#' @returns A `kb_fit_weight_nereo` object (a `kb_fit`).
 #' @references Packard, G. C. (2023). What is complex allometry? *Biology Open*,
 #'   12, bio060148. \doi{10.1242/bio.060148}
 #' @family fit functions

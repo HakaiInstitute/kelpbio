@@ -27,9 +27,8 @@ Required columns: numeric \code{diameter_mm} (mm, > 0), factor or character
 values.
 
 Each row is one plant of a sample measured for the size model, which need
-not be linked to any in situ survey. \code{diameter_mm} is the maximum sub-bulb diameter,
-the same measurement as the predictor of the weight model
-(\code{\link[=kb_fit_weight_nereo]{kb_fit_weight_nereo()}}). A numeric \code{year} is used as its character level.
+not be linked to any in situ survey. \code{diameter_mm} is the same plant diameter
+as in the weight data (\code{\link[=kb_check_data_weight_nereo]{kb_check_data_weight_nereo()}}). A numeric \code{year} is used as its character level.
 Other columns are ignored.
 }
 \examples{

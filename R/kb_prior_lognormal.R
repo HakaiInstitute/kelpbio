@@ -5,7 +5,7 @@
 #' positive parameters whose plausible values span orders of magnitude.
 #'
 #' @details
-#' The hyperparameters are on the log scale: a lognormal prior with `meanlog` and
+#' `meanlog` and `sdlog` are on the log scale: a lognormal prior with `meanlog` and
 #' `sdlog` is a Normal prior with that mean and standard deviation on the log of
 #' the parameter, so its median is `exp(meanlog)`.
 #'

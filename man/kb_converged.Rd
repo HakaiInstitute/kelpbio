@@ -52,7 +52,7 @@ parameter by \code{posterior::summarise_draws(fit)}.
 In order, try the following:
 \enumerate{
 \item Increase \code{adapt_delta} through the \code{control} argument of the \verb{kb_fit_*()}
-functions (e.g., \verb{kb_fit_*(df, control = list(adapt_delta = 0.99))}). The
+functions (for example, \verb{kb_fit_*(df, control = list(adapt_delta = 0.99))}). The
 default \code{adapt_delta} value is 0.95. Higher values reduce divergent
 transitions and can also resolve Rhat and effective sample size issues,
 at the cost of a longer runtime.

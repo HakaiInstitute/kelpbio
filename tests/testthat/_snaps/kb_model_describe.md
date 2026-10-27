@@ -4,7 +4,7 @@
       kb_model_describe(weight_nereo_fit)
     Output
       Weight allometry - Nereocystis luetkeana
-      Response: wet weight (kg); predictor: sub-bulb diameter (mm)
+      Response: wet weight (kg); predictor: plant diameter (mm)
       
       Likelihood
         log(weight_kg) ~ Normal(log(mu), sd_residual)
@@ -65,14 +65,14 @@
       kb_model_describe(weight_nereo_fit, prose = TRUE)
     Output
       Wet weight was modelled on the log scale with a Normal likelihood as an
-      allometric function of sub-bulb diameter. The expected log weight was
-      log(mu), where mu followed a three-parameter power function (Packard 2023)
-      of diameter relative to the geometric mean diameter (19.7), in which
+      allometric function of plant diameter. The expected log weight was log(mu),
+      where mu followed a three-parameter power function (Packard 2023) of
+      diameter relative to the geometric mean diameter (19.7), in which
       weight_floor is the weight as diameter approaches zero, alpha the weight
       above the floor at the reference diameter, and diameter_power the
       allometric exponent. The log of alpha varied by site, by year, and by
       site:year. Regularising priors were placed on all parameters (see the
-      notation form for the hyperparameters).
+      notation form for the prior arguments).
 
 # kb_model_describe renders the size notation blocks
 
@@ -80,7 +80,7 @@
       kb_model_describe(size_nereo_fit)
     Output
       Size distribution - Nereocystis luetkeana
-      Response: maximum sub-bulb diameter (mm)
+      Response: plant diameter (mm)
       
       Likelihood
         diameter_mm ~ Weibull(shape, mu / gamma(1 + 1 / shape))
@@ -126,7 +126,7 @@
       parameterised by its mean, mu, and precision, both common to all samples.
       Samples were pooled over the months, sites, and tissues they came from.
       Regularising priors were placed on all parameters (see the notation form
-      for the hyperparameters).
+      for the prior arguments).
 
 # kb_model_describe renders the carbon model
 
@@ -153,7 +153,7 @@
       likelihood parameterised by its mean, mu, and precision, both common to all
       samples. Samples were pooled over the months, sites, and tissues they came
       from. Regularising priors were placed on all parameters (see the notation
-      form for the hyperparameters).
+      form for the prior arguments).
 
 # kb_model_describe renders the cover calibration model with each species' priors
 
@@ -227,7 +227,7 @@
       deviation combining a constant, a part proportional to the mean, and the
       survey's standard deviation from plant weight. Regularising priors were
       placed on all parameters, with an informative prior on the tide correction
-      (see the notation form for the hyperparameters).
+      (see the notation form for the prior arguments).
 
 # kb_model_describe follows the power-law form
 
@@ -235,7 +235,7 @@
       kb_model_describe(power)
     Output
       Weight allometry - Nereocystis luetkeana
-      Response: wet weight (kg); predictor: sub-bulb diameter (mm)
+      Response: wet weight (kg); predictor: plant diameter (mm)
       
       Likelihood
         log(weight_kg) ~ Normal(log(mu), sd_residual)
@@ -265,10 +265,10 @@
       kb_model_describe(power, prose = TRUE)
     Output
       Wet weight was modelled on the log scale with a Normal likelihood as an
-      allometric function of sub-bulb diameter. The expected log weight was
-      log(mu), where mu followed a power law in diameter relative to the
-      geometric mean diameter (19.7), in which alpha is the weight at the
-      reference diameter and diameter_power the allometric exponent. The log of
-      alpha varied by site, by year, and by site:year. Regularising priors were
-      placed on all parameters (see the notation form for the hyperparameters).
+      allometric function of plant diameter. The expected log weight was log(mu),
+      where mu followed a power law in diameter relative to the geometric mean
+      diameter (19.7), in which alpha is the weight at the reference diameter and
+      diameter_power the allometric exponent. The log of alpha varied by site, by
+      year, and by site:year. Regularising priors were placed on all parameters
+      (see the notation form for the prior arguments).
 

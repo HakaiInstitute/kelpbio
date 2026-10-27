@@ -19,7 +19,7 @@ of \code{\link[=kb_fit_weight_macro]{kb_fit_weight_macro()}}; the other entries 
 Each entry is named after the parameter it sets, as reported by \code{\link[=tidy]{tidy()}} and
 \code{\link[=kb_model_describe]{kb_model_describe()}}. The prior family of each entry is fixed (the
 intercept and slope are Normal, the Gamma shape and standard deviations are
-Exponential); only the hyperparameters can be changed. \code{intercept} is the log
+Exponential); only its arguments can be changed. \code{intercept} is the log
 expected weight at the geometric mean frond count, and \code{fronds_slope} the
 slope of log expected weight on log frond count.
 }

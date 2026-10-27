@@ -10,7 +10,7 @@ test_that("a continuous predictor gives a ribbon with descriptive axis titles", 
   geoms <- geoms_of(gg)
   expect_true(any(grepl("GeomRibbon", geoms)))
   expect_true(any(grepl("GeomLine", geoms)))
-  expect_identical(gg$labels$x, "Sub-bulb diameter (mm)")
+  expect_identical(gg$labels$x, "Diameter (mm)")
   expect_identical(gg$labels$y, "Wet weight (kg)")
 })
 
@@ -61,7 +61,7 @@ test_that("rows not from kb_new_data() render as points, not a ribbon", {
     new_data = data.frame(diameter_mm = c(20, 40, 60))
   )
   gg <- kb_plot_predictions(p)
-  expect_identical(gg$labels$x, "Sub-bulb diameter (mm)")
+  expect_identical(gg$labels$x, "Diameter (mm)")
   geoms <- geoms_of(gg)
   expect_true(any(grepl("GeomPointrange", geoms)))
   expect_false(any(grepl("GeomRibbon", geoms)))
@@ -107,7 +107,7 @@ test_that("size by site plots point ranges with a descriptive y axis", {
   geoms <- geoms_of(gg)
   expect_true(any(grepl("GeomPointrange", geoms)))
   expect_identical(gg$labels$x, "Site")
-  expect_identical(gg$labels$y, "Sub-bulb diameter (mm)")
+  expect_identical(gg$labels$y, "Diameter (mm)")
   expect_equal(min(ggplot2::layer_scales(gg)$y$range$range), 0)
 })
 
@@ -184,7 +184,7 @@ test_that("log_axis = 'xy' log-scales both axes of a curve", {
   gg <- kb_plot_predictions(p, log_axis = "xy")
   expect_identical(gg$scales$get_scales("x")$trans$name, "log-10")
   expect_identical(gg$scales$get_scales("y")$trans$name, "log-10")
-  expect_identical(gg$labels$x, "Sub-bulb diameter (mm, log scale)")
+  expect_identical(gg$labels$x, "Diameter (mm, log scale)")
   expect_identical(gg$labels$y, "Wet weight (kg, log scale)")
 })
 
