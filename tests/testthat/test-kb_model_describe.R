@@ -56,6 +56,11 @@ test_that("kb_model_describe renders the carbon model", {
   expect_snapshot(kb_model_describe(carbon_macro_fit, prose = TRUE))
 })
 
+test_that("kb_model_describe renders the nitrogen model", {
+  expect_snapshot(kb_model_describe(nitrogen_nereo_fit))
+  expect_snapshot(kb_model_describe(nitrogen_macro_fit, prose = TRUE))
+})
+
 test_that("kb_model_describe renders the cover calibration model with each species' priors", {
   expect_snapshot(kb_model_describe(cover_calibration_nereo_fit))
   expect_snapshot(kb_model_describe(cover_calibration_macro_fit))

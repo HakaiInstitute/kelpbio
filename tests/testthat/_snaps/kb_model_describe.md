@@ -155,6 +155,33 @@
       from. Regularising priors were placed on all parameters (see the notation
       form for the prior arguments).
 
+# kb_model_describe renders the nitrogen model
+
+    Code
+      kb_model_describe(nitrogen_nereo_fit)
+    Output
+      Nitrogen fraction - Nereocystis luetkeana
+      Response: nitrogen_fraction, the nitrogen mass divided by the sample mass (nitrogen_mass_ug converted to mg, divided by sample_mass_mg)
+      
+      Likelihood
+        nitrogen_fraction ~ Beta(mu * precision, (1 - mu) * precision)
+        logit(mu) = intercept
+      
+      Priors
+        intercept      ~ Normal(-3.7, 0.5)
+        precision      ~ Exponential(0.001)
+
+---
+
+    Code
+      kb_model_describe(nitrogen_macro_fit, prose = TRUE)
+    Output
+      The nitrogen fraction of each dried sample was modelled with a Beta
+      likelihood parameterised by its mean, mu, and precision, both common to all
+      samples. Samples were pooled over the months, sites, and tissues they came
+      from. Regularising priors were placed on all parameters (see the notation
+      form for the prior arguments).
+
 # kb_model_describe renders the cover calibration model with each species' priors
 
     Code

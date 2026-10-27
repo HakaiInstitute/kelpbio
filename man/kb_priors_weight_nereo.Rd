@@ -45,6 +45,8 @@ Other priors:
 \code{\link[=kb_priors_carbon_nereo]{kb_priors_carbon_nereo()}},
 \code{\link[=kb_priors_cover_calibration_macro]{kb_priors_cover_calibration_macro()}},
 \code{\link[=kb_priors_cover_calibration_nereo]{kb_priors_cover_calibration_nereo()}},
+\code{\link[=kb_priors_nitrogen_macro]{kb_priors_nitrogen_macro()}},
+\code{\link[=kb_priors_nitrogen_nereo]{kb_priors_nitrogen_nereo()}},
 \code{\link[=kb_priors_size_nereo]{kb_priors_size_nereo()}},
 \code{\link[=kb_priors_weight_macro]{kb_priors_weight_macro()}},
 \code{\link[=kb_priors_wetdry_macro]{kb_priors_wetdry_macro()}},

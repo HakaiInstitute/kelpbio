@@ -40,6 +40,22 @@ test_that("dry and carbon weight are per-draw conversions of wet", {
   )
   expect_identical(attr(carbon, "kb_response"), "carbon_weight_g")
   withr::local_seed(1)
+  nitrogen <- kb_predict_mean_weight(
+    weight_nereo_fit,
+    size_nereo_fit,
+    wetdry = wetdry_nereo_fit,
+    nitrogen = nitrogen_nereo_fit,
+    measure = "nitrogen",
+    new_levels = "average",
+    progress = "none"
+  )
+  expect_equal(
+    posterior::draws_of(nitrogen$nitrogen_weight_g),
+    posterior::draws_of(wet$weight_kg) *
+      population_draws(wetdry_nereo_fit) * population_draws(nitrogen_nereo_fit) * 1000,
+    ignore_attr = TRUE
+  )
+  withr::local_seed(1)
   dry <- do.call(
     kb_predict_mean_weight,
     c(args, measure = "dry", new_levels = "average", progress = "none")

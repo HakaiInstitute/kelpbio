@@ -50,6 +50,8 @@ Other data checks:
 \code{\link[=kb_check_data_cover_calibration_macro]{kb_check_data_cover_calibration_macro()}},
 \code{\link[=kb_check_data_cover_calibration_nereo]{kb_check_data_cover_calibration_nereo()}},
 \code{\link[=kb_check_data_in_situ]{kb_check_data_in_situ()}},
+\code{\link[=kb_check_data_nitrogen_macro]{kb_check_data_nitrogen_macro()}},
+\code{\link[=kb_check_data_nitrogen_nereo]{kb_check_data_nitrogen_nereo()}},
 \code{\link[=kb_check_data_size_census_nereo]{kb_check_data_size_census_nereo()}},
 \code{\link[=kb_check_data_size_sample_nereo]{kb_check_data_size_sample_nereo()}},
 \code{\link[=kb_check_data_weight_macro]{kb_check_data_weight_macro()}},

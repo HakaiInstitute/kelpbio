@@ -52,10 +52,10 @@ An effect the fit omitted (the weight floor of a power-law fit) SHALL NOT appear
 
 ### Requirement: Fitted values, residuals, and augment
 
-`fitted()` SHALL return the posterior median of the expected response at each observed row (weight, size, the dry:wet ratio, the carbon fraction, or for the cover calibration the expected wet biomass per m² of that row's plot), and `residuals()` the posterior median of the deviance residual under the model's likelihood. `augment()` SHALL return the input data with `fitted` and `residual` columns equal to those values, and no interval columns added.
+`fitted()` SHALL return the posterior median of the expected response at each observed row (weight, size, the dry:wet ratio, the carbon or nitrogen fraction, or for the cover calibration the expected wet biomass per m² of that row's plot), and `residuals()` the posterior median of the deviance residual under the model's likelihood. `augment()` SHALL return the input data with `fitted` and `residual` columns equal to those values, and no interval columns added.
 
 #### Scenario: augment agrees with fitted and residuals
-- **WHEN** `augment(fit)` is called on a weight, size, wet/dry, carbon, or cover calibration fit
+- **WHEN** `augment(fit)` is called on a weight, size, wet/dry, carbon, nitrogen, or cover calibration fit
 - **THEN** its `fitted` and `residual` columns equal `fitted(fit)` and `residuals(fit)`
 
 #### Scenario: augment keeps the survey biomass of a cover calibration fit
@@ -116,7 +116,7 @@ An effect the fit omitted (the weight floor of a power-law fit) SHALL NOT appear
 
 ### Requirement: Errors for unsupported objects
 
-A kelpbio function taking a fit (`kb_model_describe()`, `kb_stancode()`, `kb_samples()`, `kb_converged()`, and `kb_influence()`, the prediction verbs `kb_predict_weight()`, `kb_predict_size()`, `kb_predict_wetdry()`, `kb_predict_carbon()`, and `kb_predict_cover_calibration()`, the derived verbs `kb_predict_mean_weight()`, `kb_predict_biomass_in_situ()`, and `kb_predict_biomass_canopy()`, `kb_new_data()`, and `kb_sensitivity()`) called on an object it does not support SHALL error with a `cli` message naming the argument and the required class (`kb_fit`, or the model class such as `kb_fit_weight`, `kb_fit_size`, `kb_fit_wetdry`, `kb_fit_carbon`, or `kb_fit_cover_calibration` for the prediction verbs) and pointing to the `kb_fit_*()` functions, attributed to the function the user called. Any method called on a fit whose model has no implementation for it SHALL error naming the object's class rather than return a value. kelpbio SHALL NOT add default methods to generics owned by other packages.
+A kelpbio function taking a fit (`kb_model_describe()`, `kb_stancode()`, `kb_samples()`, `kb_converged()`, and `kb_influence()`, the prediction verbs `kb_predict_weight()`, `kb_predict_size()`, `kb_predict_wetdry()`, `kb_predict_carbon()`, `kb_predict_nitrogen()`, and `kb_predict_cover_calibration()`, the derived verbs `kb_predict_mean_weight()`, `kb_predict_biomass_in_situ()`, and `kb_predict_biomass_canopy()`, `kb_new_data()`, and `kb_sensitivity()`) called on an object it does not support SHALL error with a `cli` message naming the argument and the required class (`kb_fit`, or the model class such as `kb_fit_weight`, `kb_fit_size`, `kb_fit_wetdry`, `kb_fit_carbon`, or `kb_fit_cover_calibration` for the prediction verbs) and pointing to the `kb_fit_*()` functions, attributed to the function the user called. Any method called on a fit whose model has no implementation for it SHALL error naming the object's class rather than return a value. kelpbio SHALL NOT add default methods to generics owned by other packages.
 
 #### Scenario: A non-fit errors helpfully
 - **WHEN** `kb_model_describe(1)` or `kb_predict_weight(1)` is called
@@ -182,7 +182,7 @@ priorsense's functions SHALL accept a `kb_fit` directly, giving the same sensiti
 
 ### Requirement: Posterior predictive check
 
-`pp_check(object, type = c("response", "residual"), ..., ndraws = 50)` SHALL be available after `library(kelpbio)` for any fit and SHALL return a `ggplot` overlaying the density of the observed values on the densities of `ndraws` replicate datasets, each simulated at the observed rows from one posterior draw chosen at random. With `type = "response"` the values SHALL be the recorded response (weight, size, dry:wet ratio, carbon fraction, or a survey's biomass per m²), and the x-axis SHALL be titled with it. With `type = "residual"` the observed values SHALL be `residuals(object)`, each replicate's values SHALL be the deviance residuals of that replicate under the draw that generated it, and the x-axis SHALL be titled "Deviance residual". Repeated calls SHALL differ unless a seed is set. `ndraws` SHALL be a whole number from 1 to the number of draws in the fit, and `...` SHALL be empty. A fit with no observations SHALL error.
+`pp_check(object, type = c("response", "residual"), ..., ndraws = 50)` SHALL be available after `library(kelpbio)` for any fit and SHALL return a `ggplot` overlaying the density of the observed values on the densities of `ndraws` replicate datasets, each simulated at the observed rows from one posterior draw chosen at random. With `type = "response"` the values SHALL be the recorded response (weight, size, dry:wet ratio, carbon or nitrogen fraction, or a survey's biomass per m²), and the x-axis SHALL be titled with it. With `type = "residual"` the observed values SHALL be `residuals(object)`, each replicate's values SHALL be the deviance residuals of that replicate under the draw that generated it, and the x-axis SHALL be titled "Deviance residual". Repeated calls SHALL differ unless a seed is set. `ndraws` SHALL be a whole number from 1 to the number of draws in the fit, and `...` SHALL be empty. A fit with no observations SHALL error.
 
 #### Scenario: Response check by default
 - **WHEN** `pp_check(fit)` is called

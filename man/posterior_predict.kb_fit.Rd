@@ -47,7 +47,8 @@ A draws-by-observations (\verb{D x N}) matrix.
 }
 \description{
 Draws from the posterior predictive distribution: replicate responses
-(weights, plant sizes, dry:wet ratios, carbon fractions, or in situ survey biomass)
+(weights, plant sizes, dry:wet ratios, carbon or nitrogen fractions, or in
+situ survey biomass)
 carrying both parameter uncertainty and observation noise from the model's
 likelihood. With \code{new_data = NULL} the replicates are at the observed data,
 as plotted by \link[=pp_check.kb_fit]{pp_check()}.
@@ -57,8 +58,8 @@ Site and year columns in \code{new_data} are handled as in \code{\link[=posterio
 
 The observation noise follows the fitted likelihood: Normal on log weight
 (\emph{Nereocystis} weight), Gamma (\emph{Macrocystis} weight), Weibull (\emph{Nereocystis}
-size), Beta (wet/dry and carbon), and Normal censored at zero (cover
-calibration). For a cover calibration fit, each row's spread includes the SD
+size), Beta (wet/dry, carbon, and nitrogen), and Normal censored at zero
+(cover calibration). For a cover calibration fit, each row's spread includes the SD
 of its survey biomass, from a \code{biomass_sd_kg_m2} column or a
 \code{biomass_kg_m2} column of draws, and the residual alone when \code{new_data} has
 neither.

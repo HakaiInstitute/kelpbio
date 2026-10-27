@@ -8,6 +8,8 @@ fixtures <- list(
   wetdry_macro_fit,
   carbon_nereo_fit,
   carbon_macro_fit,
+  nitrogen_nereo_fit,
+  nitrogen_macro_fit,
   cover_calibration_nereo_fit,
   cover_calibration_macro_fit
 )

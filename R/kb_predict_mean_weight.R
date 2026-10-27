@@ -1,15 +1,16 @@
 #' Predict mean plant weight
 #'
 #' Combine a weight and a size fit into the expected weight per plant of each
-#' site-year: wet or dry (kg) or carbon (g C).
+#' site-year: wet or dry (kg), or carbon or nitrogen (g).
 #'
 #' @details
 #' For each posterior draw, mean plant weight is the expected weight at size
 #' averaged over the site-year's size distribution. The size distribution is
 #' truncated above at the largest size in the size fit's data; above the
 #' largest weighed size, the weight allometry is extrapolated. Dry weight is
-#' wet weight times the expected dry:wet ratio from `wetdry`, and carbon dry
-#' weight times the expected carbon fraction from `carbon`.
+#' wet weight times the expected dry:wet ratio from `wetdry`, and carbon or
+#' nitrogen dry weight times the expected carbon fraction from `carbon` or
+#' nitrogen fraction from `nitrogen`.
 #'
 #' `weight_support` and `size_support` show the data each fit has for the
 #' site-year, from most to least local: `"site-year"`, `"site, year"` (its site
@@ -24,13 +25,13 @@
 #' @param new_data A data frame of the rows to predict at, with `site` and
 #'   `year` columns (either may be absent, as in a grid from [kb_new_data()]),
 #'   or `NULL` for the site-years in the size fit's data.
-#' @param measure A string, one of `"wet"` (kg), `"dry"` (kg), or `"carbon"`
-#'   (g C), giving the weight to predict.
+#' @param measure A string, one of `"wet"` (kg), `"dry"` (kg), `"carbon"`
+#'   (g C), or `"nitrogen"` (g N), giving the weight to predict.
 #'
 #' @returns A `kb_predictions` object: the rows of `new_data` with added
 #'   `weight_support` and `size_support`, the draws of the mean weight in a
-#'   `weight_kg`, `dry_weight_kg`, or `carbon_weight_g` column, and `estimate`,
-#'   `lower`, and `upper`.
+#'   `weight_kg`, `dry_weight_kg`, `carbon_weight_g`, or `nitrogen_weight_g`
+#'   column, and `estimate`, `lower`, and `upper`.
 #' @family prediction functions
 #' @seealso [kb_predict_biomass_in_situ()] for the biomass of in situ surveys.
 #' @export
@@ -52,8 +53,9 @@ kb_predict_mean_weight <- function(
   new_data = NULL,
   wetdry = NULL,
   carbon = NULL,
+  nitrogen = NULL,
   ...,
-  measure = c("wet", "dry", "carbon"),
+  measure = c("wet", "dry", "carbon", "nitrogen"),
   new_levels = c("sample", "average"),
   representative_site = NULL,
   n_plants = 100L,
@@ -74,8 +76,14 @@ kb_predict_mean_weight <- function(
     size,
     hint = "{.arg size} must be fitted to observed plant sizes."
   )
-  .chk_measure_fits(measure, wetdry, carbon)
-  .chk_derived_fits(list(weight = weight, size = size, wetdry = wetdry, carbon = carbon))
+  .chk_measure_fits(measure, wetdry, carbon, nitrogen)
+  .chk_derived_fits(list(
+    weight = weight,
+    size = size,
+    wetdry = wetdry,
+    carbon = carbon,
+    nitrogen = nitrogen
+  ))
   .chk_representative_site_fits(representative_site, c("weight", "size"))
   sites <- representative_sites(representative_site)
   .chk_representative_site(weight, sites$weight)
@@ -114,7 +122,8 @@ kb_predict_mean_weight <- function(
     progress,
     progress_dir
   )
-  draws <- draws * measure_factor(measure, wetdry, carbon, carbon_scale = 1000)
+  draws <- draws *
+    measure_factor(measure, wetdry, carbon, nitrogen, element_scale = 1000)
 
   summarise_draws_rows(
     grid,
@@ -125,7 +134,12 @@ kb_predict_mean_weight <- function(
     sig_fig = sig_fig,
     curve = FALSE,
     predictor = NULL,
-    response = c(wet = "weight_kg", dry = "dry_weight_kg", carbon = "carbon_weight_g")[[measure]],
+    response = c(
+      wet = "weight_kg",
+      dry = "dry_weight_kg",
+      carbon = "carbon_weight_g",
+      nitrogen = "nitrogen_weight_g"
+    )[[measure]],
     keep_draws = TRUE
   )
 }

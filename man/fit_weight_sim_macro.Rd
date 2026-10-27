@@ -23,6 +23,8 @@ Other example fits:
 \code{\link{fit_carbon_sim_nereo}},
 \code{\link{fit_cover_calibration_sim_macro}},
 \code{\link{fit_cover_calibration_sim_nereo}},
+\code{\link{fit_nitrogen_sim_macro}},
+\code{\link{fit_nitrogen_sim_nereo}},
 \code{\link{fit_size_sim_nereo}},
 \code{\link{fit_weight_sim_nereo}},
 \code{\link{fit_wetdry_sim_macro}},

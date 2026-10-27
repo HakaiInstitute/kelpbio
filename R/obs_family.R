@@ -53,6 +53,11 @@
   .obs_family_beta_mean(fit, carbon_fraction)
 }
 
+#' @export
+.obs_family.kb_fit_nitrogen <- function(fit, grid) {
+  .obs_family_beta_mean(fit, nitrogen_fraction)
+}
+
 # Beta with a logit mean and a precision, for the proportion models.
 .obs_family_beta_mean <- function(fit, response) {
   precision <- .draw_vec(fit, "precision")

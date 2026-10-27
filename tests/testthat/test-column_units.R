@@ -9,6 +9,7 @@ test_that("column_units names the unit of each unit-bearing column", {
       "dry_mass_g",
       "sample_mass_mg",
       "carbon_mass_ug",
+      "nitrogen_mass_ug",
       "canopy_area_m2",
       "plot_area_m2",
       "classified_area_m2",

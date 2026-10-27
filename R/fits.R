@@ -22,6 +22,32 @@
 #' @family example fits
 "fit_carbon_sim_nereo"
 
+# Built by data-raw/fit_nitrogen_sim_macro.R.
+#' Example Macrocystis nitrogen fit
+#'
+#' A fit of [kb_fit_nitrogen_macro()] to [data_nitrogen_sim_macro] with fewer
+#' draws than the default, for exploring the fit methods without running the
+#' sampler.
+#'
+#' @format An object of class
+#'   `c("kb_fit_nitrogen_macro", "kb_fit_nitrogen", "kb_fit")`.
+#' @seealso [kb_fit_nitrogen_macro()] and [data_nitrogen_sim_macro].
+#' @family example fits
+"fit_nitrogen_sim_macro"
+
+# Built by data-raw/fit_nitrogen_sim_nereo.R.
+#' Example Nereocystis nitrogen fit
+#'
+#' A fit of [kb_fit_nitrogen_nereo()] to [data_nitrogen_sim_nereo] with fewer
+#' draws than the default, for exploring the fit methods without running the
+#' sampler.
+#'
+#' @format An object of class
+#'   `c("kb_fit_nitrogen_nereo", "kb_fit_nitrogen", "kb_fit")`.
+#' @seealso [kb_fit_nitrogen_nereo()] and [data_nitrogen_sim_nereo].
+#' @family example fits
+"fit_nitrogen_sim_nereo"
+
 # Built by data-raw/fit_cover_calibration_sim_macro.R.
 #' Example Macrocystis cover calibration fit
 #'

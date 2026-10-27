@@ -1,8 +1,8 @@
 #' Predict the biomass of in situ surveys
 #'
 #' Combine a weight fit with the plants counted by each in situ survey into
-#' the biomass of the surveyed area: wet or dry (kg/m² or kg) or carbon
-#' (g C/m² or kg C).
+#' the biomass of the surveyed area: wet or dry (kg/m² or kg), or carbon or
+#' nitrogen (g/m² or kg).
 #'
 #' @details
 #' A plant is one individual (sporophyte), identified by its holdfast. Plant
@@ -17,8 +17,9 @@
 #'   has no biomass, and a message lists such surveys.
 #'
 #' Dry biomass is wet biomass times the expected dry:wet ratio from `wetdry`,
-#' and carbon dry biomass times the expected carbon fraction from `carbon`. The
-#' fits must be of the same species and have the same number of draws.
+#' and carbon or nitrogen dry biomass times the expected carbon fraction from
+#' `carbon` or nitrogen fraction from `nitrogen`. The fits must be of the same
+#' species and have the same number of draws.
 #'
 #' With `pool_by` and `per_area = TRUE`, a group's biomass per m² is its summed
 #' biomass over its summed `survey_area_m2`: an area-weighted mean, not the
@@ -43,9 +44,10 @@
 #'   (a numeric `year` or `survey_id` as character) with added
 #'   `weight_support` and, with a size fit,
 #'   `size_support` (as in `kb_predict_mean_weight()`), the draws of the
-#'   biomass in a column named for it (`biomass_kg_m2`, `dry_biomass_kg_m2`, or
-#'   `carbon_biomass_g_m2` per m², and `biomass_kg`, `dry_biomass_kg`, or
-#'   `carbon_biomass_kg` in total), and
+#'   biomass in a column named for it (`biomass_kg_m2`, `dry_biomass_kg_m2`,
+#'   `carbon_biomass_g_m2`, or `nitrogen_biomass_g_m2` per m², and
+#'   `biomass_kg`, `dry_biomass_kg`, `carbon_biomass_kg`, or
+#'   `nitrogen_biomass_kg` in total), and
 #'   `estimate`, `lower`, and `upper`; with `pool_by`, one row per group with its
 #'   `pool_by` columns, the support columns when `pool_by` includes `site` and
 #'   `year`, the draws, and the summary.
@@ -86,8 +88,9 @@ kb_predict_biomass_in_situ <- function(
   survey,
   wetdry = NULL,
   carbon = NULL,
+  nitrogen = NULL,
   ...,
-  measure = c("wet", "dry", "carbon"),
+  measure = c("wet", "dry", "carbon", "nitrogen"),
   per_area = TRUE,
   pool_by = NULL,
   new_levels = c("sample", "average"),
@@ -139,8 +142,14 @@ kb_predict_biomass_in_situ <- function(
   if (census) {
     .chk_census_size(weight, size)
   }
-  .chk_measure_fits(measure, wetdry, carbon)
-  fits <- list(weight = weight, size = if (!census) size, wetdry = wetdry, carbon = carbon)
+  .chk_measure_fits(measure, wetdry, carbon, nitrogen)
+  fits <- list(
+    weight = weight,
+    size = if (!census) size,
+    wetdry = wetdry,
+    carbon = carbon,
+    nitrogen = nitrogen
+  )
   .chk_derived_fits(fits)
   .chk_representative_site(weight, representative_sites(representative_site)$weight)
   .chk_summary_args(conf_level, estimate, sig_fig)
@@ -167,8 +176,9 @@ kb_predict_biomass_in_situ <- function(
     )
   }
   write_prediction_progress(progress_dir, 1L, 1L)
-  carbon_scale <- if (per_area) 1000 else 1
-  kg <- kg * measure_factor(measure, wetdry, carbon, carbon_scale = carbon_scale)
+  element_scale <- if (per_area) 1000 else 1
+  kg <- kg *
+    measure_factor(measure, wetdry, carbon, nitrogen, element_scale = element_scale)
   area <- if (per_area) grid$survey_area_m2
 
   if (is.null(pool_by)) {

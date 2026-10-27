@@ -1,5 +1,5 @@
-# The fit shared by the proportion models (wet/dry, carbon), identical across
-# species; the exported wrappers supply the species' data check, default priors,
+# The fit shared by the proportion models (wet/dry, carbon, nitrogen),
+# identical across species; the exported wrappers supply the species' data check, default priors,
 # and Stan data assembler (decisions/species-as-variant.md).
 fit_beta_model <- function(
   data,

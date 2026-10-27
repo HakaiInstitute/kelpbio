@@ -8,6 +8,7 @@ column_units <- c(
   dry_mass_g = "grams",
   sample_mass_mg = "milligrams",
   carbon_mass_ug = "micrograms",
+  nitrogen_mass_ug = "micrograms",
   canopy_area_m2 = "square metres",
   plot_area_m2 = "square metres",
   classified_area_m2 = "square metres",

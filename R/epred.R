@@ -39,6 +39,11 @@
   1 / (1 + exp(-lp))
 }
 
+#' @export
+.epred.kb_fit_nitrogen <- function(fit, lp, expectation = TRUE) {
+  1 / (1 + exp(-lp))
+}
+
 # No lognormal retransformation: the residual SD is error in the in situ
 # estimates, not variation in biomass.
 #' @export

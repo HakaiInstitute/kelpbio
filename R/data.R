@@ -32,6 +32,40 @@
 #' @family example datasets
 "data_carbon_sim_nereo"
 
+# Built by data-raw/data_nitrogen_sim_macro.R.
+#' Simulated Macrocystis nitrogen data
+#'
+#' A small simulated dataset of sample and nitrogen masses, one row per dried
+#' tissue sample, for runnable examples.
+#'
+#' @format A data frame with columns:
+#' \describe{
+#'   \item{sample_mass_mg}{Mass of the dried sample analysed (mg), a positive
+#'     number.}
+#'   \item{nitrogen_mass_ug}{Nitrogen measured in the sample (µg), a positive
+#'     number less than the sample mass.}
+#' }
+#' @seealso [fit_nitrogen_sim_macro] for a fit to this dataset.
+#' @family example datasets
+"data_nitrogen_sim_macro"
+
+# Built by data-raw/data_nitrogen_sim_nereo.R.
+#' Simulated Nereocystis nitrogen data
+#'
+#' A small simulated dataset of sample and nitrogen masses, one row per dried
+#' tissue sample, for runnable examples.
+#'
+#' @format A data frame with columns:
+#' \describe{
+#'   \item{sample_mass_mg}{Mass of the dried sample analysed (mg), a positive
+#'     number.}
+#'   \item{nitrogen_mass_ug}{Nitrogen measured in the sample (µg), a positive
+#'     number less than the sample mass.}
+#' }
+#' @seealso [fit_nitrogen_sim_nereo] for a fit to this dataset.
+#' @family example datasets
+"data_nitrogen_sim_nereo"
+
 # Built by data-raw/data_sim_nereo.R.
 #' Simulated Nereocystis size sample data
 #'

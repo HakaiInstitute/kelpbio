@@ -16,6 +16,20 @@ warn_carbon_fraction <- function(data, x_name) {
   invisible(data)
 }
 
+# 0.002 to 0.05 is the range of brown-algal tissue nitrogen (Duarte 1992;
+# Rosell and Srivastava 1985), the analysis project's exclusion bounds.
+warn_nitrogen_fraction <- function(data, x_name) {
+  fraction <- nitrogen_fraction(data)
+  n <- sum(fraction < 0.002 | fraction > 0.05)
+  if (n > 0L) {
+    cli::cli_warn(c(
+      "{n} sample{?s} in {x_name} {cli::qty(n)}{?has a/have} nitrogen fraction{?s} outside 0.002 to 0.05, the plausible range for kelp tissue.",
+      i = "Check that {.field nitrogen_mass_ug} is in micrograms and {.field sample_mass_mg} in milligrams."
+    ))
+  }
+  invisible(data)
+}
+
 # Past the tide limit (positive canopy at a tide height of at least one over
 # the slope) the corrected canopy is the cap, not the canopy measured. A row
 # warns when that holds on more than 5% of the slope's distribution, the share

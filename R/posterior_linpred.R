@@ -10,7 +10,7 @@
 #' @inheritParams posterior_epred.kb_fit
 #' @inheritParams params
 #' @param transform A flag specifying whether to apply the inverse link (`exp`,
-#'   or the inverse logit for wet/dry and carbon).
+#'   or the inverse logit for wet/dry, carbon, and nitrogen).
 #'
 #' @returns A draws-by-observations (`D x N`) matrix.
 #' @family fit methods

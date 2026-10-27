@@ -10,8 +10,9 @@ kb_predict_biomass_in_situ(
   survey,
   wetdry = NULL,
   carbon = NULL,
+  nitrogen = NULL,
   ...,
-  measure = c("wet", "dry", "carbon"),
+  measure = c("wet", "dry", "carbon", "nitrogen"),
   per_area = TRUE,
   pool_by = NULL,
   new_levels = c("sample", "average"),
@@ -35,16 +36,19 @@ census, a data frame of every counted plant, one row per plant (see
 \item{survey}{A data frame of in situ surveys, one row per survey (see
 \code{\link[=kb_check_data_in_situ]{kb_check_data_in_situ()}} for the columns).}
 
-\item{wetdry}{A \code{kb_fit_wetdry} object, required for dry and carbon biomass,
-or \code{NULL}.}
+\item{wetdry}{A \code{kb_fit_wetdry} object, required for dry, carbon, and
+nitrogen biomass, or \code{NULL}.}
 
 \item{carbon}{A \code{kb_fit_carbon} object, required for carbon biomass, or
 \code{NULL}.}
 
+\item{nitrogen}{A \code{kb_fit_nitrogen} object, required for nitrogen biomass,
+or \code{NULL}.}
+
 \item{...}{These dots are for future extensions and must be empty.}
 
-\item{measure}{A string, one of \code{"wet"}, \code{"dry"}, or \code{"carbon"}, giving the
-biomass to predict.}
+\item{measure}{A string, one of \code{"wet"}, \code{"dry"}, \code{"carbon"}, or
+\code{"nitrogen"}, giving the biomass to predict.}
 
 \item{per_area}{A flag specifying whether to give biomass per m² of the
 surveyed area, or else the biomass in that area.}
@@ -98,17 +102,18 @@ A \code{kb_predictions} object. Without \code{pool_by}, the rows of \code{survey
 (a numeric \code{year} or \code{survey_id} as character) with added
 \code{weight_support} and, with a size fit,
 \code{size_support} (as in \code{kb_predict_mean_weight()}), the draws of the
-biomass in a column named for it (\code{biomass_kg_m2}, \code{dry_biomass_kg_m2}, or
-\code{carbon_biomass_g_m2} per m², and \code{biomass_kg}, \code{dry_biomass_kg}, or
-\code{carbon_biomass_kg} in total), and
+biomass in a column named for it (\code{biomass_kg_m2}, \code{dry_biomass_kg_m2},
+\code{carbon_biomass_g_m2}, or \code{nitrogen_biomass_g_m2} per m², and
+\code{biomass_kg}, \code{dry_biomass_kg}, \code{carbon_biomass_kg}, or
+\code{nitrogen_biomass_kg} in total), and
 \code{estimate}, \code{lower}, and \code{upper}; with \code{pool_by}, one row per group with its
 \code{pool_by} columns, the support columns when \code{pool_by} includes \code{site} and
 \code{year}, the draws, and the summary.
 }
 \description{
 Combine a weight fit with the plants counted by each in situ survey into
-the biomass of the surveyed area: wet or dry (kg/m² or kg) or carbon
-(g C/m² or kg C).
+the biomass of the surveyed area: wet or dry (kg/m² or kg), or carbon or
+nitrogen (g/m² or kg).
 }
 \details{
 A plant is one individual (sporophyte), identified by its holdfast. Plant
@@ -124,8 +129,9 @@ has no biomass, and a message lists such surveys.
 }
 
 Dry biomass is wet biomass times the expected dry:wet ratio from \code{wetdry},
-and carbon dry biomass times the expected carbon fraction from \code{carbon}. The
-fits must be of the same species and have the same number of draws.
+and carbon or nitrogen dry biomass times the expected carbon fraction from
+\code{carbon} or nitrogen fraction from \code{nitrogen}. The fits must be of the same
+species and have the same number of draws.
 
 With \code{pool_by} and \code{per_area = TRUE}, a group's biomass per m² is its summed
 biomass over its summed \code{survey_area_m2}: an area-weighted mean, not the
@@ -170,11 +176,13 @@ Other prediction functions:
 \code{\link[=kb_predict_carbon]{kb_predict_carbon()}},
 \code{\link[=kb_predict_cover_calibration]{kb_predict_cover_calibration()}},
 \code{\link[=kb_predict_mean_weight]{kb_predict_mean_weight()}},
+\code{\link[=kb_predict_nitrogen]{kb_predict_nitrogen()}},
 \code{\link[=kb_predict_size]{kb_predict_size()}},
 \code{\link[=kb_predict_weight]{kb_predict_weight()}},
 \code{\link[=kb_predict_wetdry]{kb_predict_wetdry()}},
 \code{\link[=predict.kb_fit_carbon]{predict.kb_fit_carbon()}},
 \code{\link[=predict.kb_fit_cover_calibration]{predict.kb_fit_cover_calibration()}},
+\code{\link[=predict.kb_fit_nitrogen]{predict.kb_fit_nitrogen()}},
 \code{\link[=predict.kb_fit_size]{predict.kb_fit_size()}},
 \code{\link[=predict.kb_fit_weight]{predict.kb_fit_weight()}},
 \code{\link[=predict.kb_fit_wetdry]{predict.kb_fit_wetdry()}}

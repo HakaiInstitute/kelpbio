@@ -7,6 +7,15 @@
       2 samples in `d` have carbon fractions outside 0.10 to 0.50, the plausible range for kelp tissue.
       i Check that carbon_mass_ug is in micrograms and sample_mass_mg in milligrams.
 
+# warn_nitrogen_fraction counts samples outside 0.002 to 0.05 and keeps them
+
+    Code
+      out <- warn_nitrogen_fraction(odd, "`d`")
+    Condition
+      Warning:
+      2 samples in `d` have nitrogen fractions outside 0.002 to 0.05, the plausible range for kelp tissue.
+      i Check that nitrogen_mass_ug is in micrograms and sample_mass_mg in milligrams.
+
 # warn_dry_wet_ratio counts samples outside 0.02 to 0.5 and keeps them
 
     Code

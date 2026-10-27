@@ -1,7 +1,8 @@
 #' Posterior predictive draws
 #'
 #' Draws from the posterior predictive distribution: replicate responses
-#' (weights, plant sizes, dry:wet ratios, carbon fractions, or in situ survey biomass)
+#' (weights, plant sizes, dry:wet ratios, carbon or nitrogen fractions, or in
+#' situ survey biomass)
 #' carrying both parameter uncertainty and observation noise from the model's
 #' likelihood. With `new_data = NULL` the replicates are at the observed data,
 #' as plotted by [pp_check()][pp_check.kb_fit].
@@ -11,8 +12,8 @@
 #'
 #' The observation noise follows the fitted likelihood: Normal on log weight
 #' (*Nereocystis* weight), Gamma (*Macrocystis* weight), Weibull (*Nereocystis*
-#' size), Beta (wet/dry and carbon), and Normal censored at zero (cover
-#' calibration). For a cover calibration fit, each row's spread includes the SD
+#' size), Beta (wet/dry, carbon, and nitrogen), and Normal censored at zero
+#' (cover calibration). For a cover calibration fit, each row's spread includes the SD
 #' of its survey biomass, from a `biomass_sd_kg_m2` column or a
 #' `biomass_kg_m2` column of draws, and the residual alone when `new_data` has
 #' neither.
