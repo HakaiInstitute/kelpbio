@@ -507,6 +507,16 @@
   )
 }
 
+.chk_occupied_survey <- function(data, prior_only, call = rlang::caller_env()) {
+  if (.vld_occupied_survey(data, prior_only)) {
+    return(invisible(data))
+  }
+  cli::cli_abort(
+    "No survey with drone cover in {.arg data} has plants counted.",
+    call = call
+  )
+}
+
 .chk_observed_data <- function(fit, hint = NULL, call = rlang::caller_env()) {
   if (.vld_observed_data(fit)) {
     return(invisible(fit))

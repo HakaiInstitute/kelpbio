@@ -46,9 +46,10 @@ Parameter names are snake_case, applied by rule even where nothing would collide
 3. Group-level terms are `sd_<group>`, `<group>_effect`, and `z_<group>` (non-centred deviates) for `site`, `year`, and `site_year`.
 4. Distribution parameters take their standard names: `shape`, `dispersion` (negative binomial, variance `mu + dispersion * mu^2`), `precision` (Beta), `sd_residual`.
 5. A floor is `<quantity>_floor` (`weight_floor`, `biomass_floor`).
-6. Link-scale terms of a linear predictor take no scale prefix; a standalone scalar stored on a transformed scale takes `log_` or `logit_` (`logit_zero_inflation`).
-7. No parameter shares a name with a data field, an input column, a Stan reserved word (`lower`, `upper`, `offset`, `multiplier`, `target`), or a Stan function (`floor`, `gamma`, `beta`, `log`, `exp`).
-8. A parameter's prior entry in `kb_priors_*()` has the parameter's name.
+6. A second linear predictor in a model takes the rule names prefixed with the quantity it predicts (`presence_intercept`, `presence_cover_slope` for the cover calibration's presence part).
+7. Link-scale terms of a linear predictor take no scale prefix; a standalone scalar stored on a transformed scale takes `log_` or `logit_` (`logit_zero_inflation`).
+8. No parameter shares a name with a data field, an input column, a Stan reserved word (`lower`, `upper`, `offset`, `multiplier`, `target`), or a Stan function (`floor`, `gamma`, `beta`, `log`, `exp`).
+9. A parameter's prior entry in `kb_priors_*()` has the parameter's name.
 
 Stan data names: a field passing an input column through takes the column's name (`diameter_mm`, `area_m2`, `canopy_tide_height_m`); a derived field is named for its quantity (`log_biomass`, `dry_wet_ratio`); sizes are `n_obs`, `n_site`, `n_year`; flags keep `<effect>_on`.
 
@@ -93,8 +94,9 @@ Stan data names: a field passing an input column through takes the column's name
 | Cover calibration | `bCanopy` | `cover_slope` |
 | | `bFloor` | `biomass_floor` |
 | | `bTide` | `tide_height_slope` |
-| | `sBase` | `sd_residual` |
 | | `sCV` | `cv_residual` |
+| | `bPresent` | `presence_intercept` |
+| | `bPresentCover` | `presence_cover_slope` |
 | All with group effects | `sSite`, `sYear`, `sSiteYear` | `sd_site`, `sd_year`, `sd_site_year` |
 | | `bSite`, `bYear`, `bSiteYear` | `site_effect`, `year_effect`, `site_year_effect` |
 | | `z_bSite`, `z_bYear`, `z_bSiteYear` | `z_site`, `z_year`, `z_site_year` |

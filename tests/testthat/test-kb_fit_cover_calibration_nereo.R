@@ -26,8 +26,8 @@ test_that("kb_fit_cover_calibration_nereo returns a correctly-structured object"
       "cover_slope",
       "biomass_floor",
       "tide_height_slope",
-      "sd_residual",
       "cv_residual",
+      if (fit$meta$presence_on) c("presence_intercept", "presence_cover_slope"),
       "sd_site",
       "sd_year",
       "site_effect",
@@ -65,6 +65,31 @@ test_that("surveys past the tide limit under the prior warn at fit time", {
   expect_no_warning(kb_fit_cover_calibration_nereo(data, progress = "none"))
   data$canopy_tide_height_m[1] <- 3.5
   expect_warning(kb_fit_cover_calibration_nereo(data, progress = "none"), "tide prior")
+})
+
+test_that("an empty survey switches the presence part on, for either species", {
+  local_fit_stan_stub(cover_calibration_nereo_fit)
+  data <- input()
+  expect_true(any(posterior::draws_of(data$biomass_kg_m2) == 0))
+  fit <- kb_fit_cover_calibration_nereo(data, progress = "none")
+  expect_true(fit$meta$presence_on)
+  expect_true(all(c("presence_intercept", "presence_cover_slope") %in% fit$meta$terms$fixed))
+  expect_identical(capture_stan_data(cover_calibration_nereo_fit)$stan_data$presence_on, 1L)
+
+  occupied <- data[colSums(posterior::draws_of(data$biomass_kg_m2)) > 0, ]
+  fit <- kb_fit_cover_calibration_nereo(occupied, progress = "none")
+  expect_false(fit$meta$presence_on)
+  expect_false(any(c("presence_intercept", "presence_cover_slope") %in% fit$meta$terms$fixed))
+})
+
+test_that("empty surveys all below the occupied surveys in cover warn", {
+  local_fit_stan_stub(cover_calibration_nereo_fit)
+  data <- input()
+  empty <- colSums(posterior::draws_of(data$biomass_kg_m2)) == 0
+  data$canopy_area_m2[empty] <- 0
+  expect_warning(kb_fit_cover_calibration_nereo(data, progress = "none"), "presence_cover_slope")
+  data$canopy_area_m2[empty] <- data$plot_area_m2[empty]
+  expect_no_warning(kb_fit_cover_calibration_nereo(data, progress = "none"))
 })
 
 test_that("prior_only switches the likelihood off in the Stan data", {

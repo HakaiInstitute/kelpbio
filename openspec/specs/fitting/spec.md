@@ -145,6 +145,8 @@ Other columns SHALL be ignored. `kb_check_data_weight_nereo()`, `kb_check_data_w
 
 The site:year effect SHALL be included for every model with a site:year effect (weight and size; wet/dry, carbon, and nitrogen have no random effects, and the cover calibration has site and year effects but never a site:year effect), whatever years and sites the data cover. When no site was sampled in more than one year, which includes data from a single year, or no year had more than one site sampled, it SHALL be retained with a warning naming the main effect (site, year, or both) from which the site:year effect cannot be separated.
 
+The cover calibration SHALL include a presence part, for either species, when a survey it fits has a biomass of zero (no plants counted), and SHALL omit it otherwise. With the presence part, the probability that a survey holds plants SHALL be logit-linear in the plot's percent tide-corrected cover, and a survey's biomass SHALL follow the Gamma only where plants are present. The fit SHALL warn when every survey with no plants has a percent cover, before tide correction, at or below that of every survey with plants (ties included), saying that the presence slope then follows its prior and suggesting a tighter one; the warning SHALL NOT stop the fit. Data in which no survey with drone cover has plants SHALL error. A `prior_only` fit SHALL neither warn nor error on these grounds. The message is pinned by `tests/testthat/_snaps/warn.md`.
+
 An omitted effect SHALL not be reported or used in prediction (see summaries and predictions).
 
 #### Scenario: Single-year data fit site:year with a warning
@@ -167,6 +169,14 @@ An omitted effect SHALL not be reported or used in prediction (see summaries and
 - **WHEN** a cover calibration model is fitted to data spanning several years, including several plots in one site-year
 - **THEN** the fit has site and year effects, no site:year effect, and no site:year message or warning
 
+#### Scenario: An empty survey adds the presence part
+- **WHEN** a cover calibration model of either species is fitted to data holding a survey with no plants
+- **THEN** the fit has the presence parameters, and without such a survey it has none
+
+#### Scenario: Separated empty surveys warn
+- **WHEN** every survey with no plants has a percent canopy cover at or below every survey with plants
+- **THEN** the fit warns that the presence slope follows its prior
+
 ### Requirement: Priors
 
 `kb_priors_weight_nereo()`, `kb_priors_weight_macro()`, `kb_priors_size_nereo()`, `kb_priors_wetdry_nereo()`, `kb_priors_wetdry_macro()`, `kb_priors_carbon_nereo()`, `kb_priors_carbon_macro()`, `kb_priors_nitrogen_nereo()`, `kb_priors_nitrogen_macro()`, `kb_priors_cover_calibration_nereo()`, and `kb_priors_cover_calibration_macro()` SHALL return a named list of prior objects, the defaults pinned by `tests/testthat/test-kb_priors_*.R`. Each entry SHALL be named after the parameter it sets, the same name that parameter has in `tidy()`, `coef()`, `summary()`, and `kb_model_describe()`. The entries are:
@@ -175,7 +185,7 @@ An omitted effect SHALL not be reported or used in prediction (see summaries and
 - *Macrocystis* weight: `intercept`, `fronds_slope`, `shape`, `sd_site`, `sd_year`, and `sd_site_year`.
 - *Nereocystis* size: `intercept`, `shape`, `sd_site`, `sd_year`, and `sd_site_year`.
 - Wet/dry, carbon, and nitrogen, both species: `intercept` and `precision`.
-- Cover calibration, both species: `cover_slope` (lognormal), `biomass_floor`, `tide_height_slope`, `sd_residual`, `cv_residual`, `sd_site`, and `sd_year`.
+- Cover calibration, both species: `cover_slope` (lognormal), `biomass_floor`, `tide_height_slope`, `cv_residual`, `presence_intercept`, `presence_cover_slope`, `sd_site`, and `sd_year`; the presence entries apply only when the fit has a presence part.
 
 A list passed to `priors` SHALL override only the entries it contains. `kb_prior_normal()`, `kb_prior_exponential()`, and `kb_prior_lognormal()` SHALL validate their hyperparameters and print as the family with its hyperparameters.
 
@@ -243,7 +253,7 @@ The draws SHALL be a `posterior` `draws_rvars` object that works with `posterior
 
 The package SHALL ship simulated datasets `data_weight_sim_nereo`, `data_weight_sim_macro`, `data_size_sample_sim_nereo`, `data_wetdry_sim_nereo`, `data_wetdry_sim_macro`, `data_carbon_sim_nereo`, `data_carbon_sim_macro`, `data_nitrogen_sim_nereo`, `data_nitrogen_sim_macro`, `data_in_situ_sim_nereo`, `data_in_situ_sim_macro`, `data_size_census_sim_macro`, `data_canopy_sim_nereo`, and `data_canopy_sim_macro`, and small pre-fits `fit_weight_sim_nereo`, `fit_weight_sim_macro`, `fit_size_sim_nereo`, `fit_wetdry_sim_nereo`, `fit_wetdry_sim_macro`, `fit_carbon_sim_nereo`, `fit_carbon_sim_macro`, `fit_nitrogen_sim_nereo`, `fit_nitrogen_sim_macro`, `fit_cover_calibration_sim_nereo`, and `fit_cover_calibration_sim_macro`, for examples and tests, not inference. The bundled datasets and the data stored in the pre-fits SHALL use the input column names above. Real survey data and inference-grade fits SHALL NOT be bundled; they belong in the companion package `kelpbiodata`.
 
-For each species, the weight, size, survey, and canopy datasets SHALL be simulated from one set of true site-year values, with parameter values near those estimated from the Hakai Institute surveys, so that survey biomass from the bundled fits is of realistic magnitude and agrees with the bundled cover calibration. *Nereocystis* surveys SHALL carry tallied `plants`, with sizes from `data_size_sample_sim_nereo`; *Macrocystis* surveys SHALL have their plants in `data_size_census_sim_macro`. The sites SHALL have invented names that match no real survey site. The data sources SHALL cover different site-years, as in field programmes: surveys at most site-years, size at most of those, weight at a subset that includes sites never harvested, and drone cover on a subset of surveys, with at least one site-year holding more than one survey and at least one survey with no plants.
+For each species, the weight, size, survey, and canopy datasets SHALL be simulated from one set of true site-year values, with parameter values near those estimated from the Hakai Institute surveys, so that survey biomass from the bundled fits is of realistic magnitude and agrees with the bundled cover calibration. *Nereocystis* surveys SHALL carry tallied `plants`, with sizes from `data_size_sample_sim_nereo`; *Macrocystis* surveys SHALL have their plants in `data_size_census_sim_macro`. The sites SHALL have invented names that match no real survey site. The data sources SHALL cover different site-years, as in field programmes: surveys at most site-years, size at most of those, weight at a subset that includes sites never harvested, and drone cover on a subset of surveys, with at least one site-year holding more than one survey and at least one survey with no plants. A *Nereocystis* survey with no plants SHALL have drone cover above that of the lowest-cover survey with plants, so the bundled calibration estimates its presence part from the data.
 
 #### Scenario: Bundled objects work with the package
 - **WHEN** a bundled dataset is checked and a bundled fit is summarised or predicted from

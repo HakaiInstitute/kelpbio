@@ -97,21 +97,23 @@ test_that("carbon log_lik matches the Beta density of the fraction computed dire
   expect_equal(log_lik(carbon_macro_fit), expected, tolerance = 1e-10)
 })
 
-test_that("cover log_lik is the censored Normal density of the survey biomass", {
+test_that("cover log_lik is the hurdle Gamma density of the survey biomass", {
   fit <- cover_calibration_nereo_fit
+  expect_true(any(fit$data$biomass_kg_m2 == 0))
   mu <- exp(posterior_linpred(fit))
-  sd_residual <- as.vector(posterior::draws_of(fit$draws$sd_residual))
+  prob <- stats::plogis(posterior::draws_of(presence_logit(fit, fit$data)))
+  dim(prob) <- dim(mu)
   cv_residual <- as.vector(posterior::draws_of(fit$draws$cv_residual))
   y <- fit$data$biomass_kg_m2
-  biomass_sd <- fit$data$biomass_sd_kg_m2
+  weight_cv <- ifelse(y > 0, fit$data$biomass_sd_kg_m2 / y, 0)
   expected <- t(vapply(
     seq_len(nrow(mu)),
     function(d) {
-      sd <- sqrt(sd_residual[d]^2 + (cv_residual[d] * mu[d, ])^2 + biomass_sd^2)
+      shape <- 1 / (cv_residual[d]^2 + weight_cv^2)
       ifelse(
         y == 0,
-        stats::pnorm(0, mu[d, ], sd, log.p = TRUE),
-        stats::dnorm(y, mu[d, ], sd, log = TRUE)
+        log1p(-prob[d, ]),
+        log(prob[d, ]) + stats::dgamma(y, shape, shape / mu[d, ], log = TRUE)
       )
     },
     numeric(length(y))

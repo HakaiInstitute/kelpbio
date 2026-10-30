@@ -165,3 +165,17 @@ test_that("tide_cap_prior_share treats a prior off the support as its nearer bou
   expect_equal(tide_cap_prior_share(c(1, 1), c(1, 3), low), c(0, 0))
   expect_silent(warn_tide_cap(tide_cap_prior_share(1, 1, high), "`data`", "survey", "x", "y"))
 })
+
+test_that("warn_presence_separation warns only when no empty survey overlaps the occupied in cover", {
+  data <- data.frame(
+    canopy_area_m2 = c(0, 10, 50),
+    plot_area_m2 = 100,
+    biomass_kg_m2 = c(0, 1, 3)
+  )
+  expect_snapshot(warn_presence_separation(data, "`data`"))
+  data$canopy_area_m2[1] <- 10
+  expect_warning(warn_presence_separation(data, "`data`"), "presence")
+  data$canopy_area_m2[1] <- 20
+  expect_no_warning(warn_presence_separation(data, "`data`"))
+  expect_no_warning(warn_presence_separation(data[-1, ], "`data`"))
+})

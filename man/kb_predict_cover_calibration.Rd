@@ -72,8 +72,10 @@ for tide is passed with
 \code{canopy_tide_height_m = 0}. A row with no canopy predicts the biomass floor, which
 is the same for every site and year.
 
-The prediction is \code{mu}, the mean before censoring at zero, as used by
-\code{\link[=kb_predict_biomass_canopy]{kb_predict_biomass_canopy()}}. When \code{new_data = NULL}, the in situ survey biomass
+The prediction is the expected biomass: the Gamma mean \code{mu}, times the
+probability that the plot holds plants where the fit has a presence part.
+\code{\link[=kb_predict_biomass_canopy]{kb_predict_biomass_canopy()}} applies \code{mu} at full cover, without the
+presence probability. When \code{new_data = NULL}, the in situ survey biomass
 columns are kept; use \code{\link[=augment]{augment()}} for the fitted values next to them.
 }
 \examples{

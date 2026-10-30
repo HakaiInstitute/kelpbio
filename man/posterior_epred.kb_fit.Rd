@@ -54,8 +54,8 @@ Each draw is the expected response given that draw's parameters:
 \item \emph{Nereocystis} size: the Weibull mean.
 \item Wet/dry: the mean dry:wet ratio.
 \item Carbon: the mean carbon fraction.
-\item Cover calibration: \code{mu}, the mean wet biomass per m² of the Normal before
-censoring at zero.
+\item Cover calibration: the Gamma mean \code{mu}, times the probability that the
+plot holds plants where the fit has a presence part.
 }
 
 For draws that include observation noise, use \code{\link[=posterior_predict]{posterior_predict()}}.

@@ -233,6 +233,14 @@ test_that(".vld_log_axis needs positive values on each log axis", {
   expect_false(.vld_log_axis("y", p, "cover"))
 })
 
+test_that(".vld_occupied_survey needs a survey with plants unless prior_only", {
+  data <- data.frame(biomass_kg_m2 = c(0, 2))
+  expect_true(.vld_occupied_survey(data, prior_only = FALSE))
+  expect_false(.vld_occupied_survey(data[1, , drop = FALSE], prior_only = FALSE))
+  expect_true(.vld_occupied_survey(data[1, , drop = FALSE], prior_only = TRUE))
+  expect_true(.vld_occupied_survey(data[0, , drop = FALSE], prior_only = FALSE))
+})
+
 test_that(".vld_fit_rows needs rows unless prior_only", {
   expect_true(.vld_fit_rows(data.frame(x = 1), prior_only = FALSE))
   expect_true(.vld_fit_rows(data.frame(x = 1)[0, , drop = FALSE], prior_only = TRUE))

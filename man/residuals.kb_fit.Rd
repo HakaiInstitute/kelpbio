@@ -23,9 +23,10 @@ The deviance residual is computed per draw, then summarised with the posterior
 median. The likelihoods are Normal on log weight (\emph{Nereocystis} weight),
 Gamma on weight (\emph{Macrocystis} weight), Weibull on diameter (\emph{Nereocystis}
 size), Beta on the dry:wet ratio (wet/dry) and the carbon and nitrogen
-fractions (carbon, nitrogen), and Normal on in situ survey biomass censored
-at zero (cover calibration), where a survey with no plants takes minus the
-root of minus twice its log probability.
+fractions (carbon, nitrogen), and Gamma on in situ survey biomass (cover
+calibration). Where the cover calibration has a presence part, the residual
+combines the Bernoulli and Gamma deviances and is signed by the difference
+from the expected biomass.
 }
 \examples{
 residuals(fit_weight_sim_nereo)

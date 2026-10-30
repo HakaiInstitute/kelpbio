@@ -161,7 +161,9 @@ survey$survey_id <- paste(
 
 # Drone cover on the surveys of drone site-years: the cover model solved for the
 # true plot biomass, with plot-to-plot variation. Cover below zero is set to
-# zero and capped at 0.95; the empty survey's plot has no delineated canopy.
+# zero and capped at 0.95. The empty survey's plot has sparse canopy, above the
+# lowest occupied plots' cover, so the calibration's presence part can estimate
+# how presence rises with cover.
 i_grid <- match(paste(survey$site, survey$year), key)
 drone <- grid$drone[i_grid]
 n <- nrow(survey)
@@ -171,7 +173,7 @@ cover <- (grid$plot_biomass[i_grid] - b_cover_floor) /
   (b_canopy * exp(grid$e_cover[i_grid])) * exp(stats::rnorm(n, 0, 0.1))
 clipped <- cover > 0.95
 cover <- pmin(pmax(cover, 0), 0.95)
-cover[survey$plot_id == "3"] <- 0
+cover[survey$plot_id == "3"] <- 0.05
 canopy_area_m2 <- round(cover * plot_area_m2 * (1 - b_tide * canopy_tide_height_m), 2)
 survey$plot_area_m2 <- ifelse(drone, plot_area_m2, NA_real_)
 survey$canopy_area_m2 <- ifelse(drone, canopy_area_m2, NA_real_)

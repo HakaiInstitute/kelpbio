@@ -10,7 +10,7 @@ summarise_predictions <- function(
 ) {
   summarise_draws_rows(
     grid,
-    .epred(fit, linpred),
+    .epred(fit, linpred, grid = grid),
     group_vars,
     conf_level = conf_level,
     estimate = estimate,

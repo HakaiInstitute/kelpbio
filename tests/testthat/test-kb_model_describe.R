@@ -65,6 +65,8 @@ test_that("kb_model_describe renders the cover calibration model with each speci
   expect_snapshot(kb_model_describe(cover_calibration_nereo_fit))
   expect_snapshot(kb_model_describe(cover_calibration_macro_fit))
   expect_snapshot(kb_model_describe(cover_calibration_macro_fit, prose = TRUE))
+  # with the presence part
+  expect_snapshot(kb_model_describe(cover_calibration_nereo_fit, prose = TRUE))
 })
 
 test_that("kb_model_describe follows the power-law form", {

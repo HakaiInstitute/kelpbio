@@ -149,6 +149,12 @@ test_that(".chk_observed_data rejects a fit with no rows to predict at", {
   expect_invisible(.chk_observed_data(weight_nereo_fit))
 })
 
+test_that(".chk_occupied_survey errors when no survey has plants", {
+  data <- data.frame(biomass_kg_m2 = c(0, 2))
+  expect_invisible(.chk_occupied_survey(data, prior_only = FALSE))
+  expect_snapshot(error = TRUE, .chk_occupied_survey(data[1, , drop = FALSE], prior_only = FALSE))
+})
+
 test_that(".chk_fit_rows points zero-row data to prior_only", {
   data <- data.frame(x = 1)
   expect_invisible(.chk_fit_rows(data, prior_only = FALSE))

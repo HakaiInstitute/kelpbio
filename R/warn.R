@@ -46,6 +46,21 @@ warn_tide_cap <- function(share, x_name, rows, cap, basis) {
   invisible(share)
 }
 
+# When every empty survey has a percent cover at or below every occupied
+# survey's, the presence slope is set by its prior (HakaiInstitute/kelpbio#66).
+# The totals are unaffected, since they are evaluated at full cover.
+warn_presence_separation <- function(data, x_name) {
+  cover <- data$canopy_area_m2 / data$plot_area_m2
+  empty <- data$biomass_kg_m2 == 0
+  if (any(empty) && max(cover[empty]) <= min(cover[!empty])) {
+    cli::cli_warn(c(
+      "Every survey in {x_name} with no plants has a percent canopy cover at or below every survey with plants.",
+      i = "{.field presence_cover_slope} then follows its prior. Consider a tighter one, such as {.code kb_prior_normal(mean = 0, sd = 5)}."
+    ))
+  }
+  invisible(data)
+}
+
 # The share of slope draws on which each row is past the tide limit.
 tide_cap_share <- function(canopy_area_m2, canopy_tide_height_m, tide_height_slope) {
   slope <- as.vector(posterior::draws_of(tide_height_slope))

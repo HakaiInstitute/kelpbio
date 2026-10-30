@@ -49,7 +49,7 @@ test_that("cover posterior_predict draws biomass of at least zero", {
   expect_equal(ncol(pp), 2L)
   expect_true(all(pp >= 0))
   withr::local_seed(1)
-  wider <- posterior_predict(cover_calibration_nereo_fit, transform(nd, biomass_sd_kg_m2 = 5))
+  wider <- posterior_predict(cover_calibration_nereo_fit, transform(nd, biomass_kg_m2 = 1, biomass_sd_kg_m2 = 1))
   expect_gt(stats::sd(wider[, 2]), stats::sd(pp[, 2]))
 })
 

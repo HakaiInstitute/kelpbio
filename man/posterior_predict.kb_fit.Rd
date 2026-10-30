@@ -58,11 +58,12 @@ Site and year columns in \code{new_data} are handled as in \code{\link[=posterio
 
 The observation noise follows the fitted likelihood: Normal on log weight
 (\emph{Nereocystis} weight), Gamma (\emph{Macrocystis} weight), Weibull (\emph{Nereocystis}
-size), Beta (wet/dry, carbon, and nitrogen), and Normal censored at zero
-(cover calibration). For a cover calibration fit, each row's spread includes the SD
-of its survey biomass, from a \code{biomass_sd_kg_m2} column or a
-\code{biomass_kg_m2} column of draws, and the residual alone when \code{new_data} has
-neither.
+size), Beta (wet/dry, carbon, and nitrogen), and Gamma (cover calibration).
+A cover calibration fit with a presence part also draws whether each survey
+holds plants, and a survey drawn without plants is 0. Each row's spread
+includes the coefficient of variation of its survey biomass, from
+\code{biomass_kg_m2} and \code{biomass_sd_kg_m2} columns or a \code{biomass_kg_m2} column
+of draws, and the residual alone when \code{new_data} has neither.
 
 Repeated calls return different draws; use \code{set.seed()} to reproduce them.
 }

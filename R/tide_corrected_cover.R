@@ -9,3 +9,12 @@ tide_corrected_cover <- function(grid, tide_height_slope) {
   )
   canopy / grid$plot_area_m2
 }
+
+# The cover calibration's log odds that a plot holds plants (rvar, one element
+# per row of `grid`), as in inst/stan/cover_calibration.stan: the slope is per
+# percentage point of cover.
+presence_logit <- function(fit, grid) {
+  draws <- fit$draws
+  cover <- tide_corrected_cover(grid, draws$tide_height_slope)
+  draws$presence_intercept + draws$presence_cover_slope * 100 * cover
+}

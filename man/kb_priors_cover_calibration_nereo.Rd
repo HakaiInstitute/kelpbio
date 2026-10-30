@@ -11,9 +11,10 @@ A named list of prior objects with entries \code{cover_slope} (the wet
 biomass per m² at full tide-corrected canopy cover, at a typical site and
 year), \code{biomass_floor} (the wet biomass per m² at zero cover),
 \code{tide_height_slope} (the share of the zero-tide canopy area lost per metre
-of tide height), \code{sd_residual} (the constant part of the residual SD,
-kg/m²), \code{cv_residual} (the part of the residual SD proportional to the
-expected biomass), \code{sd_site}, and \code{sd_year}.
+of tide height), \code{cv_residual} (the coefficient of variation of survey
+biomass about its expected value), \code{presence_intercept} (the log odds that
+a plot with no canopy holds plants), \code{presence_cover_slope} (the change in
+those log odds per percentage point of cover), \code{sd_site}, and \code{sd_year}.
 }
 \description{
 The default priors for the \emph{Nereocystis luetkeana} cover calibration model. To
@@ -23,10 +24,11 @@ of \code{\link[=kb_fit_cover_calibration_nereo]{kb_fit_cover_calibration_nereo()
 \details{
 Each entry is named after the parameter it sets, as reported by \code{\link[=tidy]{tidy()}} and
 \code{\link[=kb_model_describe]{kb_model_describe()}}. The prior family of each entry is fixed (the cover
-slope prior is lognormal, the floor, tide, and \code{cv_residual} priors are
-Normal, and the standard deviations are Exponential); only its
-arguments can be changed. The floor and \code{cv_residual} priors are
-truncated at zero, and the tide prior at 0 and 0.5.
+slope prior is lognormal, the floor, tide, and presence priors are Normal,
+and \code{cv_residual} and the standard deviations are Exponential); only its
+arguments can be changed. The floor prior is truncated at zero, and the
+tide prior at 0 and 0.5. The presence priors apply only when the data hold
+a survey with no plants counted (see \code{\link[=kb_fit_cover_calibration_nereo]{kb_fit_cover_calibration_nereo()}}).
 }
 \examples{
 kb_priors_cover_calibration_nereo()

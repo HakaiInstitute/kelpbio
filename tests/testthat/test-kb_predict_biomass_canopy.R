@@ -179,7 +179,14 @@ test_that("high tides give finite, non-negative totals capped at the classified 
     transform(rows[1, ], canopy_area_m2 = 400),
     new_levels = "average"
   )
-  expect_equal(draws[, 4], posterior::draws_of(capped$biomass_kg)[, 1], ignore_attr = TRUE)
+  # The cap holds on the draws whose slope puts 5 m past the tide limit.
+  past <- as.vector(posterior::draws_of(fit$draws$tide_height_slope)) * 5 >= 1
+  expect_gt(mean(past), 0.5)
+  expect_equal(
+    draws[past, 4],
+    posterior::draws_of(capped$biomass_kg)[past, 1],
+    ignore_attr = TRUE
+  )
 })
 
 test_that("a numeric year matches the fitted year and pools as character", {

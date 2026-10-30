@@ -1,8 +1,7 @@
 "term","estimate","lower","upper"
-"cover_slope",11.1,5.49,18.5
-"biomass_floor",0.258,0.0203,0.7
-"tide_height_slope",0.227,0.174,0.287
-"sd_residual",0.141,0.00565,0.689
-"cv_residual",0.387,0.22,0.807
-"sd_site",0.233,0.0155,1.13
-"sd_year",0.245,0.0191,0.965
+"cover_slope",11.5,5.44,18.9
+"biomass_floor",0.287,0.0213,0.775
+"tide_height_slope",0.226,0.164,0.285
+"cv_residual",0.403,0.231,0.687
+"sd_site",0.224,0.0116,1.17
+"sd_year",0.227,0.0105,0.95

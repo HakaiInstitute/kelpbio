@@ -24,3 +24,14 @@ test_that("a plot past the tide limit is fully covered unless it has no canopy",
   expect_equal(cover[, 1], c(1, 1), ignore_attr = TRUE)
   expect_equal(cover[, 2], c(0, 0), ignore_attr = TRUE)
 })
+
+test_that("presence_logit is linear in percent tide-corrected cover", {
+  fit <- cover_calibration_nereo_fit
+  grid <- data.frame(canopy_area_m2 = c(0, 5), plot_area_m2 = 100, canopy_tide_height_m = 0)
+  logit_p <- posterior::draws_of(presence_logit(fit, grid))
+  dim(logit_p) <- c(nrow(logit_p), 2L)
+  intercept <- as.vector(posterior::draws_of(fit$draws$presence_intercept))
+  slope <- as.vector(posterior::draws_of(fit$draws$presence_cover_slope))
+  expect_equal(logit_p[, 1], intercept)
+  expect_equal(logit_p[, 2], intercept + slope * 5)
+})

@@ -70,13 +70,20 @@ row. Each survey with drone cover is one observation; surveys without it
 are not fitted, and a message gives their number. The calibration takes each
 survey's biomass per m² as that of its plot.
 
-A survey's mean wet biomass (kg/m²) is modelled with a Normal likelihood
-censored below at zero, so a survey with no plants counted enters as the
-probability of zero or less. Its mean is \code{mu = biomass_floor + cover_slope * exp(site_effect + year_effect) * cover}: \code{cover_slope} is the wet biomass per
-m² of canopy at a typical site and year, and \code{biomass_floor}, common to all
-sites and years, the wet biomass of a plot with no delineated canopy. Its SD
-is \code{sqrt(sd_residual^2 + (cv_residual * mu)^2 + biomass_sd^2)}, where
-\code{biomass_sd} is the SD of the survey's biomass draws, from plant weight.
+A survey's mean wet biomass (kg/m²) is modelled with a Gamma likelihood with
+mean \code{mu = biomass_floor + cover_slope * exp(site_effect + year_effect) * cover}: \code{cover_slope} is the wet biomass per m² of canopy at a typical site
+and year, and \code{biomass_floor}, common to all sites and years, the wet
+biomass of a plot with no delineated canopy. Its coefficient of variation
+(CV) is \code{sqrt(cv_residual^2 + weight_cv^2)}, where \code{weight_cv} is the CV of
+the survey's biomass draws, from plant weight.
+
+When \code{data} holds a survey with no plants counted, the model adds a
+presence part: a survey holds plants with probability \code{p}, where
+\code{logit(p) = presence_intercept + presence_cover_slope * 100 * cover}, and
+its biomass is Gamma only where it does, so the expected biomass is
+\code{p * mu}. The fit warns when every survey with no plants has a percent
+canopy cover at or below every survey with plants, since
+\code{presence_cover_slope} then follows its prior.
 
 \code{cover} is \code{canopy_area_m2 / (1 - tide_height_slope * canopy_tide_height_m)} over
 the plot area, capped at 1 (Timmer et al. 2024); a survey with canopy at a

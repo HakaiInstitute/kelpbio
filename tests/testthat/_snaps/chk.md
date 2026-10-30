@@ -74,6 +74,14 @@
       ! `representative_site` cannot name "size" with a size census.
       i A size census has no site effects; name only "weight".
 
+# .chk_occupied_survey errors when no survey has plants
+
+    Code
+      .chk_occupied_survey(data[1, , drop = FALSE], prior_only = FALSE)
+    Condition
+      Error:
+      ! No survey with drone cover in `data` has plants counted.
+
 # .chk_fit_rows points zero-row data to prior_only
 
     Code
