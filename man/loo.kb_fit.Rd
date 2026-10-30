@@ -47,7 +47,6 @@ Computing, 27, 1413-1432.
 \code{\link[=log_lik]{log_lik()}} for the pointwise log-likelihood.
 
 Other diagnostics:
-\code{\link[=create_priorsense_data.kb_fit]{create_priorsense_data.kb_fit()}},
 \code{\link[=kb_converged]{kb_converged()}},
 \code{\link[=kb_influence]{kb_influence()}},
 \code{\link[=kb_plot_trace]{kb_plot_trace()}},

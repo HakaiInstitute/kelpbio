@@ -54,7 +54,8 @@
 #' kb_predict_size(fit_size_sim_nereo, kb_new_data(fit_size_sim_nereo, by = "site"))
 kb_new_data <- function(fit, by = NULL, ...) {
   .chk_kb_fit_grouped(fit)
-  by <- .with_call(validate_by(by), rlang::current_env())
+  .with_call(.chk_by(by), rlang::current_env())
+  by <- by %||% character(0)
   dots <- rlang::list2(...)
   .with_call(.chk_grid_dots(fit, dots, by), rlang::current_env())
 

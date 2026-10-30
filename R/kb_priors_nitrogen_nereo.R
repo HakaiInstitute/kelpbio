@@ -4,6 +4,7 @@
 #' prior, pass a list of the entries to change to the `priors` argument of
 #' [kb_fit_nitrogen_nereo()]; the other entries keep their defaults.
 #'
+#' @details
 #' Each entry is named after the parameter it sets, as reported by [tidy()] and
 #' [kb_model_describe()]. The prior family of each entry is fixed (the intercept is Normal, the
 #' precision is Exponential); only its arguments can be changed.

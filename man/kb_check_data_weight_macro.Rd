@@ -22,13 +22,17 @@ Check that \code{data} contains the columns required to fit the \emph{Macrocysti
 pyrifera} weight model, with appropriate types and values.
 }
 \details{
-Required columns: whole-number \code{fronds} (> 0), numeric \code{weight_kg} (kg, > 0),
-factor or character \code{site}, and \code{year} (factor, character, or whole numbers),
-with no missing values.
+Required columns, with no missing values:
+\itemize{
+\item \code{fronds}, the number of fronds reaching 1 m above the holdfast, the size
+predictor (a whole number of at least 1).
+\item \code{weight_kg}, the plant's weight (kg, > 0).
+\item \code{site}, factor or character.
+\item \code{year}, factor, character, or whole numbers. A numeric \code{year} is used as
+its character level.
+}
 
-\code{fronds} is the number of fronds reaching 1 m above the holdfast, used as the
-size predictor. A numeric \code{year} is used as its character level. Other
-columns are ignored.
+Other columns are ignored.
 }
 \examples{
 data <- data.frame(

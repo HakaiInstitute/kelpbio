@@ -45,12 +45,8 @@
   if (.vld_new_data_weight_nereo(x)) {
     return(invisible(x))
   }
-  if (!is.data.frame(x)) {
-    cli::cli_abort("{x_name} must be a data frame.")
-  }
-  if (!"diameter_mm" %in% names(x)) {
-    cli::cli_abort("{x_name} must have a {.field diameter_mm} column.")
-  }
+  chk::chk_data(x, x_name = x_name)
+  chk::chk_superset(names(x), "diameter_mm", x_name = x_name)
   .chk_positive_measure(x$diameter_mm, x_name = column_xname(x_name, "diameter_mm"))
 }
 
@@ -140,12 +136,8 @@
   if (.vld_new_data_weight_macro(x)) {
     return(invisible(x))
   }
-  if (!is.data.frame(x)) {
-    cli::cli_abort("{x_name} must be a data frame.")
-  }
-  if (!"fronds" %in% names(x)) {
-    cli::cli_abort("{x_name} must have a {.field fronds} column.")
-  }
+  chk::chk_data(x, x_name = x_name)
+  chk::chk_superset(names(x), "fronds", x_name = x_name)
   .chk_frond_count(x$fronds, x_name = column_xname(x_name, "fronds"))
 }
 
@@ -156,7 +148,7 @@
   if (.vld_new_data_size(x)) {
     return(invisible(x))
   }
-  cli::cli_abort("{x_name} must be a data frame.")
+  chk::chk_data(x, x_name = x_name)
 }
 
 .chk_same_species <- function(fits, call = rlang::caller_env()) {
@@ -216,6 +208,25 @@
     c(
       "{.arg size} must have a {.field {predictor}} column, the predictor of {.arg weight}.",
       i = "{.arg weight} is a {.val {(.species_label(weight$meta$species))}} weight fit."
+    ),
+    call = call
+  )
+}
+
+.chk_size_input <- function(size, n_plants_given, call = rlang::caller_env()) {
+  if (.vld_size_input(size, n_plants_given)) {
+    return(invisible(size))
+  }
+  if (!is.data.frame(size)) {
+    cli::cli_abort(
+      "{.arg size} must be a {.cls kb_fit_size} object or a size census data frame.",
+      call = call
+    )
+  }
+  cli::cli_abort(
+    c(
+      "{.arg n_plants} applies only with a size fit.",
+      i = "With a size census, every plant's own size is used."
     ),
     call = call
   )
@@ -507,6 +518,21 @@
   )
 }
 
+# `rows` are the calibration rows, the surveys with drone cover; like
+# .chk_fit_rows(), but the user's data had rows and none had drone cover.
+.chk_drone_cover <- function(rows, prior_only, call = rlang::caller_env()) {
+  if (.vld_fit_rows(rows, prior_only)) {
+    return(invisible(rows))
+  }
+  cli::cli_abort(
+    c(
+      "No survey in {.arg data} has drone cover.",
+      i = "A survey has drone cover when {.field plot_area_m2}, {.field canopy_area_m2}, and {.field canopy_tide_height_m} are given."
+    ),
+    call = call
+  )
+}
+
 .chk_occupied_survey <- function(data, prior_only, call = rlang::caller_env()) {
   if (.vld_occupied_survey(data, prior_only)) {
     return(invisible(data))
@@ -527,34 +553,15 @@
   )
 }
 
-.chk_sensitivity_fit <- function(fit, call = rlang::caller_env()) {
-  if (.vld_sensitivity_fit(fit)) {
+# A fit with a likelihood: not prior-only, and fitted to observed data.
+# `consequence` completes "so ...", naming what cannot be done without one.
+.chk_likelihood_fit <- function(fit, consequence, call = rlang::caller_env()) {
+  if (.vld_likelihood_fit(fit)) {
     return(invisible(fit))
   }
-  if (isTRUE(fit$meta$prior_only)) {
-    cli::cli_abort(
-      "A prior-only fit has no likelihood, so its prior sensitivity cannot be assessed.",
-      call = call
-    )
-  }
+  kind <- if (isTRUE(fit$meta$prior_only)) "prior-only" else "zero-observation"
   cli::cli_abort(
-    "A zero-observation fit has no likelihood, so its prior sensitivity cannot be assessed.",
-    call = call
-  )
-}
-
-.chk_loo_fit <- function(fit, call = rlang::caller_env()) {
-  if (.vld_loo_fit(fit)) {
-    return(invisible(fit))
-  }
-  if (isTRUE(fit$meta$prior_only)) {
-    cli::cli_abort(
-      "A prior-only fit has no likelihood, so it cannot be cross-validated.",
-      call = call
-    )
-  }
-  cli::cli_abort(
-    "A zero-observation fit has no likelihood, so it cannot be cross-validated.",
+    "A {kind} fit has no likelihood, so {consequence}.",
     call = call
   )
 }
@@ -607,9 +614,7 @@
   if (.vld_cover_survey(x)) {
     return(invisible(x))
   }
-  if (!is.data.frame(x)) {
-    cli::cli_abort("{x_name} must be a data frame.")
-  }
+  chk::chk_data(x, x_name = x_name)
   chk::chk_superset(
     names(x),
     c("canopy_area_m2", "plot_area_m2", "canopy_tide_height_m"),
@@ -714,48 +719,30 @@
       "{column_xname(x_name, 'dry_mass_g')} must be less than {.field wet_mass_g}."
     )
   }
-  warn_dry_wet_ratio(data, x_name)
+  warn_tissue_ratio(data, "dry_wet", x_name)
   warn_implausible_units(data, x_name)
   invisible(data)
 }
 
-# The carbon data of either species.
-.chk_carbon_data <- function(data, x_name) {
+# The carbon or nitrogen data of either species.
+.chk_element_data <- function(data, element, x_name) {
+  mass <- paste0(element, "_mass_ug")
   chk::chk_data(data, x_name = x_name)
-  chk::chk_superset(
-    names(data),
-    c("sample_mass_mg", "carbon_mass_ug"),
-    x_name = x_name
+  chk::chk_superset(names(data), c("sample_mass_mg", mass), x_name = x_name)
+  .chk_measure_columns(data, c("sample_mass_mg", mass), x_name)
+  fraction <- switch(
+    element,
+    carbon = carbon_fraction(data),
+    nitrogen = nitrogen_fraction(data)
   )
-  .chk_measure_columns(data, c("sample_mass_mg", "carbon_mass_ug"), x_name)
-  # The carbon fraction must lie in (0, 1) for the Beta likelihood.
-  if (any(carbon_fraction(data) >= 1)) {
+  # The fraction must lie in (0, 1) for the Beta likelihood.
+  if (any(fraction >= 1)) {
     cli::cli_abort(c(
-      "{column_xname(x_name, 'carbon_mass_ug')} must be less than the sample mass.",
-      i = "Check that {.field carbon_mass_ug} is in micrograms and {.field sample_mass_mg} in milligrams."
+      "{column_xname(x_name, mass)} must be less than the sample mass.",
+      i = "Check that {.field {mass}} is in micrograms and {.field sample_mass_mg} in milligrams."
     ))
   }
-  warn_carbon_fraction(data, x_name)
-  invisible(data)
-}
-
-# The nitrogen data of either species.
-.chk_nitrogen_data <- function(data, x_name) {
-  chk::chk_data(data, x_name = x_name)
-  chk::chk_superset(
-    names(data),
-    c("sample_mass_mg", "nitrogen_mass_ug"),
-    x_name = x_name
-  )
-  .chk_measure_columns(data, c("sample_mass_mg", "nitrogen_mass_ug"), x_name)
-  # The nitrogen fraction must lie in (0, 1) for the Beta likelihood.
-  if (any(nitrogen_fraction(data) >= 1)) {
-    cli::cli_abort(c(
-      "{column_xname(x_name, 'nitrogen_mass_ug')} must be less than the sample mass.",
-      i = "Check that {.field nitrogen_mass_ug} is in micrograms and {.field sample_mass_mg} in milligrams."
-    ))
-  }
-  warn_nitrogen_fraction(data, x_name)
+  warn_tissue_ratio(data, element, x_name)
   invisible(data)
 }
 
@@ -928,9 +915,7 @@
   if (.vld_canopy_maps(x)) {
     return(invisible(x))
   }
-  if (!is.data.frame(x)) {
-    cli::cli_abort("{x_name} must be a data frame.")
-  }
+  chk::chk_data(x, x_name = x_name)
   chk::chk_superset(
     names(x),
     c("canopy_area_m2", "canopy_tide_height_m", "site", "year", "classified_area_m2"),
@@ -954,6 +939,18 @@
   cli::cli_abort(c(
     "{column_xname(x_name, 'canopy_area_m2')} must not exceed {.field classified_area_m2}.",
     i = "The canopy is found within the area the classification covered."
+  ))
+}
+
+.chk_by <- function(by) {
+  if (.vld_by(by)) {
+    return(invisible(by))
+  }
+  chk::chk_character(by)
+  valid <- .group_vars()
+  cli::cli_abort(c(
+    "Invalid {.arg by} value{?s}: {.val {setdiff(by, valid)}}.",
+    i = "Available grouping factors: {.val {valid}}."
   ))
 }
 
@@ -1080,4 +1077,27 @@
     ),
     call = call
   )
+}
+
+.chk_prior_entries <- function(priors, defaults, call = rlang::caller_env()) {
+  if (.vld_prior_entries(priors, defaults)) {
+    return(invisible(priors))
+  }
+  extra <- setdiff(names(priors), names(defaults))
+  if (length(extra)) {
+    cli::cli_abort(c(
+      "Unknown prior{?s} in {.arg priors}: {.field {extra}}.",
+      i = "Valid entries are {.field {names(defaults)}}."
+    ), call = call)
+  }
+  for (nm in names(priors)) {
+    family <- class(defaults[[nm]])[1]
+    if (!inherits(priors[[nm]], family)) {
+      cli::cli_abort(c(
+        "Prior {.field {nm}} has the wrong family.",
+        i = "Expected {.cls {family}}, not {.cls {class(priors[[nm]])[1]}}.",
+        i = "The prior family is fixed; a family change needs a different model."
+      ), call = call)
+    }
+  }
 }

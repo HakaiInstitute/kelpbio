@@ -25,15 +25,16 @@
 #' @section Resolving convergence failure:
 #'
 #' In order, try the following:
-#' 1. Increase `adapt_delta` through the `control` argument of the `kb_fit_*()`
-#'    functions (for example, `kb_fit_*(df, control = list(adapt_delta = 0.99))`). The
-#'    default `adapt_delta` value is 0.95. Higher values reduce divergent
-#'    transitions and can also resolve Rhat and effective sample size issues,
-#'    at the cost of a longer runtime.
-#' 2. Run longer: increase `niters`, or `nthin` to run more iterations while
-#'    saving the same number of draws. Both raise the effective sample sizes.
-#' 3. Narrow the priors on the random-effect standard deviations (`sd_site`,
-#'    `sd_year`, `sd_site_year`) through the `priors` argument.
+#' 1. For Rhat or effective sample sizes that fail their thresholds,
+#'    increase `niters` for more saved draws per chain, or increase `nthin` to
+#'    run more iterations while saving the same number of draws.
+#' 2. For divergent transitions, increase `adapt_delta` through the `control`
+#'    argument of the `kb_fit_*()` functions (for example,
+#'    `kb_fit_*(df, control = list(adapt_delta = 0.99))`; the default is 0.95).
+#'    A higher value makes the sampler take smaller steps, which reduces
+#'    divergent transitions at the cost of a longer runtime.
+#' 3. If either problem persists, check the data and the fit with
+#'    [pp_check()]: a unit mistake, outliers, or a poor fit can cause both.
 #'
 #' @references
 #' Vehtari, A., Gelman, A., Simpson, D., Carpenter, B., and Bürkner, P.-C.

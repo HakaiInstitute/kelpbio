@@ -3,14 +3,15 @@
 #' Check that `data` contains the columns required to fit the *Nereocystis
 #' luetkeana* wet/dry model, with appropriate types and values.
 #'
-#' Required columns: numeric `wet_mass_g` and `dry_mass_g` (g, > 0), with
-#' `dry_mass_g` less than `wet_mass_g` and no missing values.
-#'
 #' @details
-#' Each row is one tissue sample: `wet_mass_g` is its mass before drying and
-#' `dry_mass_g` after. A warning gives the number of samples whose dry:wet ratio
-#' falls outside 0.02 to 0.5, the plausible range for kelp tissue; they are kept,
-#' not removed. Other columns are ignored.
+#' Each row is one tissue sample. Required columns, with no missing values:
+#'
+#' - `wet_mass_g`, its mass before drying (g, > 0).
+#' - `dry_mass_g`, its mass after drying (g, > 0 and less than `wet_mass_g`).
+#'
+#' A warning gives the number of samples whose dry:wet ratio falls outside 0.02
+#' to 0.50, the plausible range for kelp tissue; they are kept, not removed.
+#' Other columns are ignored.
 #'
 #' @inheritParams params
 #' @param data A data frame of wet/dry observations, one row per sample.

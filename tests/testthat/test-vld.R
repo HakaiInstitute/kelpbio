@@ -293,3 +293,10 @@ test_that(".vld_id_column allows numeric year and survey_id only", {
   expect_true(.vld_id_column(factor("a"), "site"))
 })
 
+
+test_that(".vld_by accepts NULL or grouping factors only", {
+  expect_true(.vld_by(NULL))
+  expect_true(.vld_by(c("site", "year")))
+  expect_false(.vld_by("bogus"))
+  expect_false(.vld_by(1))
+})

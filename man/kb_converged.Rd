@@ -51,15 +51,16 @@ parameter by \code{posterior::summarise_draws(fit)}.
 
 In order, try the following:
 \enumerate{
-\item Increase \code{adapt_delta} through the \code{control} argument of the \verb{kb_fit_*()}
-functions (for example, \verb{kb_fit_*(df, control = list(adapt_delta = 0.99))}). The
-default \code{adapt_delta} value is 0.95. Higher values reduce divergent
-transitions and can also resolve Rhat and effective sample size issues,
-at the cost of a longer runtime.
-\item Run longer: increase \code{niters}, or \code{nthin} to run more iterations while
-saving the same number of draws. Both raise the effective sample sizes.
-\item Narrow the priors on the random-effect standard deviations (\code{sd_site},
-\code{sd_year}, \code{sd_site_year}) through the \code{priors} argument.
+\item For Rhat or effective sample sizes that fail their thresholds,
+increase \code{niters} for more saved draws per chain, or increase \code{nthin} to
+run more iterations while saving the same number of draws.
+\item For divergent transitions, increase \code{adapt_delta} through the \code{control}
+argument of the \verb{kb_fit_*()} functions (for example,
+\verb{kb_fit_*(df, control = list(adapt_delta = 0.99))}; the default is 0.95).
+A higher value makes the sampler take smaller steps, which reduces
+divergent transitions at the cost of a longer runtime.
+\item If either problem persists, check the data and the fit with
+\code{\link[=pp_check]{pp_check()}}: a unit mistake, outliers, or a poor fit can cause both.
 }
 }
 
@@ -80,7 +81,6 @@ Stan Development Team. Runtime warnings and convergence problems.
 }
 \seealso{
 Other diagnostics:
-\code{\link[=create_priorsense_data.kb_fit]{create_priorsense_data.kb_fit()}},
 \code{\link[=kb_influence]{kb_influence()}},
 \code{\link[=kb_plot_trace]{kb_plot_trace()}},
 \code{\link[=kb_sensitivity]{kb_sensitivity()}},

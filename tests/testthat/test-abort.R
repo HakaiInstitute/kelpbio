@@ -57,7 +57,7 @@ test_that("every internal generic has a default, and only display ones are total
     # .log_prior_density() dispatches on priors and has its own message.
     expect_error(
       do.call(fun, call_args),
-      "no (method|log density) for a <kb_fit_other>",
+      "[Nn]o (method|log density) for a <kb_fit_other>",
       info = generic
     )
   }

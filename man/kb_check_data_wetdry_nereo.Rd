@@ -22,13 +22,15 @@ Check that \code{data} contains the columns required to fit the \emph{Nereocysti
 luetkeana} wet/dry model, with appropriate types and values.
 }
 \details{
-Required columns: numeric \code{wet_mass_g} and \code{dry_mass_g} (g, > 0), with
-\code{dry_mass_g} less than \code{wet_mass_g} and no missing values.
+Each row is one tissue sample. Required columns, with no missing values:
+\itemize{
+\item \code{wet_mass_g}, its mass before drying (g, > 0).
+\item \code{dry_mass_g}, its mass after drying (g, > 0 and less than \code{wet_mass_g}).
+}
 
-Each row is one tissue sample: \code{wet_mass_g} is its mass before drying and
-\code{dry_mass_g} after. A warning gives the number of samples whose dry:wet ratio
-falls outside 0.02 to 0.5, the plausible range for kelp tissue; they are kept,
-not removed. Other columns are ignored.
+A warning gives the number of samples whose dry:wet ratio falls outside 0.02
+to 0.50, the plausible range for kelp tissue; they are kept, not removed.
+Other columns are ignored.
 }
 \examples{
 data <- data.frame(wet_mass_g = c(12.4, 58.7), dry_mass_g = c(1.1, 5.0))

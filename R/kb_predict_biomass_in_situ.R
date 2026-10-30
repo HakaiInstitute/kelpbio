@@ -109,24 +109,13 @@ kb_predict_biomass_in_situ <- function(
   chk::chk_flag(per_area)
   .with_call(.chk_progress_dir(progress_dir), rlang::current_env())
   .chk_kb_fit(weight, "kb_fit_weight")
-  if (!inherits(size, "kb_fit") && !is.data.frame(size)) {
-    cli::cli_abort(
-      "{.arg size} must be a {.cls kb_fit_size} object or a size census data frame."
-    )
-  }
+  .chk_size_input(size, n_plants_given = !missing(n_plants))
   census <- !inherits(size, "kb_fit")
   .chk_representative_site_fits(
     representative_site,
     if (census) "weight" else c("weight", "size")
   )
-  if (census) {
-    if (!missing(n_plants)) {
-      cli::cli_abort(c(
-        "{.arg n_plants} applies only with a size fit.",
-        i = "With a size census, every plant's own size is used."
-      ))
-    }
-  } else {
+  if (!census) {
     .chk_kb_fit(size, "kb_fit_size")
     .chk_observed_data(
       size,

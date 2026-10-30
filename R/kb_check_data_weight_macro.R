@@ -3,14 +3,17 @@
 #' Check that `data` contains the columns required to fit the *Macrocystis
 #' pyrifera* weight model, with appropriate types and values.
 #'
-#' Required columns: whole-number `fronds` (> 0), numeric `weight_kg` (kg, > 0),
-#' factor or character `site`, and `year` (factor, character, or whole numbers),
-#' with no missing values.
-#'
 #' @details
-#' `fronds` is the number of fronds reaching 1 m above the holdfast, used as the
-#' size predictor. A numeric `year` is used as its character level. Other
-#' columns are ignored.
+#' Required columns, with no missing values:
+#'
+#' - `fronds`, the number of fronds reaching 1 m above the holdfast, the size
+#'   predictor (a whole number of at least 1).
+#' - `weight_kg`, the plant's weight (kg, > 0).
+#' - `site`, factor or character.
+#' - `year`, factor, character, or whole numbers. A numeric `year` is used as
+#'   its character level.
+#'
+#' Other columns are ignored.
 #'
 #' @inheritParams kb_check_data_weight_nereo
 #' @inheritParams params

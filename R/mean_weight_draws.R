@@ -39,3 +39,43 @@ mean_weight_draws <- function(
   reporter$finish()
   out
 }
+
+# One representative_site per fit with site effects: a character vector applies
+# to every fit, a list gives each fit its own (NULL where it names none).
+representative_sites <- function(representative_site, fits = c("weight", "size")) {
+  out <- lapply(fits, function(fit) {
+    if (is.list(representative_site)) representative_site[[fit]] else representative_site
+  })
+  names(out) <- fits
+  out
+}
+
+# D x length(u) quantiles of one site-year's Weibull size distribution, per
+# draw, truncated above at `upper` and renormalised. `lp` has one value per draw.
+plant_sizes <- function(fit, lp, upper, u) {
+  shape <- as.vector(posterior::draws_of(fit$draws$shape))
+  scale <- weibull_scale(exp(lp), shape)
+  # shape and scale recycle down columns, so row d gets draw d's distribution.
+  p <- outer(stats::pweibull(upper, shape, scale), u)
+  matrix(stats::qweibull(p, shape, scale), nrow = length(lp))
+}
+
+# Mean expected weight of one site-year's plants, per draw (length D). `sizes`
+# is D x n_plants. `effects` (length D) is resolved by the caller over every
+# site-year at once, so a sampled new level is shared across them, and the
+# plants need no site or year.
+mean_plant_weight <- function(weight, sizes, effects) {
+  n <- ncol(sizes)
+  nchains <- posterior::nchains(weight$draws)
+  plants <- tibble::tibble(.rows = n)
+  plants[[weight$meta$predictor]] <- posterior::rvar(sizes, nchains = nchains)
+  plant_effects <- posterior::rvar(
+    matrix(effects, nrow = length(effects), ncol = n),
+    nchains = nchains
+  )
+  expected <- .epred(
+    weight,
+    .linpred(weight, plants, new_levels = "average", effects = plant_effects)
+  )
+  rowMeans(posterior::draws_of(expected))
+}

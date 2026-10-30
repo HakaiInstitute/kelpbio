@@ -116,7 +116,6 @@ reference:
     - kb_plot_trace
     - kb_sensitivity
     - kb_influence
-    - create_priorsense_data.kb_fit
     - prior_summary.kb_fit
     - log_lik.kb_fit
     - loo.kb_fit

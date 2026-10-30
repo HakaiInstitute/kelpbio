@@ -15,11 +15,10 @@
 augment.kb_fit <- function(x, ...) {
   rlang::check_dots_empty()
   .chk_kb_fit(x)
-  # One pass over the linear predictor for both columns.
-  mu <- .linpred_obs(x)
+  # Checked here so a zero-row fit's error names augment(), not fitted().
+  .chk_observed_data(x)
   out <- tibble::as_tibble(x$data)
-  out$fitted <- as.numeric(stats::median(.epred(x, mu, grid = x$data)))
-  res <- .eval_family(x, posterior::draws_of(mu), x$data, "res")
-  out$residual <- as.numeric(apply(res, 2L, stats::median))
+  out$fitted <- fitted(x)
+  out$residual <- residuals(x)
   out
 }

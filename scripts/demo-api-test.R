@@ -107,6 +107,7 @@ kb_samples(fit)
 # posterior's conversions and summaries accept the fit, as for brms or cmdstanr
 posterior::as_draws_df(fit)
 prior_summary(fit)
+as_draws(fit)
 # prior sensitivity (needs priorsense); each term is also the kb_priors_*()
 # entry to edit, and priorsense's own plots accept the fit
 kb_sensitivity(fit)
@@ -130,7 +131,7 @@ influence |> arrange(elpd_loo) |> head()
 # posterior predictive checks (bayesplot): replicated data against the observed
 # weights, and the same for deviance residuals
 pp_check(fit)
-pp_check(fit, "residual", ndraws = 20)
+pp_check(fit, "residual", ndraws = 10)
 
 # --- fitted / residuals / augment (observed-data diagnostics) -----------------
 # fitted values are expected (mean) weight: for the lognormal model that is the
@@ -433,7 +434,12 @@ fit_aliased <- kb_fit_weight_nereo(
 one_site <- data_weight_sim_nereo |>
   filter(site == "otter_cove") |>
   droplevels()
-fit_one_site <- kb_fit_weight_nereo(one_site, chains = 2, niters = 300, progress = "none")
+fit_one_site <- kb_fit_weight_nereo(
+  one_site,
+  chains = 2,
+  niters = 300,
+  progress = "none"
+)
 
 # how much the site and year effects depend on the sd_site_year prior
 kb_sensitivity(fit_one_year)
@@ -706,8 +712,14 @@ kb_check_data_in_situ(data_in_situ_sim_macro, data_size_census_sim_macro)
 kb_check_data_size_census_macro(data_size_census_sim_macro)
 # a numeric year is accepted; a repeated survey_id, or a tally next to a size
 # census: errors
-kb_check_data_in_situ(mutate(data_in_situ_sim_nereo, year = as.integer(as.character(year))))
-try(kb_check_data_in_situ(rbind(data_in_situ_sim_nereo, data_in_situ_sim_nereo[1, ])))
+kb_check_data_in_situ(mutate(
+  data_in_situ_sim_nereo,
+  year = as.integer(as.character(year))
+))
+try(kb_check_data_in_situ(rbind(
+  data_in_situ_sim_nereo,
+  data_in_situ_sim_nereo[1, ]
+)))
 try(kb_check_data_in_situ(data_in_situ_sim_nereo, data_size_census_sim_macro))
 
 # mean plant weight of each site-year from the weight and size fits; new
@@ -769,7 +781,10 @@ try(kb_predict_biomass_in_situ(
 # list names the sites per fit. fog_islet is in the size fit but not the
 # weight fit, so its weight_support is "year".
 survey_fog <- filter(data_in_situ_sim_nereo, site == "fog_islet")
-setdiff(fit_size_sim_nereo$meta$site_levels, fit_weight_sim_nereo$meta$site_levels)
+setdiff(
+  fit_size_sim_nereo$meta$site_levels,
+  fit_weight_sim_nereo$meta$site_levels
+)
 set.seed(1)
 kb_predict_biomass_in_situ(
   fit_weight_sim_nereo,
@@ -837,7 +852,10 @@ c(
 )
 
 # the coastwide and Hakai weight curves at a typical site
-kb_predict_weight(fit_weight_coastwide_nereo, kb_new_data(fit_weight_coastwide_nereo))
+kb_predict_weight(
+  fit_weight_coastwide_nereo,
+  kb_new_data(fit_weight_coastwide_nereo)
+)
 kb_predict_weight(fit_weight_hakai_nereo, kb_new_data(fit_weight_hakai_nereo))
 kb_predict_wetdry(fit_wetdry_hakai_nereo)
 kb_predict_carbon(fit_carbon_hakai_nereo)

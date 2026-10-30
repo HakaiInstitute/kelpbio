@@ -34,7 +34,8 @@
 #' each random effect.
 #'
 #' Requires the priorsense package. Its functions, such as
-#' `priorsense::powerscale_plot_dens()`, also accept a fit directly.
+#' `priorsense::powerscale_sensitivity()` and `priorsense::powerscale_plot_dens()`,
+#' also accept a fit directly, over the same parameters.
 #'
 #' @inheritParams params
 #' @param prior_threshold A number greater than 0: a parameter with `prior_cjs`
@@ -74,7 +75,7 @@ kb_sensitivity <- function(
   chk::chk_gt(prior_threshold)
   chk::chk_number(likelihood_threshold)
   chk::chk_gt(likelihood_threshold)
-  .chk_sensitivity_fit(fit)
+  .chk_likelihood_fit(fit, "its prior sensitivity cannot be assessed")
   rlang::check_installed("priorsense", reason = "to assess prior sensitivity.")
 
   terms <- fit$meta$terms$fixed

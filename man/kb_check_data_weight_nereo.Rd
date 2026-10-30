@@ -22,14 +22,19 @@ Check that \code{data} contains the columns required to fit the \emph{Nereocysti
 luetkeana} weight model, with appropriate types and values.
 }
 \details{
-Required columns: numeric \code{diameter_mm} (mm, > 0), numeric \code{weight_kg}
-(kg, > 0), factor or character \code{site}, and \code{year} (factor, character, or
-whole numbers), with no missing values.
-
-\code{diameter_mm} is a plant diameter that relates to weight as a power law,
+Required columns, with no missing values:
+\itemize{
+\item \code{diameter_mm}, a plant diameter that relates to weight as a power law,
 such as the maximum sub-bulb diameter, the diameter 15 cm below the
-sub-bulb, or the bulb diameter. Size data must use the same diameter. A
-numeric \code{year} is used as its character level. Other columns are ignored.
+sub-bulb, or the bulb diameter (mm, > 0). Size data must use the same
+diameter.
+\item \code{weight_kg}, the plant's weight (kg, > 0).
+\item \code{site}, factor or character.
+\item \code{year}, factor, character, or whole numbers. A numeric \code{year} is used as
+its character level.
+}
+
+Other columns are ignored.
 }
 \examples{
 data <- data.frame(

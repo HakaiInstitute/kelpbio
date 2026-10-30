@@ -274,7 +274,7 @@ test_that(".chk_cover_survey errors name the survey column", {
   bad <- good
   bad$canopy_tide_height_m <- "low"
   expect_error(.chk_cover_survey(bad), "canopy_tide_height_m")
-  expect_error(.chk_cover_survey(1), "must be a data frame")
+  expect_error(.chk_cover_survey(1), "must be a data.frame")
 })
 
 test_that(".chk_cover_survey checks biomass_sd_kg_m2 where present", {
@@ -302,7 +302,7 @@ test_that(".chk_canopy_maps errors name the survey column", {
   )
   expect_error(.chk_canopy_maps(transform(good, classified_area_m2 = 0)), "classified_area_m2")
   expect_error(.chk_canopy_maps(transform(good, year = NA)), "year")
-  expect_error(.chk_canopy_maps(1), "must be a data frame")
+  expect_error(.chk_canopy_maps(1), "must be a data.frame")
 })
 
 test_that(".chk_pool_by names a missing or non-grouping column", {
@@ -419,4 +419,10 @@ test_that(".chk_id_column allows numeric year and survey_id only", {
   expect_error(.chk_id_column(2021.5, "year", "`year`"), "year")
   expect_error(.chk_id_column(TRUE, "survey_id", "`survey_id`"), "character, factor, or numeric")
   expect_error(.chk_id_column(1, "site", "`site`"), "site")
+})
+
+test_that(".chk_by rejects a factor no model groups by", {
+  expect_invisible(.chk_by("site"))
+  expect_error(.chk_by("bogus"), "Invalid")
+  expect_error(.chk_by(1), "character")
 })

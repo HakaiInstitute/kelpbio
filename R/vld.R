@@ -152,11 +152,7 @@
   nrow(fit$data) > 0L
 }
 
-.vld_sensitivity_fit <- function(fit) {
-  !isTRUE(fit$meta$prior_only) && .vld_observed_data(fit)
-}
-
-.vld_loo_fit <- function(fit) {
+.vld_likelihood_fit <- function(fit) {
   !isTRUE(fit$meta$prior_only) && .vld_observed_data(fit)
 }
 
@@ -214,6 +210,11 @@
   weight$meta$predictor %in% names(size_census)
 }
 
+# A size fit, or a size census without n_plants (each plant's own size is used).
+.vld_size_input <- function(size, n_plants_given) {
+  inherits(size, "kb_fit") || (is.data.frame(size) && !n_plants_given)
+}
+
 .vld_measure_fits <- function(measure, wetdry, carbon, nitrogen) {
   (!measure %in% c("dry", "carbon", "nitrogen") || !is.null(wetdry)) &&
     (measure != "carbon" || !is.null(carbon)) &&
@@ -221,6 +222,10 @@
     (is.null(wetdry) || .vld_kb_fit(wetdry, "kb_fit_wetdry")) &&
     (is.null(carbon) || .vld_kb_fit(carbon, "kb_fit_carbon")) &&
     (is.null(nitrogen) || .vld_kb_fit(nitrogen, "kb_fit_nitrogen"))
+}
+
+.vld_by <- function(by) {
+  is.null(by) || (is.character(by) && all(by %in% .group_vars()))
 }
 
 .vld_pool_by <- function(pool_by, data) {
@@ -253,4 +258,14 @@
 .vld_log_axis <- function(log_axis, predictions, x) {
   (log_axis == "none" || .vld_log_y(predictions)) &&
     (log_axis != "xy" || .vld_log_x(predictions, x))
+}
+
+# Each prior entry names a default and keeps its family.
+.vld_prior_entries <- function(priors, defaults) {
+  all(names(priors) %in% names(defaults)) &&
+    all(vapply(
+      names(priors),
+      function(nm) inherits(priors[[nm]], class(defaults[[nm]])[1]),
+      logical(1)
+    ))
 }

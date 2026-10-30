@@ -58,7 +58,6 @@ Computing, 27, 1413-1432.
 \code{\link[=loo.kb_fit]{loo.kb_fit()}} for the full PSIS-LOO result.
 
 Other diagnostics:
-\code{\link[=create_priorsense_data.kb_fit]{create_priorsense_data.kb_fit()}},
 \code{\link[=kb_converged]{kb_converged()}},
 \code{\link[=kb_plot_trace]{kb_plot_trace()}},
 \code{\link[=kb_sensitivity]{kb_sensitivity()}},

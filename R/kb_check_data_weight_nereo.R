@@ -3,15 +3,19 @@
 #' Check that `data` contains the columns required to fit the *Nereocystis
 #' luetkeana* weight model, with appropriate types and values.
 #'
-#' Required columns: numeric `diameter_mm` (mm, > 0), numeric `weight_kg`
-#' (kg, > 0), factor or character `site`, and `year` (factor, character, or
-#' whole numbers), with no missing values.
-#'
 #' @details
-#' `diameter_mm` is a plant diameter that relates to weight as a power law,
-#' such as the maximum sub-bulb diameter, the diameter 15 cm below the
-#' sub-bulb, or the bulb diameter. Size data must use the same diameter. A
-#' numeric `year` is used as its character level. Other columns are ignored.
+#' Required columns, with no missing values:
+#'
+#' - `diameter_mm`, a plant diameter that relates to weight as a power law,
+#'   such as the maximum sub-bulb diameter, the diameter 15 cm below the
+#'   sub-bulb, or the bulb diameter (mm, > 0). Size data must use the same
+#'   diameter.
+#' - `weight_kg`, the plant's weight (kg, > 0).
+#' - `site`, factor or character.
+#' - `year`, factor, character, or whole numbers. A numeric `year` is used as
+#'   its character level.
+#'
+#' Other columns are ignored.
 #'
 #' @inheritParams params
 #' @param data A data frame of weight observations, one row per plant.

@@ -200,6 +200,7 @@ importFrom(rstantools,
   rstan_config
 )
 importFrom(stats,
+  fitted,
   nobs,
   residuals
 )
