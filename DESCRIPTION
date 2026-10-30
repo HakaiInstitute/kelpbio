@@ -4,7 +4,8 @@ Version: 0.0.0.9000
 Authors@R: c(
     person("Seb", "Dalgarno", , "seb@poissonconsulting.ca", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0002-3658-4517")),
-    person("Tula Foundation", role = c("fnd", "cph")))
+    person("Tula Foundation", role = c("fnd", "cph"))
+  )
 Description: Estimate wet, dry, and carbon biomass of Nereocystis
     luetkeana and Macrocystis pyrifera kelp beds from in situ surveys and
     canopy imagery, with compatibility intervals from Bayesian
@@ -14,19 +15,6 @@ License: MIT + file LICENSE
 URL: https://github.com/HakaiInstitute/kelpbio,
     https://hakaiinstitute.github.io/kelpbio/
 BugReports: https://github.com/HakaiInstitute/kelpbio/issues
-Encoding: UTF-8
-Roxygen: list(markdown = TRUE)
-Suggests:
-    kelpbiodata,
-    knitr,
-    priorsense,
-    rmarkdown,
-    testthat (>= 3.0.0),
-    vdiffr,
-    withr
-VignetteBuilder: knitr
-Config/testthat/edition: 3
-Biarch: true
 Depends:
     R (>= 4.2.0)
 Imports:
@@ -35,7 +23,7 @@ Imports:
     chk,
     cli,
     dplyr (>= 1.1.0),
-    extras,
+    extras (>= 0.10.0.9005),
     generics,
     ggplot2,
     loo,
@@ -49,6 +37,14 @@ Imports:
     rstan (>= 2.32.0),
     rstantools (>= 2.4.0),
     tibble
+Suggests:
+    kelpbiodata,
+    knitr,
+    priorsense,
+    rmarkdown,
+    testthat (>= 3.0.0),
+    vdiffr,
+    withr
 LinkingTo: 
     BH (>= 1.66.0),
     Rcpp (>= 0.12.0),
@@ -56,7 +52,15 @@ LinkingTo:
     RcppParallel (>= 5.0.1),
     rstan (>= 2.32.0),
     StanHeaders (>= 2.39.0)
-SystemRequirements: GNU make
+VignetteBuilder: 
+    knitr
+Remotes: 
+    poissonconsulting/extras
+Biarch: true
+Config/roxygen2/version: 8.1.0.9000
+Config/testthat/edition: 3
+Encoding: UTF-8
 LazyData: true
 LazyDataCompression: xz
-Config/roxygen2/version: 8.1.0.9000
+Roxygen: list(markdown = TRUE)
+SystemRequirements: GNU make
