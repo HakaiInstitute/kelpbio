@@ -868,15 +868,16 @@ try(kb_predict_mean_weight(fit_weight_coastwide_nereo, fit_size_sim_nereo))
 # The calibration takes survey biomass from kb_predict_biomass_in_situ() with
 # its defaults. Each survey with drone cover is one observation; the others are
 # left out with a message. Biomass is a floor plus a term proportional to
-# tide-corrected cover, Normal censored at zero, with an SD combining a
-# constant, a part proportional to the mean, and each survey's weight SD.
+# tide-corrected cover, Gamma with a CV combining a residual CV and each
+# survey's plant-weight CV. Data with an empty survey add a presence part, the
+# probability a survey holds plants rising with cover.
 
 kb_check_data_cover_calibration_nereo(biomass_n)
 # summed or dry biomass has no biomass_kg_m2 column of draws: an error
 try(kb_check_data_cover_calibration_nereo(select(biomass_n, -biomass_kg_m2)))
 
-# cover_slope, biomass_floor, tide_height_slope, sd_residual, cv_residual,
-# sd_site, sd_year
+# cover_slope, biomass_floor, tide_height_slope, cv_residual,
+# presence_intercept, presence_cover_slope, sd_site, sd_year
 kb_priors_cover_calibration_nereo()
 kb_priors_cover_calibration_macro() # macro differs in the floor and tide priors
 

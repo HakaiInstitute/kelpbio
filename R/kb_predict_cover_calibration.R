@@ -11,8 +11,10 @@
 #' `canopy_tide_height_m = 0`. A row with no canopy predicts the biomass floor, which
 #' is the same for every site and year.
 #'
-#' The prediction is `mu`, the mean before censoring at zero, as used by
-#' [kb_predict_biomass_canopy()]. When `new_data = NULL`, the in situ survey biomass
+#' The prediction is the expected biomass: the Gamma mean `mu`, times the
+#' probability that the plot holds plants where the fit has a presence part.
+#' [kb_predict_biomass_canopy()] applies `mu` at full cover, without the
+#' presence probability. When `new_data = NULL`, the in situ survey biomass
 #' columns are kept; use [augment()] for the fitted values next to them.
 #'
 #' @inheritParams params

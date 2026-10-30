@@ -71,38 +71,49 @@
   )
 }
 
-# Each survey's SD adds its biomass SD (from plant weight) to the residual. At
-# new data without it, replicates carry the residual alone.
+# Each survey's CV adds its plant-weight CV to the residual CV. At new data
+# without survey biomass, replicates carry the residual alone. With the
+# presence part, a survey holds plants with log odds `logit_p`.
 #' @export
 .obs_family.kb_fit_cover_calibration <- function(fit, grid) {
-  sd_residual <- .draw_vec(fit, "sd_residual")
   cv_residual <- .draw_vec(fit, "cv_residual")
-  biomass_sd <- survey_biomass_sd(grid)
+  weight_cv <- survey_weight_cv(grid)
+  shape <- function(d) 1 / (cv_residual[d]^2 + weight_cv^2)
+  response <- function(data) data$biomass_kg_m2
+  if (!.presence_on(fit)) {
+    return(list(
+      family = "gamma",
+      response = response,
+      pars = function(mu_d, d) list(shape = shape(d), rate = shape(d) / exp(mu_d))
+    ))
+  }
+  logit_p <- posterior::draws_of(presence_logit(fit, grid))
+  dim(logit_p) <- c(nrow(logit_p), nrow(grid))
   list(
-    family = "censored_normal",
-    response = function(data) data$biomass_kg_m2,
+    family = "hurdle_gamma",
+    response = response,
     pars = function(mu_d, d) {
-      mu <- exp(mu_d)
-      list(
-        mean = mu,
-        sd = sqrt(sd_residual[d]^2 + (cv_residual[d] * mu)^2 + biomass_sd^2)
-      )
+      list(logit_p = logit_p[d, ], shape = shape(d), rate = shape(d) / exp(mu_d))
     }
   )
 }
 
-# The SD of each row's survey biomass: the stored SD of a fitted survey, the
-# SD of a column of draws, or 0 when `grid` has neither.
-survey_biomass_sd <- function(grid) {
-  if ("biomass_sd_kg_m2" %in% names(grid)) {
-    return(as.numeric(grid$biomass_sd_kg_m2))
-  }
+# Each row's CV of survey biomass from plant weight, from a column of draws or
+# from the mean and SD columns of a fitted survey; 0 for a survey with no
+# biomass or when `grid` has neither.
+survey_weight_cv <- function(grid) {
   if (posterior::is_rvar(grid[["biomass_kg_m2"]])) {
     draws <- posterior::draws_of(grid$biomass_kg_m2)
     dim(draws) <- c(nrow(draws), nrow(grid))
-    return(apply(draws, 2L, stats::sd))
+    mean <- colMeans(draws)
+    sd <- apply(draws, 2L, stats::sd)
+  } else if (all(c("biomass_kg_m2", "biomass_sd_kg_m2") %in% names(grid))) {
+    mean <- as.numeric(grid$biomass_kg_m2)
+    sd <- as.numeric(grid$biomass_sd_kg_m2)
+  } else {
+    return(rep(0, nrow(grid)))
   }
-  rep(0, nrow(grid))
+  ifelse(mean > 0, sd / mean, 0)
 }
 
 # Evaluates the "log_lik", "res", or "ran" function at every draw of `mu`
@@ -134,10 +145,10 @@ survey_biomass_sd <- function(grid) {
       res = res_weibull,
       ran = ran_weibull
     ),
-    censored_normal = list(
-      log_lik = log_lik_censored_normal,
-      res = res_censored_normal,
-      ran = ran_censored_normal
+    hurdle_gamma = list(
+      log_lik = log_lik_hurdle_gamma,
+      res = res_hurdle_gamma,
+      ran = ran_hurdle_gamma
     ),
     beta = list(
       log_lik = extras::log_lik_beta,

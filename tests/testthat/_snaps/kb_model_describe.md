@@ -191,8 +191,9 @@
       Response: biomass_kg_m2, the mean wet biomass of an in situ survey (kg/m²), with SD biomass_sd_kg_m2 from plant weight
       
       Likelihood
-        biomass_kg_m2 ~ Normal(mu, sigma) censored below at 0
-        sigma = sqrt(sd_residual^2 + (cv_residual * mu)^2 + biomass_sd_kg_m2^2)
+        biomass_kg_m2 = 0 with probability 1 - p, else ~ Gamma(shape, shape / mu)
+        shape = 1 / (cv_residual^2 + weight_cv^2),  weight_cv = biomass_sd_kg_m2 / biomass_kg_m2
+        logit(p) = presence_intercept + presence_cover_slope * 100 * cover
         mu = biomass_floor
            + cover_slope * exp(year_effect[year] + site_effect[site]) * cover
         cover = min(1, canopy_area_m2 / (1 - tide_height_slope * canopy_tide_height_m) / plot_area_m2), and 1 where canopy_area_m2 > 0 and canopy_tide_height_m >= 1 / tide_height_slope
@@ -202,13 +203,14 @@
         site_effect[site] ~ Normal(0, sd_site)  site effect on log(cover_slope)
       
       Priors
-        cover_slope       ~ LogNormal(2, 1)
-        biomass_floor     ~ Normal(0, 0.1) T[0, ]
-        tide_height_slope ~ Normal(0.276, 0.04) T[0, 0.5]
-        sd_residual       ~ Exponential(2)
-        cv_residual       ~ Normal(0, 1) T[0, ]
-        sd_year           ~ Exponential(1)
-        sd_site           ~ Exponential(1)
+        cover_slope          ~ LogNormal(2, 1)
+        biomass_floor        ~ Normal(0, 0.2) T[0, ]
+        tide_height_slope    ~ Normal(0.276, 0.04) T[0, 0.5]
+        cv_residual          ~ Exponential(1)
+        presence_intercept   ~ Normal(0, 2)
+        presence_cover_slope ~ Normal(0, 20)
+        sd_year              ~ Exponential(1)
+        sd_site              ~ Exponential(1)
 
 ---
 
@@ -219,8 +221,8 @@
       Response: biomass_kg_m2, the mean wet biomass of an in situ survey (kg/m²), with SD biomass_sd_kg_m2 from plant weight
       
       Likelihood
-        biomass_kg_m2 ~ Normal(mu, sigma) censored below at 0
-        sigma = sqrt(sd_residual^2 + (cv_residual * mu)^2 + biomass_sd_kg_m2^2)
+        biomass_kg_m2 ~ Gamma(shape, shape / mu)
+        shape = 1 / (cv_residual^2 + weight_cv^2),  weight_cv = biomass_sd_kg_m2 / biomass_kg_m2
         mu = biomass_floor
            + cover_slope * exp(year_effect[year] + site_effect[site]) * cover
         cover = min(1, canopy_area_m2 / (1 - tide_height_slope * canopy_tide_height_m) / plot_area_m2), and 1 where canopy_area_m2 > 0 and canopy_tide_height_m >= 1 / tide_height_slope
@@ -233,8 +235,7 @@
         cover_slope       ~ LogNormal(2, 1)
         biomass_floor     ~ Normal(0.4, 0.3) T[0, ]
         tide_height_slope ~ Normal(0.227, 0.03) T[0, 0.5]
-        sd_residual       ~ Exponential(2)
-        cv_residual       ~ Normal(0, 1) T[0, ]
+        cv_residual       ~ Exponential(1)
         sd_year           ~ Exponential(1)
         sd_site           ~ Exponential(1)
 
@@ -249,12 +250,30 @@
       site and year. Canopy area was divided by one minus an estimated share per
       metre of tide height, and cover was capped at 1; plots with canopy at or
       above the tide height where that share reaches 1 were fully covered. The
-      likelihood was Normal, censored below at zero so that surveys with no
-      plants counted contributed the probability of zero or less, with a standard
-      deviation combining a constant, a part proportional to the mean, and the
-      survey's standard deviation from plant weight. Regularising priors were
-      placed on all parameters, with an informative prior on the tide correction
-      (see the notation form for the prior arguments).
+      likelihood was Gamma, with a coefficient of variation combining a residual
+      part and the survey's coefficient of variation from plant weight.
+      Regularising priors were placed on all parameters, with an informative
+      prior on the tide correction (see the notation form for the prior
+      arguments).
+
+---
+
+    Code
+      kb_model_describe(cover_calibration_nereo_fit, prose = TRUE)
+    Output
+      The mean wet biomass of each in situ survey was modelled as a biomass
+      floor, common to all sites and years, plus a term proportional to the
+      tide-corrected canopy cover of the survey's plot, whose slope varied by
+      site and year. Canopy area was divided by one minus an estimated share per
+      metre of tide height, and cover was capped at 1; plots with canopy at or
+      above the tide height where that share reaches 1 were fully covered. The
+      likelihood was Gamma, with a coefficient of variation combining a residual
+      part and the survey's coefficient of variation from plant weight. Surveys
+      with no plants counted entered through a presence part: the log odds that a
+      survey held plants were linear in its percent cover, and biomass was Gamma
+      only where plants were present. Regularising priors were placed on all
+      parameters, with an informative prior on the tide correction (see the
+      notation form for the prior arguments).
 
 # kb_model_describe follows the power-law form
 

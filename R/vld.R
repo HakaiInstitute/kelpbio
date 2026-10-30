@@ -143,6 +143,11 @@
   prior_only || nrow(data) > 0L
 }
 
+# The cover calibration's Gamma needs at least one survey with plants.
+.vld_occupied_survey <- function(data, prior_only) {
+  prior_only || !nrow(data) || any(data$biomass_kg_m2 > 0)
+}
+
 .vld_observed_data <- function(fit) {
   nrow(fit$data) > 0L
 }

@@ -20,5 +20,5 @@
 fitted.kb_fit <- function(object, ...) {
   rlang::check_dots_empty()
   .chk_kb_fit(object)
-  as.numeric(stats::median(.epred(object, .linpred_obs(object))))
+  as.numeric(stats::median(.epred(object, .linpred_obs(object), grid = object$data)))
 }

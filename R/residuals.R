@@ -8,9 +8,10 @@
 #' median. The likelihoods are Normal on log weight (*Nereocystis* weight),
 #' Gamma on weight (*Macrocystis* weight), Weibull on diameter (*Nereocystis*
 #' size), Beta on the dry:wet ratio (wet/dry) and the carbon and nitrogen
-#' fractions (carbon, nitrogen), and Normal on in situ survey biomass censored
-#' at zero (cover calibration), where a survey with no plants takes minus the
-#' root of minus twice its log probability.
+#' fractions (carbon, nitrogen), and Gamma on in situ survey biomass (cover
+#' calibration). Where the cover calibration has a presence part, the residual
+#' combines the Bernoulli and Gamma deviances and is signed by the difference
+#' from the expected biomass.
 #'
 #'
 #' @inheritParams params

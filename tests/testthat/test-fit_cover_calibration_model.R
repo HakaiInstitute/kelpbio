@@ -20,8 +20,8 @@ test_that("fit_cover_calibration_model builds a fit from the species' check and 
   expect_identical(
     fit$meta$terms$fixed,
     c(
-      "cover_slope", "biomass_floor", "tide_height_slope", "sd_residual",
-      "cv_residual", "sd_site", "sd_year"
+      "cover_slope", "biomass_floor", "tide_height_slope", "cv_residual",
+      "presence_intercept", "presence_cover_slope", "sd_site", "sd_year"
     )
   )
 })

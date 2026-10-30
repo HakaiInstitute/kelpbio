@@ -126,3 +126,12 @@
       2 rows in `d` are past the tide limit (canopy_tide_height_m at least 1 / tide_height_slope) on more than 5% of draws.
       i There the corrected canopy is the classified area, not the canopy measured. Fly at lower tides where possible.
 
+# warn_presence_separation warns only when no empty survey overlaps the occupied in cover
+
+    Code
+      warn_presence_separation(data, "`data`")
+    Condition
+      Warning:
+      Every survey in `data` with no plants has a percent canopy cover at or below every survey with plants.
+      i presence_cover_slope then follows its prior. Consider a tighter one, such as `kb_prior_normal(mean = 0, sd = 5)`.
+

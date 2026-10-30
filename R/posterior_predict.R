@@ -12,11 +12,12 @@
 #'
 #' The observation noise follows the fitted likelihood: Normal on log weight
 #' (*Nereocystis* weight), Gamma (*Macrocystis* weight), Weibull (*Nereocystis*
-#' size), Beta (wet/dry, carbon, and nitrogen), and Normal censored at zero
-#' (cover calibration). For a cover calibration fit, each row's spread includes the SD
-#' of its survey biomass, from a `biomass_sd_kg_m2` column or a
-#' `biomass_kg_m2` column of draws, and the residual alone when `new_data` has
-#' neither.
+#' size), Beta (wet/dry, carbon, and nitrogen), and Gamma (cover calibration).
+#' A cover calibration fit with a presence part also draws whether each survey
+#' holds plants, and a survey drawn without plants is 0. Each row's spread
+#' includes the coefficient of variation of its survey biomass, from
+#' `biomass_kg_m2` and `biomass_sd_kg_m2` columns or a `biomass_kg_m2` column
+#' of draws, and the residual alone when `new_data` has neither.
 #'
 #' Repeated calls return different draws; use `set.seed()` to reproduce them.
 #'

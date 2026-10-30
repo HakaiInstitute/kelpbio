@@ -10,8 +10,8 @@
 #' - *Nereocystis* size: the Weibull mean.
 #' - Wet/dry: the mean dry:wet ratio.
 #' - Carbon: the mean carbon fraction.
-#' - Cover calibration: `mu`, the mean wet biomass per m² of the Normal before
-#'   censoring at zero.
+#' - Cover calibration: the Gamma mean `mu`, times the probability that the
+#'   plot holds plants where the fit has a presence part.
 #'
 #' For draws that include observation noise, use [posterior_predict()].
 #'
@@ -48,5 +48,5 @@ posterior_epred.kb_fit <- function(
     call
   )
   res <- data_linpred(object, new_data, new_levels, representative_site, call = call)
-  posterior::draws_of(.epred(object, res$linpred))
+  posterior::draws_of(.epred(object, res$linpred, grid = res$grid))
 }

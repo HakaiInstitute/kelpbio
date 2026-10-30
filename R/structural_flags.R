@@ -5,3 +5,7 @@
 .site_year_on <- function(fit) {
   isTRUE(fit$meta$site_year_on)
 }
+
+.presence_on <- function(fit) {
+  isTRUE(fit$meta$presence_on)
+}

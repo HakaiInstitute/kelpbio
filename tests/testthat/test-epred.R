@@ -37,8 +37,12 @@ test_that("the wet/dry and carbon means are the inverse logit", {
   }
 })
 
-test_that("the cover calibration mean is mu, the inverse log, with no retransformation", {
-  lp <- lp_rvar(cover_calibration_nereo_fit, c(0.1, 0.5))
-  expect_equal(.epred(cover_calibration_nereo_fit, lp), exp(lp))
-  expect_equal(.epred(cover_calibration_nereo_fit, lp, expectation = FALSE), exp(lp))
+test_that("cover calibration expectation multiplies mu by the presence probability", {
+  fit <- cover_calibration_nereo_fit
+  grid <- data.frame(canopy_area_m2 = c(0, 5), plot_area_m2 = 100, canopy_tide_height_m = 0)
+  lp <- .linpred(fit, grid, new_levels = "average")
+  expect_equal(.epred(fit, lp, grid = grid), exp(lp) / (1 + exp(-presence_logit(fit, grid))))
+  expect_equal(.epred(fit, lp, expectation = FALSE, grid = grid), exp(lp))
+  fit$meta$presence_on <- FALSE
+  expect_equal(.epred(fit, lp, grid = grid), exp(lp))
 })

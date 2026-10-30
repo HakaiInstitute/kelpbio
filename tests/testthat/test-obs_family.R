@@ -65,10 +65,20 @@ test_that(".eval_family returns D x N for every type", {
   }
 })
 
-test_that("cover replicates take each survey's biomass SD, or none", {
+test_that("cover replicates take each survey's plant-weight CV, or none", {
   fit <- cover_calibration_nereo_fit
-  expect_equal(survey_biomass_sd(fit$data), fit$data$biomass_sd_kg_m2)
+  cv <- survey_weight_cv(fit$data)
+  occupied <- fit$data$biomass_kg_m2 > 0
+  expect_equal(cv[occupied], (fit$data$biomass_sd_kg_m2 / fit$data$biomass_kg_m2)[occupied])
+  expect_true(all(cv[!occupied] == 0))
   draws <- survey_biomass(mean = c(2, 1), sd = c(0.4, 0.1), site = "a", year = "2020")
-  expect_equal(survey_biomass_sd(draws), c(0.4, 0.1))
-  expect_equal(survey_biomass_sd(data.frame(canopy_area_m2 = 1:2)), c(0, 0))
+  expect_equal(survey_weight_cv(draws), c(0.2, 0.1), tolerance = 1e-6)
+  expect_equal(survey_weight_cv(data.frame(canopy_area_m2 = 1:2)), c(0, 0))
+})
+
+test_that("the cover family is a hurdle Gamma only with the presence part", {
+  fit <- cover_calibration_nereo_fit
+  expect_identical(.obs_family(fit, fit$data)$family, "hurdle_gamma")
+  fit$meta$presence_on <- FALSE
+  expect_identical(.obs_family(fit, fit$data)$family, "gamma")
 })

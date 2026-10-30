@@ -24,7 +24,7 @@ description, accessors, and the errors raised for unsupported objects.
 
 ### Requirement: Omitted effects are not reported
 
-An effect the fit omitted (the weight floor of a power-law fit) SHALL NOT appear in `tidy()`, `coef()`, `summary()`, or `kb_model_describe()`, since its draws never met the data.
+An effect the fit omitted (the weight floor of a power-law fit, the presence part of a cover calibration fitted without an empty survey) SHALL NOT appear in `tidy()`, `coef()`, `summary()`, or `kb_model_describe()`, since its draws never met the data.
 
 #### Scenario: An omitted effect is absent
 - **WHEN** a fit omitted the floor term
@@ -190,7 +190,7 @@ priorsense's functions SHALL accept a `kb_fit` directly, giving the same sensiti
 
 #### Scenario: Calibration replicates hold zeros
 - **WHEN** `pp_check(fit)` is called on a cover calibration fit
-- **THEN** the replicate surveys are censored at zero as the data are, and the x-axis is titled with the wet biomass per m²
+- **THEN** the replicate surveys hold zeros where the fit has a presence part, and the x-axis is titled with the wet biomass per m²
 
 #### Scenario: Residual check
 - **WHEN** `pp_check(fit, "residual")` is called

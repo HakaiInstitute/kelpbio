@@ -45,6 +45,13 @@ fit_cover_calibration_model <- function(
       call = call
     )
   }
+  .chk_occupied_survey(data, prior_only, call = call)
+  # A Gamma cannot take a zero, so a survey with nothing counted needs the
+  # presence part; without one there is nothing for it to fit.
+  presence_on <- any(data$biomass_kg_m2 == 0)
+  if (presence_on && !prior_only) {
+    warn_presence_separation(data, "`data`")
+  }
   priors <- resolve_priors(priors, defaults, call = call)
   warn_tide_cap(
     tide_cap_prior_share(data$canopy_area_m2, data$canopy_tide_height_m, priors$tide_height_slope),
@@ -56,10 +63,15 @@ fit_cover_calibration_model <- function(
   stan_data <- assemble_cover_calibration_data(
     data,
     priors,
-    prior_only = prior_only
+    prior_only = prior_only,
+    presence_on = presence_on
   )
 
-  parameters <- fit_parameters(priors, c("site_effect", "year_effect"))
+  parameters <- fit_parameters(
+    priors,
+    c("site_effect", "year_effect"),
+    off = if (!presence_on) c("presence_intercept", "presence_cover_slope")
+  )
   core <- fit_stan(
     stanmodels$cover_calibration,
     stan_data,
@@ -89,6 +101,7 @@ fit_cover_calibration_model <- function(
       # Most site-years hold one plot, so a site:year effect would be
       # confounded with the residual.
       site_year_on = FALSE,
+      presence_on = presence_on,
       response = "biomass_kg_m2",
       # Curves run over tide-corrected cover, a proportion of the plot, which
       # the data do not hold as a column (it depends on the fitted tide_height_slope).

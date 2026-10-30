@@ -306,9 +306,46 @@ kb_model_describe <- function(fit, ..., prose = FALSE) {
 }
 
 # One model for both species; the species differ only in their default priors.
+# The presence part is described only where the data held an empty survey.
 #' @export
 .model_spec.kb_fit_cover_calibration <- function(fit) {
   pri <- fit$meta$priors
+  presence <- .presence_on(fit)
+  gamma <- paste0(
+    "Gamma(shape, shape / mu)",
+    "\n  shape = 1 / (cv_residual^2 + weight_cv^2),  weight_cv = biomass_sd_kg_m2 / biomass_kg_m2"
+  )
+  likelihood <- if (presence) {
+    paste0(
+      "biomass_kg_m2 = 0 with probability 1 - p, else ~ ", gamma,
+      "\n  logit(p) = presence_intercept + presence_cover_slope * 100 * cover"
+    )
+  } else {
+    paste0("biomass_kg_m2 ~ ", gamma)
+  }
+  priors <- list(
+    cover_slope = pri$cover_slope,
+    biomass_floor = pri$biomass_floor,
+    tide_height_slope = pri$tide_height_slope,
+    cv_residual = pri$cv_residual,
+    presence_intercept = pri$presence_intercept,
+    presence_cover_slope = pri$presence_cover_slope,
+    sd_year = pri$sd_year,
+    sd_site = pri$sd_site
+  )
+  if (!presence) {
+    priors$presence_intercept <- NULL
+    priors$presence_cover_slope <- NULL
+  }
+  presence_prose <- if (presence) {
+    paste0(
+      "Surveys with no plants counted entered through a presence part: the ",
+      "log odds that a survey held plants were linear in its percent cover, ",
+      "and biomass was Gamma only where plants were present. "
+    )
+  } else {
+    ""
+  }
   list(
     title = "Cover calibration",
     species = .species_label(fit$meta$species),
@@ -316,10 +353,7 @@ kb_model_describe <- function(fit, ..., prose = FALSE) {
       "biomass_kg_m2, the mean wet biomass of an in situ survey (kg/m\u00b2), ",
       "with SD biomass_sd_kg_m2 from plant weight"
     ),
-    likelihood = paste0(
-      "biomass_kg_m2 ~ Normal(mu, sigma) censored below at 0",
-      "\n  sigma = sqrt(sd_residual^2 + (cv_residual * mu)^2 + biomass_sd_kg_m2^2)"
-    ),
+    likelihood = likelihood,
     mean_lhs = "mu",
     mean_terms = c("biomass_floor", "cover_slope * exp(year_effect[year] + site_effect[site]) * cover"),
     centering = paste0(
@@ -330,16 +364,8 @@ kb_model_describe <- function(fit, ..., prose = FALSE) {
       list(term = "year_effect[year]", sd = "sd_year", gloss = "year effect on log(cover_slope)"),
       list(term = "site_effect[site]", sd = "sd_site", gloss = "site effect on log(cover_slope)")
     ),
-    priors = list(
-      cover_slope = pri$cover_slope,
-      biomass_floor = pri$biomass_floor,
-      tide_height_slope = pri$tide_height_slope,
-      sd_residual = pri$sd_residual,
-      cv_residual = pri$cv_residual,
-      sd_year = pri$sd_year,
-      sd_site = pri$sd_site
-    ),
-    truncated = c("biomass_floor", "cv_residual"),
+    priors = priors,
+    truncated = "biomass_floor",
     bounded = c(tide_height_slope = paste0(" T[0, ", TIDE_SLOPE_UPPER, "]")),
     prose = paste0(
       "The mean wet biomass of each in situ survey was modelled as a biomass ",
@@ -348,13 +374,13 @@ kb_model_describe <- function(fit, ..., prose = FALSE) {
       "site and year. Canopy area was divided by one minus an estimated share ",
       "per metre of tide height, and cover was capped at 1; plots with canopy ",
       "at or above the tide height where that share reaches 1 were fully ",
-      "covered. The likelihood was ",
-      "Normal, censored below at zero so that surveys with no plants counted ",
-      "contributed the probability of zero or less, with a standard deviation ",
-      "combining a constant, a part proportional to the mean, and the ",
-      "survey's standard deviation from plant weight. Regularising priors were ",
-      "placed on all parameters, with an informative prior on the tide ",
-      "correction (see the notation form for the prior arguments)."
+      "covered. The likelihood was Gamma, with a coefficient of variation ",
+      "combining a residual part and the survey's coefficient of variation ",
+      "from plant weight. ",
+      presence_prose,
+      "Regularising priors were placed on all parameters, with an informative ",
+      "prior on the tide correction (see the notation form for the prior ",
+      "arguments)."
     )
   )
 }

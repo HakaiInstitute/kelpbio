@@ -18,7 +18,7 @@ augment.kb_fit <- function(x, ...) {
   # One pass over the linear predictor for both columns.
   mu <- .linpred_obs(x)
   out <- tibble::as_tibble(x$data)
-  out$fitted <- as.numeric(stats::median(.epred(x, mu)))
+  out$fitted <- as.numeric(stats::median(.epred(x, mu, grid = x$data)))
   res <- .eval_family(x, posterior::draws_of(mu), x$data, "res")
   out$residual <- as.numeric(apply(res, 2L, stats::median))
   out
