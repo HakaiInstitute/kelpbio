@@ -107,13 +107,18 @@ format: `survey_area_m2` is the area of the quadrats and `plants` the number of
 plants counted in them. For the estimate to be valid:
 
 - every plant reaching the surface within each quadrat is counted, and each
-  plant is counted only once;
+  plant is counted only once (for example, bulbs on the quadrat edge are
+  counted on two adjacent sides only);
 - within a defined plot area, quadrats are placed randomly or systematically
   (for example, along a transect line) without regard to where the kelp is;
+- counts and areas of the quadrats on one line or in one group are summed to
+  one row, since neighbouring quadrats are not independent;
+- counts are made at low slack tide, when the fewest bulbs are submerged;
 - the size sample is measured from plants reaching the surface.
 
 The estimate is then interpreted as the biomass of plants that reach the
-surface, not the total biomass of the site.
+surface, a lower bound on the total biomass of the site that is not directly
+comparable with diver-based estimates.
 
 #### Site-wide census
 
