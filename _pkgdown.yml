@@ -8,6 +8,13 @@ template:
     navbar-bg: "#2c3e50"
     navbar-dark: true
 
+articles:
+- title: Articles
+  navbar: ~
+  contents:
+    - articles/methods
+    - articles/advanced
+
 reference:
 - title: "Fitting models"
   desc: "Fit Bayesian Stan models."
@@ -73,10 +80,12 @@ reference:
     - data_nitrogen_sim_macro
     - data_in_situ_sim_nereo
     - data_in_situ_sim_macro
+    - data_size_census_sim_nereo
     - data_size_census_sim_macro
     - data_canopy_sim_nereo
     - data_canopy_sim_macro
     - fit_weight_sim_nereo
+    - fit_weight_sim_nereo_power
     - fit_weight_sim_macro
     - fit_size_sim_nereo
     - fit_wetdry_sim_nereo

@@ -2,7 +2,7 @@ test_that("kb_fit_size_nereo returns a correctly-structured object", {
   skip_on_cran()
   d <- droplevels(subset(
     data_size_sample_sim_nereo,
-    as.integer(site) <= 2 & as.character(year) %in% c("2019", "2020")
+    as.integer(site) <= 2 & as.character(year) %in% c("2020", "2025")
   ))
   fit <- kb_fit_size_nereo(
     d,
@@ -33,7 +33,7 @@ test_that("the fit records the species, response, and no predictor", {
 
 test_that("single-year data fit the site:year effect with an aliasing warning", {
   local_fit_stan_stub(size_nereo_fit)
-  d <- droplevels(subset(size_nereo_fit$data, as.character(year) == "2019"))
+  d <- droplevels(subset(size_nereo_fit$data, as.character(year) == "2025"))
   expect_warning(
     fit <- kb_fit_size_nereo(d, progress = "none"),
     "cannot be separated from the site effect"

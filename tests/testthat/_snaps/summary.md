@@ -6,7 +6,7 @@
       <summary_kb_fit>
       Model:     Weight (Nereocystis luetkeana)
       Predictor: diameter_mm, reference <value> (geometric mean)
-      Data:      320 observations; groups: site (4), year (5), site:year (16)
+      Data:      460 observations; groups: site (4), year (6), site:year (23)
       Draws:     2 chains, 300 post-warmup draws each (thin = 5), 600 total
       Converged: <value>
       

@@ -183,7 +183,7 @@ try(kb_new_data(fit, fronds = 5))
 # site or year levels by name: every site in 2021, or one site across years;
 # a level the fit has not seen is predicted as a new level
 kb_new_data(fit, by = "site", diameter_mm = 30, year = 2021)
-kb_new_data(fit, site = sites[1], year = 2019:2022, diameter_mm = 30)
+kb_new_data(fit, site = sites[1], year = 2022:2025, diameter_mm = 30)
 kb_new_data(fit, site = "new_reef", diameter_mm = 30)
 
 # predict at the grid: curves for the typical site and year, and by site
@@ -406,7 +406,7 @@ kb_progress(progress_dir) # 1 (complete)
 # (a) Single year of data: site:year cannot be separated from site, so the fit
 # warns naming the site effect (the warning shows whatever `progress` is).
 one_year <- data_weight_sim_nereo |>
-  filter(year == "2019") |>
+  filter(year == "2025") |>
   droplevels()
 fit_one_year <- kb_fit_weight_nereo(one_year, chains = 2, niters = 300)
 fit_one_year$meta$site_year_on # TRUE (fitted, with a warning)
@@ -417,10 +417,10 @@ fit_one_year$meta$site_year_on # TRUE (fitted, with a warning)
 aliased <- data_weight_sim_nereo |>
   mutate(year = as.character(year)) |>
   filter(
-    (site == "otter_cove" & year == "2019") |
-      (site == "gull_rock" & year == "2020") |
-      (site == "cedar_bay" & year == "2021") |
-      (site == "heron_reef" & year == "2022")
+    (site == "otter_cove" & year == "2020") |
+      (site == "gull_rock" & year == "2021") |
+      (site == "cedar_bay" & year == "2022") |
+      (site == "heron_reef" & year == "2023")
   ) |>
   droplevels()
 fit_aliased <- kb_fit_weight_nereo(

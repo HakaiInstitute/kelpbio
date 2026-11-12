@@ -2,7 +2,7 @@ test_that("kb_fit_weight_macro returns a correctly-structured object", {
   skip_on_cran()
   d <- droplevels(subset(
     data_weight_sim_macro,
-    as.integer(site) <= 2 & as.character(year) %in% c("2019", "2020")
+    as.integer(site) <= 2 & as.character(year) %in% c("2020", "2025")
   ))
   fit <- kb_fit_weight_macro(
     d,

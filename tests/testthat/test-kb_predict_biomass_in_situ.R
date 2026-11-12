@@ -49,7 +49,7 @@ test_that("a tallied survey with no plants has zero biomass", {
 
 test_that("census surveys sum each plant's expected weight, half for a partial plant", {
   survey <- tibble::tibble(
-    survey_id = c("s1", "s2"), site = "seal_ledge", year = "2019",
+    survey_id = c("s1", "s2"), site = "seal_ledge", year = "2025",
     survey_area_m2 = c(100, 50)
   )
   plants <- tibble::tibble(
@@ -63,7 +63,7 @@ test_that("census surveys sum each plant's expected weight, half for a partial p
   )
   expected <- posterior_epred(
     weight_macro_fit,
-    data.frame(site = "seal_ledge", year = "2019", fronds = c(4, 10)),
+    data.frame(site = "seal_ledge", year = "2025", fronds = c(4, 10)),
     new_levels = "average"
   )
   expect_equal(
@@ -119,7 +119,7 @@ test_that("per_area divides by the surveyed area", {
 
 test_that("carbon biomass is grams per m2 per area and kg as a total", {
   survey <- tibble::tibble(
-    survey_id = "s1", site = "seal_ledge", year = "2019", survey_area_m2 = 100
+    survey_id = "s1", site = "seal_ledge", year = "2025", survey_area_m2 = 100
   )
   plants <- tibble::tibble(survey_id = "s1", fronds = c(4, 10), partial = FALSE)
   predict <- function(...) {
@@ -151,7 +151,7 @@ test_that("carbon biomass is grams per m2 per area and kg as a total", {
 
 test_that("nitrogen biomass is grams per m2, as carbon is", {
   survey <- tibble::tibble(
-    survey_id = "s1", site = "seal_ledge", year = "2019", survey_area_m2 = 100
+    survey_id = "s1", site = "seal_ledge", year = "2025", survey_area_m2 = 100
   )
   plants <- tibble::tibble(survey_id = "s1", fronds = c(4, 10), partial = FALSE)
   predict <- function(...) {
@@ -249,7 +249,7 @@ test_that("a sampled new site is shared by the census plants of its site-year", 
   survey <- tibble::tibble(
     survey_id = c("s1", "s2", "s3"),
     site = c("new_reef", "new_reef", "other_reef"),
-    year = "2019",
+    year = "2025",
     survey_area_m2 = 100
   )
   plants <- tibble::tibble(survey_id = survey$survey_id, fronds = 10)
@@ -278,7 +278,7 @@ test_that("representative_site lends a fitted site's effects on both paths", {
 
   census <- function(site, ...) {
     survey <- tibble::tibble(
-      survey_id = "s1", site = site, year = "2019", survey_area_m2 = 100
+      survey_id = "s1", site = site, year = "2025", survey_area_m2 = 100
     )
     plants <- tibble::tibble(survey_id = "s1", fronds = c(4, 10))
     kb_predict_biomass_in_situ(weight_macro_fit, plants, survey, new_levels = "average", ...)
@@ -309,7 +309,7 @@ test_that("representative_site can name sites per fit on both paths", {
     tallied(representative_site = "otter_cove")
   )))
 
-  survey <- tibble::tibble(survey_id = "s1", site = "new_reef", year = "2019", survey_area_m2 = 100)
+  survey <- tibble::tibble(survey_id = "s1", site = "new_reef", year = "2025", survey_area_m2 = 100)
   plants <- tibble::tibble(survey_id = "s1", fronds = c(4, 10))
   expect_snapshot(
     kb_predict_biomass_in_situ(
@@ -377,7 +377,7 @@ test_that("numeric survey ids and years come back as character and pool by year"
 })
 
 test_that("a numeric survey id joins a census id written in full", {
-  survey <- tibble::tibble(survey_id = 100000, site = "seal_ledge", year = 2019, survey_area_m2 = 100)
+  survey <- tibble::tibble(survey_id = 100000, site = "seal_ledge", year = 2025, survey_area_m2 = 100)
   census <- tibble::tibble(survey_id = "100000", fronds = c(4, 10))
   p <- kb_predict_biomass_in_situ(weight_macro_fit, census, survey, new_levels = "average")
   expect_true(all(posterior::draws_of(p$biomass_kg_m2) > 0))

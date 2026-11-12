@@ -56,7 +56,7 @@ test_that("plant_sizes gives quantiles of each draw's truncated Weibull", {
 
 test_that("mean plant weight averages the weight model's expected weight", {
   site <- fitted_sites(weight_nereo_fit)
-  row <- tibble::tibble(site = site, year = "2019")
+  row <- tibble::tibble(site = site, year = "2025")
   nd <- posterior::ndraws(weight_nereo_fit$draws)
   sizes <- matrix(rep(c(20, 40), each = nd), nrow = nd)
   effects <- as.vector(posterior::draws_of(
@@ -65,7 +65,7 @@ test_that("mean plant weight averages the weight model's expected weight", {
   got <- mean_plant_weight(weight_nereo_fit, sizes, effects)
   expected <- rowMeans(posterior_epred(
     weight_nereo_fit,
-    data.frame(site = site, year = "2019", diameter_mm = c(20, 40)),
+    data.frame(site = site, year = "2025", diameter_mm = c(20, 40)),
     new_levels = "average"
   ))
   expect_equal(got, expected)

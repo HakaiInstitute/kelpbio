@@ -15,7 +15,7 @@ test_that("kb_predict_cover_calibration at the observed data matches augment", {
 test_that("predictions are returned at the supplied rows", {
   p <- kb_predict_cover_calibration(
     cover_calibration_nereo_fit,
-    cover_rows(site = fitted_sites(cover_calibration_nereo_fit, 2), year = "2019"),
+    cover_rows(site = fitted_sites(cover_calibration_nereo_fit, 2), year = "2025"),
     new_levels = "average"
   )
   expect_named(
@@ -43,7 +43,7 @@ test_that("zero canopy predicts the floor for every site and year", {
       plot_area_m2 = 200,
       canopy_tide_height_m = 0.5,
       site = fitted_sites(cover_calibration_macro_fit, 3),
-      year = c("2019", "2020", "2021")
+      year = c("2025", "2020", "2021")
     ),
     sig_fig = 8
   )
@@ -60,7 +60,7 @@ test_that("biomass increases with canopy and with tide height", {
       plot_area_m2 = 200,
       canopy_tide_height_m = c(0, 0, 1.5),
       site = fitted_sites(cover_calibration_nereo_fit),
-      year = "2019"
+      year = "2025"
     ),
     sig_fig = 8
   )
@@ -157,7 +157,7 @@ test_that("high tides give finite predictions and warn past the tide limit", {
   fit <- cover_calibration_nereo_fit
   rows <- function(canopy_area_m2, canopy_tide_height_m) {
     data.frame(
-      site = fitted_sites(fit), year = "2019", canopy_area_m2 = canopy_area_m2,
+      site = fitted_sites(fit), year = "2025", canopy_area_m2 = canopy_area_m2,
       plot_area_m2 = 200, canopy_tide_height_m = canopy_tide_height_m
     )
   }

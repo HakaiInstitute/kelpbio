@@ -8,7 +8,7 @@ test_that("errors from the shared checks name the prediction verb", {
 })
 
 test_that("the model verbs add a support column for rows with site and year", {
-  rows <- data.frame(site = c(fitted_sites(weight_nereo_fit), "new"), year = "2019")
+  rows <- data.frame(site = c(fitted_sites(weight_nereo_fit), "new"), year = "2025")
   weight <- kb_predict_weight(weight_nereo_fit, transform(rows, diameter_mm = 40))
   expect_identical(
     weight$weight_support,
@@ -22,7 +22,7 @@ test_that("the model verbs add a support column for rows with site and year", {
     cover_calibration_nereo_fit,
     data.frame(
       site = fitted_sites(cover_calibration_nereo_fit),
-      year = "2019",
+      year = "2025",
       canopy_area_m2 = 80,
       plot_area_m2 = 200,
       canopy_tide_height_m = 0.5

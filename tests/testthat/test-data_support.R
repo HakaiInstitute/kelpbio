@@ -26,13 +26,13 @@ test_that("cover_support names the data the cover fit has, without site-year", {
   support <- cover_support(
     fit,
     c(rep(fitted_sites(fit), 2), "new", "new"),
-    c("2019", "1999", "2019", "1999")
+    c("2025", "1999", "2025", "1999")
   )
   expect_identical(support, c("site, year", "site", "year", "none"))
 })
 
 test_that("with_support adds the fit's support column only for rows with site and year", {
-  rows <- data.frame(site = fitted_sites(weight_nereo_fit), year = "2019")
+  rows <- data.frame(site = fitted_sites(weight_nereo_fit), year = "2025")
   expect_named(with_support(rows, weight_nereo_fit), c("site", "year", "weight_support"))
   expect_named(with_support(rows, size_nereo_fit), c("site", "year", "size_support"))
   expect_named(

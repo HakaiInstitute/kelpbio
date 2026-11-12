@@ -76,7 +76,7 @@ test_that("a survey's total is the bed biomass per m2 times its canopy area", {
   fit <- cover_calibration_nereo_fit
   grid <- tibble::tibble(
     site = fitted_sites(fit),
-    year = "2019",
+    year = "2020",
     canopy_area_m2 = 250,
     canopy_tide_height_m = 0,
     classified_area_m2 = 1e6
@@ -95,7 +95,7 @@ test_that("the canopy is divided by one minus each draw's tide share", {
   fit <- cover_calibration_nereo_fit
   grid <- tibble::tibble(
     site = fitted_sites(fit),
-    year = "2019",
+    year = "2020",
     canopy_area_m2 = 100,
     canopy_tide_height_m = c(0, 1),
     classified_area_m2 = 1e6

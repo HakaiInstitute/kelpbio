@@ -204,6 +204,23 @@
 #' @family example datasets
 "data_canopy_sim_nereo"
 
+# Built by data-raw/data_sim_nereo.R.
+#' Simulated Nereocystis size census data
+#'
+#' A small simulated dataset of every plant counted by the otter_cove surveys
+#' in [data_in_situ_sim_nereo], one row per plant, for runnable examples.
+#'
+#' @format A data frame with columns:
+#' \describe{
+#'   \item{survey_id}{Survey the plant was counted in, matching its
+#'     `survey_id`.}
+#'   \item{diameter_mm}{Plant diameter (mm), a positive number.}
+#'   \item{partial}{Whether the plant is counted as half, a logical.}
+#' }
+#' @seealso [kb_check_data_size_census_nereo()] for the columns.
+#' @family example datasets
+"data_size_census_sim_nereo"
+
 # Built by data-raw/data_sim_macro.R.
 #' Simulated Macrocystis in situ survey data
 #'

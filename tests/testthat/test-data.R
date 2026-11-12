@@ -18,7 +18,21 @@ test_that("data_in_situ_sim_macro and data_size_census_sim_macro pass validation
   expect_named(data_size_census_sim_macro, c("survey_id", "fronds", "partial"))
   expect_silent(kb_check_data_in_situ(data_in_situ_sim_macro, data_size_census_sim_macro))
   expect_silent(kb_check_data_size_census_macro(data_size_census_sim_macro))
-  expect_equal(nlevels(data_in_situ_sim_macro$site), 12L)
+  expect_equal(nlevels(data_in_situ_sim_macro$site), 9L)
+})
+
+test_that("data_size_census_sim_nereo passes validation with its surveys", {
+  expect_named(data_size_census_sim_nereo, c("survey_id", "diameter_mm", "partial"))
+  expect_silent(kb_check_data_size_census_nereo(data_size_census_sim_nereo))
+  surveys <- data_in_situ_sim_nereo[
+    data_in_situ_sim_nereo$survey_id %in% data_size_census_sim_nereo$survey_id,
+  ]
+  expect_equal(
+    as.vector(table(data_size_census_sim_nereo$survey_id)[surveys$survey_id]),
+    surveys$plants
+  )
+  surveys$plants <- NULL
+  expect_silent(kb_check_data_in_situ(surveys, data_size_census_sim_nereo))
 })
 
 test_that("data_in_situ_sim_nereo has the expected columns and passes validation", {
@@ -30,13 +44,12 @@ test_that("data_in_situ_sim_nereo has the expected columns and passes validation
     )
   )
   expect_silent(kb_check_data_in_situ(data_in_situ_sim_nereo))
-  expect_equal(nlevels(data_in_situ_sim_nereo$site), 12L)
+  expect_equal(nlevels(data_in_situ_sim_nereo$site), 9L)
 })
 
 test_that("the survey datasets hold repeat surveys in a site-year and an empty survey", {
   for (survey in list(data_in_situ_sim_nereo, data_in_situ_sim_macro)) {
     expect_true(any(table(site_year_key(survey$site, survey$year)) > 1L))
-    expect_true(anyNA(survey$canopy_area_m2))
     expect_false(all(is.na(survey$canopy_area_m2)))
   }
   expect_true(any(data_in_situ_sim_nereo$plants == 0))
@@ -88,8 +101,8 @@ test_that("data_size_sample_sim_nereo has the expected columns and passes valida
   expect_s3_class(data_size_sample_sim_nereo, "data.frame")
   expect_named(data_size_sample_sim_nereo, c("diameter_mm", "site", "year"))
   expect_silent(kb_check_data_size_sample_nereo(data_size_sample_sim_nereo))
-  expect_equal(nlevels(data_size_sample_sim_nereo$site), 12L)
-  expect_equal(length(unique(data_size_sample_sim_nereo$year)), 5L)
+  expect_equal(nlevels(data_size_sample_sim_nereo$site), 9L)
+  expect_equal(length(unique(data_size_sample_sim_nereo$year)), 6L)
 })
 
 test_that("data_weight_sim_macro has the expected columns and passes validation", {
@@ -100,8 +113,8 @@ test_that("data_weight_sim_macro has the expected columns and passes validation"
 
 test_that("data_weight_sim_macro matches its documented format", {
   expect_gt(nrow(data_weight_sim_macro), 0L)
-  expect_equal(nlevels(data_weight_sim_macro$site), 12L)
-  expect_equal(length(unique(data_weight_sim_macro$year)), 5L)
+  expect_equal(nlevels(data_weight_sim_macro$site), 9L)
+  expect_equal(length(unique(data_weight_sim_macro$year)), 6L)
   expect_true(all(data_weight_sim_macro$fronds > 0))
   expect_true(all(
     data_weight_sim_macro$fronds == round(data_weight_sim_macro$fronds)
@@ -131,8 +144,8 @@ test_that("data_weight_sim_nereo has the expected columns and passes validation"
 
 test_that("data_weight_sim_nereo matches its documented format", {
   expect_gt(nrow(data_weight_sim_nereo), 0L)
-  expect_equal(nlevels(data_weight_sim_nereo$site), 12L)
-  expect_equal(length(unique(data_weight_sim_nereo$year)), 5L)
+  expect_equal(nlevels(data_weight_sim_nereo$site), 9L)
+  expect_equal(length(unique(data_weight_sim_nereo$year)), 6L)
   expect_true(all(data_weight_sim_nereo$diameter_mm > 0))
   expect_true(all(data_weight_sim_nereo$weight_kg > 0))
 })

@@ -30,10 +30,9 @@
 #' loo_weight <- loo(fit_weight_sim_nereo)
 #' loo_weight
 #' loo::pareto_k_values(loo_weight)
-#' @examplesIf interactive()
-#' # Compare the two forms of the Nereocystis weight model on the same data:
-#' fit_power <- kb_fit_weight_nereo(data_weight_sim_nereo, form = "power")
-#' loo_compare(loo(fit_weight_sim_nereo), loo(fit_power))
+#'
+#' # Compare the two forms of the Nereocystis weight model on the same data
+#' loo_compare(loo_weight, loo(fit_weight_sim_nereo_power))
 loo.kb_fit <- function(x, ...) {
   .chk_kb_fit(x)
   # error_call() names the generic, not the method.

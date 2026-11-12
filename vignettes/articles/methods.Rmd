@@ -1,0 +1,377 @@
+---
+title: "Methods"
+bibliography: references.bib
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.width = 7,
+  fig.height = 4
+)
+```
+
+```{r setup, include = FALSE}
+library(kelpbio)
+library(dplyr)
+library(ggplot2)
+```
+
+## Overview
+
+kelpbio estimates the biomass of *Nereocystis luetkeana* and *Macrocystis
+pyrifera* at a site in a year by combining several sub-models, each fitted to
+its own data:
+
+1. In situ biomass: weight and size models give the mean weight of the plants
+   counted in an in situ survey, which is converted to wet biomass per m² given
+   the fixed survey area.
+2. Cover calibration: a model relates estimated in situ biomass to the surface
+   canopy cover (%) within a plot bounding the in situ survey area, measured
+   from a canopy map (i.e., from aerial imagery).
+3. Total biomass: the cover calibration is applied to all surface canopy mapped
+   across the site.
+4. Dry, carbon, and nitrogen biomass: dry:wet ratio, carbon fraction, and
+   nitrogen fraction models convert the total biomass.
+
+<img src="../reference/figures/workflow.svg" alt="Flow diagram in three columns. Weight, size, and survey data feed the weight and size models and then survey biomass. Survey biomass, with plot cover, fits the cover calibration. The calibration and canopy data give total canopy biomass, which wet/dry, carbon, and nitrogen models, fitted to tissue samples, convert to dry, carbon, or nitrogen biomass." width="100%" />
+
+The sections below describe the data, the general modelling approach, and then
+each step in turn, including specific model descriptions.
+
+## Data collection
+
+kelpbio expects data collected in a specific way, and its estimates are
+interpreted according to how the data were collected.
+
+### Survey design
+
+At each site, an in situ survey counts plants within a survey area. All or some
+sample of the plants' sizes are measured (diameter for *Nereocystis* and number
+of fronds for *Macrocystis*). If a sample of plants is measured, a size model is
+required. For *Nereocystis*, diameter can refer to maximum sub-bulb diameter,
+diameter measured at some fixed distance below the bulb, or diameter of the bulb
+itself (i.e., any measure that can be related to weight with a power law
+allometric model). In the diagram below, the survey area is three parallel
+transects, each with a set length and swath width; other designs are possible as
+long as plants are counted within an area of known size.
+
+Surface canopy is mapped across the site (i.e., from aerial imagery), and the
+extent of the classified area is recorded; it caps the tide-corrected canopy
+(see Total biomass).
+
+Percent canopy cover within a plot (plot cover) is calculated for each in situ
+survey, where a plot is defined as the area bounding the in situ survey area.
+
+<img src="../reference/figures/survey-layout.svg" alt="Map of a site from above, with irregular kelp canopy polygons mapped across it. A plot about one tenth of the site is drawn tightly around the survey area. An inset shows the survey area from the side: plants rooted within it are counted, including plants below the surface, and plants rooted outside are not, even when their canopy drifts over." width="100%" />
+
+Three quantities link the in situ survey and the canopy map:
+
+- In situ biomass: the biomass per m² of the survey area (estimated from counts
+  and weight/size models).
+- Plot cover: the percent of the plot covered by mapped canopy.
+- Total biomass: the biomass of all canopy mapped within the site (estimated
+  from cover calibration model).
+
+The cover calibration, fitted to pairs of plot cover and estimated in situ
+biomass, converts the site's canopy to total biomass. It should be fitted to
+many surveys across sites and years, spread from low to high cover. More than
+one plot per site is recommended, since each adds information on how that site
+differs from the others. The plot should be drawn tightly around the survey
+area, so that its cover accurately describes the area surveyed.
+
+The figure below shows nine surveys, three sites by three years, and the
+calibration fitted to them. The biomass and plot cover values are illustrative.
+
+<img src="../reference/figures/cover-calibration.svg" alt="A grid of nine plots, three sites by three years, each showing the canopy within the plot and its survey area, with the plot cover and in situ biomass. A scatter plot shows the nine pairs of cover and biomass around the calibration line." width="100%" />
+
+### Timing
+
+kelpbio estimates biomass for a site in a year; its models have no effects for
+month or day of year. Estimates therefore describe the part of the season that
+the data come from, so they are most useful when surveys are timed consistently
+from year to year, typically at the peak of the season. If timing differs
+between years, a seasonal change appears as a change between years. If surveys
+within a year span the season, the seasonal change adds to the unexplained
+variation. Weight, size, survey, and canopy data for a site-year should all come
+from the same part of the season.
+
+### Alternative survey designs (*Nereocystis*)
+
+#### Counts from the surface
+
+The kelpbio modelling approach allows *Nereocystis* plants to be counted from
+the surface, for example in quadrats from a kayak. The data take the same
+format: `survey_area_m2` is the area of the quadrats and `plants` the number of
+plants counted in them. For the estimate to be valid:
+
+- every plant reaching the surface within each quadrat is counted, and each
+  plant is counted only once;
+- within a defined plot area, quadrats are placed randomly or systematically
+  (for example, along a transect line) without regard to where the kelp is;
+- the size sample is measured from plants reaching the surface.
+
+The estimate is then interpreted as the biomass of plants that reach the
+surface, not the total biomass of the site.
+
+#### Site-wide census
+
+kelpbio can also be used in the case of a full census, i.e., where all plants
+are counted and measured across the entire site (e.g., from high-resolution
+aerial imagery). In this case, the in situ biomass prediction is the total
+biomass (`kb_predict_biomass_in_situ()` with `per_area = FALSE`, and
+`survey_area_m2` the site area) and the cover calibration step is not necessary.
+
+## Modelling approach
+
+Each sub-model is a Bayesian model fitted with Stan [@carpenter_stan_2017]. A
+Bayesian model returns thousands of plausible values (draws) of each parameter,
+rather than one best value [@mcelreath_statistical_2020]. kelpbio uses the draws
+to:
+
+- Carry uncertainty through the steps and from one sub-model to the next. Every
+  prediction is computed for each draw, then summarised, so in situ biomass
+  carries the uncertainty of the weight and size models, and total biomass
+  carries uncertainty of the calibration model.
+- Include existing knowledge as priors, such as the published effect of tide
+  height on visible canopy (see Cover calibration).
+
+### Hierarchical effects
+
+Plants differ among sites and years. The weight, size, and cover calibration
+models are hierarchical: they estimate an effect for each site and each year
+(the weight and size models also each site-year), and the SD of each set of
+effects. This has two benefits:
+
+- A site or year with few data 'borrows' information from the others, so its
+  estimate is pulled toward the average.
+- A site, year, or site-year missing from a particular sub-model's data can
+  still be predicted. In this case the effect is drawn from the estimated
+  variation among levels, which widens its compatibility interval. For example,
+  a site with no harvested plants has a wider interval for its weight, by an
+  amount set by the variation among sites.
+
+The figure below shows the expected weight of a 40 mm *Nereocystis* plant in
+2025 at each site with weight data that year (black) and at a site without
+harvest data (red), with 95% compatibility intervals.
+
+```{r hierarchical, echo = FALSE, fig.alt = "Point estimates and 95% compatibility intervals of the expected weight of a 40 mm plant at each site with data in 2025, in black, and at a site without harvest data, in red, whose interval is wider."}
+fit <- fit_weight_sim_nereo
+rows <- data_weight_sim_nereo |>
+  filter(year == "2025") |>
+  distinct(site, year) |>
+  mutate(site = as.character(site)) |>
+  bind_rows(data.frame(site = "site without harvest data", year = "2025")) |>
+  mutate(diameter_mm = 40)
+
+set.seed(1)
+kb_predict_weight(fit, rows, new_levels = "sample") |>
+  mutate(
+    new = site == "site without harvest data",
+    site = factor(site, levels = rows$site)
+  ) |>
+  ggplot(aes(
+    x = site,
+    y = estimate,
+    ymin = lower,
+    ymax = upper,
+    colour = new
+  )) +
+  geom_pointrange() +
+  scale_colour_manual(values = c("black", "#aa2025"), guide = "none") +
+  labs(x = NULL, y = "Weight (kg)") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
+Each model below is shown as printed by `kb_model_describe()` followed by its
+key assumptions.
+
+## In situ biomass
+
+### *Nereocystis* weight model
+
+Plant weight increases with diameter as a power law above a weight floor
+[@packard_complex_2023], which is the weight as diameter approaches zero.
+
+```{r}
+kb_model_describe(fit_weight_sim_nereo)
+```
+
+Weight is modelled on the log scale, so the back-transformed mean is the median
+weight. Predictions multiply it by `exp(sd_residual^2 / 2)` to give the expected
+weight.
+
+Key assumptions:
+
+- The residual variation in log weight is normally distributed.
+- Weight is a power law in diameter plus a floor.
+- The weight above the floor varies by site, year, and site-year.
+- The floor and the power (i.e., scaling exponent) do not vary by site or year.
+
+### *Macrocystis* weight model
+
+Plant weight increases with the number of fronds as a power law.
+
+```{r}
+kb_model_describe(fit_weight_sim_macro)
+```
+
+Key assumptions:
+
+- Weight is Gamma distributed, with a constant coefficient of variation.
+- Weight is a power law in frond count.
+- The weight at a given frond count varies by site, year, and site-year.
+
+### *Nereocystis* size model
+
+*Nereocystis* plants are counted, but typically only a sample of them is
+measured. Plant diameters at a site in a year follow a Weibull distribution.
+*Macrocystis* surveys measure every plant counted (a size census), so they need
+no size model.
+
+```{r}
+kb_model_describe(fit_size_sim_nereo)
+```
+
+Key assumptions:
+
+- Diameter is Weibull distributed.
+- The mean diameter varies by site, year, and site-year.
+- The shape of the distribution is the same at all sites and years.
+- The measured plants are a random sample of the plants counted.
+
+### Mean plant weight
+
+The mean plant weight of a site-year is the weight model averaged over the
+site-year's size distribution. On each draw, 100 sizes spread evenly across the
+distribution (the midpoints of 100 equal-probability intervals) are each
+converted to a weight, and the weights averaged. Averaging weights, rather than
+taking the weight of the average size, matters because weight increases faster
+than diameter. This is known as Jensen's inequality. Sizes are limited to the
+largest diameter in the size data.
+
+```{r mean-weight, include = FALSE}
+mean_size <- kb_predict_size(fit_size_sim_nereo, data.frame(row = 1))$estimate
+weight_at_mean <- kb_predict_weight(
+  fit_weight_sim_nereo,
+  data.frame(diameter_mm = mean_size)
+)$estimate
+set.seed(1)
+mean_weight <- kb_predict_mean_weight(
+  fit_weight_sim_nereo,
+  fit_size_sim_nereo,
+  data.frame(row = 1),
+  new_levels = "average",
+  progress = "none"
+)$estimate
+```
+
+For a typical *Nereocystis* site-year, the mean plant weight is
+`r sprintf("%.2f", mean_weight)` kg, compared with
+`r sprintf("%.2f", weight_at_mean)` kg for a plant of mean size.
+
+### Survey biomass
+
+The in situ biomass of a survey with a size sample is
+
+```
+biomass_kg_m2 = plants * mean_weight_kg / survey_area_m2
+```
+
+With a size census, it is the sum of the counted plants' expected weights over
+the area surveyed. Every plant in the survey area is counted, so the uncertainty
+in in situ biomass is that of plant weight. The cover calibration takes each
+survey's estimate and SD.
+
+## Cover calibration
+
+The cover calibration relates the in situ biomass of each survey to the cover of
+its plot: biomass increases linearly with cover above a floor. The floor is the
+biomass not tracked by surface canopy, such as juveniles and submerged plants.
+
+The *Nereocystis* model is shown; the *Macrocystis* model is the same without
+the probability that a survey holds plants.
+
+```{r}
+kb_model_describe(fit_cover_calibration_sim_nereo)
+```
+
+Canopy is corrected to zero tide, since a rising tide submerges canopy. The
+proportion of canopy lost per metre of tide (`tide_height_slope`) is set by an
+informative prior from @timmer_capturing_2024; the calibration data do not
+inform it.
+
+Each survey's in situ biomass is itself an estimate. Its uncertainty from mean
+plant weight enters the model, so a less certain survey has less influence.
+
+Key assumptions:
+
+- In situ biomass is Gamma distributed, with a coefficient of variation that
+  combines residual variation and the survey's mean plant weight uncertainty.
+- In situ biomass represents the biomass per m² across the plot.
+- Expected biomass increases linearly with tide-corrected cover above a floor.
+- Biomass per unit of canopy varies by site and by year; the floor does not.
+- *Nereocystis* only: the probability that a survey holds any plants increases
+  with cover (hurdle component).
+
+## Total biomass
+
+The mapped surface canopy is assumed to be the known extent of the bed, so the
+floor biomass (i.e., biomass at 0% cover) is not applied outside of it. The
+total biomass of a site-year is the calibration at 100% cover (the expected
+biomass per m² of bed) times the tide-corrected canopy area:
+
+```
+biomass_kg = (biomass_floor + cover_slope * exp(site_effect + year_effect)) * corrected_canopy_area_m2
+corrected_canopy_area_m2 = canopy_area_m2 / (1 - tide_height_slope * canopy_tide_height_m)
+```
+
+Applying the calibrated biomass estimate at 100% cover across the site's mapped
+canopy relies on the model being linear. The biomass in a plot is
+`biomass_floor` times the plot area plus `cover_slope` multiplied by the canopy
+area, so the canopy term does not depend on the size of the plot drawn around
+it. A nonlinear calibration (e.g., power law model with scaling exponent not
+equal to 1) would give a total that changed with the size of the area over which
+percent cover is measured.
+
+The corrected canopy area is capped at the water area the imagery classified.
+The *Nereocystis* probability that a survey holds plants is not applied, since
+mapped canopy is taken to hold plants. The interval is for the expected total:
+it includes the uncertainty in the calibration and its site and year effects,
+not the scatter of individual surveys around it.
+
+<img src="../reference/figures/canopy-total.svg" alt="Three panels. First, the canopy mapped across a site as imaged at a tide height. Second, the same canopy corrected for tide, larger because canopy hidden by the tide is added, and capped at the site's water area. Third, the overall calibration read at full cover gives the biomass per square metre of canopy. Total biomass is that value times the corrected canopy area." width="100%" />
+
+## Dry, carbon, and nitrogen biomass
+
+The dry:wet ratio, carbon fraction, and nitrogen fraction of tissue samples
+share one model form, shown here for the dry:wet ratio.
+
+```{r}
+kb_model_describe(fit_wetdry_sim_nereo)
+```
+
+Key assumptions:
+
+- The ratio or fraction is Beta distributed.
+- The mean is the same for all samples, whatever their site, month, or tissue.
+
+Wet biomass, in situ or total, is converted with the expected ratio and
+fractions:
+
+```
+dry_biomass = biomass * dry_wet_ratio
+carbon_biomass = dry_biomass * carbon_fraction
+nitrogen_biomass = dry_biomass * nitrogen_fraction
+```
+
+## Estimates and convergence
+
+- The estimate is the median of the draws, and the lower and upper limits their
+  2.5% and 97.5% quantiles, a 95% compatibility interval [@rafi_semantic_2020].
+- A model has converged when every parameter has an Rhat below 1.01 and an
+  effective sample size of at least 100 per chain, and at most 0.2% of draws are
+  divergent transitions [@vehtari_rank-normalization_2021].
+
+## References

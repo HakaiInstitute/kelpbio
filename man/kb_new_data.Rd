@@ -48,7 +48,7 @@ single predictor value gives one row per group at that value.
 
 To fix a grouping factor at chosen levels, supply them by name in \code{...}, for
 example \code{year = 2021} with \code{by = "site"} for every fitted site in 2021, or
-\verb{site = "otter_cove", year = 2019:2022}. Each value is crossed with the rest
+\verb{site = "otter_cove", year = 2022:2025}. Each value is crossed with the rest
 of the grid. A level not in the fit, such as a future year, is a new level,
 treated as set by \code{new_levels}.
 
@@ -65,7 +65,7 @@ kb_new_data(fit_weight_sim_nereo, by = "site", diameter_mm = 50)
 
 # Every site in 2021, and one site across years:
 kb_new_data(fit_weight_sim_nereo, by = "site", diameter_mm = 50, year = 2021)
-kb_new_data(fit_size_sim_nereo, site = "otter_cove", year = 2019:2022)
+kb_new_data(fit_size_sim_nereo, site = "otter_cove", year = 2022:2025)
 
 kb_predict_size(fit_size_sim_nereo, kb_new_data(fit_size_sim_nereo, by = "site"))
 }

@@ -1,5 +1,6 @@
 # Build fit_weight_sim_nereo, a slim pre-fit weight model for runnable examples
-# and tests. Fitted to the whole data_weight_sim_nereo with reduced chains and draws
+# and tests, and fit_weight_sim_nereo_power, the same fit with `form = "power"`
+# for model comparison examples. Fitted to the whole data_weight_sim_nereo with reduced chains and draws
 # so the object stays small; its size is set by the draw count alone, since no
 # per-observation quantities are stored. Not for inference. Reproducibility comes
 # from the sampler `seed`.
@@ -25,3 +26,16 @@ fit_weight_sim_nereo <- kb_fit_weight_nereo(
 )
 
 usethis::use_data(fit_weight_sim_nereo, overwrite = TRUE)
+
+fit_weight_sim_nereo_power <- kb_fit_weight_nereo(
+  data_weight_sim_nereo,
+  form = "power",
+  chains = 3L,
+  niters = 500L,
+  nthin = 2L,
+  cores = 4L,
+  progress = "bar",
+  seed = 42L
+)
+
+usethis::use_data(fit_weight_sim_nereo_power, overwrite = TRUE)

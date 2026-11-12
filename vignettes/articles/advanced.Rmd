@@ -1,0 +1,263 @@
+---
+title: "Advanced usage"
+bibliography: references.bib
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.width = 7,
+  fig.height = 4.5
+)
+```
+
+```{r setup, message = FALSE, warning = FALSE}
+library(kelpbio)
+library(dplyr)
+library(ggplot2)
+library(posterior)
+```
+
+This article covers priors, predictions for new sites and years, diagnostics,
+and working with other packages in the Stan 'ecosystem'. It uses the pre-fit models included with the package, which are fitted to simulated data from made-up sites.
+
+## Priors
+
+A prior states what is plausible for a parameter before seeing the data. Each
+model has default priors, one per parameter, which are intended to be weakly informative, following Stan best practices [@gelman_prior_2017].
+
+```{r}
+kb_priors_carbon_nereo()
+```
+
+A list passed to `priors` replaces the entries it names. `prior_summary()`
+returns the priors that a model fit used.
+
+With plenty of data the prior has little influence. With few data it matters:
+here the carbon model is fitted to five samples with the default prior, and
+with a prior that holds the carbon fraction near 0.40.
+
+```{r, message = FALSE, warning = FALSE}
+few <- data_carbon_sim_nereo[1:5, ]
+
+fit_default <- kb_fit_carbon_nereo(few, seed = 1)
+fit_informed <- kb_fit_carbon_nereo(
+  few,
+  priors = list(intercept = kb_prior_normal(mean = qlogis(0.40), sd = 0.05)),
+  seed = 1
+)
+
+bind_rows(
+  default = kb_predict_carbon(fit_default),
+  informed = kb_predict_carbon(fit_informed),
+  .id = "prior"
+)
+```
+
+## New sites and years
+
+A site or year that a model fit has no data for is defined as a 'new level'. The `new_levels` argument in `kb_predict_*()` functions, sets how it is predicted, with implications for the width of the uncertainty (95% combatibility interval):
+
+- `"average"`: the typical site or year. The interval describes an average
+  site.
+- `"sample"`: a site or year drawn from the estimated variation among sites or
+  years (i.e., from the estimated random effect SD). The interval is wider, and describes a new or unobserved site that we know nothing about. 
+
+The `representative_site` argument instead gives a new site the effects of named sites in the model fit, i.e., if it is known a priori that conditions at the new site are similar.
+
+```{r}
+new_site <- data.frame(diameter_mm = 40, site = "new_reef")
+
+set.seed(1)
+bind_rows(
+  average = kb_predict_weight(fit_weight_sim_nereo, new_site),
+  sample = kb_predict_weight(
+    fit_weight_sim_nereo,
+    new_site,
+    new_levels = "sample"
+  ),
+  representative = kb_predict_weight(
+    fit_weight_sim_nereo,
+    new_site,
+    representative_site = "otter_cove"
+  ),
+  .id = "method"
+)
+```
+
+A new site with `representative_site = "otter_cove"` gets the same estimate and
+interval as otter_cove itself.
+
+```{r, fig.height = 3.5}
+set.seed(1)
+bind_rows(
+  "New site\n(average)" = kb_predict_weight(fit_weight_sim_nereo, new_site),
+  "New site\n(sample)" = kb_predict_weight(
+    fit_weight_sim_nereo,
+    new_site,
+    new_levels = "sample"
+  ),
+  "New site\n(representative - otter_cove)" = kb_predict_weight(
+    fit_weight_sim_nereo,
+    new_site,
+    representative_site = "otter_cove"
+  ),
+  "Otter Cove" = kb_predict_weight(
+    fit_weight_sim_nereo,
+    data.frame(diameter_mm = 40, site = "otter_cove")
+  ),
+  .id = "method"
+) |>
+  mutate(method = factor(method, levels = unique(method))) |>
+  ggplot(aes(x = method, y = estimate, ymin = lower, ymax = upper)) +
+  geom_pointrange() +
+  labs(x = NULL, y = "Weight at 40 mm (kg)")
+```
+
+## Diagnostics
+
+### Posterior predictive check
+
+`pp_check()` compares the observed data (dark line) with datasets simulated
+from the fitted model (light lines). A model that fits well produces simulated data
+that look like the observed data.
+
+```{r}
+pp_check(fit_weight_sim_nereo)
+```
+
+With `type = "residual"`, the function calculates and plots the deviance residuals (i.e. from observed data and from simulated datasets) instead of the data. Again, the observed residual distribution should fall within the range of the residual distributions from simulated datasets. 
+
+```{r}
+pp_check(fit_weight_sim_nereo, type = "residual")
+```
+
+### Residuals
+
+`augment()` adds the fitted value and deviance residual of each observation to the data, which can be plotted to check for patterns. In a model that fits well, the residuals scatter evenly around zero across the range of fitted values. A trend suggests the model's form misses part of the relationship, and a spread that changes with the fitted value suggests the variance is misspecified.
+
+```{r}
+augment(fit_weight_sim_nereo) |>
+  ggplot(aes(x = fitted, y = residual)) +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  geom_point(alpha = 0.3) +
+  geom_smooth(method = "loess", formula = y ~ x, se = FALSE) +
+  scale_x_log10() +
+  labs(x = "Fitted weight (kg)", y = "Deviance residual")
+```
+
+### Prior sensitivity
+
+`kb_sensitivity()` uses [power-scaling sensitivity analysis](https://mc-stan.org/priorsense/) to measure how much the parameter estimates change when the prior is adjusted. Ideally, estimates should be driven by the data and this indicated when `weak_prior` and `strong_data` are both `TRUE`. Where `weak_prior` is
+`FALSE` the prior influences the estimate. In some cases, prior influence is expected, i.e., if user deliberately set an informative prior. It can also be an indication that the prior was incorrectly specified or there are insufficient data to estimate a parameter without the prior doing some heavy lifting. In the latter case, the prior should be specified carefully, ideally based on plausible ranges or parameter values from the literature.  
+
+```{r, eval = rlang::is_installed("priorsense")}
+kb_sensitivity(fit_weight_sim_nereo)
+```
+
+### Influential observations
+
+`kb_influence()` determines how strongly each observation affects the model fit if it was removed, where a pareto k value > 0.7 indicates that it is influential. Observations flagged as `influential` are not necessarily wrong, but could be double-checked for data error. See the loo package's [Pareto k diagnostic](https://mc-stan.org/loo/reference/pareto-k-diagnostic.html) page for how `pareto_k` is calculated and interpreted. 
+
+```{r}
+kb_influence(fit_weight_sim_nereo) |>
+  arrange(desc(pareto_k)) |>
+  head(3)
+```
+
+### Prior predictive check
+
+A fit with `prior_only = TRUE` ignores the data, which allows the user to check whether the specified priors produce estimates within plausible ranges, e.g., with `pp_check()`. Here priors that hold the carbon fraction near 0.27 give carbon fractions like those observed.
+
+```{r, message = FALSE, warning = FALSE}
+fit_prior <- kb_fit_carbon_nereo(
+  data_carbon_sim_nereo,
+  priors = list(
+    intercept = kb_prior_normal(mean = -1, sd = 0.1),
+    precision = kb_prior_exponential(rate = 0.01)
+  ),
+  prior_only = TRUE,
+  seed = 1
+)
+set.seed(1)
+pp_check(fit_prior)
+```
+
+## Doing more in the Stan ecosystem
+
+kelpbio follows the [rstantools guidelines for developing Stan-based packages](https://mc-stan.org/rstantools/articles/developer-guidelines.html). A model fit object can be converted with `as_draws()` to a format accepted by packages like posterior, bayesplot, loo, priorsense package, among others. Generics will feel familiar to users of other Stan-based packages like [brms](https://paulbuerkner.com/brms/) (e.g., log_lik, posterior_predict, posterior_linpred, prior_summary).
+
+Summarise the draws with posterior:
+
+```{r}
+summarise_draws(fit_weight_sim_nereo) |>
+  head()
+```
+
+Plot them with bayesplot:
+
+```{r, message = FALSE}
+bayesplot::mcmc_areas(
+  as_draws_array(fit_weight_sim_nereo),
+  pars = c("sd_site", "sd_year", "sd_site_year")
+)
+```
+
+Compare models with loo. `loo()` estimates how well a model predicts new data,
+and `loo_compare()` ranks models by it, here the default *Nereocystis* weight
+model (a power law with a weight floor) and its power-law-only form
+(`form = "power"`). The best model is listed first; a model is clearly worse
+when its `elpd_diff` is several times its `se_diff` below zero.
+
+```{r}
+loo_compare(list(
+  packard_floor = loo(fit_weight_sim_nereo),
+  power = loo(fit_weight_sim_nereo_power)
+))
+```
+
+Simulate new observations, as a draws-by-rows matrix, for a custom check:
+
+```{r}
+sizes <- data.frame(diameter_mm = c(20, 40, 60))
+
+set.seed(1)
+simulated <- posterior_predict(fit_weight_sim_nereo, sizes)
+dim(simulated)
+```
+
+| Function | Returns |
+|---|---|
+| `tidy()` | Parameter estimates |
+| `glance()` | Sample size and convergence |
+| `augment()` | The data with fitted values and residuals |
+| `posterior_epred()` | Draws of the expected response |
+| `posterior_predict()` | Draws of new observations |
+| `log_lik()` | The pointwise log-likelihood |
+| `loo()` | Leave-one-out cross-validation |
+| `kb_stancode()` | The Stan code of the model |
+
+## Custom derived quantities
+
+The biomass functions return the posterior draws of each row in a column next
+to `estimate`, `lower`, and `upper`. Arithmetic on that column is done draw by
+draw, so a derived quantity keeps its full uncertainty.
+
+The ratio of total biomass in 2025 to 2020, and the probability that biomass
+was higher in 2025:
+
+```{r}
+set.seed(1)
+totals <- kb_predict_biomass_canopy(
+  fit_cover_calibration_sim_nereo,
+  data_canopy_sim_nereo,
+  pool_by = "year"
+)
+by_year <- setNames(totals$biomass_kg, totals$year)
+
+(by_year["2025"] / by_year["2020"]) |> summarize_draws()
+Pr(by_year["2025"] > by_year["2020"])
+```
+
+## References
