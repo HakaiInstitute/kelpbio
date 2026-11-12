@@ -13,8 +13,8 @@
       p <- kb_predict_biomass_in_situ(weight_macro_fit, data_size_census_sim_macro[0, ],
       survey, new_levels = "average")
     Message
-      i 12 surveys with no size census rows have no biomass.
-        Surveys: "seal_ledge-2019-1", "mussel_point-2019-1", "mussel_point-2019-2", "seal_ledge-2020-1", "seal_ledge-2020-2", "mussel_point-2020-1", "seal_ledge-2021-1", "mussel_point-2021-1", "seal_ledge-2022-1", "mussel_point-2022-1", "seal_ledge-2023-1", and "mussel_point-2023-1".
+      i 13 surveys with no size census rows have no biomass.
+        Surveys: "seal_ledge-2020-1", "seal_ledge-2020-2", "mussel_point-2020-1", "seal_ledge-2021-1", "mussel_point-2021-1", "seal_ledge-2022-1", "mussel_point-2022-1", "seal_ledge-2023-1", "mussel_point-2023-1", "seal_ledge-2024-1", "mussel_point-2024-1", "seal_ledge-2025-1", and "mussel_point-2025-1".
 
 # a survey table with no rows errors
 

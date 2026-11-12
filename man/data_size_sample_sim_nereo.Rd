@@ -35,6 +35,7 @@ Other example datasets:
 \code{\link{data_nitrogen_sim_macro}},
 \code{\link{data_nitrogen_sim_nereo}},
 \code{\link{data_size_census_sim_macro}},
+\code{\link{data_size_census_sim_nereo}},
 \code{\link{data_weight_sim_macro}},
 \code{\link{data_weight_sim_nereo}},
 \code{\link{data_wetdry_sim_macro}},

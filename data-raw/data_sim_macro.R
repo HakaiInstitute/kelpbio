@@ -7,11 +7,10 @@
 # biomass the drone cover is simulated from. Means, slopes, shapes, and
 # dispersions are near the analysis-project production fits, and random-effect
 # SDs near the Hakai Institute fits, so that every model converges at the
-# default sampler settings. Twelve sites over five years. The data sources
-# cover different site-years, as in the field: surveys at most, weight harvests
-# at over half (three sites never harvested), and drone cover at about
-# two-thirds. Site names are invented and match no
-# Hakai Institute survey site.
+# default sampler settings. Nine sites over six years, with abundance declining
+# at most sites. The data sources cover different site-years, as in the field:
+# surveys and drone cover at most, and weight harvests at six sites. Site names
+# are invented and match no Hakai Institute survey site.
 #
 # Every counted plant has its fronds at 1 m recorded, drawn from the
 # site-year's frond distribution; about one in twelve is a partial (edge)
@@ -24,28 +23,38 @@
 
 # The seed is one whose true plot biomass stays in the range of the production
 # estimates, with few drone covers at the cap.
-set.seed(8)
+set.seed(17)
 
 # 1. Sites, years, and which data source covers each site-year ---------------
 
 sites <- c(
   "seal_ledge", "mussel_point", "cormorant_rock", "anemone_bay", "limpet_head",
-  "shearwater_islet", "driftwood_cove", "abalone_reef", "nudibranch_bay",
-  "murrelet_pass", "otter_reach", "urchin_barren"
+  "shearwater_islet", "driftwood_cove", "abalone_reef", "nudibranch_bay"
 )
-years <- as.character(2019:2023)
+years <- as.character(2020:2025)
 
 grid <- expand.grid(site = sites, year = years, stringsAsFactors = FALSE)
 i_site <- match(grid$site, sites)
 i_year <- match(grid$year, years)
 key <- paste(grid$site, grid$year)
 
-grid$surveyed <- !key %in% c("murrelet_pass 2022", "nudibranch_bay 2019")
+# Six sites are surveyed every year, one misses a year, and two miss two years.
+gaps <- list(`4` = 2022, `5` = c(2021, 2024), `8` = c(2020, 2023))
+missing <- unlist(lapply(names(gaps), function(s) paste(sites[as.integer(s)], gaps[[s]])))
+grid$surveyed <- !key %in% missing
 grid$size <- grid$surveyed &
-  !key %in% c("seal_ledge 2021", "limpet_head 2019", "abalone_reef 2022", "anemone_bay 2020")
-# Nine sites harvested, each in four of the five years.
-grid$weight <- grid$surveyed & i_site <= 9 & i_year != (i_site %% 5) + 1
-grid$drone <- grid$surveyed & (i_site + i_year) %% 3 != 0
+  !key %in% c("seal_ledge 2022", "limpet_head 2021", "abalone_reef 2022", "anemone_bay 2020")
+# Three sites are never harvested.
+grid$weight <- grid$surveyed & !grid$site %in% c("limpet_head", "shearwater_islet", "nudibranch_bay")
+grid$drone <- grid$surveyed
+
+# Abundance trend on the log scale, shared by plant density and canopy area: a
+# decline at most sites, steeper at some, with none at two large sites and a
+# recovery in the last year at half of the declining sites.
+trend_slope <- -0.2 * c(1, 0, 0.9, 1.2, 1.1, 0.3, 0, 0.8, 1.3)
+trend_recovery <- c(0.7, 0, 0, 0.7, 0, 0, 0, 0.7, 0.7)
+grid$trend <- trend_slope[i_site] * (i_year - (length(years) + 1) / 2) +
+  ifelse(i_year == length(years), trend_recovery[i_site], 0)
 
 # 2. True values ---------------------------------------------------------------
 
@@ -61,25 +70,25 @@ fronds_ref <- 5
 b_weight5 <- 1.67 # log wet weight (kg) at 5 fronds
 b_fronds_weight <- 1.11
 shape_weight <- 4.7
-grid$e_weight <- effects(0.3, 0.3, 0.25)
+grid$e_weight <- effects(0.1, 0.3, 0.15)
 
 # Size: zero-truncated negative binomial frond count at 1 m.
 b_fronds_size <- 1.73 # log mean frond count before truncation
 dispersion_size <- 0.63 # variance mu + dispersion * mu^2
-grid$e_size <- effects(0.25, 0.2, 0.2)
+grid$e_size <- effects(0.25, 0.08, 0.08)
 
 # Counts: negative binomial plant count on a transect of area_m2. The intercept
 # is above the production estimate (log 0.31) so the composed plot biomass spans
 # the production range despite the moderated SDs.
 b_plants <- log(0.45) # log plants per m^2
 dispersion_density <- 0.11
-grid$e_density <- effects(0.4, 0.2, 0.3)
+grid$e_density <- effects(0.3, 0, 0.1) + grid$trend
 
 # Cover: biomass floor plus a canopy term in tide-corrected cover.
 b_canopy <- 8 # kg per m^2 of canopy, within the production interval
 b_floor <- 0.42 # kg/m^2 at zero cover
 b_tide <- 0.23 # share of the zero-tide canopy lost per m of tide
-grid$e_cover <- effects(0.3, 0.2, 0)
+grid$e_cover <- effects(0.25, 0.35, 0)
 
 # True plot biomass (wet kg/m^2): expected plants per m^2 times the mean expected
 # plant weight over the frond-count distribution.
@@ -148,8 +157,8 @@ transects <- do.call(rbind, lapply(cells("surveyed"), function(i) {
 transects$transect <- stats::ave(seq_len(nrow(transects)), transects$site, transects$year, FUN = seq_along)
 transects$plot_id <- "1"
 transects$visit <- 1L
-two_plots <- c("seal_ledge 2020", "limpet_head 2021", "driftwood_cove 2019")
-two_visits <- "anemone_bay 2021"
+two_plots <- c("seal_ledge 2020", "limpet_head 2022", "driftwood_cove 2021")
+two_visits <- "anemone_bay 2023"
 tkey <- paste(transects$site, transects$year)
 transects$plot_id[tkey %in% two_plots & transects$transect > 2] <- "2"
 transects$visit[tkey %in% two_visits & transects$transect > 2] <- 2L
@@ -184,7 +193,9 @@ plants$survey_id <- survey$survey_id[match(plants$survey, survey_id[first])]
 # Drone cover on the surveys of drone site-years: the cover model solved for the
 # true plot biomass, with plot-to-plot variation, kept between 0.02 and 0.95.
 i_survey <- match(paste(survey$site, survey$year), key)
-drone <- grid$drone[i_survey]
+# The empty survey's plot has no canopy imagery, so no survey with drone cover is
+# empty and the calibration has no presence part.
+drone <- grid$drone[i_survey] & survey$plot_id != "3"
 n <- nrow(survey)
 plot_area_m2 <- round(stats::runif(n, 180, 280), 1)
 canopy_tide_height_m <- sample(seq(0, 1.6, by = 0.05), n, replace = TRUE)
@@ -208,14 +219,30 @@ data_size_census_sim_macro <- plants[c("survey_id", "fronds", "partial")]
 
 canopy <- grid[grid$drone, c("site", "year")]
 m <- nrow(canopy)
-canopy$canopy_area_m2 <- round(stats::runif(m, 500, 12000))
+# Each site's bed at zero tide follows the abundance trend; the mapped canopy is
+# what remains visible at the tide height of the imagery.
+bed_area_m2 <- stats::runif(length(sites), 2500, 8000)
+# Two large beds, with no decline, hold far more kelp than the rest: their bed
+# areas are set so that the total is 150,000 to 250,000 kg.
+kg_m2_bed <- vapply(c(2, 7), function(s) {
+  k <- which(grid$drone & i_site == s)
+  mean((b_floor + b_canopy * exp(grid$e_cover[k])) * exp(grid$trend[k]))
+}, numeric(1))
+bed_area_m2[c(2, 7)] <- stats::runif(2, 150000, 250000) / (kg_m2_bed * (1 - b_tide * 0.8))
 canopy$canopy_tide_height_m <- sample(seq(0, 1.6, by = 0.05), m, replace = TRUE)
+canopy$canopy_area_m2 <- round(
+  bed_area_m2[match(canopy$site, sites)] *
+    exp(grid$trend[grid$drone] + stats::rnorm(m, 0, 0.1)) *
+    (1 - b_tide * canopy$canopy_tide_height_m)
+)
 canopy$classified_area_m2 <- round(canopy$canopy_area_m2 * stats::runif(m, 1.5, 3))
 canopy$region <- factor(
-  ifelse(match(canopy$site, sites) <= 6, "north", "south"),
+  ifelse(match(canopy$site, sites) <= 4, "north", "south"),
   levels = c("north", "south")
 )
-data_canopy_sim_macro <- canopy
+data_canopy_sim_macro <- canopy[c(
+  "site", "year", "canopy_area_m2", "canopy_tide_height_m", "classified_area_m2", "region"
+)]
 
 # 6. Save ----------------------------------------------------------------------
 

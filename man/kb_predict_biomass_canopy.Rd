@@ -51,7 +51,7 @@ combinations group the rows, such as \code{c("site", "year")}, \code{character(0
 to pool all rows, or \code{NULL} (the default) for one row per input row. On
 each draw, the biomass of a group is the sum of its rows' biomass (kg).
 For another summary, such as an unweighted mean of rows, summarise the
-draws column (see \code{vignette("advanced")}).}
+draws column, for example with \code{\link[posterior:rvar_mean]{posterior::rvar_mean()}}.}
 
 \item{new_levels}{A string giving how uncertainty is shown for a site or
 year not in the fit. Sites and years in the fit always use their own

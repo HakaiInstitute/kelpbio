@@ -134,3 +134,17 @@
 #' @seealso [kb_fit_wetdry_nereo()] and [data_wetdry_sim_nereo].
 #' @family example fits
 "fit_wetdry_sim_nereo"
+
+# Built by data-raw/fit_weight_sim_nereo.R.
+#' Example Nereocystis power-law weight fit
+#'
+#' A fit of [kb_fit_weight_nereo()] with `form = "power"` to
+#' [data_weight_sim_nereo] with fewer draws than the default, for comparing the
+#' two forms of the weight model without running the sampler.
+#'
+#' @format An object of class
+#'   `c("kb_fit_weight_nereo", "kb_fit_weight", "kb_fit")`.
+#' @seealso [fit_weight_sim_nereo] for the default form and [loo()] to compare
+#'   them.
+#' @family example fits
+"fit_weight_sim_nereo_power"

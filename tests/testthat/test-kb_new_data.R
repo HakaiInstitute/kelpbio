@@ -65,8 +65,8 @@ test_that("grouping levels supplied in ... are crossed into the grid", {
   expect_identical(nrow(grid), length(weight_nereo_fit$meta$site_levels))
   expect_true(all(grid$year == "2021"))
 
-  years <- kb_new_data(size_nereo_fit, site = "otter_cove", year = 2019:2022)
-  expect_identical(years$year, as.character(2019:2022))
+  years <- kb_new_data(size_nereo_fit, site = "otter_cove", year = 2022:2025)
+  expect_identical(years$year, as.character(2022:2025))
   expect_true(all(years$site == "otter_cove"))
   expect_false(attr(years, "kb_curve"))
 })

@@ -28,6 +28,7 @@ Other example fits:
 \code{\link{fit_size_sim_nereo}},
 \code{\link{fit_weight_sim_macro}},
 \code{\link{fit_weight_sim_nereo}},
+\code{\link{fit_weight_sim_nereo_power}},
 \code{\link{fit_wetdry_sim_nereo}}
 }
 \concept{example fits}

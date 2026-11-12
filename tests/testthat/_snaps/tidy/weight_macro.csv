@@ -1,7 +1,7 @@
 "term","estimate","lower","upper"
-"intercept",1.42,0.388,2.15
-"fronds_slope",1.15,1.07,1.22
-"shape",4.4,3.56,5.2
-"sd_site",0.303,0.0252,1.15
-"sd_year",0.363,0.0296,1.65
-"sd_site_year",0.327,0.131,0.679
+"intercept",1.49,0.18,2.32
+"fronds_slope",1.03,0.943,1.11
+"shape",4.3,3.47,5.3
+"sd_site",0.288,0.0205,1.03
+"sd_year",0.381,0.0175,2.16
+"sd_site_year",0.148,0.00899,0.502

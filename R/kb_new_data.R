@@ -17,7 +17,7 @@
 #'
 #' To fix a grouping factor at chosen levels, supply them by name in `...`, for
 #' example `year = 2021` with `by = "site"` for every fitted site in 2021, or
-#' `site = "otter_cove", year = 2019:2022`. Each value is crossed with the rest
+#' `site = "otter_cove", year = 2022:2025`. Each value is crossed with the rest
 #' of the grid. A level not in the fit, such as a future year, is a new level,
 #' treated as set by `new_levels`.
 #'
@@ -49,7 +49,7 @@
 #'
 #' # Every site in 2021, and one site across years:
 #' kb_new_data(fit_weight_sim_nereo, by = "site", diameter_mm = 50, year = 2021)
-#' kb_new_data(fit_size_sim_nereo, site = "otter_cove", year = 2019:2022)
+#' kb_new_data(fit_size_sim_nereo, site = "otter_cove", year = 2022:2025)
 #'
 #' kb_predict_size(fit_size_sim_nereo, kb_new_data(fit_size_sim_nereo, by = "site"))
 kb_new_data <- function(fit, by = NULL, ...) {

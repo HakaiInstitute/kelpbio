@@ -1,4 +1,4 @@
 "site","year","canopy_area_m2","canopy_tide_height_m","classified_area_m2","region","cover_support","estimate","lower","upper"
-"otter_cove","2019",200,0.5,1e+05,"north","site, year",2530,1050,5280
-"gull_rock","2019",400,0.5,1e+05,"north","site, year",4690,1460,9400
-"cedar_bay","2019",800,0.5,1e+05,"south","site, year",8180,2300,17600
+"otter_cove","2025",200,0.5,1e+05,"north","site, year",2370,1240,4190
+"gull_rock","2025",400,0.5,1e+05,"north","site, year",5230,2850,9120
+"cedar_bay","2025",800,0.5,1e+05,"south","site, year",7260,3420,14300

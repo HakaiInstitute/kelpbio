@@ -99,7 +99,7 @@ One paragraph, in this order: likelihood, linear predictor, group effects, notes
 - Markdown roxygen only; wrap at 80 characters; continuation lines of a tag indented two spaces.
 - Links as `[fun()]` and `[pkg::fun()]`, on the first mention of a function in a topic only; other mentions in code font. No `\code{\link{}}`, and `\describe{}` only in `@format`.
 - Code font for argument names, column names, values (`TRUE`, `FALSE`, `NA`, `NULL`, `...`), parameters, and class names. Package names are not in code font ("the posterior package"); a function or package name is not capitalised at the start of a sentence.
-- Italics for genus and species; no bold in prose; no em or en dashes; "for example" rather than "e.g."; no hedging adverbs.
+- Italics for genus and species; no bold in prose; no em or en dashes; "e.g.," and "i.e.," (with a comma) inside parentheses, "for example" and "that is" in running text; no hedging adverbs.
 - Sentences under about 30 words; no nested parentheses.
 - Every exported topic appears in `_pkgdown.yml` (`pkgdown::check_pkgdown()`).
 

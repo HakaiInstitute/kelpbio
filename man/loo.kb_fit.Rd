@@ -32,11 +32,9 @@ Use \code{\link[loo:loo_compare]{loo::loo_compare()}} to compare fits to the sam
 loo_weight <- loo(fit_weight_sim_nereo)
 loo_weight
 loo::pareto_k_values(loo_weight)
-\dontshow{if (interactive()) withAutoprint(\{ # examplesIf}
-# Compare the two forms of the Nereocystis weight model on the same data:
-fit_power <- kb_fit_weight_nereo(data_weight_sim_nereo, form = "power")
-loo_compare(loo(fit_weight_sim_nereo), loo(fit_power))
-\dontshow{\}) # examplesIf}
+
+# Compare the two forms of the Nereocystis weight model on the same data
+loo_compare(loo_weight, loo(fit_weight_sim_nereo_power))
 }
 \references{
 Vehtari, A., Gelman, A., and Gabry, J. (2017). Practical Bayesian model

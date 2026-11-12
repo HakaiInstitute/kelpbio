@@ -29,7 +29,7 @@ fit_cover_calibration_sim_nereo <- kb_fit_cover_calibration_nereo(
   # nthin multiplies the sampling iterations while holding the saved draw count
   # fixed, so these deliberately small objects clear the convergence thresholds
   # without growing.
-  nthin = 2L,
+  nthin = 4L,
   cores = 4L,
   progress = "bar",
   seed = 42L

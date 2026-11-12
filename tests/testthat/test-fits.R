@@ -94,6 +94,13 @@ test_that("fit_weight_sim_nereo is a kb_fit_weight the accessors operate on", {
   )
 })
 
+test_that("fit_weight_sim_nereo_power is the power form fitted to the same data", {
+  expect_s3_class(fit_weight_sim_nereo_power, "kb_fit_weight_nereo")
+  expect_identical(fit_weight_sim_nereo_power$meta$form, "power")
+  expect_false("weight_floor" %in% tidy(fit_weight_sim_nereo_power)$term)
+  expect_identical(nobs(fit_weight_sim_nereo_power), nobs(fit_weight_sim_nereo))
+})
+
 test_that("fit_weight_sim_nereo's group effects are labelled by level", {
   draws <- fit_weight_sim_nereo$draws
   expect_identical(

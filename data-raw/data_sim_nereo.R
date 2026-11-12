@@ -1,17 +1,17 @@
 # Build the simulated Nereocystis datasets: data_weight_sim_nereo,
-# data_size_sample_sim_nereo, data_in_situ_sim_nereo, and data_canopy_sim_nereo, for
-# fast tests and runnable examples. Not for inference.
+# data_size_sample_sim_nereo, data_in_situ_sim_nereo, data_canopy_sim_nereo, and
+# data_size_census_sim_nereo, for fast tests and runnable examples. Not for
+# inference.
 #
-# All four come from one set of true site-year values, so they agree: survey
+# All five come from one set of true site-year values, so they agree: survey
 # biomass from fits to the weight and size data lands near the true biomass the
 # drone cover is simulated from. Means, slopes, shapes, and dispersions are near
 # the analysis-project production fits, and random-effect SDs near the Hakai
 # Institute fits, so that every model converges at the default sampler
-# settings. Twelve sites over five years. The data sources cover different
-# site-years, as in the field: surveys at most, size at most of those, weight
-# harvests at over half (three sites never harvested), and drone cover at about
-# two-thirds. Site names are invented and match no
-# Hakai Institute survey site.
+# settings. Nine sites over six years, with abundance declining at most sites.
+# The data sources cover different site-years, as in the field: surveys and
+# drone cover at most, size at most of those, and weight harvests at six sites.
+# Site names are invented and match no Hakai Institute survey site.
 #
 # Each site-year's four transects are summed to one in situ survey; at a few
 # site-years the transects are split between two plots, or between two visits
@@ -22,28 +22,38 @@
 
 # The seed is one whose true plot biomass stays in the range of the production
 # estimates, with few drone covers at the cap.
-set.seed(4)
+set.seed(34)
 
 # 1. Sites, years, and which data source covers each site-year ---------------
 
 sites <- c(
   "otter_cove", "gull_rock", "cedar_bay", "heron_reef", "urchin_shoal",
-  "sculpin_head", "eagle_spit", "fog_islet", "tidepool_bluff", "raven_reef",
-  "sea_lion_rock", "kelp_point"
+  "sculpin_head", "eagle_spit", "fog_islet", "tidepool_bluff"
 )
-years <- as.character(2019:2023)
+years <- as.character(2020:2025)
 
 grid <- expand.grid(site = sites, year = years, stringsAsFactors = FALSE)
 i_site <- match(grid$site, sites)
 i_year <- match(grid$year, years)
 key <- paste(grid$site, grid$year)
 
-grid$surveyed <- !key %in% c("raven_reef 2022", "tidepool_bluff 2019")
+# Six sites are surveyed every year, one misses a year, and two miss two years.
+gaps <- list(`4` = 2022, `5` = c(2021, 2024), `8` = c(2020, 2023))
+missing <- unlist(lapply(names(gaps), function(s) paste(sites[as.integer(s)], gaps[[s]])))
+grid$surveyed <- !key %in% missing
 grid$size <- grid$surveyed &
-  !key %in% c("gull_rock 2020", "urchin_shoal 2022", "fog_islet 2021", "cedar_bay 2019")
-# Nine sites harvested, each in four of the five years.
-grid$weight <- grid$surveyed & i_site <= 9 & i_year != (i_site %% 5) + 1
-grid$drone <- grid$surveyed & (i_site + i_year) %% 3 != 0
+  !key %in% c("gull_rock 2020", "urchin_shoal 2023", "fog_islet 2021", "cedar_bay 2022")
+# Three sites are never harvested.
+grid$weight <- grid$surveyed & !grid$site %in% c("urchin_shoal", "sculpin_head", "tidepool_bluff")
+grid$drone <- grid$surveyed
+
+# Abundance trend on the log scale, shared by plant density and canopy area: a
+# decline at most sites, steeper at some, with none at two large sites and a
+# recovery in the last year at half of the declining sites.
+trend_slope <- -0.2 * c(1, 0, 0.9, 1.2, 1.1, 0.3, 0, 0.8, 1.3)
+trend_recovery <- c(0.7, 0, 0, 0.7, 0, 0, 0, 0.7, 0.7)
+grid$trend <- trend_slope[i_site] * (i_year - (length(years) + 1) / 2) +
+  ifelse(i_year == length(years), trend_recovery[i_site], 0)
 
 # 2. True values ---------------------------------------------------------------
 
@@ -59,14 +69,13 @@ b_weight30 <- log(0.91) # log weight above the floor (kg) at 30 mm
 b_power <- 3.02
 b_floor <- 0.115 # kg
 sd_weight <- 0.46 # residual SD of log weight
-# Group SDs near the Hakai Institute fit, large enough that the fit at the
-# default sampler settings has no SD pressed against zero.
-grid$e_weight <- effects(0.4, 0.25, 0.25)
+# Group SDs near the Hakai Institute fit.
+grid$e_weight <- effects(0.17, 0.15, 0.25)
 
 # Size: Weibull sub-bulb diameter with mean exp(log mean).
 b_diameter <- log(23) # log mean diameter (mm)
 shape_size <- 2.7
-grid$e_size <- effects(0.2, 0.15, 0.15)
+grid$e_size <- effects(0.2, 0.08, 0.08)
 
 # Counts: zero-inflated negative binomial plant count on a transect of area_m2.
 # The intercept is above the production estimate (log 0.18) so the composed plot
@@ -74,13 +83,13 @@ grid$e_size <- effects(0.2, 0.15, 0.15)
 b_plants <- log(1.5) # log plants per m^2 on occupied transects
 zero_inflation <- 0.05 # probability a transect is unoccupied (a structural zero)
 dispersion_density <- 0.45 # variance mu + dispersion * mu^2
-grid$e_density <- effects(0.4, 0.3, 0.3)
+grid$e_density <- effects(0.3, 0, 0.1) + grid$trend
 
 # Cover: biomass floor plus a canopy term in tide-corrected cover.
 b_canopy <- 8 # kg per m^2 of canopy
 b_cover_floor <- 0.093 # kg/m^2 at zero cover
 b_tide <- 0.28 # share of the zero-tide canopy lost per m of tide
-grid$e_cover <- effects(0.3, 0.2, 0)
+grid$e_cover <- effects(0.3, 0.25, 0)
 
 # 3. Transect counts ------------------------------------------------------------
 
@@ -138,13 +147,14 @@ data_size_sample_sim_nereo <- do.call(rbind, lapply(which(grid$size), function(i
 transects$transect <- stats::ave(seq_len(nrow(transects)), transects$site, transects$year, FUN = seq_along)
 transects$plot_id <- "1"
 transects$visit <- 1L
-two_plots <- c("otter_cove 2020", "heron_reef 2021", "eagle_spit 2019")
+two_plots <- c("otter_cove 2020", "heron_reef 2023", "eagle_spit 2021")
 two_visits <- "cedar_bay 2021"
 tkey <- paste(transects$site, transects$year)
 transects$plot_id[tkey %in% two_plots & transects$transect > 2] <- "2"
 transects$visit[tkey %in% two_visits & transects$transect > 2] <- 2L
-# One transect with no plants becomes a survey of its own plot, an empty survey.
-empty <- which(transects$plants == 0 & !tkey %in% c(two_plots, two_visits))[1]
+# One transect becomes an empty survey of its own plot.
+empty <- which(!tkey %in% c(two_plots, two_visits))[5]
+transects$plants[empty] <- 0L
 transects$plot_id[empty] <- "3"
 
 survey_id <- paste(transects$site, transects$year, transects$plot_id, transects$visit)
@@ -173,7 +183,7 @@ cover <- (grid$plot_biomass[i_grid] - b_cover_floor) /
   (b_canopy * exp(grid$e_cover[i_grid])) * exp(stats::rnorm(n, 0, 0.1))
 clipped <- cover > 0.95
 cover <- pmin(pmax(cover, 0), 0.95)
-cover[survey$plot_id == "3"] <- 0.05
+cover[survey$plot_id == "3"] <- 0.12
 canopy_area_m2 <- round(cover * plot_area_m2 * (1 - b_tide * canopy_tide_height_m), 2)
 survey$plot_area_m2 <- ifelse(drone, plot_area_m2, NA_real_)
 survey$canopy_area_m2 <- ifelse(drone, canopy_area_m2, NA_real_)
@@ -189,16 +199,46 @@ data_in_situ_sim_nereo <- survey[c(
 
 canopy <- grid[grid$drone, c("site", "year")]
 m <- nrow(canopy)
-canopy$canopy_area_m2 <- round(stats::runif(m, 500, 12000))
+# Each site's bed at zero tide follows the abundance trend; the mapped canopy is
+# what remains visible at the tide height of the imagery.
+bed_area_m2 <- stats::runif(length(sites), 4000, 12000)
+# Two large beds, with no decline, hold far more kelp than the rest: their bed
+# areas are set so that the total is 150,000 to 250,000 kg.
+kg_m2_bed <- vapply(c(2, 7), function(s) {
+  k <- which(grid$drone & i_site == s)
+  mean((b_cover_floor + b_canopy * exp(grid$e_cover[k])) * exp(grid$trend[k]))
+}, numeric(1))
+bed_area_m2[c(2, 7)] <- stats::runif(2, 150000, 250000) / (kg_m2_bed * (1 - b_tide * 0.8))
 canopy$canopy_tide_height_m <- sample(seq(0, 1.6, by = 0.05), m, replace = TRUE)
+canopy$canopy_area_m2 <- round(
+  bed_area_m2[match(canopy$site, sites)] *
+    exp(grid$trend[grid$drone] + stats::rnorm(m, 0, 0.1)) *
+    (1 - b_tide * canopy$canopy_tide_height_m)
+)
 canopy$classified_area_m2 <- round(canopy$canopy_area_m2 * stats::runif(m, 1.5, 3))
 canopy$region <- factor(
-  ifelse(match(canopy$site, sites) <= 6, "north", "south"),
+  ifelse(match(canopy$site, sites) <= 4, "north", "south"),
   levels = c("north", "south")
 )
-data_canopy_sim_nereo <- canopy
+data_canopy_sim_nereo <- canopy[c(
+  "site", "year", "canopy_area_m2", "canopy_tide_height_m", "classified_area_m2", "region"
+)]
 
-# 7. Save ----------------------------------------------------------------------
+# 7. Size census -----------------------------------------------------------------
+
+# Every plant counted by the otter_cove surveys, measured. Simulated after the
+# other datasets so their draws are unchanged.
+census_surveys <- which(survey$site == "otter_cove" & survey$plants > 0)
+data_size_census_sim_nereo <- do.call(rbind, lapply(census_surveys, function(s) {
+  n <- survey$plants[s]
+  data.frame(
+    survey_id = survey$survey_id[s],
+    diameter_mm = round(stats::rweibull(n, shape_size, size_scale(i_grid[s])), 1),
+    partial = stats::runif(n) < 1 / 12
+  )
+}))
+
+# 8. Save ----------------------------------------------------------------------
 
 # Levels in creation order, not string order; this order carries through to fits
 # and predictions.
@@ -214,6 +254,8 @@ data_weight_sim_nereo <- as_sim(data_weight_sim_nereo)
 data_size_sample_sim_nereo <- as_sim(data_size_sample_sim_nereo)
 data_in_situ_sim_nereo <- as_sim(data_in_situ_sim_nereo)
 data_canopy_sim_nereo <- as_sim(data_canopy_sim_nereo)
+rownames(data_size_census_sim_nereo) <- NULL
+data_size_census_sim_nereo <- tibble::as_tibble(data_size_census_sim_nereo)
 
 message(
   "True plot biomass (kg/m2) at surveyed site-years, quantiles 0, 0.25, 0.5, 0.75, 1: ",
@@ -228,3 +270,4 @@ usethis::use_data(data_weight_sim_nereo, overwrite = TRUE)
 usethis::use_data(data_size_sample_sim_nereo, overwrite = TRUE)
 usethis::use_data(data_in_situ_sim_nereo, overwrite = TRUE)
 usethis::use_data(data_canopy_sim_nereo, overwrite = TRUE)
+usethis::use_data(data_size_census_sim_nereo, overwrite = TRUE)

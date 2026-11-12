@@ -1,7 +1,7 @@
 surveys <- function(classified_area_m2 = 1e5, ...) {
   data.frame(
     site = fitted_sites(cover_calibration_nereo_fit, 3),
-    year = "2019",
+    year = "2025",
     canopy_area_m2 = c(200, 400, 800),
     canopy_tide_height_m = 0.5,
     classified_area_m2 = classified_area_m2,
@@ -165,7 +165,7 @@ test_that("a pool_by group holding one site-year twice warns", {
 test_that("high tides give finite, non-negative totals capped at the classified area", {
   fit <- cover_calibration_nereo_fit
   rows <- data.frame(
-    site = fitted_sites(fit), year = "2019", canopy_area_m2 = 100,
+    site = fitted_sites(fit), year = "2025", canopy_area_m2 = 100,
     canopy_tide_height_m = c(0, 2, 3.5, 5), classified_area_m2 = 400
   )
   expect_warning(
@@ -197,10 +197,10 @@ test_that("a numeric year matches the fitted year and pools as character", {
   )
   withr::local_seed(1)
   numeric_year <- kb_predict_biomass_canopy(
-    cover_calibration_nereo_fit, transform(surveys(), year = 2019),
+    cover_calibration_nereo_fit, transform(surveys(), year = 2025),
     new_levels = "average", pool_by = "year"
   )
-  expect_identical(numeric_year$year, "2019")
+  expect_identical(numeric_year$year, "2025")
   expect_equal(numeric_year$biomass_kg, character_year$biomass_kg)
 })
 
