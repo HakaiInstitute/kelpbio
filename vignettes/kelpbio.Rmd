@@ -24,58 +24,68 @@ library(ggplot2)
 kelpbio estimates the biomass of *Nereocystis luetkeana* and *Macrocystis
 pyrifera* kelp beds. The total biomass of a site in a given year combines plants
 counted and measured from in situ surveys, the surface canopy area mapped from aerial imagery, and a
-calibration model that relates the two.
-
-```{r workflow, echo = FALSE, out.width = "100%", fig.alt = "Flow diagram in three columns. Weight, size, and survey data feed the weight and size models and then survey biomass. Survey biomass, with plot cover, fits the cover calibration. The calibration and canopy data give total canopy biomass, which wet/dry, carbon, and nitrogen models, fitted to tissue samples, convert to dry, carbon, or nitrogen biomass."}
-knitr::include_graphics("../man/figures/workflow.svg")
-```
+calibration model that relates the two. See the [Methods](https://hakaiinstitute.github.io/kelpbio/articles/methods.html) article for more details on methods, including expected survey design, general statistical approach, model descriptions, and how sub-models are combined to get predictions. 
 
 This article uses *Nereocystis* as an example. The data shown below are simulated, with invented site names.
-
-Two other articles go further:
-
-- [Methods](https://hakaiinstitute.github.io/kelpbio/articles/methods.html)
-  describes the models and how predictions are computed.
-- [Advanced usage](https://hakaiinstitute.github.io/kelpbio/articles/advanced.html)
-  covers priors, diagnostics, and working with other Stan packages.
 
 ## Glossary
 
 - **Plant**: one individual (sporophyte), identified by its holdfast (*Macrocystis*) or stipe (*Nereocystis*).
 - **In situ survey**: count of the plants within a surveyed area, with all or a sample of the plants measured (e.g., three 30 m sub-surface transects with 2 m swaths, and the maximum sub-bulb diameter measured for about 15 plants per transect).
 - **Plot**: area bounding the in situ survey, over which canopy percent cover is estimated.
-- **Canopy map**: surface canopy within a site mapped from aerial imagery (e.g., drone), with the tide height at the time of imaging.
+- **Canopy map**: surface canopy within a site mapped from aerial imagery (e.g., drone), with the tide height recorded at the time of imaging.
+- **Site**: a location of any size with with mapped canopy and possibly, matching in situ survey data. 
 - **Site-year**: annual snapshot of a site, i.e., in peak season.
 
 ## Data format
 
 Each dataset is a data frame with set column names, one row per measured
 unit, and units are part of the column name (for example `diameter_mm`). Other
-columns are ignored. Each entry below lists the columns, with example values
-from the simulated data included with the package.
+columns are ignored. Each entry below lists the columns, as given by
+`kb_data_columns()`.
+
+Not every dataset is required. *Nereocystis* size data are either a size sample
+or a size census, depending on the survey design (see
+[Censused areas](#censused-areas)). A sub-model without data can use a pre-fit
+model from kelpbiodata (see [Pre-fit models](#pre-fit-models)), so the minimum
+data are a canopy map.
 
 ```{r data-format, echo = FALSE, results = "asis"}
-data_format <- function(title, row, used_by, check, data, columns) {
-  example <- vapply(names(columns), function(column) {
-    x <- data[[column]]
-    x <- x[!is.na(x)][1]
-    if (is.double(x)) x <- signif(x, 3)
-    as.character(x)
-  }, character(1))
-  table <- data.frame(
-    Column = paste0("<code>", names(columns), "</code>"),
-    Example = unname(example),
-    Description = unname(columns)
+html <- function(x) {
+  x <- gsub("&", "&amp;", x, fixed = TRUE)
+  x <- gsub("<", "&lt;", x, fixed = TRUE)
+  gsub(">", "&gt;", x, fixed = TRUE)
+}
+ref <- function(fun) {
+  paste0(
+    "<a href=\"https://hakaiinstitute.github.io/kelpbio/reference/",
+    fun,
+    ".html\"><code>",
+    fun,
+    "()</code></a>"
   )
-  ref <- function(fun) {
-    paste0(
-      "<a href=\"https://hakaiinstitute.github.io/kelpbio/reference/", fun,
-      ".html\"><code>", fun, "()</code></a>"
-    )
-  }
+}
+data_format <- function(title, row, used_by, dataset) {
+  columns <- kb_data_columns(dataset)
+  table <- data.frame(
+    Column = paste0(
+      "<code>",
+      columns$column,
+      "</code>",
+      ifelse(columns$required, "", " (optional)")
+    ),
+    Units = ifelse(is.na(columns$units), "", columns$units),
+    Allowed = html(columns$allowed),
+    Example = html(columns$example),
+    Description = html(columns$description)
+  )
   cat(
-    "<details>\n<summary><strong>", title, "</strong>, one row per ", row,
-    "; used by ", paste(vapply(used_by, ref, ""), collapse = ", "),
+    "<details>\n<summary><strong>",
+    title,
+    "</strong>, one row per ",
+    row,
+    "; used by ",
+    paste(vapply(used_by, ref, ""), collapse = ", "),
     "</summary>\n\n",
     sep = ""
   )
@@ -86,95 +96,69 @@ data_format <- function(title, row, used_by, check, data, columns) {
     row.names = FALSE,
     table.attr = "class=\"table\""
   ))
+  check <- paste0("kb_check_data_", dataset)
   cat("\nChecked by ", ref(check), ".\n\n</details>\n\n", sep = "")
 }
 
 data_format(
-  "Weight, *Nereocystis*", "harvested plant", "kb_fit_weight_nereo", "kb_check_data_weight_nereo",
-  data_weight_sim_nereo,
-  c(
-    diameter_mm = "Plant diameter (mm), such as the maximum sub-bulb diameter.",
-    weight_kg = "Wet weight of the plant (kg).",
-    site = "Site.",
-    year = "Year."
-  )
+  "Weight, *Nereocystis*",
+  "harvested plant",
+  "kb_fit_weight_nereo",
+  "weight_nereo"
 )
 data_format(
-  "Weight, *Macrocystis*", "harvested plant", "kb_fit_weight_macro", "kb_check_data_weight_macro",
-  data_weight_sim_macro,
-  c(
-    fronds = "Number of fronds reaching 1 m above the holdfast.",
-    weight_kg = "Wet weight of the plant (kg).",
-    site = "Site.",
-    year = "Year."
-  )
+  "Weight, *Macrocystis*",
+  "harvested plant",
+  "kb_fit_weight_macro",
+  "weight_macro"
 )
 data_format(
-  "Size sample, *Nereocystis*", "measured plant", "kb_fit_size_nereo", "kb_check_data_size_sample_nereo",
-  data_size_sample_sim_nereo,
-  c(
-    diameter_mm = "Plant diameter (mm), the same measure as in the weight data.",
-    site = "Site.",
-    year = "Year."
-  )
+  "Size sample, *Nereocystis*",
+  "measured plant",
+  "kb_fit_size_nereo",
+  "size_sample_nereo"
 )
 data_format(
-  "In situ survey", "survey", "kb_predict_biomass_in_situ", "kb_check_data_in_situ",
-  data_in_situ_sim_nereo,
-  c(
-    survey_id = "Identifies the survey.",
-    site = "Site.",
-    year = "Year.",
-    survey_area_m2 = "Area surveyed (m²).",
-    plants = "Number of plants counted; absent when a size census is given.",
-    plot_area_m2 = "Area of the plot (m²); with canopy imagery only.",
-    canopy_area_m2 = "Canopy mapped within the plot (m²); with canopy imagery only.",
-    canopy_tide_height_m = "Tide height when the canopy was imaged (m); with canopy imagery only."
-  )
+  "In situ survey",
+  "survey",
+  "kb_predict_biomass_in_situ",
+  "in_situ"
 )
 data_format(
-  "Size census", "counted plant", "kb_predict_biomass_in_situ", "kb_check_data_size_census_macro",
-  data_size_census_sim_macro,
-  c(
-    survey_id = "The survey the plant was counted in.",
-    fronds = "Number of fronds reaching 1 m above the holdfast (*Macrocystis*), or `diameter_mm` (*Nereocystis*).",
-    partial = "Optional: `TRUE` for a plant counted as half, such as on the edge of the survey area."
-  )
+  "Size census, *Nereocystis*",
+  "counted plant",
+  "kb_predict_biomass_in_situ",
+  "size_census_nereo"
 )
 data_format(
-  "Canopy map", "map of a site's canopy", "kb_predict_biomass_canopy", "kb_check_data_canopy",
-  data_canopy_sim_nereo,
-  c(
-    site = "Site.",
-    year = "Year.",
-    canopy_area_m2 = "Canopy mapped within the site (m²).",
-    canopy_tide_height_m = "Tide height when the canopy was imaged (m).",
-    classified_area_m2 = "Water area the imagery classified, with or without canopy (m²)."
-  )
+  "Size census, *Macrocystis*",
+  "counted plant",
+  "kb_predict_biomass_in_situ",
+  "size_census_macro"
 )
 data_format(
-  "Wet/dry", "tissue sample", c("kb_fit_wetdry_nereo", "kb_fit_wetdry_macro"), "kb_check_data_wetdry_nereo",
-  data_wetdry_sim_nereo,
-  c(
-    wet_mass_g = "Mass before drying (g).",
-    dry_mass_g = "Mass after drying (g)."
-  )
+  "Canopy map",
+  "map of a site's canopy",
+  "kb_predict_biomass_canopy",
+  "canopy"
 )
 data_format(
-  "Carbon", "dried tissue sample", c("kb_fit_carbon_nereo", "kb_fit_carbon_macro"), "kb_check_data_carbon_nereo",
-  data_carbon_sim_nereo,
-  c(
-    sample_mass_mg = "Mass of the sample analysed (mg).",
-    carbon_mass_ug = "Carbon measured in the sample (µg)."
-  )
+  "Wet/dry",
+  "tissue sample",
+  c("kb_fit_wetdry_nereo", "kb_fit_wetdry_macro"),
+  "wetdry_nereo"
 )
 data_format(
-  "Nitrogen", "dried tissue sample", c("kb_fit_nitrogen_nereo", "kb_fit_nitrogen_macro"), "kb_check_data_nitrogen_nereo",
-  data_nitrogen_sim_nereo,
-  c(
-    sample_mass_mg = "Mass of the sample analysed (mg).",
-    nitrogen_mass_ug = "Nitrogen measured in the sample (µg)."
-  )
+  "Carbon",
+  "dried tissue sample",
+  c("kb_fit_carbon_nereo", "kb_fit_carbon_macro"),
+  "carbon_nereo"
+)
+data_format(
+  "Nitrogen",
+  "dried tissue sample",
+  c("kb_fit_nitrogen_nereo", "kb_fit_nitrogen_macro"),
+  "nitrogen_nereo"
 )
 ```
 
@@ -312,11 +296,15 @@ totals
 kb_plot_predictions(totals, geom = "bar")
 ```
 
-`pool_by` pools the estimates by group, in this case to give the total biomass in each year, summed across sites, with the uncertainty of the sum.
+`pool_by` pools the estimates by group, in this case to give the total biomass in each year and region, summed across sites, with the uncertainty of the sum.
 
 ```{r, fig.width = 9, fig.height = 5.5}
 set.seed(1)
-kb_predict_biomass_canopy(fit_cover, data_canopy_sim_nereo, pool_by = "year") |>
+kb_predict_biomass_canopy(
+  fit_cover,
+  data_canopy_sim_nereo,
+  pool_by = c("region", "year")
+) |>
   kb_plot_predictions(geom = "bar")
 ```
 
@@ -339,7 +327,7 @@ kb_predict_biomass_canopy(
 
 ## Pre-fit models
 
-The kelpbiodata package holds Hakai Institute and coastwide datasets, with models pre-fit to them. The pre-fit models can be used when data have not been collected for a particular sub-model, such as harvested plants for weight allometry or tissue samples for the dry:wet ratio and carbon fraction.
+The kelpbiodata package holds Hakai Institute and coastwide datasets, with models pre-fit to them. The pre-fit models can be used when data have not been collected for a particular sub-model, such as harvested plants for weight allometry or tissue samples for the dry:wet ratio and carbon fraction. There is a pre-fit model for every sub-model, including the cover calibration, so canopy biomass can be estimated from a canopy map alone.
 
 ```{r, eval = rlang::is_installed("kelpbiodata")}
 set.seed(1)
@@ -418,3 +406,11 @@ biomass_macro <- kb_predict_biomass_in_situ(
   data_in_situ_sim_macro
 )
 ```
+
+## More information
+
+For additional information:
+- [Methods](https://hakaiinstitute.github.io/kelpbio/articles/methods.html)
+  describes the models and how predictions are computed.
+- [Advanced usage](https://hakaiinstitute.github.io/kelpbio/articles/advanced.html)
+  covers priors, diagnostics, and working with other Stan packages.

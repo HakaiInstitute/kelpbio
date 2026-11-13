@@ -4,18 +4,14 @@
 #' luetkeana* weight model, with appropriate types and values.
 #'
 #' @details
-#' Required columns, with no missing values:
+#' ```{r, echo = FALSE, results = "asis"}
+#' cat(doc_data_columns("weight_nereo"))
+#' ```
 #'
-#' - `diameter_mm`, a plant diameter that relates to weight as a power law,
-#'   such as the maximum sub-bulb diameter, the diameter 15 cm below the
-#'   sub-bulb, or the bulb diameter (mm, > 0). Size data must use the same
-#'   diameter.
-#' - `weight_kg`, the plant's weight (kg, > 0).
-#' - `site`, factor or character.
-#' - `year`, factor, character, or whole numbers. A numeric `year` is used as
-#'   its character level.
-#'
-#' Other columns are ignored.
+#' `diameter_mm` is any plant diameter that relates to weight as a power law,
+#' such as the maximum sub-bulb diameter, the diameter 15 cm below the
+#' sub-bulb, or the bulb diameter. Required columns have no missing values;
+#' other columns are ignored.
 #'
 #' @inheritParams params
 #' @param data A data frame of weight observations, one row per plant.
@@ -40,7 +36,7 @@ kb_check_data_weight_nereo <- function(
       chk::chk_data(data, x_name = x_name)
       chk::chk_superset(
         names(data),
-        c("diameter_mm", "weight_kg", "site", "year"),
+        data_column_names("weight_nereo"),
         x_name = x_name
       )
       .chk_measure_columns(data, c("diameter_mm", "weight_kg"), x_name)

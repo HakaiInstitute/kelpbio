@@ -22,19 +22,18 @@ Check that \code{data} contains the columns required to fit the \emph{Nereocysti
 luetkeana} weight model, with appropriate types and values.
 }
 \details{
-Required columns, with no missing values:
+Required columns:
 \itemize{
-\item \code{diameter_mm}, a plant diameter that relates to weight as a power law,
-such as the maximum sub-bulb diameter, the diameter 15 cm below the
-sub-bulb, or the bulb diameter (mm, > 0). Size data must use the same
-diameter.
+\item \code{diameter_mm}, the plant diameter, measured as in the size data (mm, > 0).
 \item \code{weight_kg}, the plant's weight (kg, > 0).
-\item \code{site}, factor or character.
-\item \code{year}, factor, character, or whole numbers. A numeric \code{year} is used as
-its character level.
+\item \code{site}, the site the plant was sampled at (any text).
+\item \code{year}, the year the plant was sampled (whole number or text).
 }
 
-Other columns are ignored.
+\code{diameter_mm} is any plant diameter that relates to weight as a power law,
+such as the maximum sub-bulb diameter, the diameter 15 cm below the
+sub-bulb, or the bulb diameter. Required columns have no missing values;
+other columns are ignored.
 }
 \examples{
 data <- data.frame(
@@ -58,6 +57,7 @@ Other data checks:
 \code{\link[=kb_check_data_size_sample_nereo]{kb_check_data_size_sample_nereo()}},
 \code{\link[=kb_check_data_weight_macro]{kb_check_data_weight_macro()}},
 \code{\link[=kb_check_data_wetdry_macro]{kb_check_data_wetdry_macro()}},
-\code{\link[=kb_check_data_wetdry_nereo]{kb_check_data_wetdry_nereo()}}
+\code{\link[=kb_check_data_wetdry_nereo]{kb_check_data_wetdry_nereo()}},
+\code{\link[=kb_data_columns]{kb_data_columns()}}
 }
 \concept{data checks}

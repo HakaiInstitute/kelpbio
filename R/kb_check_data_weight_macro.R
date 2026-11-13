@@ -4,16 +4,11 @@
 #' pyrifera* weight model, with appropriate types and values.
 #'
 #' @details
-#' Required columns, with no missing values:
+#' ```{r, echo = FALSE, results = "asis"}
+#' cat(doc_data_columns("weight_macro"))
+#' ```
 #'
-#' - `fronds`, the number of fronds reaching 1 m above the holdfast, the size
-#'   predictor (a whole number of at least 1).
-#' - `weight_kg`, the plant's weight (kg, > 0).
-#' - `site`, factor or character.
-#' - `year`, factor, character, or whole numbers. A numeric `year` is used as
-#'   its character level.
-#'
-#' Other columns are ignored.
+#' Required columns have no missing values; other columns are ignored.
 #'
 #' @inheritParams kb_check_data_weight_nereo
 #' @inheritParams params
@@ -37,7 +32,7 @@ kb_check_data_weight_macro <- function(
       chk::chk_data(data, x_name = x_name)
       chk::chk_superset(
         names(data),
-        c("fronds", "weight_kg", "site", "year"),
+        data_column_names("weight_macro"),
         x_name = x_name
       )
       .chk_measure_columns(data, "fronds", x_name, count = TRUE)
