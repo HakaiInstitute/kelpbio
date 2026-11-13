@@ -19,7 +19,9 @@ fit_weight_sim_macro <- kb_fit_weight_macro(
   # nthin multiplies the sampling iterations while holding the saved draw count
   # fixed, so these deliberately small objects clear the convergence thresholds
   # without growing.
-  nthin = 2L,
+  nthin = 4L,
+  # Avoids the few divergences these data give at the default.
+  control = list(adapt_delta = 0.99),
   cores = 4L,
   progress = "bar",
   seed = 42L

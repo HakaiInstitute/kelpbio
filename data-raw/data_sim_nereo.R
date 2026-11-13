@@ -8,7 +8,8 @@
 # drone cover is simulated from. Means, slopes, shapes, and dispersions are near
 # the analysis-project production fits, and random-effect SDs near the Hakai
 # Institute fits, so that every model converges at the default sampler
-# settings. Nine sites over six years, with abundance declining at most sites.
+# settings. Nine sites over six years, with abundance declining at every site to
+# 2024 and recovering in 2025, most at one small site and one large bed.
 # The data sources cover different site-years, as in the field: surveys and
 # drone cover at most, size at most of those, and weight harvests at six sites.
 # Site names are invented and match no Hakai Institute survey site.
@@ -20,9 +21,8 @@
 # Run from the package root:
 #   Rscript data-raw/data_sim_nereo.R
 
-# The seed is one whose true plot biomass stays in the range of the production
-# estimates, with few drone covers at the cap.
-set.seed(34)
+# The seed is one whose drone covers spread widely, with few at the cap.
+set.seed(31)
 
 # 1. Sites, years, and which data source covers each site-year ---------------
 
@@ -48,10 +48,11 @@ grid$weight <- grid$surveyed & !grid$site %in% c("urchin_shoal", "sculpin_head",
 grid$drone <- grid$surveyed
 
 # Abundance trend on the log scale, shared by plant density and canopy area: a
-# decline at most sites, steeper at some, with none at two large sites and a
-# recovery in the last year at half of the declining sites.
-trend_slope <- -0.2 * c(1, 0, 0.9, 1.2, 1.1, 0.3, 0, 0.8, 1.3)
-trend_recovery <- c(0.7, 0, 0, 0.7, 0, 0, 0, 0.7, 0.7)
+# decline at every site, steeper at some, and a recovery in the last year that
+# takes one small site (otter_cove) and one large bed (eagle_spit) above their
+# first-year abundance.
+trend_slope <- -0.35 * c(1, 0.8, 0.9, 1.2, 1.1, 0.7, 1, 0.8, 1.3)
+trend_recovery <- c(2.2, 0.6, 0.4, 0.8, 0.4, 0.5, 2, 0.8, 0.7)
 grid$trend <- trend_slope[i_site] * (i_year - (length(years) + 1) / 2) +
   ifelse(i_year == length(years), trend_recovery[i_site], 0)
 
@@ -78,18 +79,20 @@ shape_size <- 2.7
 grid$e_size <- effects(0.2, 0.08, 0.08)
 
 # Counts: zero-inflated negative binomial plant count on a transect of area_m2.
-# The intercept is above the production estimate (log 0.18) so the composed plot
-# biomass spans the production range despite the moderated SDs.
-b_plants <- log(1.5) # log plants per m^2 on occupied transects
+# The intercept is above the production estimate (log 0.18), and density varies
+# among sites, so that plot cover spans most of its range.
+b_plants <- log(1.8) # log plants per m^2 on occupied transects
 zero_inflation <- 0.05 # probability a transect is unoccupied (a structural zero)
-dispersion_density <- 0.45 # variance mu + dispersion * mu^2
-grid$e_density <- effects(0.3, 0, 0.1) + grid$trend
+dispersion_density <- 0.15 # variance mu + dispersion * mu^2
+grid$e_density <- effects(0.6, 0, 0.1) + grid$trend
 
 # Cover: biomass floor plus a canopy term in tide-corrected cover.
 b_canopy <- 8 # kg per m^2 of canopy
 b_cover_floor <- 0.093 # kg/m^2 at zero cover
 b_tide <- 0.28 # share of the zero-tide canopy lost per m of tide
-grid$e_cover <- effects(0.3, 0.25, 0)
+# Small group SDs, so the calibration and the totals it gives are estimated
+# with moderate uncertainty.
+grid$e_cover <- effects(0.1, 0.05, 0)
 
 # 3. Transect counts ------------------------------------------------------------
 
@@ -183,7 +186,7 @@ cover <- (grid$plot_biomass[i_grid] - b_cover_floor) /
   (b_canopy * exp(grid$e_cover[i_grid])) * exp(stats::rnorm(n, 0, 0.1))
 clipped <- cover > 0.95
 cover <- pmin(pmax(cover, 0), 0.95)
-cover[survey$plot_id == "3"] <- 0.12
+cover[survey$plot_id == "3"] <- 0.2
 canopy_area_m2 <- round(cover * plot_area_m2 * (1 - b_tide * canopy_tide_height_m), 2)
 survey$plot_area_m2 <- ifelse(drone, plot_area_m2, NA_real_)
 survey$canopy_area_m2 <- ifelse(drone, canopy_area_m2, NA_real_)
@@ -202,8 +205,8 @@ m <- nrow(canopy)
 # Each site's bed at zero tide follows the abundance trend; the mapped canopy is
 # what remains visible at the tide height of the imagery.
 bed_area_m2 <- stats::runif(length(sites), 4000, 12000)
-# Two large beds, with no decline, hold far more kelp than the rest: their bed
-# areas are set so that the total is 150,000 to 250,000 kg.
+# Two large beds hold far more kelp than the rest: their bed areas are set so
+# that the total averages 150,000 to 250,000 kg over the years.
 kg_m2_bed <- vapply(c(2, 7), function(s) {
   k <- which(grid$drone & i_site == s)
   mean((b_cover_floor + b_canopy * exp(grid$e_cover[k])) * exp(grid$trend[k]))
