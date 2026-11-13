@@ -103,11 +103,11 @@ fit_cover <- fit_cover_calibration_sim_nereo
 The calibration applied to each canopy map gives the total biomass of each site
 and year, with 95% compatibility limits.
 
-```{r totals, fig.width = 9, fig.height = 5.5, fig.alt = "Total biomass of each site by year, as estimates with 95% compatibility intervals."}
+```{r totals, fig.width = 9, fig.height = 5.5, fig.alt = "Total biomass of each site by year, as columns with 95% compatibility intervals."}
 totals <- kb_predict_biomass_canopy(fit_cover, data_canopy_sim_nereo)
 totals
 
-kb_plot_predictions(totals)
+kb_plot_predictions(totals, geom = "bar")
 ```
 
 ## Learn more

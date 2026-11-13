@@ -300,3 +300,10 @@ test_that(".vld_by accepts NULL or grouping factors only", {
   expect_false(.vld_by("bogus"))
   expect_false(.vld_by(1))
 })
+
+test_that(".vld_geom allows columns only off a curve on linear axes", {
+  expect_true(.vld_geom("pointrange", TRUE, "xy"))
+  expect_true(.vld_geom("bar", FALSE, "none"))
+  expect_false(.vld_geom("bar", TRUE, "none"))
+  expect_false(.vld_geom("bar", FALSE, "y"))
+})

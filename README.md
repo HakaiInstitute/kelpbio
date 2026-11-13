@@ -91,24 +91,24 @@ totals
 #> # A tibble: 49 × 11
 #>    site      year  canopy_area_m2 canopy_tide_height_m classified_area_m2 region
 #>    <fct>     <fct>          <dbl>                <dbl>              <dbl> <fct> 
-#>  1 otter_co… 2020            7184                 0.2               16233 north 
-#>  2 gull_rock 2020            9360                 1.55              17745 north 
-#>  3 cedar_bay 2020           11370                 1.55              34020 north 
-#>  4 heron_re… 2020            7193                 0                 19121 north 
-#>  5 urchin_s… 2020           14175                 0.6               24213 south 
-#>  6 sculpin_… 2020            8558                 1.25              21919 south 
-#>  7 eagle_sp… 2020           16258                 1.5               46670 south 
-#>  8 tidepool… 2020           10595                 1.4               19199 south 
-#>  9 otter_co… 2021            3415                 1.3                5572 north 
-#> 10 gull_rock 2021           14182                 1                 40162 north 
+#>  1 otter_co… 2020            6817                 1.2               18504 north 
+#>  2 gull_rock 2020           53242                 0.15             142539 north 
+#>  3 cedar_bay 2020            5893                 1.05              11737 north 
+#>  4 heron_re… 2020           24787                 0.6               51227 north 
+#>  5 urchin_s… 2020           20431                 0.75              55633 south 
+#>  6 sculpin_… 2020           16455                 1                 45632 south 
+#>  7 eagle_sp… 2020           38273                 1.3               76960 south 
+#>  8 tidepool… 2020           20110                 0.2               41234 south 
+#>  9 otter_co… 2021            4819                 1.6                9556 north 
+#> 10 gull_rock 2021           38877                 0.2               83128 north 
 #> # ℹ 39 more rows
 #> # ℹ 5 more variables: cover_support <chr>, biomass_kg <rvar[1d]>,
 #> #   estimate <dbl>, lower <dbl>, upper <dbl>
 
-kb_plot_predictions(totals)
+kb_plot_predictions(totals, geom = "bar")
 ```
 
-<img src="man/figures/README-totals-1.png" alt="Total biomass of each site by year, as estimates with 95% compatibility intervals."  />
+<img src="man/figures/README-totals-1.png" alt="Total biomass of each site by year, as columns with 95% compatibility intervals."  />
 
 ## Learn more
 

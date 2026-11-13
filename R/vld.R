@@ -260,6 +260,11 @@
     (log_axis != "xy" || .vld_log_x(predictions, x))
 }
 
+# Columns start at zero, so they need a linear y-axis and are not a curve.
+.vld_geom <- function(geom, curve, log_axis) {
+  geom == "pointrange" || (!curve && log_axis == "none")
+}
+
 # Each prior entry names a default and keeps its family.
 .vld_prior_entries <- function(priors, defaults) {
   all(names(priors) %in% names(defaults)) &&

@@ -1,28 +1,28 @@
 "survey_id","site","year","survey_area_m2","plants","plot_area_m2","canopy_area_m2","canopy_tide_height_m","weight_support","size_support","biomass_kg_m2","biomass_sd_kg_m2","fitted","residual"
-"otter_cove-2020-1","otter_cove","2020",80,181,214,32.1,0.4,"site-year","site-year",1.75,0.356,1.87,-0.233
-"otter_cove-2020-2","otter_cove","2020",80,209,213,23.9,0.9,"site-year","site-year",2.02,0.411,1.68,0.427
-"gull_rock-2020-1","gull_rock","2020",185,696,185,18.3,1.5,"site-year","site, year",3.42,0.993,2.16,0.946
-"cedar_bay-2020-1","cedar_bay","2020",20,0,262,25.7,0.65,"site-year","site-year",0,0,1.1,-2.66
-"cedar_bay-2020-2","cedar_bay","2020",100,223,201,23.7,0.2,"site-year","site-year",1.09,0.217,1.12,-0.242
-"heron_reef-2020-1","heron_reef","2020",255,695,255,14.6,0.55,"site-year","site-year",1.33,0.261,0.946,0.759
-"otter_cove-2021-1","otter_cove","2021",180,333,278,48.3,1.25,"site-year","site-year",1.7,0.323,2.09,-0.462
-"gull_rock-2021-1","gull_rock","2021",120,323,183,44,0.05,"site-year","site-year",2.56,0.507,2.03,0.509
-"cedar_bay-2021-1","cedar_bay","2021",100,84,237,19.1,1.2,"site-year","site-year",0.484,0.0873,0.837,-1.19
-"cedar_bay-2021-2","cedar_bay","2021",100,133,232,33.3,0.25,"site-year","site-year",0.767,0.138,1.01,-0.649
-"heron_reef-2021-1","heron_reef","2021",200,324,252,15.2,1.1,"site-year","site-year",1.28,0.256,0.904,0.753
-"otter_cove-2022-1","otter_cove","2022",140,369,260,29.5,1.55,"site-year","site-year",2.15,0.41,1.71,0.512
-"gull_rock-2022-1","gull_rock","2022",140,158,196,56,0.85,"site-year","site-year",1.42,0.294,3.27,-1.56
-"cedar_bay-2022-1","cedar_bay","2022",180,331,229,26.8,0.55,"site-year","site, year",1.24,0.331,0.97,0.533
-"otter_cove-2023-1","otter_cove","2023",180,247,187,22.5,0.2,"site-year","site-year",0.798,0.142,1.06,-0.732
-"gull_rock-2023-1","gull_rock","2023",200,207,200,23.2,1.1,"site-year","site-year",0.598,0.121,1.54,-1.78
-"cedar_bay-2023-1","cedar_bay","2023",255,582,255,28.9,1.25,"site-year","site-year",1.7,0.338,1.16,0.873
-"heron_reef-2023-1","heron_reef","2023",60,72,194,21.9,0.15,"site-year","site-year",0.849,0.166,1.21,-0.838
-"heron_reef-2023-2","heron_reef","2023",100,272,186,11.4,1.55,"site-year","site-year",1.92,0.377,1.15,1.14
-"otter_cove-2024-1","otter_cove","2024",120,68,222,17.2,0.85,"site-year","site-year",0.484,0.101,0.675,-0.861
-"gull_rock-2024-1","gull_rock","2024",200,563,266,108,0.75,"site-year","site-year",3.69,0.752,3.12,0.389
-"cedar_bay-2024-1","cedar_bay","2024",200,101,232,48.4,0.8,"site-year","site-year",0.553,0.11,1.26,-1.59
-"heron_reef-2024-1","heron_reef","2024",244,101,244,13.9,1.15,"site-year","site-year",0.422,0.0818,0.689,-1.21
-"otter_cove-2025-1","otter_cove","2025",140,307,183,16.4,0.4,"site-year","site-year",1.39,0.274,1.11,0.515
-"gull_rock-2025-1","gull_rock","2025",228,808,228,28.8,1.35,"site-year","site-year",3.62,0.771,2.44,0.868
-"cedar_bay-2025-1","cedar_bay","2025",240,140,253,12.4,0.85,"site-year","site-year",0.429,0.0803,0.604,-1.09
-"heron_reef-2025-1","heron_reef","2025",140,212,259,10.7,0.4,"site-year","site-year",0.961,0.179,0.635,0.864
+"otter_cove-2020-1","otter_cove","2020",140,992,215,87.3,1.35,"site-year","site-year",6.06,1.05,5.28,0.394
+"otter_cove-2020-2","otter_cove","2020",80,297,262,110,1,"site-year","site-year",3.18,0.549,4.81,-1.1
+"gull_rock-2020-1","gull_rock","2020",233,660,233,30.3,1.35,"site-year","site, year",2.86,0.6,1.95,0.978
+"cedar_bay-2020-1","cedar_bay","2020",40,0,270,34.3,1.3,"site-year","site-year",0,0,1.78,-2.67
+"cedar_bay-2020-2","cedar_bay","2020",180,861,255,81.2,0.8,"site-year","site-year",4.46,0.814,3.61,0.569
+"heron_reef-2020-1","heron_reef","2020",120,550,217,73.5,0.6,"site-year","site-year",4.2,0.728,3.63,0.42
+"otter_cove-2021-1","otter_cove","2021",250,1491,250,146,0.7,"site-year","site-year",5.09,0.875,5.49,-0.246
+"gull_rock-2021-1","gull_rock","2021",180,279,240,17.6,1.6,"site-year","site-year",1.38,0.247,1.14,0.533
+"cedar_bay-2021-1","cedar_bay","2021",140,419,189,61.2,0.4,"site-year","site-year",4.02,0.744,2.99,0.824
+"cedar_bay-2021-2","cedar_bay","2021",60,59,244,78.7,1.5,"site-year","site-year",1.32,0.244,4.29,-2.67
+"heron_reef-2021-1","heron_reef","2021",100,224,213,69.3,0,"site-year","site-year",2.62,0.463,2.74,-0.212
+"otter_cove-2022-1","otter_cove","2022",232,687,232,70.6,1.15,"site-year","site-year",3.53,0.659,3.67,-0.163
+"gull_rock-2022-1","gull_rock","2022",160,235,240,22.6,0.7,"site-year","site-year",1.76,0.313,1.13,1.13
+"cedar_bay-2022-1","cedar_bay","2022",200,468,261,46.4,1.5,"site-year","site, year",2.39,0.527,2.62,-0.328
+"otter_cove-2023-1","otter_cove","2023",160,153,269,41.6,1.1,"site-year","site-year",0.88,0.175,1.76,-1.73
+"gull_rock-2023-1","gull_rock","2023",180,106,246,17.4,1.25,"site-year","site-year",0.893,0.16,0.982,-0.58
+"cedar_bay-2023-1","cedar_bay","2023",240,569,261,46.1,0.05,"site-year","site-year",1.97,0.386,1.54,0.635
+"heron_reef-2023-1","heron_reef","2023",60,87,249,38,0.6,"site-year","site-year",1.91,0.345,1.56,0.558
+"heron_reef-2023-2","heron_reef","2023",120,161,193,31,0.8,"site-year","site-year",1.77,0.32,1.73,0.171
+"otter_cove-2024-1","otter_cove","2024",180,330,260,43.9,1.1,"site-year","site-year",1.83,0.332,1.88,-0.189
+"gull_rock-2024-1","gull_rock","2024",160,142,241,12.1,0.25,"site-year","site-year",0.715,0.121,0.539,0.726
+"cedar_bay-2024-1","cedar_bay","2024",220,139,274,37.7,0.1,"site-year","site-year",0.673,0.119,1.19,-1.64
+"heron_reef-2024-1","heron_reef","2024",233,177,233,11.9,0.25,"site-year","site-year",0.482,0.0883,0.514,-0.629
+"otter_cove-2025-1","otter_cove","2025",220,2072,270,196,0.85,"site-year","site-year",11.2,2,7.78,1.04
+"gull_rock-2025-1","gull_rock","2025",180,130,180,9.1,1.35,"site-year","site-year",0.603,0.107,0.796,-1.11
+"cedar_bay-2025-1","cedar_bay","2025",240,383,278,22.8,0.75,"site-year","site-year",1.42,0.249,0.957,0.967
+"heron_reef-2025-1","heron_reef","2025",120,108,224,12.9,1.05,"site-year","site-year",0.76,0.136,0.754,0.272

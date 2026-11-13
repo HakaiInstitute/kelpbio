@@ -290,3 +290,30 @@ test_that("each layout is visually stable", {
     kb_plot_predictions(survey, max_facets = Inf)
   )
 })
+
+test_that("geom = 'bar' draws columns from zero with intervals", {
+  p <- mean_weight_by_site()
+  gg <- kb_plot_predictions(p, geom = "bar")
+  expect_true(all(c("GeomCol", "GeomLinerange") %in% geoms_of(gg)))
+  expect_false("GeomPointrange" %in% geoms_of(gg))
+  expect_equal(min(ggplot2::layer_scales(gg)$y$range$range), 0)
+  expect_identical(geoms_of(ggplot2::autoplot(p, geom = "bar")), geoms_of(gg))
+  expect_snapshot(kb_plot_predictions(p, geom = "bar", log_axis = "y"), error = TRUE)
+  expect_snapshot(kb_plot_predictions(weight_curve(), geom = "bar"), error = TRUE)
+})
+
+test_that("the column layout is visually stable", {
+  skip_if_not_installed("vdiffr")
+  withr::local_seed(1)
+  survey <- kb_predict_biomass_in_situ(
+    weight_nereo_fit,
+    size_nereo_fit,
+    data_in_situ_sim_nereo,
+    pool_by = c("site", "year"),
+    progress = "none"
+  )
+  vdiffr::expect_doppelganger(
+    "survey biomass by site-year columns",
+    kb_plot_predictions(survey, geom = "bar", max_facets = Inf)
+  )
+})

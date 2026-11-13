@@ -426,3 +426,9 @@ test_that(".chk_by rejects a factor no model groups by", {
   expect_error(.chk_by("bogus"), "Invalid")
   expect_error(.chk_by(1), "character")
 })
+
+test_that(".chk_geom gives a message per reason columns cannot be drawn", {
+  expect_invisible(.chk_geom("bar", FALSE, "none"))
+  expect_error(.chk_geom("bar", TRUE, "none"), "drawn as a curve")
+  expect_error(.chk_geom("bar", FALSE, "y"), "linear axes")
+})

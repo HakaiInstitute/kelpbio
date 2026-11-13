@@ -11,7 +11,10 @@
 #'
 #' Predictions over a grid of predictor values (as from [kb_new_data()]) are
 #' drawn as a line and compatibility-interval ribbon; others as points with
-#' intervals. Override the chosen x-axis with `x`.
+#' intervals, or with `geom = "bar"` as columns from zero with intervals.
+#' Columns suit a quantity that is a total or stock, such as biomass by year;
+#' they need linear axes and are not available for a curve. Override the chosen
+#' x-axis with `x`.
 #'
 #' Axes are linear by default, with the y-axis extended to zero. Weights and
 #' biomass often span orders of magnitude; `log_axis = "y"` shows
@@ -29,6 +32,9 @@
 #' @param predictions A `kb_predictions` object.
 #' @param x A string naming the x-axis column, or `NULL` to choose it from the
 #'   predictions.
+#' @param geom A string, one of `"pointrange"` (points with intervals) or
+#'   `"bar"` (columns from zero with intervals), for predictions not drawn as
+#'   a curve.
 #' @param log_axis A string, one of `"none"` (linear axes), `"y"` (log-scaled
 #'   y-axis), or `"xy"` (log-scaled x- and y-axes).
 #' @param max_facets A whole number capping the facet panels drawn; if the
@@ -67,6 +73,14 @@
 #'   kb_plot_predictions() +
 #'   ggplot2::coord_flip()
 #'
+#' # Canopy biomass by year (columns):
+#' kb_predict_biomass_canopy(
+#'   fit_cover_calibration_sim_nereo,
+#'   data_canopy_sim_nereo,
+#'   pool_by = "year"
+#' ) |>
+#'   kb_plot_predictions(geom = "bar")
+#'
 #' # Allometric curve on log-log axes:
 #' kb_predict_weight(fit, kb_new_data(fit)) |>
 #'   kb_plot_predictions(log_axis = "xy")
@@ -82,11 +96,13 @@ kb_plot_predictions <- function(
   predictions,
   ...,
   x = NULL,
+  geom = c("pointrange", "bar"),
   log_axis = c("none", "y", "xy"),
   max_facets = 12L
 ) {
   rlang::check_dots_empty()
   chk::chk_null_or(x, vld = chk::vld_string)
+  geom <- rlang::arg_match(geom)
   log_axis <- rlang::arg_match(log_axis)
   chk::chk_number(max_facets)
   chk::chk_gt(max_facets, value = 0)
@@ -136,8 +152,9 @@ kb_plot_predictions <- function(
   ) {
     "ribbon"
   } else {
-    "pointrange"
+    geom
   }
+  .chk_geom(geom, style == "ribbon", log_axis)
 
   # The draws column of a derived verb is not plotted.
   draws <- vapply(predictions, posterior::is_rvar, logical(1))
@@ -152,6 +169,13 @@ kb_plot_predictions <- function(
         alpha = 0.2
       ) +
       ggplot2::geom_line()
+  } else if (style == "bar") {
+    # Translucent columns keep the interval visible inside them.
+    gg <- gg +
+      ggplot2::geom_col(alpha = 0.5) +
+      ggplot2::geom_linerange(
+        ggplot2::aes(ymin = .data$lower, ymax = .data$upper)
+      )
   } else {
     gg <- gg +
       ggplot2::geom_pointrange(

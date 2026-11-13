@@ -309,7 +309,7 @@ data_canopy_sim_nereo
 totals <- kb_predict_biomass_canopy(fit_cover, data_canopy_sim_nereo)
 totals
 
-kb_plot_predictions(totals)
+kb_plot_predictions(totals, geom = "bar")
 ```
 
 `pool_by` pools the estimates by group, in this case to give the total biomass in each year, summed across sites, with the uncertainty of the sum.
@@ -317,7 +317,7 @@ kb_plot_predictions(totals)
 ```{r, fig.width = 9, fig.height = 5.5}
 set.seed(1)
 kb_predict_biomass_canopy(fit_cover, data_canopy_sim_nereo, pool_by = "year") |>
-  kb_plot_predictions()
+  kb_plot_predictions(geom = "bar")
 ```
 
 See the [methods article](https://hakaiinstitute.github.io/kelpbio/articles/methods.html#survey-design) for more detail, including a diagram of a typical survey layout that shows how a plot relates to its site.

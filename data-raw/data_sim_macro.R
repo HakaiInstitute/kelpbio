@@ -8,7 +8,8 @@
 # dispersions are near the analysis-project production fits, and random-effect
 # SDs near the Hakai Institute fits, so that every model converges at the
 # default sampler settings. Nine sites over six years, with abundance declining
-# at most sites. The data sources cover different site-years, as in the field:
+# at every site to 2024 and recovering in 2025, most at one small site and one
+# large bed. The data sources cover different site-years, as in the field:
 # surveys and drone cover at most, and weight harvests at six sites. Site names
 # are invented and match no Hakai Institute survey site.
 #
@@ -21,9 +22,8 @@
 # Run from the package root:
 #   Rscript data-raw/data_sim_macro.R
 
-# The seed is one whose true plot biomass stays in the range of the production
-# estimates, with few drone covers at the cap.
-set.seed(17)
+# The seed is one whose drone covers spread widely, with none at the limits.
+set.seed(20)
 
 # 1. Sites, years, and which data source covers each site-year ---------------
 
@@ -49,10 +49,11 @@ grid$weight <- grid$surveyed & !grid$site %in% c("limpet_head", "shearwater_isle
 grid$drone <- grid$surveyed
 
 # Abundance trend on the log scale, shared by plant density and canopy area: a
-# decline at most sites, steeper at some, with none at two large sites and a
-# recovery in the last year at half of the declining sites.
-trend_slope <- -0.2 * c(1, 0, 0.9, 1.2, 1.1, 0.3, 0, 0.8, 1.3)
-trend_recovery <- c(0.7, 0, 0, 0.7, 0, 0, 0, 0.7, 0.7)
+# decline at every site, steeper at some, and a recovery in the last year that
+# takes one small site (seal_ledge) and one large bed (driftwood_cove) above
+# their first-year abundance.
+trend_slope <- -0.3 * c(1, 0.8, 0.9, 1.2, 1.1, 0.7, 1, 0.8, 1.3)
+trend_recovery <- c(1.8, 0.5, 0.3, 0.6, 0.3, 0.4, 1.7, 0.6, 0.5)
 grid$trend <- trend_slope[i_site] * (i_year - (length(years) + 1) / 2) +
   ifelse(i_year == length(years), trend_recovery[i_site], 0)
 
@@ -78,9 +79,8 @@ dispersion_size <- 0.63 # variance mu + dispersion * mu^2
 grid$e_size <- effects(0.25, 0.08, 0.08)
 
 # Counts: negative binomial plant count on a transect of area_m2. The intercept
-# is above the production estimate (log 0.31) so the composed plot biomass spans
-# the production range despite the moderated SDs.
-b_plants <- log(0.45) # log plants per m^2
+# is near the production estimate (log 0.31).
+b_plants <- log(0.35) # log plants per m^2
 dispersion_density <- 0.11
 grid$e_density <- effects(0.3, 0, 0.1) + grid$trend
 
@@ -88,7 +88,9 @@ grid$e_density <- effects(0.3, 0, 0.1) + grid$trend
 b_canopy <- 8 # kg per m^2 of canopy, within the production interval
 b_floor <- 0.42 # kg/m^2 at zero cover
 b_tide <- 0.23 # share of the zero-tide canopy lost per m of tide
-grid$e_cover <- effects(0.25, 0.35, 0)
+# Small group SDs, so the calibration and the totals it gives are estimated
+# with moderate uncertainty.
+grid$e_cover <- effects(0.1, 0.05, 0)
 
 # True plot biomass (wet kg/m^2): expected plants per m^2 times the mean expected
 # plant weight over the frond-count distribution.
@@ -222,8 +224,8 @@ m <- nrow(canopy)
 # Each site's bed at zero tide follows the abundance trend; the mapped canopy is
 # what remains visible at the tide height of the imagery.
 bed_area_m2 <- stats::runif(length(sites), 2500, 8000)
-# Two large beds, with no decline, hold far more kelp than the rest: their bed
-# areas are set so that the total is 150,000 to 250,000 kg.
+# Two large beds hold far more kelp than the rest: their bed areas are set so
+# that the total averages 150,000 to 250,000 kg over the years.
 kg_m2_bed <- vapply(c(2, 7), function(s) {
   k <- which(grid$drone & i_site == s)
   mean((b_floor + b_canopy * exp(grid$e_cover[k])) * exp(grid$trend[k]))

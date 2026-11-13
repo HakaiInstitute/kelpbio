@@ -25,3 +25,21 @@
       ! A log y-axis needs positive estimate, lower, and upper values.
       i Use `log_axis = "none"`.
 
+# geom = 'bar' draws columns from zero with intervals
+
+    Code
+      kb_plot_predictions(p, geom = "bar", log_axis = "y")
+    Condition
+      Error in `kb_plot_predictions()`:
+      ! Columns start at zero, so they need linear axes.
+      i Use `log_axis = "none"` or `geom = "pointrange"`.
+
+---
+
+    Code
+      kb_plot_predictions(weight_curve(), geom = "bar")
+    Condition
+      Error in `kb_plot_predictions()`:
+      ! Predictions over a grid of predictor values are drawn as a curve, not as columns.
+      i Use `geom = "pointrange"`.
+
