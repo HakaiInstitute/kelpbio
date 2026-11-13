@@ -1079,6 +1079,28 @@
   )
 }
 
+.chk_geom <- function(geom, curve, log_axis, call = rlang::caller_env()) {
+  if (.vld_geom(geom, curve, log_axis)) {
+    return(invisible(geom))
+  }
+  if (curve) {
+    cli::cli_abort(
+      c(
+        "Predictions over a grid of predictor values are drawn as a curve, not as columns.",
+        i = "Use {.code geom = \"pointrange\"}."
+      ),
+      call = call
+    )
+  }
+  cli::cli_abort(
+    c(
+      "Columns start at zero, so they need linear axes.",
+      i = "Use {.code log_axis = \"none\"} or {.code geom = \"pointrange\"}."
+    ),
+    call = call
+  )
+}
+
 .chk_prior_entries <- function(priors, defaults, call = rlang::caller_env()) {
   if (.vld_prior_entries(priors, defaults)) {
     return(invisible(priors))

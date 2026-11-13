@@ -8,6 +8,7 @@ kb_plot_predictions(
   predictions,
   ...,
   x = NULL,
+  geom = c("pointrange", "bar"),
   log_axis = c("none", "y", "xy"),
   max_facets = 12L
 )
@@ -19,6 +20,10 @@ kb_plot_predictions(
 
 \item{x}{A string naming the x-axis column, or \code{NULL} to choose it from the
 predictions.}
+
+\item{geom}{A string, one of \code{"pointrange"} (points with intervals) or
+\code{"bar"} (columns from zero with intervals), for predictions not drawn as
+a curve.}
 
 \item{log_axis}{A string, one of \code{"none"} (linear axes), \code{"y"} (log-scaled
 y-axis), or \code{"xy"} (log-scaled x- and y-axes).}
@@ -42,7 +47,10 @@ standard \code{ggplot} that can be refined with \code{+} (scales, labels, themes
 
 Predictions over a grid of predictor values (as from \code{\link[=kb_new_data]{kb_new_data()}}) are
 drawn as a line and compatibility-interval ribbon; others as points with
-intervals. Override the chosen x-axis with \code{x}.
+intervals, or with \code{geom = "bar"} as columns from zero with intervals.
+Columns suit a quantity that is a total or stock, such as biomass by year;
+they need linear axes and are not available for a curve. Override the chosen
+x-axis with \code{x}.
 
 Axes are linear by default, with the y-axis extended to zero. Weights and
 biomass often span orders of magnitude; \code{log_axis = "y"} shows
@@ -83,6 +91,14 @@ kb_predict_size(
 kb_predict_weight(fit, kb_new_data(fit, by = "site", diameter_mm = 30)) |>
   kb_plot_predictions() +
   ggplot2::coord_flip()
+
+# Canopy biomass by year (columns):
+kb_predict_biomass_canopy(
+  fit_cover_calibration_sim_nereo,
+  data_canopy_sim_nereo,
+  pool_by = "year"
+) |>
+  kb_plot_predictions(geom = "bar")
 
 # Allometric curve on log-log axes:
 kb_predict_weight(fit, kb_new_data(fit)) |>
