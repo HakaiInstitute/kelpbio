@@ -4,17 +4,17 @@
 #' *Nereocystis luetkeana* nitrogen model, with appropriate types and values.
 #'
 #' @details
-#' Each row is one dried tissue sample. Required columns, with no missing
-#' values:
+#' Each row is one dried tissue sample.
 #'
-#' - `sample_mass_mg`, the mass of the sample analysed (mg, > 0).
-#' - `nitrogen_mass_ug`, the nitrogen measured in it (µg, > 0 and less than the sample
-#'   mass).
+#' ```{r, echo = FALSE, results = "asis"}
+#' cat(doc_data_columns("nitrogen_nereo"))
+#' ```
 #'
-#' The model's response is the nitrogen fraction, the nitrogen mass divided by the
-#' sample mass (`nitrogen_mass_ug` converted to mg). A warning gives the number of
-#' samples whose nitrogen fraction falls outside 0.002 to 0.05, the plausible range for
-#' kelp tissue; they are kept, not removed. Other columns are ignored.
+#' Required columns have no missing values. The model's response is the
+#' nitrogen fraction, the nitrogen mass divided by the sample mass. A warning gives
+#' the number of samples whose nitrogen fraction falls outside 0.002 to 0.05, the
+#' plausible range for kelp tissue; they are kept, not removed. Other columns
+#' are ignored.
 #'
 #' @inheritParams params
 #' @param data A data frame of nitrogen observations, one row per sample.

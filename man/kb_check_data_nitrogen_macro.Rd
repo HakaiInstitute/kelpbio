@@ -22,18 +22,18 @@ Check that \code{data} contains the columns required to fit the
 \emph{Macrocystis pyrifera} nitrogen model, with appropriate types and values.
 }
 \details{
-Each row is one dried tissue sample. Required columns, with no missing
-values:
+Each row is one dried tissue sample.
+Required columns:
 \itemize{
-\item \code{sample_mass_mg}, the mass of the sample analysed (mg, > 0).
-\item \code{nitrogen_mass_ug}, the nitrogen measured in it (µg, > 0 and less than the sample
-mass).
+\item \code{sample_mass_mg}, the mass of the dried tissue sample analysed (mg, > 0).
+\item \code{nitrogen_mass_ug}, the mass of nitrogen measured in the sample (µg, > 0 and less than the sample mass).
 }
 
-The model's response is the nitrogen fraction, the nitrogen mass divided by the
-sample mass (\code{nitrogen_mass_ug} converted to mg). A warning gives the number of
-samples whose nitrogen fraction falls outside 0.002 to 0.05, the plausible range for
-kelp tissue; they are kept, not removed. Other columns are ignored.
+Required columns have no missing values. The model's response is the
+nitrogen fraction, the nitrogen mass divided by the sample mass. A warning gives
+the number of samples whose nitrogen fraction falls outside 0.002 to 0.05, the
+plausible range for kelp tissue; they are kept, not removed. Other columns
+are ignored.
 }
 \examples{
 data <- data.frame(sample_mass_mg = c(2.4, 2.7), nitrogen_mass_ug = c(45, 52))
@@ -54,6 +54,7 @@ Other data checks:
 \code{\link[=kb_check_data_weight_macro]{kb_check_data_weight_macro()}},
 \code{\link[=kb_check_data_weight_nereo]{kb_check_data_weight_nereo()}},
 \code{\link[=kb_check_data_wetdry_macro]{kb_check_data_wetdry_macro()}},
-\code{\link[=kb_check_data_wetdry_nereo]{kb_check_data_wetdry_nereo()}}
+\code{\link[=kb_check_data_wetdry_nereo]{kb_check_data_wetdry_nereo()}},
+\code{\link[=kb_data_columns]{kb_data_columns()}}
 }
 \concept{data checks}

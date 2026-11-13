@@ -49,8 +49,9 @@ reference:
     - kb_prior_exponential
     - kb_prior_lognormal
 - title: "Data checks"
-  desc: "Check input data before fitting."
+  desc: "Describe and check input data before fitting."
   contents:
+    - kb_data_columns
     - kb_check_data_weight_nereo
     - kb_check_data_weight_macro
     - kb_check_data_size_sample_nereo

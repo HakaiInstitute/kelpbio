@@ -6,16 +6,14 @@
 #'
 #' @details
 #' Each row is one counted plant, an individual (sporophyte) identified by its
-#' holdfast. Required columns:
+#' holdfast. The plant's site and year are those of its survey (see
+#' [kb_check_data_in_situ()]).
 #'
-#' - `survey_id`, the survey the plant was counted in (see
-#'   [kb_check_data_in_situ()]), which gives the plant's site and year.
-#' - `fronds`, the number of fronds reaching 1 m above the holdfast (a whole
-#'   number of at least 1), the predictor of the weight model
-#'   ([kb_fit_weight_macro()]).
+#' ```{r, echo = FALSE, results = "asis"}
+#' cat(doc_data_columns("size_census_macro"))
+#' ```
 #'
-#' An optional logical `partial` marks plants counted as half, such as plants
-#' on the edge of a transect. Other columns are ignored.
+#' Columns have no missing values; other columns are ignored.
 #'
 #' @inheritParams params
 #' @param data A data frame of counted plants, one row per plant.

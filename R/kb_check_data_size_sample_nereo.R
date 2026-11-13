@@ -5,16 +5,13 @@
 #'
 #' @details
 #' Each row is one plant of a sample measured for the size model, which need
-#' not be linked to any in situ survey. Required columns, with no missing
-#' values:
+#' not be linked to any in situ survey.
 #'
-#' - `diameter_mm`, the plant diameter (mm, > 0), the same diameter as in the
-#'   weight data ([kb_check_data_weight_nereo()]).
-#' - `site`, factor or character.
-#' - `year`, factor, character, or whole numbers. A numeric `year` is used as
-#'   its character level.
+#' ```{r, echo = FALSE, results = "asis"}
+#' cat(doc_data_columns("size_sample_nereo"))
+#' ```
 #'
-#' Other columns are ignored.
+#' Required columns have no missing values; other columns are ignored.
 #'
 #' @inheritParams params
 #' @param data A data frame of a size sample, one row per measured plant.
@@ -40,7 +37,7 @@ kb_check_data_size_sample_nereo <- function(
       chk::chk_data(data, x_name = x_name)
       chk::chk_superset(
         names(data),
-        c("diameter_mm", "site", "year"),
+        data_column_names("size_sample_nereo"),
         x_name = x_name
       )
       .chk_measure_columns(data, "diameter_mm", x_name)
