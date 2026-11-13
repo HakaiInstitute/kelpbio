@@ -43,7 +43,10 @@ each step in turn, including specific model descriptions.
 ## Data collection
 
 kelpbio expects data collected in a specific way, and its estimates are
-interpreted according to how the data were collected.
+interpreted according to how the data were collected. `kb_data_columns()`
+lists the columns of each data frame, with their units, allowed values, and
+examples, and the `kb_check_data_*()` functions check a data frame before it is
+used.
 
 ### Survey design
 
