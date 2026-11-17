@@ -21,6 +21,11 @@ library(kelpbio)
 library(ggplot2)
 ```
 
+```{r cores, include = FALSE}
+# R CMD check allows at most 2 cores.
+options(mc.cores = 2L)
+```
+
 kelpbio estimates the biomass of *Nereocystis luetkeana* and *Macrocystis
 pyrifera* kelp beds. The total biomass of a site in a given year combines plants
 counted and measured from in situ surveys, the surface canopy area mapped from aerial imagery, and a
