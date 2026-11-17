@@ -26,8 +26,9 @@ kb_fit_weight_nereo(
 \item{priors}{A named list of prior objects (see \code{\link[=kb_priors_weight_nereo]{kb_priors_weight_nereo()}}),
 or \code{NULL} to use the defaults. Entries not supplied keep their defaults.}
 
-\item{form}{A string, one of \code{"packard_floor"} (the default) or \code{"power"},
-giving the mean function of weight in diameter (see Details).}
+\item{form}{A string giving the relationship of weight to diameter, one of
+\code{"packard_floor"} (the default, a power law above a weight floor; Packard
+2023) or \code{"power"} (a power law).}
 
 \item{...}{Additional arguments passed to \code{\link[rstan:sampling]{rstan::sampling()}}, such as
 \code{control}.}
@@ -63,27 +64,14 @@ A \code{kb_fit_weight_nereo} object (a \code{kb_fit}).
 \description{
 Fit an allometric weight model for \emph{Nereocystis luetkeana} via Stan.
 }
-\details{
-Log wet weight (kg) is modelled with a Normal likelihood with mean \code{log(mu)}
-and standard deviation \code{sd_residual}, so \code{log(mu)} is the expected log
-weight. \code{form} sets \code{mu} as a function of plant diameter, with \code{x} the
-\code{diameter_mm} divided by the geometric mean diameter of the data:
-\itemize{
-\item \code{"packard_floor"} (the default):
-\code{mu = weight_floor + alpha * x^diameter_power}, the three-parameter
-power function of Packard (2023). \code{weight_floor} makes the relationship
-curve on log-log axes: the local allometric exponent rises with plant
-size and levels off toward \code{diameter_power} as the floor's share of
-weight shrinks.
-\item \code{"power"}: \code{mu = alpha * x^diameter_power}, a power law, which is a
-straight line on log-log axes.
+\section{Model}{
+
+\code{\link[=kb_model_describe]{kb_model_describe()}} prints the fitted model, with its priors, in notation
+or as a methods paragraph. The
+\href{https://hakaiinstitute.github.io/kelpbio/articles/methods.html}{Methods article}
+describes each model and its assumptions.
 }
 
-The allometric coefficient \code{alpha} varies by site and year,
-\code{log(alpha) = intercept + site_effect + year_effect + site_year_effect}, so
-these effects scale the size-dependent part of the weight, while
-\code{weight_floor} is common to all sites and years.
-}
 \section{Sampling}{
 
 Chains are run in parallel by default. Set \code{options(mc.cores = 1)} (or pass

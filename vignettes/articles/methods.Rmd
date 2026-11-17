@@ -118,7 +118,7 @@ plants counted in them. For the estimate to be valid:
 
 The estimate is then interpreted as the biomass of plants that reach the
 surface, a lower bound on the total biomass of the site that is not directly
-comparable with diver-based estimates.
+comparable with estimates from in situ surveys that count submerged plants.
 
 #### Site-wide census
 
@@ -298,8 +298,8 @@ The cover calibration relates the in situ biomass of each survey to the cover of
 its plot: biomass increases linearly with cover above a floor. The floor is the
 biomass not tracked by surface canopy, such as juveniles and submerged plants.
 
-The *Nereocystis* model is shown; the *Macrocystis* model is the same without
-the probability that a survey holds plants.
+The *Nereocystis* model is shown. For either species, the model includes the
+probability that a survey holds plants only when a survey counted no plants.
 
 ```{r}
 kb_model_describe(fit_cover_calibration_sim_nereo)
@@ -320,8 +320,8 @@ Key assumptions:
 - In situ biomass represents the biomass per m² across the plot.
 - Expected biomass increases linearly with tide-corrected cover above a floor.
 - Biomass per unit of canopy varies by site and by year; the floor does not.
-- *Nereocystis* only: the probability that a survey holds any plants increases
-  with cover (hurdle component).
+- When a survey counted no plants, the probability that a survey holds any
+  plants increases with cover (hurdle component).
 
 ## Total biomass
 
@@ -344,7 +344,7 @@ equal to 1) would give a total that changed with the size of the area over which
 percent cover is measured.
 
 The corrected canopy area is capped at the water area the imagery classified.
-The *Nereocystis* probability that a survey holds plants is not applied, since
+The probability that a survey holds plants is not applied, since
 mapped canopy is taken to hold plants. The interval is for the expected total:
 it includes the uncertainty in the calibration and its site and year effects,
 not the scatter of individual surveys around it.

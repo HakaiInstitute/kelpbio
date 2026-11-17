@@ -52,7 +52,7 @@
 #'   `pool_by` columns, the support columns when `pool_by` includes `site` and
 #'   `year`, the draws, and the summary.
 #' @family prediction functions
-#' @seealso [kb_fit_cover_calibration_nereo()] to calibrate drone cover on the
+#' @seealso [kb_fit_cover_calibration_nereo()] to calibrate plot cover on the
 #'   result.
 #' @export
 #'

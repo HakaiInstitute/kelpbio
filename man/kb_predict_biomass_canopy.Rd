@@ -91,7 +91,7 @@ columns, \code{cover_support} when \code{pool_by} includes \code{site} and \code
 draws, and the summary.
 }
 \description{
-Predict the biomass over each row's drone-mapped canopy from a cover
+Predict the biomass over each row's mapped canopy from a cover
 calibration fit: wet, dry, carbon, or nitrogen (kg), optionally pooled over
 groups of rows.
 }
@@ -103,10 +103,9 @@ outside it. The interval is for the expected total: it carries the
 uncertainty in the parameters and the site and year effects, not variation
 between canopy maps.
 
-The tide-corrected canopy area is \code{canopy_area_m2 / (1 - tide_height_slope * canopy_tide_height_m)} (Timmer et al. 2024), capped at \code{classified_area_m2}; at a
-tide height at or above \code{1 / tide_height_slope} it is \code{classified_area_m2}.
-A row past that limit on more than 5\% of draws warns, since its total is
-then set by the classified area rather than the canopy mapped. Canopy
+The canopy area is corrected for tide (Timmer et al. 2024) and capped at
+\code{classified_area_m2}. A row capped on more than 5\% of draws warns, since its
+total is then set by the classified area rather than the canopy mapped. Canopy
 already corrected for tide is passed with \code{canopy_tide_height_m = 0}.
 
 Dry biomass is the wet total times the expected dry:wet ratio from \code{wetdry},
@@ -155,6 +154,9 @@ sensing. \emph{Frontiers in Environmental Science}, 12, 1338483.
 \seealso{
 \code{\link[=kb_predict_cover_calibration]{kb_predict_cover_calibration()}} for biomass per m² of a plot at a
 given cover; at full cover and zero tide height, the biomass per m² of bed.
+The
+\href{https://hakaiinstitute.github.io/kelpbio/articles/methods.html}{Methods article}
+describes how totals are computed.
 
 Other prediction functions:
 \code{\link[=autoplot.kb_predictions]{autoplot.kb_predictions()}},

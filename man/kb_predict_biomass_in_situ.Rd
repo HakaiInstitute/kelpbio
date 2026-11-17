@@ -165,7 +165,7 @@ kb_predict_biomass_in_situ(
 )
 }
 \seealso{
-\code{\link[=kb_fit_cover_calibration_nereo]{kb_fit_cover_calibration_nereo()}} to calibrate drone cover on the
+\code{\link[=kb_fit_cover_calibration_nereo]{kb_fit_cover_calibration_nereo()}} to calibrate plot cover on the
 result.
 
 Other prediction functions:

@@ -28,7 +28,7 @@ kelpbio estimates the biomass and carbon of *Nereocystis luetkeana* and
 biomass of a site in a year combines three sources:
 
 - plants counted and measured by in situ surveys;
-- the canopy area mapped from drone or other imagery;
+- the canopy area mapped from aerial imagery;
 - a calibration model that relates the two.
 
 Estimates are for the peak season, with uncertainty carried through from every
@@ -90,7 +90,7 @@ biomass <- kb_predict_biomass_in_situ(
 )
 ```
 
-The cover calibration relates survey biomass to drone canopy cover.
+The cover calibration relates in situ biomass to plot cover.
 
 ```{r calibration, eval = FALSE}
 fit_cover <- kb_fit_cover_calibration_nereo(biomass)

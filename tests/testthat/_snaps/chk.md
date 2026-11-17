@@ -80,7 +80,7 @@
       .chk_occupied_survey(data[1, , drop = FALSE], prior_only = FALSE)
     Condition
       Error:
-      ! No survey with drone cover in `data` has plants counted.
+      ! No survey with plot cover in `data` has plants counted.
 
 # .chk_fit_rows points zero-row data to prior_only
 

@@ -5,9 +5,8 @@
 #' [kb_fit_size_nereo()]; the other entries keep their defaults.
 #'
 #' Each entry is named after the parameter it sets, as reported by [tidy()] and
-#' [kb_model_describe()]. The prior family of each entry is fixed (the intercept is Normal, the Weibull
-#' shape and standard deviations are Exponential); only its arguments can be
-#' changed.
+#' [kb_model_describe()]. The prior family of each entry is fixed; only its
+#' arguments can be changed.
 #'
 #' @returns A named list of prior objects with entries `intercept` (the log mean
 #'   diameter), `shape` (the Weibull shape), `sd_site`, `sd_year`, and

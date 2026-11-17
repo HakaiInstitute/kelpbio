@@ -56,10 +56,8 @@ as plotted by \link[=pp_check.kb_fit]{pp_check()}.
 \details{
 Site and year columns in \code{new_data} are handled as in \code{\link[=posterior_epred]{posterior_epred()}}.
 
-The observation noise follows the fitted likelihood: Normal on log weight
-(\emph{Nereocystis} weight), Gamma (\emph{Macrocystis} weight), Weibull (\emph{Nereocystis}
-size), Beta (wet/dry, carbon, and nitrogen), and Gamma (cover calibration).
-A cover calibration fit with a presence part also draws whether each survey
+The observation noise follows the likelihood of the fit's model (see
+\code{\link[=kb_model_describe]{kb_model_describe()}}). A cover calibration fit with a presence part also draws whether each survey
 holds plants, and a survey drawn without plants is 0. Each row's spread
 includes the coefficient of variation of its survey biomass, from
 \code{biomass_kg_m2} and \code{biomass_sd_kg_m2} columns or a \code{biomass_kg_m2} column

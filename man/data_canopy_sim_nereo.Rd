@@ -20,7 +20,7 @@ A data frame with columns:
 data_canopy_sim_nereo
 }
 \description{
-A small simulated dataset of drone-mapped canopy, one row per map of a
+A small simulated dataset of mapped canopy, one row per map of a
 site's canopy, for runnable examples of totals over the canopy.
 }
 \seealso{

@@ -75,9 +75,9 @@
   !anyDuplicated(id_text(x$survey_id))
 }
 
-# The drone pairing of a survey: all three columns given or all missing on each
+# The plot cover pairing of a survey: all three columns given or all missing on each
 # row, or the columns absent.
-.vld_drone_columns <- function(x) {
+.vld_plot_cover_columns <- function(x) {
   cols <- c("plot_area_m2", "canopy_area_m2", "canopy_tide_height_m")
   present <- intersect(cols, names(x))
   if (!length(present)) {

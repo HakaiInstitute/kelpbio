@@ -3,16 +3,11 @@
 #' Fit a carbon-fraction model for *Nereocystis luetkeana* via Stan.
 #'
 #' @details
-#' The carbon fraction of each dried sample, its carbon mass divided by its
-#' mass (`carbon_mass_ug` converted to mg, divided by `sample_mass_mg`), is
-#' modelled with a Beta likelihood with mean `mu` and precision `precision`,
-#' both common to all samples, so `mu` is the expected fraction and
-#' `logit(mu) = intercept`.
-#'
 #' Samples are pooled over the months, sites, and tissues they come from. To
 #' estimate the fraction for a particular season, fit the model to that
 #' season's samples only.
 #'
+#' @inheritSection params Model
 #' @inheritSection params Sampling
 #' @inheritParams kb_fit_weight_nereo
 #' @inheritParams params

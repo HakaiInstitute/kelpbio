@@ -38,7 +38,7 @@ test_that("survey_calibration_rows keeps covered rows as their mean and SD", {
   expect_silent(survey_calibration_rows(data, progress = "none"))
 })
 
-test_that("calibration data without drone cover errors", {
+test_that("calibration data without plot cover errors", {
   data <- survey_biomass()
   data[c("plot_area_m2", "canopy_area_m2", "canopy_tide_height_m")] <- NA_real_
   expect_snapshot(

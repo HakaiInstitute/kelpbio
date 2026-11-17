@@ -10,10 +10,8 @@
 #' @details
 #' Site and year columns in `new_data` are handled as in [posterior_epred()].
 #'
-#' The observation noise follows the fitted likelihood: Normal on log weight
-#' (*Nereocystis* weight), Gamma (*Macrocystis* weight), Weibull (*Nereocystis*
-#' size), Beta (wet/dry, carbon, and nitrogen), and Gamma (cover calibration).
-#' A cover calibration fit with a presence part also draws whether each survey
+#' The observation noise follows the likelihood of the fit's model (see
+#' [kb_model_describe()]). A cover calibration fit with a presence part also draws whether each survey
 #' holds plants, and a survey drawn without plants is 0. Each row's spread
 #' includes the coefficient of variation of its survey biomass, from
 #' `biomass_kg_m2` and `biomass_sd_kg_m2` columns or a `biomass_kg_m2` column

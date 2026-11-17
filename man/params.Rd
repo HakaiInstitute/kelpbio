@@ -114,6 +114,14 @@ See the \code{control} argument of \code{\link[rstan:stan]{rstan::stan()}} for t
 Check convergence with \code{\link[=kb_converged]{kb_converged()}}, \code{\link[=glance]{glance()}}, or \code{\link[=summary]{summary()}}.
 }
 
+\section{Model}{
+
+\code{\link[=kb_model_describe]{kb_model_describe()}} prints the fitted model, with its priors, in notation
+or as a methods paragraph. The
+\href{https://hakaiinstitute.github.io/kelpbio/articles/methods.html}{Methods article}
+describes each model and its assumptions.
+}
+
 \section{Site and year interaction}{
 
 The site:year effect lets each site depart from the year-to-year pattern

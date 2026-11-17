@@ -19,7 +19,7 @@ kb_fit_cover_calibration_nereo(
 )
 }
 \arguments{
-\item{data}{A data frame of in situ survey biomass with drone cover, one row
+\item{data}{A data frame of in situ survey biomass with plot cover, one row
 per survey (see \code{\link[=kb_check_data_cover_calibration_nereo]{kb_check_data_cover_calibration_nereo()}} for the columns).}
 
 \item{priors}{A named list of prior objects (see
@@ -60,40 +60,38 @@ holds the fitted surveys, with \code{biomass_kg_m2} the mean of each survey's
 draws and \code{biomass_sd_kg_m2} their SD.
 }
 \description{
-Fit a calibration of in situ survey biomass on drone canopy cover for
+Fit a calibration of in situ survey biomass on plot cover for
 \emph{Nereocystis luetkeana} via Stan.
 }
 \details{
 \code{data} is the output of \code{\link[=kb_predict_biomass_in_situ]{kb_predict_biomass_in_situ()}} with its defaults: wet
-biomass per m² of each in situ survey, with the survey's drone cover on its
-row. Each survey with drone cover is one observation; surveys without it
-are not fitted, and a message gives their number. The calibration takes each
-survey's biomass per m² as that of its plot.
-
-A survey's mean wet biomass (kg/m²) is modelled with a Gamma likelihood with
-mean \code{mu = biomass_floor + cover_slope * exp(site_effect + year_effect) * cover}: \code{cover_slope} is the wet biomass per m² of canopy at a typical site
-and year, and \code{biomass_floor}, common to all sites and years, the wet
-biomass of a plot with no delineated canopy. Its coefficient of variation
-(CV) is \code{sqrt(cv_residual^2 + weight_cv^2)}, where \code{weight_cv} is the CV of
-the survey's biomass draws, from plant weight.
+biomass per m² of each in situ survey, with the survey's plot cover columns
+on its row. Each survey with plot cover is one observation; surveys without
+it are not fitted, and a message gives their number. The calibration takes
+each survey's biomass per m² as that of its plot.
 
 When \code{data} holds a survey with no plants counted, the model adds a
-presence part: a survey holds plants with probability \code{p}, where
-\code{logit(p) = presence_intercept + presence_cover_slope * 100 * cover}, and
-its biomass is Gamma only where it does, so the expected biomass is
-\code{p * mu}. The fit warns when every survey with no plants has a percent
-canopy cover at or below every survey with plants, since
-\code{presence_cover_slope} then follows its prior.
+presence part, the probability that a plot holds plants. The fit warns when
+every survey with no plants has a plot cover, before tide correction, at or
+below that of every survey with plants, since \code{presence_cover_slope} then
+follows its prior.
 
-\code{cover} is \code{canopy_area_m2 / (1 - tide_height_slope * canopy_tide_height_m)} over
-the plot area, capped at 1 (Timmer et al. 2024); a survey with canopy at a
-tide height at or above \code{1 / tide_height_slope} is fully covered, and the fit
-warns when that holds with more than 5\% prior probability. The default prior
-on \code{tide_height_slope} largely sets the correction: raise its mean for beds in
-strong current. Imagery at a tide of 2 m or below follows published practice and stays
-below the tide limit. Pass canopy already corrected for tide with
+Canopy is corrected for tide (Timmer et al. 2024), and a survey whose
+tide-corrected canopy exceeds its plot is fully covered. The fit warns when
+that holds with more than 5\% prior probability. The default prior on
+\code{tide_height_slope} largely sets the correction: raise its mean for beds in
+strong current. Imagery at a tide of 2 m or below follows published practice
+and stays below the tide limit. Pass canopy already corrected for tide with
 \code{canopy_tide_height_m = 0}.
 }
+\section{Model}{
+
+\code{\link[=kb_model_describe]{kb_model_describe()}} prints the fitted model, with its priors, in notation
+or as a methods paragraph. The
+\href{https://hakaiinstitute.github.io/kelpbio/articles/methods.html}{Methods article}
+describes each model and its assumptions.
+}
+
 \section{Sampling}{
 
 Chains are run in parallel by default. Set \code{options(mc.cores = 1)} (or pass

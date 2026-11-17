@@ -60,18 +60,19 @@ A \code{kb_fit_size_nereo} object (a \code{kb_fit}).
 Fit a size-distribution model for \emph{Nereocystis luetkeana} via Stan.
 }
 \details{
-Plant diameter (mm) is modelled with a Weibull likelihood with
-mean \code{mu} and shape \code{shape}, common to all plants, so \code{mu} is the expected
-diameter.
-
-\code{mu} varies by site and year, \code{log(mu) = intercept + site_effect + year_effect + site_year_effect}, so \code{intercept} is the log expected
-diameter at a typical site and year.
-
 Plants grow through the season and the model has no month effect, so
 plants measured in different months of a site-year are pooled into one
 distribution. To estimate sizes for the peak season, fit the model to plants
 measured in the peak season only.
 }
+\section{Model}{
+
+\code{\link[=kb_model_describe]{kb_model_describe()}} prints the fitted model, with its priors, in notation
+or as a methods paragraph. The
+\href{https://hakaiinstitute.github.io/kelpbio/articles/methods.html}{Methods article}
+describes each model and its assumptions.
+}
+
 \section{Sampling}{
 
 Chains are run in parallel by default. Set \code{options(mc.cores = 1)} (or pass

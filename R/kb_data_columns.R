@@ -15,7 +15,7 @@
 #' The `in_situ` column `plants` is required when sizes come from a size sample
 #' and must be absent when they come from a size census. The `in_situ` columns
 #' `plot_area_m2`, `canopy_area_m2`, and `canopy_tide_height_m` are given
-#' together for a survey with canopy imagery, or left missing together.
+#' together for a survey with a canopy map, or left missing together.
 #'
 #' @param dataset A string of the dataset to describe, one of
 #'   `kb_data_columns()$dataset`, or `NULL` for every dataset.

@@ -5,9 +5,8 @@
 #' of [kb_fit_weight_macro()]; the other entries keep their defaults.
 #'
 #' Each entry is named after the parameter it sets, as reported by [tidy()] and
-#' [kb_model_describe()]. The prior family of each entry is fixed (the
-#' intercept and slope are Normal, the Gamma shape and standard deviations are
-#' Exponential); only its arguments can be changed. `intercept` is the log
+#' [kb_model_describe()]. The prior family of each entry is fixed; only its
+#' arguments can be changed. `intercept` is the log
 #' expected weight at the geometric mean frond count, and `fronds_slope` the
 #' slope of log expected weight on log frond count.
 #'

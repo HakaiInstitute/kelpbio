@@ -53,7 +53,7 @@ Optional columns:
 when \code{size_census} is given; the counts then come from its rows.
 Biomass per m² is the biomass counted over \code{survey_area_m2}.
 
-A survey with canopy imagery has \code{plot_area_m2}, \code{canopy_area_m2}, and
+A survey with a canopy map has \code{plot_area_m2}, \code{canopy_area_m2}, and
 \code{canopy_tide_height_m}, given together; a survey without has all three
 missing. When the whole plot is surveyed, \code{survey_area_m2} equals
 \code{plot_area_m2}. Other columns, such as \code{region}, are ignored, and can be

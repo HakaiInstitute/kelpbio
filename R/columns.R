@@ -93,7 +93,7 @@ data_columns <- local({
     "Whether the plant counts as half, such as a plant on the edge of a transect.",
     "FALSE"
   )
-  drone <- function(required, missing) {
+  plot_cover <- function(required, missing) {
     or_missing <- if (missing) ", or missing" else ""
     dplyr::bind_rows(
       col(
@@ -179,7 +179,7 @@ data_columns <- local({
     ),
     site("The site surveyed.", "otter_cove"),
     year("The year of the survey."),
-    drone(required = TRUE, missing = TRUE)
+    plot_cover(required = TRUE, missing = TRUE)
   )
 
   datasets <- list(
@@ -240,7 +240,7 @@ data_columns <- local({
         "The number of plants counted, given only when sizes come from a size sample.",
         "360"
       ),
-      drone(required = FALSE, missing = TRUE)
+      plot_cover(required = FALSE, missing = TRUE)
     ),
     canopy = dplyr::bind_rows(
       site("The site mapped.", "otter_cove"),

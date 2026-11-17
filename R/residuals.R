@@ -5,14 +5,10 @@
 #'
 #' @details
 #' The deviance residual is computed per draw, then summarised with the posterior
-#' median. The likelihoods are Normal on log weight (*Nereocystis* weight),
-#' Gamma on weight (*Macrocystis* weight), Weibull on diameter (*Nereocystis*
-#' size), Beta on the dry:wet ratio (wet/dry) and the carbon and nitrogen
-#' fractions (carbon, nitrogen), and Gamma on in situ survey biomass (cover
-#' calibration). Where the cover calibration has a presence part, the residual
-#' combines the Bernoulli and Gamma deviances and is signed by the difference
+#' median, from the likelihood of the fit's model (see [kb_model_describe()]).
+#' Where the cover calibration has a presence part, the residual combines the
+#' deviances of plant presence and biomass and is signed by the difference
 #' from the expected biomass.
-#'
 #'
 #' @inheritParams params
 #' @returns A numeric vector of deviance residuals, length `nobs(object)`.

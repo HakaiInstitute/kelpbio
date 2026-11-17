@@ -47,16 +47,11 @@ A draws-by-observations (\verb{D x N}) matrix.
 Draws of the expected response.
 }
 \details{
-Each draw is the expected response given that draw's parameters:
-\itemize{
-\item \emph{Nereocystis} weight: the lognormal mean.
-\item \emph{Macrocystis} weight: the Gamma mean.
-\item \emph{Nereocystis} size: the Weibull mean.
-\item Wet/dry: the mean dry:wet ratio.
-\item Carbon: the mean carbon fraction.
-\item Cover calibration: the Gamma mean \code{mu}, times the probability that the
-plot holds plants where the fit has a presence part.
-}
+Each draw is the expected response, the mean of the fit's likelihood (see
+\code{\link[=kb_model_describe]{kb_model_describe()}}), given that draw's parameters. For a cover
+calibration with a presence part, it includes the probability that the plot
+holds plants. For a \emph{Nereocystis} weight fit, which is modelled on the log
+scale, it is the mean weight, not the median.
 
 For draws that include observation noise, use \code{\link[=posterior_predict]{posterior_predict()}}.
 

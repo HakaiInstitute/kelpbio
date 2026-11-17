@@ -59,18 +59,14 @@ A \code{kb_fit_weight_macro} object (a \code{kb_fit}).
 \description{
 Fit an allometric weight model for \emph{Macrocystis pyrifera} via Stan.
 }
-\details{
-Wet weight (kg) is modelled with a Gamma likelihood with mean \code{mu} and shape
-\code{shape}, common to all plants, so \code{mu} is the expected weight. \code{mu} is a
-power function of frond count, \code{mu = alpha * x^fronds_slope}, with \code{x} the
-\code{fronds} divided by the geometric mean frond count of the data, which is a
-straight line on log-log axes.
+\section{Model}{
 
-The allometric coefficient \code{alpha} varies by site and year,
-\code{log(alpha) = intercept + site_effect + year_effect + site_year_effect}, so
-\code{intercept} is the log expected weight of a plant with the geometric mean
-frond count at a typical site and year.
+\code{\link[=kb_model_describe]{kb_model_describe()}} prints the fitted model, with its priors, in notation
+or as a methods paragraph. The
+\href{https://hakaiinstitute.github.io/kelpbio/articles/methods.html}{Methods article}
+describes each model and its assumptions.
 }
+
 \section{Sampling}{
 
 Chains are run in parallel by default. Set \code{options(mc.cores = 1)} (or pass

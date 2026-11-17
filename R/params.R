@@ -20,6 +20,12 @@
 #'
 #' Check convergence with [kb_converged()], [glance()], or [summary()].
 #'
+#' @section Model:
+#' [kb_model_describe()] prints the fitted model, with its priors, in notation
+#' or as a methods paragraph. The
+#' [Methods article](https://hakaiinstitute.github.io/kelpbio/articles/methods.html)
+#' describes each model and its assumptions.
+#'
 #' @section Site and year interaction:
 #' The site:year effect lets each site depart from the year-to-year pattern
 #' shared by all sites, so a site can have a good year while others have a poor

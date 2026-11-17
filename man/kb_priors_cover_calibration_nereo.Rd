@@ -23,11 +23,8 @@ of \code{\link[=kb_fit_cover_calibration_nereo]{kb_fit_cover_calibration_nereo()
 }
 \details{
 Each entry is named after the parameter it sets, as reported by \code{\link[=tidy]{tidy()}} and
-\code{\link[=kb_model_describe]{kb_model_describe()}}. The prior family of each entry is fixed (the cover
-slope prior is lognormal, the floor, tide, and presence priors are Normal,
-and \code{cv_residual} and the standard deviations are Exponential); only its
-arguments can be changed. The floor prior is truncated at zero, and the
-tide prior at 0 and 0.5. The presence priors apply only when the data hold
+\code{\link[=kb_model_describe]{kb_model_describe()}}. The prior family of each entry is fixed; only its
+arguments can be changed. The presence priors apply only when the data hold
 a survey with no plants counted (see \code{\link[=kb_fit_cover_calibration_nereo]{kb_fit_cover_calibration_nereo()}}).
 }
 \examples{

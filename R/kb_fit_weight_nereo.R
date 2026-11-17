@@ -2,26 +2,7 @@
 #'
 #' Fit an allometric weight model for *Nereocystis luetkeana* via Stan.
 #'
-#' @details
-#' Log wet weight (kg) is modelled with a Normal likelihood with mean `log(mu)`
-#' and standard deviation `sd_residual`, so `log(mu)` is the expected log
-#' weight. `form` sets `mu` as a function of plant diameter, with `x` the
-#' `diameter_mm` divided by the geometric mean diameter of the data:
-#'
-#' - `"packard_floor"` (the default):
-#'   `mu = weight_floor + alpha * x^diameter_power`, the three-parameter
-#'   power function of Packard (2023). `weight_floor` makes the relationship
-#'   curve on log-log axes: the local allometric exponent rises with plant
-#'   size and levels off toward `diameter_power` as the floor's share of
-#'   weight shrinks.
-#' - `"power"`: `mu = alpha * x^diameter_power`, a power law, which is a
-#'   straight line on log-log axes.
-#'
-#' The allometric coefficient `alpha` varies by site and year,
-#' `log(alpha) = intercept + site_effect + year_effect + site_year_effect`, so
-#' these effects scale the size-dependent part of the weight, while
-#' `weight_floor` is common to all sites and years.
-#'
+#' @inheritSection params Model
 #' @inheritSection params Sampling
 #' @inheritSection params Site and year interaction
 #' @inheritParams params
@@ -29,8 +10,9 @@
 #'   [kb_check_data_weight_nereo()] for the required columns).
 #' @param priors A named list of prior objects (see [kb_priors_weight_nereo()]),
 #'   or `NULL` to use the defaults. Entries not supplied keep their defaults.
-#' @param form A string, one of `"packard_floor"` (the default) or `"power"`,
-#'   giving the mean function of weight in diameter (see Details).
+#' @param form A string giving the relationship of weight to diameter, one of
+#'   `"packard_floor"` (the default, a power law above a weight floor; Packard
+#'   2023) or `"power"` (a power law).
 #' @param ... Additional arguments passed to [rstan::sampling()], such as
 #'   `control`.
 #'

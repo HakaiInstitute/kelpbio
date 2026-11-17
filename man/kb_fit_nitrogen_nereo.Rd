@@ -60,16 +60,18 @@ A \code{kb_fit_nitrogen_nereo} object (a \code{kb_fit}).
 Fit a nitrogen-fraction model for \emph{Nereocystis luetkeana} via Stan.
 }
 \details{
-The nitrogen fraction of each dried sample, its nitrogen mass divided by its
-mass (\code{nitrogen_mass_ug} converted to mg, divided by \code{sample_mass_mg}), is
-modelled with a Beta likelihood with mean \code{mu} and precision \code{precision},
-both common to all samples, so \code{mu} is the expected fraction and
-\code{logit(mu) = intercept}.
-
 Samples are pooled over the months, sites, and tissues they come from. To
 estimate the fraction for a particular season, fit the model to that
 season's samples only.
 }
+\section{Model}{
+
+\code{\link[=kb_model_describe]{kb_model_describe()}} prints the fitted model, with its priors, in notation
+or as a methods paragraph. The
+\href{https://hakaiinstitute.github.io/kelpbio/articles/methods.html}{Methods article}
+describes each model and its assumptions.
+}
+
 \section{Sampling}{
 
 Chains are run in parallel by default. Set \code{options(mc.cores = 1)} (or pass

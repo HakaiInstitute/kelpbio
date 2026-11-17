@@ -6,8 +6,8 @@
 #'
 #' @details
 #' Each entry is named after the parameter it sets, as reported by [tidy()] and
-#' [kb_model_describe()]. The prior family of each entry is fixed (the intercept is Normal, the
-#' precision is Exponential); only its arguments can be changed.
+#' [kb_model_describe()]. The prior family of each entry is fixed; only its
+#' arguments can be changed.
 #'
 #' @returns A named list of prior objects with entries `intercept` (the nitrogen
 #'   fraction of dry mass on the logit scale) and `precision` (the Beta

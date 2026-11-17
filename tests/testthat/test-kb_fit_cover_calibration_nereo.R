@@ -50,7 +50,7 @@ test_that("the fit records the species, response, predictor, and no site:year", 
   expect_identical(fit$meta$terms$random, c("site_effect", "year_effect"))
 })
 
-test_that("surveys without drone cover are not fitted, with a message", {
+test_that("surveys without plot cover are not fitted, with a message", {
   local_fit_stan_stub(cover_calibration_nereo_fit)
   data <- input()
   data[1, c("plot_area_m2", "canopy_area_m2", "canopy_tide_height_m")] <- NA

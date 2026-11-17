@@ -55,7 +55,7 @@ test_that("repeat surveys in a site-year pass", {
   expect_silent(kb_check_data_in_situ(transform(survey(), site = "a")))
 })
 
-test_that("the drone columns are given together", {
+test_that("the plot cover columns are given together", {
   expect_snapshot(
     kb_check_data_in_situ(transform(survey(), canopy_tide_height_m = c(0.8, NA, NA))),
     error = TRUE

@@ -60,14 +60,18 @@ A \code{kb_fit_wetdry_macro} object (a \code{kb_fit}).
 Fit a dry:wet ratio model for \emph{Macrocystis pyrifera} via Stan.
 }
 \details{
-The dry:wet ratio of each sample, \code{dry_mass_g / wet_mass_g}, is modelled
-with a Beta likelihood with mean \code{mu} and precision \code{precision}, both
-common to all samples, so \code{mu} is the expected ratio and \code{logit(mu) = intercept}.
-
 Samples are pooled over the months, sites, and tissues they come from. To
 estimate the ratio for a particular season, fit the model to that season's
 samples only.
 }
+\section{Model}{
+
+\code{\link[=kb_model_describe]{kb_model_describe()}} prints the fitted model, with its priors, in notation
+or as a methods paragraph. The
+\href{https://hakaiinstitute.github.io/kelpbio/articles/methods.html}{Methods article}
+describes each model and its assumptions.
+}
+
 \section{Sampling}{
 
 Chains are run in parallel by default. Set \code{options(mc.cores = 1)} (or pass

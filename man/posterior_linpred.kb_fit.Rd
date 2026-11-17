@@ -16,8 +16,8 @@
 \arguments{
 \item{object}{A \code{kb_fit} object.}
 
-\item{transform}{A flag specifying whether to apply the inverse link (\code{exp},
-or the inverse logit for wet/dry, carbon, and nitrogen).}
+\item{transform}{A flag specifying whether to apply the inverse of the
+model's link function (see \code{\link[=kb_model_describe]{kb_model_describe()}}).}
 
 \item{new_data}{A data frame with the fit's predictor column (and optional
 \code{site} and \code{year} columns), or \code{NULL} for the observed data.}

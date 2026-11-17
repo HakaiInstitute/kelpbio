@@ -163,8 +163,8 @@
 #'
 #' A small simulated dataset of in situ surveys, one row per survey,
 #' for runnable examples: the plants tallied, with sizes from
-#' [fit_size_sim_nereo], and the drone cover of the surveys with canopy
-#' imagery. Some site-years hold more than one survey, and one survey counted no
+#' [fit_size_sim_nereo], and the plot cover of the surveys with a canopy
+#' map. Some site-years hold more than one survey, and one survey counted no
 #' plants.
 #'
 #' @format A data frame with columns:
@@ -174,11 +174,11 @@
 #'   \item{year}{Year, a factor (5 levels).}
 #'   \item{survey_area_m2}{Surveyed area (m²), a positive number.}
 #'   \item{plants}{Plants counted, a whole number of at least 0.}
-#'   \item{plot_area_m2}{Plot polygon (m²), or `NA` without canopy imagery.}
-#'   \item{canopy_area_m2}{Drone canopy within the plot (m²), or `NA` without
-#'     canopy imagery.}
-#'   \item{canopy_tide_height_m}{Tide height when the canopy was imaged (m), or `NA` without canopy
-#'     imagery.}
+#'   \item{plot_area_m2}{Plot polygon (m²), or `NA` without a canopy map.}
+#'   \item{canopy_area_m2}{Mapped canopy within the plot (m²), or `NA` without
+#'     a canopy map.}
+#'   \item{canopy_tide_height_m}{Tide height when the canopy was imaged (m), or `NA` without a canopy
+#'     map.}
 #' }
 #' @seealso [kb_check_data_in_situ()] for the columns.
 #' @family example datasets
@@ -187,7 +187,7 @@
 # Built by data-raw/data_sim_nereo.R.
 #' Simulated Nereocystis canopy data
 #'
-#' A small simulated dataset of drone-mapped canopy, one row per map of a
+#' A small simulated dataset of mapped canopy, one row per map of a
 #' site's canopy, for runnable examples of totals over the canopy.
 #'
 #' @format A data frame with columns:
@@ -226,7 +226,7 @@
 #'
 #' A small simulated dataset of in situ surveys, one row per survey,
 #' for runnable examples: the plants listed in [data_size_census_sim_macro], and the
-#' drone cover of the surveys with canopy imagery. Some site-years hold more
+#' plot cover of the surveys with a canopy map. Some site-years hold more
 #' than one survey, and one survey counted no plants.
 #'
 #' @format A data frame with columns:
@@ -235,11 +235,11 @@
 #'   \item{site}{Site, a factor (12 levels).}
 #'   \item{year}{Year, a factor (5 levels).}
 #'   \item{survey_area_m2}{Surveyed area (m²), a positive number.}
-#'   \item{plot_area_m2}{Plot polygon (m²), or `NA` without canopy imagery.}
-#'   \item{canopy_area_m2}{Drone canopy within the plot (m²), or `NA` without
-#'     canopy imagery.}
-#'   \item{canopy_tide_height_m}{Tide height when the canopy was imaged (m), or `NA` without canopy
-#'     imagery.}
+#'   \item{plot_area_m2}{Plot polygon (m²), or `NA` without a canopy map.}
+#'   \item{canopy_area_m2}{Mapped canopy within the plot (m²), or `NA` without
+#'     a canopy map.}
+#'   \item{canopy_tide_height_m}{Tide height when the canopy was imaged (m), or `NA` without a canopy
+#'     map.}
 #' }
 #' @seealso [kb_check_data_in_situ()] for the columns.
 #' @family example datasets
@@ -248,7 +248,7 @@
 # Built by data-raw/data_sim_macro.R.
 #' Simulated Macrocystis canopy data
 #'
-#' A small simulated dataset of drone-mapped canopy, one row per map of a
+#' A small simulated dataset of mapped canopy, one row per map of a
 #' site's canopy, for runnable examples of totals over the canopy.
 #'
 #' @format A data frame with columns:

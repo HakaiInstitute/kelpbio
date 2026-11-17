@@ -5,11 +5,8 @@
 #' of [kb_fit_cover_calibration_macro()]; the other entries keep their defaults.
 #'
 #' Each entry is named after the parameter it sets, as reported by [tidy()] and
-#' [kb_model_describe()]. The prior family of each entry is fixed (the cover
-#' slope prior is lognormal, the floor, tide, and presence priors are Normal,
-#' and `cv_residual` and the standard deviations are Exponential); only its
-#' arguments can be changed. The floor prior is truncated at zero, and the
-#' tide prior at 0 and 0.5. The presence priors apply only when the data hold
+#' [kb_model_describe()]. The prior family of each entry is fixed; only its
+#' arguments can be changed. The presence priors apply only when the data hold
 #' a survey with no plants counted (see [kb_fit_cover_calibration_macro()]).
 #'
 #' @returns A named list of prior objects with entries `cover_slope` (the wet
