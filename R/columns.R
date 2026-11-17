@@ -25,8 +25,8 @@ column_xname <- function(x_name, col) {
 # data check topics build their column lists from it. `required` is whether
 # the column must be present; `allowed` the values a check accepts.
 data_columns <- local({
-  m2 <- "m²"
-  ug <- "µg"
+  m2 <- "m\u00b2"
+  ug <- "\u00b5g"
   col <- function(
     column,
     required,
