@@ -23,22 +23,19 @@ biomass with \code{\link[=kb_predict_biomass_canopy]{kb_predict_biomass_canopy()
 its \code{new_data}.
 }
 \details{
-Each row of \code{data} is one map of a site's canopy. Required columns, with no
-missing values:
+Each row of \code{data} is one map of a site's canopy. A site-year may have
+several maps, such as from imagery weeks apart.
+Required columns:
 \itemize{
-\item \code{site}, factor or character.
-\item \code{year}, factor, character, or whole numbers. A numeric \code{year} is used as
-its character level.
-\item \code{canopy_area_m2}, the canopy area (m², \verb{>= 0}).
-\item \code{canopy_tide_height_m}, the tide height when the canopy was imaged (m,
-chart datum).
-\item \code{classified_area_m2}, the water area the canopy classification covered,
-including water where no canopy was found (m², > 0 and at least
-\code{canopy_area_m2}).
+\item \code{site}, the site mapped (any text).
+\item \code{year}, the year of the map (whole number or text).
+\item \code{canopy_area_m2}, the canopy area mapped (m², >= 0 and <= classified_area_m2).
+\item \code{canopy_tide_height_m}, the tide height when the canopy was imaged, relative to chart datum (m, any number).
+\item \code{classified_area_m2}, the water area the canopy classification covered, including water where no canopy was found (m², > 0).
 }
 
-A site-year may have several maps, such as from imagery weeks apart. Other
-columns, such as \code{region}, are ignored, and can be named in \code{pool_by}.
+Required columns have no missing values. Other columns, such as \code{region},
+are ignored, and can be named in \code{pool_by}.
 }
 \examples{
 kb_check_data_canopy(data_canopy_sim_nereo)
@@ -58,6 +55,7 @@ Other data checks:
 \code{\link[=kb_check_data_weight_macro]{kb_check_data_weight_macro()}},
 \code{\link[=kb_check_data_weight_nereo]{kb_check_data_weight_nereo()}},
 \code{\link[=kb_check_data_wetdry_macro]{kb_check_data_wetdry_macro()}},
-\code{\link[=kb_check_data_wetdry_nereo]{kb_check_data_wetdry_nereo()}}
+\code{\link[=kb_check_data_wetdry_nereo]{kb_check_data_wetdry_nereo()}},
+\code{\link[=kb_data_columns]{kb_data_columns()}}
 }
 \concept{data checks}

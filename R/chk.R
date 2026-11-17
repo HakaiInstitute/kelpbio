@@ -663,8 +663,8 @@
     )
   }
   missing <- setdiff(
-    c("site", "year", "plot_area_m2", "canopy_area_m2", "canopy_tide_height_m"),
-    names(data)
+    data_column_names("cover_calibration_nereo"),
+    c("biomass_kg_m2", names(data))
   )
   if (length(missing)) {
     cli::cli_abort(
@@ -709,7 +709,7 @@
   chk::chk_data(data, x_name = x_name)
   chk::chk_superset(
     names(data),
-    c("wet_mass_g", "dry_mass_g"),
+    data_column_names("wetdry_nereo"),
     x_name = x_name
   )
   .chk_measure_columns(data, c("wet_mass_g", "dry_mass_g"), x_name)
@@ -728,7 +728,11 @@
 .chk_element_data <- function(data, element, x_name) {
   mass <- paste0(element, "_mass_ug")
   chk::chk_data(data, x_name = x_name)
-  chk::chk_superset(names(data), c("sample_mass_mg", mass), x_name = x_name)
+  chk::chk_superset(
+    names(data),
+    data_column_names(paste0(element, "_nereo")),
+    x_name = x_name
+  )
   .chk_measure_columns(data, c("sample_mass_mg", mass), x_name)
   fraction <- switch(
     element,
@@ -821,7 +825,7 @@
 .chk_survey_data <- function(data, size_census, x_name, census_name) {
   chk::chk_data(data, x_name = x_name)
   .chk_rows(data, x_name)
-  required <- c("survey_id", "site", "year", "survey_area_m2")
+  required <- data_column_names("in_situ")
   if (is.null(size_census)) {
     required <- c(required, "plants")
   }
@@ -858,7 +862,8 @@
 # column.
 .chk_size_census_data <- function(data, size, x_name) {
   chk::chk_data(data, x_name = x_name)
-  chk::chk_superset(names(data), c("survey_id", size), x_name = x_name)
+  dataset <- if (identical(size, "fronds")) "size_census_macro" else "size_census_nereo"
+  chk::chk_superset(names(data), data_column_names(dataset), x_name = x_name)
   .chk_group_columns(data, x_name, "survey_id")
   if (identical(size, "fronds")) {
     nm <- column_xname(x_name, "fronds")
@@ -916,11 +921,7 @@
     return(invisible(x))
   }
   chk::chk_data(x, x_name = x_name)
-  chk::chk_superset(
-    names(x),
-    c("canopy_area_m2", "canopy_tide_height_m", "site", "year", "classified_area_m2"),
-    x_name = x_name
-  )
+  chk::chk_superset(names(x), data_column_names("canopy"), x_name = x_name)
   nm <- column_xname(x_name, "canopy_area_m2")
   chk::chk_numeric(x$canopy_area_m2, x_name = nm)
   chk::chk_not_any_na(x$canopy_area_m2, x_name = nm)

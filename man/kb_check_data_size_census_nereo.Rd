@@ -24,16 +24,20 @@ Check that \code{data} has the columns and values of a census of every
 }
 \details{
 Each row is one counted plant, an individual (sporophyte) identified by its
-holdfast. Required columns:
+holdfast. The plant's site and year are those of its survey (see
+\code{\link[=kb_check_data_in_situ]{kb_check_data_in_situ()}}).
+Required columns:
 \itemize{
-\item \code{survey_id}, the survey the plant was counted in (see
-\code{\link[=kb_check_data_in_situ]{kb_check_data_in_situ()}}), which gives the plant's site and year.
-\item \code{diameter_mm}, the plant diameter (mm, > 0), the same diameter as in the
-weight data (\code{\link[=kb_check_data_weight_nereo]{kb_check_data_weight_nereo()}}).
+\item \code{survey_id}, the survey the plant was counted in (a survey_id of the in situ data).
+\item \code{diameter_mm}, the plant diameter, measured as in the weight data (mm, > 0).
 }
 
-An optional logical \code{partial} marks plants counted as half, such as plants
-on the edge of a transect. Other columns are ignored.
+Optional columns:
+\itemize{
+\item \code{partial}, whether the plant counts as half, such as a plant on the edge of a transect (TRUE or FALSE).
+}
+
+Columns have no missing values; other columns are ignored.
 }
 \examples{
 size_census <- data.frame(
@@ -59,6 +63,7 @@ Other data checks:
 \code{\link[=kb_check_data_weight_macro]{kb_check_data_weight_macro()}},
 \code{\link[=kb_check_data_weight_nereo]{kb_check_data_weight_nereo()}},
 \code{\link[=kb_check_data_wetdry_macro]{kb_check_data_wetdry_macro()}},
-\code{\link[=kb_check_data_wetdry_nereo]{kb_check_data_wetdry_nereo()}}
+\code{\link[=kb_check_data_wetdry_nereo]{kb_check_data_wetdry_nereo()}},
+\code{\link[=kb_data_columns]{kb_data_columns()}}
 }
 \concept{data checks}

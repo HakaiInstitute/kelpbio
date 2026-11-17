@@ -43,7 +43,7 @@ each step in turn, including specific model descriptions.
 ## Data collection
 
 kelpbio expects data collected in a specific way, and its estimates are
-interpreted according to how the data were collected.
+interpreted according to how the data were collected. 
 
 ### Survey design
 
@@ -127,6 +127,9 @@ are counted and measured across the entire site (e.g., from high-resolution
 aerial imagery). In this case, the in situ biomass prediction is the total
 biomass (`kb_predict_biomass_in_situ()` with `per_area = FALSE`, and
 `survey_area_m2` the site area) and the cover calibration step is not necessary.
+
+### Compiling data for kelpbio
+kelpbio has specific requirements for compiling data into data frames for use by model fitting functions, including column names and the expected values/types in each column. Details are listed under [Data format](kelpbio.html#data-format) in "Get started with kelpbio".
 
 ## Modelling approach
 

@@ -5,18 +5,15 @@
 #'
 #' @details
 #' `data` is the output of [kb_predict_biomass_in_situ()] with its defaults, one
-#' row per in situ survey. Required columns:
+#' row per in situ survey.
 #'
-#' - `biomass_kg_m2`, the draws of the survey's wet biomass per m² (finite,
-#'   `>= 0`).
-#' - `site` and `year`, factor or character.
-#' - `plot_area_m2` (the plot polygon, m², > 0), `canopy_area_m2` (the drone
-#'   canopy delineated within it, m², `>= 0` and at most `plot_area_m2`), and
-#'   `canopy_tide_height_m` (the tide height when the canopy was imaged, m, chart datum), given
-#'   together or missing together on each row. A row without them has no drone
-#'   cover and is not fitted.
+#' ```{r, echo = FALSE, results = "asis"}
+#' cat(doc_data_columns("cover_calibration_nereo"))
+#' ```
 #'
-#' Other columns are ignored.
+#' `plot_area_m2`, `canopy_area_m2`, and `canopy_tide_height_m` are given
+#' together or missing together on each row. A row without them has no
+#' canopy cover and is not fitted. Other columns are ignored.
 #'
 #' @inheritParams params
 #' @param data A data frame of in situ survey biomass, one row per survey.

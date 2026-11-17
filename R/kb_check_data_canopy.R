@@ -5,21 +5,15 @@
 #' its `new_data`.
 #'
 #' @details
-#' Each row of `data` is one map of a site's canopy. Required columns, with no
-#' missing values:
+#' Each row of `data` is one map of a site's canopy. A site-year may have
+#' several maps, such as from imagery weeks apart.
 #'
-#' - `site`, factor or character.
-#' - `year`, factor, character, or whole numbers. A numeric `year` is used as
-#'   its character level.
-#' - `canopy_area_m2`, the canopy area (m², `>= 0`).
-#' - `canopy_tide_height_m`, the tide height when the canopy was imaged (m,
-#'   chart datum).
-#' - `classified_area_m2`, the water area the canopy classification covered,
-#'   including water where no canopy was found (m², > 0 and at least
-#'   `canopy_area_m2`).
+#' ```{r, echo = FALSE, results = "asis"}
+#' cat(doc_data_columns("canopy"))
+#' ```
 #'
-#' A site-year may have several maps, such as from imagery weeks apart. Other
-#' columns, such as `region`, are ignored, and can be named in `pool_by`.
+#' Required columns have no missing values. Other columns, such as `region`,
+#' are ignored, and can be named in `pool_by`.
 #'
 #' @inheritParams params
 #' @param data A data frame of canopy maps, one row per map.

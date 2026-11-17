@@ -22,15 +22,16 @@ Check that \code{data} contains the columns required to fit the \emph{Macrocysti
 pyrifera} wet/dry model, with appropriate types and values.
 }
 \details{
-Each row is one tissue sample. Required columns, with no missing values:
+Each row is one tissue sample.
+Required columns:
 \itemize{
-\item \code{wet_mass_g}, its mass before drying (g, > 0).
-\item \code{dry_mass_g}, its mass after drying (g, > 0 and less than \code{wet_mass_g}).
+\item \code{wet_mass_g}, the mass of the tissue sample before drying (g, > 0).
+\item \code{dry_mass_g}, the mass of the tissue sample after drying (g, > 0 and < wet_mass_g).
 }
 
-A warning gives the number of samples whose dry:wet ratio falls outside 0.02
-to 0.50, the plausible range for kelp tissue; they are kept, not removed.
-Other columns are ignored.
+Required columns have no missing values. A warning gives the number of
+samples whose dry:wet ratio falls outside 0.02 to 0.50, the plausible range
+for kelp tissue; they are kept, not removed. Other columns are ignored.
 }
 \examples{
 data <- data.frame(wet_mass_g = c(1.8, 4.6), dry_mass_g = c(0.22, 0.57))
@@ -51,6 +52,7 @@ Other data checks:
 \code{\link[=kb_check_data_size_sample_nereo]{kb_check_data_size_sample_nereo()}},
 \code{\link[=kb_check_data_weight_macro]{kb_check_data_weight_macro()}},
 \code{\link[=kb_check_data_weight_nereo]{kb_check_data_weight_nereo()}},
-\code{\link[=kb_check_data_wetdry_nereo]{kb_check_data_wetdry_nereo()}}
+\code{\link[=kb_check_data_wetdry_nereo]{kb_check_data_wetdry_nereo()}},
+\code{\link[=kb_data_columns]{kb_data_columns()}}
 }
 \concept{data checks}

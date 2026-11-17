@@ -22,17 +22,15 @@ Check that \code{data} contains the columns required to fit the \emph{Macrocysti
 pyrifera} weight model, with appropriate types and values.
 }
 \details{
-Required columns, with no missing values:
+Required columns:
 \itemize{
-\item \code{fronds}, the number of fronds reaching 1 m above the holdfast, the size
-predictor (a whole number of at least 1).
+\item \code{fronds}, the number of fronds reaching 1 m above the holdfast (whole number >= 1).
 \item \code{weight_kg}, the plant's weight (kg, > 0).
-\item \code{site}, factor or character.
-\item \code{year}, factor, character, or whole numbers. A numeric \code{year} is used as
-its character level.
+\item \code{site}, the site the plant was sampled at (any text).
+\item \code{year}, the year the plant was sampled (whole number or text).
 }
 
-Other columns are ignored.
+Required columns have no missing values; other columns are ignored.
 }
 \examples{
 data <- data.frame(
@@ -56,6 +54,7 @@ Other data checks:
 \code{\link[=kb_check_data_size_sample_nereo]{kb_check_data_size_sample_nereo()}},
 \code{\link[=kb_check_data_weight_nereo]{kb_check_data_weight_nereo()}},
 \code{\link[=kb_check_data_wetdry_macro]{kb_check_data_wetdry_macro()}},
-\code{\link[=kb_check_data_wetdry_nereo]{kb_check_data_wetdry_nereo()}}
+\code{\link[=kb_check_data_wetdry_nereo]{kb_check_data_wetdry_nereo()}},
+\code{\link[=kb_data_columns]{kb_data_columns()}}
 }
 \concept{data checks}

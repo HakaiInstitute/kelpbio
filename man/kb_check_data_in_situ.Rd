@@ -31,27 +31,33 @@ of in situ surveys with \code{\link[=kb_predict_biomass_in_situ]{kb_predict_biom
 \details{
 Each row of \code{data} is one survey: one count of the plants in a surveyed
 area. A plant is one individual (sporophyte), identified by its holdfast.
-Required columns:
-\itemize{
-\item \code{survey_id}, factor, character, or numeric, identifying each survey once.
 Surveys of the same site in the same year, including on the same day, are
 separate rows.
-\item \code{site}, factor or character, and \code{year}, factor, character, or whole
-numbers. A numeric \code{year} or \code{survey_id} is used as its character value.
-\item \code{survey_area_m2}, the surveyed area (m², > 0), such as a dive's transects.
-Biomass per m² is the biomass counted over this area.
-\item \code{plants}, the number of plants counted (\verb{>= 0}), when sizes come from a
-size fit. It must be absent when \code{size_census} is given; the counts then
-come from its rows.
+Required columns:
+\itemize{
+\item \code{survey_id}, the survey's identifier (text or number, unique to each survey).
+\item \code{site}, the site surveyed (any text).
+\item \code{year}, the year of the survey (whole number or text).
+\item \code{survey_area_m2}, the area searched for plants (m², > 0).
 }
 
-A survey with canopy imagery also has \code{plot_area_m2} (the plot polygon,
-m², > 0), over which the drone cover is measured, \code{canopy_area_m2} (the
-canopy delineated within it, m², \verb{>= 0} and at most \code{plot_area_m2}), and
-\code{canopy_tide_height_m} (the tide height when the canopy was imaged, m, chart
-datum). The three are given together or left missing together. When the
-whole plot is surveyed, \code{survey_area_m2} equals \code{plot_area_m2}. Other
-columns, such as \code{region}, are ignored, and can be named in \code{pool_by}.
+Optional columns:
+\itemize{
+\item \code{plants}, the number of plants counted, given only when sizes come from a size sample (whole number >= 0).
+\item \code{plot_area_m2}, the area of the plot polygon the canopy cover is measured over (m², > 0, or missing).
+\item \code{canopy_area_m2}, the canopy area delineated within the plot polygon (m², >= 0 and <= plot_area_m2, or missing).
+\item \code{canopy_tide_height_m}, the tide height when the canopy was imaged, relative to chart datum (m, any number, or missing).
+}
+
+\code{plants} is required when sizes come from a size fit, and must be absent
+when \code{size_census} is given; the counts then come from its rows.
+Biomass per m² is the biomass counted over \code{survey_area_m2}.
+
+A survey with canopy imagery has \code{plot_area_m2}, \code{canopy_area_m2}, and
+\code{canopy_tide_height_m}, given together; a survey without has all three
+missing. When the whole plot is surveyed, \code{survey_area_m2} equals
+\code{plot_area_m2}. Other columns, such as \code{region}, are ignored, and can be
+named in \code{pool_by}.
 }
 \examples{
 kb_check_data_in_situ(data_in_situ_sim_nereo)
@@ -72,6 +78,7 @@ Other data checks:
 \code{\link[=kb_check_data_weight_macro]{kb_check_data_weight_macro()}},
 \code{\link[=kb_check_data_weight_nereo]{kb_check_data_weight_nereo()}},
 \code{\link[=kb_check_data_wetdry_macro]{kb_check_data_wetdry_macro()}},
-\code{\link[=kb_check_data_wetdry_nereo]{kb_check_data_wetdry_nereo()}}
+\code{\link[=kb_check_data_wetdry_nereo]{kb_check_data_wetdry_nereo()}},
+\code{\link[=kb_data_columns]{kb_data_columns()}}
 }
 \concept{data checks}

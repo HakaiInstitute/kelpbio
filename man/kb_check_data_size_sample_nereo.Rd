@@ -23,17 +23,15 @@ luetkeana} size model, with appropriate types and values.
 }
 \details{
 Each row is one plant of a sample measured for the size model, which need
-not be linked to any in situ survey. Required columns, with no missing
-values:
+not be linked to any in situ survey.
+Required columns:
 \itemize{
-\item \code{diameter_mm}, the plant diameter (mm, > 0), the same diameter as in the
-weight data (\code{\link[=kb_check_data_weight_nereo]{kb_check_data_weight_nereo()}}).
-\item \code{site}, factor or character.
-\item \code{year}, factor, character, or whole numbers. A numeric \code{year} is used as
-its character level.
+\item \code{diameter_mm}, the plant diameter, measured as in the weight data (mm, > 0).
+\item \code{site}, the site the plant was measured at (any text).
+\item \code{year}, the year the plant was measured (whole number or text).
 }
 
-Other columns are ignored.
+Required columns have no missing values; other columns are ignored.
 }
 \examples{
 data <- data.frame(
@@ -59,6 +57,7 @@ Other data checks:
 \code{\link[=kb_check_data_weight_macro]{kb_check_data_weight_macro()}},
 \code{\link[=kb_check_data_weight_nereo]{kb_check_data_weight_nereo()}},
 \code{\link[=kb_check_data_wetdry_macro]{kb_check_data_wetdry_macro()}},
-\code{\link[=kb_check_data_wetdry_nereo]{kb_check_data_wetdry_nereo()}}
+\code{\link[=kb_check_data_wetdry_nereo]{kb_check_data_wetdry_nereo()}},
+\code{\link[=kb_data_columns]{kb_data_columns()}}
 }
 \concept{data checks}
