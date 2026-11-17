@@ -1,6 +1,6 @@
 ---
 title: "Advanced usage"
-bibliography: references.bib
+bibliography: ../references.bib
 ---
 
 ```{r, include = FALSE}

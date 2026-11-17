@@ -1,6 +1,11 @@
 ---
 title: "Methods"
+output: rmarkdown::html_vignette
 bibliography: references.bib
+vignette: >
+  %\VignetteIndexEntry{Methods}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
 ---
 
 ```{r, include = FALSE}
@@ -35,7 +40,7 @@ its own data:
 4. Dry, carbon, and nitrogen biomass: dry:wet ratio, carbon fraction, and
    nitrogen fraction models convert the total biomass.
 
-<img src="../reference/figures/workflow.svg" alt="Flow diagram in three columns. Weight, size, and survey data feed the weight and size models and then survey biomass. Survey biomass, with plot cover, fits the cover calibration. The calibration and canopy data give total canopy biomass, which wet/dry, carbon, and nitrogen models, fitted to tissue samples, convert to dry, carbon, or nitrogen biomass." width="100%" />
+<img src="figures/workflow.svg" alt="Flow diagram in three columns. Weight, size, and survey data feed the weight and size models and then survey biomass. Survey biomass, with plot cover, fits the cover calibration. The calibration and canopy data give total canopy biomass, which wet/dry, carbon, and nitrogen models, fitted to tissue samples, convert to dry, carbon, or nitrogen biomass." width="100%" />
 
 The sections below describe the data, the general modelling approach, and then
 each step in turn, including specific model descriptions.
@@ -64,7 +69,7 @@ extent of the classified area is recorded; it caps the tide-corrected canopy
 Percent canopy cover within a plot (plot cover) is calculated for each in situ
 survey, where a plot is defined as the area bounding the in situ survey area.
 
-<img src="../reference/figures/survey-layout.svg" alt="Map of a site from above, with irregular kelp canopy polygons mapped across it. A plot about one tenth of the site is drawn tightly around the survey area. An inset shows the survey area from the side: plants rooted within it are counted, including plants below the surface, and plants rooted outside are not, even when their canopy drifts over." width="100%" />
+<img src="figures/survey-layout.svg" alt="Map of a site from above, with irregular kelp canopy polygons mapped across it. A plot about one tenth of the site is drawn tightly around the survey area. An inset shows the survey area from the side: plants rooted within it are counted, including plants below the surface, and plants rooted outside are not, even when their canopy drifts over." width="100%" />
 
 Three quantities link the in situ survey and the canopy map:
 
@@ -84,7 +89,7 @@ area, so that its cover accurately describes the area surveyed.
 The figure below shows nine surveys, three sites by three years, and the
 calibration fitted to them. The biomass and plot cover values are illustrative.
 
-<img src="../reference/figures/cover-calibration.svg" alt="A grid of nine plots, three sites by three years, each showing the canopy within the plot and its survey area, with the plot cover and in situ biomass. A scatter plot shows the nine pairs of cover and biomass around the calibration line." width="100%" />
+<img src="figures/cover-calibration.svg" alt="A grid of nine plots, three sites by three years, each showing the canopy within the plot and its survey area, with the plot cover and in situ biomass. A scatter plot shows the nine pairs of cover and biomass around the calibration line." width="100%" />
 
 ### Timing
 
@@ -349,7 +354,7 @@ mapped canopy is taken to hold plants. The interval is for the expected total:
 it includes the uncertainty in the calibration and its site and year effects,
 not the scatter of individual surveys around it.
 
-<img src="../reference/figures/canopy-total.svg" alt="Three panels. First, the canopy mapped across a site as imaged at a tide height. Second, the same canopy corrected for tide, larger because canopy hidden by the tide is added, and capped at the site's water area. Third, the overall calibration read at full cover gives the biomass per square metre of canopy. Total biomass is that value times the corrected canopy area." width="100%" />
+<img src="figures/canopy-total.svg" alt="Three panels. First, the canopy mapped across a site as imaged at a tide height. Second, the same canopy corrected for tide, larger because canopy hidden by the tide is added, and capped at the site's water area. Third, the overall calibration read at full cover gives the biomass per square metre of canopy. Total biomass is that value times the corrected canopy area." width="100%" />
 
 ## Dry, carbon, and nitrogen biomass
 

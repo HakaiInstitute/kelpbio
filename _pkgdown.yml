@@ -12,7 +12,7 @@ articles:
 - title: Articles
   navbar: ~
   contents:
-    - articles/methods
+    - methods
     - articles/advanced
 
 reference:
