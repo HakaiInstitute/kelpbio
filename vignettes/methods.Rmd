@@ -136,7 +136,7 @@ biomass (`kb_predict_biomass_in_situ()` with `per_area = FALSE`, and
 `survey_area_m2` the site area) and the cover calibration step is not necessary.
 
 ### Compiling data for kelpbio
-kelpbio has specific requirements for compiling data into data frames for use by model fitting functions, including column names and the expected values/types in each column. Details are listed under [Data format](kelpbio.html#data-format) in "Get started with kelpbio".
+kelpbio has specific requirements for compiling data into data frames for use by model fitting functions, including column names and the expected values/types in each column. Details are in the [Data format](data-format.html) article.
 
 ## Modelling approach
 
