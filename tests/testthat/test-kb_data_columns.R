@@ -57,7 +57,7 @@ test_that("kb_data_columns() returns one dataset's columns", {
   expect_identical(out$column, c("wet_mass_g", "dry_mass_g"))
   expect_identical(unique(out$dataset), "wetdry_macro")
   expect_error(kb_data_columns("wetdry"), "dataset")
-  expect_error(kb_data_columns(c("canopy", "in_situ")), "dataset")
+  expect_error(kb_data_columns(c("survey_canopy", "survey_in_situ")), "dataset")
 })
 
 test_that("each dataset's columns are in its simulated data", {
@@ -87,7 +87,7 @@ test_that("cover calibration columns are in the survey biomass predictions", {
   biomass <- kb_predict_biomass_in_situ(
     fit_weight_sim_nereo,
     fit_size_sim_nereo,
-    data_in_situ_sim_nereo[1:2, ],
+    data_survey_in_situ_sim_nereo[1:2, ],
     progress = "none"
   )
   for (dataset in c("cover_calibration_nereo", "cover_calibration_macro")) {
@@ -107,9 +107,9 @@ test_that("each check requires exactly the dictionary's required columns", {
     rows <- kb_data_columns(dataset)
     data <- example_data(rows)
     required <- data[rows$column[rows$required]]
-    if (dataset == "in_situ") {
+    if (dataset == "survey_in_situ") {
       # plants, optional in the dictionary, is required without a size census.
-      expect_silent(kb_check_data_in_situ(required, census_example()))
+      expect_silent(kb_check_data_survey_in_situ(required, census_example()))
     } else {
       expect_silent(check_data(dataset)(required))
     }

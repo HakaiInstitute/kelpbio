@@ -70,13 +70,13 @@
 #'
 #' # One total per row
 #' set.seed(1)
-#' kb_predict_biomass_canopy(fit, data_canopy_sim_nereo)
+#' kb_predict_biomass_canopy(fit, data_survey_canopy_sim_nereo)
 #'
 #' # Wet totals by region and year
 #' set.seed(1)
 #' kb_predict_biomass_canopy(
 #'   fit,
-#'   data_canopy_sim_nereo,
+#'   data_survey_canopy_sim_nereo,
 #'   pool_by = c("region", "year")
 #' )
 #'
@@ -84,7 +84,7 @@
 #' set.seed(1)
 #' kb_predict_biomass_canopy(
 #'   fit,
-#'   data_canopy_sim_nereo,
+#'   data_survey_canopy_sim_nereo,
 #'   fit_wetdry_sim_nereo,
 #'   fit_carbon_sim_nereo,
 #'   measure = "carbon",

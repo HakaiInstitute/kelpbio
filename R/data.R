@@ -180,9 +180,9 @@
 #'   \item{canopy_tide_height_m}{Tide height when the canopy was imaged (m), or `NA` without a canopy
 #'     map.}
 #' }
-#' @seealso [kb_check_data_in_situ()] for the columns.
+#' @seealso [kb_check_data_survey_in_situ()] for the columns.
 #' @family example datasets
-"data_in_situ_sim_nereo"
+"data_survey_in_situ_sim_nereo"
 
 # Built by data-raw/data_sim_nereo.R.
 #' Simulated Nereocystis canopy data
@@ -202,13 +202,13 @@
 #' }
 #' @seealso [kb_predict_biomass_canopy()].
 #' @family example datasets
-"data_canopy_sim_nereo"
+"data_survey_canopy_sim_nereo"
 
 # Built by data-raw/data_sim_nereo.R.
 #' Simulated Nereocystis size census data
 #'
 #' A small simulated dataset of every plant counted by the otter_cove surveys
-#' in [data_in_situ_sim_nereo], one row per plant, for runnable examples.
+#' in [data_survey_in_situ_sim_nereo], one row per plant, for runnable examples.
 #'
 #' @format A data frame with columns:
 #' \describe{
@@ -241,9 +241,9 @@
 #'   \item{canopy_tide_height_m}{Tide height when the canopy was imaged (m), or `NA` without a canopy
 #'     map.}
 #' }
-#' @seealso [kb_check_data_in_situ()] for the columns.
+#' @seealso [kb_check_data_survey_in_situ()] for the columns.
 #' @family example datasets
-"data_in_situ_sim_macro"
+"data_survey_in_situ_sim_macro"
 
 # Built by data-raw/data_sim_macro.R.
 #' Simulated Macrocystis canopy data
@@ -263,13 +263,13 @@
 #' }
 #' @seealso [kb_predict_biomass_canopy()].
 #' @family example datasets
-"data_canopy_sim_macro"
+"data_survey_canopy_sim_macro"
 
 # Built by data-raw/data_sim_macro.R.
 #' Simulated Macrocystis size census data
 #'
 #' A small simulated dataset of every plant counted by the surveys in
-#' [data_in_situ_sim_macro], one row per plant, for runnable examples.
+#' [data_survey_in_situ_sim_macro], one row per plant, for runnable examples.
 #'
 #' @format A data frame with columns:
 #' \describe{

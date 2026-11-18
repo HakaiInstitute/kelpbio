@@ -11,7 +11,7 @@
 #' separate rows.
 #'
 #' ```{r, echo = FALSE, results = "asis"}
-#' cat(doc_data_columns("in_situ"))
+#' cat(doc_data_columns("survey_in_situ"))
 #' ```
 #'
 #' `plants` is required when sizes come from a size fit, and must be absent
@@ -37,9 +37,9 @@
 #' @export
 #'
 #' @examples
-#' kb_check_data_in_situ(data_in_situ_sim_nereo)
-#' kb_check_data_in_situ(data_in_situ_sim_macro, data_size_census_sim_macro)
-kb_check_data_in_situ <- function(
+#' kb_check_data_survey_in_situ(data_survey_in_situ_sim_nereo)
+#' kb_check_data_survey_in_situ(data_survey_in_situ_sim_macro, data_size_census_sim_macro)
+kb_check_data_survey_in_situ <- function(
   data,
   size_census = NULL,
   x_name = chk::deparse_backtick_chk(substitute(data))

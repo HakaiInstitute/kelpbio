@@ -127,7 +127,7 @@ data_format(
   "In situ survey",
   "survey",
   "kb_predict_biomass_in_situ",
-  "in_situ"
+  "survey_in_situ"
 )
 data_format(
   "Size census, *Nereocystis*",
@@ -145,7 +145,7 @@ data_format(
   "Canopy map",
   "map of a site's canopy",
   "kb_predict_biomass_canopy",
-  "canopy"
+  "survey_canopy"
 )
 data_format(
   "Wet/dry",
@@ -260,13 +260,13 @@ fit_size <- kb_fit_size_nereo(data_size_sample_sim_nereo)
 ```
 
 ```{r}
-data_in_situ_sim_nereo
+data_survey_in_situ_sim_nereo
 
 set.seed(1)
 biomass <- kb_predict_biomass_in_situ(
   fit_weight_sim_nereo,
   fit_size_sim_nereo,
-  data_in_situ_sim_nereo,
+  data_survey_in_situ_sim_nereo,
   progress = "none"
 )
 biomass
@@ -293,9 +293,9 @@ kb_predict_cover_calibration(fit_cover, kb_new_data(fit_cover)) |>
 The cover calibration model is applied to the mapped canopy of each site-year to estimate its total biomass.
 
 ```{r, fig.width = 9, fig.height = 5.5}
-data_canopy_sim_nereo
+data_survey_canopy_sim_nereo
 
-totals <- kb_predict_biomass_canopy(fit_cover, data_canopy_sim_nereo)
+totals <- kb_predict_biomass_canopy(fit_cover, data_survey_canopy_sim_nereo)
 totals
 
 kb_plot_predictions(totals, geom = "bar")
@@ -307,7 +307,7 @@ kb_plot_predictions(totals, geom = "bar")
 set.seed(1)
 kb_predict_biomass_canopy(
   fit_cover,
-  data_canopy_sim_nereo,
+  data_survey_canopy_sim_nereo,
   pool_by = c("region", "year")
 ) |>
   kb_plot_predictions(geom = "bar")
@@ -323,7 +323,7 @@ biomass to carbon, and a nitrogen model fit converts dry biomass to nitrogen.
 ```{r}
 kb_predict_biomass_canopy(
   fit_cover,
-  data_canopy_sim_nereo,
+  data_survey_canopy_sim_nereo,
   wetdry = fit_wetdry_sim_nereo,
   carbon = fit_carbon_sim_nereo,
   measure = "carbon"
@@ -339,7 +339,7 @@ set.seed(1)
 kb_predict_biomass_in_situ(
   kelpbiodata::fit_weight_coastwide_nereo,
   kelpbiodata::fit_size_hakai_nereo,
-  data_in_situ_sim_nereo[1:3, ],
+  data_survey_in_situ_sim_nereo[1:3, ],
   progress = "none"
 )
 ```
@@ -369,7 +369,7 @@ set.seed(1)
 kb_predict_biomass_in_situ(
   fit_combined,
   fit_size_sim_nereo,
-  data_in_situ_sim_nereo[1:3, ],
+  data_survey_in_situ_sim_nereo[1:3, ],
   progress = "none"
 )
 ```
@@ -384,7 +384,7 @@ data_size_census_sim_nereo
 
 # The censused surveys, with their counts taken from the census.
 census_surveys <- dplyr::filter(
-  data_in_situ_sim_nereo,
+  data_survey_in_situ_sim_nereo,
   survey_id %in% data_size_census_sim_nereo$survey_id
 )
 census_surveys <- dplyr::select(census_surveys, -plants)
@@ -409,7 +409,7 @@ set.seed(1)
 biomass_macro <- kb_predict_biomass_in_situ(
   fit_weight_sim_macro,
   data_size_census_sim_macro,
-  data_in_situ_sim_macro,
+  data_survey_in_situ_sim_macro,
   progress = "none"
 )
 ```

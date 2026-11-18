@@ -179,7 +179,7 @@
 # Mapped canopy for canopy totals.
 .vld_canopy_maps <- function(x) {
   is.data.frame(x) &&
-    all(data_column_names("canopy") %in% names(x)) &&
+    all(data_column_names("survey_canopy") %in% names(x)) &&
     is.numeric(x$canopy_area_m2) &&
     !anyNA(x$canopy_area_m2) &&
     .vld_finite(x$canopy_area_m2) &&

@@ -9,7 +9,7 @@
 #' several maps, such as from imagery weeks apart.
 #'
 #' ```{r, echo = FALSE, results = "asis"}
-#' cat(doc_data_columns("canopy"))
+#' cat(doc_data_columns("survey_canopy"))
 #' ```
 #'
 #' Required columns have no missing values. Other columns, such as `region`,
@@ -23,8 +23,8 @@
 #' @export
 #'
 #' @examples
-#' kb_check_data_canopy(data_canopy_sim_nereo)
-kb_check_data_canopy <- function(
+#' kb_check_data_survey_canopy(data_survey_canopy_sim_nereo)
+kb_check_data_survey_canopy <- function(
   data,
   x_name = chk::deparse_backtick_chk(substitute(data))
 ) {

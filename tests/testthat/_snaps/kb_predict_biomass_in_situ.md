@@ -20,7 +20,7 @@
 
     Code
       kb_predict_biomass_in_situ(weight_nereo_fit, size_nereo_fit,
-        data_in_situ_sim_nereo[0, ])
+        data_survey_in_situ_sim_nereo[0, ])
     Condition
       Error in `kb_predict_biomass_in_situ()`:
       ! `survey` must have at least one row.
@@ -29,7 +29,7 @@
 
     Code
       kb_predict_biomass_in_situ(weight_macro_fit, data_size_census_sim_macro,
-        data_in_situ_sim_macro, n_plants = 10)
+        data_survey_in_situ_sim_macro, n_plants = 10)
     Condition
       Error in `kb_predict_biomass_in_situ()`:
       ! `n_plants` applies only with a size fit.
@@ -39,7 +39,7 @@
 
     Code
       kb_predict_biomass_in_situ(weight_nereo_fit, data_size_census_sim_macro,
-        data_in_situ_sim_macro)
+        data_survey_in_situ_sim_macro)
     Condition
       Error in `kb_predict_biomass_in_situ()`:
       ! `size` must have a diameter_mm column, the predictor of `weight`.
@@ -48,7 +48,8 @@
 ---
 
     Code
-      kb_predict_biomass_in_situ(weight_nereo_fit, NULL, data_in_situ_sim_nereo)
+      kb_predict_biomass_in_situ(weight_nereo_fit, NULL,
+        data_survey_in_situ_sim_nereo)
     Condition
       Error in `kb_predict_biomass_in_situ()`:
       ! `size` must be a <kb_fit_size> object or a size census data frame.

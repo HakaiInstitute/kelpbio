@@ -34,7 +34,7 @@ census, a data frame of every counted plant, one row per plant (see
 \code{\link[=kb_check_data_size_census_macro]{kb_check_data_size_census_macro()}} for the columns).}
 
 \item{survey}{A data frame of in situ surveys, one row per survey (see
-\code{\link[=kb_check_data_in_situ]{kb_check_data_in_situ()}} for the columns).}
+\code{\link[=kb_check_data_survey_in_situ]{kb_check_data_survey_in_situ()}} for the columns).}
 
 \item{wetdry}{A \code{kb_fit_wetdry} object, required for dry, carbon, and
 nitrogen biomass, or \code{NULL}.}
@@ -144,7 +144,7 @@ set.seed(1)
 kb_predict_biomass_in_situ(
   fit_weight_sim_nereo,
   fit_size_sim_nereo,
-  data_in_situ_sim_nereo
+  data_survey_in_situ_sim_nereo
 )
 
 # A site the weight fit has no data for, weighed like a fitted site
@@ -152,7 +152,7 @@ set.seed(1)
 kb_predict_biomass_in_situ(
   fit_weight_sim_nereo,
   fit_size_sim_nereo,
-  subset(data_in_situ_sim_nereo, site == "fog_islet"),
+  subset(data_survey_in_situ_sim_nereo, site == "fog_islet"),
   representative_site = list(weight = "otter_cove")
 )
 
@@ -161,7 +161,7 @@ set.seed(1)
 kb_predict_biomass_in_situ(
   fit_weight_sim_macro,
   data_size_census_sim_macro,
-  data_in_situ_sim_macro,
+  data_survey_in_situ_sim_macro,
   pool_by = c("site", "year")
 )
 }

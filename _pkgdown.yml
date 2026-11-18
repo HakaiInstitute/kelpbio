@@ -63,10 +63,10 @@ reference:
     - kb_check_data_nitrogen_macro
     - kb_check_data_cover_calibration_nereo
     - kb_check_data_cover_calibration_macro
-    - kb_check_data_in_situ
+    - kb_check_data_survey_in_situ
     - kb_check_data_size_census_nereo
     - kb_check_data_size_census_macro
-    - kb_check_data_canopy
+    - kb_check_data_survey_canopy
 - title: "Example data and fits"
   desc: "Simulated datasets and pre-fit models for examples."
   contents:
@@ -79,12 +79,12 @@ reference:
     - data_nitrogen_sim_nereo
     - data_carbon_sim_macro
     - data_nitrogen_sim_macro
-    - data_in_situ_sim_nereo
-    - data_in_situ_sim_macro
+    - data_survey_in_situ_sim_nereo
+    - data_survey_in_situ_sim_macro
     - data_size_census_sim_nereo
     - data_size_census_sim_macro
-    - data_canopy_sim_nereo
-    - data_canopy_sim_macro
+    - data_survey_canopy_sim_nereo
+    - data_survey_canopy_sim_macro
     - fit_weight_sim_nereo
     - fit_weight_sim_nereo_power
     - fit_weight_sim_macro

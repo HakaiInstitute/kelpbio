@@ -5,15 +5,15 @@
 #'
 #' @details
 #' Each dataset is the data frame checked by the data check of the same name:
-#' `"weight_nereo"` by [kb_check_data_weight_nereo()], `"in_situ"` by
-#' [kb_check_data_in_situ()], and so on. A required column must be present; a
+#' `"weight_nereo"` by [kb_check_data_weight_nereo()], `"survey_in_situ"` by
+#' [kb_check_data_survey_in_situ()], and so on. A required column must be present; a
 #' required column has no missing values unless `allowed` says otherwise.
 #' Grouping columns (`site`, `year`, `survey_id`) may also be factors, and a
 #' numeric `year` or `survey_id` is used as its character value. Other columns
 #' are ignored.
 #'
-#' The `in_situ` column `plants` is required when sizes come from a size sample
-#' and must be absent when they come from a size census. The `in_situ` columns
+#' The `survey_in_situ` column `plants` is required when sizes come from a size sample
+#' and must be absent when they come from a size census. The `survey_in_situ` columns
 #' `plot_area_m2`, `canopy_area_m2`, and `canopy_tide_height_m` are given
 #' together for a survey with a canopy map, or left missing together.
 #'

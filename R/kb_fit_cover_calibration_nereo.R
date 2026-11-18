@@ -54,7 +54,7 @@
 #' biomass <- kb_predict_biomass_in_situ(
 #'   fit_weight_sim_nereo,
 #'   fit_size_sim_nereo,
-#'   data_in_situ_sim_nereo
+#'   data_survey_in_situ_sim_nereo
 #' )
 #' fit <- kb_fit_cover_calibration_nereo(biomass)
 #' tidy(fit)

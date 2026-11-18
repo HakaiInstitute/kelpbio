@@ -825,7 +825,7 @@
 .chk_survey_data <- function(data, size_census, x_name, census_name) {
   chk::chk_data(data, x_name = x_name)
   .chk_rows(data, x_name)
-  required <- data_column_names("in_situ")
+  required <- data_column_names("survey_in_situ")
   if (is.null(size_census)) {
     required <- c(required, "plants")
   }
@@ -921,7 +921,7 @@
     return(invisible(x))
   }
   chk::chk_data(x, x_name = x_name)
-  chk::chk_superset(names(x), data_column_names("canopy"), x_name = x_name)
+  chk::chk_superset(names(x), data_column_names("survey_canopy"), x_name = x_name)
   nm <- column_xname(x_name, "canopy_area_m2")
   chk::chk_numeric(x$canopy_area_m2, x_name = nm)
   chk::chk_not_any_na(x$canopy_area_m2, x_name = nm)

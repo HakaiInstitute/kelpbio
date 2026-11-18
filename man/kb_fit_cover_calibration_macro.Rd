@@ -116,7 +116,7 @@ tidy(fit_cover_calibration_sim_macro)
 biomass <- kb_predict_biomass_in_situ(
   fit_weight_sim_macro,
   data_size_census_sim_macro,
-  data_in_situ_sim_macro
+  data_survey_in_situ_sim_macro
 )
 fit <- kb_fit_cover_calibration_macro(biomass)
 tidy(fit)

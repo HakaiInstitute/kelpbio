@@ -251,7 +251,7 @@ was higher in 2025:
 set.seed(1)
 totals <- kb_predict_biomass_canopy(
   fit_cover_calibration_sim_nereo,
-  data_canopy_sim_nereo,
+  data_survey_canopy_sim_nereo,
   pool_by = "year"
 )
 by_year <- setNames(totals$biomass_kg, totals$year)

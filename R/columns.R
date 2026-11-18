@@ -210,7 +210,7 @@ data_columns <- local({
       fronds,
       partial
     ),
-    in_situ = dplyr::bind_rows(
+    survey_in_situ = dplyr::bind_rows(
       col(
         "survey_id",
         TRUE,
@@ -242,7 +242,7 @@ data_columns <- local({
       ),
       plot_cover(required = FALSE, missing = TRUE)
     ),
-    canopy = dplyr::bind_rows(
+    survey_canopy = dplyr::bind_rows(
       site("The site mapped.", "otter_cove"),
       year("The year of the map."),
       col(

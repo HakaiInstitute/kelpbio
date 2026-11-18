@@ -76,7 +76,7 @@
 #' # Canopy biomass by year (columns):
 #' kb_predict_biomass_canopy(
 #'   fit_cover_calibration_sim_nereo,
-#'   data_canopy_sim_nereo,
+#'   data_survey_canopy_sim_nereo,
 #'   pool_by = "year"
 #' ) |>
 #'   kb_plot_predictions(geom = "bar")

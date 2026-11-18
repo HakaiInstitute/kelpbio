@@ -1,5 +1,5 @@
 # Build the simulated Macrocystis datasets: data_weight_sim_macro,
-# data_in_situ_sim_macro, data_size_census_sim_macro, and data_canopy_sim_macro, for
+# data_survey_in_situ_sim_macro, data_size_census_sim_macro, and data_survey_canopy_sim_macro, for
 # fast tests and runnable examples. Not for inference.
 #
 # All four come from one set of true site-year values, so they agree: survey
@@ -211,7 +211,7 @@ survey$canopy_area_m2 <- ifelse(drone, canopy_area_m2, NA_real_)
 survey$canopy_tide_height_m <- ifelse(drone, canopy_tide_height_m, NA_real_)
 survey$survey_area_m2 <- pmin(survey$survey_area_m2, ifelse(drone, plot_area_m2, Inf))
 
-data_in_situ_sim_macro <- survey[c(
+data_survey_in_situ_sim_macro <- survey[c(
   "survey_id", "site", "year", "survey_area_m2",
   "plot_area_m2", "canopy_area_m2", "canopy_tide_height_m"
 )]
@@ -242,7 +242,7 @@ canopy$region <- factor(
   ifelse(match(canopy$site, sites) <= 4, "north", "south"),
   levels = c("north", "south")
 )
-data_canopy_sim_macro <- canopy[c(
+data_survey_canopy_sim_macro <- canopy[c(
   "site", "year", "canopy_area_m2", "canopy_tide_height_m", "classified_area_m2", "region"
 )]
 
@@ -261,9 +261,9 @@ as_sim <- function(data) {
   tibble::as_tibble(data)
 }
 data_weight_sim_macro <- as_sim(data_weight_sim_macro)
-data_in_situ_sim_macro <- as_sim(data_in_situ_sim_macro)
+data_survey_in_situ_sim_macro <- as_sim(data_survey_in_situ_sim_macro)
 data_size_census_sim_macro <- as_sim(data_size_census_sim_macro)
-data_canopy_sim_macro <- as_sim(data_canopy_sim_macro)
+data_survey_canopy_sim_macro <- as_sim(data_survey_canopy_sim_macro)
 
 message(
   "True plot biomass (kg/m2) at surveyed site-years, quantiles 0, 0.25, 0.5, 0.75, 1: ",
@@ -275,6 +275,6 @@ message(
 )
 
 usethis::use_data(data_weight_sim_macro, overwrite = TRUE)
-usethis::use_data(data_in_situ_sim_macro, overwrite = TRUE)
+usethis::use_data(data_survey_in_situ_sim_macro, overwrite = TRUE)
 usethis::use_data(data_size_census_sim_macro, overwrite = TRUE)
-usethis::use_data(data_canopy_sim_macro, overwrite = TRUE)
+usethis::use_data(data_survey_canopy_sim_macro, overwrite = TRUE)

@@ -70,7 +70,7 @@ set.seed(1)
 biomass <- kb_predict_biomass_in_situ(
   fit_weight,
   fit_size,
-  data_in_situ_sim_nereo,
+  data_survey_in_situ_sim_nereo,
   progress = "none"
 )
 ```
@@ -85,7 +85,7 @@ The calibration applied to each canopy map gives the total biomass of
 each site and year, with 95% compatibility limits.
 
 ``` r
-totals <- kb_predict_biomass_canopy(fit_cover, data_canopy_sim_nereo)
+totals <- kb_predict_biomass_canopy(fit_cover, data_survey_canopy_sim_nereo)
 totals
 #> <kb_predictions> response: biomass_kg | by: site, year
 #> # A tibble: 49 × 11
