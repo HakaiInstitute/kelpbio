@@ -170,9 +170,10 @@ kb_plot_predictions <- function(
       ) +
       ggplot2::geom_line()
   } else if (style == "bar") {
-    # Translucent columns keep the interval visible inside them.
+    # A light solid fill keeps the interval visible inside the columns; the
+    # interval is drawn after the columns so it stays on top.
     gg <- gg +
-      ggplot2::geom_col(alpha = 0.5) +
+      ggplot2::geom_col(fill = "grey70") +
       ggplot2::geom_linerange(
         ggplot2::aes(ymin = .data$lower, ymax = .data$upper)
       )
