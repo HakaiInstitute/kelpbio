@@ -29,7 +29,7 @@ Required columns:
 \item \code{biomass_kg_m2}, the draws of the survey's wet biomass per m² (kg/m², >= 0).
 \item \code{site}, the site surveyed (any text).
 \item \code{year}, the year of the survey (whole number or text).
-\item \code{plot_area_m2}, the area of the plot polygon the canopy cover is measured over (m², > 0, or missing).
+\item \code{plot_area_m2}, the area of the plot polygon bounding the survey area that the canopy cover is measured over (m², > 0, or missing).
 \item \code{canopy_area_m2}, the canopy area delineated within the plot polygon (m², >= 0 and <= plot_area_m2, or missing).
 \item \code{canopy_tide_height_m}, the tide height when the canopy was imaged, relative to chart datum (m, any number, or missing).
 }

@@ -102,7 +102,7 @@ data_columns <- local({
         "numeric",
         m2,
         paste0("> 0", or_missing),
-        "The area of the plot polygon the canopy cover is measured over.",
+        "The area of the plot polygon bounding the survey area that the canopy cover is measured over.",
         "232.5"
       ),
       col(
@@ -228,7 +228,7 @@ data_columns <- local({
         "numeric",
         m2,
         "> 0",
-        "The area searched for plants.",
+        "The area surveyed for plants.",
         "182.3"
       ),
       col(

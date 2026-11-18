@@ -39,13 +39,13 @@ Required columns:
 \item \code{survey_id}, the survey's identifier (text or number, unique to each survey).
 \item \code{site}, the site surveyed (any text).
 \item \code{year}, the year of the survey (whole number or text).
-\item \code{survey_area_m2}, the area searched for plants (m², > 0).
+\item \code{survey_area_m2}, the area surveyed for plants (m², > 0).
 }
 
 Optional columns:
 \itemize{
 \item \code{plants}, the number of plants counted, given only when sizes come from a size sample (whole number >= 0).
-\item \code{plot_area_m2}, the area of the plot polygon the canopy cover is measured over (m², > 0, or missing).
+\item \code{plot_area_m2}, the area of the plot polygon bounding the survey area that the canopy cover is measured over (m², > 0, or missing).
 \item \code{canopy_area_m2}, the canopy area delineated within the plot polygon (m², >= 0 and <= plot_area_m2, or missing).
 \item \code{canopy_tide_height_m}, the tide height when the canopy was imaged, relative to chart datum (m, any number, or missing).
 }
