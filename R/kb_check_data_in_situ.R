@@ -5,7 +5,8 @@
 #'
 #' @details
 #' Each row of `data` is one survey: one count of the plants in a surveyed
-#' area. A plant is one individual (sporophyte), identified by its holdfast.
+#' area. A plant is one individual (sporophyte), identified by its holdfast
+#' (*Macrocystis*) or stipe (*Nereocystis*).
 #' Surveys of the same site in the same year, including on the same day, are
 #' separate rows.
 #'

@@ -77,12 +77,14 @@ below that of every survey with plants, since \code{presence_cover_slope} then
 follows its prior.
 
 Canopy is corrected for tide (Timmer et al. 2024), and a survey whose
-tide-corrected canopy exceeds its plot is fully covered. The fit warns when
-that holds with more than 5\% prior probability. The default prior on
-\code{tide_height_slope} largely sets the correction: raise its mean for beds in
-strong current. Imagery at a tide of 2 m or below follows published practice
-and stays below the tide limit. Pass canopy already corrected for tide with
-\code{canopy_tide_height_m = 0}.
+tide-corrected canopy exceeds its plot is fully covered. At a tide height of
+1 / \code{tide_height_slope} or more (the tide limit), the correction has no
+finite value and the survey is fully covered; the fit warns when a survey is
+past the tide limit with more than 5\% prior probability. The limit is at
+least 2 m, so imagery at a tide of 2 m or below, as published practice
+recommends, never reaches it. The default prior on \code{tide_height_slope}
+largely sets the correction: raise its mean for beds in strong current. Pass
+canopy already corrected for tide with \code{canopy_tide_height_m = 0}.
 }
 \section{Model}{
 

@@ -3,9 +3,10 @@
 #' Predict the expected wet biomass (kg/m²) of a plot from its plot cover.
 #'
 #' @details
-#' Cover is tide-corrected and capped at full cover, as in the fit, and a row
-#' at full cover on more than 5% of draws warns. Canopy already corrected
-#' for tide is passed with
+#' Cover is tide-corrected and capped at full cover, as in the fit. A row past
+#' the tide limit (a tide height of 1 / `tide_height_slope` or more, at least
+#' 2 m), where the correction has no finite value and the cover is full, on more
+#' than 5% of draws warns. Canopy already corrected for tide is passed with
 #' `canopy_tide_height_m = 0`. A row with no canopy predicts the biomass floor, which
 #' is the same for every site and year.
 #'

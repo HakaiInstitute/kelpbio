@@ -30,7 +30,8 @@ of in situ surveys with \code{\link[=kb_predict_biomass_in_situ]{kb_predict_biom
 }
 \details{
 Each row of \code{data} is one survey: one count of the plants in a surveyed
-area. A plant is one individual (sporophyte), identified by its holdfast.
+area. A plant is one individual (sporophyte), identified by its holdfast
+(\emph{Macrocystis}) or stipe (\emph{Nereocystis}).
 Surveys of the same site in the same year, including on the same day, are
 separate rows.
 Required columns:

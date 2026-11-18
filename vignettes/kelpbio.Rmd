@@ -39,7 +39,7 @@ This article uses *Nereocystis* as an example. The data shown below are simulate
 - **In situ survey**: count of the plants within a surveyed area, with all or a sample of the plants measured (e.g., three 30 m sub-surface transects with 2 m swaths, and the maximum sub-bulb diameter measured for about 15 plants per transect).
 - **Plot**: area bounding the in situ survey, over which canopy percent cover is estimated.
 - **Canopy map**: surface canopy within a site mapped from aerial imagery (e.g., drone), with the tide height recorded at the time of imaging.
-- **Site**: a location of any size with with mapped canopy and possibly, matching in situ survey data. 
+- **Site**: a location of any size with mapped canopy and possibly, matching in situ survey data. 
 - **Site-year**: annual snapshot of a site, i.e., in peak season.
 
 ## Data format
@@ -168,7 +168,7 @@ data_format(
 ```
 
 Each dataset has a `kb_check_data_*()` function that checks the data against the format expected by the model fitting functions (e.g., column names and values) and gives an informative error message when a correction is required.
-See `?kb_check_data_*` for details on the format requirements.
+See the [data checks](https://hakaiinstitute.github.io/kelpbio/reference/index.html#data-checks) in the reference for details on the format requirements.
 
 ```{r, error = TRUE}
 kb_check_data_weight_nereo(data_weight_sim_nereo)
@@ -315,7 +315,7 @@ kb_predict_biomass_canopy(
 
 See the [methods article](https://hakaiinstitute.github.io/kelpbio/articles/methods.html#survey-design) for more detail, including a diagram of a typical survey layout that shows how a plot relates to its site.
 
-### Dry and carbon biomass
+### Dry, carbon, and nitrogen biomass
 
 A wet/dry model fit converts wet to dry biomass, a carbon model fit converts dry
 biomass to carbon, and a nitrogen model fit converts dry biomass to nitrogen.
@@ -377,7 +377,7 @@ kb_predict_biomass_in_situ(
 
 ## Censused areas
 
-If every plant within a survey area is counted and measured (a full census), a size model is not needed, and `per_area = FALSE` gives the total biomass in the surveyed area. In this case no calibration is needed, and the uncertainty in biomass comes only from the weight model.
+If every plant within a survey area is counted and measured (a full census), a size model is not needed, and `per_area = FALSE` gives the total biomass in the surveyed area. The uncertainty in biomass then comes only from the weight model. When every plant in a site is counted and measured, no calibration is needed.
 
 ```{r}
 data_size_census_sim_nereo
@@ -405,10 +405,12 @@ always used in place of a size model. The calibration and totals follow as for
 *Nereocystis*.
 
 ```{r}
+set.seed(1)
 biomass_macro <- kb_predict_biomass_in_situ(
   fit_weight_sim_macro,
   data_size_census_sim_macro,
-  data_in_situ_sim_macro
+  data_in_situ_sim_macro,
+  progress = "none"
 )
 ```
 

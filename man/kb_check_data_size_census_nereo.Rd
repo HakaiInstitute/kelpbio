@@ -24,7 +24,7 @@ Check that \code{data} has the columns and values of a census of every
 }
 \details{
 Each row is one counted plant, an individual (sporophyte) identified by its
-holdfast. The plant's site and year are those of its survey (see
+stipe. The plant's site and year are those of its survey (see
 \code{\link[=kb_check_data_in_situ]{kb_check_data_in_situ()}}).
 Required columns:
 \itemize{

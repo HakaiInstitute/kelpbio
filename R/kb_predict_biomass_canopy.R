@@ -13,9 +13,12 @@
 #' between canopy maps.
 #'
 #' The canopy area is corrected for tide (Timmer et al. 2024) and capped at
-#' `classified_area_m2`. A row capped on more than 5% of draws warns, since its
-#' total is then set by the classified area rather than the canopy mapped. Canopy
-#' already corrected for tide is passed with `canopy_tide_height_m = 0`.
+#' `classified_area_m2`. At a tide height of 1 / `tide_height_slope` or more
+#' (the tide limit, at least 2 m), the correction has no finite value and the
+#' corrected canopy is the cap. A row past the tide limit on more than 5% of
+#' draws warns, since its total is then set by the classified area rather than
+#' the canopy mapped. Canopy already corrected for tide is passed with
+#' `canopy_tide_height_m = 0`.
 #'
 #' Dry biomass is the wet total times the expected dry:wet ratio from `wetdry`,
 #' and carbon or nitrogen the dry total times the expected carbon fraction from
@@ -55,7 +58,8 @@
 #'   \doi{10.3389/fenvs.2024.1338483}
 #' @family prediction functions
 #' @seealso [kb_predict_cover_calibration()] for biomass per m² of a plot at a
-#'   given cover; at full cover and zero tide height, the biomass per m² of bed.
+#'   given cover; at full cover and zero tide height, the biomass per m² of bed,
+#'   apart from the probability that the plot holds plants.
 #'   The
 #'   [Methods article](https://hakaiinstitute.github.io/kelpbio/articles/methods.html)
 #'   describes how totals are computed.

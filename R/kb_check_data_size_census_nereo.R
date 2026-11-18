@@ -6,7 +6,7 @@
 #'
 #' @details
 #' Each row is one counted plant, an individual (sporophyte) identified by its
-#' holdfast. The plant's site and year are those of its survey (see
+#' stipe. The plant's site and year are those of its survey (see
 #' [kb_check_data_in_situ()]).
 #'
 #' ```{r, echo = FALSE, results = "asis"}

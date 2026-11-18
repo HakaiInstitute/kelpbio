@@ -116,8 +116,9 @@ the biomass of the surveyed area: wet or dry (kg/m² or kg), or carbon or
 nitrogen (g/m² or kg).
 }
 \details{
-A plant is one individual (sporophyte), identified by its holdfast. Plant
-sizes come from one of two sources:
+A plant is one individual (sporophyte), identified by its holdfast
+(\emph{Macrocystis}) or stipe (\emph{Nereocystis}). Plant sizes come from one of two
+sources:
 \itemize{
 \item A size fit, when plants were tallied and a sample of them measured. A
 survey's biomass is its \code{plants} count times its site-year's mean plant

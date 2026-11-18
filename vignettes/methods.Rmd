@@ -62,12 +62,14 @@ allometric model). In the diagram below, the survey area is three parallel
 transects, each with a set length and swath width; other designs are possible as
 long as plants are counted within an area of known size.
 
-Surface canopy is mapped across the site (i.e., from aerial imagery), and the
-extent of the classified area is recorded; it caps the tide-corrected canopy
-(see Total biomass).
+Surface canopy is mapped across the site (i.e., from aerial imagery), with the
+tide height at the time of imaging and the extent of the water area classified.
 
 Percent canopy cover within a plot (plot cover) is calculated for each in situ
 survey, where a plot is defined as the area bounding the in situ survey area.
+
+Both canopy areas, within the plot and across the site, are corrected for tide
+and capped at the area they lie within (i.e., the plot area and classified area, respectively). 
 
 <img src="figures/survey-layout.svg" alt="Map of a site from above, with irregular kelp canopy polygons mapped across it. A plot about one tenth of the site is drawn tightly around the survey area. An inset shows the survey area from the side: plants rooted within it are counted, including plants below the surface, and plants rooted outside are not, even when their canopy drifts over." width="100%" />
 
@@ -160,8 +162,8 @@ effects. This has two benefits:
 - A site or year with few data 'borrows' information from the others, so its
   estimate is pulled toward the average.
 - A site, year, or site-year missing from a particular sub-model's data can
-  still be predicted. In this case the effect is drawn from the estimated
-  variation among levels, which widens its compatibility interval. For example,
+  still be predicted. In biomass estimates, the effect is drawn from the
+  estimated variation among levels, which widens its compatibility interval. For example,
   a site with no harvested plants has a wider interval for its weight, by an
   amount set by the variation among sites.
 
@@ -262,7 +264,8 @@ distribution (the midpoints of 100 equal-probability intervals) are each
 converted to a weight, and the weights averaged. Averaging weights, rather than
 taking the weight of the average size, matters because weight increases faster
 than diameter. This is known as Jensen's inequality. Sizes are limited to the
-largest diameter in the size data.
+largest diameter in the size data. Above the largest diameter in the weight
+data, the weight model is extrapolated.
 
 ```{r mean-weight, include = FALSE}
 mean_size <- kb_predict_size(fit_size_sim_nereo, data.frame(row = 1))$estimate
@@ -293,9 +296,18 @@ biomass_kg_m2 = plants * mean_weight_kg / survey_area_m2
 ```
 
 With a size census, it is the sum of the counted plants' expected weights over
-the area surveyed. Every plant in the survey area is counted, so the uncertainty
-in in situ biomass is that of plant weight. The cover calibration takes each
-survey's estimate and SD.
+the area surveyed. A plant only partly inside the survey area, such as a
+*Macrocystis* plant on the edge of a transect, is marked `partial` in the data
+and counts as half.
+
+The uncertainty in in situ biomass is that of mean plant weight, from the weight
+and size models (or the weight model alone with a size census). The cover
+calibration takes the mean and SD of each survey's draws.
+
+Key assumptions:
+
+- Every plant in the survey area is counted, so counts carry no sampling error.
+- The survey area is known without error.
 
 ## Cover calibration
 
@@ -310,10 +322,20 @@ probability that a survey holds plants only when a survey counted no plants.
 kb_model_describe(fit_cover_calibration_sim_nereo)
 ```
 
-Canopy is corrected to zero tide, since a rising tide submerges canopy. The
-proportion of canopy lost per metre of tide (`tide_height_slope`) is set by an
-informative prior from @timmer_capturing_2024; the calibration data do not
-inform it.
+The canopy area in each plot is corrected to zero tide, since a rising tide
+submerges canopy, and capped at the plot area, so cover is at most 100%:
+
+```
+corrected_canopy_area_m2 = min(canopy_area_m2 / (1 - tide_height_slope * canopy_tide_height_m), plot_area_m2)
+cover = corrected_canopy_area_m2 / plot_area_m2
+```
+
+The proportion of canopy lost per metre of tide (`tide_height_slope`) is set by
+an informative prior from @timmer_capturing_2024; the calibration data do not
+inform it. At a tide height of 1 / `tide_height_slope` or more (the tide limit,
+at least 2 m), the correction has no finite value and the corrected canopy is
+the cap; a warning is given when a plot or map is past the tide limit on more
+than 5% of draws.
 
 Each survey's in situ biomass is itself an estimate. Its uncertainty from mean
 plant weight enters the model, so a less certain survey has less influence.
@@ -333,11 +355,12 @@ Key assumptions:
 The mapped surface canopy is assumed to be the known extent of the bed, so the
 floor biomass (i.e., biomass at 0% cover) is not applied outside of it. The
 total biomass of a site-year is the calibration at 100% cover (the expected
-biomass per m² of bed) times the tide-corrected canopy area:
+biomass per m² of bed) times the site's canopy area, corrected for tide as in
+the cover calibration and capped at the water area the imagery classified:
 
 ```
 biomass_kg = (biomass_floor + cover_slope * exp(site_effect + year_effect)) * corrected_canopy_area_m2
-corrected_canopy_area_m2 = canopy_area_m2 / (1 - tide_height_slope * canopy_tide_height_m)
+corrected_canopy_area_m2 = min(canopy_area_m2 / (1 - tide_height_slope * canopy_tide_height_m), classified_area_m2)
 ```
 
 Applying the calibrated biomass estimate at 100% cover across the site's mapped
@@ -348,7 +371,6 @@ it. A nonlinear calibration (e.g., power law model with scaling exponent not
 equal to 1) would give a total that changed with the size of the area over which
 percent cover is measured.
 
-The corrected canopy area is capped at the water area the imagery classified.
 The probability that a survey holds plants is not applied, since
 mapped canopy is taken to hold plants. The interval is for the expected total:
 it includes the uncertainty in the calibration and its site and year effects,
