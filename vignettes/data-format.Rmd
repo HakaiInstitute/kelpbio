@@ -20,44 +20,60 @@ library(kelpbio)
 
 ## Overview
 
-The data are compiled as one dataset per kind of measurement. Each is a table
-with one row per plant, in situ survey, canopy map, or tissue sample. Column
-names are fixed and carry their units (for example `diameter_mm`); any additional columns are ignored. Some tables have column names that differ by species, e.g., `weight`.
+The data are compiled as one dataset per kind of measurement. Column
+names are fixed and carry their units (for example `diameter_mm`); any
+additional columns are ignored. Some tables have columns that differ by
+species, such as `weight` (e.g., `diameter_mm` vs `fronds`).
 
-Not every dataset is required. A model without data can use a model pre-fit
-to a public dataset in kelpbiodata (see
-[Pre-fit models](kelpbio.html#pre-fit-models)). For example, at minimum, mapped canopy data (`survey_canopy`) can be used to get estimates of total canopy biomass if using a cover calibration model fit to a public dataset, although uncertainty will be appropriately wider for sites and years not matching those in the model (see [Methods](methods.html)).
+Not every dataset is required: a model without data can use a model pre-fit
+to a public dataset in kelpbiodata (see [Pre-fit models](kelpbio.html#pre-fit-models)). How the datasets combine
+into biomass is explained in the [Methods overview](methods.html#overview), and
+how the data are expected to be collected in [Survey design](methods.html#survey-design).
 
-## From data to biomass
+## Two data format choices to highlight:
 
-Each dataset contributes to one step from plants, to in situ biomass, to total canopy biomass. In summary, harvested plants relate weight to size, measured sizes give counted plants their weight, and biomass per m² of the in situ survey area is estimated. That estimated in situ biomass, calibrated against the canopy cover of the plot bounding the survey area, is used to estimate total biomass from each canopy map, and tissue samples convert wet biomass to dry, carbon, and nitrogen biomass. The [Methods](methods.html) article describes each step in detail. 
-
-## Size data: sample or census
-
-For *Nereocystis*, one of `size_sample` or `size_census` is used depending on the in situ survey design. A *Nereocystis* survey often counts every plant but measures only a sample of them. In this case the sizes go in the `size_sample` table, each survey's total plant count goes in `survey_in_situ`, and a size model is fit to estimate the size of unmeasured plants. If every counted plant was measured, the sizes go in `size_census`. In this case, no size model is needed and total plant counts are calculated for each survey from the `size_census` table (i.e., the number of plants with each `survey_id`, a partial plant counting as half). 
-For *Macrocystis*, it is assumed that all plants are measured, and the `size_census` table is always used.
+1. **Size sample or census.** A *Nereocystis* survey either measures a sample of the counted plants or all of them. With a sample, size data are provided in `size_sample`, each survey's total plant count is recorded in the `plants` column of `survey_in_situ`, and a size model is used to estimate size of unmeasured plants. If every plant is measured, sizes are recorded in the `size_census` table and each survey's total plant count is calculated automatically. For *Macrocystis*, it is assumed that all plants are measured and sizes are recorded in the `size_census` table.
+2. **Site and year, or survey.** These methods are designed to estimate annual biomass at each site: the weight, size, and cover calibration models have site and year effects, and the tissue models estimate one ratio or fraction for all samples. A site can still have in situ surveys at more than one plot, or more than once in a year, and have canopy mapped more than once in a year. Each in situ survey therefore has its own `survey_id` in `survey_in_situ`, which the plants of a size census carry, and each canopy map is its own row in `survey_canopy`. However, no models estimate seasonal variation (i.e., within a year); canopy maps of the same site-year share the same biomass per m² of canopy, and in situ surveys of the same site-year share the same mean plant weight (see [Timing](methods.html#timing) for details). 
 
 ## Datasets
 
-- `weight`: harvested plants, each with its size and wet weight. Size is a
-  diameter for *Nereocystis* (e.g., maximum sub-bulb diameter), measured
-  the same way as in the size data, and the number of fronds reaching 1 m above
-  the holdfast for *Macrocystis*. Any diameter can be used (e.g., bulb diameter, or diameter 15 cm below the bulb) as long as it is measured the same way in the size data and can be related to weight with a power law allometric model. 
-- `size_sample`: the plants measured, each with its site and year; each in situ
-  survey gives its count in the `plants` column of `survey_in_situ`.
-- `size_census`: every plant counted, each with the `survey_id` of the survey
-  it was counted in; the counts come from this dataset, so `survey_in_situ` has
-  no `plants` column.
-- `survey_in_situ`: one row per in situ survey, with its survey area. If the
-  canopy was mapped over the survey, the row also has the area of the plot (a
-  polygon drawn tightly around the in situ survey area), the canopy area within it, and the tide height at the time of imaging.
-- `survey_canopy`: one row per canopy map of a site, with the total canopy area, the
-  tide height at the time of imaging, and the total water area classified.
-- `wetdry`, `carbon`, and `nitrogen`: one row per tissue sample.
+```{r datasets, echo = FALSE, results = "asis"}
+# Each kind of dataset (its name without the species suffix), with what one
+# row holds (kb_datasets()) and the article section on its model.
+datasets <- list(
+  weight = c("weight_nereo", "weight models", "methods.html#in-situ-biomass"),
+  size_sample = c("size_sample_nereo", "size model", "methods.html#nereocystis-size-model"),
+  size_census = c("size_census_nereo", "Censused areas", "kelpbio.html#censused-areas"),
+  survey_in_situ = c("survey_in_situ", "Cover calibration", "methods.html#cover-calibration"),
+  survey_canopy = c("survey_canopy", "Total biomass", "methods.html#total-biomass"),
+  wetdry = c("wetdry_nereo", "Dry, carbon, and nitrogen biomass", "methods.html#dry-carbon-and-nitrogen-biomass"),
+  carbon = c("carbon_nereo", "Dry, carbon, and nitrogen biomass", "methods.html#dry-carbon-and-nitrogen-biomass"),
+  nitrogen = c("nitrogen_nereo", "Dry, carbon, and nitrogen biomass", "methods.html#dry-carbon-and-nitrogen-biomass")
+)
+lower_first <- function(x) paste0(tolower(substr(x, 1, 1)), substring(x, 2))
+rows <- vapply(datasets, function(x) kb_datasets(x[[1]])$row, "")
+# Kinds whose rows read the same share one bullet, as the tissue samples do.
+for (row in unique(rows)) {
+  kinds <- names(rows)[rows == row]
+  x <- datasets[[kinds[[1]]]]
+  names <- paste0("`", kinds, "`")
+  if (length(names) > 1) {
+    names <- paste0(
+      paste(names[-length(names)], collapse = ", "),
+      if (length(names) > 2) ", and " else " and ",
+      names[[length(names)]]
+    )
+  }
+  cat(sprintf(
+    "- %s: one row per %s ([%s](%s)).\n",
+    names, lower_first(row), x[[2]], x[[3]]
+  ))
+}
+cat("\n")
+```
 
-## Linking the datasets
-
-These methods give annual estimates of biomass at each site. The weight, size, and cover calibration models estimate an effect for each site and each year, so harvested plants, size samples, and canopy maps need only `site` and `year` in each row. A site can be surveyed at more than one plot, or more than once in a year, so each in situ survey has its own `survey_id`, and each plant in `size_census` carries the `survey_id` of its survey, so that it counts toward that survey's plant total. In situ biomass is estimated for each survey, and each survey is a separate observation in the cover calibration. Note that surveys at a given site share its site effect, and surveys in a given year share its year effect; seasonal variation is not modelled (see [Timing](methods.html#timing)). Tissue samples need no `site`, `year`, or `survey_id`, as their ratios are not assumed to vary by site or year. Each site must be spelled the same way in every dataset: the datasets are joined by site and year, and a misspelled site is read as a new site.
+Each site must be spelled the same way in every dataset: the datasets are
+joined by site and year, and a misspelled site is read as a new site.
 
 ## Columns
 
@@ -78,8 +94,11 @@ ref <- function(fun) {
     "()</code></a>"
   )
 }
-data_format <- function(title, row, used_by, dataset) {
+data_format <- function(title, used_by, dataset) {
   columns <- kb_data_columns(dataset)
+  row <- kb_datasets(dataset)$row
+  row <- paste0(tolower(substr(row, 1, 1)), substring(row, 2))
+  row <- gsub("`([^`]*)`", "<code>\\1</code>", row)
   table <- data.frame(
     Column = paste0(
       "<code>",
@@ -115,61 +134,51 @@ data_format <- function(title, row, used_by, dataset) {
 
 data_format(
   "Weight, *Nereocystis*",
-  "harvested plant",
   "kb_fit_weight_nereo",
   "weight_nereo"
 )
 data_format(
   "Weight, *Macrocystis*",
-  "harvested plant",
   "kb_fit_weight_macro",
   "weight_macro"
 )
 data_format(
   "Size sample, *Nereocystis*",
-  "measured plant",
   "kb_fit_size_nereo",
   "size_sample_nereo"
 )
 data_format(
   "In situ survey",
-  "survey",
   "kb_predict_biomass_in_situ",
   "survey_in_situ"
 )
 data_format(
   "Size census, *Nereocystis*",
-  "counted plant",
   "kb_predict_biomass_in_situ",
   "size_census_nereo"
 )
 data_format(
   "Size census, *Macrocystis*",
-  "counted plant",
   "kb_predict_biomass_in_situ",
   "size_census_macro"
 )
 data_format(
   "Canopy map",
-  "map of a site's canopy",
   "kb_predict_biomass_canopy",
   "survey_canopy"
 )
 data_format(
   "Wet/dry",
-  "tissue sample",
   c("kb_fit_wetdry_nereo", "kb_fit_wetdry_macro"),
   "wetdry_nereo"
 )
 data_format(
   "Carbon",
-  "dried tissue sample",
   c("kb_fit_carbon_nereo", "kb_fit_carbon_macro"),
   "carbon_nereo"
 )
 data_format(
   "Nitrogen",
-  "dried tissue sample",
   c("kb_fit_nitrogen_nereo", "kb_fit_nitrogen_macro"),
   "nitrogen_nereo"
 )
