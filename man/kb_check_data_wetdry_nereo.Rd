@@ -53,6 +53,7 @@ Other data checks:
 \code{\link[=kb_check_data_weight_macro]{kb_check_data_weight_macro()}},
 \code{\link[=kb_check_data_weight_nereo]{kb_check_data_weight_nereo()}},
 \code{\link[=kb_check_data_wetdry_macro]{kb_check_data_wetdry_macro()}},
-\code{\link[=kb_data_columns]{kb_data_columns()}}
+\code{\link[=kb_data_columns]{kb_data_columns()}},
+\code{\link[=kb_datasets]{kb_datasets()}}
 }
 \concept{data checks}

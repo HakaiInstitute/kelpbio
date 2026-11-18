@@ -53,6 +53,7 @@ reference:
   desc: "Describe and check input data before fitting."
   contents:
     - kb_data_columns
+    - kb_datasets
     - kb_check_data_weight_nereo
     - kb_check_data_weight_macro
     - kb_check_data_size_sample_nereo

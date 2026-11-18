@@ -294,6 +294,27 @@ data_column_names <- function(dataset, required = TRUE) {
   rows$column
 }
 
+# What one row of each dataset holds, as markdown (column names in backticks),
+# returned by kb_datasets(), in the order of the data dictionary.
+data_rows <- tibble::tribble(
+  ~dataset, ~row,
+  "weight_nereo", "Harvested plant, with its size, wet weight, `site`, and `year`",
+  "weight_macro", "Harvested plant, with its size, wet weight, `site`, and `year`",
+  "size_sample_nereo", "Measured plant, with its size, `site`, and `year`",
+  "size_census_nereo", "Counted plant, with its size and the `survey_id` of its survey; a `partial` plant counts as half",
+  "size_census_macro", "Counted plant, with its size and the `survey_id` of its survey; a `partial` plant counts as half",
+  "survey_in_situ", "In situ survey, with its `survey_id`, `site`, `year`, and survey area, and, where the canopy was mapped over it, its plot cover",
+  "survey_canopy", "Canopy map, with its `site`, `year`, and mapped canopy",
+  "wetdry_nereo", "Tissue sample, with no site or year",
+  "wetdry_macro", "Tissue sample, with no site or year",
+  "carbon_nereo", "Tissue sample, with no site or year",
+  "carbon_macro", "Tissue sample, with no site or year",
+  "nitrogen_nereo", "Tissue sample, with no site or year",
+  "nitrogen_macro", "Tissue sample, with no site or year",
+  "cover_calibration_nereo", "In situ survey, with its estimated biomass and plot cover",
+  "cover_calibration_macro", "In situ survey, with its estimated biomass and plot cover"
+)
+
 # The column lists of a data check topic, as markdown.
 doc_data_columns <- function(dataset) {
   rows <- data_columns[data_columns$dataset == dataset, ]
