@@ -52,15 +52,16 @@ parameter by \code{posterior::summarise_draws(fit)}.
 In order, try the following:
 \enumerate{
 \item For Rhat or effective sample sizes that fail their thresholds,
-increase \code{niters} for more saved draws per chain, or increase \code{nthin} to
-run more iterations while saving the same number of draws.
+increase \code{nthin} to run more iterations while saving the same number of
+draws or increase \code{niters} for more saved draws per chain.
 \item For divergent transitions, increase \code{adapt_delta} through the \code{control}
 argument of the \verb{kb_fit_*()} functions (for example,
 \verb{kb_fit_*(df, control = list(adapt_delta = 0.99))}; the default is 0.95).
 A higher value makes the sampler take smaller steps, which reduces
 divergent transitions at the cost of a longer runtime.
 \item If either problem persists, check the data and the fit with
-\code{\link[=pp_check]{pp_check()}}: a unit mistake, outliers, or a poor fit can cause both.
+\code{\link[=pp_check]{pp_check()}} and \code{\link[=kb_influence]{kb_influence()}}: a unit mistake, outliers,
+or a poor fit can cause both.
 }
 }
 
