@@ -64,7 +64,7 @@ A site or year that a model fit has no data for is defined as a 'new level'. The
 - `"sample"`: a site or year drawn from the estimated variation among sites or
   years (i.e., from the estimated random effect standard deviation). The interval is wider, and describes a new or unobserved site about which nothing is known.
 
-The `representative_site` argument instead gives a new site the effects of named sites in the model fit, i.e., if it is known a priori that conditions at the new site are similar.
+The `representative_site` argument instead gives a new site the effects of named sites in the model fit, e.g., when it is known a priori that conditions at the new site are similar.
 
 ```{r}
 new_site <- data.frame(diameter_mm = 40, site = "new_reef")
@@ -150,7 +150,7 @@ augment(fit_weight_sim_nereo) |>
 ### Prior sensitivity
 
 `kb_sensitivity()` uses [power-scaling sensitivity analysis](https://mc-stan.org/priorsense/) to measure how much the parameter estimates change when the prior is adjusted. Ideally, estimates should be driven by the data and this is indicated when `weak_prior` and `strong_data` are both `TRUE`. Where `weak_prior` is
-`FALSE` the prior influences the estimate. In some cases, prior influence is expected, i.e., if the user deliberately set an informative prior or in the case of tide correction. It can also be an indication that the prior was incorrectly specified or there are insufficient data to estimate a parameter without the prior doing some heavy lifting. In the latter case, the prior should be specified carefully, ideally based on plausible ranges or parameter values from the literature.
+`FALSE` the prior influences the estimate. In some cases, prior influence is expected, e.g., when the user deliberately sets an informative prior, or for the cover calibration's tide correction (`tide_height_slope`). It can also be an indication that the prior was incorrectly specified or there are insufficient data to estimate a parameter without relying on the prior. In the latter case, the prior should be specified carefully, ideally based on plausible ranges or parameter values from the literature.
 
 The two flags give four cases:
 
