@@ -50,7 +50,7 @@ Build the engine on the **`posterior` `rvar` datatype**:
 
 ## Rationale
 
-A benchmark (`scripts/benchmark-prediction-methods.R`) compared the engines on
+A benchmark (not kept in the repository) compared the engines on
 the same fits for speed and validity (recovery of a closed-form truth, two-model
 biomass composition). All engines recovered truth and agreed; the differences
 were speed, dependencies, and code clarity:

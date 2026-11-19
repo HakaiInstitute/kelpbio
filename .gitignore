@@ -40,3 +40,5 @@ figure/
 # side analyses (simulation studies) and their outputs
 scripts/sim-site-year-drop*
 scripts/sim-output/
+scripts/benchmark-*
+scripts/profile-*
