@@ -2,11 +2,6 @@
 #'
 #' Fit a nitrogen-fraction model for *Nereocystis luetkeana* via Stan.
 #'
-#' @details
-#' Samples are pooled over the months, sites, and tissues they come from. To
-#' estimate the fraction for a particular season, fit the model to that
-#' season's samples only.
-#'
 #' @inheritSection params Model
 #' @inheritSection params Sampling
 #' @inheritParams kb_fit_weight_nereo

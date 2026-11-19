@@ -5,33 +5,19 @@
 #' nitrogen (g/m² or kg).
 #'
 #' @details
-#' A plant is one individual (sporophyte), identified by its holdfast
-#' (*Macrocystis*) or stipe (*Nereocystis*). Plant sizes come from one of two
-#' sources:
-#'
-#' - A size fit, when plants were tallied and a sample of them measured. A
-#'   survey's biomass is its `plants` count times its site-year's mean plant
-#'   weight (see [kb_predict_mean_weight()]).
-#' - A size census of every counted plant, when each was measured, joined to
-#'   its survey by `survey_id`. A survey's biomass is the sum of its plants'
-#'   expected weights, half for a `partial` plant. A survey with no census rows
-#'   has no biomass, and a message lists such surveys.
-#'
-#' Dry biomass is wet biomass times the expected dry:wet ratio from `wetdry`,
-#' and carbon or nitrogen dry biomass times the expected carbon fraction from
-#' `carbon` or nitrogen fraction from `nitrogen`. The fits must be of the same
-#' species and have the same number of draws.
-#'
-#' With `pool_by` and `per_area = TRUE`, a group's biomass per m² is its summed
-#' biomass over its summed `survey_area_m2`: an area-weighted mean, not the
-#' mean of its surveys' values.
+#' Plant sizes come from a size fit, when only a sample of plants was measured,
+#' or from a size census, when every counted plant was measured, joined to its
+#' survey by `survey_id` (see
+#' [Methods](https://hakaiinstitute.github.io/kelpbio/articles/methods.html#survey-biomass)).
+#' A survey with no rows in the size census has zero biomass, and a message
+#' lists such surveys. With `pool_by` and `per_area = TRUE`, a group's biomass
+#' per m² is its summed biomass over its summed `survey_area_m2`.
 #'
 #' @inheritParams two_fit_params
 #' @inheritParams derived_params
 #' @inheritParams params
-#' @param size A `kb_fit_size` object, when plants were tallied, or a size
-#'   census, a data frame of every counted plant, one row per plant (see
-#'   [kb_check_data_size_census_nereo()] and
+#' @param size A `kb_fit_size` object, or a size census, a data frame with one
+#'   row per counted plant (see [kb_check_data_size_census_nereo()] and
 #'   [kb_check_data_size_census_macro()] for the columns).
 #' @param survey A data frame of in situ surveys, one row per survey (see
 #'   [kb_check_data_survey_in_situ()] for the columns).
@@ -41,17 +27,12 @@
 #'   mean plant weight from a size fit; larger values are more precise and
 #'   slower. Not used with a size census.
 #'
-#' @returns A `kb_predictions` object. Without `pool_by`, the rows of `survey`
-#'   (a numeric `year` or `survey_id` as character) with added
-#'   `weight_support` and, with a size fit,
-#'   `size_support` (as in `kb_predict_mean_weight()`), the draws of the
-#'   biomass in a column named for it (`biomass_kg_m2`, `dry_biomass_kg_m2`,
-#'   `carbon_biomass_g_m2`, or `nitrogen_biomass_g_m2` per m², and
-#'   `biomass_kg`, `dry_biomass_kg`, `carbon_biomass_kg`, or
-#'   `nitrogen_biomass_kg` in total), and
-#'   `estimate`, `lower`, and `upper`; with `pool_by`, one row per group with its
-#'   `pool_by` columns, the support columns when `pool_by` includes `site` and
-#'   `year`, the draws, and the summary.
+#' @returns A `kb_predictions` object: the rows of `survey`, or one row per
+#'   `pool_by` group, with `weight_support` and, with a size fit,
+#'   `size_support` (as in [kb_predict_mean_weight()]), the draws of the
+#'   biomass (for example `biomass_kg_m2` or `carbon_biomass_kg`), and
+#'   `estimate`, `lower`, and
+#'   `upper`.
 #' @family prediction functions
 #' @seealso [kb_fit_cover_calibration_nereo()] to calibrate plot cover on the
 #'   result.
@@ -122,7 +103,10 @@ kb_predict_biomass_in_situ <- function(
       size,
       hint = "{.arg size} must be fitted to observed plant sizes."
     )
-    .chk_representative_site(size, representative_sites(representative_site)$size)
+    .chk_representative_site(
+      size,
+      representative_sites(representative_site)$size
+    )
     .chk_n_plants(n_plants)
   }
   .with_call(
@@ -141,7 +125,10 @@ kb_predict_biomass_in_situ <- function(
     nitrogen = nitrogen
   )
   .chk_derived_fits(fits)
-  .chk_representative_site(weight, representative_sites(representative_site)$weight)
+  .chk_representative_site(
+    weight,
+    representative_sites(representative_site)$weight
+  )
   .chk_summary_args(conf_level, estimate, sig_fig)
 
   grid <- ids_as_character(tibble::as_tibble(survey))
@@ -152,7 +139,14 @@ kb_predict_biomass_in_situ <- function(
   grid <- dplyr::relocate(grid, "year", .after = "site")
 
   kg <- if (census) {
-    census_biomass_draws(weight, size, grid, new_levels, representative_site, progress)
+    census_biomass_draws(
+      weight,
+      size,
+      grid,
+      new_levels,
+      representative_site,
+      progress
+    )
   } else {
     tallied_biomass_draws(
       weight,
@@ -168,7 +162,13 @@ kb_predict_biomass_in_situ <- function(
   write_prediction_progress(progress_dir, 1L, 1L)
   element_scale <- if (per_area) 1000 else 1
   kg <- kg *
-    measure_factor(measure, wetdry, carbon, nitrogen, element_scale = element_scale)
+    measure_factor(
+      measure,
+      wetdry,
+      carbon,
+      nitrogen,
+      element_scale = element_scale
+    )
   area <- if (per_area) grid$survey_area_m2
 
   if (is.null(pool_by)) {

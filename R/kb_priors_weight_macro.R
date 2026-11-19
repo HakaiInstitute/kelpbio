@@ -1,17 +1,10 @@
 #' Default priors for the Macrocystis weight model
 #'
-#' The default priors for the *Macrocystis pyrifera* allometric weight model. To
-#' change a prior, pass a list of the entries to change to the `priors` argument
-#' of [kb_fit_weight_macro()]; the other entries keep their defaults.
+#' The default priors for the *Macrocystis pyrifera* weight model, for the
+#' `priors` argument of [kb_fit_weight_macro()].
 #'
-#' Each entry is named after the parameter it sets, as reported by [tidy()] and
-#' [kb_model_describe()]. The prior family of each entry is fixed; only its
-#' arguments can be changed. `intercept` is the log
-#' expected weight at the geometric mean frond count, and `fronds_slope` the
-#' slope of log expected weight on log frond count.
-#'
-#' @returns A named list of prior objects with entries `intercept`,
-#'   `fronds_slope`, `shape`, `sd_site`, `sd_year`, and `sd_site_year`.
+#' @inheritSection params Priors
+#' @returns A named list of prior objects, one per parameter.
 #' @family priors
 #' @export
 #'

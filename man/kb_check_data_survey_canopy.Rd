@@ -23,8 +23,7 @@ biomass with \code{\link[=kb_predict_biomass_canopy]{kb_predict_biomass_canopy()
 its \code{new_data}.
 }
 \details{
-Each row of \code{data} is one map of a site's canopy. A site-year may have
-several maps, such as from imagery weeks apart.
+Each row is one canopy map of a site; a site-year may have several.
 Required columns:
 \itemize{
 \item \code{site}, the site mapped (any text).
@@ -34,8 +33,9 @@ Required columns:
 \item \code{classified_area_m2}, the water area the canopy classification covered, including water where no canopy was found (m², > 0).
 }
 
-Required columns have no missing values. Other columns, such as \code{region},
-are ignored, and can be named in \code{pool_by}.
+Other columns are ignored.
+
+Other grouping columns, such as \code{region}, can be named in \code{pool_by}.
 }
 \examples{
 kb_check_data_survey_canopy(data_survey_canopy_sim_nereo)

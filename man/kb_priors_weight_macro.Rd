@@ -7,21 +7,20 @@
 kb_priors_weight_macro()
 }
 \value{
-A named list of prior objects with entries \code{intercept},
-\code{fronds_slope}, \code{shape}, \code{sd_site}, \code{sd_year}, and \code{sd_site_year}.
+A named list of prior objects, one per parameter.
 }
 \description{
-The default priors for the \emph{Macrocystis pyrifera} allometric weight model. To
-change a prior, pass a list of the entries to change to the \code{priors} argument
-of \code{\link[=kb_fit_weight_macro]{kb_fit_weight_macro()}}; the other entries keep their defaults.
+The default priors for the \emph{Macrocystis pyrifera} weight model, for the
+\code{priors} argument of \code{\link[=kb_fit_weight_macro]{kb_fit_weight_macro()}}.
 }
-\details{
-Each entry is named after the parameter it sets, as reported by \code{\link[=tidy]{tidy()}} and
-\code{\link[=kb_model_describe]{kb_model_describe()}}. The prior family of each entry is fixed; only its
-arguments can be changed. \code{intercept} is the log
-expected weight at the geometric mean frond count, and \code{fronds_slope} the
-slope of log expected weight on log frond count.
+\section{Priors}{
+
+Each entry is named after the parameter it sets, which \code{\link[=kb_model_describe]{kb_model_describe()}}
+prints with the model. A list passed to \code{priors} replaces the entries it
+names; the others keep their defaults. The prior family of each entry is
+fixed; only its arguments can be changed.
 }
+
 \examples{
 kb_priors_weight_macro()
 \dontshow{if (interactive()) withAutoprint(\{ # examplesIf}

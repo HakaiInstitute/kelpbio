@@ -5,19 +5,13 @@
 \alias{data_wetdry_sim_macro}
 \title{Simulated Macrocystis wet/dry data}
 \format{
-A data frame with columns:
-\describe{
-\item{wet_mass_g}{Wet mass of the sample (g), a positive number.}
-\item{dry_mass_g}{Dry mass of the sample (g), a positive number less than
-\code{wet_mass_g}.}
-}
+A data frame with the columns of \code{\link[=kb_check_data_wetdry_macro]{kb_check_data_wetdry_macro()}}.
 }
 \usage{
 data_wetdry_sim_macro
 }
 \description{
-A small simulated dataset of sample wet and dry masses, one row per tissue
-sample, for runnable examples.
+A small simulated dataset of tissue samples, for runnable examples.
 }
 \seealso{
 \link{fit_wetdry_sim_macro} for a fit to this dataset.

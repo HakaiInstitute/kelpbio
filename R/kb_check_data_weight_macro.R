@@ -8,8 +8,6 @@
 #' cat(doc_data_columns("weight_macro"))
 #' ```
 #'
-#' Required columns have no missing values; other columns are ignored.
-#'
 #' @inheritParams kb_check_data_weight_nereo
 #' @inheritParams params
 #' @returns `data`, invisibly.

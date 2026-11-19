@@ -5,15 +5,11 @@
 #' [kb_predict_biomass_in_situ()].
 #'
 #' @details
-#' Each row is one counted plant, an individual (sporophyte) identified by its
-#' stipe. The plant's site and year are those of its survey (see
-#' [kb_check_data_survey_in_situ()]).
+#' Each row is one counted plant; its site and year are those of its survey.
 #'
 #' ```{r, echo = FALSE, results = "asis"}
 #' cat(doc_data_columns("size_census_nereo"))
 #' ```
-#'
-#' Columns have no missing values; other columns are ignored.
 #'
 #' @inheritParams params
 #' @param data A data frame of counted plants, one row per plant.

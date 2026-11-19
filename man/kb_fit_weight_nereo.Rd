@@ -53,7 +53,7 @@ preceding \code{set.seed()} also makes the fit reproducible.}
 
 \item{progress}{A string, one of \code{"bar"} (the default, a console progress
 bar), \code{"verbose"} (rstan's per-iteration output and diagnostic warnings), or
-\code{"none"} (silent). Controls fit-time console output only.}
+\code{"none"} (silent).}
 
 \item{progress_dir}{A string giving an existing directory in which to record
 progress for \code{\link[=kb_progress]{kb_progress()}}, or \code{NULL} (the default) to record none.}
@@ -67,16 +67,18 @@ Fit an allometric weight model for \emph{Nereocystis luetkeana} via Stan.
 \section{Model}{
 
 \code{\link[=kb_model_describe]{kb_model_describe()}} prints the fitted model, with its priors, in notation
-or as a methods paragraph. The
+or as a written description. The
 \href{https://hakaiinstitute.github.io/kelpbio/articles/methods.html}{Methods article}
 describes each model and its assumptions.
 }
 
 \section{Sampling}{
 
-Chains are run in parallel by default. Set \code{options(mc.cores = 1)} (or pass
-\code{cores = 1}) on shared servers, in containers, or inside another parallel
-context.
+Chains run in parallel by default, one core per chain, capped at the cores
+available. \code{cores} sets the number of cores; when it is \code{NULL},
+\code{getOption("mc.cores")} is used if set. Set \code{cores = 1} (or
+\code{options(mc.cores = 1)}) where cores are shared or limited, or inside another
+parallel process.
 
 The sampler runs with \code{adapt_delta = 0.95} by default, which reduces
 divergences at the cost of slightly longer runtime. Override it, or set any
@@ -84,20 +86,21 @@ other sampler control, by passing a \code{control} list through \code{...}, for 
 \code{control = list(adapt_delta = 0.99)}; only the entries supplied are changed.
 See the \code{control} argument of \code{\link[rstan:stan]{rstan::stan()}} for the full set of entries.
 
+By default, each of 4 chains runs 1000 warmup iterations and then saves 1000
+draws with no thinning, giving 4000 draws in total. These match the defaults
+of \code{\link[rstan:stan]{rstan::stan()}} and Stan's general recommendations.
+
 Check convergence with \code{\link[=kb_converged]{kb_converged()}}, \code{\link[=glance]{glance()}}, or \code{\link[=summary]{summary()}}.
 }
 
 \section{Site and year interaction}{
 
-The site:year effect lets each site depart from the year-to-year pattern
-shared by all sites, so a site can have a good year while others have a poor
-one. Separating it from the site and year effects needs at least one site
-with data in more than one year and at least one year with more than one
-site. Without that, as with data from a single year, the fit warns:
-estimates for the site-years in the data are unaffected, but the site or year
-effects, and predictions for other site-years or new sites and years, depend
-on the \code{sd_site_year} prior. Use \code{\link[=kb_sensitivity]{kb_sensitivity()}} to check how much they
-do.
+The site:year effect lets a site depart from the year-to-year pattern shared
+by all sites. It is separable from the site and year effects only when a site
+has data in more than one year and a year has more than one site; otherwise
+the fit warns. Estimates for the site-years in the data are then unaffected,
+but other predictions depend on the \code{sd_site_year} prior (see
+\code{\link[=kb_sensitivity]{kb_sensitivity()}}).
 }
 
 \examples{

@@ -23,9 +23,7 @@ Check that \code{data} has the columns and values of a census of every
 \code{\link[=kb_predict_biomass_in_situ]{kb_predict_biomass_in_situ()}}.
 }
 \details{
-Each row is one counted plant, an individual (sporophyte) identified by its
-stipe. The plant's site and year are those of its survey (see
-\code{\link[=kb_check_data_survey_in_situ]{kb_check_data_survey_in_situ()}}).
+Each row is one counted plant; its site and year are those of its survey.
 Required columns:
 \itemize{
 \item \code{survey_id}, the survey the plant was counted in (a survey_id of the in situ data).
@@ -37,7 +35,7 @@ Optional columns:
 \item \code{partial}, whether the plant counts as half, such as a plant on the edge of a transect (TRUE or FALSE).
 }
 
-Columns have no missing values; other columns are ignored.
+Other columns are ignored.
 }
 \examples{
 size_census <- data.frame(

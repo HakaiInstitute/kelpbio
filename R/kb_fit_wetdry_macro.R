@@ -2,7 +2,7 @@
 #'
 #' Fit a dry:wet ratio model for *Macrocystis pyrifera* via Stan.
 #'
-#' @inherit kb_fit_wetdry_nereo details sections
+#' @inherit kb_fit_wetdry_nereo sections
 #' @inheritParams kb_fit_wetdry_nereo
 #' @param data A data frame of wet/dry observations, one row per sample (see
 #'   [kb_check_data_wetdry_macro()] for the required columns).

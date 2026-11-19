@@ -5,27 +5,16 @@
 \alias{data_survey_canopy_sim_macro}
 \title{Simulated Macrocystis canopy data}
 \format{
-A data frame with columns:
-\describe{
-\item{site}{Site, a factor (12 levels).}
-\item{year}{Year, a factor (5 levels).}
-\item{canopy_area_m2}{Canopy mapped within the site (m²).}
-\item{canopy_tide_height_m}{Tide height when the canopy was imaged (m).}
-\item{classified_area_m2}{Water area the canopy classification covered
-(m²), including water with no canopy.}
-\item{region}{Region of the site, a factor (\code{"north"}, \code{"south"}).}
-}
+A data frame with the columns of \code{\link[=kb_check_data_survey_canopy]{kb_check_data_survey_canopy()}} and
+\code{region}, a factor to pool by.
 }
 \usage{
 data_survey_canopy_sim_macro
 }
 \description{
-A small simulated dataset of mapped canopy, one row per map of a
-site's canopy, for runnable examples of totals over the canopy.
+A small simulated dataset of canopy maps, for runnable examples.
 }
 \seealso{
-\code{\link[=kb_predict_biomass_canopy]{kb_predict_biomass_canopy()}}.
-
 Other example datasets:
 \code{\link{data_carbon_sim_macro}},
 \code{\link{data_carbon_sim_nereo}},

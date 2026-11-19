@@ -11,19 +11,22 @@
 #' Site and year columns in `new_data` are handled as in [posterior_epred()].
 #'
 #' The observation noise follows the likelihood of the fit's model (see
-#' [kb_model_describe()]). A cover calibration fit with a presence part also draws whether each survey
-#' holds plants, and a survey drawn without plants is 0. Each row's spread
-#' includes the coefficient of variation of its survey biomass, from
-#' `biomass_kg_m2` and `biomass_sd_kg_m2` columns or a `biomass_kg_m2` column
-#' of draws, and the residual alone when `new_data` has neither.
+#' [kb_model_describe()]). A cover calibration fit with a presence part also
+#' draws whether each survey holds plants, and a survey drawn without plants
+#' is 0. Each row's spread includes the coefficient of variation of its survey
+#' biomass, from `biomass_kg_m2` and `biomass_sd_kg_m2` columns or a
+#' `biomass_kg_m2` column of draws, and the residual alone when `new_data` has
+#' neither.
 #'
 #' Repeated calls return different draws; use `set.seed()` to reproduce them.
 #'
 #' @inheritParams params
 #' @param new_data A data frame with the fit's predictor column (and optional
 #'   `site` and `year` columns; `canopy_area_m2`, `plot_area_m2`, and
-#'   `canopy_tide_height_m` for a cover calibration fit), or `NULL` to predict at the
-#'   observed data.
+#'   `canopy_tide_height_m` for a cover calibration fit), or `NULL` to predict
+#'   at the observed data.
+#'   `year` may be numeric or character: `2022` and `"2022"` match the same
+#'   fitted year.
 #'
 #' @returns A draws-by-observations (`D x N`) matrix.
 #' @family fit methods

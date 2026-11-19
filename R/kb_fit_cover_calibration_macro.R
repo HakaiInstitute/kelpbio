@@ -3,29 +3,7 @@
 #' Fit a calibration of in situ survey biomass on plot cover for
 #' *Macrocystis pyrifera* via Stan.
 #'
-#' @details
-#' `data` is the output of [kb_predict_biomass_in_situ()] with its defaults: wet
-#' biomass per m² of each in situ survey, with the survey's plot cover columns
-#' on its row. Each survey with plot cover is one observation; surveys without
-#' it are not fitted, and a message gives their number. The calibration takes
-#' each survey's biomass per m² as that of its plot.
-#'
-#' When `data` holds a survey with no plants counted, the model adds a
-#' presence part, the probability that a plot holds plants. The fit warns when
-#' every survey with no plants has a plot cover, before tide correction, at or
-#' below that of every survey with plants, since `presence_cover_slope` then
-#' follows its prior.
-#'
-#' Canopy is corrected for tide (Timmer et al. 2024), and a survey whose
-#' tide-corrected canopy exceeds its plot is fully covered. At a tide height of
-#' 1 / `tide_height_slope` or more (the tide limit), the correction has no
-#' finite value and the survey is fully covered; the fit warns when a survey is
-#' past the tide limit with more than 5% prior probability. The limit is at
-#' least 2 m, so imagery at a tide of 2 m or below, as published practice
-#' recommends, never reaches it. The default prior on `tide_height_slope`
-#' largely sets the correction: raise its mean for beds in strong current. Pass
-#' canopy already corrected for tide with `canopy_tide_height_m = 0`.
-#'
+#' @inherit kb_fit_cover_calibration_nereo details
 #' @inheritSection params Model
 #' @inheritSection params Sampling
 #' @inheritParams kb_fit_weight_nereo
@@ -39,11 +17,6 @@
 #' @returns A `kb_fit_cover_calibration_macro` object (a `kb_fit`). Its `data`
 #'   holds the fitted surveys, with `biomass_kg_m2` the mean of each survey's
 #'   draws and `biomass_sd_kg_m2` their SD.
-#' @references Timmer, B., Reshitnyk, L. Y., Hessing-Lewis, M., Juanes, F.,
-#'   Gendall, L., and Costa, M. (2024). Capturing accurate kelp canopy extent:
-#'   integrating tides, currents, and species-level morphology in kelp remote
-#'   sensing. *Frontiers in Environmental Science*, 12, 1338483.
-#'   \doi{10.3389/fenvs.2024.1338483}
 #' @family fit functions
 #' @export
 #'

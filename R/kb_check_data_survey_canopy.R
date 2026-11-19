@@ -5,15 +5,13 @@
 #' its `new_data`.
 #'
 #' @details
-#' Each row of `data` is one map of a site's canopy. A site-year may have
-#' several maps, such as from imagery weeks apart.
+#' Each row is one canopy map of a site; a site-year may have several.
 #'
 #' ```{r, echo = FALSE, results = "asis"}
 #' cat(doc_data_columns("survey_canopy"))
 #' ```
 #'
-#' Required columns have no missing values. Other columns, such as `region`,
-#' are ignored, and can be named in `pool_by`.
+#' Other grouping columns, such as `region`, can be named in `pool_by`.
 #'
 #' @inheritParams params
 #' @param data A data frame of canopy maps, one row per map.

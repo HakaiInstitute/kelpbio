@@ -7,26 +7,24 @@
 kb_priors_cover_calibration_nereo()
 }
 \value{
-A named list of prior objects with entries \code{cover_slope} (the wet
-biomass per m² at full tide-corrected canopy cover, at a typical site and
-year), \code{biomass_floor} (the wet biomass per m² at zero cover),
-\code{tide_height_slope} (the share of the zero-tide canopy area lost per metre
-of tide height), \code{cv_residual} (the coefficient of variation of survey
-biomass about its expected value), \code{presence_intercept} (the log odds that
-a plot with no canopy holds plants), \code{presence_cover_slope} (the change in
-those log odds per percentage point of cover), \code{sd_site}, and \code{sd_year}.
+A named list of prior objects, one per parameter.
 }
 \description{
-The default priors for the \emph{Nereocystis luetkeana} cover calibration model. To
-change a prior, pass a list of the entries to change to the \code{priors} argument
-of \code{\link[=kb_fit_cover_calibration_nereo]{kb_fit_cover_calibration_nereo()}}; the other entries keep their defaults.
+The default priors for the \emph{Nereocystis luetkeana} cover calibration model,
+for the \code{priors} argument of \code{\link[=kb_fit_cover_calibration_nereo]{kb_fit_cover_calibration_nereo()}}.
 }
 \details{
-Each entry is named after the parameter it sets, as reported by \code{\link[=tidy]{tidy()}} and
-\code{\link[=kb_model_describe]{kb_model_describe()}}. The prior family of each entry is fixed; only its
-arguments can be changed. The presence priors apply only when the data hold
-a survey with no plants counted (see \code{\link[=kb_fit_cover_calibration_nereo]{kb_fit_cover_calibration_nereo()}}).
+The presence priors apply only when the data hold a survey with no plants
+counted.
 }
+\section{Priors}{
+
+Each entry is named after the parameter it sets, which \code{\link[=kb_model_describe]{kb_model_describe()}}
+prints with the model. A list passed to \code{priors} replaces the entries it
+names; the others keep their defaults. The prior family of each entry is
+fixed; only its arguments can be changed.
+}
+
 \examples{
 kb_priors_cover_calibration_nereo()
 \dontshow{if (interactive()) withAutoprint(\{ # examplesIf}

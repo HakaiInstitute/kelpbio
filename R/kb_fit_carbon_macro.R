@@ -2,7 +2,7 @@
 #'
 #' Fit a carbon-fraction model for *Macrocystis pyrifera* via Stan.
 #'
-#' @inherit kb_fit_carbon_nereo details sections
+#' @inherit kb_fit_carbon_nereo sections
 #' @inheritParams kb_fit_carbon_nereo
 #' @param data A data frame of carbon observations, one row per sample (see
 #'   [kb_check_data_carbon_macro()] for the required columns).

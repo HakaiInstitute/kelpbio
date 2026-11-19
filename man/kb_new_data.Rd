@@ -16,7 +16,7 @@ grid. One of:
 \item \code{NULL}: no grouping columns (the typical site and year).
 \item \code{"site"}: one row per fitted site.
 \item \code{"year"}: one row per fitted year.
-\item \code{c("site", "year")}: one row per observed site-year.
+\item \code{c("site", "year")}: one row per site-year.
 }}
 
 \item{...}{Named values to cross into the grid: for a weight or cover calibration

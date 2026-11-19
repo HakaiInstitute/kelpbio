@@ -34,8 +34,8 @@ Three conditions must be met:
 \item every parameter's rank-normalized split Rhat below \code{rhat} (default 1.01;
 Vehtari et al. 2021, Section 2);
 \item every parameter's bulk and tail effective sample size at least \code{ess} times
-the number of chains (default 100, so 400 for four chains; Vehtari et al.
-2021);
+the number of chains (default 100, which is 400 for four chains; Vehtari
+et al. 2021);
 \item the percentage of divergent transitions at or below \code{max_perc_divergent}
 (default 0.2\% of saved draws). Set \code{max_perc_divergent = 0} to require
 none.

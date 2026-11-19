@@ -12,8 +12,8 @@
 #' - every parameter's rank-normalized split Rhat below `rhat` (default 1.01;
 #'   Vehtari et al. 2021, Section 2);
 #' - every parameter's bulk and tail effective sample size at least `ess` times
-#'   the number of chains (default 100, so 400 for four chains; Vehtari et al.
-#'   2021);
+#'   the number of chains (default 100, which is 400 for four chains; Vehtari
+#'   et al. 2021);
 #' - the percentage of divergent transitions at or below `max_perc_divergent`
 #'   (default 0.2% of saved draws). Set `max_perc_divergent = 0` to require
 #'   none.

@@ -141,16 +141,6 @@
   .chk_frond_count(x$fronds, x_name = column_xname(x_name, "fronds"))
 }
 
-.chk_new_data_size <- function(
-  x,
-  x_name = chk::deparse_backtick_chk(substitute(x))
-) {
-  if (.vld_new_data_size(x)) {
-    return(invisible(x))
-  }
-  chk::chk_data(x, x_name = x_name)
-}
-
 .chk_same_species <- function(fits, call = rlang::caller_env()) {
   if (.vld_same_species(fits)) {
     return(invisible(fits))
@@ -589,24 +579,24 @@
 # Size new_data has no predictor column.
 #' @export
 .chk_new_data.kb_fit_size <- function(fit, new_data) {
-  .chk_new_data_size(new_data)
+  chk::chk_data(new_data, x_name = "`new_data`")
 }
 
 # Wet/dry has no predictor or groups, so any data frame will do.
 #' @export
 .chk_new_data.kb_fit_wetdry <- function(fit, new_data) {
-  .chk_new_data_size(new_data)
+  chk::chk_data(new_data, x_name = "`new_data`")
 }
 
 # Carbon, like wet/dry, has no predictor or groups.
 #' @export
 .chk_new_data.kb_fit_carbon <- function(fit, new_data) {
-  .chk_new_data_size(new_data)
+  chk::chk_data(new_data, x_name = "`new_data`")
 }
 
 #' @export
 .chk_new_data.kb_fit_nitrogen <- function(fit, new_data) {
-  .chk_new_data_size(new_data)
+  chk::chk_data(new_data, x_name = "`new_data`")
 }
 
 # `x_name` names the data frame; column messages name the column within it.

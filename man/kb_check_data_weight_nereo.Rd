@@ -30,10 +30,11 @@ Required columns:
 \item \code{year}, the year the plant was sampled (whole number or text).
 }
 
+Other columns are ignored.
+
 \code{diameter_mm} is any plant diameter that relates to weight as a power law,
 such as the maximum sub-bulb diameter, the diameter 15 cm below the
-sub-bulb, or the bulb diameter. Required columns have no missing values;
-other columns are ignored.
+sub-bulb, or the bulb diameter.
 }
 \examples{
 data <- data.frame(

@@ -5,20 +5,13 @@
 \alias{data_carbon_sim_macro}
 \title{Simulated Macrocystis carbon data}
 \format{
-A data frame with columns:
-\describe{
-\item{sample_mass_mg}{Mass of the dried sample analysed (mg), a positive
-number.}
-\item{carbon_mass_ug}{Carbon measured in the sample (µg), a positive number
-less than the sample mass.}
-}
+A data frame with the columns of \code{\link[=kb_check_data_carbon_macro]{kb_check_data_carbon_macro()}}.
 }
 \usage{
 data_carbon_sim_macro
 }
 \description{
-A small simulated dataset of sample and carbon masses, one row per dried
-tissue sample, for runnable examples.
+A small simulated dataset of dried tissue samples, for runnable examples.
 }
 \seealso{
 \link{fit_carbon_sim_macro} for a fit to this dataset.

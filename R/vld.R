@@ -111,11 +111,6 @@
   is.data.frame(x) && "fronds" %in% names(x) && .vld_frond_count(x$fronds)
 }
 
-# Size new_data has no predictor column.
-.vld_new_data_size <- function(x) {
-  is.data.frame(x)
-}
-
 .vld_progress <- function(x) {
   is.character(x) &&
     length(x) == 1L &&

@@ -3,43 +3,11 @@
 #' A model fit's metadata paired with a per-term posterior summary table.
 #'
 #' @details
-#' The `print` method renders a header (the model and species, the predictor,
-#' observation and group counts, sampler configuration, and the convergence
-#' verdict), the coefficient table, and a diagnostics footer. For a compact
-#' overview without the numeric table, call `print()` on the fit itself. For the
-#' model equation and priors, call [kb_model_describe()].
-#'
-#' The footer reports the sampler diagnostics: the percentage of saved draws
-#' that ended in a divergent transition, the percentage that saturated the
-#' maximum treedepth, and the minimum E-BFMI across chains. Divergences indicate
-#' the sampler failed to explore part of the posterior and so enter the
-#' [kb_converged()] verdict; treedepth saturation affects efficiency rather than
-#' validity, and E-BFMI below 0.2 suggests the model would benefit from
-#' reparameterization.
-#'
-#' The coefficient table reports, per term:
-#' \describe{
-#'   \item{`estimate`}{the posterior point estimate (the `estimate` function;
-#'     the median by default).}
-#'   \item{`lower`, `upper`}{the `conf_level` equal-tailed compatibility limits.}
-#'   \item{`rhat`}{the potential scale reduction factor, comparing between- and
-#'     within-chain variance; values near 1 indicate convergence.}
-#'   \item{`ess_bulk`}{the bulk effective sample size, governing the reliability
-#'     of central posterior summaries.}
-#'   \item{`ess_tail`}{the tail effective sample size, governing the reliability
-#'     of the interval limits.}
-#'   \item{`converged`}{whether the term meets the Rhat and effective sample size
-#'     thresholds of [kb_converged()] at `rhat` and `ess`. A term with no Rhat,
-#'     such as a constant, is not judged on it.}
-#' }
-#'
-#' The header's convergence verdict is [kb_converged()] at the same `rhat` and
-#' `ess`. It also covers the group-level deviations and the divergent
-#' transitions, so it can be `FALSE` when every term shown has converged.
-#'
-#' Population-level coefficients and random-effect standard deviations are
-#' always shown. The group-level deviations are included only when
-#' `include_random_effects = TRUE`.
+#' The printed summary adds the sampler diagnostics (divergent transitions,
+#' maximum treedepth, and E-BFMI). A term's `converged` uses the Rhat and
+#' effective sample size thresholds of [kb_converged()]; the fit's verdict also
+#' covers the group-level deviations and divergent transitions, so it can be
+#' `FALSE` when every term shown has converged.
 #'
 #' @inheritParams params
 #'

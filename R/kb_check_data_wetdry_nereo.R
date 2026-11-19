@@ -10,9 +10,8 @@
 #' cat(doc_data_columns("wetdry_nereo"))
 #' ```
 #'
-#' Required columns have no missing values. A warning gives the number of
-#' samples whose dry:wet ratio falls outside 0.02 to 0.50, the plausible range
-#' for kelp tissue; they are kept, not removed. Other columns are ignored.
+#' A warning gives the number of samples whose dry:wet ratio falls outside 0.02
+#' to 0.50, the plausible range for kelp tissue; they are kept.
 #'
 #' @inheritParams params
 #' @param data A data frame of wet/dry observations, one row per sample.

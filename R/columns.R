@@ -338,7 +338,8 @@ doc_data_columns <- function(dataset) {
   paste(
     c(
       section("Required columns:", rows$required),
-      section("Optional columns:", !rows$required)
+      section("Optional columns:", !rows$required),
+      "Other columns are ignored."
     ),
     collapse = "\n"
   )

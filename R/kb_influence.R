@@ -5,24 +5,11 @@
 #' (PSIS-LOO; Vehtari et al. 2017).
 #'
 #' @details
-#' Each observation gets two values:
-#'
-#' - `pareto_k` measures how much the fit changes when the observation is left
-#'   out. Values above `threshold` mark an influential observation.
-#' - `elpd_loo` is the log density of the observation under a fit that left it
-#'   out. Lower values mark observations the model predicts poorly. Its scale
-#'   depends on the response's units, so compare values within a fit.
-#'
-#' `pareto_k` measures how much the fit depends on an observation, which a
-#' deviance residual from [augment()] does not.
-#'
-#' Influential or poorly predicted observations are worth checking for recording
-#' errors. An observation that checks out is valid data and should be kept:
-#' influence often reflects a site and year with few observations rather than an
-#' error. Many influential observations across the data suggest the model
-#' describes the data poorly.
-#'
-#' The values are those of [loo::loo()] on the fit.
+#' `pareto_k` measures how much the fit changes when an observation is left
+#' out, and `elpd_loo` how well the observation is predicted by a fit without
+#' it; see the
+#' [Advanced article](https://hakaiinstitute.github.io/kelpbio/articles/advanced.html#influential-observations)
+#' for details.
 #'
 #' @inheritParams params
 #' @param threshold A number greater than 0: an observation with `pareto_k`
@@ -51,7 +38,8 @@ kb_influence <- function(fit, ..., threshold = NULL) {
   }
   .chk_likelihood_fit(fit, "it cannot be cross-validated")
   # loo's sample-size-dependent threshold, which loo does not export.
-  threshold <- threshold %||% min(1 - 1 / log10(posterior::ndraws(fit$draws)), 0.7)
+  threshold <- threshold %||%
+    min(1 - 1 / log10(posterior::ndraws(fit$draws)), 0.7)
 
   # The influential column reports high Pareto k, so loo's warning is redundant.
   psis <- withCallingHandlers(

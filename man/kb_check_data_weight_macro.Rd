@@ -30,7 +30,7 @@ Required columns:
 \item \code{year}, the year the plant was sampled (whole number or text).
 }
 
-Required columns have no missing values; other columns are ignored.
+Other columns are ignored.
 }
 \examples{
 data <- data.frame(

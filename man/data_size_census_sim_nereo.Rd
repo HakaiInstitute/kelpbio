@@ -5,24 +5,17 @@
 \alias{data_size_census_sim_nereo}
 \title{Simulated Nereocystis size census data}
 \format{
-A data frame with columns:
-\describe{
-\item{survey_id}{Survey the plant was counted in, matching its
-\code{survey_id}.}
-\item{diameter_mm}{Plant diameter (mm), a positive number.}
-\item{partial}{Whether the plant is counted as half, a logical.}
-}
+A data frame with the columns of
+\code{\link[=kb_check_data_size_census_nereo]{kb_check_data_size_census_nereo()}}.
 }
 \usage{
 data_size_census_sim_nereo
 }
 \description{
 A small simulated dataset of every plant counted by the otter_cove surveys
-in \link{data_survey_in_situ_sim_nereo}, one row per plant, for runnable examples.
+in \link{data_survey_in_situ_sim_nereo}, for runnable examples.
 }
 \seealso{
-\code{\link[=kb_check_data_size_census_nereo]{kb_check_data_size_census_nereo()}} for the columns.
-
 Other example datasets:
 \code{\link{data_carbon_sim_macro}},
 \code{\link{data_carbon_sim_nereo}},

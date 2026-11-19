@@ -29,11 +29,11 @@ Required columns:
 \item \code{carbon_mass_ug}, the mass of carbon measured in the sample (µg, > 0 and less than the sample mass).
 }
 
-Required columns have no missing values. The model's response is the
-carbon fraction, the carbon mass divided by the sample mass. A warning gives
-the number of samples whose carbon fraction falls outside 0.10 to 0.50, the
-plausible range for kelp tissue; they are kept, not removed. Other columns
-are ignored.
+Other columns are ignored.
+
+A warning gives the number of samples whose carbon fraction (carbon mass over
+sample mass) falls outside 0.10 to 0.50, the plausible range for kelp
+tissue; they are kept.
 }
 \examples{
 data <- data.frame(sample_mass_mg = c(2.4, 2.7), carbon_mass_ug = c(760, 850))

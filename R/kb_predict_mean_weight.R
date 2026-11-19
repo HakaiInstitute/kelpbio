@@ -4,19 +4,12 @@
 #' site-year: wet or dry (kg), or carbon or nitrogen (g).
 #'
 #' @details
-#' For each posterior draw, mean plant weight is the expected weight at size
-#' averaged over the site-year's size distribution. The size distribution is
-#' truncated above at the largest size in the size fit's data; above the
-#' largest weighed size, the weight allometry is extrapolated. Dry weight is
-#' wet weight times the expected dry:wet ratio from `wetdry`, and carbon or
-#' nitrogen dry weight times the expected carbon fraction from `carbon` or
-#' nitrogen fraction from `nitrogen`.
-#'
+#' Mean plant weight is the weight model averaged over the site-year's size
+#' distribution (see
+#' [Methods](https://hakaiinstitute.github.io/kelpbio/articles/methods.html#mean-plant-weight)).
 #' `weight_support` and `size_support` show the data each fit has for the
 #' site-year, from most to least local: `"site-year"`, `"site, year"` (its site
 #' and its year, but not together), `"site"`, `"year"`, or `"none"`.
-#'
-#' The fits must be of the same species and have the same number of draws.
 #'
 #' @inheritParams two_fit_params
 #' @inheritParams derived_params
@@ -25,6 +18,8 @@
 #' @param new_data A data frame of the rows to predict at, with `site` and
 #'   `year` columns (either may be absent, as in a grid from [kb_new_data()]),
 #'   or `NULL` for the site-years in the size fit's data.
+#'   `year` may be numeric or character: `2022` and `"2022"` match the same
+#'   fitted year.
 #' @param measure A string, one of `"wet"` (kg), `"dry"` (kg), `"carbon"`
 #'   (g C), or `"nitrogen"` (g N), giving the weight to predict.
 #'

@@ -1,17 +1,10 @@
 #' Default priors for the Nereocystis wet/dry model
 #'
-#' The default priors for the *Nereocystis luetkeana* wet/dry model. To change a
-#' prior, pass a list of the entries to change to the `priors` argument of
-#' [kb_fit_wetdry_nereo()]; the other entries keep their defaults.
+#' The default priors for the *Nereocystis luetkeana* wet/dry model, for the
+#' `priors` argument of [kb_fit_wetdry_nereo()].
 #'
-#' @details
-#' Each entry is named after the parameter it sets, as reported by [tidy()] and
-#' [kb_model_describe()]. The prior family of each entry is fixed; only its
-#' arguments can be changed.
-#'
-#' @returns A named list of prior objects with entries `intercept` (the dry:wet
-#'   ratio on the logit scale) and `precision` (the Beta precision; larger
-#'   values mean less spread around the mean ratio).
+#' @inheritSection params Priors
+#' @returns A named list of prior objects, one per parameter.
 #' @family priors
 #' @export
 #'

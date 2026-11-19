@@ -7,25 +7,21 @@
 kb_priors_weight_nereo()
 }
 \value{
-A named list of prior objects with entries \code{intercept},
-\code{diameter_power}, \code{weight_floor}, \code{sd_site}, \code{sd_year}, \code{sd_site_year},
-and \code{sd_residual}.
+A named list of prior objects, one per parameter.
 }
 \description{
-The default priors for the \emph{Nereocystis luetkeana} allometric weight model.
-To change a prior, pass a list of the entries to change to the \code{priors}
-argument of \code{\link[=kb_fit_weight_nereo]{kb_fit_weight_nereo()}}; the other entries keep their defaults.
+The default priors for the \emph{Nereocystis luetkeana} weight model, for the
+\code{priors} argument of \code{\link[=kb_fit_weight_nereo]{kb_fit_weight_nereo()}}. \code{weight_floor} applies only to
+\code{form = "packard_floor"}.
 }
-\details{
-Each entry is named after the parameter it sets, as reported by \code{\link[=tidy]{tidy()}} and
-\code{\link[=kb_model_describe]{kb_model_describe()}}. The prior family of each entry is fixed; only its
-arguments can be changed. \code{intercept} is on the log of the weight above
-the floor at the geometric mean diameter of the data, \code{diameter_power} is the
-allometric exponent, and \code{weight_floor} is the weight (kg) as diameter
-approaches zero, used only by \code{form = "packard_floor"}. The priors on
-\code{diameter_power} and \code{weight_floor} are truncated at zero. \code{sd_residual} is the
-residual standard deviation of log weight.
+\section{Priors}{
+
+Each entry is named after the parameter it sets, which \code{\link[=kb_model_describe]{kb_model_describe()}}
+prints with the model. A list passed to \code{priors} replaces the entries it
+names; the others keep their defaults. The prior family of each entry is
+fixed; only its arguments can be changed.
 }
+
 \examples{
 kb_priors_weight_nereo()
 \dontshow{if (interactive()) withAutoprint(\{ # examplesIf}

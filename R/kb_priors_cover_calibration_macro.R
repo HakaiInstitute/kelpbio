@@ -1,22 +1,13 @@
 #' Default priors for the Macrocystis cover calibration model
 #'
-#' The default priors for the *Macrocystis pyrifera* cover calibration model. To
-#' change a prior, pass a list of the entries to change to the `priors` argument
-#' of [kb_fit_cover_calibration_macro()]; the other entries keep their defaults.
+#' The default priors for the *Macrocystis pyrifera* cover calibration model,
+#' for the `priors` argument of [kb_fit_cover_calibration_macro()].
 #'
-#' Each entry is named after the parameter it sets, as reported by [tidy()] and
-#' [kb_model_describe()]. The prior family of each entry is fixed; only its
-#' arguments can be changed. The presence priors apply only when the data hold
-#' a survey with no plants counted (see [kb_fit_cover_calibration_macro()]).
+#' The presence priors apply only when the data hold a survey with no plants
+#' counted.
 #'
-#' @returns A named list of prior objects with entries `cover_slope` (the wet
-#'   biomass per m² at full tide-corrected canopy cover, at a typical site and
-#'   year), `biomass_floor` (the wet biomass per m² at zero cover),
-#'   `tide_height_slope` (the share of the zero-tide canopy area lost per metre
-#'   of tide height), `cv_residual` (the coefficient of variation of survey
-#'   biomass about its expected value), `presence_intercept` (the log odds that
-#'   a plot with no canopy holds plants), `presence_cover_slope` (the change in
-#'   those log odds per percentage point of cover), `sd_site`, and `sd_year`.
+#' @inheritSection params Priors
+#' @returns A named list of prior objects, one per parameter.
 #' @family priors
 #' @export
 #'

@@ -45,43 +45,11 @@ A \code{summary_kb_fit} object: a list of fit metadata and a
 A model fit's metadata paired with a per-term posterior summary table.
 }
 \details{
-The \code{print} method renders a header (the model and species, the predictor,
-observation and group counts, sampler configuration, and the convergence
-verdict), the coefficient table, and a diagnostics footer. For a compact
-overview without the numeric table, call \code{print()} on the fit itself. For the
-model equation and priors, call \code{\link[=kb_model_describe]{kb_model_describe()}}.
-
-The footer reports the sampler diagnostics: the percentage of saved draws
-that ended in a divergent transition, the percentage that saturated the
-maximum treedepth, and the minimum E-BFMI across chains. Divergences indicate
-the sampler failed to explore part of the posterior and so enter the
-\code{\link[=kb_converged]{kb_converged()}} verdict; treedepth saturation affects efficiency rather than
-validity, and E-BFMI below 0.2 suggests the model would benefit from
-reparameterization.
-
-The coefficient table reports, per term:
-\describe{
-\item{\code{estimate}}{the posterior point estimate (the \code{estimate} function;
-the median by default).}
-\item{\code{lower}, \code{upper}}{the \code{conf_level} equal-tailed compatibility limits.}
-\item{\code{rhat}}{the potential scale reduction factor, comparing between- and
-within-chain variance; values near 1 indicate convergence.}
-\item{\code{ess_bulk}}{the bulk effective sample size, governing the reliability
-of central posterior summaries.}
-\item{\code{ess_tail}}{the tail effective sample size, governing the reliability
-of the interval limits.}
-\item{\code{converged}}{whether the term meets the Rhat and effective sample size
-thresholds of \code{\link[=kb_converged]{kb_converged()}} at \code{rhat} and \code{ess}. A term with no Rhat,
-such as a constant, is not judged on it.}
-}
-
-The header's convergence verdict is \code{\link[=kb_converged]{kb_converged()}} at the same \code{rhat} and
-\code{ess}. It also covers the group-level deviations and the divergent
-transitions, so it can be \code{FALSE} when every term shown has converged.
-
-Population-level coefficients and random-effect standard deviations are
-always shown. The group-level deviations are included only when
-\code{include_random_effects = TRUE}.
+The printed summary adds the sampler diagnostics (divergent transitions,
+maximum treedepth, and E-BFMI). A term's \code{converged} uses the Rhat and
+effective sample size thresholds of \code{\link[=kb_converged]{kb_converged()}}; the fit's verdict also
+covers the group-level deviations and divergent transitions, so it can be
+\code{FALSE} when every term shown has converged.
 }
 \examples{
 summary(fit_weight_sim_nereo)

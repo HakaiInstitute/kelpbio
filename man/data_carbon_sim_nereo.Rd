@@ -5,20 +5,13 @@
 \alias{data_carbon_sim_nereo}
 \title{Simulated Nereocystis carbon data}
 \format{
-A data frame with columns:
-\describe{
-\item{sample_mass_mg}{Mass of the dried sample analysed (mg), a positive
-number.}
-\item{carbon_mass_ug}{Carbon measured in the sample (µg), a positive number
-less than the sample mass.}
-}
+A data frame with the columns of \code{\link[=kb_check_data_carbon_nereo]{kb_check_data_carbon_nereo()}}.
 }
 \usage{
 data_carbon_sim_nereo
 }
 \description{
-A small simulated dataset of sample and carbon masses, one row per dried
-tissue sample, for runnable examples.
+A small simulated dataset of dried tissue samples, for runnable examples.
 }
 \seealso{
 \link{fit_carbon_sim_nereo} for a fit to this dataset.

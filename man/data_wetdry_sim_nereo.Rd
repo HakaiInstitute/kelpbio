@@ -5,19 +5,13 @@
 \alias{data_wetdry_sim_nereo}
 \title{Simulated Nereocystis wet/dry data}
 \format{
-A data frame with columns:
-\describe{
-\item{wet_mass_g}{Wet mass of the sample (g), a positive number.}
-\item{dry_mass_g}{Dry mass of the sample (g), a positive number less than
-\code{wet_mass_g}.}
-}
+A data frame with the columns of \code{\link[=kb_check_data_wetdry_nereo]{kb_check_data_wetdry_nereo()}}.
 }
 \usage{
 data_wetdry_sim_nereo
 }
 \description{
-A small simulated dataset of sample wet and dry masses, one row per tissue
-sample, for runnable examples.
+A small simulated dataset of tissue samples, for runnable examples.
 }
 \seealso{
 \link{fit_wetdry_sim_nereo} for a fit to this dataset.

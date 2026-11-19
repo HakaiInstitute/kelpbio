@@ -5,23 +5,15 @@
 \alias{data_weight_sim_nereo}
 \title{Simulated Nereocystis weight data}
 \format{
-A data frame with columns:
-\describe{
-\item{diameter_mm}{Plant diameter (mm), a positive number.}
-\item{weight_kg}{Wet weight (kg), a positive number.}
-\item{site}{Site, a factor (12 levels).}
-\item{year}{Harvest year, a factor (5 levels).}
-}
+A data frame with the columns of \code{\link[=kb_check_data_weight_nereo]{kb_check_data_weight_nereo()}}.
 }
 \usage{
 data_weight_sim_nereo
 }
 \description{
-A small simulated dataset of plant diameter and wet weight, one row per
-harvested plant, for runnable examples. One of four simulated \emph{Nereocystis}
-datasets with shared sites and years, so their fits can be combined into
-survey biomass (see \code{\link[=kb_predict_biomass_in_situ]{kb_predict_biomass_in_situ()}}). Some site-years have no
-weight data.
+A small simulated dataset of harvested plants, for runnable examples. It
+shares sites and years with the other simulated \emph{Nereocystis} datasets; some
+site-years have no weight data.
 }
 \seealso{
 \link{fit_weight_sim_nereo} for a fit to this dataset.

@@ -29,9 +29,10 @@ Required columns:
 \item \code{dry_mass_g}, the mass of the tissue sample after drying (g, > 0 and < wet_mass_g).
 }
 
-Required columns have no missing values. A warning gives the number of
-samples whose dry:wet ratio falls outside 0.02 to 0.50, the plausible range
-for kelp tissue; they are kept, not removed. Other columns are ignored.
+Other columns are ignored.
+
+A warning gives the number of samples whose dry:wet ratio falls outside 0.02
+to 0.50, the plausible range for kelp tissue; they are kept.
 }
 \examples{
 data <- data.frame(wet_mass_g = c(1.8, 4.6), dry_mass_g = c(0.22, 0.57))

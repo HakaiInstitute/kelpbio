@@ -29,11 +29,9 @@ Check that \code{data} has the columns and values needed to predict the biomass
 of in situ surveys with \code{\link[=kb_predict_biomass_in_situ]{kb_predict_biomass_in_situ()}}.
 }
 \details{
-Each row of \code{data} is one survey: one count of the plants in a surveyed
-area. A plant is one individual (sporophyte), identified by its holdfast
-(\emph{Macrocystis}) or stipe (\emph{Nereocystis}).
-Surveys of the same site in the same year, including on the same day, are
-separate rows.
+Each row is one survey, with a count of the plants in the surveyed area. A
+survey is the area over which canopy percent cover is calculated, and can
+combine several transects.
 Required columns:
 \itemize{
 \item \code{survey_id}, the survey's identifier (text or number, unique to each survey).
@@ -50,15 +48,14 @@ Optional columns:
 \item \code{canopy_tide_height_m}, the tide height when the canopy was imaged, relative to chart datum (m, any number, or missing).
 }
 
-\code{plants} is required when sizes come from a size fit, and must be absent
-when \code{size_census} is given; the counts then come from its rows.
-Biomass per m² is the biomass counted over \code{survey_area_m2}.
+Other columns are ignored.
 
-A survey with a canopy map has \code{plot_area_m2}, \code{canopy_area_m2}, and
-\code{canopy_tide_height_m}, given together; a survey without has all three
-missing. When the whole plot is surveyed, \code{survey_area_m2} equals
-\code{plot_area_m2}. Other columns, such as \code{region}, are ignored, and can be
-named in \code{pool_by}.
+\code{plants} is required when only a sample of plants is measured (a size
+sample), and must be absent when every plant is measured (a size census),
+since the count then comes from the census rows. The plot cover columns
+(\code{plot_area_m2}, \code{canopy_area_m2}, and \code{canopy_tide_height_m}) are either
+all present or all missing on each row. Other grouping columns, such as
+\code{region}, can be named in \code{pool_by}.
 }
 \examples{
 kb_check_data_survey_in_situ(data_survey_in_situ_sim_nereo)

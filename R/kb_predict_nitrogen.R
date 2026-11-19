@@ -1,6 +1,6 @@
 #' Predict the nitrogen fraction
 #'
-#' Summarise the expected nitrogen fraction of dry mass for the population of
+#' Predict the expected nitrogen fraction of dry mass for the population of
 #' samples the model was fitted to.
 #'
 #' @details

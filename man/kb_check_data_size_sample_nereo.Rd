@@ -22,8 +22,8 @@ Check that \code{data} contains the columns required to fit the \emph{Nereocysti
 luetkeana} size model, with appropriate types and values.
 }
 \details{
-Each row is one plant of a sample measured for the size model, which need
-not be linked to any in situ survey.
+Each row is one measured plant, linked to a site and year rather than to a
+specific in situ survey.
 Required columns:
 \itemize{
 \item \code{diameter_mm}, the plant diameter, measured as in the weight data (mm, > 0).
@@ -31,7 +31,7 @@ Required columns:
 \item \code{year}, the year the plant was measured (whole number or text).
 }
 
-Required columns have no missing values; other columns are ignored.
+Other columns are ignored.
 }
 \examples{
 data <- data.frame(

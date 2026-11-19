@@ -1,8 +1,8 @@
 #' Describe a fitted model
 #'
 #' Render the complete fitted model in scientific notation (the default) or as a
-#' report-ready methods paragraph (`prose = TRUE`). The notation uses the
-#' package's own parameter names (`intercept`, `sd_site`, ...), so every symbol
+#' written description (`prose = TRUE`). The notation uses the package's own
+#' parameter names (`intercept`, `sd_site`, ...), so every symbol
 #' matches a row of [tidy()], [summary()], and [coef()].
 #'
 #' @details
@@ -48,12 +48,22 @@ kb_model_describe <- function(fit, ..., prose = FALSE) {
   pri <- fit$meta$priors
 
   mean_terms <- c(
-    "intercept", "site_effect[site]", "year_effect[year]",
+    "intercept",
+    "site_effect[site]",
+    "year_effect[year]",
     "site_year_effect[site, year]"
   )
   random <- list(
-    list(term = "site_effect[site]", sd = "sd_site", gloss = "site effect on log(alpha)"),
-    list(term = "year_effect[year]", sd = "sd_year", gloss = "year effect on log(alpha)"),
+    list(
+      term = "site_effect[site]",
+      sd = "sd_site",
+      gloss = "site effect on log(alpha)"
+    ),
+    list(
+      term = "year_effect[year]",
+      sd = "sd_year",
+      gloss = "year effect on log(alpha)"
+    ),
     list(
       term = "site_year_effect[site, year]",
       sd = "sd_site_year",
@@ -106,7 +116,11 @@ kb_model_describe <- function(fit, ..., prose = FALSE) {
     predictor_desc = "plant diameter (mm)",
     likelihood = paste0(
       "log(weight_kg) ~ Normal(log(mu), sd_residual)",
-      if (floor) "\n  mu = weight_floor + alpha * x^diameter_power" else "\n  mu = alpha * x^diameter_power"
+      if (floor) {
+        "\n  mu = weight_floor + alpha * x^diameter_power"
+      } else {
+        "\n  mu = alpha * x^diameter_power"
+      }
     ),
     mean_lhs = "log(alpha)",
     mean_terms = mean_terms,
@@ -131,12 +145,22 @@ kb_model_describe <- function(fit, ..., prose = FALSE) {
   pri <- fit$meta$priors
 
   mean_terms <- c(
-    "intercept", "site_effect[site]", "year_effect[year]",
+    "intercept",
+    "site_effect[site]",
+    "year_effect[year]",
     "site_year_effect[site, year]"
   )
   random <- list(
-    list(term = "site_effect[site]", sd = "sd_site", gloss = "site effect on log(alpha)"),
-    list(term = "year_effect[year]", sd = "sd_year", gloss = "year effect on log(alpha)"),
+    list(
+      term = "site_effect[site]",
+      sd = "sd_site",
+      gloss = "site effect on log(alpha)"
+    ),
+    list(
+      term = "year_effect[year]",
+      sd = "sd_year",
+      gloss = "year effect on log(alpha)"
+    ),
     list(
       term = "site_year_effect[site, year]",
       sd = "sd_site_year",
@@ -189,12 +213,22 @@ kb_model_describe <- function(fit, ..., prose = FALSE) {
   pri <- fit$meta$priors
   list(
     mean_terms = c(
-      intercept, "site_effect[site]", "year_effect[year]",
+      intercept,
+      "site_effect[site]",
+      "year_effect[year]",
       "site_year_effect[site, year]"
     ),
     random = list(
-      list(term = "site_effect[site]", sd = "sd_site", gloss = "site effect on log(mu)"),
-      list(term = "year_effect[year]", sd = "sd_year", gloss = "year effect on log(mu)"),
+      list(
+        term = "site_effect[site]",
+        sd = "sd_site",
+        gloss = "site effect on log(mu)"
+      ),
+      list(
+        term = "year_effect[year]",
+        sd = "sd_year",
+        gloss = "year effect on log(mu)"
+      ),
       list(
         term = "site_year_effect[site, year]",
         sd = "sd_site_year",
@@ -317,7 +351,8 @@ kb_model_describe <- function(fit, ..., prose = FALSE) {
   )
   likelihood <- if (presence) {
     paste0(
-      "biomass_kg_m2 = 0 with probability 1 - p, else ~ ", gamma,
+      "biomass_kg_m2 = 0 with probability 1 - p, else ~ ",
+      gamma,
       "\n  logit(p) = presence_intercept + presence_cover_slope * 100 * cover"
     )
   } else {
@@ -355,14 +390,25 @@ kb_model_describe <- function(fit, ..., prose = FALSE) {
     ),
     likelihood = likelihood,
     mean_lhs = "mu",
-    mean_terms = c("biomass_floor", "cover_slope * exp(year_effect[year] + site_effect[site]) * cover"),
+    mean_terms = c(
+      "biomass_floor",
+      "cover_slope * exp(year_effect[year] + site_effect[site]) * cover"
+    ),
     centering = paste0(
       "cover = min(1, canopy_area_m2 / (1 - tide_height_slope * canopy_tide_height_m) / plot_area_m2), ",
       "and 1 where canopy_area_m2 > 0 and canopy_tide_height_m >= 1 / tide_height_slope"
     ),
     random = list(
-      list(term = "year_effect[year]", sd = "sd_year", gloss = "year effect on log(cover_slope)"),
-      list(term = "site_effect[site]", sd = "sd_site", gloss = "site effect on log(cover_slope)")
+      list(
+        term = "year_effect[year]",
+        sd = "sd_year",
+        gloss = "year effect on log(cover_slope)"
+      ),
+      list(
+        term = "site_effect[site]",
+        sd = "sd_site",
+        gloss = "site effect on log(cover_slope)"
+      )
     ),
     priors = priors,
     truncated = "biomass_floor",

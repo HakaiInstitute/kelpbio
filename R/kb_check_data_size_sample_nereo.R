@@ -4,14 +4,12 @@
 #' luetkeana* size model, with appropriate types and values.
 #'
 #' @details
-#' Each row is one plant of a sample measured for the size model, which need
-#' not be linked to any in situ survey.
+#' Each row is one measured plant, linked to a site and year rather than to a
+#' specific in situ survey.
 #'
 #' ```{r, echo = FALSE, results = "asis"}
 #' cat(doc_data_columns("size_sample_nereo"))
 #' ```
-#'
-#' Required columns have no missing values; other columns are ignored.
 #'
 #' @inheritParams params
 #' @param data A data frame of a size sample, one row per measured plant.

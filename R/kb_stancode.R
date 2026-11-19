@@ -2,7 +2,6 @@
 #'
 #' The Stan source code of the fitted model, without comments.
 #'
-#'
 #' @inheritParams params
 #' @returns A `kb_stancode` object, which prints as formatted code. Use
 #'   [as.character()] for the plain string.

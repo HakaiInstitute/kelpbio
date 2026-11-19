@@ -25,23 +25,11 @@ Plot the density of the observed data over the densities of replicate datasets
 simulated from the fitted model, to check that the model reproduces its data.
 }
 \details{
-Each replicate dataset is simulated at the observed rows from one posterior
-draw, chosen at random. A model that fits well gives replicates that bracket
-the observed curve; a systematic gap, such as observed values piling up where
-the replicates have few, points to a mismatch in shape or scale or to errors
-in the data. The check reuses the data the model was fitted to, so it shows
-gross misfit rather than fine differences.
-
-For a fit made with \code{prior_only = TRUE}, the replicates come from the prior,
-so the plot is a prior predictive check: whether the priors allow data like
-those observed.
-
-With \code{type = "residual"}, the observed curve is \code{\link[=residuals]{residuals()}} and each
-replicate's curve is the deviance residuals of the replicate under the draw
-that generated it. For a well-fitting model the two match.
-
-The replicates are random, so set a seed with \code{set.seed()} for a reproducible
-plot.
+Each replicate is simulated at the observed rows from one random posterior
+draw, so set a seed with \code{set.seed()} for a reproducible plot. For a fit made
+with \code{prior_only = TRUE}, the plot is a prior predictive check. See the
+\href{https://hakaiinstitute.github.io/kelpbio/articles/advanced.html#posterior-predictive-check}{Advanced article}
+for how to read it.
 }
 \examples{
 set.seed(1)

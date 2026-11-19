@@ -20,29 +20,33 @@
 
 \item{new_data}{A data frame of the rows to predict at, with
 \code{canopy_area_m2} (the canopy area in the plot, m²), \code{plot_area_m2} (the
-plot area, m²), \code{canopy_tide_height_m} (the tide height, m), and optionally \code{site}
-and \code{year}, or \code{NULL} for the observed surveys.}
+plot area, m²), \code{canopy_tide_height_m} (the tide height, m), and
+optionally \code{site} and \code{year}, or \code{NULL} for the observed surveys.
+\code{year} may be numeric or character: \code{2022} and \code{"2022"} match the same
+fitted year.}
 
 \item{...}{These dots are for future extensions and must be empty.}
 
-\item{new_levels}{A string giving how uncertainty is shown for a site or
-year not in the fit, or when \code{new_data} has no \code{site} or \code{year} column.
-Sites and years in the fit always use their own estimates; a \code{year} of
-whole numbers matches the fitted year of the same value. One of:
+\item{new_levels}{A string giving how uncertainty is estimated for a site or
+year not in the data used to fit the model, or when \code{new_data} has no
+\code{site} or \code{year} column. Sites and years in the model fit always use their
+own estimates. One of:
 \itemize{
-\item \code{"average"} (the default): the typical site or year. The interval
-covers uncertainty in the typical value only. Use it to describe an
-average site or year.
-\item \code{"sample"}: a new effect for each new site or year,
-drawn from the estimated variation among sites or among years. The
-estimate is about the same, but the interval also includes that
-variation. Use it to get realistic uncertainty about a particular site
-or year the model has no data on. The interval varies slightly between
-calls; use \code{set.seed()} to reproduce it.
+\item \code{"average"} (the default): the typical site or year. The site and year
+effects are set to 0, their mean, so the interval does not include
+among-site or among-year variation. Use it to describe an average site or
+year.
+\item \code{"sample"}: a new effect for each new site or year, drawn from the
+estimated variation among sites or among years (the random-effect
+standard deviation). The point estimate is equivalent, but the interval
+is wider since it also includes that variation. Use it to get realistic
+uncertainty about a particular site or year that the model has no
+information on. The interval varies slightly between calls; use
+\code{set.seed()} to reproduce it.
 }}
 
 \item{representative_site}{A character vector of sites in the fit whose
-effects a new site takes (averaged when several are named), or \code{NULL} (the
+effects a new site adopts (averaged when several are named), or \code{NULL} (the
 default) to follow \code{new_levels}.}
 
 \item{conf_level}{A number greater than 0 and less than 1 giving the

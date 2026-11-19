@@ -5,33 +5,17 @@
 \alias{data_survey_in_situ_sim_nereo}
 \title{Simulated Nereocystis in situ survey data}
 \format{
-A data frame with columns:
-\describe{
-\item{survey_id}{Survey identifier, a character string.}
-\item{site}{Site, a factor (12 levels).}
-\item{year}{Year, a factor (5 levels).}
-\item{survey_area_m2}{Surveyed area (m²), a positive number.}
-\item{plants}{Plants counted, a whole number of at least 0.}
-\item{plot_area_m2}{Plot polygon (m²), or \code{NA} without a canopy map.}
-\item{canopy_area_m2}{Mapped canopy within the plot (m²), or \code{NA} without
-a canopy map.}
-\item{canopy_tide_height_m}{Tide height when the canopy was imaged (m), or \code{NA} without a canopy
-map.}
-}
+A data frame with the columns of \code{\link[=kb_check_data_survey_in_situ]{kb_check_data_survey_in_situ()}}.
 }
 \usage{
 data_survey_in_situ_sim_nereo
 }
 \description{
-A small simulated dataset of in situ surveys, one row per survey,
-for runnable examples: the plants tallied, with sizes from
-\link{fit_size_sim_nereo}, and the plot cover of the surveys with a canopy
-map. Some site-years hold more than one survey, and one survey counted no
-plants.
+A small simulated dataset of in situ surveys with tallied plants, for
+runnable examples. Some site-years hold more than one survey, one survey
+counted no plants, and some surveys have no canopy map.
 }
 \seealso{
-\code{\link[=kb_check_data_survey_in_situ]{kb_check_data_survey_in_situ()}} for the columns.
-
 Other example datasets:
 \code{\link{data_carbon_sim_macro}},
 \code{\link{data_carbon_sim_nereo}},

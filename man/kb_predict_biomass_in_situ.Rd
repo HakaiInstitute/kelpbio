@@ -28,16 +28,16 @@ kb_predict_biomass_in_situ(
 \arguments{
 \item{weight}{A \code{kb_fit_weight} object.}
 
-\item{size}{A \code{kb_fit_size} object, when plants were tallied, or a size
-census, a data frame of every counted plant, one row per plant (see
-\code{\link[=kb_check_data_size_census_nereo]{kb_check_data_size_census_nereo()}} and
+\item{size}{A \code{kb_fit_size} object, or a size census, a data frame with one
+row per counted plant (see \code{\link[=kb_check_data_size_census_nereo]{kb_check_data_size_census_nereo()}} and
 \code{\link[=kb_check_data_size_census_macro]{kb_check_data_size_census_macro()}} for the columns).}
 
 \item{survey}{A data frame of in situ surveys, one row per survey (see
 \code{\link[=kb_check_data_survey_in_situ]{kb_check_data_survey_in_situ()}} for the columns).}
 
 \item{wetdry}{A \code{kb_fit_wetdry} object, required for dry, carbon, and
-nitrogen biomass, or \code{NULL}.}
+nitrogen biomass, or \code{NULL}. All fits must be of the same species and have
+the same number of draws.}
 
 \item{carbon}{A \code{kb_fit_carbon} object, required for carbon biomass, or
 \code{NULL}.}
@@ -48,14 +48,14 @@ or \code{NULL}.}
 \item{...}{These dots are for future extensions and must be empty.}
 
 \item{measure}{A string, one of \code{"wet"}, \code{"dry"}, \code{"carbon"}, or
-\code{"nitrogen"}, giving the biomass to predict.}
+\code{"nitrogen"}, giving the type of biomass to predict.}
 
 \item{per_area}{A flag specifying whether to give biomass per m² of the
 surveyed area, or else the biomass in that area.}
 
-\item{pool_by}{A character vector naming character or factor columns whose
-combinations group the rows, such as \code{c("site", "year")}, \code{character(0)}
-to pool all rows, or \code{NULL} (the default) for one row per input row. On
+\item{pool_by}{A character vector naming character or factor columns to
+group the rows by, such as \code{c("site", "year")}, \code{character(0)} to pool all
+rows, or \code{NULL} (the default) for one row per input row. On
 each draw, the biomass of a group is the sum of its rows' biomass (kg).
 For another summary, such as an unweighted mean of rows, summarise the
 draws column, for example with \code{\link[posterior:rvar_mean]{posterior::rvar_mean()}}.}
@@ -64,14 +64,16 @@ draws column, for example with \code{\link[posterior:rvar_mean]{posterior::rvar_
 year not in the fit. Sites and years in the fit always use their own
 estimates. One of:
 \itemize{
-\item \code{"sample"} (the default): a new effect for each new site or year,
-drawn from the estimated variation among sites or among years and shared
-by every row naming it. The estimate is about the same, but the interval
-also includes that variation. Use it for particular site-years the model
-has no data on. The interval varies slightly between calls; use
+\item \code{"sample"} (the default): a new effect for each new site or year, drawn
+from the estimated variation among sites or among years (the
+random-effect standard deviation). The point estimate is equivalent, but
+the interval is wider since it also includes that variation. Use it to
+get realistic uncertainty about a particular site or year that the model
+has no information on. The interval varies slightly between calls; use
 \code{set.seed()} to reproduce it.
-\item \code{"average"}: the typical site or year. The interval covers uncertainty
-in the typical value only. Use it to describe an average site or year.
+\item \code{"average"}: the typical site or year. The site and year effects are set
+to 0, their mean, so the interval does not include among-site or
+among-year variation. Use it to describe an average site or year.
 }}
 
 \item{representative_site}{A character vector of sites whose effects a new
@@ -98,17 +100,12 @@ bar) or \code{"none"} (silent).}
 progress for \code{\link[=kb_progress]{kb_progress()}}, or \code{NULL} (the default) to record none.}
 }
 \value{
-A \code{kb_predictions} object. Without \code{pool_by}, the rows of \code{survey}
-(a numeric \code{year} or \code{survey_id} as character) with added
-\code{weight_support} and, with a size fit,
-\code{size_support} (as in \code{kb_predict_mean_weight()}), the draws of the
-biomass in a column named for it (\code{biomass_kg_m2}, \code{dry_biomass_kg_m2},
-\code{carbon_biomass_g_m2}, or \code{nitrogen_biomass_g_m2} per m², and
-\code{biomass_kg}, \code{dry_biomass_kg}, \code{carbon_biomass_kg}, or
-\code{nitrogen_biomass_kg} in total), and
-\code{estimate}, \code{lower}, and \code{upper}; with \code{pool_by}, one row per group with its
-\code{pool_by} columns, the support columns when \code{pool_by} includes \code{site} and
-\code{year}, the draws, and the summary.
+A \code{kb_predictions} object: the rows of \code{survey}, or one row per
+\code{pool_by} group, with \code{weight_support} and, with a size fit,
+\code{size_support} (as in \code{\link[=kb_predict_mean_weight]{kb_predict_mean_weight()}}), the draws of the
+biomass (for example \code{biomass_kg_m2} or \code{carbon_biomass_kg}), and
+\code{estimate}, \code{lower}, and
+\code{upper}.
 }
 \description{
 Combine a weight fit with the plants counted by each in situ survey into
@@ -116,27 +113,13 @@ the biomass of the surveyed area: wet or dry (kg/m² or kg), or carbon or
 nitrogen (g/m² or kg).
 }
 \details{
-A plant is one individual (sporophyte), identified by its holdfast
-(\emph{Macrocystis}) or stipe (\emph{Nereocystis}). Plant sizes come from one of two
-sources:
-\itemize{
-\item A size fit, when plants were tallied and a sample of them measured. A
-survey's biomass is its \code{plants} count times its site-year's mean plant
-weight (see \code{\link[=kb_predict_mean_weight]{kb_predict_mean_weight()}}).
-\item A size census of every counted plant, when each was measured, joined to
-its survey by \code{survey_id}. A survey's biomass is the sum of its plants'
-expected weights, half for a \code{partial} plant. A survey with no census rows
-has no biomass, and a message lists such surveys.
-}
-
-Dry biomass is wet biomass times the expected dry:wet ratio from \code{wetdry},
-and carbon or nitrogen dry biomass times the expected carbon fraction from
-\code{carbon} or nitrogen fraction from \code{nitrogen}. The fits must be of the same
-species and have the same number of draws.
-
-With \code{pool_by} and \code{per_area = TRUE}, a group's biomass per m² is its summed
-biomass over its summed \code{survey_area_m2}: an area-weighted mean, not the
-mean of its surveys' values.
+Plant sizes come from a size fit, when only a sample of plants was measured,
+or from a size census, when every counted plant was measured, joined to its
+survey by \code{survey_id} (see
+\href{https://hakaiinstitute.github.io/kelpbio/articles/methods.html#survey-biomass}{Methods}).
+A survey with no rows in the size census has zero biomass, and a message
+lists such surveys. With \code{pool_by} and \code{per_area = TRUE}, a group's biomass
+per m² is its summed biomass over its summed \code{survey_area_m2}.
 }
 \examples{
 # Tallied plants, sizes from a size fit

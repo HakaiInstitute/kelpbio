@@ -150,7 +150,14 @@ augment(fit_weight_sim_nereo) |>
 ### Prior sensitivity
 
 `kb_sensitivity()` uses [power-scaling sensitivity analysis](https://mc-stan.org/priorsense/) to measure how much the parameter estimates change when the prior is adjusted. Ideally, estimates should be driven by the data and this is indicated when `weak_prior` and `strong_data` are both `TRUE`. Where `weak_prior` is
-`FALSE` the prior influences the estimate. In some cases, prior influence is expected, i.e., if the user deliberately set an informative prior. It can also be an indication that the prior was incorrectly specified or there are insufficient data to estimate a parameter without the prior doing some heavy lifting. In the latter case, the prior should be specified carefully, ideally based on plausible ranges or parameter values from the literature.  
+`FALSE` the prior influences the estimate. In some cases, prior influence is expected, i.e., if the user deliberately set an informative prior. It can also be an indication that the prior was incorrectly specified or there are insufficient data to estimate a parameter without the prior doing some heavy lifting. In the latter case, the prior should be specified carefully, ideally based on plausible ranges or parameter values from the literature.
+
+The two flags give four cases:
+
+- `weak_prior` and `strong_data`: the data drive the estimate.
+- `strong_data` only: the prior and the data both move the estimate, a possible conflict; check the prior against what the data show.
+- Neither: the prior dominates and the data say little about the parameter, so the prior needs a justification. This is expected where `informative_prior` is `TRUE`, as for the cover calibration's `tide_height_slope`.
+- `weak_prior` only: neither moves the estimate much, often a parameter the data identify only weakly.
 
 ```{r, eval = rlang::is_installed("priorsense")}
 kb_sensitivity(fit_weight_sim_nereo)

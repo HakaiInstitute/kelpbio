@@ -12,6 +12,8 @@
 #' @param new_data A data frame of the rows to predict at, with the fit's
 #'   predictor column (`diameter_mm` or `fronds`) and optional `site` and `year`
 #'   columns, or `NULL` for the observed data.
+#'   `year` may be numeric or character: `2022` and `"2022"` match the same
+#'   fitted year.
 #'
 #' @returns A `kb_predictions` object: the rows of `new_data` with added
 #'   `estimate`, `lower`, and `upper` columns summarising the posterior

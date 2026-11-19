@@ -22,8 +22,8 @@ Check that \code{data} has the columns and values needed to fit the
 \emph{Macrocystis pyrifera} cover calibration model.
 }
 \details{
-\code{data} is the output of \code{\link[=kb_predict_biomass_in_situ]{kb_predict_biomass_in_situ()}} with its defaults, one
-row per in situ survey.
+\code{data} is the output of \code{\link[=kb_predict_biomass_in_situ]{kb_predict_biomass_in_situ()}}, one row per in situ
+survey.
 Required columns:
 \itemize{
 \item \code{biomass_kg_m2}, the draws of the survey's wet biomass per m² (kg/m², >= 0).
@@ -34,9 +34,10 @@ Required columns:
 \item \code{canopy_tide_height_m}, the tide height when the canopy was imaged, relative to chart datum (m, any number, or missing).
 }
 
-\code{plot_area_m2}, \code{canopy_area_m2}, and \code{canopy_tide_height_m} are given
-together or missing together on each row. A row without them has no
-canopy cover and is not fitted. Other columns are ignored.
+Other columns are ignored.
+
+The plot cover columns are given or missing together; a row without them is
+not fitted.
 }
 \examples{
 biomass <- kb_predict_biomass_in_situ(

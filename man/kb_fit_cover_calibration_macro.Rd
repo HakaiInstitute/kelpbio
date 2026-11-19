@@ -49,7 +49,7 @@ preceding \code{set.seed()} also makes the fit reproducible.}
 
 \item{progress}{A string, one of \code{"bar"} (the default, a console progress
 bar), \code{"verbose"} (rstan's per-iteration output and diagnostic warnings), or
-\code{"none"} (silent). Controls fit-time console output only.}
+\code{"none"} (silent).}
 
 \item{progress_dir}{A string giving an existing directory in which to record
 progress for \code{\link[=kb_progress]{kb_progress()}}, or \code{NULL} (the default) to record none.}
@@ -64,47 +64,42 @@ Fit a calibration of in situ survey biomass on plot cover for
 \emph{Macrocystis pyrifera} via Stan.
 }
 \details{
-\code{data} is the output of \code{\link[=kb_predict_biomass_in_situ]{kb_predict_biomass_in_situ()}} with its defaults: wet
-biomass per m² of each in situ survey, with the survey's plot cover columns
-on its row. Each survey with plot cover is one observation; surveys without
-it are not fitted, and a message gives their number. The calibration takes
-each survey's biomass per m² as that of its plot.
+\code{data} is the output of \code{\link[=kb_predict_biomass_in_situ]{kb_predict_biomass_in_situ()}} with its defaults.
+Surveys without plot cover are not fitted, and a message gives their number.
+The model is described in
+\href{https://hakaiinstitute.github.io/kelpbio/articles/methods.html#cover-calibration}{Methods}.
 
-When \code{data} holds a survey with no plants counted, the model adds a
-presence part, the probability that a plot holds plants. The fit warns when
-every survey with no plants has a plot cover, before tide correction, at or
-below that of every survey with plants, since \code{presence_cover_slope} then
-follows its prior.
-
-Canopy is corrected for tide (Timmer et al. 2024), and a survey whose
-tide-corrected canopy exceeds its plot is fully covered. At a tide height of
-1 / \code{tide_height_slope} or more (the tide limit), the correction has no
-finite value and the survey is fully covered; the fit warns when a survey is
-past the tide limit with more than 5\% prior probability. The limit is at
-least 2 m, so imagery at a tide of 2 m or below, as published practice
-recommends, never reaches it. The default prior on \code{tide_height_slope}
-largely sets the correction: raise its mean for beds in strong current. Pass
-canopy already corrected for tide with \code{canopy_tide_height_m = 0}.
+The fit warns when a survey is past the tide limit with more than 5\% prior
+probability, and when every survey with no plants has a plot cover at or
+below that of every survey with plants, since \code{presence_cover_slope} is then
+informed only by its prior. If canopy is already tide-corrected, set
+\code{canopy_tide_height_m = 0}.
 }
 \section{Model}{
 
 \code{\link[=kb_model_describe]{kb_model_describe()}} prints the fitted model, with its priors, in notation
-or as a methods paragraph. The
+or as a written description. The
 \href{https://hakaiinstitute.github.io/kelpbio/articles/methods.html}{Methods article}
 describes each model and its assumptions.
 }
 
 \section{Sampling}{
 
-Chains are run in parallel by default. Set \code{options(mc.cores = 1)} (or pass
-\code{cores = 1}) on shared servers, in containers, or inside another parallel
-context.
+Chains run in parallel by default, one core per chain, capped at the cores
+available. \code{cores} sets the number of cores; when it is \code{NULL},
+\code{getOption("mc.cores")} is used if set. Set \code{cores = 1} (or
+\code{options(mc.cores = 1)}) where cores are shared or limited, or inside another
+parallel process.
 
 The sampler runs with \code{adapt_delta = 0.95} by default, which reduces
 divergences at the cost of slightly longer runtime. Override it, or set any
 other sampler control, by passing a \code{control} list through \code{...}, for example
 \code{control = list(adapt_delta = 0.99)}; only the entries supplied are changed.
 See the \code{control} argument of \code{\link[rstan:stan]{rstan::stan()}} for the full set of entries.
+
+By default, each of 4 chains runs 1000 warmup iterations and then saves 1000
+draws with no thinning, giving 4000 draws in total. These match the defaults
+of \code{\link[rstan:stan]{rstan::stan()}} and Stan's general recommendations.
 
 Check convergence with \code{\link[=kb_converged]{kb_converged()}}, \code{\link[=glance]{glance()}}, or \code{\link[=summary]{summary()}}.
 }
@@ -121,13 +116,6 @@ biomass <- kb_predict_biomass_in_situ(
 fit <- kb_fit_cover_calibration_macro(biomass)
 tidy(fit)
 \dontshow{\}) # examplesIf}
-}
-\references{
-Timmer, B., Reshitnyk, L. Y., Hessing-Lewis, M., Juanes, F.,
-Gendall, L., and Costa, M. (2024). Capturing accurate kelp canopy extent:
-integrating tides, currents, and species-level morphology in kelp remote
-sensing. \emph{Frontiers in Environmental Science}, 12, 1338483.
-\doi{10.3389/fenvs.2024.1338483}
 }
 \seealso{
 Other fit functions:

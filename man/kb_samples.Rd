@@ -35,7 +35,7 @@ kb_samples(fit, ...)
 A \code{posterior} \code{draws_rvars} object.
 }
 \description{
-The posterior draws of the effects a fitted model estimated.
+The posterior draws of the estimated parameters from a fitted model.
 }
 \details{
 The \code{posterior} functions, such as \code{as_draws_df()}, \code{summarise_draws()},
