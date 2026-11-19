@@ -20,7 +20,7 @@ library(posterior)
 ```
 
 This article covers priors, predictions for new sites and years, diagnostics,
-and working with other packages in the Stan 'ecosystem'. It uses the pre-fit models included with the package, which are fitted to simulated data from made-up sites.
+and working with other packages in the Stan 'ecosystem'. It uses the pre-fit models included with the package, which are fitted to simulated data with invented site names.
 
 ## Priors
 
@@ -34,7 +34,7 @@ kb_priors_carbon_nereo()
 A list passed to `priors` replaces the entries it names. `prior_summary()`
 returns the priors that a model fit used.
 
-With plenty of data the prior has little influence. With few data it matters:
+With plenty of data the prior has little or no influence. With few data it matters:
 here the carbon model is fitted to five samples with the default prior, and
 with a prior that holds the carbon fraction near 0.40.
 
@@ -62,7 +62,7 @@ A site or year that a model fit has no data for is defined as a 'new level'. The
 - `"average"`: the typical site or year. The interval describes an average
   site.
 - `"sample"`: a site or year drawn from the estimated variation among sites or
-  years (i.e., from the estimated random effect SD). The interval is wider, and describes a new or unobserved site about which nothing is known.
+  years (i.e., from the estimated random effect standard deviation). The interval is wider, and describes a new or unobserved site about which nothing is known.
 
 The `representative_site` argument instead gives a new site the effects of named sites in the model fit, i.e., if it is known a priori that conditions at the new site are similar.
 
@@ -150,7 +150,7 @@ augment(fit_weight_sim_nereo) |>
 ### Prior sensitivity
 
 `kb_sensitivity()` uses [power-scaling sensitivity analysis](https://mc-stan.org/priorsense/) to measure how much the parameter estimates change when the prior is adjusted. Ideally, estimates should be driven by the data and this is indicated when `weak_prior` and `strong_data` are both `TRUE`. Where `weak_prior` is
-`FALSE` the prior influences the estimate. In some cases, prior influence is expected, i.e., if the user deliberately set an informative prior. It can also be an indication that the prior was incorrectly specified or there are insufficient data to estimate a parameter without the prior doing some heavy lifting. In the latter case, the prior should be specified carefully, ideally based on plausible ranges or parameter values from the literature.
+`FALSE` the prior influences the estimate. In some cases, prior influence is expected, i.e., if the user deliberately set an informative prior or in the case of tide correction. It can also be an indication that the prior was incorrectly specified or there are insufficient data to estimate a parameter without the prior doing some heavy lifting. In the latter case, the prior should be specified carefully, ideally based on plausible ranges or parameter values from the literature.
 
 The two flags give four cases:
 

@@ -27,25 +27,24 @@ options(mc.cores = 2L)
 ```
 
 kelpbio estimates the biomass of *Nereocystis luetkeana* and *Macrocystis
-pyrifera* kelp beds. The total biomass of a site in a given year combines plants
-counted and measured from in situ surveys, the surface canopy area mapped from aerial imagery, and a
-calibration model that relates the two. See the [Methods](https://hakaiinstitute.github.io/kelpbio/articles/methods.html) article for more details on methods, including expected survey design, general statistical approach, model descriptions, and how sub-models are combined to get predictions. 
+pyrifera*. Total biomass combines plants counted and measured in in
+situ surveys, the surface canopy area mapped from aerial imagery, and a
+calibration model that relates the two. See the [Methods](https://hakaiinstitute.github.io/kelpbio/articles/methods.html) article for more details on methods, including expected survey design and timing, general statistical approach, model descriptions, and how sub-models are combined to get predictions. 
 
 This article uses *Nereocystis* as an example. The data shown below are simulated, with invented site names.
 
 ## Glossary
 
 - **Plant**: one individual (sporophyte), identified by its holdfast (*Macrocystis*) or stipe (*Nereocystis*).
-- **In situ survey**: count of the plants within a surveyed area, with all or a sample of the plants measured (e.g., three 30 m sub-surface transects with 2 m swaths, and the maximum sub-bulb diameter measured for about 15 plants per transect).
-- **Plot**: area bounding the in situ survey, over which canopy percent cover is estimated.
-- **Canopy map**: surface canopy within a site mapped from aerial imagery (e.g., drone), with the tide height recorded at the time of imaging.
+- **In situ survey**: count of the plants within a surveyed area, with all or a sample of the plants measured (e.g., three 30 m sub-surface transects with 2 m swaths, and the maximum sub-bulb diameter measured for 15 plants per transect).
+- **Plot**: area bounding the in situ survey, over which canopy percent cover is calculated.
+- **Canopy map**: surface canopy within a site mapped from aerial imagery, with the tide height recorded at the time of imaging.
 - **Site**: a location of any size with mapped canopy and possibly, matching in situ survey data. 
 - **Site-year**: annual snapshot of a site, i.e., in peak season.
 
 ## Data format
 
-Each dataset is a data frame with set column names, one row per measured unit,
-and units in the column names (for example `diameter_mm`). The
+Each dataset is a table with a set of required column names and values, formatted for model fitting. Expected units are in the column names (e.g., `diameter_mm`). The
 [Data format](data-format.html) article describes what each dataset holds, how
 the datasets are linked, and their columns, as given by `kb_data_columns()`.
 Each dataset has a `kb_check_data_*()` function that checks it.
@@ -61,6 +60,12 @@ fit <- kb_fit_weight_nereo(data_weight_sim_nereo)
 
 ```{r, include = FALSE}
 fit <- fit_weight_sim_nereo
+```
+
+`kb_model_describe()` prints a detailed description of the fitted model, including its priors. `kb_stancode()` prints the underlying Stan code. 
+
+```{r}
+kb_model_describe(fit)
 ```
 
 `tidy()` or `coef()` gives the estimate of each parameter with its lower and upper 95%
@@ -83,6 +88,8 @@ In a converged model, the chains of each parameter overlap and should resemble a
 kb_plot_trace(fit)
 ```
 
+See the [advanced usage article](https://hakaiinstitute.github.io/kelpbio/articles/advanced.html) for more diagnostics. 
+
 ## Predict and plot
 
 The `kb_predict_*()` functions take a fit object and generate predictions (estimates with 95% compatibility limits).
@@ -93,14 +100,14 @@ If no new data are supplied, predictions are made for each row of the data the m
 kb_predict_weight(fit)
 ```
 
-New data can be supplied to predict at specific values.
+New data can be supplied to predict at specific values, including values not in the observed data.
 
 ```{r}
 new_dat <- data.frame(site = "otter_cove", year = 2023, diameter_mm = c(15, 20))
 kb_predict_weight(fit, new_data = new_dat)
 ```
 
-`kb_new_data()` generates a grid of new data, e.g., the full range of diameters at each site, and the predictions can be plotted with `kb_plot_predictions()`.
+`kb_new_data()` is a helper that generates a grid of new data, e.g., the full range of diameters at each site, and the predictions can be plotted with `kb_plot_predictions()`.
 
 ```{r}
 predictions <- kb_predict_weight(fit, kb_new_data(fit, by = "site"))
@@ -119,15 +126,14 @@ kb_plot_predictions(predictions, log_axis = "xy") +
   )
 ```
 
-See the [advanced usage article](https://hakaiinstitute.github.io/kelpbio/articles/advanced.html) for control over how uncertainty is estimated for a new site or year, that is, one not in the data the model was fitted to.
+See the [advanced usage article](https://hakaiinstitute.github.io/kelpbio/articles/advanced.html) for control over how uncertainty is estimated for a new site or year (i.e., one not in the data the model was fitted to). 
 
-## From plants to site biomass
+## From plants to total biomass
 
 ### In situ biomass
 
-The biomass of a survey is its number of plants times their mean weight, over
-the area surveyed. Mean weight is estimated, with uncertainty, from the weight model and a size model
-fitted to a sample of measured plants.
+The biomass (kg/m²) of an in situ survey is the number of plants counted times their mean weight, over the area surveyed. Mean weight is estimated, with uncertainty, from the weight model and a size model
+fitted to a sample of measured plants (see [Censused areas](#censused-areas) for surveys where all plants are measured). 
 
 ```{r, eval = FALSE}
 fit_size <- kb_fit_size_nereo(data_size_sample_sim_nereo)
@@ -164,7 +170,7 @@ kb_predict_cover_calibration(fit_cover, kb_new_data(fit_cover)) |>
 
 ### Total biomass
 
-The cover calibration model is applied to the mapped canopy of each site-year to estimate its total biomass.
+The cover calibration model is applied to each canopy map to estimate its total biomass.
 
 ```{r, fig.width = 9, fig.height = 5.5}
 data_survey_canopy_sim_nereo
@@ -206,7 +212,7 @@ kb_predict_biomass_canopy(
 
 ## Pre-fit models
 
-The kelpbiodata package holds Hakai Institute datasets, with models pre-fit to them. The pre-fit models can be used when data have not been collected for a particular sub-model, such as harvested plants for weight allometry or tissue samples for the dry:wet ratio and carbon fraction. There is a pre-fit model for every sub-model, including the cover calibration, so canopy biomass can be estimated from a canopy map alone.
+The kelpbiodata package holds public datasets, with models pre-fit to them. The pre-fit models can be used when data have not been collected at your sites for a particular sub-model, such as harvested plants for weight allometry or tissue samples for the dry:wet ratio and carbon fraction. There is a pre-fit model for every sub-model, including the cover calibration, so canopy biomass can be estimated from a canopy map alone.
 
 ```{r, eval = rlang::is_installed("kelpbiodata")}
 set.seed(1)
@@ -220,7 +226,7 @@ kb_predict_biomass_in_situ(
 
 Sites or years in the user's data that are not in the pre-fit model's dataset are treated as new levels, so their estimates have wider uncertainty.
 
-User data can also be combined with a kelpbiodata dataset to increase the number of observations. For example, if plants have been harvested at only a couple of sites, combining them with the kelpbiodata weights gives a better estimate of the general weight allometry relationship, while the site-level random effect still gives an estimate for each site of interest.
+User data can also be combined with a kelpbiodata dataset to increase the number of observations. For example, if plants have been harvested at only a couple of sites, combining them with the kelpbiodata Hakai Institute weight data gives a better estimate of the general weight allometry relationship, while the site-level random effect still gives an estimate for each site of interest from the user's data.
 
 ```{r, eval = rlang::is_installed("kelpbiodata")}
 data_weight <- dplyr::bind_rows(
@@ -291,6 +297,9 @@ biomass_macro <- kb_predict_biomass_in_situ(
 ## More information
 
 For additional information:
+
+- [Data format](https://hakaiinstitute.github.io/kelpbio/articles/data-format.html)
+  lists the datasets, their columns, and how they link.
 - [Methods](https://hakaiinstitute.github.io/kelpbio/articles/methods.html)
   describes the models and how predictions are computed.
 - [Advanced usage](https://hakaiinstitute.github.io/kelpbio/articles/advanced.html)

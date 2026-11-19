@@ -26,8 +26,7 @@ library(ggplot2)
 ## Overview
 
 kelpbio estimates the biomass of *Nereocystis luetkeana* and *Macrocystis
-pyrifera* at a site in a year by combining several sub-models, each fitted to
-its own data:
+pyrifera* by combining several sub-models, each fitted to its own data:
 
 1. In situ biomass: weight and size models give the mean weight of the plants
    counted in an in situ survey, which is converted to wet biomass per m² given
@@ -60,10 +59,10 @@ diameter measured at some fixed distance below the bulb, or diameter of the bulb
 itself (i.e., any measure that can be related to weight with a power law
 allometric model). In the diagram below, the survey area is three parallel
 transects, each with a set length and swath width; other designs are possible as
-long as plants are counted within an area of known size.
+long as plants are counted within an area of known size. Here the three transects form one survey rather than three, because their combined area is easier to relate to canopy percent cover.
 
-Surface canopy is mapped across the site (i.e., from aerial imagery), with the
-tide height at the time of imaging and the extent of the water area classified.
+Surface canopy is mapped across the whole site (i.e., from aerial imagery), with the
+tide height at the time of imaging and the extent of the water area classified (i.e., the total area classified as kelp or non-kelp).
 
 Percent canopy cover within a plot (plot cover) is calculated for each in situ
 survey, where a plot is defined as the area bounding the in situ survey area.
@@ -83,9 +82,7 @@ Three quantities link the in situ survey and the canopy map:
 
 The cover calibration, fitted to pairs of plot cover and estimated in situ
 biomass, converts the site's canopy to total biomass. It should be fitted to
-many surveys across sites and years, spread from low to high cover. More than
-one plot per site is recommended, since each adds information on how that site
-differs from the others. The plot should be drawn tightly around the survey
+many surveys across sites and years, ideally spread from low to high cover. More than one plot per site is recommended, since each adds information on how that site differs from the others. The plot should be drawn tightly around the survey
 area, so that its cover accurately describes the area surveyed.
 
 The figure below shows nine surveys, three sites by three years, and the
@@ -95,8 +92,8 @@ calibration fitted to them. The biomass and plot cover values are illustrative.
 
 ### Timing
 
-kelpbio estimates biomass for a site in a year; its models have no effects for
-month or day of year. Estimates therefore describe the part of the season that
+kelpbio is intended for annual estimates of biomass at a site: its models have
+site and year effects, but none for month or day of year. Estimates therefore describe the part of the season that
 the data come from, so they are most useful when surveys are timed consistently
 from year to year, typically at the peak of the season. If timing differs
 between years, a seasonal change appears as a change between years. If surveys
@@ -109,9 +106,8 @@ from the same part of the season.
 #### Counts from the surface
 
 The kelpbio modelling approach allows *Nereocystis* plants to be counted from
-the surface, for example in quadrats from a kayak. The data take the same
-format: `survey_area_m2` is the area of the quadrats and `plants` the number of
-plants counted in them. For the estimate to be valid:
+the surface, e.g., in quadrats from a boat. The data take the same
+format: `survey_area_m2` is the combined area of the quadrats and `plants` the total number of plants counted in them. For the estimate to be valid:
 
 - every plant reaching the surface within each quadrat is counted, and each
   plant is counted only once (for example, bulbs on the quadrat edge are
@@ -136,7 +132,7 @@ biomass (`kb_predict_biomass_in_situ()` with `per_area = FALSE`, and
 `survey_area_m2` the site area) and the cover calibration step is not necessary.
 
 ### Compiling data for kelpbio
-kelpbio has specific requirements for compiling data into data frames for use by model fitting functions, including column names and the expected values/types in each column. Details are in the [Data format](data-format.html) article.
+kelpbio has specific requirements for compiling data into tables for use by model fitting functions, including column names and the expected values/types in each column. Details are in the [Data format](data-format.html) article.
 
 ## Modelling approach
 
@@ -164,8 +160,9 @@ effects. This has two benefits:
 - A site, year, or site-year missing from a particular sub-model's data can
   still be predicted. In biomass estimates, the effect is drawn from the
   estimated variation among levels, which widens its compatibility interval. For example,
-  a site with no harvested plants has a wider interval for its weight, by an
-  amount set by the variation among sites.
+  a site with no harvested plants is predicted from the population-level
+  relationship, with an interval widened by the estimated variation among sites
+  (i.e., the estimated random-effect standard deviation).
 
 The figure below shows the expected weight of a 40 mm *Nereocystis* plant in
 2025 at each site with weight data that year (black) and at a site without
@@ -354,8 +351,8 @@ Key assumptions:
 
 The mapped surface canopy is assumed to be the known extent of the bed, so the
 floor biomass (i.e., biomass at 0% cover) is not applied outside of it. The
-total biomass of a site-year is the calibration at 100% cover (the expected
-biomass per m² of bed) times the site's canopy area, corrected for tide as in
+total biomass of a canopy map is the calibration at 100% cover (the expected
+biomass per m² of bed) times its canopy area, corrected for tide as in
 the cover calibration and capped at the water area the imagery classified:
 
 ```
@@ -364,7 +361,7 @@ corrected_canopy_area_m2 = min(canopy_area_m2 / (1 - tide_height_slope * canopy_
 ```
 
 Applying the calibrated biomass estimate at 100% cover across the site's mapped
-canopy relies on the model being linear. The biomass in a plot is
+canopy relies on the model form being linear. The biomass in a plot is
 `biomass_floor` times the plot area plus `cover_slope` multiplied by the canopy
 area, so the canopy term does not depend on the size of the plot drawn around
 it. A nonlinear calibration (e.g., power law model with scaling exponent not
