@@ -92,5 +92,7 @@ if (full_check) {
 }
 
 if (build_site) {
-  pkgdown::build_site()
+  # The optimized install above; reinstalling would reuse the debug objects
+  # that document()/test() leave in src/, slowing the articles' fits ~20x.
+  pkgdown::build_site(install = FALSE)
 }
