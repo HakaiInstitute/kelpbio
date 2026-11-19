@@ -22,72 +22,19 @@ saved draws that ended in a divergent transition.}
 \value{
 A one-row tibble with \code{n} (the number of observations), \code{K} (the
 number of terms \code{\link[=tidy]{tidy()}} reports, excluding the per-level group effects),
-\code{nchains}, \code{niters}, \code{nthin}, \code{ess_bulk}, \code{ess_tail}, \code{rhat},
-\code{perc_divergent}, and \code{converged} (from \code{\link[=kb_converged]{kb_converged()}}).
+\code{nchains}, \code{niters}, \code{nthin}, the worst \code{ess_bulk}, \code{ess_tail}, and \code{rhat}
+across parameters, \code{perc_divergent} (the percentage of saved draws that
+ended in a divergent transition), and \code{converged} (from \code{\link[=kb_converged]{kb_converged()}}).
 }
 \description{
 One-row summary of a model fit with convergence diagnostics.
 }
-\section{Output}{
-
-
-There are three indicators of convergence in the output:
-\itemize{
-\item \code{rhat} is the potential scale reduction factor for the worst-performing
-parameter: a comparison of between- and within-chain variance, with values
-near 1 indicating convergence.
-\item \code{ess_bulk} and \code{ess_tail} are the bulk and tail effective sample sizes for
-the worst-performing parameter: the number of independent draws worth of
-information about the centre and the tails of its posterior.
-\item \code{perc_divergent} is the divergent transition rate: the divergent
-transitions divided by the number of saved draws (i.e., post-thinning),
-expressed as a percentage.
-}
-}
-
-\section{Assessing convergence}{
-
-
-Three conditions must be met:
-\itemize{
-\item every parameter's rank-normalized split Rhat below \code{rhat} (default 1.01;
-Vehtari et al. 2021, Section 2);
-\item every parameter's bulk and tail effective sample size at least \code{ess} times
-the number of chains (default 100, so 400 for four chains; Vehtari et al.
-2021);
-\item the percentage of divergent transitions at or below \code{max_perc_divergent}
-(default 0.2\% of saved draws). Set \code{max_perc_divergent = 0} to require
-none.
-}
-
-Rhat and the effective sample sizes are those of \code{\link[posterior:rhat]{posterior::rhat()}},
-\code{\link[posterior:ess_bulk]{posterior::ess_bulk()}}, and \code{\link[posterior:ess_tail]{posterior::ess_tail()}}, reported for each
-parameter by \code{posterior::summarise_draws(fit)}.
-}
-
-\section{Resolving convergence failure}{
-
-
-In order, try the following:
-\enumerate{
-\item For Rhat or effective sample sizes that fail their thresholds,
-increase \code{niters} for more saved draws per chain, or increase \code{nthin} to
-run more iterations while saving the same number of draws.
-\item For divergent transitions, increase \code{adapt_delta} through the \code{control}
-argument of the \verb{kb_fit_*()} functions (for example,
-\verb{kb_fit_*(df, control = list(adapt_delta = 0.99))}; the default is 0.95).
-A higher value makes the sampler take smaller steps, which reduces
-divergent transitions at the cost of a longer runtime.
-\item If either problem persists, check the data and the fit with
-\code{\link[=pp_check]{pp_check()}}: a unit mistake, outliers, or a poor fit can cause both.
-}
-}
-
 \examples{
 glance(fit_weight_sim_nereo)
 }
 \seealso{
-\code{\link[=kb_converged]{kb_converged()}}
+\code{\link[=kb_converged]{kb_converged()}} for the convergence thresholds and what to do
+when they fail.
 
 Other fit methods:
 \code{\link[=augment.kb_fit]{augment.kb_fit()}},

@@ -8,7 +8,7 @@
 \description{
 \if{html}{\figure{logo.png}{options: style='float: right' alt='logo' width='120'}}
 
-Estimate wet, dry, and carbon biomass of Nereocystis luetkeana and Macrocystis pyrifera kelp beds from in situ surveys and canopy imagery, with compatibility intervals from Bayesian hierarchical models fitted by 'rstan'. The Stan models are pre-compiled, so no Stan installation is needed.
+Estimate wet, dry, carbon, and nitrogen biomass of Nereocystis luetkeana and Macrocystis pyrifera kelp from in situ surveys and mapped surface canopy, with compatibility intervals from Bayesian hierarchical models fitted by 'rstan'.
 }
 \seealso{
 Useful links:

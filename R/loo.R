@@ -5,8 +5,6 @@
 #' cross-validation (PSIS-LOO; Vehtari et al. 2017).
 #'
 #' @details
-#'
-#'
 #' The pointwise results (`$pointwise` and `loo::pareto_k_values()`) have one
 #' row per observation, in the order of the fitted data. `elpd_loo` and the
 #' Pareto k diagnostic are described in [kb_influence()], which adds them to the

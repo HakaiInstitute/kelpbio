@@ -36,7 +36,7 @@ fit_cover_calibration_model <- function(
     call = call
   )
   data <- survey_calibration_rows(data, progress = progress)
-  .chk_drone_cover(data, prior_only, call = call)
+  .chk_plot_cover(data, prior_only, call = call)
   .chk_occupied_survey(data, prior_only, call = call)
   # A Gamma cannot take a zero, so a survey with nothing counted needs the
   # presence part; without one there is nothing for it to fit.
@@ -107,7 +107,7 @@ fit_cover_calibration_model <- function(
   )
 }
 
-# The rows with drone cover, with each survey's biomass draws reduced to their
+# The rows with plot cover, with each survey's biomass draws reduced to their
 # mean (`biomass_kg_m2`) and SD (`biomass_sd_kg_m2`), so the fit stores no
 # draws per observation. Silent when progress = "none".
 survey_calibration_rows <- function(data, progress = "bar") {
@@ -128,7 +128,7 @@ survey_calibration_rows <- function(data, progress = "bar") {
 notify_uncovered_surveys <- function(n, progress = "bar") {
   if (n > 0L && !identical(progress, "none")) {
     cli::cli_inform(c(
-      i = "{n} survey{?s} without drone cover {cli::qty(n)}{?is/are} not fitted."
+      i = "{n} survey{?s} without plot cover {cli::qty(n)}{?is/are} not fitted."
     ))
   }
   invisible(n)

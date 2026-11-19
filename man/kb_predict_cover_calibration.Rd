@@ -20,29 +20,33 @@ kb_predict_cover_calibration(
 
 \item{new_data}{A data frame of the rows to predict at, with
 \code{canopy_area_m2} (the canopy area in the plot, m²), \code{plot_area_m2} (the
-plot area, m²), \code{canopy_tide_height_m} (the tide height, m), and optionally \code{site}
-and \code{year}, or \code{NULL} for the observed surveys.}
+plot area, m²), \code{canopy_tide_height_m} (the tide height, m), and
+optionally \code{site} and \code{year}, or \code{NULL} for the observed surveys.
+\code{year} may be numeric or character: \code{2022} and \code{"2022"} match the same
+fitted year.}
 
 \item{...}{These dots are for future extensions and must be empty.}
 
-\item{new_levels}{A string giving how uncertainty is shown for a site or
-year not in the fit, or when \code{new_data} has no \code{site} or \code{year} column.
-Sites and years in the fit always use their own estimates; a \code{year} of
-whole numbers matches the fitted year of the same value. One of:
+\item{new_levels}{A string giving how uncertainty is estimated for a site or
+year not in the data used to fit the model, or when \code{new_data} has no
+\code{site} or \code{year} column. Sites and years in the model fit always use their
+own estimates. One of:
 \itemize{
-\item \code{"average"} (the default): the typical site or year. The interval
-covers uncertainty in the typical value only. Use it to describe an
-average site or year.
-\item \code{"sample"}: a new effect for each new site or year,
-drawn from the estimated variation among sites or among years. The
-estimate is about the same, but the interval also includes that
-variation. Use it to get realistic uncertainty about a particular site
-or year the model has no data on. The interval varies slightly between
-calls; use \code{set.seed()} to reproduce it.
+\item \code{"average"} (the default): the typical site or year. The site and year
+effects are set to 0, their mean, so the interval does not include
+among-site or among-year variation. Use it to describe an average site or
+year.
+\item \code{"sample"}: a new effect for each new site or year, drawn from the
+estimated variation among sites or among years (the random-effect
+standard deviation). The point estimate is equivalent, but the interval
+is wider since it also includes that variation. Use it to get realistic
+uncertainty about a particular site or year that the model has no
+information on. The interval varies slightly between calls; use
+\code{set.seed()} to reproduce it.
 }}
 
 \item{representative_site}{A character vector of sites in the fit whose
-effects a new site takes (averaged when several are named), or \code{NULL} (the
+effects a new site adopts (averaged when several are named), or \code{NULL} (the
 default) to follow \code{new_levels}.}
 
 \item{conf_level}{A number greater than 0 and less than 1 giving the
@@ -54,29 +58,19 @@ a single estimate, such as \code{median} or \code{mean}.}
 \item{sig_fig}{A whole number of significant figures for summary output.}
 }
 \value{
-A \code{kb_predictions} object: the rows of \code{new_data} with added
-\code{estimate}, \code{lower}, and \code{upper} columns summarising the posterior
-distribution of the expected wet biomass per m² of plot. When the rows
-have \code{site} and \code{year}, a \code{cover_support} column (as in
-\code{\link[=kb_predict_biomass_canopy]{kb_predict_biomass_canopy()}}) precedes the summary.
+A \code{kb_predictions} object: the rows of \code{new_data} with
+\code{cover_support} (when the rows have a site and year), \code{estimate}, \code{lower},
+and \code{upper}.
 }
 \description{
-Predict the expected wet biomass (kg/m²) of a plot from its drone canopy
-cover.
+Predict the expected wet biomass (kg/m²) of a plot from its plot cover.
 }
 \details{
-Cover is tide-corrected and capped at 1, as in the fit; a row with canopy at
-a tide height at or above \code{1 / tide_height_slope} is fully covered, and a
-row past that limit on more than 5\% of draws warns. Canopy already corrected
-for tide is passed with
-\code{canopy_tide_height_m = 0}. A row with no canopy predicts the biomass floor, which
-is the same for every site and year.
-
-The prediction is the expected biomass: the Gamma mean \code{mu}, times the
-probability that the plot holds plants where the fit has a presence part.
-\code{\link[=kb_predict_biomass_canopy]{kb_predict_biomass_canopy()}} applies \code{mu} at full cover, without the
-presence probability. When \code{new_data = NULL}, the in situ survey biomass
-columns are kept; use \code{\link[=augment]{augment()}} for the fitted values next to them.
+Cover is tide-corrected and capped at full cover, 100\% (see
+\href{https://hakaiinstitute.github.io/kelpbio/articles/methods.html#cover-calibration}{Methods}).
+A warning is given if a row is past the tide limit on more than 5\% of draws.
+When the fit has a presence part (when any survey in its data counted no
+plants), the prediction includes the probability that the plot holds plants.
 }
 \examples{
 fit <- fit_cover_calibration_sim_nereo

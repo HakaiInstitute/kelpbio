@@ -1,6 +1,6 @@
 #' Posterior draws
 #'
-#' The posterior draws of the effects a fitted model estimated.
+#' The posterior draws of the estimated parameters from a fitted model.
 #'
 #' The `posterior` functions, such as `as_draws_df()`, `summarise_draws()`,
 #' `nchains()`, `ndraws()`, and `variables()`, also accept a fit.

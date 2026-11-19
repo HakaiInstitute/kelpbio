@@ -17,29 +17,33 @@
 
 \item{new_data}{A data frame with the fit's predictor column (and optional
 \code{site} and \code{year} columns; \code{canopy_area_m2}, \code{plot_area_m2}, and
-\code{canopy_tide_height_m} for a cover calibration fit), or \code{NULL} to predict at the
-observed data.}
+\code{canopy_tide_height_m} for a cover calibration fit), or \code{NULL} to predict
+at the observed data.
+\code{year} may be numeric or character: \code{2022} and \code{"2022"} match the same
+fitted year.}
 
 \item{...}{These dots are for future extensions and must be empty.}
 
-\item{new_levels}{A string giving how uncertainty is shown for a site or
-year not in the fit, or when \code{new_data} has no \code{site} or \code{year} column.
-Sites and years in the fit always use their own estimates; a \code{year} of
-whole numbers matches the fitted year of the same value. One of:
+\item{new_levels}{A string giving how uncertainty is estimated for a site or
+year not in the data used to fit the model, or when \code{new_data} has no
+\code{site} or \code{year} column. Sites and years in the model fit always use their
+own estimates. One of:
 \itemize{
-\item \code{"average"} (the default): the typical site or year. The interval
-covers uncertainty in the typical value only. Use it to describe an
-average site or year.
-\item \code{"sample"}: a new effect for each new site or year,
-drawn from the estimated variation among sites or among years. The
-estimate is about the same, but the interval also includes that
-variation. Use it to get realistic uncertainty about a particular site
-or year the model has no data on. The interval varies slightly between
-calls; use \code{set.seed()} to reproduce it.
+\item \code{"average"} (the default): the typical site or year. The site and year
+effects are set to 0, their mean, so the interval does not include
+among-site or among-year variation. Use it to describe an average site or
+year.
+\item \code{"sample"}: a new effect for each new site or year, drawn from the
+estimated variation among sites or among years (the random-effect
+standard deviation). The point estimate is equivalent, but the interval
+is wider since it also includes that variation. Use it to get realistic
+uncertainty about a particular site or year that the model has no
+information on. The interval varies slightly between calls; use
+\code{set.seed()} to reproduce it.
 }}
 
 \item{representative_site}{A character vector of sites in the fit whose
-effects a new site takes (averaged when several are named), or \code{NULL} (the
+effects a new site adopts (averaged when several are named), or \code{NULL} (the
 default) to follow \code{new_levels}.}
 }
 \value{
@@ -56,14 +60,13 @@ as plotted by \link[=pp_check.kb_fit]{pp_check()}.
 \details{
 Site and year columns in \code{new_data} are handled as in \code{\link[=posterior_epred]{posterior_epred()}}.
 
-The observation noise follows the fitted likelihood: Normal on log weight
-(\emph{Nereocystis} weight), Gamma (\emph{Macrocystis} weight), Weibull (\emph{Nereocystis}
-size), Beta (wet/dry, carbon, and nitrogen), and Gamma (cover calibration).
-A cover calibration fit with a presence part also draws whether each survey
-holds plants, and a survey drawn without plants is 0. Each row's spread
-includes the coefficient of variation of its survey biomass, from
-\code{biomass_kg_m2} and \code{biomass_sd_kg_m2} columns or a \code{biomass_kg_m2} column
-of draws, and the residual alone when \code{new_data} has neither.
+The observation noise follows the likelihood of the fit's model (see
+\code{\link[=kb_model_describe]{kb_model_describe()}}). A cover calibration fit with a presence part also
+draws whether each survey holds plants, and a survey drawn without plants
+is 0. Each row's spread includes the coefficient of variation of its survey
+biomass, from \code{biomass_kg_m2} and \code{biomass_sd_kg_m2} columns or a
+\code{biomass_kg_m2} column of draws, and the residual alone when \code{new_data} has
+neither.
 
 Repeated calls return different draws; use \code{set.seed()} to reproduce them.
 }

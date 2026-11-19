@@ -1,6 +1,6 @@
 ---
 title: "Advanced usage"
-bibliography: references.bib
+bibliography: ../references.bib
 ---
 
 ```{r, include = FALSE}
@@ -20,12 +20,12 @@ library(posterior)
 ```
 
 This article covers priors, predictions for new sites and years, diagnostics,
-and working with other packages in the Stan 'ecosystem'. It uses the pre-fit models included with the package, which are fitted to simulated data from made-up sites.
+and working with other packages in the Stan 'ecosystem'. It uses the pre-fit models included with the package, which are fitted to simulated data with invented site names.
 
 ## Priors
 
 A prior states what is plausible for a parameter before seeing the data. Each
-model has default priors, one per parameter, which are intended to be weakly informative, following Stan best practices [@gelman_prior_2017].
+model has default priors, one per parameter, which are intended to be weakly informative, following Stan best practices [@gelman_prior_2017], except the informative prior on `tide_height_slope` in the cover calibration (see [Methods](https://hakaiinstitute.github.io/kelpbio/articles/methods.html#cover-calibration)).
 
 ```{r}
 kb_priors_carbon_nereo()
@@ -34,7 +34,7 @@ kb_priors_carbon_nereo()
 A list passed to `priors` replaces the entries it names. `prior_summary()`
 returns the priors that a model fit used.
 
-With plenty of data the prior has little influence. With few data it matters:
+With plenty of data the prior has little or no influence. With few data it matters:
 here the carbon model is fitted to five samples with the default prior, and
 with a prior that holds the carbon fraction near 0.40.
 
@@ -57,14 +57,14 @@ bind_rows(
 
 ## New sites and years
 
-A site or year that a model fit has no data for is defined as a 'new level'. The `new_levels` argument in `kb_predict_*()` functions, sets how it is predicted, with implications for the width of the uncertainty (95% combatibility interval):
+A site or year that a model fit has no data for is defined as a 'new level'. The `new_levels` argument in `kb_predict_*()` functions sets how it is predicted, with implications for the width of the uncertainty (95% compatibility interval):
 
 - `"average"`: the typical site or year. The interval describes an average
   site.
 - `"sample"`: a site or year drawn from the estimated variation among sites or
-  years (i.e., from the estimated random effect SD). The interval is wider, and describes a new or unobserved site that we know nothing about. 
+  years (i.e., from the estimated random effect standard deviation). The interval is wider, and describes a new or unobserved site about which nothing is known.
 
-The `representative_site` argument instead gives a new site the effects of named sites in the model fit, i.e., if it is known a priori that conditions at the new site are similar.
+The `representative_site` argument instead gives a new site the effects of named sites in the model fit, e.g., when it is known a priori that conditions at the new site are similar.
 
 ```{r}
 new_site <- data.frame(diameter_mm = 40, site = "new_reef")
@@ -149,8 +149,15 @@ augment(fit_weight_sim_nereo) |>
 
 ### Prior sensitivity
 
-`kb_sensitivity()` uses [power-scaling sensitivity analysis](https://mc-stan.org/priorsense/) to measure how much the parameter estimates change when the prior is adjusted. Ideally, estimates should be driven by the data and this indicated when `weak_prior` and `strong_data` are both `TRUE`. Where `weak_prior` is
-`FALSE` the prior influences the estimate. In some cases, prior influence is expected, i.e., if user deliberately set an informative prior. It can also be an indication that the prior was incorrectly specified or there are insufficient data to estimate a parameter without the prior doing some heavy lifting. In the latter case, the prior should be specified carefully, ideally based on plausible ranges or parameter values from the literature.  
+`kb_sensitivity()` uses [power-scaling sensitivity analysis](https://mc-stan.org/priorsense/) to measure how much the parameter estimates change when the prior is adjusted. Ideally, estimates should be driven by the data and this is indicated when `weak_prior` and `strong_data` are both `TRUE`. Where `weak_prior` is
+`FALSE` the prior influences the estimate. In some cases, prior influence is expected, e.g., when the user deliberately sets an informative prior, or for the cover calibration's tide correction (`tide_height_slope`). It can also be an indication that the prior was incorrectly specified or there are insufficient data to estimate a parameter without relying on the prior. In the latter case, the prior should be specified carefully, ideally based on plausible ranges or parameter values from the literature.
+
+The two flags give four cases:
+
+- `weak_prior` and `strong_data`: the data drive the estimate.
+- `strong_data` only: the prior and the data both move the estimate, a possible conflict; check the prior against what the data show.
+- Neither: the prior dominates and the data say little about the parameter, so the prior needs a justification. This is expected where `informative_prior` is `TRUE`, as for the cover calibration's `tide_height_slope`.
+- `weak_prior` only: neither moves the estimate much, often a parameter the data identify only weakly.
 
 ```{r, eval = rlang::is_installed("priorsense")}
 kb_sensitivity(fit_weight_sim_nereo)
@@ -158,7 +165,7 @@ kb_sensitivity(fit_weight_sim_nereo)
 
 ### Influential observations
 
-`kb_influence()` determines how strongly each observation affects the model fit if it was removed, where a pareto k value > 0.7 indicates that it is influential. Observations flagged as `influential` are not necessarily wrong, but could be double-checked for data error. See the loo package's [Pareto k diagnostic](https://mc-stan.org/loo/reference/pareto-k-diagnostic.html) page for how `pareto_k` is calculated and interpreted. 
+`kb_influence()` determines how strongly each observation affects the model fit if it was removed, where a `pareto_k` above the threshold (0.7) indicates that it is influential. Observations flagged as `influential` are not necessarily wrong, but could be double-checked for data error. See the loo package's [Pareto k diagnostic](https://mc-stan.org/loo/reference/pareto-k-diagnostic.html) page for how `pareto_k` is calculated and interpreted. 
 
 ```{r}
 kb_influence(fit_weight_sim_nereo) |>
@@ -251,7 +258,7 @@ was higher in 2025:
 set.seed(1)
 totals <- kb_predict_biomass_canopy(
   fit_cover_calibration_sim_nereo,
-  data_canopy_sim_nereo,
+  data_survey_canopy_sim_nereo,
   pool_by = "year"
 )
 by_year <- setNames(totals$biomass_kg, totals$year)

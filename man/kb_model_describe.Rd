@@ -20,8 +20,8 @@ printed description.
 }
 \description{
 Render the complete fitted model in scientific notation (the default) or as a
-report-ready methods paragraph (\code{prose = TRUE}). The notation uses the
-package's own parameter names (\code{intercept}, \code{sd_site}, ...), so every symbol
+written description (\code{prose = TRUE}). The notation uses the package's own
+parameter names (\code{intercept}, \code{sd_site}, ...), so every symbol
 matches a row of \code{\link[=tidy]{tidy()}}, \code{\link[=summary]{summary()}}, and \code{\link[=coef]{coef()}}.
 }
 \details{

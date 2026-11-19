@@ -75,9 +75,9 @@
   !anyDuplicated(id_text(x$survey_id))
 }
 
-# The drone pairing of a survey: all three columns given or all missing on each
+# The plot cover pairing of a survey: all three columns given or all missing on each
 # row, or the columns absent.
-.vld_drone_columns <- function(x) {
+.vld_plot_cover_columns <- function(x) {
   cols <- c("plot_area_m2", "canopy_area_m2", "canopy_tide_height_m")
   present <- intersect(cols, names(x))
   if (!length(present)) {
@@ -109,11 +109,6 @@
 
 .vld_new_data_weight_macro <- function(x) {
   is.data.frame(x) && "fronds" %in% names(x) && .vld_frond_count(x$fronds)
-}
-
-# Size new_data has no predictor column.
-.vld_new_data_size <- function(x) {
-  is.data.frame(x)
 }
 
 .vld_progress <- function(x) {
@@ -179,7 +174,7 @@
 # Mapped canopy for canopy totals.
 .vld_canopy_maps <- function(x) {
   is.data.frame(x) &&
-    all(data_column_names("canopy") %in% names(x)) &&
+    all(data_column_names("survey_canopy") %in% names(x)) &&
     is.numeric(x$canopy_area_m2) &&
     !anyNA(x$canopy_area_m2) &&
     .vld_finite(x$canopy_area_m2) &&

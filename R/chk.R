@@ -141,16 +141,6 @@
   .chk_frond_count(x$fronds, x_name = column_xname(x_name, "fronds"))
 }
 
-.chk_new_data_size <- function(
-  x,
-  x_name = chk::deparse_backtick_chk(substitute(x))
-) {
-  if (.vld_new_data_size(x)) {
-    return(invisible(x))
-  }
-  chk::chk_data(x, x_name = x_name)
-}
-
 .chk_same_species <- function(fits, call = rlang::caller_env()) {
   if (.vld_same_species(fits)) {
     return(invisible(fits))
@@ -518,16 +508,16 @@
   )
 }
 
-# `rows` are the calibration rows, the surveys with drone cover; like
-# .chk_fit_rows(), but the user's data had rows and none had drone cover.
-.chk_drone_cover <- function(rows, prior_only, call = rlang::caller_env()) {
+# `rows` are the calibration rows, the surveys with plot cover; like
+# .chk_fit_rows(), but the user's data had rows and none had plot cover.
+.chk_plot_cover <- function(rows, prior_only, call = rlang::caller_env()) {
   if (.vld_fit_rows(rows, prior_only)) {
     return(invisible(rows))
   }
   cli::cli_abort(
     c(
-      "No survey in {.arg data} has drone cover.",
-      i = "A survey has drone cover when {.field plot_area_m2}, {.field canopy_area_m2}, and {.field canopy_tide_height_m} are given."
+      "No survey in {.arg data} has plot cover.",
+      i = "A survey has plot cover when {.field plot_area_m2}, {.field canopy_area_m2}, and {.field canopy_tide_height_m} are given."
     ),
     call = call
   )
@@ -538,7 +528,7 @@
     return(invisible(data))
   }
   cli::cli_abort(
-    "No survey with drone cover in {.arg data} has plants counted.",
+    "No survey with plot cover in {.arg data} has plants counted.",
     call = call
   )
 }
@@ -589,24 +579,24 @@
 # Size new_data has no predictor column.
 #' @export
 .chk_new_data.kb_fit_size <- function(fit, new_data) {
-  .chk_new_data_size(new_data)
+  chk::chk_data(new_data, x_name = "`new_data`")
 }
 
 # Wet/dry has no predictor or groups, so any data frame will do.
 #' @export
 .chk_new_data.kb_fit_wetdry <- function(fit, new_data) {
-  .chk_new_data_size(new_data)
+  chk::chk_data(new_data, x_name = "`new_data`")
 }
 
 # Carbon, like wet/dry, has no predictor or groups.
 #' @export
 .chk_new_data.kb_fit_carbon <- function(fit, new_data) {
-  .chk_new_data_size(new_data)
+  chk::chk_data(new_data, x_name = "`new_data`")
 }
 
 #' @export
 .chk_new_data.kb_fit_nitrogen <- function(fit, new_data) {
-  .chk_new_data_size(new_data)
+  chk::chk_data(new_data, x_name = "`new_data`")
 }
 
 # `x_name` names the data frame; column messages name the column within it.
@@ -646,7 +636,7 @@
 }
 
 # The calibration data shared by both species: survey biomass from
-# kb_predict_biomass_in_situ() with each survey's drone cover on its row.
+# kb_predict_biomass_in_situ() with each survey's plot cover on its row.
 .chk_cover_calibration_data <- function(data, x_name, call = rlang::caller_env()) {
   chk::chk_data(data, x_name = x_name)
   hint <- "Use the output of {.fn kb_predict_biomass_in_situ} with its defaults: wet biomass per m\u00b2, one row per survey."
@@ -673,7 +663,7 @@
     )
   }
   .chk_group_columns(data, x_name)
-  .chk_drone_columns(data, x_name)
+  .chk_plot_cover_columns(data, x_name)
   draws <- posterior::draws_of(data$biomass_kg_m2)
   if (!all(is.finite(draws)) || any(draws < 0)) {
     cli::cli_abort(
@@ -762,8 +752,8 @@
   ))
 }
 
-.chk_drone_columns <- function(x, x_name = deparse(substitute(x))) {
-  if (.vld_drone_columns(x)) {
+.chk_plot_cover_columns <- function(x, x_name = deparse(substitute(x))) {
+  if (.vld_plot_cover_columns(x)) {
     return(invisible(x))
   }
   cols <- c("plot_area_m2", "canopy_area_m2", "canopy_tide_height_m")
@@ -779,8 +769,8 @@
   if (any(partial)) {
     col <- cols[colSums(missing[partial, , drop = FALSE]) > 0][1]
     cli::cli_abort(c(
-      "{column_xname(x_name, col)} must not be missing where the other drone columns are given.",
-      i = "Give {.field {cols}} together, or leave all three missing for a survey without drone cover."
+      "{column_xname(x_name, col)} must not be missing where the other plot cover columns are given.",
+      i = "Give {.field {cols}} together, or leave all three missing for a survey without plot cover."
     ))
   }
   d <- x[!missing[, 1L], cols, drop = FALSE]
@@ -825,7 +815,7 @@
 .chk_survey_data <- function(data, size_census, x_name, census_name) {
   chk::chk_data(data, x_name = x_name)
   .chk_rows(data, x_name)
-  required <- data_column_names("in_situ")
+  required <- data_column_names("survey_in_situ")
   if (is.null(size_census)) {
     required <- c(required, "plants")
   }
@@ -841,7 +831,7 @@
     ))
   }
   .chk_unique_surveys(data, x_name)
-  .chk_drone_columns(data, x_name)
+  .chk_plot_cover_columns(data, x_name)
   warn_implausible_units(data, x_name)
   warn_group_names(data, x_name)
   warn_survey_area(data, x_name)
@@ -921,7 +911,7 @@
     return(invisible(x))
   }
   chk::chk_data(x, x_name = x_name)
-  chk::chk_superset(names(x), data_column_names("canopy"), x_name = x_name)
+  chk::chk_superset(names(x), data_column_names("survey_canopy"), x_name = x_name)
   nm <- column_xname(x_name, "canopy_area_m2")
   chk::chk_numeric(x$canopy_area_m2, x_name = nm)
   chk::chk_not_any_na(x$canopy_area_m2, x_name = nm)

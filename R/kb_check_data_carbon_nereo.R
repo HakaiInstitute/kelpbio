@@ -10,11 +10,9 @@
 #' cat(doc_data_columns("carbon_nereo"))
 #' ```
 #'
-#' Required columns have no missing values. The model's response is the
-#' carbon fraction, the carbon mass divided by the sample mass. A warning gives
-#' the number of samples whose carbon fraction falls outside 0.10 to 0.50, the
-#' plausible range for kelp tissue; they are kept, not removed. Other columns
-#' are ignored.
+#' A warning gives the number of samples whose carbon fraction (carbon mass over
+#' sample mass) falls outside 0.10 to 0.50, the plausible range for kelp
+#' tissue; they are kept.
 #'
 #' @inheritParams params
 #' @param data A data frame of carbon observations, one row per sample.

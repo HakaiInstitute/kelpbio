@@ -1,0 +1,150 @@
+---
+title: "Data format"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Data format}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup, include = FALSE}
+library(kelpbio)
+```
+
+## Overview
+
+The data are compiled as one dataset per kind of measurement. Column
+names are fixed and carry their units (for example `diameter_mm`); any
+additional columns are ignored. Some tables have columns that differ by
+species, such as `weight` (e.g., `diameter_mm` vs `fronds`).
+
+Not every dataset is required: a model without data can use a model pre-fit
+to a public dataset in kelpbiodata (see [Pre-fit models](kelpbio.html#pre-fit-models)). How the datasets combine
+into biomass is explained in the [Methods overview](methods.html#overview), and
+how the data are expected to be collected in [Survey design](methods.html#survey-design).
+
+## Two data format choices to highlight:
+
+1. **Size sample or census.** A *Nereocystis* survey either measures a sample of the counted plants or all of them. With a sample, size data are provided in `size_sample`, each survey's total plant count is recorded in the `plants` column of `survey_in_situ`, and a size model is used to estimate size of unmeasured plants. If every plant is measured, sizes are recorded in the `size_census` table and each survey's total plant count is calculated automatically. For *Macrocystis*, it is assumed that all plants are measured and sizes are recorded in the `size_census` table.
+2. **Site and year, or survey.** These methods are designed to estimate annual biomass at each site: the weight, size, and cover calibration models have site and year effects, and the tissue models estimate one ratio or fraction for all samples. A site can still have in situ surveys at more than one plot, or more than once in a year, and have canopy mapped more than once in a year. Each in situ survey therefore has its own `survey_id` in `survey_in_situ`, which the plants of a size census carry, and each canopy map is its own row in `survey_canopy`. However, no models estimate seasonal variation (i.e., within a year); canopy maps of the same site-year share the same biomass per m² of canopy, and in situ surveys of the same site-year share the same mean plant weight (see [Timing](methods.html#timing) for details). 
+
+## Datasets {.tabset}
+
+The columns of each dataset, as given by `kb_data_columns()`.
+Each site must be spelled the same way in every dataset: the datasets are
+joined by site and year, and a misspelled site is read as a new site.
+
+```{r data-format, echo = FALSE, results = "asis"}
+html <- function(x) {
+  x <- gsub("&", "&amp;", x, fixed = TRUE)
+  x <- gsub("<", "&lt;", x, fixed = TRUE)
+  gsub(">", "&gt;", x, fixed = TRUE)
+}
+ref <- function(fun) {
+  paste0(
+    "<a href=\"https://hakaiinstitute.github.io/kelpbio/reference/",
+    fun,
+    ".html\"><code>",
+    fun,
+    "()</code></a>"
+  )
+}
+refs <- function(funs) paste(vapply(funs, ref, ""), collapse = ", ")
+column_table <- function(dataset) {
+  columns <- kb_data_columns(dataset)
+  table <- data.frame(
+    Column = paste0(
+      "<code>",
+      columns$column,
+      "</code>",
+      ifelse(
+        columns$required,
+        "",
+        "<br><span class=\"text-body-secondary\">optional</span>"
+      )
+    ),
+    Units = ifelse(is.na(columns$units), "", columns$units),
+    Allowed = html(columns$allowed),
+    Example = paste0("<code>", html(columns$example), "</code>"),
+    Description = html(columns$description)
+  )
+  print(knitr::kable(
+    table,
+    format = "html",
+    escape = FALSE,
+    row.names = FALSE,
+    table.attr = "class=\"table table-sm table-striped small\""
+  ))
+  cat("\n")
+}
+# One tab per dataset, as the kelpbioshiny Data format page shows them; a
+# dataset whose columns differ by species has a table per species.
+data_format <- function(tab, datasets, used_by) {
+  row <- kb_datasets(datasets[[1]])$row
+  row <- paste0(tolower(substr(row, 1, 1)), substring(row, 2))
+  row <- gsub("`([^`]*)`", "<code>\\1</code>", row)
+  checks <- paste0("kb_check_data_", datasets)
+  cat(
+    "### ", tab, "\n\n",
+    "One row per ", row, ". Used by ", refs(used_by),
+    " and checked by ", refs(checks), ".\n\n",
+    sep = ""
+  )
+  if (length(datasets) == 1) {
+    column_table(datasets[[1]])
+    return(invisible())
+  }
+  for (dataset in datasets) {
+    species <- if (endsWith(dataset, "_macro")) "Macrocystis" else "Nereocystis"
+    cat("<p><strong><em>", species, "</em></strong></p>\n\n", sep = "")
+    column_table(dataset)
+  }
+}
+
+data_format(
+  "weight",
+  c("weight_nereo", "weight_macro"),
+  c("kb_fit_weight_nereo", "kb_fit_weight_macro")
+)
+data_format("size_sample", "size_sample_nereo", "kb_fit_size_nereo")
+data_format(
+  "size_census",
+  c("size_census_nereo", "size_census_macro"),
+  "kb_predict_biomass_in_situ"
+)
+data_format("survey_in_situ", "survey_in_situ", "kb_predict_biomass_in_situ")
+data_format("survey_canopy", "survey_canopy", "kb_predict_biomass_canopy")
+data_format(
+  "wetdry",
+  "wetdry_nereo",
+  c("kb_fit_wetdry_nereo", "kb_fit_wetdry_macro")
+)
+data_format(
+  "carbon",
+  "carbon_nereo",
+  c("kb_fit_carbon_nereo", "kb_fit_carbon_macro")
+)
+data_format(
+  "nitrogen",
+  "nitrogen_nereo",
+  c("kb_fit_nitrogen_nereo", "kb_fit_nitrogen_macro")
+)
+```
+
+## Checking the data
+
+Each dataset has a `kb_check_data_*()` function that checks the data against the format expected by the model fitting functions (e.g., column names and values) and gives an informative error message when a correction is required.
+See the [data checks](https://hakaiinstitute.github.io/kelpbio/reference/index.html#data-checks) in the reference for details on the format requirements.
+
+```{r, error = TRUE}
+kb_check_data_weight_nereo(data_weight_sim_nereo)
+
+kb_check_data_weight_nereo(data_weight_sim_nereo[, c("diameter_mm", "site")])
+```

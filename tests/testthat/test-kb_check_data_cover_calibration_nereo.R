@@ -4,7 +4,7 @@ test_that("valid nereo calibration data passes invisibly, including zero canopy 
   expect_identical(kb_check_data_cover_calibration_nereo(data), data)
 })
 
-test_that("rows without drone cover and extra columns pass", {
+test_that("rows without plot cover and extra columns pass", {
   data <- survey_biomass()
   data[2, c("plot_area_m2", "canopy_area_m2", "canopy_tide_height_m")] <- NA
   data$region <- "north"
@@ -21,7 +21,7 @@ test_that("data without biomass draws errors, pointing to kb_predict_biomass_in_
   expect_snapshot(kb_check_data_cover_calibration_nereo(data), error = TRUE)
 })
 
-test_that("bad drone columns error naming the column", {
+test_that("bad plot cover columns error naming the column", {
   good <- survey_biomass()
   bad <- good
   bad$canopy_area_m2[1] <- 250

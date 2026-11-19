@@ -1,34 +1,26 @@
 #' Predict biomass from canopy cover
 #'
-#' Predict the expected wet biomass (kg/m²) of a plot from its drone canopy
-#' cover.
+#' Predict the expected wet biomass (kg/m²) of a plot from its plot cover.
 #'
 #' @details
-#' Cover is tide-corrected and capped at 1, as in the fit; a row with canopy at
-#' a tide height at or above `1 / tide_height_slope` is fully covered, and a
-#' row past that limit on more than 5% of draws warns. Canopy already corrected
-#' for tide is passed with
-#' `canopy_tide_height_m = 0`. A row with no canopy predicts the biomass floor, which
-#' is the same for every site and year.
-#'
-#' The prediction is the expected biomass: the Gamma mean `mu`, times the
-#' probability that the plot holds plants where the fit has a presence part.
-#' [kb_predict_biomass_canopy()] applies `mu` at full cover, without the
-#' presence probability. When `new_data = NULL`, the in situ survey biomass
-#' columns are kept; use [augment()] for the fitted values next to them.
+#' Cover is tide-corrected and capped at full cover, 100% (see
+#' [Methods](https://hakaiinstitute.github.io/kelpbio/articles/methods.html#cover-calibration)).
+#' A warning is given if a row is past the tide limit on more than 5% of draws.
+#' When the fit has a presence part (when any survey in its data counted no
+#' plants), the prediction includes the probability that the plot holds plants.
 #'
 #' @inheritParams params
 #' @param fit A `kb_fit_cover_calibration` object.
 #' @param new_data A data frame of the rows to predict at, with
 #'   `canopy_area_m2` (the canopy area in the plot, m²), `plot_area_m2` (the
-#'   plot area, m²), `canopy_tide_height_m` (the tide height, m), and optionally `site`
-#'   and `year`, or `NULL` for the observed surveys.
+#'   plot area, m²), `canopy_tide_height_m` (the tide height, m), and
+#'   optionally `site` and `year`, or `NULL` for the observed surveys.
+#'   `year` may be numeric or character: `2022` and `"2022"` match the same
+#'   fitted year.
 #'
-#' @returns A `kb_predictions` object: the rows of `new_data` with added
-#'   `estimate`, `lower`, and `upper` columns summarising the posterior
-#'   distribution of the expected wet biomass per m² of plot. When the rows
-#'   have `site` and `year`, a `cover_support` column (as in
-#'   [kb_predict_biomass_canopy()]) precedes the summary.
+#' @returns A `kb_predictions` object: the rows of `new_data` with
+#'   `cover_support` (when the rows have a site and year), `estimate`, `lower`,
+#'   and `upper`.
 #' @family prediction functions
 #' @seealso [kb_new_data()] to build rows by site or year over tide-corrected
 #'   cover.
@@ -76,7 +68,11 @@ kb_predict_cover_calibration <- function(
   )
   if (!is.null(new_data)) {
     warn_tide_cap(
-      tide_cap_share(new_data$canopy_area_m2, new_data$canopy_tide_height_m, fit$draws$tide_height_slope),
+      tide_cap_share(
+        new_data$canopy_area_m2,
+        new_data$canopy_tide_height_m,
+        fit$draws$tide_height_slope
+      ),
       "`new_data`",
       rows = "row",
       cap = "the plot area (full cover)",

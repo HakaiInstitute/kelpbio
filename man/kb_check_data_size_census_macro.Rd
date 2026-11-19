@@ -23,9 +23,7 @@ Check that \code{data} has the columns and values of a census of every
 \code{\link[=kb_predict_biomass_in_situ]{kb_predict_biomass_in_situ()}}.
 }
 \details{
-Each row is one counted plant, an individual (sporophyte) identified by its
-holdfast. The plant's site and year are those of its survey (see
-\code{\link[=kb_check_data_in_situ]{kb_check_data_in_situ()}}).
+Each row is one counted plant; its site and year are those of its survey.
 Required columns:
 \itemize{
 \item \code{survey_id}, the survey the plant was counted in (a survey_id of the in situ data).
@@ -37,7 +35,7 @@ Optional columns:
 \item \code{partial}, whether the plant counts as half, such as a plant on the edge of a transect (TRUE or FALSE).
 }
 
-Columns have no missing values; other columns are ignored.
+Other columns are ignored.
 }
 \examples{
 kb_check_data_size_census_macro(data_size_census_sim_macro)
@@ -47,20 +45,21 @@ kb_check_data_size_census_macro(data_size_census_sim_macro)
 tallied rather than measured.
 
 Other data checks:
-\code{\link[=kb_check_data_canopy]{kb_check_data_canopy()}},
 \code{\link[=kb_check_data_carbon_macro]{kb_check_data_carbon_macro()}},
 \code{\link[=kb_check_data_carbon_nereo]{kb_check_data_carbon_nereo()}},
 \code{\link[=kb_check_data_cover_calibration_macro]{kb_check_data_cover_calibration_macro()}},
 \code{\link[=kb_check_data_cover_calibration_nereo]{kb_check_data_cover_calibration_nereo()}},
-\code{\link[=kb_check_data_in_situ]{kb_check_data_in_situ()}},
 \code{\link[=kb_check_data_nitrogen_macro]{kb_check_data_nitrogen_macro()}},
 \code{\link[=kb_check_data_nitrogen_nereo]{kb_check_data_nitrogen_nereo()}},
 \code{\link[=kb_check_data_size_census_nereo]{kb_check_data_size_census_nereo()}},
 \code{\link[=kb_check_data_size_sample_nereo]{kb_check_data_size_sample_nereo()}},
+\code{\link[=kb_check_data_survey_canopy]{kb_check_data_survey_canopy()}},
+\code{\link[=kb_check_data_survey_in_situ]{kb_check_data_survey_in_situ()}},
 \code{\link[=kb_check_data_weight_macro]{kb_check_data_weight_macro()}},
 \code{\link[=kb_check_data_weight_nereo]{kb_check_data_weight_nereo()}},
 \code{\link[=kb_check_data_wetdry_macro]{kb_check_data_wetdry_macro()}},
 \code{\link[=kb_check_data_wetdry_nereo]{kb_check_data_wetdry_nereo()}},
-\code{\link[=kb_data_columns]{kb_data_columns()}}
+\code{\link[=kb_data_columns]{kb_data_columns()}},
+\code{\link[=kb_datasets]{kb_datasets()}}
 }
 \concept{data checks}

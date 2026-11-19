@@ -22,47 +22,49 @@ Check that \code{data} has the columns and values needed to fit the
 \emph{Macrocystis pyrifera} cover calibration model.
 }
 \details{
-\code{data} is the output of \code{\link[=kb_predict_biomass_in_situ]{kb_predict_biomass_in_situ()}} with its defaults, one
-row per in situ survey.
+\code{data} is the output of \code{\link[=kb_predict_biomass_in_situ]{kb_predict_biomass_in_situ()}}, one row per in situ
+survey.
 Required columns:
 \itemize{
 \item \code{biomass_kg_m2}, the draws of the survey's wet biomass per m² (kg/m², >= 0).
 \item \code{site}, the site surveyed (any text).
 \item \code{year}, the year of the survey (whole number or text).
-\item \code{plot_area_m2}, the area of the plot polygon the canopy cover is measured over (m², > 0, or missing).
+\item \code{plot_area_m2}, the area of the plot polygon bounding the survey area that the canopy cover is measured over (m², > 0, or missing).
 \item \code{canopy_area_m2}, the canopy area delineated within the plot polygon (m², >= 0 and <= plot_area_m2, or missing).
 \item \code{canopy_tide_height_m}, the tide height when the canopy was imaged, relative to chart datum (m, any number, or missing).
 }
 
-\code{plot_area_m2}, \code{canopy_area_m2}, and \code{canopy_tide_height_m} are given
-together or missing together on each row. A row without them has no
-canopy cover and is not fitted. Other columns are ignored.
+Other columns are ignored.
+
+The plot cover columns are given or missing together; a row without them is
+not fitted.
 }
 \examples{
 biomass <- kb_predict_biomass_in_situ(
   fit_weight_sim_macro,
   data_size_census_sim_macro,
-  data_in_situ_sim_macro,
+  data_survey_in_situ_sim_macro,
   progress = "none"
 )
 kb_check_data_cover_calibration_macro(biomass)
 }
 \seealso{
 Other data checks:
-\code{\link[=kb_check_data_canopy]{kb_check_data_canopy()}},
 \code{\link[=kb_check_data_carbon_macro]{kb_check_data_carbon_macro()}},
 \code{\link[=kb_check_data_carbon_nereo]{kb_check_data_carbon_nereo()}},
 \code{\link[=kb_check_data_cover_calibration_nereo]{kb_check_data_cover_calibration_nereo()}},
-\code{\link[=kb_check_data_in_situ]{kb_check_data_in_situ()}},
 \code{\link[=kb_check_data_nitrogen_macro]{kb_check_data_nitrogen_macro()}},
 \code{\link[=kb_check_data_nitrogen_nereo]{kb_check_data_nitrogen_nereo()}},
 \code{\link[=kb_check_data_size_census_macro]{kb_check_data_size_census_macro()}},
 \code{\link[=kb_check_data_size_census_nereo]{kb_check_data_size_census_nereo()}},
 \code{\link[=kb_check_data_size_sample_nereo]{kb_check_data_size_sample_nereo()}},
+\code{\link[=kb_check_data_survey_canopy]{kb_check_data_survey_canopy()}},
+\code{\link[=kb_check_data_survey_in_situ]{kb_check_data_survey_in_situ()}},
 \code{\link[=kb_check_data_weight_macro]{kb_check_data_weight_macro()}},
 \code{\link[=kb_check_data_weight_nereo]{kb_check_data_weight_nereo()}},
 \code{\link[=kb_check_data_wetdry_macro]{kb_check_data_wetdry_macro()}},
 \code{\link[=kb_check_data_wetdry_nereo]{kb_check_data_wetdry_nereo()}},
-\code{\link[=kb_data_columns]{kb_data_columns()}}
+\code{\link[=kb_data_columns]{kb_data_columns()}},
+\code{\link[=kb_datasets]{kb_datasets()}}
 }
 \concept{data checks}

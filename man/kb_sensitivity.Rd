@@ -29,39 +29,12 @@ Assess how much each parameter's posterior depends on its prior and on the
 data, by power-scaling (Kallioinen et al. 2024).
 }
 \details{
-Power-scaling raises the prior, or the likelihood, to a power slightly above
-and below 1 and measures how far each parameter's posterior moves, as a
-cumulative Jensen-Shannon (CJS) distance.
-
-Each parameter falls into one of four cases:
-\itemize{
-\item \code{weak_prior} and \code{strong_data}: the estimate is driven by the data, the
-desirable case.
-\item \code{strong_data} but not \code{weak_prior}: the prior and the data both move the
-estimate, a possible conflict between them. Check whether the prior is
-consistent with what the data show.
-\item neither: the prior dominates and the data say little about the parameter.
-The estimate reflects the prior, so the prior needs a justification.
-\item \code{weak_prior} but not \code{strong_data}: neither moves the estimate much, often a
-parameter the data identify only weakly.
-}
-
-A prior that is informative by design is expected to dominate, so a
-parameter with \code{informative_prior = TRUE} and neither flag is not a problem.
-The only such parameter is the cover calibration's \code{tide_height_slope}: its
-default prior is the published response of canopy area to tide height
-(Timmer et al. 2024), and few in situ surveys span enough tide range to estimate it.
-It is marked whatever prior the fit used.
-
-Each \code{term} is also the name of its prior's entry in the list from the
-model's \verb{kb_priors_*()} function, so to change a flagged prior, edit that
-entry and refit. Random-effect levels are not assessed; their standard
-deviations (\code{sd_site}, \code{sd_year}, \code{sd_site_year}) carry the sensitivity of
-each random effect.
-
-Requires the priorsense package. Its functions, such as
-\code{priorsense::powerscale_sensitivity()} and \code{priorsense::powerscale_plot_dens()},
-also accept a fit directly, over the same parameters.
+A parameter is driven by the data when it has both \code{weak_prior} and
+\code{strong_data}; see the
+\href{https://hakaiinstitute.github.io/kelpbio/articles/advanced.html#prior-sensitivity}{Advanced article}
+for the other cases. The cover calibration's \code{tide_height_slope} has an
+informative prior by design, so \code{informative_prior} marks it.
+Requires the priorsense package.
 }
 \examples{
 \dontshow{if (rlang::is_installed("priorsense")) withAutoprint(\{ # examplesIf}
@@ -72,12 +45,6 @@ kb_sensitivity(fit_weight_sim_nereo)
 Kallioinen, N., Paananen, T., Bürkner, P.-C., and Vehtari, A. (2024).
 Detecting and diagnosing prior and likelihood sensitivity with power-scaling.
 Statistics and Computing, 34, 57.
-
-Timmer, B., Reshitnyk, L. Y., Hessing-Lewis, M., Juanes, F., Gendall, L.,
-and Costa, M. (2024). Capturing accurate kelp canopy extent: integrating
-tides, currents, and species-level morphology in kelp remote sensing.
-\emph{Frontiers in Environmental Science}, 12, 1338483.
-\doi{10.3389/fenvs.2024.1338483}
 }
 \seealso{
 Other diagnostics:

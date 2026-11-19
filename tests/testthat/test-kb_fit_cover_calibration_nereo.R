@@ -3,7 +3,7 @@ input <- function() calibration_input(cover_calibration_nereo_fit)
 test_that("kb_fit_cover_calibration_nereo returns a correctly-structured object", {
   skip_on_cran()
   withr::local_seed(1)
-  survey <- subset(data_in_situ_sim_nereo, as.integer(site) <= 4)
+  survey <- subset(data_survey_in_situ_sim_nereo, as.integer(site) <= 4)
   biomass <- kb_predict_biomass_in_situ(
     fit_weight_sim_nereo,
     fit_size_sim_nereo,
@@ -50,7 +50,7 @@ test_that("the fit records the species, response, predictor, and no site:year", 
   expect_identical(fit$meta$terms$random, c("site_effect", "year_effect"))
 })
 
-test_that("surveys without drone cover are not fitted, with a message", {
+test_that("surveys without plot cover are not fitted, with a message", {
   local_fit_stan_stub(cover_calibration_nereo_fit)
   data <- input()
   data[1, c("plot_area_m2", "canopy_area_m2", "canopy_tide_height_m")] <- NA

@@ -1,4 +1,5 @@
-# Dev build / QC for kelpbio: rstan_config(), install, document, then test.
+# Dev build / QC for kelpbio: rstan_config(), install (with the vignettes),
+# document, then test.
 #
 #   Rscript scripts/build.R                       routine build
 #   Rscript scripts/build.R --fits                + rebuild all pre-fits and fixtures (MCMC)
@@ -58,7 +59,9 @@ if (any(file.size(stan_objs) > 15e6)) {
 # load_all()/test() do not re-transpile inst/stan/*.stan.
 rstantools::rstan_config()
 # Before document(), whose load_all() would leave debug objects to reuse.
-devtools::install(build = FALSE, quick = TRUE, upgrade = FALSE)
+# Built first, so the vignettes are knitted and installed with the package, as
+# kelpbioshiny shows the installed Methods and Get started vignettes.
+devtools::install(build_vignettes = TRUE, upgrade = FALSE)
 devtools::document()
 
 # Each script runs in a fresh R process and load_all()s the current source.
@@ -89,5 +92,7 @@ if (full_check) {
 }
 
 if (build_site) {
-  pkgdown::build_site()
+  # The optimized install above; reinstalling would reuse the debug objects
+  # that document()/test() leave in src/, slowing the articles' fits ~20x.
+  pkgdown::build_site(install = FALSE)
 }

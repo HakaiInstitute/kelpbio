@@ -10,11 +10,9 @@
 #' cat(doc_data_columns("nitrogen_nereo"))
 #' ```
 #'
-#' Required columns have no missing values. The model's response is the
-#' nitrogen fraction, the nitrogen mass divided by the sample mass. A warning gives
-#' the number of samples whose nitrogen fraction falls outside 0.002 to 0.05, the
-#' plausible range for kelp tissue; they are kept, not removed. Other columns
-#' are ignored.
+#' A warning gives the number of samples whose nitrogen fraction (nitrogen mass
+#' over sample mass) falls outside 0.002 to 0.05, the plausible range for kelp
+#' tissue; they are kept.
 #'
 #' @inheritParams params
 #' @param data A data frame of nitrogen observations, one row per sample.

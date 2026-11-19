@@ -5,37 +5,31 @@
 \alias{data_size_sample_sim_nereo}
 \title{Simulated Nereocystis size sample data}
 \format{
-A data frame with columns:
-\describe{
-\item{diameter_mm}{Plant diameter (mm), a positive number.}
-\item{site}{Site, a factor (12 levels).}
-\item{year}{Year, a factor (5 levels).}
-}
+A data frame with the columns of
+\code{\link[=kb_check_data_size_sample_nereo]{kb_check_data_size_sample_nereo()}}.
 }
 \usage{
 data_size_sample_sim_nereo
 }
 \description{
-A small simulated dataset of plant diameter, one row per plant of
-a sample measured for the size model, for runnable examples. One of four
-simulated \emph{Nereocystis} datasets with shared sites and years, so their fits
-can be combined into in situ survey biomass (see \code{\link[=kb_predict_biomass_in_situ]{kb_predict_biomass_in_situ()}}). Some
+A small simulated dataset of measured plants, for runnable examples. It
+shares sites and years with the other simulated \emph{Nereocystis} datasets; some
 site-years have no size data.
 }
 \seealso{
 \link{fit_size_sim_nereo} for a fit to this dataset.
 
 Other example datasets:
-\code{\link{data_canopy_sim_macro}},
-\code{\link{data_canopy_sim_nereo}},
 \code{\link{data_carbon_sim_macro}},
 \code{\link{data_carbon_sim_nereo}},
-\code{\link{data_in_situ_sim_macro}},
-\code{\link{data_in_situ_sim_nereo}},
 \code{\link{data_nitrogen_sim_macro}},
 \code{\link{data_nitrogen_sim_nereo}},
 \code{\link{data_size_census_sim_macro}},
 \code{\link{data_size_census_sim_nereo}},
+\code{\link{data_survey_canopy_sim_macro}},
+\code{\link{data_survey_canopy_sim_nereo}},
+\code{\link{data_survey_in_situ_sim_macro}},
+\code{\link{data_survey_in_situ_sim_nereo}},
 \code{\link{data_weight_sim_macro}},
 \code{\link{data_weight_sim_nereo}},
 \code{\link{data_wetdry_sim_macro}},

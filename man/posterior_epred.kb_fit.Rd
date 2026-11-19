@@ -16,28 +16,32 @@
 \item{object}{A \code{kb_fit} object.}
 
 \item{new_data}{A data frame with the fit's predictor column (and optional
-\code{site} and \code{year} columns), or \code{NULL} for the observed data.}
+\code{site} and \code{year} columns), or \code{NULL} for the observed data.
+\code{year} may be numeric or character: \code{2022} and \code{"2022"} match the same
+fitted year.}
 
 \item{...}{These dots are for future extensions and must be empty.}
 
-\item{new_levels}{A string giving how uncertainty is shown for a site or
-year not in the fit, or when \code{new_data} has no \code{site} or \code{year} column.
-Sites and years in the fit always use their own estimates; a \code{year} of
-whole numbers matches the fitted year of the same value. One of:
+\item{new_levels}{A string giving how uncertainty is estimated for a site or
+year not in the data used to fit the model, or when \code{new_data} has no
+\code{site} or \code{year} column. Sites and years in the model fit always use their
+own estimates. One of:
 \itemize{
-\item \code{"average"} (the default): the typical site or year. The interval
-covers uncertainty in the typical value only. Use it to describe an
-average site or year.
-\item \code{"sample"}: a new effect for each new site or year,
-drawn from the estimated variation among sites or among years. The
-estimate is about the same, but the interval also includes that
-variation. Use it to get realistic uncertainty about a particular site
-or year the model has no data on. The interval varies slightly between
-calls; use \code{set.seed()} to reproduce it.
+\item \code{"average"} (the default): the typical site or year. The site and year
+effects are set to 0, their mean, so the interval does not include
+among-site or among-year variation. Use it to describe an average site or
+year.
+\item \code{"sample"}: a new effect for each new site or year, drawn from the
+estimated variation among sites or among years (the random-effect
+standard deviation). The point estimate is equivalent, but the interval
+is wider since it also includes that variation. Use it to get realistic
+uncertainty about a particular site or year that the model has no
+information on. The interval varies slightly between calls; use
+\code{set.seed()} to reproduce it.
 }}
 
 \item{representative_site}{A character vector of sites in the fit whose
-effects a new site takes (averaged when several are named), or \code{NULL} (the
+effects a new site adopts (averaged when several are named), or \code{NULL} (the
 default) to follow \code{new_levels}.}
 }
 \value{
@@ -47,18 +51,14 @@ A draws-by-observations (\verb{D x N}) matrix.
 Draws of the expected response.
 }
 \details{
-Each draw is the expected response given that draw's parameters:
-\itemize{
-\item \emph{Nereocystis} weight: the lognormal mean.
-\item \emph{Macrocystis} weight: the Gamma mean.
-\item \emph{Nereocystis} size: the Weibull mean.
-\item Wet/dry: the mean dry:wet ratio.
-\item Carbon: the mean carbon fraction.
-\item Cover calibration: the Gamma mean \code{mu}, times the probability that the
-plot holds plants where the fit has a presence part.
-}
+Each draw is the expected response, the mean of the fit's likelihood (see
+\code{\link[=kb_model_describe]{kb_model_describe()}}), given that draw's parameters. For a cover
+calibration with a presence part, it includes the probability that the plot
+has plants present. For a \emph{Nereocystis} weight fit, which is modelled on the
+log scale, it is the mean weight, not the median.
 
-For draws that include observation noise, use \code{\link[=posterior_predict]{posterior_predict()}}.
+For draws of new observations, which include residual variation, use
+\code{\link[=posterior_predict]{posterior_predict()}}.
 
 A \code{site} (and optionally \code{year}) column in \code{new_data} with levels in the fit
 gives predictions for those levels. With \code{new_data = NULL} the observed data

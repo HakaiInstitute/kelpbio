@@ -93,7 +93,7 @@ data_columns <- local({
     "Whether the plant counts as half, such as a plant on the edge of a transect.",
     "FALSE"
   )
-  drone <- function(required, missing) {
+  plot_cover <- function(required, missing) {
     or_missing <- if (missing) ", or missing" else ""
     dplyr::bind_rows(
       col(
@@ -102,7 +102,7 @@ data_columns <- local({
         "numeric",
         m2,
         paste0("> 0", or_missing),
-        "The area of the plot polygon the canopy cover is measured over.",
+        "The area of the plot polygon bounding the survey area that the canopy cover is measured over.",
         "232.5"
       ),
       col(
@@ -179,7 +179,7 @@ data_columns <- local({
     ),
     site("The site surveyed.", "otter_cove"),
     year("The year of the survey."),
-    drone(required = TRUE, missing = TRUE)
+    plot_cover(required = TRUE, missing = TRUE)
   )
 
   datasets <- list(
@@ -210,7 +210,7 @@ data_columns <- local({
       fronds,
       partial
     ),
-    in_situ = dplyr::bind_rows(
+    survey_in_situ = dplyr::bind_rows(
       col(
         "survey_id",
         TRUE,
@@ -228,7 +228,7 @@ data_columns <- local({
         "numeric",
         m2,
         "> 0",
-        "The area searched for plants.",
+        "The area surveyed for plants.",
         "182.3"
       ),
       col(
@@ -240,9 +240,9 @@ data_columns <- local({
         "The number of plants counted, given only when sizes come from a size sample.",
         "360"
       ),
-      drone(required = FALSE, missing = TRUE)
+      plot_cover(required = FALSE, missing = TRUE)
     ),
-    canopy = dplyr::bind_rows(
+    survey_canopy = dplyr::bind_rows(
       site("The site mapped.", "otter_cove"),
       year("The year of the map."),
       col(
@@ -294,6 +294,27 @@ data_column_names <- function(dataset, required = TRUE) {
   rows$column
 }
 
+# What one row of each dataset holds, as markdown (column names in backticks),
+# returned by kb_datasets(), in the order of the data dictionary.
+data_rows <- tibble::tribble(
+  ~dataset, ~row,
+  "weight_nereo", "Harvested plant, with its size, wet weight, `site`, and `year`",
+  "weight_macro", "Harvested plant, with its size, wet weight, `site`, and `year`",
+  "size_sample_nereo", "Measured plant, with its size, `site`, and `year`",
+  "size_census_nereo", "Counted plant, with its size and the `survey_id` of its survey; a `partial` plant counts as half",
+  "size_census_macro", "Counted plant, with its size and the `survey_id` of its survey; a `partial` plant counts as half",
+  "survey_in_situ", "In situ survey, with its `survey_id`, `site`, `year`, and survey area, and, where the canopy was mapped over it, its plot cover",
+  "survey_canopy", "Canopy map, with its `site`, `year`, and mapped canopy",
+  "wetdry_nereo", "Tissue sample, with no site or year",
+  "wetdry_macro", "Tissue sample, with no site or year",
+  "carbon_nereo", "Tissue sample, with no site or year",
+  "carbon_macro", "Tissue sample, with no site or year",
+  "nitrogen_nereo", "Tissue sample, with no site or year",
+  "nitrogen_macro", "Tissue sample, with no site or year",
+  "cover_calibration_nereo", "In situ survey, with its estimated biomass and plot cover",
+  "cover_calibration_macro", "In situ survey, with its estimated biomass and plot cover"
+)
+
 # The column lists of a data check topic, as markdown.
 doc_data_columns <- function(dataset) {
   rows <- data_columns[data_columns$dataset == dataset, ]
@@ -317,7 +338,8 @@ doc_data_columns <- function(dataset) {
   paste(
     c(
       section("Required columns:", rows$required),
-      section("Optional columns:", !rows$required)
+      section("Optional columns:", !rows$required),
+      "Other columns are ignored."
     ),
     collapse = "\n"
   )

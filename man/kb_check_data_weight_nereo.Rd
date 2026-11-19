@@ -30,10 +30,11 @@ Required columns:
 \item \code{year}, the year the plant was sampled (whole number or text).
 }
 
+Other columns are ignored.
+
 \code{diameter_mm} is any plant diameter that relates to weight as a power law,
 such as the maximum sub-bulb diameter, the diameter 15 cm below the
-sub-bulb, or the bulb diameter. Required columns have no missing values;
-other columns are ignored.
+sub-bulb, or the bulb diameter.
 }
 \examples{
 data <- data.frame(
@@ -44,20 +45,21 @@ kb_check_data_weight_nereo(data)
 }
 \seealso{
 Other data checks:
-\code{\link[=kb_check_data_canopy]{kb_check_data_canopy()}},
 \code{\link[=kb_check_data_carbon_macro]{kb_check_data_carbon_macro()}},
 \code{\link[=kb_check_data_carbon_nereo]{kb_check_data_carbon_nereo()}},
 \code{\link[=kb_check_data_cover_calibration_macro]{kb_check_data_cover_calibration_macro()}},
 \code{\link[=kb_check_data_cover_calibration_nereo]{kb_check_data_cover_calibration_nereo()}},
-\code{\link[=kb_check_data_in_situ]{kb_check_data_in_situ()}},
 \code{\link[=kb_check_data_nitrogen_macro]{kb_check_data_nitrogen_macro()}},
 \code{\link[=kb_check_data_nitrogen_nereo]{kb_check_data_nitrogen_nereo()}},
 \code{\link[=kb_check_data_size_census_macro]{kb_check_data_size_census_macro()}},
 \code{\link[=kb_check_data_size_census_nereo]{kb_check_data_size_census_nereo()}},
 \code{\link[=kb_check_data_size_sample_nereo]{kb_check_data_size_sample_nereo()}},
+\code{\link[=kb_check_data_survey_canopy]{kb_check_data_survey_canopy()}},
+\code{\link[=kb_check_data_survey_in_situ]{kb_check_data_survey_in_situ()}},
 \code{\link[=kb_check_data_weight_macro]{kb_check_data_weight_macro()}},
 \code{\link[=kb_check_data_wetdry_macro]{kb_check_data_wetdry_macro()}},
 \code{\link[=kb_check_data_wetdry_nereo]{kb_check_data_wetdry_nereo()}},
-\code{\link[=kb_data_columns]{kb_data_columns()}}
+\code{\link[=kb_data_columns]{kb_data_columns()}},
+\code{\link[=kb_datasets]{kb_datasets()}}
 }
 \concept{data checks}

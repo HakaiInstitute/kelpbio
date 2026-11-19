@@ -9,8 +9,8 @@
 #'
 #' @inheritParams posterior_epred.kb_fit
 #' @inheritParams params
-#' @param transform A flag specifying whether to apply the inverse link (`exp`,
-#'   or the inverse logit for wet/dry, carbon, and nitrogen).
+#' @param transform A flag specifying whether to apply the inverse of the
+#'   model's link function (see [kb_model_describe()]).
 #'
 #' @returns A draws-by-observations (`D x N`) matrix.
 #' @family fit methods

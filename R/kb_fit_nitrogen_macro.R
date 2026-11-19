@@ -2,7 +2,7 @@
 #'
 #' Fit a nitrogen-fraction model for *Macrocystis pyrifera* via Stan.
 #'
-#' @inherit kb_fit_nitrogen_nereo details sections
+#' @inherit kb_fit_nitrogen_nereo sections
 #' @inheritParams kb_fit_nitrogen_nereo
 #' @param data A data frame of nitrogen observations, one row per sample (see
 #'   [kb_check_data_nitrogen_macro()] for the required columns).

@@ -4,16 +4,15 @@
 #' *Nereocystis luetkeana* cover calibration model.
 #'
 #' @details
-#' `data` is the output of [kb_predict_biomass_in_situ()] with its defaults, one
-#' row per in situ survey.
+#' `data` is the output of [kb_predict_biomass_in_situ()], one row per in situ
+#' survey.
 #'
 #' ```{r, echo = FALSE, results = "asis"}
 #' cat(doc_data_columns("cover_calibration_nereo"))
 #' ```
 #'
-#' `plot_area_m2`, `canopy_area_m2`, and `canopy_tide_height_m` are given
-#' together or missing together on each row. A row without them has no
-#' canopy cover and is not fitted. Other columns are ignored.
+#' The plot cover columns are given or missing together; a row without them is
+#' not fitted.
 #'
 #' @inheritParams params
 #' @param data A data frame of in situ survey biomass, one row per survey.
@@ -26,7 +25,7 @@
 #' biomass <- kb_predict_biomass_in_situ(
 #'   fit_weight_sim_nereo,
 #'   fit_size_sim_nereo,
-#'   data_in_situ_sim_nereo,
+#'   data_survey_in_situ_sim_nereo,
 #'   progress = "none"
 #' )
 #' kb_check_data_cover_calibration_nereo(biomass)

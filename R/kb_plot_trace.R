@@ -4,11 +4,12 @@
 #' and one line per chain, to check that the chains have mixed.
 #'
 #' @details
-#' The terms are those [tidy()] reports: the population-level coefficients and
-#' the random-effect standard deviations. Chains that have mixed overlap and
-#' wander around a common level with no trend; a chain stuck apart from the
-#' others, or a slow drift, points to a convergence problem that [kb_converged()]
-#' and the `converged` column of [summary()][summary.kb_fit()] also report.
+#' The terms are those reported by [tidy()]: the population-level coefficients
+#' and the random-effect standard deviations. Chains that have converged
+#' resemble a "fuzzy caterpillar", overlapping and wandering around a common
+#' value with no trend. A chain stuck apart from the others, or slowly drifting,
+#' indicates a convergence problem, which [kb_converged()], [glance()], and
+#' [summary()][summary.kb_fit()] also report.
 #'
 #' @inheritParams params
 #' @param ncol A whole number of panel columns.
@@ -32,7 +33,10 @@ kb_plot_trace <- function(fit, ..., ncol = 2L) {
     term = factor(rep(terms, each = nrow(draws)), levels = terms),
     chain = factor(rep(draws$.chain, length(terms))),
     iteration = rep(draws$.iteration, length(terms)),
-    value = unlist(lapply(terms, function(term) draws[[term]]), use.names = FALSE)
+    value = unlist(
+      lapply(terms, function(term) draws[[term]]),
+      use.names = FALSE
+    )
   )
   ggplot2::ggplot(
     trace,

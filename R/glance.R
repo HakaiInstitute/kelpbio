@@ -5,28 +5,14 @@
 #' @inheritParams params
 #' @inheritParams kb_converged
 #'
-#' @section Output:
-#'
-#' There are three indicators of convergence in the output:
-#'
-#' - `rhat` is the potential scale reduction factor for the worst-performing
-#'   parameter: a comparison of between- and within-chain variance, with values
-#'   near 1 indicating convergence.
-#' - `ess_bulk` and `ess_tail` are the bulk and tail effective sample sizes for
-#'   the worst-performing parameter: the number of independent draws worth of
-#'   information about the centre and the tails of its posterior.
-#' - `perc_divergent` is the divergent transition rate: the divergent
-#'   transitions divided by the number of saved draws (i.e., post-thinning),
-#'   expressed as a percentage.
-#'
-#' @inheritSection kb_converged Assessing convergence
-#' @inheritSection kb_converged Resolving convergence failure
-#' @seealso [kb_converged()]
+#' @seealso [kb_converged()] for the convergence thresholds and what to do
+#'   when they fail.
 #'
 #' @returns A one-row tibble with `n` (the number of observations), `K` (the
 #'   number of terms [tidy()] reports, excluding the per-level group effects),
-#'   `nchains`, `niters`, `nthin`, `ess_bulk`, `ess_tail`, `rhat`,
-#'   `perc_divergent`, and `converged` (from [kb_converged()]).
+#'   `nchains`, `niters`, `nthin`, the worst `ess_bulk`, `ess_tail`, and `rhat`
+#'   across parameters, `perc_divergent` (the percentage of saved draws that
+#'   ended in a divergent transition), and `converged` (from [kb_converged()]).
 #' @family fit methods
 #' @exportS3Method generics::glance
 #' @examples

@@ -4,29 +4,11 @@
 #' `kb_predict_*()` function).
 #'
 #' @details
-#' Called with just the predictions, the plot configures itself: the x-axis,
-#' faceting, and geometry are chosen from the predictions. The result is a
-#' standard `ggplot` that can be refined with `+` (scales, labels, themes,
-#' `coord_flip()`).
-#'
-#' Predictions over a grid of predictor values (as from [kb_new_data()]) are
-#' drawn as a line and compatibility-interval ribbon; others as points with
-#' intervals, or with `geom = "bar"` as columns from zero with intervals.
-#' Columns suit a quantity that is a total or stock, such as biomass by year;
-#' they need linear axes and are not available for a curve. Override the chosen
-#' x-axis with `x`.
-#'
-#' Axes are linear by default, with the y-axis extended to zero. Weights and
-#' biomass often span orders of magnitude; `log_axis = "y"` shows
-#' them on a log scale, and `log_axis = "xy"` also log-scales a numeric x-axis,
-#' as for a weight curve. A log axis says so in its title. Values on a log axis
-#' must be positive. Numeric axes are labelled as plain numbers with thousands
-#' separators (`200,000`, not `2e+05`).
-#'
-#' The plot sets no theme, so it takes the active one
-#' ([ggplot2::theme_get()]); add a theme with `+` to change it.
-#'
-#' Only the predictions are drawn; add raw data as a ggplot2 layer.
+#' The x-axis, facets, and geometry are chosen from the predictions:
+#' predictions over a grid of predictor values (as from [kb_new_data()]) are
+#' drawn as a line and compatibility-interval ribbon, and others as points or
+#' columns with intervals. The result is a `ggplot` that can be extended with
+#' `+`, for example to add the raw data as a layer.
 #'
 #' @inheritParams params
 #' @param predictions A `kb_predictions` object.
@@ -76,7 +58,7 @@
 #' # Canopy biomass by year (columns):
 #' kb_predict_biomass_canopy(
 #'   fit_cover_calibration_sim_nereo,
-#'   data_canopy_sim_nereo,
+#'   data_survey_canopy_sim_nereo,
 #'   pool_by = "year"
 #' ) |>
 #'   kb_plot_predictions(geom = "bar")
@@ -170,9 +152,10 @@ kb_plot_predictions <- function(
       ) +
       ggplot2::geom_line()
   } else if (style == "bar") {
-    # Translucent columns keep the interval visible inside them.
+    # A light solid fill keeps the interval visible inside the columns; the
+    # interval is drawn after the columns so it stays on top.
     gg <- gg +
-      ggplot2::geom_col(alpha = 0.5) +
+      ggplot2::geom_col(fill = "grey70") +
       ggplot2::geom_linerange(
         ggplot2::aes(ymin = .data$lower, ymax = .data$upper)
       )

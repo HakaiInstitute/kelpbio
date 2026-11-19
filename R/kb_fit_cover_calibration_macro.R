@@ -1,44 +1,14 @@
 #' Fit a Macrocystis cover calibration model
 #'
-#' Fit a calibration of in situ survey biomass on drone canopy cover for
+#' Fit a calibration of in situ survey biomass on plot cover for
 #' *Macrocystis pyrifera* via Stan.
 #'
-#' @details
-#' `data` is the output of [kb_predict_biomass_in_situ()] with its defaults: wet
-#' biomass per m² of each in situ survey, with the survey's drone cover on its
-#' row. Each survey with drone cover is one observation; surveys without it
-#' are not fitted, and a message gives their number. The calibration takes each
-#' survey's biomass per m² as that of its plot.
-#'
-#' A survey's mean wet biomass (kg/m²) is modelled with a Gamma likelihood with
-#' mean `mu = biomass_floor + cover_slope * exp(site_effect + year_effect) *
-#' cover`: `cover_slope` is the wet biomass per m² of canopy at a typical site
-#' and year, and `biomass_floor`, common to all sites and years, the wet
-#' biomass of a plot with no delineated canopy. Its coefficient of variation
-#' (CV) is `sqrt(cv_residual^2 + weight_cv^2)`, where `weight_cv` is the CV of
-#' the survey's biomass draws, from plant weight.
-#'
-#' When `data` holds a survey with no plants counted, the model adds a
-#' presence part: a survey holds plants with probability `p`, where
-#' `logit(p) = presence_intercept + presence_cover_slope * 100 * cover`, and
-#' its biomass is Gamma only where it does, so the expected biomass is
-#' `p * mu`. The fit warns when every survey with no plants has a percent
-#' canopy cover at or below every survey with plants, since
-#' `presence_cover_slope` then follows its prior.
-#'
-#' `cover` is `canopy_area_m2 / (1 - tide_height_slope * canopy_tide_height_m)` over
-#' the plot area, capped at 1 (Timmer et al. 2024); a survey with canopy at a
-#' tide height at or above `1 / tide_height_slope` is fully covered, and the fit
-#' warns when that holds with more than 5% prior probability. The default prior
-#' on `tide_height_slope` largely sets the correction: raise its mean for beds in
-#' strong current. Imagery at a tide of 2 m or below follows published practice and stays
-#' below the tide limit. Pass canopy already corrected for tide with
-#' `canopy_tide_height_m = 0`.
-#'
+#' @inherit kb_fit_cover_calibration_nereo details
+#' @inheritSection params Model
 #' @inheritSection params Sampling
 #' @inheritParams kb_fit_weight_nereo
 #' @inheritParams params
-#' @param data A data frame of in situ survey biomass with drone cover, one row
+#' @param data A data frame of in situ survey biomass with plot cover, one row
 #'   per survey (see [kb_check_data_cover_calibration_macro()] for the columns).
 #' @param priors A named list of prior objects (see
 #'   [kb_priors_cover_calibration_macro()]), or `NULL` to use the defaults.
@@ -47,11 +17,6 @@
 #' @returns A `kb_fit_cover_calibration_macro` object (a `kb_fit`). Its `data`
 #'   holds the fitted surveys, with `biomass_kg_m2` the mean of each survey's
 #'   draws and `biomass_sd_kg_m2` their SD.
-#' @references Timmer, B., Reshitnyk, L. Y., Hessing-Lewis, M., Juanes, F.,
-#'   Gendall, L., and Costa, M. (2024). Capturing accurate kelp canopy extent:
-#'   integrating tides, currents, and species-level morphology in kelp remote
-#'   sensing. *Frontiers in Environmental Science*, 12, 1338483.
-#'   \doi{10.3389/fenvs.2024.1338483}
 #' @family fit functions
 #' @export
 #'
@@ -62,7 +27,7 @@
 #' biomass <- kb_predict_biomass_in_situ(
 #'   fit_weight_sim_macro,
 #'   data_size_census_sim_macro,
-#'   data_in_situ_sim_macro
+#'   data_survey_in_situ_sim_macro
 #' )
 #' fit <- kb_fit_cover_calibration_macro(biomass)
 #' tidy(fit)

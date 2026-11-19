@@ -29,11 +29,11 @@ Required columns:
 \item \code{carbon_mass_ug}, the mass of carbon measured in the sample (µg, > 0 and less than the sample mass).
 }
 
-Required columns have no missing values. The model's response is the
-carbon fraction, the carbon mass divided by the sample mass. A warning gives
-the number of samples whose carbon fraction falls outside 0.10 to 0.50, the
-plausible range for kelp tissue; they are kept, not removed. Other columns
-are ignored.
+Other columns are ignored.
+
+A warning gives the number of samples whose carbon fraction (carbon mass over
+sample mass) falls outside 0.10 to 0.50, the plausible range for kelp
+tissue; they are kept.
 }
 \examples{
 data <- data.frame(sample_mass_mg = c(2.4, 2.7), carbon_mass_ug = c(760, 850))
@@ -41,20 +41,21 @@ kb_check_data_carbon_macro(data)
 }
 \seealso{
 Other data checks:
-\code{\link[=kb_check_data_canopy]{kb_check_data_canopy()}},
 \code{\link[=kb_check_data_carbon_nereo]{kb_check_data_carbon_nereo()}},
 \code{\link[=kb_check_data_cover_calibration_macro]{kb_check_data_cover_calibration_macro()}},
 \code{\link[=kb_check_data_cover_calibration_nereo]{kb_check_data_cover_calibration_nereo()}},
-\code{\link[=kb_check_data_in_situ]{kb_check_data_in_situ()}},
 \code{\link[=kb_check_data_nitrogen_macro]{kb_check_data_nitrogen_macro()}},
 \code{\link[=kb_check_data_nitrogen_nereo]{kb_check_data_nitrogen_nereo()}},
 \code{\link[=kb_check_data_size_census_macro]{kb_check_data_size_census_macro()}},
 \code{\link[=kb_check_data_size_census_nereo]{kb_check_data_size_census_nereo()}},
 \code{\link[=kb_check_data_size_sample_nereo]{kb_check_data_size_sample_nereo()}},
+\code{\link[=kb_check_data_survey_canopy]{kb_check_data_survey_canopy()}},
+\code{\link[=kb_check_data_survey_in_situ]{kb_check_data_survey_in_situ()}},
 \code{\link[=kb_check_data_weight_macro]{kb_check_data_weight_macro()}},
 \code{\link[=kb_check_data_weight_nereo]{kb_check_data_weight_nereo()}},
 \code{\link[=kb_check_data_wetdry_macro]{kb_check_data_wetdry_macro()}},
 \code{\link[=kb_check_data_wetdry_nereo]{kb_check_data_wetdry_nereo()}},
-\code{\link[=kb_data_columns]{kb_data_columns()}}
+\code{\link[=kb_data_columns]{kb_data_columns()}},
+\code{\link[=kb_datasets]{kb_datasets()}}
 }
 \concept{data checks}

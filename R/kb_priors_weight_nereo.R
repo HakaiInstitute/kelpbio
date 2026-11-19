@@ -1,21 +1,11 @@
 #' Default priors for the Nereocystis weight model
 #'
-#' The default priors for the *Nereocystis luetkeana* allometric weight model.
-#' To change a prior, pass a list of the entries to change to the `priors`
-#' argument of [kb_fit_weight_nereo()]; the other entries keep their defaults.
+#' The default priors for the *Nereocystis luetkeana* weight model, for the
+#' `priors` argument of [kb_fit_weight_nereo()]. `weight_floor` applies only to
+#' `form = "packard_floor"`.
 #'
-#' Each entry is named after the parameter it sets, as reported by [tidy()] and
-#' [kb_model_describe()]. The prior family of each entry is fixed; only its
-#' arguments can be changed. `intercept` is on the log of the weight above
-#' the floor at the geometric mean diameter of the data, `diameter_power` is the
-#' allometric exponent, and `weight_floor` is the weight (kg) as diameter
-#' approaches zero, used only by `form = "packard_floor"`. The priors on
-#' `diameter_power` and `weight_floor` are truncated at zero. `sd_residual` is the
-#' residual standard deviation of log weight.
-#'
-#' @returns A named list of prior objects with entries `intercept`,
-#'   `diameter_power`, `weight_floor`, `sd_site`, `sd_year`, `sd_site_year`,
-#'   and `sd_residual`.
+#' @inheritSection params Priors
+#' @returns A named list of prior objects, one per parameter.
 #' @family priors
 #' @export
 #'

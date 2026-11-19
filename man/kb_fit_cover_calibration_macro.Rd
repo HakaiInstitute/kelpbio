@@ -19,7 +19,7 @@ kb_fit_cover_calibration_macro(
 )
 }
 \arguments{
-\item{data}{A data frame of in situ survey biomass with drone cover, one row
+\item{data}{A data frame of in situ survey biomass with plot cover, one row
 per survey (see \code{\link[=kb_check_data_cover_calibration_macro]{kb_check_data_cover_calibration_macro()}} for the columns).}
 
 \item{priors}{A named list of prior objects (see
@@ -49,7 +49,7 @@ preceding \code{set.seed()} also makes the fit reproducible.}
 
 \item{progress}{A string, one of \code{"bar"} (the default, a console progress
 bar), \code{"verbose"} (rstan's per-iteration output and diagnostic warnings), or
-\code{"none"} (silent). Controls fit-time console output only.}
+\code{"none"} (silent).}
 
 \item{progress_dir}{A string giving an existing directory in which to record
 progress for \code{\link[=kb_progress]{kb_progress()}}, or \code{NULL} (the default) to record none.}
@@ -60,51 +60,46 @@ holds the fitted surveys, with \code{biomass_kg_m2} the mean of each survey's
 draws and \code{biomass_sd_kg_m2} their SD.
 }
 \description{
-Fit a calibration of in situ survey biomass on drone canopy cover for
+Fit a calibration of in situ survey biomass on plot cover for
 \emph{Macrocystis pyrifera} via Stan.
 }
 \details{
-\code{data} is the output of \code{\link[=kb_predict_biomass_in_situ]{kb_predict_biomass_in_situ()}} with its defaults: wet
-biomass per m² of each in situ survey, with the survey's drone cover on its
-row. Each survey with drone cover is one observation; surveys without it
-are not fitted, and a message gives their number. The calibration takes each
-survey's biomass per m² as that of its plot.
+\code{data} is the output of \code{\link[=kb_predict_biomass_in_situ]{kb_predict_biomass_in_situ()}} with its defaults.
+Surveys without plot cover are not fitted, and a message gives their number.
+The model is described in
+\href{https://hakaiinstitute.github.io/kelpbio/articles/methods.html#cover-calibration}{Methods}.
 
-A survey's mean wet biomass (kg/m²) is modelled with a Gamma likelihood with
-mean \code{mu = biomass_floor + cover_slope * exp(site_effect + year_effect) * cover}: \code{cover_slope} is the wet biomass per m² of canopy at a typical site
-and year, and \code{biomass_floor}, common to all sites and years, the wet
-biomass of a plot with no delineated canopy. Its coefficient of variation
-(CV) is \code{sqrt(cv_residual^2 + weight_cv^2)}, where \code{weight_cv} is the CV of
-the survey's biomass draws, from plant weight.
-
-When \code{data} holds a survey with no plants counted, the model adds a
-presence part: a survey holds plants with probability \code{p}, where
-\code{logit(p) = presence_intercept + presence_cover_slope * 100 * cover}, and
-its biomass is Gamma only where it does, so the expected biomass is
-\code{p * mu}. The fit warns when every survey with no plants has a percent
-canopy cover at or below every survey with plants, since
-\code{presence_cover_slope} then follows its prior.
-
-\code{cover} is \code{canopy_area_m2 / (1 - tide_height_slope * canopy_tide_height_m)} over
-the plot area, capped at 1 (Timmer et al. 2024); a survey with canopy at a
-tide height at or above \code{1 / tide_height_slope} is fully covered, and the fit
-warns when that holds with more than 5\% prior probability. The default prior
-on \code{tide_height_slope} largely sets the correction: raise its mean for beds in
-strong current. Imagery at a tide of 2 m or below follows published practice and stays
-below the tide limit. Pass canopy already corrected for tide with
+The fit warns when a survey is past the tide limit with more than 5\% prior
+probability, and when every survey with no plants has a plot cover at or
+below that of every survey with plants, since \code{presence_cover_slope} is then
+informed only by its prior. If canopy is already tide-corrected, set
 \code{canopy_tide_height_m = 0}.
 }
+\section{Model}{
+
+\code{\link[=kb_model_describe]{kb_model_describe()}} prints the fitted model, with its priors, in notation
+or as a written description. The
+\href{https://hakaiinstitute.github.io/kelpbio/articles/methods.html}{Methods article}
+describes each model and its assumptions.
+}
+
 \section{Sampling}{
 
-Chains are run in parallel by default. Set \code{options(mc.cores = 1)} (or pass
-\code{cores = 1}) on shared servers, in containers, or inside another parallel
-context.
+Chains run in parallel by default, one core per chain, capped at the cores
+available. \code{cores} sets the number of cores; when it is \code{NULL},
+\code{getOption("mc.cores")} is used if set. Set \code{cores = 1} (or
+\code{options(mc.cores = 1)}) where cores are shared or limited, or inside another
+parallel process.
 
 The sampler runs with \code{adapt_delta = 0.95} by default, which reduces
 divergences at the cost of slightly longer runtime. Override it, or set any
 other sampler control, by passing a \code{control} list through \code{...}, for example
 \code{control = list(adapt_delta = 0.99)}; only the entries supplied are changed.
 See the \code{control} argument of \code{\link[rstan:stan]{rstan::stan()}} for the full set of entries.
+
+By default, each of 4 chains runs 1000 warmup iterations and then saves 1000
+draws with no thinning, giving 4000 draws in total. These match the defaults
+of \code{\link[rstan:stan]{rstan::stan()}} and Stan's general recommendations.
 
 Check convergence with \code{\link[=kb_converged]{kb_converged()}}, \code{\link[=glance]{glance()}}, or \code{\link[=summary]{summary()}}.
 }
@@ -116,18 +111,11 @@ tidy(fit_cover_calibration_sim_macro)
 biomass <- kb_predict_biomass_in_situ(
   fit_weight_sim_macro,
   data_size_census_sim_macro,
-  data_in_situ_sim_macro
+  data_survey_in_situ_sim_macro
 )
 fit <- kb_fit_cover_calibration_macro(biomass)
 tidy(fit)
 \dontshow{\}) # examplesIf}
-}
-\references{
-Timmer, B., Reshitnyk, L. Y., Hessing-Lewis, M., Juanes, F.,
-Gendall, L., and Costa, M. (2024). Capturing accurate kelp canopy extent:
-integrating tides, currents, and species-level morphology in kelp remote
-sensing. \emph{Frontiers in Environmental Science}, 12, 1338483.
-\doi{10.3389/fenvs.2024.1338483}
 }
 \seealso{
 Other fit functions:

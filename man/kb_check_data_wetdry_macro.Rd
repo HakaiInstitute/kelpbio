@@ -29,9 +29,10 @@ Required columns:
 \item \code{dry_mass_g}, the mass of the tissue sample after drying (g, > 0 and < wet_mass_g).
 }
 
-Required columns have no missing values. A warning gives the number of
-samples whose dry:wet ratio falls outside 0.02 to 0.50, the plausible range
-for kelp tissue; they are kept, not removed. Other columns are ignored.
+Other columns are ignored.
+
+A warning gives the number of samples whose dry:wet ratio falls outside 0.02
+to 0.50, the plausible range for kelp tissue; they are kept.
 }
 \examples{
 data <- data.frame(wet_mass_g = c(1.8, 4.6), dry_mass_g = c(0.22, 0.57))
@@ -39,20 +40,21 @@ kb_check_data_wetdry_macro(data)
 }
 \seealso{
 Other data checks:
-\code{\link[=kb_check_data_canopy]{kb_check_data_canopy()}},
 \code{\link[=kb_check_data_carbon_macro]{kb_check_data_carbon_macro()}},
 \code{\link[=kb_check_data_carbon_nereo]{kb_check_data_carbon_nereo()}},
 \code{\link[=kb_check_data_cover_calibration_macro]{kb_check_data_cover_calibration_macro()}},
 \code{\link[=kb_check_data_cover_calibration_nereo]{kb_check_data_cover_calibration_nereo()}},
-\code{\link[=kb_check_data_in_situ]{kb_check_data_in_situ()}},
 \code{\link[=kb_check_data_nitrogen_macro]{kb_check_data_nitrogen_macro()}},
 \code{\link[=kb_check_data_nitrogen_nereo]{kb_check_data_nitrogen_nereo()}},
 \code{\link[=kb_check_data_size_census_macro]{kb_check_data_size_census_macro()}},
 \code{\link[=kb_check_data_size_census_nereo]{kb_check_data_size_census_nereo()}},
 \code{\link[=kb_check_data_size_sample_nereo]{kb_check_data_size_sample_nereo()}},
+\code{\link[=kb_check_data_survey_canopy]{kb_check_data_survey_canopy()}},
+\code{\link[=kb_check_data_survey_in_situ]{kb_check_data_survey_in_situ()}},
 \code{\link[=kb_check_data_weight_macro]{kb_check_data_weight_macro()}},
 \code{\link[=kb_check_data_weight_nereo]{kb_check_data_weight_nereo()}},
 \code{\link[=kb_check_data_wetdry_nereo]{kb_check_data_wetdry_nereo()}},
-\code{\link[=kb_data_columns]{kb_data_columns()}}
+\code{\link[=kb_data_columns]{kb_data_columns()}},
+\code{\link[=kb_datasets]{kb_datasets()}}
 }
 \concept{data checks}

@@ -23,17 +23,17 @@ their types, units, allowed values, and examples.
 }
 \details{
 Each dataset is the data frame checked by the data check of the same name:
-\code{"weight_nereo"} by \code{\link[=kb_check_data_weight_nereo]{kb_check_data_weight_nereo()}}, \code{"in_situ"} by
-\code{\link[=kb_check_data_in_situ]{kb_check_data_in_situ()}}, and so on. A required column must be present; a
-required column has no missing values unless \code{allowed} says otherwise.
-Grouping columns (\code{site}, \code{year}, \code{survey_id}) may also be factors, and a
-numeric \code{year} or \code{survey_id} is used as its character value. Other columns
+\code{"weight_nereo"} by \code{\link[=kb_check_data_weight_nereo]{kb_check_data_weight_nereo()}}, \code{"survey_in_situ"} by
+\code{\link[=kb_check_data_survey_in_situ]{kb_check_data_survey_in_situ()}}, etc. A required column must be present; a
+required column must have no missing values unless \code{allowed} says otherwise.
+Grouping columns (\code{site}, \code{year}, \code{survey_id}) may be factors, and a
+numeric \code{year} or \code{survey_id} is converted to character. Other columns
 are ignored.
 
-The \code{in_situ} column \code{plants} is required when sizes come from a size sample
-and must be absent when they come from a size census. The \code{in_situ} columns
-\code{plot_area_m2}, \code{canopy_area_m2}, and \code{canopy_tide_height_m} are given
-together for a survey with canopy imagery, or left missing together.
+The \code{survey_in_situ} column \code{plants} is required when sizes come from a size
+sample and must be absent when they come from a size census. The
+\code{survey_in_situ} columns \code{plot_area_m2}, \code{canopy_area_m2}, and
+\code{canopy_tide_height_m} are either all present or all missing on each row.
 }
 \examples{
 kb_data_columns("weight_nereo")
@@ -41,20 +41,21 @@ unique(kb_data_columns()$dataset)
 }
 \seealso{
 Other data checks:
-\code{\link[=kb_check_data_canopy]{kb_check_data_canopy()}},
 \code{\link[=kb_check_data_carbon_macro]{kb_check_data_carbon_macro()}},
 \code{\link[=kb_check_data_carbon_nereo]{kb_check_data_carbon_nereo()}},
 \code{\link[=kb_check_data_cover_calibration_macro]{kb_check_data_cover_calibration_macro()}},
 \code{\link[=kb_check_data_cover_calibration_nereo]{kb_check_data_cover_calibration_nereo()}},
-\code{\link[=kb_check_data_in_situ]{kb_check_data_in_situ()}},
 \code{\link[=kb_check_data_nitrogen_macro]{kb_check_data_nitrogen_macro()}},
 \code{\link[=kb_check_data_nitrogen_nereo]{kb_check_data_nitrogen_nereo()}},
 \code{\link[=kb_check_data_size_census_macro]{kb_check_data_size_census_macro()}},
 \code{\link[=kb_check_data_size_census_nereo]{kb_check_data_size_census_nereo()}},
 \code{\link[=kb_check_data_size_sample_nereo]{kb_check_data_size_sample_nereo()}},
+\code{\link[=kb_check_data_survey_canopy]{kb_check_data_survey_canopy()}},
+\code{\link[=kb_check_data_survey_in_situ]{kb_check_data_survey_in_situ()}},
 \code{\link[=kb_check_data_weight_macro]{kb_check_data_weight_macro()}},
 \code{\link[=kb_check_data_weight_nereo]{kb_check_data_weight_nereo()}},
 \code{\link[=kb_check_data_wetdry_macro]{kb_check_data_wetdry_macro()}},
-\code{\link[=kb_check_data_wetdry_nereo]{kb_check_data_wetdry_nereo()}}
+\code{\link[=kb_check_data_wetdry_nereo]{kb_check_data_wetdry_nereo()}},
+\code{\link[=kb_datasets]{kb_datasets()}}
 }
 \concept{data checks}

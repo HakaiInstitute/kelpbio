@@ -22,11 +22,12 @@ Plot the posterior draws of each term against iteration, one panel per term
 and one line per chain, to check that the chains have mixed.
 }
 \details{
-The terms are those \code{\link[=tidy]{tidy()}} reports: the population-level coefficients and
-the random-effect standard deviations. Chains that have mixed overlap and
-wander around a common level with no trend; a chain stuck apart from the
-others, or a slow drift, points to a convergence problem that \code{\link[=kb_converged]{kb_converged()}}
-and the \code{converged} column of \link[=summary.kb_fit]{summary()} also report.
+The terms are those reported by \code{\link[=tidy]{tidy()}}: the population-level coefficients
+and the random-effect standard deviations. Chains that have converged
+resemble a "fuzzy caterpillar", overlapping and wandering around a common
+value with no trend. A chain stuck apart from the others, or slowly drifting,
+indicates a convergence problem, which \code{\link[=kb_converged]{kb_converged()}}, \code{\link[=glance]{glance()}}, and
+\link[=summary.kb_fit]{summary()} also report.
 }
 \examples{
 kb_plot_trace(fit_weight_sim_nereo)

@@ -3,17 +3,14 @@
 #' Draws of the expected response.
 #'
 #' @details
-#' Each draw is the expected response given that draw's parameters:
+#' Each draw is the expected response, the mean of the fit's likelihood (see
+#' [kb_model_describe()]), given that draw's parameters. For a cover
+#' calibration with a presence part, it includes the probability that the plot
+#' has plants present. For a *Nereocystis* weight fit, which is modelled on the
+#' log scale, it is the mean weight, not the median.
 #'
-#' - *Nereocystis* weight: the lognormal mean.
-#' - *Macrocystis* weight: the Gamma mean.
-#' - *Nereocystis* size: the Weibull mean.
-#' - Wet/dry: the mean dry:wet ratio.
-#' - Carbon: the mean carbon fraction.
-#' - Cover calibration: the Gamma mean `mu`, times the probability that the
-#'   plot holds plants where the fit has a presence part.
-#'
-#' For draws that include observation noise, use [posterior_predict()].
+#' For draws of new observations, which include residual variation, use
+#' [posterior_predict()].
 #'
 #' A `site` (and optionally `year`) column in `new_data` with levels in the fit
 #' gives predictions for those levels. With `new_data = NULL` the observed data
@@ -22,6 +19,8 @@
 #' @inheritParams params
 #' @param new_data A data frame with the fit's predictor column (and optional
 #'   `site` and `year` columns), or `NULL` for the observed data.
+#'   `year` may be numeric or character: `2022` and `"2022"` match the same
+#'   fitted year.
 #'
 #' @returns A draws-by-observations (`D x N`) matrix.
 #' @family fit methods
@@ -47,6 +46,12 @@ posterior_epred.kb_fit <- function(
     },
     call
   )
-  res <- data_linpred(object, new_data, new_levels, representative_site, call = call)
+  res <- data_linpred(
+    object,
+    new_data,
+    new_levels,
+    representative_site,
+    call = call
+  )
   posterior::draws_of(.epred(object, res$linpred, grid = res$grid))
 }

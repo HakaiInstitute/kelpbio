@@ -30,10 +30,13 @@ kb_predict_mean_weight(
 
 \item{new_data}{A data frame of the rows to predict at, with \code{site} and
 \code{year} columns (either may be absent, as in a grid from \code{\link[=kb_new_data]{kb_new_data()}}),
-or \code{NULL} for the site-years in the size fit's data.}
+or \code{NULL} for the site-years in the size fit's data.
+\code{year} may be numeric or character: \code{2022} and \code{"2022"} match the same
+fitted year.}
 
 \item{wetdry}{A \code{kb_fit_wetdry} object, required for dry, carbon, and
-nitrogen biomass, or \code{NULL}.}
+nitrogen biomass, or \code{NULL}. All fits must be of the same species and have
+the same number of draws.}
 
 \item{carbon}{A \code{kb_fit_carbon} object, required for carbon biomass, or
 \code{NULL}.}
@@ -50,14 +53,16 @@ or \code{NULL}.}
 year not in the fit. Sites and years in the fit always use their own
 estimates. One of:
 \itemize{
-\item \code{"sample"} (the default): a new effect for each new site or year,
-drawn from the estimated variation among sites or among years and shared
-by every row naming it. The estimate is about the same, but the interval
-also includes that variation. Use it for particular site-years the model
-has no data on. The interval varies slightly between calls; use
+\item \code{"sample"} (the default): a new effect for each new site or year, drawn
+from the estimated variation among sites or among years (the
+random-effect standard deviation). The point estimate is equivalent, but
+the interval is wider since it also includes that variation. Use it to
+get realistic uncertainty about a particular site or year that the model
+has no information on. The interval varies slightly between calls; use
 \code{set.seed()} to reproduce it.
-\item \code{"average"}: the typical site or year. The interval covers uncertainty
-in the typical value only. Use it to describe an average site or year.
+\item \code{"average"}: the typical site or year. The site and year effects are set
+to 0, their mean, so the interval does not include among-site or
+among-year variation. Use it to describe an average site or year.
 }}
 
 \item{representative_site}{A character vector of sites whose effects a new
@@ -66,7 +71,7 @@ the sites per fit, such as \code{list(weight = "site_a")}, where a fit left out
 follows \code{new_levels}, or \code{NULL} (the default) to follow \code{new_levels}.}
 
 \item{n_plants}{A whole number of sizes averaged per draw to compute the
-mean plant weight; larger values are more precise and slower.}
+mean plant weight; larger values are more precise and slower to compute.}
 
 \item{conf_level}{A number greater than 0 and less than 1 giving the
 compatibility-interval level.}
@@ -93,19 +98,12 @@ Combine a weight and a size fit into the expected weight per plant of each
 site-year: wet or dry (kg), or carbon or nitrogen (g).
 }
 \details{
-For each posterior draw, mean plant weight is the expected weight at size
-averaged over the site-year's size distribution. The size distribution is
-truncated above at the largest size in the size fit's data; above the
-largest weighed size, the weight allometry is extrapolated. Dry weight is
-wet weight times the expected dry:wet ratio from \code{wetdry}, and carbon or
-nitrogen dry weight times the expected carbon fraction from \code{carbon} or
-nitrogen fraction from \code{nitrogen}.
-
+Mean plant weight is the weight model averaged over the site-year's size
+distribution (see
+\href{https://hakaiinstitute.github.io/kelpbio/articles/methods.html#mean-plant-weight}{Methods}).
 \code{weight_support} and \code{size_support} show the data each fit has for the
 site-year, from most to least local: \code{"site-year"}, \code{"site, year"} (its site
 and its year, but not together), \code{"site"}, \code{"year"}, or \code{"none"}.
-
-The fits must be of the same species and have the same number of draws.
 }
 \examples{
 set.seed(1)

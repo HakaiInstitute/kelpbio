@@ -23,17 +23,15 @@ kb_predict_biomass_canopy(
 \arguments{
 \item{fit}{A \code{kb_fit_cover_calibration} object.}
 
-\item{new_data}{A data frame of mapped canopy, one row per map of a site's
-canopy (summed over the map's polygons), with
-\code{site}, \code{year}, \code{canopy_area_m2} (the canopy mapped within the site, m²),
-\code{canopy_tide_height_m} (the tide height when the canopy was imaged, m), and
-\code{classified_area_m2} (the water area within the site that the canopy
-classification covered, including water where no canopy was found, m²),
-which caps the tide-corrected canopy. Other columns are kept and can be
-named in \code{pool_by}.}
+\item{new_data}{A data frame of canopy maps, one row per map (see
+\code{\link[=kb_check_data_survey_canopy]{kb_check_data_survey_canopy()}} for the columns). Other columns are kept
+and can be named in \code{pool_by}.
+\code{year} may be numeric or character: \code{2022} and \code{"2022"} match the same
+fitted year.}
 
 \item{wetdry}{A \code{kb_fit_wetdry} object, required for dry, carbon, and
-nitrogen biomass, or \code{NULL}.}
+nitrogen biomass, or \code{NULL}. All fits must be of the same species and have
+the same number of draws.}
 
 \item{carbon}{A \code{kb_fit_carbon} object, required for carbon biomass, or
 \code{NULL}.}
@@ -44,11 +42,11 @@ or \code{NULL}.}
 \item{...}{These dots are for future extensions and must be empty.}
 
 \item{measure}{A string, one of \code{"wet"}, \code{"dry"}, \code{"carbon"}, or
-\code{"nitrogen"}, giving the biomass to predict.}
+\code{"nitrogen"}, giving the type of biomass to predict.}
 
-\item{pool_by}{A character vector naming character or factor columns whose
-combinations group the rows, such as \code{c("site", "year")}, \code{character(0)}
-to pool all rows, or \code{NULL} (the default) for one row per input row. On
+\item{pool_by}{A character vector naming character or factor columns to
+group the rows by, such as \code{c("site", "year")}, \code{character(0)} to pool all
+rows, or \code{NULL} (the default) for one row per input row. On
 each draw, the biomass of a group is the sum of its rows' biomass (kg).
 For another summary, such as an unweighted mean of rows, summarise the
 draws column, for example with \code{\link[posterior:rvar_mean]{posterior::rvar_mean()}}.}
@@ -57,18 +55,20 @@ draws column, for example with \code{\link[posterior:rvar_mean]{posterior::rvar_
 year not in the fit. Sites and years in the fit always use their own
 estimates. One of:
 \itemize{
-\item \code{"sample"} (the default): a new effect for each new site or year,
-drawn from the estimated variation among sites or among years and shared
-by every row naming it. The estimate is about the same, but the interval
-also includes that variation. Use it for particular site-years the model
-has no data on. The interval varies slightly between calls; use
+\item \code{"sample"} (the default): a new effect for each new site or year, drawn
+from the estimated variation among sites or among years (the
+random-effect standard deviation). The point estimate is equivalent, but
+the interval is wider since it also includes that variation. Use it to
+get realistic uncertainty about a particular site or year that the model
+has no information on. The interval varies slightly between calls; use
 \code{set.seed()} to reproduce it.
-\item \code{"average"}: the typical site or year. The interval covers uncertainty
-in the typical value only. Use it to describe an average site or year.
+\item \code{"average"}: the typical site or year. The site and year effects are set
+to 0, their mean, so the interval does not include among-site or
+among-year variation. Use it to describe an average site or year.
 }}
 
 \item{representative_site}{A character vector of sites in the fit whose
-effects a new site takes (averaged when several are named), or \code{NULL} (the
+effects a new site adopts (averaged when several are named), or \code{NULL} (the
 default) to follow \code{new_levels}.}
 
 \item{conf_level}{A number greater than 0 and less than 1 giving the
@@ -80,57 +80,37 @@ a single estimate, such as \code{median} or \code{mean}.}
 \item{sig_fig}{A whole number of significant figures for summary output.}
 }
 \value{
-A \code{kb_predictions} object. Without \code{pool_by}, the rows of \code{new_data}
-(a numeric \code{year} as character) with added \code{cover_support} (\code{"site, year"}, \code{"site"}, \code{"year"}, or
-\code{"none"}: the data the calibration fit has for the row's site and year), the
-draws of the total in a column named for it (\code{biomass_kg},
-\code{dry_biomass_kg}, \code{carbon_biomass_kg}, or \code{nitrogen_biomass_kg}), and
-\code{estimate},
-\code{lower}, and \code{upper}; with \code{pool_by}, one row per group with its \code{pool_by}
-columns, \code{cover_support} when \code{pool_by} includes \code{site} and \code{year}, the
-draws, and the summary.
+A \code{kb_predictions} object: the rows of \code{new_data}, or one row per
+\code{pool_by} group, with \code{cover_support} (when the rows have a site and
+year), the draws of the total (\code{biomass_kg}, \code{dry_biomass_kg},
+\code{carbon_biomass_kg}, or \code{nitrogen_biomass_kg}), and \code{estimate}, \code{lower},
+and \code{upper}.
 }
 \description{
-Predict the biomass over each row's drone-mapped canopy from a cover
-calibration fit: wet, dry, carbon, or nitrogen (kg), optionally pooled over
-groups of rows.
+Predict the biomass over each row's mapped canopy from a cover
+calibration fit: wet, dry, carbon, or nitrogen (kg), optionally pooled by
+grouping columns.
 }
 \details{
-A row's total is the expected biomass per m² of bed for its site and year
-(the calibration at full cover) times its tide-corrected canopy area. The
-mapped canopy is taken as the extent of the bed, so no biomass is counted
-outside it. The interval is for the expected total: it carries the
-uncertainty in the parameters and the site and year effects, not variation
-between canopy maps.
-
-The tide-corrected canopy area is \code{canopy_area_m2 / (1 - tide_height_slope * canopy_tide_height_m)} (Timmer et al. 2024), capped at \code{classified_area_m2}; at a
-tide height at or above \code{1 / tide_height_slope} it is \code{classified_area_m2}.
-A row past that limit on more than 5\% of draws warns, since its total is
-then set by the classified area rather than the canopy mapped. Canopy
-already corrected for tide is passed with \code{canopy_tide_height_m = 0}.
-
-Dry biomass is the wet total times the expected dry:wet ratio from \code{wetdry},
-and carbon or nitrogen the dry total times the expected carbon fraction from
-\code{carbon} or nitrogen fraction from \code{nitrogen}.
-The fits must be of the same species and have the same number of draws.
-
-Pool totals with \code{pool_by} rather than summing per-row estimates or limits.
-A site-year may have several rows, such as from imagery weeks apart, but pooling
-two maps of one site-year counts its bed twice, so a group with more than one
-row per site-year warns.
+A row's total is the calibration at full cover times its tide-corrected
+canopy area, capped at \code{classified_area_m2} (see
+\href{https://hakaiinstitute.github.io/kelpbio/articles/methods.html#total-biomass}{Methods}).
+A warning is given if a row is past the tide limit on more than 5\% of draws,
+or if a pooled group has more than one map of a site-year, which counts its
+bed more than once.
 }
 \examples{
 fit <- fit_cover_calibration_sim_nereo
 
 # One total per row
 set.seed(1)
-kb_predict_biomass_canopy(fit, data_canopy_sim_nereo)
+kb_predict_biomass_canopy(fit, data_survey_canopy_sim_nereo)
 
 # Wet totals by region and year
 set.seed(1)
 kb_predict_biomass_canopy(
   fit,
-  data_canopy_sim_nereo,
+  data_survey_canopy_sim_nereo,
   pool_by = c("region", "year")
 )
 
@@ -138,23 +118,15 @@ kb_predict_biomass_canopy(
 set.seed(1)
 kb_predict_biomass_canopy(
   fit,
-  data_canopy_sim_nereo,
+  data_survey_canopy_sim_nereo,
   fit_wetdry_sim_nereo,
   fit_carbon_sim_nereo,
   measure = "carbon",
   pool_by = "year"
 )
 }
-\references{
-Timmer, B., Reshitnyk, L. Y., Hessing-Lewis, M., Juanes, F.,
-Gendall, L., and Costa, M. (2024). Capturing accurate kelp canopy extent:
-integrating tides, currents, and species-level morphology in kelp remote
-sensing. \emph{Frontiers in Environmental Science}, 12, 1338483.
-\doi{10.3389/fenvs.2024.1338483}
-}
 \seealso{
-\code{\link[=kb_predict_cover_calibration]{kb_predict_cover_calibration()}} for biomass per m² of a plot at a
-given cover; at full cover and zero tide height, the biomass per m² of bed.
+\code{\link[=kb_predict_cover_calibration]{kb_predict_cover_calibration()}} for biomass per m² of a plot.
 
 Other prediction functions:
 \code{\link[=autoplot.kb_predictions]{autoplot.kb_predictions()}},

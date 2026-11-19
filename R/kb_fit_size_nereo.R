@@ -2,20 +2,7 @@
 #'
 #' Fit a size-distribution model for *Nereocystis luetkeana* via Stan.
 #'
-#' @details
-#' Plant diameter (mm) is modelled with a Weibull likelihood with
-#' mean `mu` and shape `shape`, common to all plants, so `mu` is the expected
-#' diameter.
-#'
-#' `mu` varies by site and year, `log(mu) = intercept + site_effect +
-#' year_effect + site_year_effect`, so `intercept` is the log expected
-#' diameter at a typical site and year.
-#'
-#' Plants grow through the season and the model has no month effect, so
-#' plants measured in different months of a site-year are pooled into one
-#' distribution. To estimate sizes for the peak season, fit the model to plants
-#' measured in the peak season only.
-#'
+#' @inheritSection params Model
 #' @inheritSection params Sampling
 #' @inheritSection params Site and year interaction
 #' @inheritParams kb_fit_weight_nereo

@@ -5,40 +5,31 @@
 \alias{data_weight_sim_macro}
 \title{Simulated Macrocystis weight data}
 \format{
-A data frame with columns:
-\describe{
-\item{fronds}{Fronds reaching 1 m above the holdfast, a positive whole
-number.}
-\item{weight_kg}{Wet weight (kg), a positive number.}
-\item{site}{Site, a factor (12 levels).}
-\item{year}{Harvest year, a factor (5 levels).}
-}
+A data frame with the columns of \code{\link[=kb_check_data_weight_macro]{kb_check_data_weight_macro()}}.
 }
 \usage{
 data_weight_sim_macro
 }
 \description{
-A small simulated dataset of frond count and wet weight, one row per
-harvested plant, for runnable examples. One of four simulated \emph{Macrocystis}
-datasets with shared sites and years, so their fits can be combined into
-survey biomass (see \code{\link[=kb_predict_biomass_in_situ]{kb_predict_biomass_in_situ()}}). Some site-years have no
-weight data.
+A small simulated dataset of harvested plants, for runnable examples. It
+shares sites and years with the other simulated \emph{Macrocystis} datasets; some
+site-years have no weight data.
 }
 \seealso{
 \link{fit_weight_sim_macro} for a fit to this dataset.
 
 Other example datasets:
-\code{\link{data_canopy_sim_macro}},
-\code{\link{data_canopy_sim_nereo}},
 \code{\link{data_carbon_sim_macro}},
 \code{\link{data_carbon_sim_nereo}},
-\code{\link{data_in_situ_sim_macro}},
-\code{\link{data_in_situ_sim_nereo}},
 \code{\link{data_nitrogen_sim_macro}},
 \code{\link{data_nitrogen_sim_nereo}},
 \code{\link{data_size_census_sim_macro}},
 \code{\link{data_size_census_sim_nereo}},
 \code{\link{data_size_sample_sim_nereo}},
+\code{\link{data_survey_canopy_sim_macro}},
+\code{\link{data_survey_canopy_sim_nereo}},
+\code{\link{data_survey_in_situ_sim_macro}},
+\code{\link{data_survey_in_situ_sim_nereo}},
 \code{\link{data_weight_sim_nereo}},
 \code{\link{data_wetdry_sim_macro}},
 \code{\link{data_wetdry_sim_nereo}}

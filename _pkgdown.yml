@@ -12,7 +12,8 @@ articles:
 - title: Articles
   navbar: ~
   contents:
-    - articles/methods
+    - methods
+    - data-format
     - articles/advanced
 
 reference:
@@ -22,14 +23,14 @@ reference:
     - kb_fit_weight_nereo
     - kb_fit_weight_macro
     - kb_fit_size_nereo
+    - kb_fit_cover_calibration_nereo
+    - kb_fit_cover_calibration_macro
     - kb_fit_wetdry_nereo
     - kb_fit_wetdry_macro
     - kb_fit_carbon_nereo
-    - kb_fit_nitrogen_nereo
     - kb_fit_carbon_macro
+    - kb_fit_nitrogen_nereo
     - kb_fit_nitrogen_macro
-    - kb_fit_cover_calibration_nereo
-    - kb_fit_cover_calibration_macro
     - kb_progress
 - title: "Priors"
   desc: "Specify priors for model parameters."
@@ -37,14 +38,14 @@ reference:
     - kb_priors_weight_nereo
     - kb_priors_weight_macro
     - kb_priors_size_nereo
+    - kb_priors_cover_calibration_nereo
+    - kb_priors_cover_calibration_macro
     - kb_priors_wetdry_nereo
     - kb_priors_wetdry_macro
     - kb_priors_carbon_nereo
-    - kb_priors_nitrogen_nereo
     - kb_priors_carbon_macro
+    - kb_priors_nitrogen_nereo
     - kb_priors_nitrogen_macro
-    - kb_priors_cover_calibration_nereo
-    - kb_priors_cover_calibration_macro
     - kb_prior_normal
     - kb_prior_exponential
     - kb_prior_lognormal
@@ -52,93 +53,100 @@ reference:
   desc: "Describe and check input data before fitting."
   contents:
     - kb_data_columns
+    - kb_datasets
     - kb_check_data_weight_nereo
     - kb_check_data_weight_macro
     - kb_check_data_size_sample_nereo
+    - kb_check_data_size_census_nereo
+    - kb_check_data_size_census_macro
+    - kb_check_data_survey_in_situ
+    - kb_check_data_cover_calibration_nereo
+    - kb_check_data_cover_calibration_macro
+    - kb_check_data_survey_canopy
     - kb_check_data_wetdry_nereo
     - kb_check_data_wetdry_macro
     - kb_check_data_carbon_nereo
-    - kb_check_data_nitrogen_nereo
     - kb_check_data_carbon_macro
+    - kb_check_data_nitrogen_nereo
     - kb_check_data_nitrogen_macro
-    - kb_check_data_cover_calibration_nereo
-    - kb_check_data_cover_calibration_macro
-    - kb_check_data_in_situ
-    - kb_check_data_size_census_nereo
-    - kb_check_data_size_census_macro
-    - kb_check_data_canopy
 - title: "Example data and fits"
   desc: "Simulated datasets and pre-fit models for examples."
   contents:
     - data_weight_sim_nereo
     - data_weight_sim_macro
     - data_size_sample_sim_nereo
+    - data_size_census_sim_nereo
+    - data_size_census_sim_macro
+    - data_survey_in_situ_sim_nereo
+    - data_survey_in_situ_sim_macro
+    - data_survey_canopy_sim_nereo
+    - data_survey_canopy_sim_macro
     - data_wetdry_sim_nereo
     - data_wetdry_sim_macro
     - data_carbon_sim_nereo
-    - data_nitrogen_sim_nereo
     - data_carbon_sim_macro
+    - data_nitrogen_sim_nereo
     - data_nitrogen_sim_macro
-    - data_in_situ_sim_nereo
-    - data_in_situ_sim_macro
-    - data_size_census_sim_nereo
-    - data_size_census_sim_macro
-    - data_canopy_sim_nereo
-    - data_canopy_sim_macro
     - fit_weight_sim_nereo
     - fit_weight_sim_nereo_power
     - fit_weight_sim_macro
     - fit_size_sim_nereo
+    - fit_cover_calibration_sim_nereo
+    - fit_cover_calibration_sim_macro
     - fit_wetdry_sim_nereo
     - fit_wetdry_sim_macro
     - fit_carbon_sim_nereo
-    - fit_nitrogen_sim_nereo
     - fit_carbon_sim_macro
+    - fit_nitrogen_sim_nereo
     - fit_nitrogen_sim_macro
-    - fit_cover_calibration_sim_nereo
-    - fit_cover_calibration_sim_macro
 - title: "Predictions and plotting"
   desc: "Predict and visualise model output."
   contents:
     - kb_new_data
     - kb_predict_weight
     - kb_predict_size
+    - kb_predict_mean_weight
+    - kb_predict_biomass_in_situ
+    - kb_predict_cover_calibration
+    - kb_predict_biomass_canopy
     - kb_predict_wetdry
     - kb_predict_carbon
     - kb_predict_nitrogen
-    - kb_predict_cover_calibration
-    - kb_predict_mean_weight
-    - kb_predict_biomass_in_situ
-    - kb_predict_biomass_canopy
     - kb_plot_predictions
-- title: "Fit summaries and diagnostics"
-  desc: "Summarise fits and check convergence, model fit, and prior sensitivity."
+    - autoplot.kb_predictions
+- title: "Fit summaries"
+  desc: "Describe a fit and summarise its parameters."
   contents:
-    - kb_samples
-    - kb_stancode
     - kb_model_describe
     - tidy.kb_fit
     - coef.kb_fit
     - glance.kb_fit
     - summary.kb_fit
-    - augment.kb_fit
+    - prior_summary.kb_fit
+    - kb_samples
+    - kb_stancode
+- title: "Diagnostics"
+  desc: "Check convergence, model fit, and prior sensitivity."
+  contents:
     - kb_converged
     - kb_plot_trace
+    - pp_check.kb_fit
+    - residuals.kb_fit
+    - augment.kb_fit
     - kb_sensitivity
     - kb_influence
-    - prior_summary.kb_fit
-    - log_lik.kb_fit
     - loo.kb_fit
+    - log_lik.kb_fit
+- title: "Stan ecosystem methods"
+  desc: "Standard methods for posterior draws and predictions."
+  contents:
     - fitted.kb_fit
-    - residuals.kb_fit
     - predict.kb_fit_weight
     - predict.kb_fit_size
+    - predict.kb_fit_cover_calibration
     - predict.kb_fit_wetdry
     - predict.kb_fit_carbon
     - predict.kb_fit_nitrogen
-    - predict.kb_fit_cover_calibration
     - posterior_epred.kb_fit
     - posterior_linpred.kb_fit
     - posterior_predict.kb_fit
-    - pp_check.kb_fit
-    - autoplot.kb_predictions

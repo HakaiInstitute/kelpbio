@@ -10,54 +10,54 @@ test_that("data_carbon_sim_nereo has the expected columns and passes validation"
   expect_silent(kb_check_data_carbon_nereo(data_carbon_sim_nereo))
 })
 
-test_that("data_in_situ_sim_macro and data_size_census_sim_macro pass validation together", {
+test_that("data_survey_in_situ_sim_macro and data_size_census_sim_macro pass validation together", {
   expect_named(
-    data_in_situ_sim_macro,
+    data_survey_in_situ_sim_macro,
     c("survey_id", "site", "year", "survey_area_m2", "plot_area_m2", "canopy_area_m2", "canopy_tide_height_m")
   )
   expect_named(data_size_census_sim_macro, c("survey_id", "fronds", "partial"))
-  expect_silent(kb_check_data_in_situ(data_in_situ_sim_macro, data_size_census_sim_macro))
+  expect_silent(kb_check_data_survey_in_situ(data_survey_in_situ_sim_macro, data_size_census_sim_macro))
   expect_silent(kb_check_data_size_census_macro(data_size_census_sim_macro))
-  expect_equal(nlevels(data_in_situ_sim_macro$site), 9L)
+  expect_equal(nlevels(data_survey_in_situ_sim_macro$site), 9L)
 })
 
 test_that("data_size_census_sim_nereo passes validation with its surveys", {
   expect_named(data_size_census_sim_nereo, c("survey_id", "diameter_mm", "partial"))
   expect_silent(kb_check_data_size_census_nereo(data_size_census_sim_nereo))
-  surveys <- data_in_situ_sim_nereo[
-    data_in_situ_sim_nereo$survey_id %in% data_size_census_sim_nereo$survey_id,
+  surveys <- data_survey_in_situ_sim_nereo[
+    data_survey_in_situ_sim_nereo$survey_id %in% data_size_census_sim_nereo$survey_id,
   ]
   expect_equal(
     as.vector(table(data_size_census_sim_nereo$survey_id)[surveys$survey_id]),
     surveys$plants
   )
   surveys$plants <- NULL
-  expect_silent(kb_check_data_in_situ(surveys, data_size_census_sim_nereo))
+  expect_silent(kb_check_data_survey_in_situ(surveys, data_size_census_sim_nereo))
 })
 
-test_that("data_in_situ_sim_nereo has the expected columns and passes validation", {
+test_that("data_survey_in_situ_sim_nereo has the expected columns and passes validation", {
   expect_named(
-    data_in_situ_sim_nereo,
+    data_survey_in_situ_sim_nereo,
     c(
       "survey_id", "site", "year", "survey_area_m2", "plants",
       "plot_area_m2", "canopy_area_m2", "canopy_tide_height_m"
     )
   )
-  expect_silent(kb_check_data_in_situ(data_in_situ_sim_nereo))
-  expect_equal(nlevels(data_in_situ_sim_nereo$site), 9L)
+  expect_silent(kb_check_data_survey_in_situ(data_survey_in_situ_sim_nereo))
+  expect_equal(nlevels(data_survey_in_situ_sim_nereo$site), 9L)
 })
 
 test_that("the survey datasets hold repeat surveys in a site-year and an empty survey", {
-  for (survey in list(data_in_situ_sim_nereo, data_in_situ_sim_macro)) {
+  for (survey in list(data_survey_in_situ_sim_nereo, data_survey_in_situ_sim_macro)) {
     expect_true(any(table(site_year_key(survey$site, survey$year)) > 1L))
     expect_false(all(is.na(survey$canopy_area_m2)))
   }
-  expect_true(any(data_in_situ_sim_nereo$plants == 0))
-  expect_false(all(data_in_situ_sim_macro$survey_id %in% data_size_census_sim_macro$survey_id))
+  expect_true(any(data_survey_in_situ_sim_nereo$plants == 0))
+  expect_false(all(data_survey_in_situ_sim_macro$survey_id %in% data_size_census_sim_macro$survey_id))
 })
 
-test_that("data_canopy_sim_nereo and data_canopy_sim_macro have the expected columns", {
-  for (canopy in list(data_canopy_sim_nereo, data_canopy_sim_macro)) {
+test_that("data_survey_canopy_sim_nereo and data_survey_canopy_sim_macro have the expected columns", {
+  for (canopy in list(data_survey_canopy_sim_nereo, data_survey_canopy_sim_macro)) {
     expect_named(
       canopy,
       c("site", "year", "canopy_area_m2", "canopy_tide_height_m", "classified_area_m2", "region")
@@ -73,13 +73,13 @@ test_that("survey biomass from the bundled fits agrees with the bundled calibrat
     nereo = kb_predict_biomass_in_situ(
       fit_weight_sim_nereo,
       fit_size_sim_nereo,
-      data_in_situ_sim_nereo,
+      data_survey_in_situ_sim_nereo,
       progress = "none"
     ),
     macro = kb_predict_biomass_in_situ(
       fit_weight_sim_macro,
       data_size_census_sim_macro,
-      data_in_situ_sim_macro,
+      data_survey_in_situ_sim_macro,
       progress = "none"
     )
   )
@@ -125,10 +125,10 @@ test_that("data_weight_sim_macro matches its documented format", {
 test_that("the macro data sources cover different site-years", {
   key <- function(site, year) unique(site_year_key(site, year))
   weight <- key(data_weight_sim_macro$site, data_weight_sim_macro$year)
-  survey <- key(data_in_situ_sim_macro$site, data_in_situ_sim_macro$year)
+  survey <- key(data_survey_in_situ_sim_macro$site, data_survey_in_situ_sim_macro$year)
   expect_lt(length(weight), length(survey))
   expect_gt(
-    length(setdiff(unique(data_in_situ_sim_macro$site), unique(data_weight_sim_macro$site))),
+    length(setdiff(unique(data_survey_in_situ_sim_macro$site), unique(data_weight_sim_macro$site))),
     0L
   )
 })
@@ -154,10 +154,10 @@ test_that("the nereo data sources cover different site-years", {
   key <- function(site, year) unique(site_year_key(site, year))
   weight <- key(data_weight_sim_nereo$site, data_weight_sim_nereo$year)
   size <- key(data_size_sample_sim_nereo$site, data_size_sample_sim_nereo$year)
-  survey <- key(data_in_situ_sim_nereo$site, data_in_situ_sim_nereo$year)
+  survey <- key(data_survey_in_situ_sim_nereo$site, data_survey_in_situ_sim_nereo$year)
   expect_lt(length(weight), length(survey))
   expect_gt(
-    length(setdiff(unique(data_in_situ_sim_nereo$site), unique(data_weight_sim_nereo$site))),
+    length(setdiff(unique(data_survey_in_situ_sim_nereo$site), unique(data_weight_sim_nereo$site))),
     0L
   )
   expect_gt(length(setdiff(survey, size)), 0L)

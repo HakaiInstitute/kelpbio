@@ -7,7 +7,8 @@
 \item{weight}{A \code{kb_fit_weight} object.}
 
 \item{wetdry}{A \code{kb_fit_wetdry} object, required for dry, carbon, and
-nitrogen biomass, or \code{NULL}.}
+nitrogen biomass, or \code{NULL}. All fits must be of the same species and have
+the same number of draws.}
 
 \item{carbon}{A \code{kb_fit_carbon} object, required for carbon biomass, or
 \code{NULL}.}
@@ -16,10 +17,10 @@ nitrogen biomass, or \code{NULL}.}
 or \code{NULL}.}
 
 \item{measure}{A string, one of \code{"wet"}, \code{"dry"}, \code{"carbon"}, or
-\code{"nitrogen"}, giving the biomass to predict.}
+\code{"nitrogen"}, giving the type of biomass to predict.}
 
 \item{n_plants}{A whole number of sizes averaged per draw to compute the
-mean plant weight; larger values are more precise and slower.}
+mean plant weight; larger values are more precise and slower to compute.}
 
 \item{progress}{A string, one of \code{"bar"} (the default, a console progress
 bar) or \code{"none"} (silent).}
@@ -28,19 +29,21 @@ bar) or \code{"none"} (silent).}
 year not in the fit. Sites and years in the fit always use their own
 estimates. One of:
 \itemize{
-\item \code{"sample"} (the default): a new effect for each new site or year,
-drawn from the estimated variation among sites or among years and shared
-by every row naming it. The estimate is about the same, but the interval
-also includes that variation. Use it for particular site-years the model
-has no data on. The interval varies slightly between calls; use
+\item \code{"sample"} (the default): a new effect for each new site or year, drawn
+from the estimated variation among sites or among years (the
+random-effect standard deviation). The point estimate is equivalent, but
+the interval is wider since it also includes that variation. Use it to
+get realistic uncertainty about a particular site or year that the model
+has no information on. The interval varies slightly between calls; use
 \code{set.seed()} to reproduce it.
-\item \code{"average"}: the typical site or year. The interval covers uncertainty
-in the typical value only. Use it to describe an average site or year.
+\item \code{"average"}: the typical site or year. The site and year effects are set
+to 0, their mean, so the interval does not include among-site or
+among-year variation. Use it to describe an average site or year.
 }}
 
-\item{pool_by}{A character vector naming character or factor columns whose
-combinations group the rows, such as \code{c("site", "year")}, \code{character(0)}
-to pool all rows, or \code{NULL} (the default) for one row per input row. On
+\item{pool_by}{A character vector naming character or factor columns to
+group the rows by, such as \code{c("site", "year")}, \code{character(0)} to pool all
+rows, or \code{NULL} (the default) for one row per input row. On
 each draw, the biomass of a group is the sum of its rows' biomass (kg).
 For another summary, such as an unweighted mean of rows, summarise the
 draws column, for example with \code{\link[posterior:rvar_mean]{posterior::rvar_mean()}}.}

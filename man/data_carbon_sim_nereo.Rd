@@ -5,35 +5,28 @@
 \alias{data_carbon_sim_nereo}
 \title{Simulated Nereocystis carbon data}
 \format{
-A data frame with columns:
-\describe{
-\item{sample_mass_mg}{Mass of the dried sample analysed (mg), a positive
-number.}
-\item{carbon_mass_ug}{Carbon measured in the sample (µg), a positive number
-less than the sample mass.}
-}
+A data frame with the columns of \code{\link[=kb_check_data_carbon_nereo]{kb_check_data_carbon_nereo()}}.
 }
 \usage{
 data_carbon_sim_nereo
 }
 \description{
-A small simulated dataset of sample and carbon masses, one row per dried
-tissue sample, for runnable examples.
+A small simulated dataset of dried tissue samples, for runnable examples.
 }
 \seealso{
 \link{fit_carbon_sim_nereo} for a fit to this dataset.
 
 Other example datasets:
-\code{\link{data_canopy_sim_macro}},
-\code{\link{data_canopy_sim_nereo}},
 \code{\link{data_carbon_sim_macro}},
-\code{\link{data_in_situ_sim_macro}},
-\code{\link{data_in_situ_sim_nereo}},
 \code{\link{data_nitrogen_sim_macro}},
 \code{\link{data_nitrogen_sim_nereo}},
 \code{\link{data_size_census_sim_macro}},
 \code{\link{data_size_census_sim_nereo}},
 \code{\link{data_size_sample_sim_nereo}},
+\code{\link{data_survey_canopy_sim_macro}},
+\code{\link{data_survey_canopy_sim_nereo}},
+\code{\link{data_survey_in_situ_sim_macro}},
+\code{\link{data_survey_in_situ_sim_nereo}},
 \code{\link{data_weight_sim_macro}},
 \code{\link{data_weight_sim_nereo}},
 \code{\link{data_wetdry_sim_macro}},

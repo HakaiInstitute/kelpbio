@@ -134,7 +134,7 @@ test_that("survey biomass by site-year plots point ranges titled as a biomass", 
   p <- kb_predict_biomass_in_situ(
     weight_nereo_fit,
     size_nereo_fit,
-    data_in_situ_sim_nereo,
+    data_survey_in_situ_sim_nereo,
     pool_by = c("site", "year"),
     progress = "none"
   )
@@ -281,7 +281,7 @@ test_that("each layout is visually stable", {
   survey <- kb_predict_biomass_in_situ(
     weight_nereo_fit,
     size_nereo_fit,
-    data_in_situ_sim_nereo,
+    data_survey_in_situ_sim_nereo,
     pool_by = c("site", "year"),
     progress = "none"
   )
@@ -308,7 +308,7 @@ test_that("the column layout is visually stable", {
   survey <- kb_predict_biomass_in_situ(
     weight_nereo_fit,
     size_nereo_fit,
-    data_in_situ_sim_nereo,
+    data_survey_in_situ_sim_nereo,
     pool_by = c("site", "year"),
     progress = "none"
   )

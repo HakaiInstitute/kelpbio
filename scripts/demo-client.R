@@ -18,9 +18,9 @@ str(data_weight_sim_nereo)
 # measured plants
 str(data_size_sample_sim_nereo)
 # in situ surveys
-str(data_in_situ_sim_nereo)
+str(data_survey_in_situ_sim_nereo)
 # drone-mapped canopy
-str(data_canopy_sim_nereo)
+str(data_survey_canopy_sim_nereo)
 # tissue samples
 str(data_wetdry_sim_nereo)
 str(data_carbon_sim_nereo)
@@ -28,7 +28,7 @@ str(data_carbon_sim_nereo)
 # data checks (also run inside the fits)
 kb_check_data_weight_nereo(data_weight_sim_nereo)
 kb_check_data_size_sample_nereo(data_size_sample_sim_nereo)
-kb_check_data_in_situ(data_in_situ_sim_nereo)
+kb_check_data_survey_in_situ(data_survey_in_situ_sim_nereo)
 
 # --- fit the sub-models ---------------------------------------------------------
 fit_weight <- kb_fit_weight_nereo(data_weight_sim_nereo)
@@ -62,14 +62,14 @@ kb_plot_predictions(mean_weight)
 biomass <- kb_predict_biomass_in_situ(
   fit_weight,
   fit_size,
-  data_in_situ_sim_nereo
+  data_survey_in_situ_sim_nereo
 )
 biomass
 # pooled by site-year
 x <- kb_predict_biomass_in_situ(
   fit_weight,
   fit_size,
-  data_in_situ_sim_nereo,
+  data_survey_in_situ_sim_nereo,
   pool_by = c("site", "year")
 )
 
@@ -94,23 +94,23 @@ augment(fit_cover) |>
   labs(x = "Canopy cover (uncorrected)", y = "Wet biomass (kg/m²)")
 
 # --- biomass over the mapped canopy -----------------------------------------------
-totals <- kb_predict_biomass_canopy(fit_cover, data_canopy_sim_nereo)
+totals <- kb_predict_biomass_canopy(fit_cover, data_survey_canopy_sim_nereo)
 totals
 kb_plot_predictions(totals)
 
 # pooled by year and by region-year
-kb_predict_biomass_canopy(fit_cover, data_canopy_sim_nereo, pool_by = "year") |>
+kb_predict_biomass_canopy(fit_cover, data_survey_canopy_sim_nereo, pool_by = "year") |>
   kb_plot_predictions()
 kb_predict_biomass_canopy(
   fit_cover,
-  data_canopy_sim_nereo,
+  data_survey_canopy_sim_nereo,
   pool_by = c("region", "year")
 )
 
 # carbon stock by year
 kb_predict_biomass_canopy(
   fit_cover,
-  data_canopy_sim_nereo,
+  data_survey_canopy_sim_nereo,
   fit_wetdry,
   fit_carbon,
   measure = "carbon",
@@ -135,7 +135,7 @@ kb_predict_weight(
 biomass_ref <- kb_predict_biomass_in_situ(
   fit_weight_coastwide_nereo,
   fit_size,
-  data_in_situ_sim_nereo
+  data_survey_in_situ_sim_nereo
 )
 count(biomass_ref, weight_support)
 biomass_ref
@@ -146,7 +146,7 @@ central_coast <- c("pontier:North", "pontier:Second", "pontier:Triquetta")
 biomass_rep <- kb_predict_biomass_in_situ(
   fit_weight_coastwide_nereo,
   fit_size,
-  data_in_situ_sim_nereo,
+  data_survey_in_situ_sim_nereo,
   representative_site = list(weight = central_coast)
 )
 biomass_rep
@@ -155,7 +155,7 @@ biomass_rep
 fit_cover_rep <- kb_fit_cover_calibration_nereo(biomass_rep)
 kb_predict_biomass_canopy(
   fit_cover_rep,
-  data_canopy_sim_nereo,
+  data_survey_canopy_sim_nereo,
   fit_wetdry_hakai_nereo,
   fit_carbon_hakai_nereo,
   measure = "carbon",
@@ -168,7 +168,7 @@ kb_predict_biomass_canopy(
 # =============================================================================
 # every plant measured, so no size model or calibration; census simulated here
 
-survey_census <- data_in_situ_sim_nereo |>
+survey_census <- data_survey_in_situ_sim_nereo |>
   select(survey_id, site, year, survey_area_m2, plants)
 
 size_census <- survey_census |>
@@ -191,7 +191,7 @@ survey_census <- select(survey_census, -plants)
 
 str(survey_census)
 str(size_census)
-kb_check_data_in_situ(survey_census, size_census)
+kb_check_data_survey_in_situ(survey_census, size_census)
 
 # biomass per survey (kg) and per m2
 census_kg <- kb_predict_biomass_in_situ(
@@ -256,7 +256,7 @@ autoplot(mean_weight) +
 # change in total biomass, first to last year, draw by draw
 by_year <- kb_predict_biomass_canopy(
   fit_cover,
-  data_canopy_sim_nereo,
+  data_survey_canopy_sim_nereo,
   pool_by = "year"
 )
 change <- by_year$biomass_kg[nrow(by_year)] - by_year$biomass_kg[1]

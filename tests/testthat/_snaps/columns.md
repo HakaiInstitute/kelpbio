@@ -11,4 +11,6 @@
       Optional columns:
       
       - `partial`, whether the plant counts as half, such as a plant on the edge of a transect (TRUE or FALSE).
+      
+      Other columns are ignored.
 

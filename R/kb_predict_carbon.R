@@ -4,9 +4,9 @@
 #' samples the model was fitted to.
 #'
 #' @details
-#' A single estimate, pooled over the months, sites, and tissues of the samples
-#' supplied to the fit; to estimate for one season, fit the model to that
-#' season's samples.
+#' A single estimate, pooled over the months, sites, and tissue types of the
+#' samples supplied; to estimate for a particular time of year, filter the data
+#' before fitting the model.
 #'
 #' @inheritParams params
 #' @param fit A `kb_fit_carbon` object.

@@ -1,10 +1,10 @@
 #' Default priors for the Macrocystis carbon model
 #'
-#' The default priors for the *Macrocystis pyrifera* carbon model. To change a
-#' prior, pass a list of the entries to change to the `priors` argument of
-#' [kb_fit_carbon_macro()]; the other entries keep their defaults.
+#' The default priors for the *Macrocystis pyrifera* carbon model, for the
+#' `priors` argument of [kb_fit_carbon_macro()].
 #'
-#' @inherit kb_priors_carbon_nereo details return
+#' @inheritSection params Priors
+#' @returns A named list of prior objects, one per parameter.
 #' @family priors
 #' @export
 #'

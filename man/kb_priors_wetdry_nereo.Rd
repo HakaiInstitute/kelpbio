@@ -7,20 +7,20 @@
 kb_priors_wetdry_nereo()
 }
 \value{
-A named list of prior objects with entries \code{intercept} (the dry:wet
-ratio on the logit scale) and \code{precision} (the Beta precision; larger
-values mean less spread around the mean ratio).
+A named list of prior objects, one per parameter.
 }
 \description{
-The default priors for the \emph{Nereocystis luetkeana} wet/dry model. To change a
-prior, pass a list of the entries to change to the \code{priors} argument of
-\code{\link[=kb_fit_wetdry_nereo]{kb_fit_wetdry_nereo()}}; the other entries keep their defaults.
+The default priors for the \emph{Nereocystis luetkeana} wet/dry model, for the
+\code{priors} argument of \code{\link[=kb_fit_wetdry_nereo]{kb_fit_wetdry_nereo()}}.
 }
-\details{
-Each entry is named after the parameter it sets, as reported by \code{\link[=tidy]{tidy()}} and
-\code{\link[=kb_model_describe]{kb_model_describe()}}. The prior family of each entry is fixed (the intercept is Normal, the
-precision is Exponential); only its arguments can be changed.
+\section{Priors}{
+
+Each entry is named after the parameter it sets, which \code{\link[=kb_model_describe]{kb_model_describe()}}
+prints with the model. A list passed to \code{priors} replaces the entries it
+names; the others keep their defaults. The prior family of each entry is
+fixed; only its arguments can be changed.
 }
+
 \examples{
 kb_priors_wetdry_nereo()
 \dontshow{if (interactive()) withAutoprint(\{ # examplesIf}

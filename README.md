@@ -14,16 +14,17 @@ status](https://hakaiinstitute.r-universe.dev/kelpbio/badges/checks)](https://ha
 experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
 <!-- badges: end -->
 
-kelpbio estimates the biomass and carbon of *Nereocystis luetkeana* and
+kelpbio estimates the biomass of *Nereocystis luetkeana* and
 *Macrocystis pyrifera* kelp beds with Bayesian hierarchical models. The
-total biomass of a site in a year combines three sources:
+total biomass combines three sources:
 
 - plants counted and measured by in situ surveys;
-- the canopy area mapped from drone or other imagery;
+- the canopy area mapped from aerial imagery;
 - a calibration model that relates the two.
 
-Estimates are for the peak season, with uncertainty carried through from
-every model to the totals.
+Methods are designed to produce annual estimates (e.g., for the peak
+season), with uncertainty propagated through each sub-model into the
+totals.
 
 ## Installation
 
@@ -52,8 +53,8 @@ Source builds require a C++ toolchain:
 
 ## Usage
 
-The examples use simulated data from made-up sites. The weight and size
-models are fitted first.
+The examples use simulated data and invented site names. The weight and
+size models are fitted first.
 
 ``` r
 library(kelpbio)
@@ -62,30 +63,32 @@ fit_weight <- kb_fit_weight_nereo(data_weight_sim_nereo)
 fit_size <- kb_fit_size_nereo(data_size_sample_sim_nereo)
 ```
 
-The biomass of each in situ survey is predicted from the two models and
-the survey counts.
+The biomass (kg/m²) of each in situ survey is predicted from the two
+models and the survey counts.
 
 ``` r
 set.seed(1)
 biomass <- kb_predict_biomass_in_situ(
   fit_weight,
   fit_size,
-  data_in_situ_sim_nereo,
+  data_survey_in_situ_sim_nereo,
   progress = "none"
 )
 ```
 
-The cover calibration relates survey biomass to drone canopy cover.
+The cover calibration relates estimated in situ biomass to the canopy
+percent cover of each plot, the area bounding a survey (`plot_area_m2`
+in `data_survey_in_situ_sim_nereo`).
 
 ``` r
 fit_cover <- kb_fit_cover_calibration_nereo(biomass)
 ```
 
-The calibration applied to each canopy map gives the total biomass of
-each site and year, with 95% compatibility limits.
+The calibration applied to each canopy map gives the total biomass, with
+95% compatibility limits.
 
 ``` r
-totals <- kb_predict_biomass_canopy(fit_cover, data_canopy_sim_nereo)
+totals <- kb_predict_biomass_canopy(fit_cover, data_survey_canopy_sim_nereo)
 totals
 #> <kb_predictions> response: biomass_kg | by: site, year
 #> # A tibble: 49 × 11

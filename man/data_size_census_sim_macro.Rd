@@ -5,36 +5,28 @@
 \alias{data_size_census_sim_macro}
 \title{Simulated Macrocystis size census data}
 \format{
-A data frame with columns:
-\describe{
-\item{survey_id}{Survey the plant was counted in, matching its
-\code{survey_id}.}
-\item{fronds}{Fronds reaching 1 m above the holdfast, a positive whole
-number.}
-\item{partial}{Whether the plant is counted as half, a logical.}
-}
+A data frame with the columns of
+\code{\link[=kb_check_data_size_census_macro]{kb_check_data_size_census_macro()}}.
 }
 \usage{
 data_size_census_sim_macro
 }
 \description{
 A small simulated dataset of every plant counted by the surveys in
-\link{data_in_situ_sim_macro}, one row per plant, for runnable examples.
+\link{data_survey_in_situ_sim_macro}, for runnable examples.
 }
 \seealso{
-\code{\link[=kb_check_data_size_census_macro]{kb_check_data_size_census_macro()}} for the columns.
-
 Other example datasets:
-\code{\link{data_canopy_sim_macro}},
-\code{\link{data_canopy_sim_nereo}},
 \code{\link{data_carbon_sim_macro}},
 \code{\link{data_carbon_sim_nereo}},
-\code{\link{data_in_situ_sim_macro}},
-\code{\link{data_in_situ_sim_nereo}},
 \code{\link{data_nitrogen_sim_macro}},
 \code{\link{data_nitrogen_sim_nereo}},
 \code{\link{data_size_census_sim_nereo}},
 \code{\link{data_size_sample_sim_nereo}},
+\code{\link{data_survey_canopy_sim_macro}},
+\code{\link{data_survey_canopy_sim_nereo}},
+\code{\link{data_survey_in_situ_sim_macro}},
+\code{\link{data_survey_in_situ_sim_nereo}},
 \code{\link{data_weight_sim_macro}},
 \code{\link{data_weight_sim_nereo}},
 \code{\link{data_wetdry_sim_macro}},

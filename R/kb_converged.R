@@ -12,8 +12,8 @@
 #' - every parameter's rank-normalized split Rhat below `rhat` (default 1.01;
 #'   Vehtari et al. 2021, Section 2);
 #' - every parameter's bulk and tail effective sample size at least `ess` times
-#'   the number of chains (default 100, so 400 for four chains; Vehtari et al.
-#'   2021);
+#'   the number of chains (default 100, which is 400 for four chains; Vehtari
+#'   et al. 2021);
 #' - the percentage of divergent transitions at or below `max_perc_divergent`
 #'   (default 0.2% of saved draws). Set `max_perc_divergent = 0` to require
 #'   none.
@@ -26,15 +26,16 @@
 #'
 #' In order, try the following:
 #' 1. For Rhat or effective sample sizes that fail their thresholds,
-#'    increase `niters` for more saved draws per chain, or increase `nthin` to
-#'    run more iterations while saving the same number of draws.
+#'    increase `nthin` to run more iterations while saving the same number of
+#'    draws or increase `niters` for more saved draws per chain.
 #' 2. For divergent transitions, increase `adapt_delta` through the `control`
 #'    argument of the `kb_fit_*()` functions (for example,
 #'    `kb_fit_*(df, control = list(adapt_delta = 0.99))`; the default is 0.95).
 #'    A higher value makes the sampler take smaller steps, which reduces
 #'    divergent transitions at the cost of a longer runtime.
 #' 3. If either problem persists, check the data and the fit with
-#'    [pp_check()]: a unit mistake, outliers, or a poor fit can cause both.
+#'    [pp_check()] and [kb_influence()]: a unit mistake, outliers,
+#'    or a poor fit can cause both.
 #'
 #' @references
 #' Vehtari, A., Gelman, A., Simpson, D., Carpenter, B., and Bürkner, P.-C.

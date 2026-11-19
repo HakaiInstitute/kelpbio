@@ -31,7 +31,7 @@ and \code{upper} columns summarising the posterior distribution of the expected
 nitrogen fraction.
 }
 \description{
-Summarise the expected nitrogen fraction of dry mass for the population of
+Predict the expected nitrogen fraction of dry mass for the population of
 samples the model was fitted to.
 }
 \details{
