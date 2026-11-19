@@ -1,4 +1,4 @@
-# Fit a Nereocystis Weight Model
+# Fit a Nereocystis weight model
 
 Fit an allometric weight model for *Nereocystis luetkeana* via Stan.
 
@@ -8,6 +8,7 @@ Fit an allometric weight model for *Nereocystis luetkeana* via Stan.
 kb_fit_weight_nereo(
   data,
   priors = NULL,
+  form = c("packard_floor", "power"),
   ...,
   prior_only = FALSE,
   chains = 4L,
@@ -32,22 +33,25 @@ kb_fit_weight_nereo(
 
   A named list of prior objects (see
   [`kb_priors_weight_nereo()`](https://hakaiinstitute.github.io/kelpbio/reference/kb_priors_weight_nereo.md)),
-  or `NULL` to use the defaults. Supplied entries override the
-  corresponding defaults; unspecified entries keep their defaults.
+  or `NULL` to use the defaults. Entries not supplied keep their
+  defaults.
+
+- form:
+
+  A string giving the relationship of weight to diameter, one of
+  `"packard_floor"` (the default, a power law above a weight floor;
+  Packard 2023) or `"power"` (a power law).
 
 - ...:
 
   Additional arguments passed to
   [`rstan::sampling()`](https://mc-stan.org/rstan/reference/stanmodel-method-sampling.html),
-  including a `control` list (merged over the `adapt_delta = 0.95`
-  default); see the `control` argument of
-  [`rstan::stan()`](https://mc-stan.org/rstan/reference/stan.html) for
-  the available entries.
+  such as `control`.
 
 - prior_only:
 
-  A flag specifying whether to sample from the priors only (the
-  likelihood is switched off), for prior predictive checks.
+  A flag specifying whether to sample from the priors only, for prior
+  predictive checks.
 
 - chains:
 
@@ -55,112 +59,126 @@ kb_fit_weight_nereo(
 
 - niters:
 
-  A whole number of saved post-warmup draws per chain (warmup defaults
-  to match).
+  A whole number of saved post-warmup draws per chain (minimum 2; number
+  of warmup draws defaults to match).
 
 - nthin:
 
-  A whole number giving the thinning interval.
+  A whole number of the thinning interval.
 
 - cores:
 
-  A whole number of cores for parallel chains, or `NULL` to use
-  `getOption("mc.cores")` (falling back to `chains`), capped at the
-  available cores.
+  A whole number of cores used to sample chains in parallel, or `NULL`
+  to use `getOption("mc.cores")` if set or `chains` if not. Capped at
+  the number of available cores.
 
 - seed:
 
   A whole number passed to
   [`rstan::sampling()`](https://mc-stan.org/rstan/reference/stanmodel-method-sampling.html)
-  to make the fit reproducible, or `NULL` (the default). When `NULL`, a
-  seed is drawn from R's RNG, so a preceding
+  to make the fit reproducible, or `NULL` (the default, which uses a
+  random seed). A preceding
   [`set.seed()`](https://rdrr.io/r/base/Random.html) also makes the fit
-  reproducible; an explicit `seed` takes precedence over the RNG state.
+  reproducible.
 
 - progress:
 
   A string, one of `"bar"` (the default, a console progress bar),
   `"verbose"` (rstan's per-iteration output and diagnostic warnings), or
-  `"none"` (silent). Controls fit-time console output only.
+  `"none"` (silent).
 
 - progress_dir:
 
-  A string giving an existing directory in which to write a pollable
-  progress artifact (read by
-  [`kb_fit_progress()`](https://hakaiinstitute.github.io/kelpbio/reference/kb_fit_progress.md)),
-  or `NULL` (the default) to write none.
+  A string giving an existing directory in which to record progress for
+  [`kb_progress()`](https://hakaiinstitute.github.io/kelpbio/reference/kb_progress.md),
+  or `NULL` (the default) to record none.
 
 ## Value
 
-An object of class `c("kb_fit_weight", "kb_fit")`.
+A `kb_fit_weight_nereo` object (a `kb_fit`).
 
-## Details
+## Model
 
-The response is log wet weight, modelled with a Student-t likelihood (4
-degrees of freedom, for robustness to outliers). Expected log weight is
-a quadratic (allometric) function of log sub-bulb diameter, centered at
-its geometric mean so the intercept is the expected log weight at a
-typical diameter. The intercept and the allometric slope vary by site,
-and the intercept also varies by `site:year`.
+[`kb_model_describe()`](https://hakaiinstitute.github.io/kelpbio/reference/kb_model_describe.md)
+prints the fitted model, with its priors, in notation or as a written
+description. The [Methods
+article](https://hakaiinstitute.github.io/kelpbio/articles/methods.html)
+describes each model and its assumptions.
 
-`niters` is the number of saved post-warmup draws per chain; warmup
-defaults to match `niters` and the post-warmup phase is thinned by
-`nthin`. The returned object stores the extracted posterior draws
-(including the `log_lik` and `yrep` generated quantities), diagnostics,
-data, and metadata.
+## Sampling
 
-`progress` controls fit-time console output. The default `"bar"` shows a
-progress bar; `"verbose"` streams rstan's per-iteration output and its
-post-sampling diagnostic warnings; `"none"` is silent. `progress`
-changes only console output, never the fit; inspect convergence with
-[`converged()`](https://poissonconsulting.github.io/universals/reference/converged.html)
-/ [`glance()`](https://generics.r-lib.org/reference/glance.html) /
-[`summary()`](https://rdrr.io/r/base/summary.html) in every mode.
+Chains run in parallel by default, one core per chain, capped at the
+cores available. `cores` sets the number of cores; when it is `NULL`,
+`getOption("mc.cores")` is used if set. Set `cores = 1` (or
+`options(mc.cores = 1)`) where cores are shared or limited, or inside
+another parallel process.
 
-Supply `progress_dir` (an existing directory) to have the fit write a
-pollable progress artifact there, which
-[`kb_fit_progress()`](https://hakaiinstitute.github.io/kelpbio/reference/kb_fit_progress.md)
-reads to report the completed fraction from another R process (for
-example, to drive a progress indicator while the fit runs in the
-background).
-
-Chains run in parallel by default (`cores = NULL` uses
-`getOption("mc.cores")`, falling back to `chains`, capped at the
-available cores). Set `options(mc.cores = 1)` (or pass `cores = 1`) on
-shared servers, in containers, or inside another parallel context.
-
-The sampler runs with a conservative `adapt_delta = 0.95` by default,
-which reduces divergences at the cost of slightly longer runtime.
-Override it, or set any other sampler control, by passing a `control`
-list through `...`, e.g.
-`kb_fit_weight_nereo(data, control = list(adapt_delta = 0.99))`; only
-the entries supplied are changed. See the `control` argument of
+The sampler runs with `adapt_delta = 0.95` by default, which reduces
+divergences at the cost of slightly longer runtime. Override it, or set
+any other sampler control, by passing a `control` list through `...`,
+for example `control = list(adapt_delta = 0.99)`; only the entries
+supplied are changed. See the `control` argument of
 [`rstan::stan()`](https://mc-stan.org/rstan/reference/stan.html) for the
-full set of tunable entries (e.g. `adapt_delta`, `max_treedepth`).
+full set of entries.
 
-The site:year effect is set from the data: it is dropped when the data
-span a single year (then confounded with the site effect) and included
-otherwise. When no site spans more than one year it is kept with a
-warning, since `sSite` and `sSiteYear` are not then separately
-identified.
+By default, each of 4 chains runs 1000 warmup iterations and then saves
+1000 draws with no thinning, giving 4000 draws in total. These match the
+defaults of
+[`rstan::stan()`](https://mc-stan.org/rstan/reference/stan.html) and
+Stan's general recommendations.
+
+Check convergence with
+[`kb_converged()`](https://hakaiinstitute.github.io/kelpbio/reference/kb_converged.md),
+[`glance()`](https://generics.r-lib.org/reference/glance.html), or
+[`summary()`](https://rdrr.io/r/base/summary.html).
+
+## Site and year interaction
+
+The site:year effect lets a site depart from the year-to-year pattern
+shared by all sites. It is separable from the site and year effects only
+when a site has data in more than one year and a year has more than one
+site; otherwise the fit warns. Estimates for the site-years in the data
+are then unaffected, but other predictions depend on the `sd_site_year`
+prior (see
+[`kb_sensitivity()`](https://hakaiinstitute.github.io/kelpbio/reference/kb_sensitivity.md)).
+
+## References
+
+Packard, G. C. (2023). What is complex allometry? *Biology Open*, 12,
+bio060148. [doi:10.1242/bio.060148](https://doi.org/10.1242/bio.060148)
+
+## See also
+
+Other fit functions:
+[`kb_fit_carbon_macro()`](https://hakaiinstitute.github.io/kelpbio/reference/kb_fit_carbon_macro.md),
+[`kb_fit_carbon_nereo()`](https://hakaiinstitute.github.io/kelpbio/reference/kb_fit_carbon_nereo.md),
+[`kb_fit_cover_calibration_macro()`](https://hakaiinstitute.github.io/kelpbio/reference/kb_fit_cover_calibration_macro.md),
+[`kb_fit_cover_calibration_nereo()`](https://hakaiinstitute.github.io/kelpbio/reference/kb_fit_cover_calibration_nereo.md),
+[`kb_fit_nitrogen_macro()`](https://hakaiinstitute.github.io/kelpbio/reference/kb_fit_nitrogen_macro.md),
+[`kb_fit_nitrogen_nereo()`](https://hakaiinstitute.github.io/kelpbio/reference/kb_fit_nitrogen_nereo.md),
+[`kb_fit_size_nereo()`](https://hakaiinstitute.github.io/kelpbio/reference/kb_fit_size_nereo.md),
+[`kb_fit_weight_macro()`](https://hakaiinstitute.github.io/kelpbio/reference/kb_fit_weight_macro.md),
+[`kb_fit_wetdry_macro()`](https://hakaiinstitute.github.io/kelpbio/reference/kb_fit_wetdry_macro.md),
+[`kb_fit_wetdry_nereo()`](https://hakaiinstitute.github.io/kelpbio/reference/kb_fit_wetdry_nereo.md),
+[`kb_progress()`](https://hakaiinstitute.github.io/kelpbio/reference/kb_progress.md)
 
 ## Examples
 
 ``` r
-if (interactive()) {
-  fit <- kb_fit_weight_nereo(data_weight_sim_nereo)
-  tidy(fit)
-}
 # A pre-fit example model is included with the package:
 tidy(fit_weight_sim_nereo)
 #> # A tibble: 7 × 4
-#>   term          estimate   lower  upper
-#>   <chr>            <dbl>   <dbl>  <dbl>
-#> 1 bWeight        -1.47   -1.66   -1.24 
-#> 2 bDiameter       2.5     2.28    2.74 
-#> 3 bDiameter2      0.0749 -0.156   0.313
-#> 4 sSite           0.27    0.176   0.459
-#> 5 sSiteDiameter   0.313   0.169   0.62 
-#> 6 sSiteYear       0.0962  0.0521  0.149
-#> 7 sWeight         0.161   0.141   0.185
+#>   term           estimate    lower  upper
+#>   <chr>             <dbl>    <dbl>  <dbl>
+#> 1 intercept       -0.666  -0.918   -0.421
+#> 2 diameter_power   2.92    2.71     3.13 
+#> 3 weight_floor     0.118   0.098    0.14 
+#> 4 sd_site          0.2     0.0406   0.521
+#> 5 sd_year          0.0544  0.00298  0.254
+#> 6 sd_site_year     0.261   0.179    0.372
+#> 7 sd_residual      0.463   0.438    0.488
+if (FALSE) { # interactive()
+fit <- kb_fit_weight_nereo(data_weight_sim_nereo)
+tidy(fit)
+}
 ```

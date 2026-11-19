@@ -1,9 +1,8 @@
-# Augment Model Data
+# Add fitted values and residuals to the data
 
 Append the [`fitted()`](https://rdrr.io/r/stats/fitted.values.html) and
 deviance [`residuals()`](https://rdrr.io/r/stats/residuals.html) values
-to the input data. Values are the point estimate (median) of the
-posterior distributions.
+to the input data.
 
 ## Usage
 
@@ -20,51 +19,51 @@ augment(x, ...)
 
 - ...:
 
-  Unused.
+  These dots are for future extensions and must be empty.
 
 ## Value
 
-The input data with added columns `fitted` (response-scale fitted value)
-and `residual` (deviance residual).
+The input data with added columns `fitted` (the posterior median of the
+expected response) and `residual` (the posterior median of the deviance
+residual).
 
 ## See also
 
 [`fitted()`](https://rdrr.io/r/stats/fitted.values.html) and
 [`residuals()`](https://rdrr.io/r/stats/residuals.html).
 
-Other generics:
+Other fit methods:
 [`coef.kb_fit()`](https://hakaiinstitute.github.io/kelpbio/reference/coef.kb_fit.md),
-[`converged.kb_fit()`](https://hakaiinstitute.github.io/kelpbio/reference/converged.kb_fit.md),
-[`fitted.kb_fit_weight()`](https://hakaiinstitute.github.io/kelpbio/reference/fitted.kb_fit_weight.md),
+[`fitted.kb_fit()`](https://hakaiinstitute.github.io/kelpbio/reference/fitted.kb_fit.md),
 [`glance.kb_fit()`](https://hakaiinstitute.github.io/kelpbio/reference/glance.kb_fit.md),
+[`kb_model_describe()`](https://hakaiinstitute.github.io/kelpbio/reference/kb_model_describe.md),
+[`kb_samples()`](https://hakaiinstitute.github.io/kelpbio/reference/kb_samples.md),
 [`kb_stancode()`](https://hakaiinstitute.github.io/kelpbio/reference/kb_stancode.md),
 [`log_lik.kb_fit()`](https://hakaiinstitute.github.io/kelpbio/reference/log_lik.kb_fit.md),
-[`posterior_epred.kb_fit_weight()`](https://hakaiinstitute.github.io/kelpbio/reference/posterior_epred.kb_fit_weight.md),
-[`posterior_linpred.kb_fit_weight()`](https://hakaiinstitute.github.io/kelpbio/reference/posterior_linpred.kb_fit_weight.md),
-[`posterior_predict.kb_fit_weight()`](https://hakaiinstitute.github.io/kelpbio/reference/posterior_predict.kb_fit_weight.md),
-[`predict.kb_fit_weight()`](https://hakaiinstitute.github.io/kelpbio/reference/predict.kb_fit_weight.md),
+[`posterior_epred.kb_fit()`](https://hakaiinstitute.github.io/kelpbio/reference/posterior_epred.kb_fit.md),
+[`posterior_linpred.kb_fit()`](https://hakaiinstitute.github.io/kelpbio/reference/posterior_linpred.kb_fit.md),
+[`posterior_predict.kb_fit()`](https://hakaiinstitute.github.io/kelpbio/reference/posterior_predict.kb_fit.md),
 [`prior_summary.kb_fit()`](https://hakaiinstitute.github.io/kelpbio/reference/prior_summary.kb_fit.md),
-[`residuals.kb_fit_weight()`](https://hakaiinstitute.github.io/kelpbio/reference/residuals.kb_fit_weight.md),
-[`samples()`](https://hakaiinstitute.github.io/kelpbio/reference/samples.md),
+[`residuals.kb_fit()`](https://hakaiinstitute.github.io/kelpbio/reference/residuals.kb_fit.md),
 [`summary.kb_fit()`](https://hakaiinstitute.github.io/kelpbio/reference/summary.kb_fit.md),
-[`tidy.kb_fit_weight()`](https://hakaiinstitute.github.io/kelpbio/reference/tidy.kb_fit_weight.md)
+[`tidy.kb_fit()`](https://hakaiinstitute.github.io/kelpbio/reference/tidy.kb_fit.md)
 
 ## Examples
 
 ``` r
 augment(fit_weight_sim_nereo)
-#> # A tibble: 234 × 6
-#>    diameter weight site  year  fitted residual
-#>       <dbl>  <dbl> <fct> <fct>  <dbl>    <dbl>
-#>  1     53.8  0.412 site1 2019  0.427   -0.242 
-#>  2     38.2  0.183 site1 2019  0.173    0.378 
-#>  3     25.2  0.059 site1 2019  0.0595  -0.0540
-#>  4     54.5  0.523 site1 2019  0.442    1.11  
-#>  5     25.6  0.06  site1 2019  0.0619  -0.212 
-#>  6     49.5  0.411 site1 2019  0.342    1.19  
-#>  7     63.7  0.693 site2 2019  0.672    0.199 
-#>  8     32.6  0.144 site2 2019  0.132    0.582 
-#>  9     44.5  0.166 site2 2019  0.279   -2.53  
-#> 10     58    0.457 site2 2019  0.534   -1.02  
-#> # ℹ 224 more rows
+#> # A tibble: 660 × 6
+#>    diameter_mm weight_kg site       year  fitted residual
+#>          <dbl>     <dbl> <fct>      <fct>  <dbl>    <dbl>
+#>  1        28.6     0.663 otter_cove 2020   0.779  -0.117 
+#>  2        16.5     0.569 otter_cove 2020   0.262   1.91  
+#>  3        27.3     0.841 otter_cove 2020   0.697   0.640 
+#>  4        38.3     1.38  otter_cove 2020   1.64   -0.154 
+#>  5        16.2     0.153 otter_cove 2020   0.255  -0.877 
+#>  6        29.8     0.793 otter_cove 2020   0.861   0.0529
+#>  7        34.7     1.36  otter_cove 2020   1.27    0.389 
+#>  8        16.2     0.141 otter_cove 2020   0.255  -1.05  
+#>  9        25.9     0.311 otter_cove 2020   0.615  -1.25  
+#> 10        35.5     1.53  otter_cove 2020   1.34    0.508 
+#> # ℹ 650 more rows
 ```

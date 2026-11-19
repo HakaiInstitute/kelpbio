@@ -1,8 +1,9 @@
 # kelpbio: Bayesian Kelp Biomass Estimation
 
-Fit a Bayesian hierarchical Stan model via 'rstan' to estimate the
-allometric relationship between kelp weight and size from in-situ
-observations.
+Estimate wet, dry, carbon, and nitrogen biomass of Nereocystis luetkeana
+and Macrocystis pyrifera kelp from in situ surveys and mapped surface
+canopy, with compatibility intervals from Bayesian hierarchical models
+fitted by 'rstan'.
 
 ## See also
 

@@ -1,0 +1,172 @@
+# Predict size
+
+Predict the expected plant size at each row of `new_data`, or at the
+observed data when `new_data = NULL`.
+
+## Usage
+
+``` r
+kb_predict_size(
+  fit,
+  new_data = NULL,
+  ...,
+  new_levels = c("average", "sample"),
+  representative_site = NULL,
+  conf_level = 0.95,
+  estimate = stats::median,
+  sig_fig = 3
+)
+```
+
+## Arguments
+
+- fit:
+
+  A `kb_fit_size` object.
+
+- new_data:
+
+  A data frame with optional `site` and `year` columns, one row per
+  prediction, or `NULL` to predict at the observed data. `year` may be
+  numeric or character: `2022` and `"2022"` match the same fitted year.
+
+- ...:
+
+  These dots are for future extensions and must be empty.
+
+- new_levels:
+
+  A string giving how uncertainty is estimated for a site or year not in
+  the data used to fit the model, or when `new_data` has no `site` or
+  `year` column. Sites and years in the model fit always use their own
+  estimates. One of:
+
+  - `"average"` (the default): the typical site or year. The site and
+    year effects are set to 0, their mean, so the interval does not
+    include among-site or among-year variation. Use it to describe an
+    average site or year.
+
+  - `"sample"`: a new effect for each new site or year, drawn from the
+    estimated variation among sites or among years (the random-effect
+    standard deviation). The point estimate is equivalent, but the
+    interval is wider since it also includes that variation. Use it to
+    get realistic uncertainty about a particular site or year that the
+    model has no information on. The interval varies slightly between
+    calls; use [`set.seed()`](https://rdrr.io/r/base/Random.html) to
+    reproduce it.
+
+- representative_site:
+
+  A character vector of sites in the fit whose effects a new site adopts
+  (averaged when several are named), or `NULL` (the default) to follow
+  `new_levels`.
+
+- conf_level:
+
+  A number greater than 0 and less than 1 giving the
+  compatibility-interval level.
+
+- estimate:
+
+  A function that reduces a numeric vector of posterior draws to a
+  single estimate, such as `median` or `mean`.
+
+- sig_fig:
+
+  A whole number of significant figures for summary output.
+
+## Value
+
+A `kb_predictions` object: the rows of `new_data` with added `estimate`,
+`lower`, and `upper` columns summarising the posterior distribution of
+expected size. When the rows have `site` and `year`, a `size_support`
+column (as in
+[`kb_predict_mean_weight()`](https://hakaiinstitute.github.io/kelpbio/reference/kb_predict_mean_weight.md))
+precedes the summary.
+
+## Details
+
+The expected size is the mean of the fitted size distribution
+(*Nereocystis* plant diameter in mm).
+
+The size models have no predictor, so `new_data` needs no columns: each
+row is a site, a year, or a site-year, given by its optional `site` and
+`year` columns.
+
+With `representative_site`, a new site also takes the named sites'
+site:year effect in a year in which they have data.
+
+## See also
+
+[`kb_new_data()`](https://hakaiinstitute.github.io/kelpbio/reference/kb_new_data.md)
+to build rows by site or year, and
+[`posterior_predict()`](https://mc-stan.org/rstantools/reference/posterior_predict.html)
+for draws of individual plant sizes.
+
+Other prediction functions:
+[`autoplot.kb_predictions()`](https://hakaiinstitute.github.io/kelpbio/reference/autoplot.kb_predictions.md),
+[`kb_new_data()`](https://hakaiinstitute.github.io/kelpbio/reference/kb_new_data.md),
+[`kb_plot_predictions()`](https://hakaiinstitute.github.io/kelpbio/reference/kb_plot_predictions.md),
+[`kb_predict_biomass_canopy()`](https://hakaiinstitute.github.io/kelpbio/reference/kb_predict_biomass_canopy.md),
+[`kb_predict_biomass_in_situ()`](https://hakaiinstitute.github.io/kelpbio/reference/kb_predict_biomass_in_situ.md),
+[`kb_predict_carbon()`](https://hakaiinstitute.github.io/kelpbio/reference/kb_predict_carbon.md),
+[`kb_predict_cover_calibration()`](https://hakaiinstitute.github.io/kelpbio/reference/kb_predict_cover_calibration.md),
+[`kb_predict_mean_weight()`](https://hakaiinstitute.github.io/kelpbio/reference/kb_predict_mean_weight.md),
+[`kb_predict_nitrogen()`](https://hakaiinstitute.github.io/kelpbio/reference/kb_predict_nitrogen.md),
+[`kb_predict_weight()`](https://hakaiinstitute.github.io/kelpbio/reference/kb_predict_weight.md),
+[`kb_predict_wetdry()`](https://hakaiinstitute.github.io/kelpbio/reference/kb_predict_wetdry.md),
+[`predict.kb_fit_carbon()`](https://hakaiinstitute.github.io/kelpbio/reference/predict.kb_fit_carbon.md),
+[`predict.kb_fit_cover_calibration()`](https://hakaiinstitute.github.io/kelpbio/reference/predict.kb_fit_cover_calibration.md),
+[`predict.kb_fit_nitrogen()`](https://hakaiinstitute.github.io/kelpbio/reference/predict.kb_fit_nitrogen.md),
+[`predict.kb_fit_size()`](https://hakaiinstitute.github.io/kelpbio/reference/predict.kb_fit_size.md),
+[`predict.kb_fit_weight()`](https://hakaiinstitute.github.io/kelpbio/reference/predict.kb_fit_weight.md),
+[`predict.kb_fit_wetdry()`](https://hakaiinstitute.github.io/kelpbio/reference/predict.kb_fit_wetdry.md)
+
+## Examples
+
+``` r
+fit <- fit_size_sim_nereo
+
+# At the observed plants:
+kb_predict_size(fit)
+#> <kb_predictions> response: diameter_mm | by: site, year
+#> # A tibble: 900 × 7
+#>    diameter_mm site       year  size_support estimate lower upper
+#>          <dbl> <fct>      <fct> <chr>           <dbl> <dbl> <dbl>
+#>  1        24.5 otter_cove 2020  site-year          26  23.7  29.2
+#>  2        28.3 otter_cove 2020  site-year          26  23.7  29.2
+#>  3        30.7 otter_cove 2020  site-year          26  23.7  29.2
+#>  4        17.4 otter_cove 2020  site-year          26  23.7  29.2
+#>  5        41.7 otter_cove 2020  site-year          26  23.7  29.2
+#>  6        18.9 otter_cove 2020  site-year          26  23.7  29.2
+#>  7        16.6 otter_cove 2020  site-year          26  23.7  29.2
+#>  8        33.5 otter_cove 2020  site-year          26  23.7  29.2
+#>  9        32.6 otter_cove 2020  site-year          26  23.7  29.2
+#> 10        18.7 otter_cove 2020  site-year          26  23.7  29.2
+#> # ℹ 890 more rows
+
+# By site:
+kb_predict_size(fit, kb_new_data(fit, by = "site"))
+#> <kb_predictions> response: diameter_mm | by: site
+#> # A tibble: 9 × 4
+#>   site           estimate lower upper
+#>   <fct>             <dbl> <dbl> <dbl>
+#> 1 otter_cove         25.6  23.3  28  
+#> 2 gull_rock          27.5  25    30.3
+#> 3 cedar_bay          22.4  20.5  24.8
+#> 4 heron_reef         24.4  22.1  26.9
+#> 5 urchin_shoal       18.7  16.7  21.3
+#> 6 sculpin_head       22.4  20.5  24.6
+#> 7 eagle_spit         29.1  26.6  31.9
+#> 8 fog_islet          31.8  28.1  36  
+#> 9 tidepool_bluff     27.3  25    30.1
+
+# At new rows, including a new site:
+kb_predict_size(fit, data.frame(site = c("otter_cove", "new_site")))
+#> <kb_predictions> response: diameter_mm | by: site
+#> # A tibble: 2 × 4
+#>   site       estimate lower upper
+#>   <chr>         <dbl> <dbl> <dbl>
+#> 1 otter_cove     25.6  23.3  28  
+#> 2 new_site       25.1  21.4  29.1
+```

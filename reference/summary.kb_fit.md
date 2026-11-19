@@ -1,4 +1,4 @@
-# Summarise a Model Fit
+# Summarise a fit
 
 A model fit's metadata paired with a per-term posterior summary table.
 
@@ -12,7 +12,9 @@ summary(
   conf_level = 0.95,
   estimate = stats::median,
   sig_fig = 3,
-  include_random_effects = FALSE
+  include_random_effects = FALSE,
+  rhat = 1.01,
+  ess = 100
 )
 ```
 
@@ -24,16 +26,17 @@ summary(
 
 - ...:
 
-  Unused.
+  These dots are for future extensions and must be empty.
 
 - conf_level:
 
-  A number between 0 and 1 giving the compatibility-interval level.
+  A number greater than 0 and less than 1 giving the
+  compatibility-interval level.
 
 - estimate:
 
   A function that reduces a numeric vector of posterior draws to a
-  scalar point estimate (e.g. `median` or `mean`).
+  single estimate, such as `median` or `mean`.
 
 - sig_fig:
 
@@ -44,99 +47,99 @@ summary(
   A flag specifying whether to include the group-level random-effect
   terms in the output.
 
+- rhat:
+
+  A number giving the maximum acceptable Rhat.
+
+- ess:
+
+  A number giving the minimum acceptable bulk and tail effective sample
+  size per chain.
+
 ## Value
 
 A `summary_kb_fit` object: a list of fit metadata and a `coefficients`
 tibble with columns `term`, `estimate`, `lower`, `upper`, `rhat`,
-`ess_bulk`, and `ess_tail`.
+`ess_bulk`, `ess_tail`, and `converged`.
 
 ## Details
 
-The `print` method renders a header (likelihood family, fixed- and
-random-effect structure, observation and group counts, sampler
-configuration, and the convergence verdict), the coefficient table, and
-a diagnostics footer. For a compact overview without the numeric table,
-call [`print()`](https://rdrr.io/r/base/print.html) on the fit itself.
-
-The coefficient table reports, per term:
-
-- `estimate`:
-
-  the posterior point estimate (the `estimate` function; the median by
-  default).
-
-- `lower`, `upper`:
-
-  the `conf_level` equal-tailed compatibility limits.
-
-- `rhat`:
-
-  the potential scale reduction factor, comparing between- and
-  within-chain variance; values near 1 indicate convergence.
-
-- `ess_bulk`:
-
-  the bulk effective sample size, governing the reliability of central
-  posterior summaries.
-
-- `ess_tail`:
-
-  the tail effective sample size, governing the reliability of the
-  interval limits.
-
-Population-level coefficients and random-effect standard deviations are
-always shown. The group-level deviations are included only when
-`include_random_effects = TRUE`, following the convention that `summary`
-reports the variance hyperparameters rather than the per-level effects
-(the latter are the
-[`tidy()`](https://generics.r-lib.org/reference/tidy.html) default).
+The printed summary adds the sampler diagnostics (divergent transitions,
+maximum treedepth, and E-BFMI). A term's `converged` uses the Rhat and
+effective sample size thresholds of
+[`kb_converged()`](https://hakaiinstitute.github.io/kelpbio/reference/kb_converged.md);
+the fit's verdict also covers the group-level deviations and divergent
+transitions, so it can be `FALSE` when every term shown has converged.
 
 ## See also
 
-Other generics:
+Other fit methods:
 [`augment.kb_fit()`](https://hakaiinstitute.github.io/kelpbio/reference/augment.kb_fit.md),
 [`coef.kb_fit()`](https://hakaiinstitute.github.io/kelpbio/reference/coef.kb_fit.md),
-[`converged.kb_fit()`](https://hakaiinstitute.github.io/kelpbio/reference/converged.kb_fit.md),
-[`fitted.kb_fit_weight()`](https://hakaiinstitute.github.io/kelpbio/reference/fitted.kb_fit_weight.md),
+[`fitted.kb_fit()`](https://hakaiinstitute.github.io/kelpbio/reference/fitted.kb_fit.md),
 [`glance.kb_fit()`](https://hakaiinstitute.github.io/kelpbio/reference/glance.kb_fit.md),
+[`kb_model_describe()`](https://hakaiinstitute.github.io/kelpbio/reference/kb_model_describe.md),
+[`kb_samples()`](https://hakaiinstitute.github.io/kelpbio/reference/kb_samples.md),
 [`kb_stancode()`](https://hakaiinstitute.github.io/kelpbio/reference/kb_stancode.md),
 [`log_lik.kb_fit()`](https://hakaiinstitute.github.io/kelpbio/reference/log_lik.kb_fit.md),
-[`posterior_epred.kb_fit_weight()`](https://hakaiinstitute.github.io/kelpbio/reference/posterior_epred.kb_fit_weight.md),
-[`posterior_linpred.kb_fit_weight()`](https://hakaiinstitute.github.io/kelpbio/reference/posterior_linpred.kb_fit_weight.md),
-[`posterior_predict.kb_fit_weight()`](https://hakaiinstitute.github.io/kelpbio/reference/posterior_predict.kb_fit_weight.md),
-[`predict.kb_fit_weight()`](https://hakaiinstitute.github.io/kelpbio/reference/predict.kb_fit_weight.md),
+[`posterior_epred.kb_fit()`](https://hakaiinstitute.github.io/kelpbio/reference/posterior_epred.kb_fit.md),
+[`posterior_linpred.kb_fit()`](https://hakaiinstitute.github.io/kelpbio/reference/posterior_linpred.kb_fit.md),
+[`posterior_predict.kb_fit()`](https://hakaiinstitute.github.io/kelpbio/reference/posterior_predict.kb_fit.md),
 [`prior_summary.kb_fit()`](https://hakaiinstitute.github.io/kelpbio/reference/prior_summary.kb_fit.md),
-[`residuals.kb_fit_weight()`](https://hakaiinstitute.github.io/kelpbio/reference/residuals.kb_fit_weight.md),
-[`samples()`](https://hakaiinstitute.github.io/kelpbio/reference/samples.md),
-[`tidy.kb_fit_weight()`](https://hakaiinstitute.github.io/kelpbio/reference/tidy.kb_fit_weight.md)
+[`residuals.kb_fit()`](https://hakaiinstitute.github.io/kelpbio/reference/residuals.kb_fit.md),
+[`tidy.kb_fit()`](https://hakaiinstitute.github.io/kelpbio/reference/tidy.kb_fit.md)
 
 ## Examples
 
 ``` r
 summary(fit_weight_sim_nereo)
 #> <summary_kb_fit>
-#> Model:     weight (nereocystis)
-#> Family:    Student-t (df = 4); response log(weight)
-#> Fixed:     intercept + linear + quadratic log(diameter/d0)
-#> Random:    site (intercept, slope); site:year (intercept)
-#> Centered:  log-diameter at d0 = 40.1 (geometric mean of diameter)
-#> Data:      234 observations; groups: site (10), site:year (39)
-#> Draws:     2 chains, 400 post-warmup draws each (thin = 1), 800 total
+#> Model:     Weight (Nereocystis luetkeana)
+#> Predictor: diameter_mm, reference 24.9 (geometric mean)
+#> Data:      660 observations; groups: site (6), year (6), site:year (33)
+#> Draws:     3 chains, 500 post-warmup draws each (thin = 4), 1500 total
 #> Converged: TRUE
 #> 
-#> # A tibble: 7 × 7
-#>   term          estimate   lower  upper  rhat ess_bulk ess_tail
-#>   <chr>            <dbl>   <dbl>  <dbl> <dbl>    <dbl>    <dbl>
-#> 1 bWeight        -1.47   -1.66   -1.24  1.00       249      331
-#> 2 bDiameter       2.5     2.28    2.74  1.03       218      444
-#> 3 bDiameter2      0.0749 -0.156   0.313 0.998     1176      739
-#> 4 sSite           0.27    0.176   0.459 1.00       226      501
-#> 5 sSiteDiameter   0.313   0.169   0.62  1.02       201      380
-#> 6 sSiteYear       0.0962  0.0521  0.149 1.01       222      356
-#> 7 sWeight         0.161   0.141   0.185 1.00       538      561
+#> # A tibble: 7 × 8
+#>   term           estimate    lower  upper  rhat ess_bulk ess_tail converged
+#>   <chr>             <dbl>    <dbl>  <dbl> <dbl>    <dbl>    <dbl> <lgl>    
+#> 1 intercept       -0.666  -0.918   -0.421  1        1399     1217 TRUE     
+#> 2 diameter_power   2.92    2.71     3.13   1.00     1399     1345 TRUE     
+#> 3 weight_floor     0.118   0.098    0.14   1.00     1395     1318 TRUE     
+#> 4 sd_site          0.2     0.0406   0.521  1.00      733      589 TRUE     
+#> 5 sd_year          0.0544  0.00298  0.254  1.00     1117     1457 TRUE     
+#> 6 sd_site_year     0.261   0.179    0.372  1        1082     1460 TRUE     
+#> 7 sd_residual      0.463   0.438    0.488  1        1348     1425 TRUE     
 #> 
 #> estimate: posterior point estimate; lower, upper: 95% compatibility limits.
 #> rhat: potential scale reduction factor (1 at convergence).
 #> ess_bulk, ess_tail: bulk and tail effective sample sizes.
-#> 0 divergent transitions.
+#> converged: rhat below 1.01 and ess_bulk, ess_tail at least 100 per chain.
+#> 0% divergent transitions; 0% max-treedepth; min E-BFMI 1.6.
+
+# Looser thresholds, for a quick exploratory fit:
+summary(fit_weight_sim_nereo, rhat = 1.05, ess = 50)
+#> <summary_kb_fit>
+#> Model:     Weight (Nereocystis luetkeana)
+#> Predictor: diameter_mm, reference 24.9 (geometric mean)
+#> Data:      660 observations; groups: site (6), year (6), site:year (33)
+#> Draws:     3 chains, 500 post-warmup draws each (thin = 4), 1500 total
+#> Converged: TRUE
+#> 
+#> # A tibble: 7 × 8
+#>   term           estimate    lower  upper  rhat ess_bulk ess_tail converged
+#>   <chr>             <dbl>    <dbl>  <dbl> <dbl>    <dbl>    <dbl> <lgl>    
+#> 1 intercept       -0.666  -0.918   -0.421  1        1399     1217 TRUE     
+#> 2 diameter_power   2.92    2.71     3.13   1.00     1399     1345 TRUE     
+#> 3 weight_floor     0.118   0.098    0.14   1.00     1395     1318 TRUE     
+#> 4 sd_site          0.2     0.0406   0.521  1.00      733      589 TRUE     
+#> 5 sd_year          0.0544  0.00298  0.254  1.00     1117     1457 TRUE     
+#> 6 sd_site_year     0.261   0.179    0.372  1        1082     1460 TRUE     
+#> 7 sd_residual      0.463   0.438    0.488  1        1348     1425 TRUE     
+#> 
+#> estimate: posterior point estimate; lower, upper: 95% compatibility limits.
+#> rhat: potential scale reduction factor (1 at convergence).
+#> ess_bulk, ess_tail: bulk and tail effective sample sizes.
+#> converged: rhat below 1.05 and ess_bulk, ess_tail at least 50 per chain.
+#> 0% divergent transitions; 0% max-treedepth; min E-BFMI 1.6.
 ```

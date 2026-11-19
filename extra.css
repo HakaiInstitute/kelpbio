@@ -1,0 +1,42 @@
+/* Compact article tabs, as in the kelpbioshiny Data format page, so a row of
+   dataset tabs fits on one line. Unselected tabs are shaded so they read as
+   tabs; the selected tab joins the panel below in the body text colour. */
+main .nav-tabs .nav-link {
+  padding: 0.4rem 0.7rem;
+  margin-right: 0.2rem;
+  font-size: 0.875rem;
+  background-color: var(--bs-secondary-bg);
+  border-color: var(--bs-border-color);
+  border-bottom-color: transparent;
+}
+
+main .nav-tabs .nav-link:hover {
+  background-color: var(--bs-border-color);
+}
+
+main .nav-tabs .nav-link.active {
+  color: var(--bs-body-color);
+  font-weight: 600;
+  background-color: var(--bs-body-bg);
+  border-color: var(--bs-border-color) var(--bs-border-color) var(--bs-body-bg);
+}
+
+/* pkgdown keeps every tab panel in the layout, so the panel area is as tall as
+   the tallest tab; show only the active one. */
+main .tab-content {
+  display: block;
+}
+
+main .tab-content > .tab-pane:not(.active) {
+  display: none;
+}
+
+/* A line under the column headers of tables in article tabs. */
+main .tab-content .table > thead > tr > th {
+  border-bottom: 1px solid var(--bs-secondary-color);
+}
+
+/* Column names and examples are never hyphenated. */
+main .tab-content .table code {
+  hyphens: none;
+}

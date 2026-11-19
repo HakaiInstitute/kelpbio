@@ -1,6 +1,9 @@
 # Articles
 
-### All vignettes
+### Articles
 
-- [Get started with
-  kelpbio](https://hakaiinstitute.github.io/kelpbio/articles/kelpbio.md):
+- [Methods](https://hakaiinstitute.github.io/kelpbio/articles/methods.md):
+- [Data
+  format](https://hakaiinstitute.github.io/kelpbio/articles/data-format.md):
+- [Advanced
+  usage](https://hakaiinstitute.github.io/kelpbio/articles/advanced.md):
