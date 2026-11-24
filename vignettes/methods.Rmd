@@ -39,7 +39,7 @@ pyrifera* by combining several sub-models, each fitted to its own data:
 4. Dry, carbon, and nitrogen biomass: dry:wet ratio, carbon fraction, and
    nitrogen fraction models convert the total biomass.
 
-<img src="figures/workflow.svg" alt="Flow diagram in three columns. Weight, size, and survey data feed the weight and size models and then survey biomass. Survey biomass, with plot cover, fits the cover calibration. The calibration and canopy data give total canopy biomass, which wet/dry, carbon, and nitrogen models, fitted to tissue samples, convert to dry, carbon, or nitrogen biomass." width="100%" />
+<img src="figures/workflow.svg" alt="Flow diagram in three columns. Weight, size, and survey data feed the weight and size models and then in situ survey biomass. In situ survey biomass, with plot cover, fits the cover calibration. The calibration and canopy data give total canopy biomass, which wet/dry, carbon, and nitrogen models, fitted to tissue samples, convert to dry, carbon, or nitrogen biomass." width="100%" />
 
 The sections below describe the data, the general modelling approach, and then
 each step in turn, including specific model descriptions.
