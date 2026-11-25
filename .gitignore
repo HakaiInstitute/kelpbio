@@ -42,3 +42,6 @@ scripts/sim-site-year-drop*
 scripts/sim-output/
 scripts/benchmark-*
 scripts/profile-*
+
+# personal Claude Code instructions
+CLAUDE.local.md

@@ -2,20 +2,13 @@
 
 R package for Bayesian kelp biomass estimation. All exported functions use the `kb_` prefix.
 
-## Repositories and issues
-
-- Development (branches, commits, pull requests) happens in the HakaiInstitute repo (`HakaiInstitute/kelpbio`), never in the poissonconsulting fork.
-- GitHub issues are tracked in the poissonconsulting fork (`poissonconsulting/kelpbio`), which is public. The fork holds the issues only and is synced with the HakaiInstitute repo occasionally.
-
 ## Development workflow
 
-- New work goes on a new branch in the main checkout (`~/Code/HakaiInstitute/kelpbio`), not a worktree unless asked: the user reviews diffs and accepts snapshots there. Other sessions may share the checkout, so stage only the files this session changed and list any others instead of committing them.
-- Branches are stacked by default. Branch from the tip of the open PR stack (the open PR's branch that no other PR targets, from `gh pr list`) and confirm the tip before branching. When a change could stand apart from the stack, ask whether to stack it or base it on `dev`; never pick `dev` unasked. Each PR targets the branch below it, and only the bottom PR of a stack targets `dev`.
-- The PR chain shows how the changes progressed; the stack is reviewed and merged as one diff against `dev`. Only the tip's CI must pass: a fix goes on the tip, never on a lower branch, so the PRs beneath are not pushed or re-run. Request review of the whole stack with the tip's comparison against `dev` (`https://github.com/HakaiInstitute/kelpbio/compare/dev...<tip-branch>`), not PR by PR. Once approved, retarget the tip PR to `dev` and merge it with a merge commit (not a squash), then close each PR beneath it by hand with a comment naming the tip PR.
-- Commit and push only when asked, to `origin`; a request to push includes the build and `jarl check .` below. Never amend a pushed commit. After a push, show the stack (PR, branch, base, CI) and update the title and description of every PR whose contents changed.
+- Development happens in `HakaiInstitute/kelpbio`. Changes are committed to `dev`; `dev` is merged into `main` by a pull request, which is reviewed and merged with a merge commit (not a squash).
+- Commit and push only when asked, to `origin`; a request to push includes the build and `jarl check .` below. Never amend a pushed commit. After a push, update the title and description of the open `dev` to `main` pull request if its contents changed.
 - Before pushing, run `Rscript scripts/build.R` and `jarl check .`. CI runs R CMD check and jarl on every push to a PR, and lint is what fails most often: CI installs the latest jarl, so keep the local one current (`jarl --version`), and never assign inside a call (`out <- expect_no_warning(f())`, not `expect_no_warning(out <- f())`).
-- Planned work goes in an issue on `poissonconsulting/kelpbio`, not session memory, so the next session can find it.
-- Before opening or pushing a PR, scan the open issues (`gh issue list --repo poissonconsulting/kelpbio`, and the other two repos' forks for cross-repo work) for any the PR resolves, and list each in the PR description as `Closes poissonconsulting/kelpbio#<n>`. GitHub closes them only when the PR merges into the default branch, so a stacked PR's issues close once the stack reaches `main`; close any left open by hand after merging.
+- Planned work goes in a GitHub issue, not session memory, so the next session can find it.
+- Before opening or pushing a PR, scan the open issues (`gh issue list`, and the other two repos' for cross-repo work) for any the PR resolves, and list each in the PR description as `Closes #<n>`. GitHub closes them when the PR merges into `main`.
 - Draft vignettes, simulation and side-analysis scripts, and review exports (`review/`) are never committed; ask when unsure whether a new file belongs in history.
 
 ## Common Commands
@@ -35,7 +28,6 @@ The build runs are also Positron/VS Code tasks (Command Palette > "Tasks: Run Ta
 - **After editing any `inst/stan/*.stan` file**: run `rstantools::rstan_config()` (regenerates `src/stanExports_*` and `R/stanmodels.R`), then `devtools::install()`. `devtools::load_all()`/`test()` compile from the generated C++ but do NOT re-transpile the Stan source, so `.stan` edits are silently missed without `rstan_config()` first. Then rebuild that model's fits (see Tests or rebuilt fits).
 - When a change removes exports, run `devtools::document()` before `devtools::install()`: install reads NAMESPACE and fails on exports that no longer exist.
 - Generated files (`R/stanmodels.R`, `src/stanExports_*`, `src/RcppExports.cpp`) are never hand-edited and are excluded from styling and linting.
-- `install()` writes to the user's library, which kelpbioshiny and kelpbiodata use: never build while the user's own build is running.
 
 ## Tests or rebuilt fits
 
@@ -48,15 +40,14 @@ The build runs are also Positron/VS Code tasks (Command Palette > "Tasks: Run Ta
 
 | Resource | Path |
 |----------|------|
-| Analysis project (final models + Stan code) | `~/Analyses/poissonconsulting/hakai-kelp-biomass-25/` |
-| Reference package architecture | `~/Code/poissonconsulting/bboutools/` |
+| Reference package architecture | [`poissonconsulting/bboutools`](https://github.com/poissonconsulting/bboutools) |
 | Observable behaviour (the package contract) | `openspec/specs/` (`fitting`, `predictions`, `summaries`) |
 | OpenSpec workflow and what lives where | `openspec/workflow.md` |
 | Rules for change artifacts | `openspec/config.yaml` |
 | Decision records | `decisions/` (superseded records in `decisions/archive/`) |
 | Documentation style | `.claude/STYLE.md` |
 
-One fact, one home: behaviour in the specs, the exact models and outputs in code, tests, and snapshots, conventions here, lasting rationale in `decisions/`, per-change rationale in that change's `design.md`. When implementing any feature, read the corresponding analysis project script and Stan file first; the analysis project contains the final, validated model code that kelpbio adapts.
+One fact, one home: behaviour in the specs, the exact models and outputs in code, tests, and snapshots, conventions here, lasting rationale in `decisions/`, per-change rationale in that change's `design.md`.
 
 ## Change Workflow (OpenSpec)
 
@@ -64,30 +55,16 @@ One fact, one home: behaviour in the specs, the exact models and outputs in code
 
 In addition:
 
-- **One change, one branch, one PR.** An OpenSpec change is proposed, implemented and archived (`openspec archive <name> --yes`) on its own branch in the stack, and archived before review is requested; never leave archiving to a later PR.
-- **README and vignettes wait** for the one pending pass over them; roxygen, `_pkgdown.yml`, specs and the demo scripts still update in each PR.
-- **Trust the test suite + green CI as the "done" signal**, not `tasks.md` checkboxes. The tip of the stack passes CI before review is requested on the whole stack.
-- **The analysis project wins**: when a spec and the analysis project's model code disagree, follow the analysis project.
-- **Simplest design**: optimise for one reviewer; prefer the design with less code, and report the net lines added or removed.
+- **Archive before review.** An OpenSpec change is proposed, implemented and archived (`openspec archive <name> --yes`) before the `dev` to `main` pull request that contains it is reviewed; never leave archiving to a later one.
+- **Reader docs update with the change**: roxygen, `_pkgdown.yml`, specs, README, vignettes, and the demo scripts.
+- **Trust the test suite + green CI as the "done" signal**, not `tasks.md` checkboxes. `dev` passes CI before review of the pull request into `main` is requested.
+- **Simplest design**: prefer the design with less code.
 - **Pre-release** (version `0.0.0.9000`): no NEWS entries, version bumps, deprecations or backward compatibility; rename freely. From the first release, follow the tidyverse release process: a NEWS bullet for each user-facing change, semantic versions set with `usethis::use_version()`, and lifecycle for deprecations.
 - **`decisions/` are live documents**: overwrite them to describe the current design rather than appending dated revisions. Git keeps the history.
 
-## Analysis Project Structure
+## Model Scope
 
-The analysis project uses `embr`/`cmdstanr`. kelpbio re-implements the same models using `rstan`/`rstantools`. Key analysis scripts:
-
-| Topic | Model script | Stan file |
-|-------|-------------|-----------|
-| Weight (allometric) | `models-weight-nereo.R` | `stan/nereo/weight/weight-nereo.stan` |
-| Size (distribution) | `models-size-nereo.R` | `stan/nereo/size/size-nereo.stan` |
-| Cover calibration | `models-cover-nereo.R` | `stan/nereo/cover/cover-offset.stan` |
-| Blade fraction | `models-blade-frac-nereo.R` | `stan/nereo/blade/blade-frac-nereo.stan` |
-| Wet/dry | `models-wetdry-nereo.R` | `stan/nereo/wetdry/wetdry-nereo.stan` |
-| Carbon | `models-carbon-nereo.R` | `stan/nereo/carbon/carbon-nereo.stan` |
-
-kelpbio estimates the **peak season at site-year resolution, with no month dimension** (the analysis models' month effects are dropped); a site-year may hold several plots and a plot several surveys. Biomass of an in situ survey is its counted plants' expected weight over the area searched (mean plant weight by size integration for tallied plants); the cover calibration relates it to drone cover, and totals apply the calibration over mapped canopy. There is no density model and no *Macrocystis* size model; see `decisions/prediction-engine.md`.
-
-Adaptations from the analysis Stan models: prior hyperparameters are passed through the `data` block (the analysis hard-codes them), and columns are snake_case (`diameter_mm`, `weight_kg`, `site`, `year`) rather than CamelCase.
+kelpbio estimates the **peak season at site-year resolution, with no month dimension**; a site-year may hold several plots and a plot several surveys. Biomass of an in situ survey is its counted plants' expected weight over the area searched (mean plant weight by size integration for tallied plants); the cover calibration relates it to drone cover, and totals apply the calibration over mapped canopy. There is no density model and no *Macrocystis* size model; see `decisions/prediction-engine.md`.
 
 ## Bayesian Engine
 
