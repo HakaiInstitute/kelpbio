@@ -37,7 +37,7 @@
       <stop offset="1" stop-color="#9FC4E0" />
     </linearGradient>
     <clipPath id="plot-clip">
-      <rect x="195" y="200" width="165" height="96" />
+      <rect x="187" y="192" width="181" height="112" />
     </clipPath>
   </defs>
 
@@ -59,8 +59,8 @@
   <rect class="transect" x="200" y="236" width="155" height="23" />
   <rect class="transect-casing" x="200" y="267" width="155" height="23" />
   <rect class="transect" x="200" y="267" width="155" height="23" />
-  <rect class="plot" x="195" y="200" width="165" height="96" />
-  <text class="sans map-label" x="195" y="193" style="fill:#C0392B">Plot</text>
+  <rect class="plot" x="187" y="192" width="181" height="112" />
+  <text class="sans map-label" x="187" y="185" style="fill:#C0392B">Plot</text>
 
   <!-- Site boundary -->
   <path class="site" d="M539.7 40.0 L103.2 56.8 L30.3 144.9 L30.0 213.5 L179.1 390.7 L511.7 392.8 L510.4 384.7 L490.8 229.3 L584.1 109.0 L590.0 97.5 L539.7 40.0Z" />
@@ -72,7 +72,7 @@
   <text class="sans badge-text" x="142" y="353">1</text>
 
   <!-- Callout 2: plot -->
-  <path class="leader" d="M 360 200 L 395 172" />
+  <path class="leader" d="M 368 192 L 395 172" />
   <circle class="badge" cx="404" cy="165" r="12" />
   <text class="sans badge-text" x="404" y="170">2</text>
 
