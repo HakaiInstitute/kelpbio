@@ -76,12 +76,9 @@
   <circle class="badge" cx="404" cy="165" r="12" />
   <text class="sans badge-text" x="404" y="170">2</text>
 
-  <!-- Callout 3: all canopy in the site -->
-  <path class="leader" d="M 520 300 L 452 262" />
-  <path class="leader" d="M 520 300 L 345 335" />
-  <path class="leader" d="M 520 300 L 545 90" />
-  <circle class="badge" cx="520" cy="300" r="12" />
-  <text class="sans badge-text" x="520" y="305">3</text>
+  <!-- Callout 3: all canopy in the site, so it labels the site rather than pointing at polygons -->
+  <circle class="badge" cx="124" cy="115" r="12" />
+  <text class="sans badge-text" x="124" y="120">3</text>
 
   <!-- Legend -->
   <g class="sans">
