@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 910 656" width="910" height="656" role="img" aria-labelledby="title desc">
   <title id="title">kelpbio workflow</title>
-  <desc id="desc">Field data are fitted by Bayesian sub-models, whose draws combine into survey biomass, the cover calibration, total biomass per site-year, and its dry, carbon, or nitrogen biomass.</desc>
+  <desc id="desc">Field data are fitted by Bayesian sub-models, whose draws combine into in situ survey biomass, the cover calibration, total biomass per site-year, and its dry, carbon, or nitrogen biomass.</desc>
   <style>
     .bg { fill: #ffffff; }
     .box { stroke-width: 1.2; }
@@ -89,7 +89,7 @@
 
   <!-- Predictions -->
   <rect rx="8" ry="8" class="box output" x="650" y="140" width="230" height="58"/>
-  <text class="title output-text" x="765" y="161">Survey biomass</text>
+  <text class="title output-text" x="765" y="161">In situ survey biomass</text>
   <text class="fn output-text" x="765" y="182">kb_predict_biomass_in_situ()</text>
 
   <rect rx="8" ry="8" class="box output" x="650" y="366" width="230" height="58"/>

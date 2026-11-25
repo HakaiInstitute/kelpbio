@@ -93,7 +93,7 @@ canopy mapped across the site.</li>
 <li>Dry, carbon, and nitrogen biomass: dry:wet ratio, carbon fraction,
 and nitrogen fraction models convert the total biomass.</li>
 </ol>
-<p><img src="figures/workflow.svg" alt="Flow diagram in three columns. Weight, size, and survey data feed the weight and size models and then survey biomass. Survey biomass, with plot cover, fits the cover calibration. The calibration and canopy data give total canopy biomass, which wet/dry, carbon, and nitrogen models, fitted to tissue samples, convert to dry, carbon, or nitrogen biomass." width="100%"></p>
+<p><img src="figures/workflow.svg" alt="Flow diagram in three columns. Weight, size, and survey data feed the weight and size models and then in situ survey biomass. In situ survey biomass, with plot cover, fits the cover calibration. The calibration and canopy data give total canopy biomass, which wet/dry, carbon, and nitrogen models, fitted to tissue samples, convert to dry, carbon, or nitrogen biomass." width="100%"></p>
 <p>The sections below describe the data, the general modelling approach,
 and then each step in turn, including specific model descriptions.</p>
 </div>
@@ -169,17 +169,19 @@ site-year should all come from the same part of the season.</p>
 <h4 id="counts-from-the-surface">Counts from the surface<a class="anchor" aria-label="anchor" href="#counts-from-the-surface"></a>
 </h4>
 <p>The kelpbio modelling approach allows <em>Nereocystis</em> plants to
-be counted from the surface, e.g., in quadrats from a boat. The data
-take the same format: <code>survey_area_m2</code> is the combined area
-of the quadrats and <code>plants</code> the total number of plants
-counted in them. For the estimate to be valid:</p>
+be counted from the surface in quadrats from a boat (e.g., the methods
+recommended by the <a href="https://mappocean.org/wp-content/uploads/2026/06/Thompson-and-MaPP-2026-MaPP-Kelp-Monitoring-Methods-1.pdf" class="external-link">Marine
+Plan Partnership for the North Pacific Coast</a>). The data take the
+same format: <code>survey_area_m2</code> is the combined area of the
+quadrats and <code>plants</code> the total number of plants counted in
+them. For the estimate to be valid:</p>
 <ul>
-<li>every plant reaching the surface within each quadrat is counted, and
-each plant is counted only once (for example, bulbs on the quadrat edge
-are counted on two adjacent sides only);</li>
-<li>within a defined plot area, quadrats are placed randomly or
-systematically (for example, along a transect line) without regard to
-where the kelp is;</li>
+<li>every plant with a bulb at the surface within each quadrat is
+counted once;</li>
+<li>along each transect, quadrats are placed randomly or systematically
+(e.g., at a fixed spacing) without regard to where the kelp is, and
+transects are placed to represent the plot in which cover is calculated
+(e.g., crossing its areas of low and high density in proportion);</li>
 <li>counts and areas of the quadrats on one line or in one group are
 summed to one row, since neighbouring quadrats are not independent;</li>
 <li>counts are made at low slack tide, when the fewest bulbs are

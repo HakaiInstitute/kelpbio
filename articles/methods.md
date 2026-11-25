@@ -18,11 +18,11 @@ its own data:
     and nitrogen fraction models convert the total biomass.
 
 ![Flow diagram in three columns. Weight, size, and survey data feed the
-weight and size models and then survey biomass. Survey biomass, with
-plot cover, fits the cover calibration. The calibration and canopy data
-give total canopy biomass, which wet/dry, carbon, and nitrogen models,
-fitted to tissue samples, convert to dry, carbon, or nitrogen
-biomass.](figures/workflow.svg)
+weight and size models and then in situ survey biomass. In situ survey
+biomass, with plot cover, fits the cover calibration. The calibration
+and canopy data give total canopy biomass, which wet/dry, carbon, and
+nitrogen models, fitted to tissue samples, convert to dry, carbon, or
+nitrogen biomass.](figures/workflow.svg)
 
 The sections below describe the data, the general modelling approach,
 and then each step in turn, including specific model descriptions.
@@ -109,17 +109,20 @@ site-year should all come from the same part of the season.
 #### Counts from the surface
 
 The kelpbio modelling approach allows *Nereocystis* plants to be counted
-from the surface, e.g., in quadrats from a boat. The data take the same
-format: `survey_area_m2` is the combined area of the quadrats and
-`plants` the total number of plants counted in them. For the estimate to
-be valid:
+from the surface in quadrats from a boat (e.g., the methods recommended
+by the [Marine Plan Partnership for the North Pacific
+Coast](https://mappocean.org/wp-content/uploads/2026/06/Thompson-and-MaPP-2026-MaPP-Kelp-Monitoring-Methods-1.pdf)).
+The data take the same format: `survey_area_m2` is the combined area of
+the quadrats and `plants` the total number of plants counted in them.
+For the estimate to be valid:
 
-- every plant reaching the surface within each quadrat is counted, and
-  each plant is counted only once (for example, bulbs on the quadrat
-  edge are counted on two adjacent sides only);
-- within a defined plot area, quadrats are placed randomly or
-  systematically (for example, along a transect line) without regard to
-  where the kelp is;
+- every plant with a bulb at the surface within each quadrat is counted
+  once;
+- along each transect, quadrats are placed randomly or systematically
+  (e.g., at a fixed spacing) without regard to where the kelp is, and
+  transects are placed to represent the plot in which cover is
+  calculated (e.g., crossing its areas of low and high density in
+  proportion);
 - counts and areas of the quadrats on one line or in one group are
   summed to one row, since neighbouring quadrats are not independent;
 - counts are made at low slack tide, when the fewest bulbs are
