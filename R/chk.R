@@ -672,7 +672,6 @@
     )
   }
   warn_implausible_units(data, x_name)
-  warn_group_names(data, x_name)
   invisible(data)
 }
 
@@ -833,7 +832,6 @@
   .chk_unique_surveys(data, x_name)
   .chk_plot_cover_columns(data, x_name)
   warn_implausible_units(data, x_name)
-  warn_group_names(data, x_name)
   warn_survey_area(data, x_name)
   if (!is.null(size_census)) {
     size <- intersect(c("diameter_mm", "fronds"), names(size_census))

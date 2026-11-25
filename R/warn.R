@@ -75,23 +75,6 @@ warn_tissue_ratio <- function(data, ratio, x_name) {
   invisible(data)
 }
 
-# Tools like tidybayes split names such as site_year_effect[<site>,<year>] on
-# the comma. A warning, not an error: indexing the draws by name is unaffected.
-warn_group_names <- function(data, x_name) {
-  for (col in intersect(c("site", "year"), names(data))) {
-    values <- unique(as.character(data[[col]]))
-    bad <- values[grepl("[],[]", values)]
-    if (length(bad)) {
-      nm <- column_xname(x_name, col)
-      cli::cli_warn(c(
-        "{nm} has value{?s} {.val {bad}} containing a comma or square bracket.",
-        i = "Parameter names such as {.code site_year_effect[<site>,<year>]} built from such values cannot be split back into their levels by tools that parse them."
-      ))
-    }
-  }
-  invisible(data)
-}
-
 # The limits lie well beyond the site-year medians in the reference data
 # (Nereocystis: the coastwide harvest compilation; otherwise Hakai Institute
 # surveys and lab samples) and well inside what a unit mistake produces. The

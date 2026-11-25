@@ -25,16 +25,6 @@
       2 samples in `d` have dry:wet mass ratios outside 0.02 to 0.50, the plausible range for kelp tissue.
       i Check the wet and dry masses for transcription or weighing errors.
 
-# a site or year with a comma or bracket warns, naming the values
-
-    Code
-      warn_group_names(data.frame(site = c("North Reef, inner", "b",
-        "North Reef, inner"), year = "2020"), "`d`")
-    Condition
-      Warning:
-      Column `site` of `d` has value "North Reef, inner" containing a comma or square bracket.
-      i Parameter names such as `site_year_effect[<site>,<year>]` built from such values cannot be split back into their levels by tools that parse them.
-
 # a column in the wrong unit warns, naming it and the expected unit
 
     Code

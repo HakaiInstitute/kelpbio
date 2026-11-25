@@ -22,31 +22,6 @@ test_that("warn_dry_wet_ratio counts samples outside 0.02 to 0.5 and keeps them"
   expect_identical(out, odd)
 })
 
-test_that("a site or year with a comma or bracket warns, naming the values", {
-  expect_snapshot(warn_group_names(
-    data.frame(site = c("North Reef, inner", "b", "North Reef, inner"), year = "2020"),
-    "`d`"
-  ))
-  expect_warning(
-    warn_group_names(data.frame(site = "a", year = "2020[a]"), "`d`"),
-    "2020\\[a\\]"
-  )
-})
-
-test_that("plain names, including spaces, raise no warning", {
-  expect_no_warning(
-    warn_group_names(data.frame(site = c("North Reef", "b"), year = "2020"), "`d`")
-  )
-  expect_no_warning(warn_group_names(data.frame(x = "a,b"), "`d`"))
-})
-
-test_that("the data checks warn on ambiguous group names", {
-  data <- data_size_sample_sim_nereo
-  data$site <- as.character(data$site)
-  data$site[1] <- "North Reef, inner"
-  expect_warning(kb_check_data_size_sample_nereo(data), "comma or square bracket")
-})
-
 test_that("a column in the wrong unit warns, naming it and the expected unit", {
   expect_snapshot(warn_implausible_units(data.frame(diameter_mm = c(2.5, 3.4, 4)), "`d`"))
   expect_snapshot(warn_implausible_units(data.frame(weight_kg = c(900, 1200)), "`d`"))

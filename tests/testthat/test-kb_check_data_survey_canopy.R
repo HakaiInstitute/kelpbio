@@ -42,13 +42,9 @@ test_that("errors name the data", {
   expect_error(kb_check_data_survey_canopy(maps, x_name = "`canopy sheet`"), "canopy sheet")
 })
 
-test_that("implausible units and ambiguous group names warn", {
+test_that("implausible units warn", {
   expect_warning(
     kb_check_data_survey_canopy(transform(canopy(), canopy_tide_height_m = c(40, 110, 80))),
     "canopy_tide_height_m"
-  )
-  expect_warning(
-    kb_check_data_survey_canopy(transform(canopy(), site = c("a,b", "a,b", "c"))),
-    "comma"
   )
 })

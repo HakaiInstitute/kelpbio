@@ -37,7 +37,6 @@ kb_check_data_weight_macro <- function(
       .chk_measure_columns(data, "weight_kg", x_name)
       .chk_group_columns(data, x_name)
       warn_implausible_units(data, x_name)
-      warn_group_names(data, x_name)
     },
     rlang::current_env()
   )
