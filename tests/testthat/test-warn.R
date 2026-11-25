@@ -134,36 +134,11 @@ test_that("a pool_by group holding one site-year twice warns", {
   expect_no_warning(warn_overlapping_canopy(grid, c(1L, 2L)))
 })
 
-test_that("rows past the tide limit on more than 5% of draws warn", {
-  expect_snapshot(
-    warn_tide_cap(c(0.2, 0.01, 0.5), "`d`", rows = "row", cap = "the classified area", basis = "on more than 5% of draws")
-  )
-  expect_no_warning(warn_tide_cap(c(0, 0.05), "`d`", rows = "row", cap = "x", basis = "y"))
-})
-
-test_that("tide_cap_share counts the draws past the tide limit, zero canopy excepted", {
-  slope <- posterior::rvar(c(0.2, 0.3, 0.4, 0.5))
-  # one over the slope is 5, 3.33, 2.5, and 2
-  expect_equal(tide_cap_share(c(10, 10, 10, 0), c(1, 2.5, 5, 5), slope), c(0, 0.5, 1, 0))
-})
-
-test_that("tide_cap_prior_share is the truncated Normal tail beyond one over the tide", {
-  prior <- kb_prior_normal(mean = 0.276, sd = 0.04)
-  expect_equal(tide_cap_prior_share(c(1, 1, 0), c(1, 2, 5), prior), c(0, 0, 0))
-  set.seed(1)
-  x <- stats::rnorm(1e6, 0.276, 0.04)
-  x <- x[x >= 0 & x <= 0.5]
-  expect_equal(tide_cap_prior_share(1, 3, prior), mean(x >= 1 / 3), tolerance = 0.01)
-  expect_equal(tide_cap_prior_share(1, -1, prior), 0)
-})
-
-test_that("tide_cap_prior_share treats a prior off the support as its nearer bound", {
-  high <- kb_prior_normal(mean = 2, sd = 0.01)
-  # at the upper bound of 0.5, the tide limit is 2 m
-  expect_equal(tide_cap_prior_share(c(1, 1, 0), c(1, 3, 3), high), c(0, 1, 0))
-  low <- kb_prior_normal(mean = -1, sd = 0.01)
-  expect_equal(tide_cap_prior_share(c(1, 1), c(1, 3), low), c(0, 0))
-  expect_silent(warn_tide_cap(tide_cap_prior_share(1, 1, high), "`data`", "survey", "x", "y"))
+test_that("rows with canopy above 2 m tide warn", {
+  d <- data.frame(canopy_area_m2 = c(10, 10, 10, 0, 10), canopy_tide_height_m = c(2.5, 5, 2, 5, -0.5))
+  expect_snapshot(warn_high_tide(d, "`d`", rows = "row"))
+  expect_snapshot(warn_high_tide(d[1, ], "`d`", rows = "survey"))
+  expect_no_warning(warn_high_tide(d[3:5, ], "`d`", rows = "row"))
 })
 
 test_that("warn_presence_separation warns only when no empty survey overlaps the occupied in cover", {

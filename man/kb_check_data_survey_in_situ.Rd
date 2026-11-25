@@ -45,7 +45,7 @@ Optional columns:
 \item \code{plants}, the number of plants counted, given only when sizes come from a size sample (whole number >= 0).
 \item \code{plot_area_m2}, the area of the plot polygon bounding the survey area that the canopy cover is measured over (m², > 0, or missing).
 \item \code{canopy_area_m2}, the canopy area delineated within the plot polygon (m², >= 0 and <= plot_area_m2, or missing).
-\item \code{canopy_tide_height_m}, the tide height when the canopy was imaged, relative to chart datum (m, any number, or missing).
+\item \code{canopy_tide_height_m}, the tide height when the canopy was imaged, relative to chart datum, ideally close to 0 m and at most 2 m, or 0 for canopy already corrected for tide (m, any number, or missing).
 }
 
 Other columns are ignored.

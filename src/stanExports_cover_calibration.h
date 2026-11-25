@@ -17,7 +17,7 @@ static constexpr std::array<const char*, 81> locations_array__ =
   {" (found before start of program)",
   " (in 'cover_calibration', line 53, column 2 to column 28)",
   " (in 'cover_calibration', line 54, column 2 to column 30)",
-  " (in 'cover_calibration', line 55, column 2 to column 45)",
+  " (in 'cover_calibration', line 55, column 2 to column 34)",
   " (in 'cover_calibration', line 56, column 2 to column 28)",
   " (in 'cover_calibration', line 57, column 2 to column 26)",
   " (in 'cover_calibration', line 58, column 2 to column 28)",
@@ -522,8 +522,8 @@ public:
           lp__);
       current_statement__ = 3;
       auto tide_height_slope =
-        in__.template read_constrain_lub<local_scalar_t__, jacobian__>(0,
-          0.5, lp__);
+        in__.template read_constrain_lb<local_scalar_t__, jacobian__>(0,
+          lp__);
       current_statement__ = 4;
       auto cv_residual =
         in__.template read_constrain_lb<local_scalar_t__, jacobian__>(0,
@@ -706,8 +706,8 @@ public:
           lp__);
       current_statement__ = 3;
       auto tide_height_slope =
-        in__.template read_constrain_lub<local_scalar_t__, jacobian__>(0,
-          0.5, lp__);
+        in__.template read_constrain_lb<local_scalar_t__, jacobian__>(0,
+          lp__);
       current_statement__ = 4;
       auto cv_residual =
         in__.template read_constrain_lb<local_scalar_t__, jacobian__>(0,
@@ -901,8 +901,8 @@ public:
           lp__);
       current_statement__ = 3;
       auto tide_height_slope =
-        in__.template read_constrain_lub<local_scalar_t__, jacobian__>(0,
-          0.5, lp__);
+        in__.template read_constrain_lb<local_scalar_t__, jacobian__>(0,
+          lp__);
       current_statement__ = 4;
       auto cv_residual =
         in__.template read_constrain_lb<local_scalar_t__, jacobian__>(0,
@@ -990,7 +990,7 @@ public:
       local_scalar_t__ tide_height_slope = DUMMY_VAR__;
       current_statement__ = 3;
       tide_height_slope = in__.read<local_scalar_t__>();
-      out__.write_free_lub(0, 0.5, tide_height_slope);
+      out__.write_free_lb(0, tide_height_slope);
       local_scalar_t__ cv_residual = DUMMY_VAR__;
       current_statement__ = 4;
       cv_residual = in__.read<local_scalar_t__>();
@@ -1085,7 +1085,7 @@ public:
       local_scalar_t__ tide_height_slope = DUMMY_VAR__;
       current_statement__ = 3;
       tide_height_slope = context__.vals_r("tide_height_slope")[(1 - 1)];
-      out__.write_free_lub(0, 0.5, tide_height_slope);
+      out__.write_free_lb(0, tide_height_slope);
       local_scalar_t__ cv_residual = DUMMY_VAR__;
       current_statement__ = 4;
       cv_residual = context__.vals_r("cv_residual")[(1 - 1)];

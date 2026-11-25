@@ -23,10 +23,6 @@ cap_canopy <- function(canopy, seen, cap) {
   corrected
 }
 
-# The upper bound of the tide slope's support, as declared for
-# `tide_height_slope` in inst/stan/cover_calibration.stan; keep the two equal.
-TIDE_SLOPE_UPPER <- 0.5
-
 # Mirrors inst/stan/cover_calibration.stan: tide-corrected canopy, capped at the
 # plot area, as a proportion of it.
 tide_corrected_cover <- function(grid, tide_height_slope) {

@@ -120,7 +120,10 @@ data_columns <- local({
         "numeric",
         "m",
         paste0("any number", or_missing),
-        "The tide height when the canopy was imaged, relative to chart datum.",
+        paste(
+          "The tide height when the canopy was imaged, relative to chart datum,",
+          "ideally close to 0 m and at most 2 m, or 0 for canopy already corrected for tide."
+        ),
         "0.75"
       )
     )
@@ -260,7 +263,10 @@ data_columns <- local({
         "numeric",
         "m",
         "any number",
-        "The tide height when the canopy was imaged, relative to chart datum.",
+        paste(
+          "The tide height when the canopy was imaged, relative to chart datum,",
+          "ideally close to 0 m and at most 2 m, or 0 for canopy already corrected for tide."
+        ),
         "1.0"
       ),
       col(

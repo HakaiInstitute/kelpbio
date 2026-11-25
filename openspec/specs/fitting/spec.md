@@ -323,19 +323,19 @@ The data checks, and so the fit functions, SHALL warn when a `site` or `year` va
 - **WHEN** the site and year values contain none of `,`, `[`, or `]`, including names with spaces
 - **THEN** no group-name warning is issued
 
-### Requirement: Surveys past the tide limit are flagged
+### Requirement: Surveys at high tides are flagged
 
-The cover calibration fits SHALL warn when a survey with positive canopy has more than a 5% probability, under the tide slope's prior truncated to its support, of a tide height at or above one over the tide slope, giving the number of such surveys and saying that there the survey enters as fully covered rather than with the canopy measured. The warning SHALL NOT stop the fit. A survey with positive canopy whose tide height is at or above one over the tide slope SHALL enter the fit as fully covered; a survey with no canopy SHALL keep zero cover. The message is pinned by `tests/testthat/_snaps/warn.md`.
+The cover calibration fits SHALL warn when a survey with positive canopy has `canopy_tide_height_m` above 2 m, giving the number of such surveys and advising imagery at lower tides, since above 2 m the tide correction is large. The warning SHALL NOT stop the fit. The fit's log-likelihood SHALL be finite at any finite tide height, and a survey with no canopy SHALL keep zero cover. The message is pinned by `tests/testthat/_snaps/warn.md`.
 
 #### Scenario: A survey flown at 3.5 m warns
-- **WHEN** a *Nereocystis* cover calibration is fitted with the default priors and one survey with canopy has `canopy_tide_height_m` of 3.5
+- **WHEN** a *Nereocystis* cover calibration is fitted and one survey with canopy has `canopy_tide_height_m` of 3.5
 - **THEN** a warning gives one survey, and the fit proceeds
 
 #### Scenario: Surveys at ordinary tides raise no tide warning
-- **WHEN** every survey has `canopy_tide_height_m` at or below 2, including negative tide heights
+- **WHEN** every survey has `canopy_tide_height_m` at or below 2, including negative tide heights, or a survey above 2 m has no canopy
 - **THEN** no tide warning is issued
 
-#### Scenario: A survey past the tide limit is fully covered
-- **WHEN** the log-likelihood of a cover calibration fit is computed at a survey whose tide height is at or above one over a draw's tide slope
-- **THEN** that draw's value is finite and equals the log-likelihood at full cover
+#### Scenario: The log-likelihood is finite at any tide
+- **WHEN** the log-likelihood of a cover calibration fit is computed at a survey with canopy at tide heights of 2, 3.5, and 5 m
+- **THEN** every draw's value is finite
 

@@ -5,7 +5,7 @@
 #' @details
 #' Cover is tide-corrected and capped at full cover, 100% (see
 #' [Methods](https://hakaiinstitute.github.io/kelpbio/articles/methods.html#cover-calibration)).
-#' A warning is given if a row is past the tide limit on more than 5% of draws.
+#' A warning is given if a row with canopy has a tide height above 2 m.
 #' When the fit has a presence part (when any survey in its data counted no
 #' plants), the prediction includes the probability that the plot holds plants.
 #'
@@ -67,17 +67,7 @@ kb_predict_cover_calibration <- function(
     sig_fig
   )
   if (!is.null(new_data)) {
-    warn_tide_cap(
-      tide_cap_share(
-        new_data$canopy_area_m2,
-        new_data$canopy_tide_height_m,
-        fit$draws$tide_height_slope
-      ),
-      "`new_data`",
-      rows = "row",
-      cap = "the plot area (full cover)",
-      basis = "on more than 5% of draws"
-    )
+    warn_high_tide(new_data, "`new_data`", rows = "row")
   }
   predictions
 }

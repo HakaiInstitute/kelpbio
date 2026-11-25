@@ -1,20 +1,19 @@
 # Plausibility warnings warn rather than abort, so unusual but valid data are
 # never blocked.
 
-# Past the tide limit (positive canopy at a tide height of at least one over
-# the slope) the corrected canopy is the cap, not the canopy measured. A row
-# warns when that holds on more than 5% of the slope's distribution, the share
-# beyond each 95% limit, so the cap reaches into its interval.
-warn_tide_cap <- function(share, x_name, rows, cap, basis) {
-  n <- sum(share > 0.05)
+# Above 2 m the tide correction multiplies canopy by about 2 or more with the
+# default slope priors, so imagery at lower tides is advised. Rows without
+# canopy are uncorrected at any tide.
+warn_high_tide <- function(data, x_name, rows) {
+  n <- sum(data$canopy_area_m2 > 0 & data$canopy_tide_height_m > 2)
   if (n > 0L) {
     rows <- if (n == 1L) rows else paste0(rows, "s")
     cli::cli_warn(c(
-      "{n} {rows} in {x_name} {cli::qty(n)}{?is/are} past the tide limit ({.field canopy_tide_height_m} at least 1 / {.field tide_height_slope}) {basis}.",
-      i = "There the corrected canopy is {cap}, not the canopy measured. Fly at lower tides where possible."
+      "{n} {rows} in {x_name} {cli::qty(n)}{?has/have} canopy imaged at a {.field canopy_tide_height_m} above 2 m.",
+      i = "The tide correction is large in this case. It is recommended to fly at tides of 2 m or below where possible."
     ))
   }
-  invisible(share)
+  invisible(data)
 }
 
 # When every empty survey has a percent cover at or below every occupied
@@ -30,32 +29,6 @@ warn_presence_separation <- function(data, x_name) {
     ))
   }
   invisible(data)
-}
-
-# The share of slope draws on which each row is past the tide limit.
-tide_cap_share <- function(canopy_area_m2, canopy_tide_height_m, tide_height_slope) {
-  slope <- as.vector(posterior::draws_of(tide_height_slope))
-  past <- outer(slope, canopy_tide_height_m) >= 1
-  ifelse(canopy_area_m2 > 0, colMeans(past), 0)
-}
-
-# The probability that each row is past the tide limit under a Normal prior on
-# the slope truncated to its support [0, TIDE_SLOPE_UPPER]. A prior with no
-# mass on the support, to numerical precision, is a point mass at the nearer
-# bound.
-tide_cap_prior_share <- function(canopy_area_m2, canopy_tide_height_m, prior) {
-  upper <- TIDE_SLOPE_UPPER
-  limit <- pmin(1 / pmax(canopy_tide_height_m, 0), upper)
-  mass <- function(x) stats::pnorm(x, prior$mean, prior$sd)
-  support <- mass(upper) - mass(0)
-  share <- if (support > 0) {
-    (mass(upper) - mass(limit)) / support
-  } else if (prior$mean > upper) {
-    as.numeric(upper * canopy_tide_height_m >= 1)
-  } else {
-    rep(0, length(canopy_tide_height_m))
-  }
-  ifelse(canopy_area_m2 > 0, share, 0)
 }
 
 # The plausible range of each tissue ratio for kelp; values outside it usually

@@ -63,6 +63,7 @@ long as plants are counted within an area of known size. Here the three transect
 
 Surface canopy is mapped across the whole site (i.e., from aerial imagery), with the
 tide height at the time of imaging and the extent of the water area classified (i.e., the total area classified as kelp or non-kelp).
+Imagery is ideally captured at a tide height close to 0 m (chart datum), when the least canopy is submerged, and at most 2 m, since the tide correction grows quickly above that.
 
 Percent canopy cover within a plot (plot cover) is calculated for each in situ
 survey, where a plot is defined as the area bounding the in situ survey area.
@@ -331,10 +332,8 @@ cover = corrected_canopy_area_m2 / plot_area_m2
 
 The proportion of canopy lost per metre of tide (`tide_height_slope`) is set by
 an informative prior from @timmer_capturing_2024; the calibration data do not
-inform it. At a tide height of 1 / `tide_height_slope` or more (the tide limit,
-at least 2 m), the correction has no finite value and the corrected canopy is
-the cap; a warning is given when a plot or map is past the tide limit on more
-than 5% of draws.
+inform it. With the default priors, canopy imaged at 2 m is about doubled by
+the correction; a warning is given for canopy imaged above 2 m.
 
 Each survey's in situ biomass is itself an estimate. Its uncertainty from mean
 plant weight enters the model, so a less certain survey has less influence.

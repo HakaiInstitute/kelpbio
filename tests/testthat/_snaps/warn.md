@@ -116,15 +116,23 @@
       i Each row is a map of the site-year's bed, so the sum counts it once per map.
       i Repeated: "a:2020".
 
-# rows past the tide limit on more than 5% of draws warn
+# rows with canopy above 2 m tide warn
 
     Code
-      warn_tide_cap(c(0.2, 0.01, 0.5), "`d`", rows = "row", cap = "the classified area",
-      basis = "on more than 5% of draws")
+      warn_high_tide(d, "`d`", rows = "row")
     Condition
       Warning:
-      2 rows in `d` are past the tide limit (canopy_tide_height_m at least 1 / tide_height_slope) on more than 5% of draws.
-      i There the corrected canopy is the classified area, not the canopy measured. Fly at lower tides where possible.
+      2 rows in `d` have canopy imaged at a canopy_tide_height_m above 2 m.
+      i The tide correction is large in this case. It is recommended to fly at tides of 2 m or below where possible.
+
+---
+
+    Code
+      warn_high_tide(d[1, ], "`d`", rows = "survey")
+    Condition
+      Warning:
+      1 survey in `d` has canopy imaged at a canopy_tide_height_m above 2 m.
+      i The tide correction is large in this case. It is recommended to fly at tides of 2 m or below where possible.
 
 # warn_presence_separation warns only when no empty survey overlaps the occupied in cover
 

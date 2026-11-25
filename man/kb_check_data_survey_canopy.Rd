@@ -29,7 +29,7 @@ Required columns:
 \item \code{site}, the site mapped (any text).
 \item \code{year}, the year of the map (whole number or text).
 \item \code{canopy_area_m2}, the canopy area mapped (m², >= 0 and <= classified_area_m2).
-\item \code{canopy_tide_height_m}, the tide height when the canopy was imaged, relative to chart datum (m, any number).
+\item \code{canopy_tide_height_m}, the tide height when the canopy was imaged, relative to chart datum, ideally close to 0 m and at most 2 m, or 0 for canopy already corrected for tide (m, any number).
 \item \code{classified_area_m2}, the water area the canopy classification covered, including water where no canopy was found (m², > 0).
 }
 

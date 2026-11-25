@@ -8,7 +8,7 @@
 #' @details
 #' Priors, centring, and random effects are those of the fit; an effect not
 #' fitted (such as the weight floor of a power-law fit) is omitted.
-#' Priors marked `T[0, ]` are truncated at zero, and `T[0, 0.5]` at 0 and 0.5.
+#' Priors marked `T[0, ]` are truncated at zero.
 #'
 #' @inheritParams params
 #' @param prose A flag specifying whether to render a methods-section paragraph
@@ -394,10 +394,7 @@ kb_model_describe <- function(fit, ..., prose = FALSE) {
       "biomass_floor",
       "cover_slope * exp(year_effect[year] + site_effect[site]) * cover"
     ),
-    centering = paste0(
-      "cover = min(1, canopy_area_m2 / (1 - tide_height_slope * canopy_tide_height_m) / plot_area_m2), ",
-      "and 1 where canopy_area_m2 > 0 and canopy_tide_height_m >= 1 / tide_height_slope"
-    ),
+    centering = "cover = min(1, canopy_area_m2 / (1 - tide_height_slope * canopy_tide_height_m) / plot_area_m2)",
     random = list(
       list(
         term = "year_effect[year]",
@@ -411,16 +408,14 @@ kb_model_describe <- function(fit, ..., prose = FALSE) {
       )
     ),
     priors = priors,
-    truncated = "biomass_floor",
-    bounded = c(tide_height_slope = paste0(" T[0, ", TIDE_SLOPE_UPPER, "]")),
+    truncated = c("biomass_floor", "tide_height_slope"),
     prose = paste0(
       "The mean wet biomass of each in situ survey was modelled as a biomass ",
       "floor, common to all sites and years, plus a term proportional to the ",
       "tide-corrected canopy cover of the survey's plot, whose slope varied by ",
       "site and year. Canopy area was divided by one minus an estimated share ",
-      "per metre of tide height, and cover was capped at 1; plots with canopy ",
-      "at or above the tide height where that share reaches 1 were fully ",
-      "covered. The likelihood was Gamma, with a coefficient of variation ",
+      "per metre of tide height, and cover was capped at 1. The likelihood ",
+      "was Gamma, with a coefficient of variation ",
       "combining a residual part and the survey's coefficient of variation ",
       "from plant weight. ",
       presence_prose,
@@ -468,13 +463,7 @@ kb_model_describe <- function(fit, ..., prose = FALSE) {
   prior_lines <- vapply(
     names(spec$priors),
     function(nm) {
-      trunc <- if (nm %in% names(spec$bounded)) {
-        spec$bounded[[nm]]
-      } else if (nm %in% spec$truncated) {
-        " T[0, ]"
-      } else {
-        ""
-      }
+      trunc <- if (nm %in% spec$truncated) " T[0, ]" else ""
       sprintf(
         "  %-*s ~ %s%s",
         width,

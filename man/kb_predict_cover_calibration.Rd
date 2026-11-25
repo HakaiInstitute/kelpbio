@@ -68,7 +68,7 @@ Predict the expected wet biomass (kg/m²) of a plot from its plot cover.
 \details{
 Cover is tide-corrected and capped at full cover, 100\% (see
 \href{https://hakaiinstitute.github.io/kelpbio/articles/methods.html#cover-calibration}{Methods}).
-A warning is given if a row is past the tide limit on more than 5\% of draws.
+A warning is given if a row with canopy has a tide height above 2 m.
 When the fit has a presence part (when any survey in its data counted no
 plants), the prediction includes the probability that the plot holds plants.
 }

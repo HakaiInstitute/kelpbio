@@ -95,8 +95,8 @@ grouping columns.
 A row's total is the calibration at full cover times its tide-corrected
 canopy area, capped at \code{classified_area_m2} (see
 \href{https://hakaiinstitute.github.io/kelpbio/articles/methods.html#total-biomass}{Methods}).
-A warning is given if a row is past the tide limit on more than 5\% of draws,
-or if a pooled group has more than one map of a site-year, which counts its
+A warning is given if a row with canopy has a tide height above 2 m, or if
+a pooled group has more than one map of a site-year, which counts its
 bed more than once.
 }
 \examples{

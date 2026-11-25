@@ -54,7 +54,7 @@ data {
 parameters {
   real<lower=0> cover_slope;              // kg per m^2 of canopy, typical site and year
   real<lower=0> biomass_floor;            // kg/m^2 at zero cover
-  real<lower=0, upper=0.5> tide_height_slope;
+  real<lower=0> tide_height_slope;
   real<lower=0> cv_residual;              // CV of survey biomass about mu
   real presence_intercept;                // logit p at zero cover
   real presence_cover_slope;              // per percentage point of cover

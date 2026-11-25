@@ -59,12 +59,12 @@ test_that("surveys without plot cover are not fitted, with a message", {
   expect_no_message(kb_fit_cover_calibration_nereo(data, progress = "none"))
 })
 
-test_that("surveys past the tide limit under the prior warn at fit time", {
+test_that("surveys with canopy above 2 m tide warn at fit time", {
   local_fit_stan_stub(cover_calibration_nereo_fit)
   data <- input()
   expect_no_warning(kb_fit_cover_calibration_nereo(data, progress = "none"))
   data$canopy_tide_height_m[1] <- 3.5
-  expect_warning(kb_fit_cover_calibration_nereo(data, progress = "none"), "tide prior")
+  expect_warning(kb_fit_cover_calibration_nereo(data, progress = "none"), "above 2 m")
 })
 
 test_that("an empty survey switches the presence part on, for either species", {

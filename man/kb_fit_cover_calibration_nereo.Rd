@@ -69,10 +69,10 @@ Surveys without plot cover are not fitted, and a message gives their number.
 The model is described in
 \href{https://hakaiinstitute.github.io/kelpbio/articles/methods.html#cover-calibration}{Methods}.
 
-The fit warns when a survey is past the tide limit with more than 5\% prior
-probability, and when every survey with no plants has a plot cover at or
-below that of every survey with plants, since \code{presence_cover_slope} is then
-informed only by its prior. If canopy is already tide-corrected, set
+The fit warns when a survey with canopy has a tide height above 2 m, and
+when every survey with no plants has a plot cover at or below that of every
+survey with plants, since \code{presence_cover_slope} is then informed only by
+its prior. If canopy is already tide-corrected, set
 \code{canopy_tide_height_m = 0}.
 }
 \section{Model}{

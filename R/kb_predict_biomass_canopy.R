@@ -8,8 +8,8 @@
 #' A row's total is the calibration at full cover times its tide-corrected
 #' canopy area, capped at `classified_area_m2` (see
 #' [Methods](https://hakaiinstitute.github.io/kelpbio/articles/methods.html#total-biomass)).
-#' A warning is given if a row is past the tide limit on more than 5% of draws,
-#' or if a pooled group has more than one map of a site-year, which counts its
+#' A warning is given if a row with canopy has a tide height above 2 m, or if
+#' a pooled group has more than one map of a site-year, which counts its
 #' bed more than once.
 #'
 #' @inheritParams derived_params
@@ -95,17 +95,7 @@ kb_predict_biomass_canopy <- function(
   .chk_representative_site(fit, representative_site)
   .chk_summary_args(conf_level, estimate, sig_fig)
   warn_implausible_units(new_data, "`new_data`")
-  warn_tide_cap(
-    tide_cap_share(
-      new_data$canopy_area_m2,
-      new_data$canopy_tide_height_m,
-      fit$draws$tide_height_slope
-    ),
-    "`new_data`",
-    rows = "row",
-    cap = "the classified area",
-    basis = "on more than 5% of draws"
-  )
+  warn_high_tide(new_data, "`new_data`", rows = "row")
 
   grid <- tibble::as_tibble(new_data)
   draws <- canopy_biomass_draws(fit, grid, new_levels, representative_site) *

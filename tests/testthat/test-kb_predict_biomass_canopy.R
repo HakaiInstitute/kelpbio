@@ -170,7 +170,7 @@ test_that("high tides give finite, non-negative totals capped at the classified 
   )
   expect_warning(
     p <- kb_predict_biomass_canopy(fit, rows, new_levels = "average"),
-    "past the tide limit"
+    "2 rows"
   )
   draws <- posterior::draws_of(p$biomass_kg)
   expect_true(all(is.finite(draws) & draws >= 0))
@@ -179,7 +179,7 @@ test_that("high tides give finite, non-negative totals capped at the classified 
     transform(rows[1, ], canopy_area_m2 = 400),
     new_levels = "average"
   )
-  # The cap holds on the draws whose slope puts 5 m past the tide limit.
+  # The cap holds on the draws whose slope leaves 5 m without a finite correction.
   past <- as.vector(posterior::draws_of(fit$draws$tide_height_slope)) * 5 >= 1
   expect_gt(mean(past), 0.5)
   expect_equal(

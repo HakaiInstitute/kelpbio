@@ -196,7 +196,7 @@
         logit(p) = presence_intercept + presence_cover_slope * 100 * cover
         mu = biomass_floor
            + cover_slope * exp(year_effect[year] + site_effect[site]) * cover
-        cover = min(1, canopy_area_m2 / (1 - tide_height_slope * canopy_tide_height_m) / plot_area_m2), and 1 where canopy_area_m2 > 0 and canopy_tide_height_m >= 1 / tide_height_slope
+        cover = min(1, canopy_area_m2 / (1 - tide_height_slope * canopy_tide_height_m) / plot_area_m2)
       
       Random effects
         year_effect[year] ~ Normal(0, sd_year)  year effect on log(cover_slope)
@@ -205,7 +205,7 @@
       Priors
         cover_slope          ~ LogNormal(2, 1)
         biomass_floor        ~ Normal(0, 0.2) T[0, ]
-        tide_height_slope    ~ Normal(0.276, 0.04) T[0, 0.5]
+        tide_height_slope    ~ Normal(0.276, 0.04) T[0, ]
         cv_residual          ~ Exponential(1)
         presence_intercept   ~ Normal(0, 2)
         presence_cover_slope ~ Normal(0, 20)
@@ -225,7 +225,7 @@
         shape = 1 / (cv_residual^2 + weight_cv^2),  weight_cv = biomass_sd_kg_m2 / biomass_kg_m2
         mu = biomass_floor
            + cover_slope * exp(year_effect[year] + site_effect[site]) * cover
-        cover = min(1, canopy_area_m2 / (1 - tide_height_slope * canopy_tide_height_m) / plot_area_m2), and 1 where canopy_area_m2 > 0 and canopy_tide_height_m >= 1 / tide_height_slope
+        cover = min(1, canopy_area_m2 / (1 - tide_height_slope * canopy_tide_height_m) / plot_area_m2)
       
       Random effects
         year_effect[year] ~ Normal(0, sd_year)  year effect on log(cover_slope)
@@ -234,7 +234,7 @@
       Priors
         cover_slope       ~ LogNormal(2, 1)
         biomass_floor     ~ Normal(0.4, 0.3) T[0, ]
-        tide_height_slope ~ Normal(0.227, 0.03) T[0, 0.5]
+        tide_height_slope ~ Normal(0.227, 0.03) T[0, ]
         cv_residual       ~ Exponential(1)
         sd_year           ~ Exponential(1)
         sd_site           ~ Exponential(1)
@@ -248,13 +248,11 @@
       floor, common to all sites and years, plus a term proportional to the
       tide-corrected canopy cover of the survey's plot, whose slope varied by
       site and year. Canopy area was divided by one minus an estimated share per
-      metre of tide height, and cover was capped at 1; plots with canopy at or
-      above the tide height where that share reaches 1 were fully covered. The
-      likelihood was Gamma, with a coefficient of variation combining a residual
-      part and the survey's coefficient of variation from plant weight.
-      Regularising priors were placed on all parameters, with an informative
-      prior on the tide correction (see the notation form for the prior
-      arguments).
+      metre of tide height, and cover was capped at 1. The likelihood was Gamma,
+      with a coefficient of variation combining a residual part and the survey's
+      coefficient of variation from plant weight. Regularising priors were placed
+      on all parameters, with an informative prior on the tide correction (see
+      the notation form for the prior arguments).
 
 ---
 
@@ -265,15 +263,14 @@
       floor, common to all sites and years, plus a term proportional to the
       tide-corrected canopy cover of the survey's plot, whose slope varied by
       site and year. Canopy area was divided by one minus an estimated share per
-      metre of tide height, and cover was capped at 1; plots with canopy at or
-      above the tide height where that share reaches 1 were fully covered. The
-      likelihood was Gamma, with a coefficient of variation combining a residual
-      part and the survey's coefficient of variation from plant weight. Surveys
-      with no plants counted entered through a presence part: the log odds that a
-      survey held plants were linear in its percent cover, and biomass was Gamma
-      only where plants were present. Regularising priors were placed on all
-      parameters, with an informative prior on the tide correction (see the
-      notation form for the prior arguments).
+      metre of tide height, and cover was capped at 1. The likelihood was Gamma,
+      with a coefficient of variation combining a residual part and the survey's
+      coefficient of variation from plant weight. Surveys with no plants counted
+      entered through a presence part: the log odds that a survey held plants
+      were linear in its percent cover, and biomass was Gamma only where plants
+      were present. Regularising priors were placed on all parameters, with an
+      informative prior on the tide correction (see the notation form for the
+      prior arguments).
 
 # kb_model_describe follows the power-law form
 
