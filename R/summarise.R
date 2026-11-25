@@ -1,11 +1,5 @@
 # One row per scalar term (e.g. site_effect[1]).
-summarise_draws_terms <- function(
-  draws,
-  variables,
-  conf_level = 0.95,
-  estimate = stats::median,
-  sig_fig = 3
-) {
+summarise_draws_terms <- function(draws, variables, conf_level, estimate, sig_fig) {
   a <- (1 - conf_level) / 2
   sub <- posterior::subset_draws(draws, variable = variables)
   posterior::summarise_draws(

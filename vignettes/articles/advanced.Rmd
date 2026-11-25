@@ -165,7 +165,7 @@ kb_sensitivity(fit_weight_sim_nereo)
 
 ### Influential observations
 
-`kb_influence()` determines how strongly each observation affects the model fit if it was removed, where a `pareto_k` above the threshold (0.7) indicates that it is influential. Observations flagged as `influential` are not necessarily wrong, but could be double-checked for data error. See the loo package's [Pareto k diagnostic](https://mc-stan.org/loo/reference/pareto-k-diagnostic.html) page for how `pareto_k` is calculated and interpreted. 
+`kb_influence()` determines how strongly each observation affects the model fit if it was removed, where a `pareto_k` above the threshold (0.7 at the default number of draws, slightly lower with fewer draws; see `kb_influence()`) indicates that it is influential. Observations flagged as `influential` are not necessarily wrong, but could be double-checked for data error. See the loo package's [Pareto k diagnostic](https://mc-stan.org/loo/reference/pareto-k-diagnostic.html) page for how `pareto_k` is calculated and interpreted. 
 
 ```{r}
 kb_influence(fit_weight_sim_nereo) |>

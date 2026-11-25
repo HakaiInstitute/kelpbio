@@ -1,5 +1,11 @@
 test_that("summarise_draws_terms returns house columns bracketing the estimate", {
-  out <- summarise_draws_terms(weight_nereo_fit$draws, c("intercept", "diameter_power"))
+  out <- summarise_draws_terms(
+    weight_nereo_fit$draws,
+    c("intercept", "diameter_power"),
+    conf_level = 0.95,
+    estimate = stats::median,
+    sig_fig = 3
+  )
   expect_s3_class(out, "tbl_df")
   expect_named(out, c("term", "estimate", "lower", "upper"))
   expect_setequal(out$term, c("intercept", "diameter_power"))
@@ -7,11 +13,19 @@ test_that("summarise_draws_terms returns house columns bracketing the estimate",
 })
 
 test_that("summarise_draws_terms widens the interval with conf_level", {
-  wide <- summarise_draws_terms(weight_nereo_fit$draws, "intercept", conf_level = 0.99)
+  wide <- summarise_draws_terms(
+    weight_nereo_fit$draws,
+    "intercept",
+    conf_level = 0.99,
+    estimate = stats::median,
+    sig_fig = 3
+  )
   narrow <- summarise_draws_terms(
     weight_nereo_fit$draws,
     "intercept",
-    conf_level = 0.80
+    conf_level = 0.80,
+    estimate = stats::median,
+    sig_fig = 3
   )
   expect_gt(wide$upper - wide$lower, narrow$upper - narrow$lower)
 })
@@ -20,7 +34,9 @@ test_that("summarise_draws_terms applies the estimate function and sig_fig", {
   mean_est <- summarise_draws_terms(
     weight_nereo_fit$draws,
     "intercept",
-    estimate = mean
+    conf_level = 0.95,
+    estimate = mean,
+    sig_fig = 3
   )$estimate
   expect_equal(
     mean_est,
@@ -29,6 +45,8 @@ test_that("summarise_draws_terms applies the estimate function and sig_fig", {
   two <- summarise_draws_terms(
     weight_nereo_fit$draws,
     "intercept",
+    conf_level = 0.95,
+    estimate = stats::median,
     sig_fig = 2
   )$estimate
   expect_equal(two, signif(two, 2))
