@@ -14,8 +14,10 @@ The default priors for the \emph{Nereocystis luetkeana} cover calibration model,
 for the \code{priors} argument of \code{\link[=kb_fit_cover_calibration_nereo]{kb_fit_cover_calibration_nereo()}}.
 }
 \details{
-The presence priors apply only when the data hold a survey with no plants
-counted.
+The \code{tide_height_slope} prior, the share of canopy lost per metre of tide,
+is informative and from Timmer et al. (2024); the calibration data do not
+inform it. The presence priors apply only when the data hold a survey with
+no plants counted.
 }
 \section{Priors}{
 
@@ -39,6 +41,13 @@ kb_fit_cover_calibration_nereo(
   priors = list(cover_slope = kb_prior_lognormal(meanlog = 2, sdlog = 0.5))
 )
 \dontshow{\}) # examplesIf}
+}
+\references{
+Timmer, B., Reshitnyk, L. Y., Hessing-Lewis, M., Juanes, F., Gendall, L.,
+and Costa, M. (2024). Capturing accurate kelp canopy extent: integrating
+tides, currents, and species-level morphology in kelp remote sensing.
+Frontiers in Environmental Science, 12, 1338483.
+\doi{10.3389/fenvs.2024.1338483}
 }
 \seealso{
 Other priors:
