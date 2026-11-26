@@ -23,7 +23,10 @@ biomass with \code{\link[=kb_predict_biomass_canopy]{kb_predict_biomass_canopy()
 its \code{new_data}.
 }
 \details{
-Each row is one canopy map of a site; a site-year may have several.
+Each row is one canopy map of the whole site; a site-year may have several.
+A warning is given if the maps of a site-year have \code{classified_area_m2}
+values that differ by more than half, which suggests maps of parts of the
+site.
 Required columns:
 \itemize{
 \item \code{site}, the site mapped (any text).

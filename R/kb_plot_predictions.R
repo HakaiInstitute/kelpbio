@@ -140,8 +140,10 @@ kb_plot_predictions <- function(
 
   # The draws column of a derived verb is not plotted.
   draws <- vapply(predictions, posterior::is_rvar, logical(1))
+  plotted <- tibble::as_tibble(predictions)[!draws]
+  plotted$.row <- seq_len(nrow(plotted))
   gg <- ggplot2::ggplot(
-    tibble::as_tibble(predictions)[!draws],
+    plotted,
     ggplot2::aes(x = .data[[x]], y = .data$estimate)
   )
   if (style == "ribbon") {
@@ -153,11 +155,19 @@ kb_plot_predictions <- function(
       ggplot2::geom_line()
   } else if (style == "bar") {
     # A light solid fill keeps the interval visible inside the columns; the
-    # interval is drawn after the columns so it stays on top.
+    # interval is drawn after the columns so it stays on top. Rows sharing an x
+    # value, such as repeated maps of a site-year, are dodged rather than
+    # stacked; a row alone at its x value keeps the full width.
+    dodge <- ggplot2::position_dodge(width = 0.9)
     gg <- gg +
-      ggplot2::geom_col(fill = "grey70") +
+      ggplot2::geom_col(
+        ggplot2::aes(group = .data$.row),
+        fill = "grey70",
+        position = dodge
+      ) +
       ggplot2::geom_linerange(
-        ggplot2::aes(ymin = .data$lower, ymax = .data$upper)
+        ggplot2::aes(ymin = .data$lower, ymax = .data$upper, group = .data$.row),
+        position = dodge
       )
   } else {
     gg <- gg +

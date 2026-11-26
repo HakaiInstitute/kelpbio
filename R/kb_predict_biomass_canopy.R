@@ -8,9 +8,17 @@
 #' A row's total is the calibration at full cover times its tide-corrected
 #' canopy area, capped at `classified_area_m2` (see
 #' [Methods](https://hakaiinstitute.github.io/kelpbio/articles/methods.html#total-biomass)).
+#'
+#' A total is a snapshot of the kelp present when the site is mapped, and each
+#' row is assumed to map the whole site; a site flown in parts should be
+#' combined into one row first. Several maps within a site-year are therefore
+#' repeated measurements of one bed. With `pool_by`, the maps of each site-year
+#' in a group are first averaged and the site-year means then summed, so a bed
+#' is never counted more than once.
+#'
 #' A warning is given if a row with canopy has a tide height above 2 m, or if
-#' a pooled group has more than one map of a site-year, which counts its
-#' bed more than once.
+#' the maps of a site-year have `classified_area_m2` values that differ by more
+#' than half, which suggests maps of parts of the site.
 #'
 #' @inheritParams derived_params
 #' @inheritParams params
@@ -96,6 +104,7 @@ kb_predict_biomass_canopy <- function(
   .chk_summary_args(conf_level, estimate, sig_fig)
   warn_implausible_units(new_data, "`new_data`")
   warn_high_tide(new_data, "`new_data`", rows = "row")
+  warn_partial_maps(new_data, "`new_data`")
 
   grid <- tibble::as_tibble(new_data)
   draws <- canopy_biomass_draws(fit, grid, new_levels, representative_site) *
@@ -104,8 +113,7 @@ kb_predict_biomass_canopy <- function(
   if (is.null(pool_by)) {
     group_vars <- .group_vars()
   } else {
-    pooled <- pool_draws_by(grid, draws, pool_by)
-    warn_overlapping_canopy(grid, pooled$id)
+    pooled <- pool_draws_by(grid, draws, pool_by, average_by = .group_vars())
     grid <- pooled$groups
     draws <- pooled$draws
     group_vars <- pool_by

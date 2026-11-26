@@ -317,3 +317,46 @@ test_that("the column layout is visually stable", {
     kb_plot_predictions(survey, geom = "bar", max_facets = Inf)
   )
 })
+
+test_that("columns sharing an x value are dodged, single columns keep full width", {
+  maps <- data_survey_canopy_sim_nereo[c(1, 1, 1), ]
+  maps$year <- as.character(maps$year)
+  maps$canopy_area_m2[2] <- maps$canopy_area_m2[2] * 2
+  maps$year[3] <- "2099"
+  withr::local_seed(1)
+  p <- kb_predict_biomass_canopy(fit_cover_calibration_sim_nereo, maps)
+  cols <- ggplot2::layer_data(kb_plot_predictions(p, geom = "bar"), 1L)
+  width <- cols$xmax - cols$xmin
+  expect_equal(width[1:2], width[3] / c(2, 2))
+  expect_false(cols$xmin[1] == cols$xmin[2])
+  bars <- ggplot2::layer_data(kb_plot_predictions(p, geom = "bar"), 2L)
+  expect_equal(bars$x, (cols$xmin + cols$xmax) / 2)
+})
+
+test_that("dodged columns are visually stable", {
+  skip_if_not_installed("vdiffr")
+  maps <- data_survey_canopy_sim_nereo
+  repeated <- maps[maps$site == maps$site[1] & maps$year == maps$year[1], ][1, ]
+  repeated <- repeated[rep(1, 4), ]
+  repeated$canopy_area_m2 <- repeated$canopy_area_m2 * c(0.6, 0.8, 1.2, 1.4)
+  withr::local_seed(1)
+  canopy <- kb_predict_biomass_canopy(
+    fit_cover_calibration_sim_nereo,
+    rbind(maps, repeated)
+  )
+  vdiffr::expect_doppelganger(
+    "canopy biomass repeated maps columns",
+    kb_plot_predictions(canopy, geom = "bar", max_facets = Inf)
+  )
+  withr::local_seed(1)
+  survey <- kb_predict_biomass_in_situ(
+    weight_nereo_fit,
+    size_nereo_fit,
+    data_survey_in_situ_sim_nereo,
+    progress = "none"
+  )
+  vdiffr::expect_doppelganger(
+    "survey biomass by survey columns",
+    kb_plot_predictions(survey, geom = "bar", max_facets = Inf)
+  )
+})

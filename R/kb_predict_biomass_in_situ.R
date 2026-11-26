@@ -10,8 +10,13 @@
 #' survey by `survey_id` (see
 #' [Methods](https://hakaiinstitute.github.io/kelpbio/articles/methods.html#survey-biomass)).
 #' A survey with no rows in the size census has zero biomass, and a message
-#' lists such surveys. With `pool_by` and `per_area = TRUE`, a group's biomass
-#' per m² is its summed biomass over its summed `survey_area_m2`.
+#' lists such surveys.
+#'
+#' With `pool_by`, the surveys of a group, such as a site-year, are assumed to
+#' cover separate areas, so the group's biomass is the sum of its surveys'
+#' biomass, and with `per_area = TRUE` that sum over their summed
+#' `survey_area_m2`, an area-weighted average. A plot surveyed more than once
+#' therefore counts once per survey.
 #'
 #' @inheritParams two_fit_params
 #' @inheritParams derived_params

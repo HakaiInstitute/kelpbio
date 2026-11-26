@@ -300,6 +300,10 @@ the area surveyed. A plant only partly inside the survey area, such as a
 *Macrocystis* plant on the edge of a transect, is marked `partial` in the data
 and counts as half.
 
+Several in situ surveys of a site-year are assumed to cover separate areas, so
+pooled survey biomass is the sum of the surveys, and pooled biomass per m² is
+that sum over their summed area, i.e., an area-weighted average.
+
 The uncertainty in in situ biomass is that of mean plant weight, from the weight
 and size models (or the weight model alone with a size census). The cover
 calibration takes the mean and SD of each survey's draws.
@@ -368,6 +372,13 @@ area, so the canopy term does not depend on the size of the plot drawn around
 it. A nonlinear calibration (e.g., power law model with scaling exponent not
 equal to 1) would give a total that changed with the size of the area over which
 percent cover is measured.
+
+Total biomass is a snapshot of the kelp present when the site is mapped, and
+each canopy map is assumed to cover the whole site. Several maps of a site-year
+are therefore repeated measurements of one bed. When totals are pooled, for
+example by site-year, year, or region, the maps of each site-year are first
+averaged and the site-year means then summed, so a bed is never counted more
+than once.
 
 The probability that a survey holds plants is not applied, since
 mapped canopy is taken to hold plants. The interval is for the expected total:

@@ -57,6 +57,23 @@ test_that("an area divides each sum by its group's summed area", {
   expect_equal(res$draws[, 1], (c(1, 2) + c(5, 6)) / c(4, 4))
 })
 
+test_that("average_by averages the rows of a cell before summing", {
+  maps <- tibble::tibble(
+    site = c("a", "a", "b"),
+    year = "2020",
+    region = "south",
+    flight = c("1", "2", "1")
+  )
+  res <- pool_draws_by(maps, draws, c("site", "year"), average_by = c("site", "year"))
+  expect_equal(res$draws, cbind((c(1, 2) + c(3, 4)) / 2, c(5, 6)), ignore_attr = TRUE)
+  res <- pool_draws_by(maps, draws, "region", average_by = c("site", "year"))
+  expect_equal(res$draws[, 1], (c(1, 2) + c(3, 4)) / 2 + c(5, 6))
+  res <- pool_draws_by(maps, draws, c("site", "flight"), average_by = c("site", "year"))
+  expect_equal(res$draws, draws, ignore_attr = TRUE)
+  res <- pool_draws_by(grid, draws, "region", average_by = c("site", "year"))
+  expect_equal(res, pool_draws_by(grid, draws, "region"))
+})
+
 test_that("character groups are ordered alphabetically", {
   res <- pool_draws_by(transform(grid, region = as.character(region)), draws, "region")
   expect_identical(res$groups$region, c("north", "south"))

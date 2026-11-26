@@ -5,7 +5,10 @@
 #' its `new_data`.
 #'
 #' @details
-#' Each row is one canopy map of a site; a site-year may have several.
+#' Each row is one canopy map of the whole site; a site-year may have several.
+#' A warning is given if the maps of a site-year have `classified_area_m2`
+#' values that differ by more than half, which suggests maps of parts of the
+#' site.
 #'
 #' ```{r, echo = FALSE, results = "asis"}
 #' cat(doc_data_columns("survey_canopy"))
@@ -31,6 +34,7 @@ kb_check_data_survey_canopy <- function(
       chk::chk_string(x_name)
       .chk_canopy_maps(data, x_name)
       warn_implausible_units(data, x_name)
+      warn_partial_maps(data, x_name)
     },
     rlang::current_env()
   )

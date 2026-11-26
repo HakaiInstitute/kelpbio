@@ -103,10 +103,15 @@ test_that("a surveyed area above the plot area warns", {
   expect_no_warning(warn_survey_area(transform(d, plot_area_m2 = NA), "`d`"))
 })
 
-test_that("a pool_by group holding one site-year twice warns", {
-  grid <- tibble::tibble(site = c("a", "a"), year = "2020")
-  expect_snapshot(warn_overlapping_canopy(grid, c(1L, 1L)))
-  expect_no_warning(warn_overlapping_canopy(grid, c(1L, 2L)))
+test_that("maps of a site-year covering different areas warn", {
+  d <- data.frame(
+    site = c("a", "a", "b", "b"),
+    year = "2020",
+    classified_area_m2 = c(1000, 2000, 1000, 1400)
+  )
+  expect_snapshot(warn_partial_maps(d, "`d`"))
+  expect_no_warning(warn_partial_maps(d[3:4, ], "`d`"))
+  expect_no_warning(warn_partial_maps(d[c(1, 3), ], "`d`"))
 })
 
 test_that("rows with canopy above 2 m tide warn", {

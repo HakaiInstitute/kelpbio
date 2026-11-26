@@ -55,10 +55,10 @@ surveyed area, or else the biomass in that area.}
 
 \item{pool_by}{A character vector naming character or factor columns to
 group the rows by, such as \code{c("site", "year")}, \code{character(0)} to pool all
-rows, or \code{NULL} (the default) for one row per input row. On
-each draw, the biomass of a group is the sum of its rows' biomass (kg).
-For another summary, such as an unweighted mean of rows, summarise the
-draws column, for example with \code{\link[posterior:rvar_mean]{posterior::rvar_mean()}}.}
+rows, or \code{NULL} (the default) for one estimate per input row. The rows of a
+group are combined on each draw as described in Details. To use a different
+summary method, such as an unweighted mean of rows, summarise the draws column,
+for example with \code{\link[posterior:rvar_mean]{posterior::rvar_mean()}}.}
 
 \item{new_levels}{A string giving how uncertainty is shown for a site or
 year not in the fit. Sites and years in the fit always use their own
@@ -118,8 +118,13 @@ or from a size census, when every counted plant was measured, joined to its
 survey by \code{survey_id} (see
 \href{https://hakaiinstitute.github.io/kelpbio/articles/methods.html#survey-biomass}{Methods}).
 A survey with no rows in the size census has zero biomass, and a message
-lists such surveys. With \code{pool_by} and \code{per_area = TRUE}, a group's biomass
-per m² is its summed biomass over its summed \code{survey_area_m2}.
+lists such surveys.
+
+With \code{pool_by}, the surveys of a group, such as a site-year, are assumed to
+cover separate areas, so the group's biomass is the sum of its surveys'
+biomass, and with \code{per_area = TRUE} that sum over their summed
+\code{survey_area_m2}, an area-weighted average. A plot surveyed more than once
+therefore counts once per survey.
 }
 \examples{
 # Tallied plants, sizes from a size fit

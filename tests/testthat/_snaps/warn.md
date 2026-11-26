@@ -96,15 +96,15 @@
       1 survey in `d` has survey_area_m2 > plot_area_m2.
       i Check that the two columns are not swapped.
 
-# a pool_by group holding one site-year twice warns
+# maps of a site-year covering different areas warn
 
     Code
-      warn_overlapping_canopy(grid, c(1L, 1L))
+      warn_partial_maps(d, "`d`")
     Condition
       Warning:
-      Some `pool_by` groups hold more than one row for a site-year, so their totals overlap.
-      i Each row is a map of the site-year's bed, so the sum counts it once per map.
-      i Repeated: "a:2020".
+      Some site-years in `d` have maps whose classified_area_m2 differ by more than half.
+      i Each map should cover the whole site; combine maps of parts of a site into one row.
+      i Site-years: "a:2020".
 
 # rows with canopy above 2 m tide warn
 

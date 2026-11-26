@@ -154,11 +154,36 @@ test_that("a repeated pool_by column pools as if named once", {
   expect_identical(twice, once)
 })
 
-test_that("a pool_by group holding one site-year twice warns", {
-  twice <- surveys()[c(1, 1), ]
-  expect_warning(
-    kb_predict_biomass_canopy(cover_calibration_nereo_fit, twice, pool_by = "region"),
-    "overlap"
+test_that("repeated maps of a site-year are averaged before pooling", {
+  fit <- cover_calibration_nereo_fit
+  maps <- surveys()[c(1, 1, 2, 3), ]
+  maps$canopy_area_m2[2] <- 600
+  maps$flight <- c("1", "2", "1", "1")
+  totals <- canopy_biomass_draws(fit, maps, "average", NULL)
+  by_site_year <- kb_predict_biomass_canopy(
+    fit, maps,
+    new_levels = "average", pool_by = c("site", "year")
+  )
+  repeated <- by_site_year$site == maps$site[1]
+  expect_equal(
+    posterior::draws_of(by_site_year$biomass_kg)[, repeated],
+    (totals[, 1] + totals[, 2]) / 2,
+    ignore_attr = TRUE
+  )
+  by_year <- kb_predict_biomass_canopy(fit, maps, new_levels = "average", pool_by = "year")
+  expect_equal(
+    posterior::draws_of(by_year$biomass_kg)[, 1],
+    (totals[, 1] + totals[, 2]) / 2 + totals[, 3] + totals[, 4],
+    ignore_attr = TRUE
+  )
+  by_flight <- kb_predict_biomass_canopy(
+    fit, maps,
+    new_levels = "average", pool_by = c("site", "year", "flight")
+  )
+  expect_equal(nrow(by_flight), 4L)
+  expect_setequal(
+    as.vector(posterior::draws_of(by_flight$biomass_kg)),
+    as.vector(totals)
   )
 })
 
@@ -212,5 +237,17 @@ test_that("canopy biomass predictions match their snapshots", {
   expect_snapshot_data(
     kb_predict_biomass_canopy(cover_calibration_nereo_fit, surveys(), pool_by = "region"),
     "nereo-region"
+  )
+})
+
+test_that("maps of a site-year covering different areas warn", {
+  maps <- surveys()[c(1, 1), ]
+  maps$classified_area_m2 <- c(1e5, 3e4)
+  expect_warning(
+    kb_predict_biomass_canopy(cover_calibration_nereo_fit, maps),
+    "classified_area_m2"
+  )
+  expect_no_warning(
+    kb_predict_biomass_canopy(cover_calibration_nereo_fit, surveys()[c(1, 1), ], pool_by = "year")
   )
 })

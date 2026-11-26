@@ -46,10 +46,10 @@ or \code{NULL}.}
 
 \item{pool_by}{A character vector naming character or factor columns to
 group the rows by, such as \code{c("site", "year")}, \code{character(0)} to pool all
-rows, or \code{NULL} (the default) for one row per input row. On
-each draw, the biomass of a group is the sum of its rows' biomass (kg).
-For another summary, such as an unweighted mean of rows, summarise the
-draws column, for example with \code{\link[posterior:rvar_mean]{posterior::rvar_mean()}}.}
+rows, or \code{NULL} (the default) for one estimate per input row. The rows of a
+group are combined on each draw as described in Details. To use a different
+summary method, such as an unweighted mean of rows, summarise the draws column,
+for example with \code{\link[posterior:rvar_mean]{posterior::rvar_mean()}}.}
 
 \item{new_levels}{A string giving how uncertainty is shown for a site or
 year not in the fit. Sites and years in the fit always use their own
@@ -95,9 +95,17 @@ grouping columns.
 A row's total is the calibration at full cover times its tide-corrected
 canopy area, capped at \code{classified_area_m2} (see
 \href{https://hakaiinstitute.github.io/kelpbio/articles/methods.html#total-biomass}{Methods}).
+
+A total is a snapshot of the kelp present when the site is mapped, and each
+row is assumed to map the whole site; a site flown in parts should be
+combined into one row first. Several maps within a site-year are therefore
+repeated measurements of one bed. With \code{pool_by}, the maps of each site-year
+in a group are first averaged and the site-year means then summed, so a bed
+is never counted more than once.
+
 A warning is given if a row with canopy has a tide height above 2 m, or if
-a pooled group has more than one map of a site-year, which counts its
-bed more than once.
+the maps of a site-year have \code{classified_area_m2} values that differ by more
+than half, which suggests maps of parts of the site.
 }
 \examples{
 fit <- fit_cover_calibration_sim_nereo

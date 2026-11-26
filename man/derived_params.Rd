@@ -43,10 +43,10 @@ among-year variation. Use it to describe an average site or year.
 
 \item{pool_by}{A character vector naming character or factor columns to
 group the rows by, such as \code{c("site", "year")}, \code{character(0)} to pool all
-rows, or \code{NULL} (the default) for one row per input row. On
-each draw, the biomass of a group is the sum of its rows' biomass (kg).
-For another summary, such as an unweighted mean of rows, summarise the
-draws column, for example with \code{\link[posterior:rvar_mean]{posterior::rvar_mean()}}.}
+rows, or \code{NULL} (the default) for one estimate per input row. The rows of a
+group are combined on each draw as described in Details. To use a different
+summary method, such as an unweighted mean of rows, summarise the draws column,
+for example with \code{\link[posterior:rvar_mean]{posterior::rvar_mean()}}.}
 }
 \description{
 Parameter descriptions shared by \code{\link[=kb_predict_mean_weight]{kb_predict_mean_weight()}},

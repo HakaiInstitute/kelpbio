@@ -48,3 +48,8 @@ test_that("implausible units warn", {
     "canopy_tide_height_m"
   )
 })
+
+test_that("maps of a site-year covering different areas warn", {
+  maps <- transform(canopy(), classified_area_m2 = c(5000, 2000, 3000))
+  expect_warning(kb_check_data_survey_canopy(maps), "a:2021")
+})

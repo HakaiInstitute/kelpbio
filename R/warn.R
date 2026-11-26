@@ -127,19 +127,22 @@ warn_survey_area <- function(data, x_name) {
   invisible(data)
 }
 
-# Two rows for one site-year in a `pool_by` group are two totals over the same
-# mapped canopy, so their sum double counts. `id` gives each row's group.
-warn_overlapping_canopy <- function(grid, id) {
-  key <- site_year_key(grid$site, grid$year)
-  repeated <- unique(key[duplicated(paste(id, key))])
-  if (length(repeated)) {
+# Pooled canopy totals average the maps of a site-year, which assumes each maps
+# the whole site. Maps of one site-year whose classified areas differ by more
+# than half suggest a site flown in parts.
+warn_partial_maps <- function(data, x_name) {
+  key <- site_year_key(data$site, data$year)
+  area <- data$classified_area_m2
+  ratio <- tapply(area, key, max) / tapply(area, key, min)
+  partial <- names(ratio)[ratio > 1.5]
+  if (length(partial)) {
     cli::cli_warn(c(
-      "Some {.arg pool_by} groups hold more than one row for a site-year, so their totals overlap.",
-      i = "Each row is a map of the site-year's bed, so the sum counts it once per map.",
-      i = "Repeated: {.val {repeated}}."
+      "Some site-years in {x_name} have maps whose {.field classified_area_m2} differ by more than half.",
+      i = "Each map should cover the whole site; combine maps of parts of a site into one row.",
+      i = "Site-years: {.val {partial}}."
     ))
   }
-  invisible(NULL)
+  invisible(data)
 }
 
 # Warn when values lie below half the fitted minimum or above twice the fitted
