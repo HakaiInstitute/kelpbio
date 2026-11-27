@@ -2,130 +2,340 @@
 
 ## Purpose
 
-Fitting the weight model and the kb_fit object contract: draws-not-stanfit storage, prior-only / zero-observation support, and sampler control.
-
+Fitting a model: the input data and its checks, the priors, how the data determine
+which effects are fitted, sampler control and progress, and what a fit object
+holds. The exact model each fit function estimates (likelihood, mean, effects,
+priors) is the one `kb_model_describe()` reports, pinned by
+`tests/testthat/_snaps/kb_model_describe.md`.
 ## Requirements
+### Requirement: Fit a model
 
-### Requirement: Fit the Nereocystis weight model
+`kb_fit_weight_nereo()`, `kb_fit_weight_macro()`, `kb_fit_size_nereo()`, `kb_fit_wetdry_nereo()`, `kb_fit_wetdry_macro()`, `kb_fit_carbon_nereo()`, `kb_fit_carbon_macro()`, `kb_fit_nitrogen_nereo()`, `kb_fit_nitrogen_macro()`, `kb_fit_cover_calibration_nereo()`, and `kb_fit_cover_calibration_macro()` SHALL fit the species' weight, size, wet/dry, carbon, or cover calibration model and return a `kb_fit` object. Arguments SHALL be validated before sampling. Fitting SHALL need no Stan toolchain on the user's machine, and changing a prior's hyperparameters SHALL need no recompilation; a prior's family is fixed by the model.
 
-`kb_fit_weight_nereo(data, priors, prior_only, chains, niters, nthin, cores, seed, progress, ...)` SHALL fit the *Nereocystis luetkeana* allometric weight model (quadratic log-diameter mean with site intercept, site slope, and a data-determined site:year random effect) via `stanmodels$weight_nereo` and return an object of class `c("kb_fit_weight", "kb_fit")`. The species is fixed by the function (there is no `species` argument); it is recorded as `"nereocystis"` in `meta$species`. There SHALL be no `site_year_on` argument: the site:year effect is determined from the data (see below) and the determination is recorded in `meta$site_year_on`.
+#### Scenario: Returns a fit
+- **WHEN** a fit function is called on valid data
+- **THEN** it returns an object inheriting from `kb_fit`, the model class (`kb_fit_weight`, `kb_fit_size`, `kb_fit_wetdry`, `kb_fit_carbon`, `kb_fit_nitrogen`, or `kb_fit_cover_calibration`), and the species class (e.g. `kb_fit_cover_calibration_nereo`)
 
-The site:year effect SHALL be included when the data span more than one distinct year and omitted otherwise. When years are present but no site was sampled in more than one year (an aliased design in which the site and site:year contributions are not separately identifiable) the effect SHALL be retained and a `cli` warning issued; predictions conditioned on the observed site-years are unaffected, but the individual site and site:year terms and their standard deviations (`sSite`, `sSiteYear`) are prior-driven and SHALL NOT be interpreted separately. When the effect is omitted an informational message SHALL be issued unless `progress = "none"`.
+#### Scenario: Invalid arguments error before sampling
+- **WHEN** a fit function is called with invalid data, an invalid sampler argument, or a prior of the wrong family
+- **THEN** it errors with a `cli` message before any sampling, a family mismatch saying that a different family needs a different model
 
-#### Scenario: Returns a kb_fit_weight object
-- **WHEN** `kb_fit_weight_nereo()` is called on valid weight data
-- **THEN** it returns an object of class `c("kb_fit_weight", "kb_fit")` with `meta$species` equal to `"nereocystis"`
+### Requirement: Input data
 
-#### Scenario: Arguments are validated at entry
-- **WHEN** `kb_fit_weight_nereo()` is called with an invalid argument (e.g. bad `data`, a `priors` entry of the wrong family)
-- **THEN** it errors at entry via `chk`/`cli` before sampling (a family mismatch reports that a family change needs a different model variant)
+The required columns SHALL be, with no missing or infinite values in any required column. `site` SHALL be character or factor. `year` and `survey_id` SHALL be character, factor, or numeric; a numeric `year` SHALL be whole numbers. Numeric values SHALL be converted to character on entry, so the fit's levels, the stored data, and every output carry them as character; character and factor values SHALL be kept as given. A column measured in a unit SHALL name the unit as a suffix (`_mm`, `_kg`, `_m2`); counts, grouping, and identifier columns carry no suffix. "Plant" SHALL mean, for both species, one individual (sporophyte) identified by its holdfast. The fits work at site-year resolution: weight, size sample, and survey data SHALL give the year of each row in `year`, and no date column SHALL be read.
 
-#### Scenario: Site:year effect included for multi-year data
-- **WHEN** the data span more than one year and at least one site is sampled in more than one year
-- **THEN** the site:year effect is included (`meta$site_year_on` is `TRUE`) and no structural message is issued
+- *Nereocystis* weight: `diameter_mm` (a plant diameter that relates to weight as a power law, such as the maximum sub-bulb diameter, mm, > 0), `weight_kg` (kg, > 0), `site`, and `year`.
+- *Macrocystis* weight: `fronds` (fronds at 1 m above the holdfast, a positive whole number), `weight_kg` (kg, > 0), `site`, and `year`.
+- *Nereocystis* size sample (plants measured to fit the size model): `diameter_mm` (the same plant diameter as the weight data, mm, > 0), `site`, and `year`.
+- Wet/dry, both species: `wet_mass_g` (wet mass of a sample, g, > 0) and `dry_mass_g` (its dry mass, g, > 0 and less than `wet_mass_g`). A warning SHALL give the number of samples whose dry:wet ratio lies outside 0.02 to 0.5, the plausible range for kelp tissue, and those samples SHALL be kept.
+- Carbon, both species: `sample_mass_mg` (mass of a dried sample, mg, > 0) and `carbon_mass_ug` (carbon measured in it, µg, > 0), the carbon fraction `carbon_mass_ug / 1000 / sample_mass_mg` being less than 1. A warning SHALL give the number of samples whose carbon fraction lies outside 0.10 to 0.50, the plausible range for kelp tissue, and those samples SHALL be kept.
+- Nitrogen, both species: `sample_mass_mg` (mass of a dried sample, mg, > 0) and `nitrogen_mass_ug` (nitrogen measured in it, µg, > 0), the nitrogen fraction `nitrogen_mass_ug / 1000 / sample_mass_mg` being less than 1. A warning SHALL give the number of samples whose nitrogen fraction lies outside 0.002 to 0.05, the plausible range for kelp tissue, and those samples SHALL be kept.
+- In situ surveys, both species: one row per survey, with `survey_id` (each value appearing once), `site`, `year`, and `survey_area_m2` (the surveyed area, m², > 0). Surveys of the same site in the same year, including on the same day, SHALL be separate rows with distinct `survey_id` values. `plants` (plants counted, a number `>= 0`) SHALL be present when sizes come from a size fit and absent when they come from a size census. `plot_area_m2` (the plot polygon, m², > 0), `canopy_area_m2` (mapped canopy delineated in the plot, m², `>= 0` and at most `plot_area_m2`), and `canopy_tide_height_m` (tide height when the canopy was imaged, m, chart datum) MAY be present; on each row all three SHALL be given or all three missing.
+- Size census (every plant a survey counted): one row per counted plant, with `survey_id` matching a survey row, the size (`diameter_mm` for *Nereocystis*, > 0; `fronds` for *Macrocystis*, a positive whole number), and optionally `partial` (logical, no missing values; `TRUE` counts the plant as half). A plant's site and year SHALL be those of its survey.
+- Canopy maps, both species: one row per map of a site's canopy, with `site`, `year`, `canopy_area_m2` (canopy area, m², `>= 0`), `canopy_tide_height_m` (tide height when the canopy was imaged, m, chart datum), and `classified_area_m2` (the water area the canopy classification covered, m², > 0 and at least `canopy_area_m2`).
+- Cover calibration, both species: `data` is the output of `kb_predict_biomass_in_situ()` at its default `pool_by`, wet biomass per m², each survey with plot cover entering as one observation. It SHALL carry `site`, `year`, `plot_area_m2`, `canopy_area_m2`, `canopy_tide_height_m`, and the `biomass_kg_m2` column of draws. Rows without plot cover SHALL be left out with a message giving their number (suppressed by `progress = "none"`), and the fit SHALL error when no row has plot cover. Data lacking `biomass_kg_m2` (dry, carbon, or nitrogen biomass, or total biomass) or a column of draws in it, or lacking the survey columns (summed output), SHALL error naming the missing columns and pointing to `kb_predict_biomass_in_situ()` with its defaults.
 
-#### Scenario: Site:year effect omitted for single-year data
-- **WHEN** the data contain fewer than two distinct years
-- **THEN** the site:year effect is omitted (`meta$site_year_on` is `FALSE`) and, unless `progress = "none"`, an informational message reports the omission
+Other columns SHALL be ignored. `kb_check_data_weight_nereo()`, `kb_check_data_weight_macro()`, `kb_check_data_size_sample_nereo()`, `kb_check_data_wetdry_nereo()`, `kb_check_data_wetdry_macro()`, `kb_check_data_carbon_nereo()`, `kb_check_data_carbon_macro()`, `kb_check_data_nitrogen_nereo()`, `kb_check_data_nitrogen_macro()`, `kb_check_data_cover_calibration_nereo()`, and `kb_check_data_cover_calibration_macro()` SHALL apply these checks, returning the data invisibly, and the fit functions SHALL apply them at entry. `kb_check_data_survey_in_situ(data, size_census = NULL)` SHALL check a survey table, and with `size_census` also the size census, the join by `survey_id`, and the absence of a `plants` column; `kb_check_data_size_census_nereo()` and `kb_check_data_size_census_macro()` SHALL check a size census alone. `kb_check_data_survey_canopy()` SHALL check canopy maps, the `new_data` of `kb_predict_biomass_canopy()`, with the errors that function gives.
 
-#### Scenario: Aliased design retains the effect with a warning
-- **WHEN** the data span more than one year but no site is sampled in more than one year
-- **THEN** the site:year effect is retained (`meta$site_year_on` is `TRUE`) and a `cli` warning reports that the site and site:year effects are not separately identifiable and that the estimate reflects the prior
+#### Scenario: Canopy maps are checked as the canopy prediction checks them
+- **WHEN** `kb_check_data_survey_canopy()` is called on canopy maps whose `canopy_area_m2` exceeds `classified_area_m2`, or that lack `canopy_tide_height_m`
+- **THEN** it errors naming the column, as `kb_predict_biomass_canopy()` does for the same `new_data`
 
-### Requirement: Fit object stores draws, not the stanfit
+#### Scenario: Valid data passes
+- **WHEN** a data check is called on data meeting the requirements
+- **THEN** it returns the data invisibly with no message
 
-The returned `kb_fit` SHALL store extracted posterior draws (a `posterior` draws object) plus sampler diagnostics, the input data, and resolved metadata — and SHALL NOT retain the live `stanfit`.
+#### Scenario: A bad column errors naming it
+- **WHEN** a required column is missing, of the wrong type, out of range, or contains `NA`
+- **THEN** it errors with a message naming the column
 
-#### Scenario: Draws and diagnostics are retained, stanfit discarded
-- **WHEN** the fit object is inspected
-- **THEN** it exposes posterior draws (the fixed effects `bWeight`, `bDiameter`, `bDiameter2`; the SDs `sSite`, `sSiteDiameter`, `sSiteYear`, `sWeight`; the per-site `bSite` and `bSiteDiameter`; the site-by-year `bSiteYear`; and the `log_lik` and `yrep` generated quantities) and diagnostics, and contains no live `stanfit`
+#### Scenario: An unsuffixed column name is missing
+- **WHEN** *Nereocystis* weight data have `diameter` and `weight` but not `diameter_mm` and `weight_kg`
+- **THEN** it errors naming the missing `diameter_mm` column
 
-#### Scenario: log_lik and yrep are stored for downstream tools
-- **WHEN** the fit object is inspected
-- **THEN** it retains the pointwise `log_lik` draws (for `loo`) and the `yrep` posterior-predictive draws (for `bayesplot::pp_check`)
+#### Scenario: A zero frond count errors for counted plants
+- **WHEN** a *Macrocystis* size census contains a plant with `fronds` of `0`
+- **THEN** it errors naming `fronds`, since the model describes plants with at least one frond at 1 m
 
-### Requirement: Prior-only and zero-observation fits
+#### Scenario: Weight data take a year
+- **WHEN** *Nereocystis* weight data have `site` and `year`
+- **THEN** they pass, and the fit's site-years are the combinations of `site` and `year` in the data
 
-`kb_fit_weight_nereo()` SHALL support fitting from the priors alone.
+#### Scenario: A numeric year is converted
+- **WHEN** weight, size sample, or survey data have `year` as whole numbers such as `2021`
+- **THEN** they pass, and the fit's year levels and the stored data hold `"2021"`
 
-#### Scenario: prior_only ignores the data
-- **WHEN** `kb_fit_weight_nereo(data, prior_only = TRUE)` is called
-- **THEN** the resulting draws reflect the priors only (a fit on permuted responses yields the same prior-only distribution)
+#### Scenario: A fractional year errors
+- **WHEN** a `year` column holds a number that is not whole, such as `2021.5`
+- **THEN** it errors naming `year`
 
-#### Scenario: Empty data is accepted under prior_only
-- **WHEN** `kb_fit_weight_nereo()` is given a zero-row data frame with `prior_only = TRUE`
-- **THEN** it returns a valid `kb_fit_weight` object sampled from the priors
+#### Scenario: A numeric survey identifier is converted
+- **WHEN** survey data and a size census give `survey_id` as numbers
+- **THEN** they pass, census rows join to their surveys by those values, and outputs carry `survey_id` as character
 
-### Requirement: Sampler control
+#### Scenario: Data with a date and no year error
+- **WHEN** weight, size sample, or survey data have a `date` column and no `year` column
+- **THEN** it errors naming the missing `year` column
 
-`kb_fit_weight_nereo()` SHALL expose `chains`, `niters`, `nthin`, `cores`, `seed`, `progress`, and `progress_dir` as first-class arguments and forward other arguments to `rstan::sampling()` via `...`. `seed` (default `NULL`) SHALL be forwarded to `rstan::sampling()`; when `NULL`, rstan derives its own seed from R's RNG so a preceding `set.seed()` makes the fit reproducible, and an explicit `seed` takes precedence. `niters` is the number of saved post-warmup draws per chain (default `1000`); warmup defaults to match and the post-warmup phase is thinned by `nthin` (default `1`, no thinning). The sampler SHALL run with `adapt_delta = 0.95` by default (raised above Stan's `0.8` for the hierarchical geometry); `adapt_delta` is not a first-class argument, but a `control` list passed through `...` SHALL be merged over this default so power users can override `adapt_delta` or set other control entries (e.g. `max_treedepth`) without dropping it. The sampler SHALL NOT open an HTML progress viewer (`open_progress = FALSE`).
+#### Scenario: Zero plants are valid for a tallied survey
+- **WHEN** survey data contain a survey with `plants` of `0`
+- **THEN** the data pass
 
-`progress` SHALL be a string, one of `"bar"` (default), `"verbose"`, or `"none"`, validated with `rlang::arg_match()`. It controls only fit-time console output; it SHALL NOT change the returned object, the draws, or reproducibility.
+#### Scenario: A tally with a size census errors
+- **WHEN** `kb_check_data_survey_in_situ(data, size_census)` is called with a `data` holding a `plants` column
+- **THEN** it errors stating that counts come from the size census rows
 
-- `progress = "bar"` SHALL display a determinate console progress bar that advances with the fraction of sampler iterations (warmup and sampling) completed across all chains, and SHALL suppress rstan's raw per-iteration stream and its post-sampling HMC diagnostic warnings.
-- `progress = "verbose"` SHALL stream rstan's per-iteration output AND its post-sampling HMC diagnostic warnings (divergent transitions, treedepth, low BFMI, Rhat/ESS) to the console (the previous default behaviour), and SHALL NOT display the progress bar.
-- `progress = "none"` SHALL suppress all fit-time output (progress bar, rstan stream, and HMC warnings), muffled at the call site, not via a global option.
+#### Scenario: A census plant with no survey errors
+- **WHEN** a size census row's `survey_id` matches no survey row
+- **THEN** it errors naming the unmatched `survey_id` values
 
-`progress_dir` (default `NULL`) SHALL be `NULL` or a path to an existing, writable directory, validated at entry. When a directory is supplied, `kb_fit_weight_nereo()` SHALL write a kelpbio-owned, pollable progress artifact into it while the fit runs (a manifest recording the total expected iterations, plus the working sampler output), so another R process can read fit progress via `kb_fit_progress()`. Writing the artifact SHALL be independent of `progress`: it is produced under any of `"bar"`, `"verbose"`, `"none"` whenever `progress_dir` is supplied. A caller-supplied `progress_dir` and its contents are the caller's to clean up; kelpbio SHALL NOT delete a caller-supplied directory, and the artifact SHALL remain readable after the fit completes (a final poll reads complete). When `progress_dir` is `NULL` no external artifact is produced (the console `"bar"` may use an internal temporary location that it removes on exit).
+#### Scenario: Partial plot cover columns error
+- **WHEN** a survey row has `canopy_area_m2` but a missing `canopy_tide_height_m` or `plot_area_m2`
+- **THEN** it errors naming the missing column
 
-A structured convergence summary SHALL be available regardless of `progress` through `converged()`/`glance()` (Rhat and the effective sample rate) and `summary()` (per-term Rhat/ESS and the divergent-transition count). `cores = NULL` SHALL resolve to `getOption("mc.cores")` (falling back to `chains`), capped at the available cores so the default never oversubscribes; servers, containers, and `load_all()`-on-Windows users can throttle via `options(mc.cores = 1)` or `cores = 1`.
+#### Scenario: Canopy larger than its plot errors
+- **WHEN** a survey row's `canopy_area_m2` exceeds its `plot_area_m2`
+- **THEN** it errors naming `canopy_area_m2`
 
-#### Scenario: niters means saved post-warmup draws
-- **WHEN** `kb_fit_weight_nereo(niters = 1000, nthin = 2, chains = 4)` is called
-- **THEN** `niters(fit)` is `1000` (saved draws per chain) regardless of `nthin`
+#### Scenario: A surveyed area above the plot area warns
+- **WHEN** a survey row's `survey_area_m2` exceeds its `plot_area_m2`
+- **THEN** a warning names both columns, and the data still pass
 
-#### Scenario: Defaults and parallelism
-- **WHEN** `kb_fit_weight_nereo()` is called with defaults
-- **THEN** it fits `chains = 4` with `nthin = 1`, runs chains in parallel using `getOption("mc.cores")` (falling back to `chains`) capped at the available cores, and (`progress = "bar"`) displays a determinate console progress bar without opening an HTML progress viewer
+#### Scenario: A repeated survey identifier errors
+- **WHEN** survey data have two rows with the same `survey_id`
+- **THEN** it errors naming the repeated `survey_id` values
 
-#### Scenario: Parallelism can be throttled
-- **WHEN** `options(mc.cores = 1)` is set (or `cores = 1` is passed)
-- **THEN** the fit runs the chains serially, so it is safe on shared servers, in containers, and from `devtools::load_all()` on Windows
+#### Scenario: Repeat surveys in a site-year pass
+- **WHEN** survey data have two rows with the same `site` and `year` and distinct `survey_id` values
+- **THEN** the data pass, with one survey per row
 
-#### Scenario: adapt_delta default and override
-- **WHEN** `kb_fit_weight_nereo()` is called with defaults, and separately with `control = list(adapt_delta = 0.99)` or `control = list(max_treedepth = 12)`
-- **THEN** the default fit samples at `adapt_delta = 0.95`; a supplied `control` is merged over the default so `adapt_delta = 0.99` overrides it and `max_treedepth = 12` is added while `adapt_delta = 0.95` is retained
+#### Scenario: A dry mass not below the wet mass errors
+- **WHEN** wet/dry data contain a sample whose `dry_mass_g` is greater than or equal to its `wet_mass_g`
+- **THEN** it errors naming `dry_mass_g`
 
-#### Scenario: Progress bar is the default
-- **WHEN** `kb_fit_weight_nereo()` is called with the default `progress = "bar"`
-- **THEN** a determinate progress bar advances with the fraction of iterations completed, rstan's raw per-iteration stream and HMC warnings do not reach the console, and the convergence summary remains available through `converged()`/`glance()`/`summary()`
+#### Scenario: An implausible dry:wet ratio warns
+- **WHEN** a sample's dry:wet ratio lies outside 0.02 to 0.5
+- **THEN** a warning gives the number of such samples, and the data still pass with every sample kept
 
-#### Scenario: Verbose reproduces the rstan stream
-- **WHEN** `kb_fit_weight_nereo(progress = "verbose")` is called
-- **THEN** rstan's per-iteration output and its post-sampling HMC diagnostic warnings (divergent transitions, treedepth, low BFMI, Rhat/ESS) reach the console and no progress bar is shown
+#### Scenario: Carbon above the sample mass errors
+- **WHEN** carbon data have a `carbon_mass_ug` above `sample_mass_mg` once converted to milligrams, as a sample mass in grams produces
+- **THEN** it errors naming `carbon_mass_ug` and the expected units
 
-#### Scenario: None is silent
-- **WHEN** `kb_fit_weight_nereo(progress = "none")` is called
-- **THEN** no progress bar, rstan stream, or HMC warnings reach the console (suppressed at the call site, not via a global option); the convergence summary remains available through `converged()`/`glance()`/`summary()`
+#### Scenario: An implausible carbon fraction warns
+- **WHEN** a sample's carbon fraction lies outside 0.10 to 0.50
+- **THEN** a warning gives the number of such samples, and the data still pass with every sample kept
 
-#### Scenario: Invalid progress value errors at entry
-- **WHEN** `kb_fit_weight_nereo(progress = "loud")` is called
-- **THEN** it errors at entry via `rlang::arg_match()` before sampling, reporting the allowed values `"bar"`, `"verbose"`, `"none"`
+#### Scenario: Survey biomass passes straight into the calibration
+- **WHEN** `kb_fit_cover_calibration_nereo()` is given `kb_predict_biomass_in_situ()` output with its defaults
+- **THEN** it fits the rows with plot cover, and the fit stores each survey's biomass as the mean (`biomass_kg_m2`) and SD (`biomass_sd_kg_m2`) of its draws, not the draws
 
-#### Scenario: Progress does not affect the draws
-- **WHEN** the same model is fit twice with the same `seed` (or the same preceding `set.seed()`) but different `progress` values
-- **THEN** the returned draws are identical: `progress` changes only console output
+#### Scenario: Rows without plot cover are left out
+- **WHEN** some rows of the calibration data have missing plot cover columns
+- **THEN** those rows are not fitted, and a message gives their number
 
-#### Scenario: progress_dir writes a pollable artifact independent of console mode
-- **WHEN** `kb_fit_weight_nereo(data, progress_dir = d, progress = "none")` is called with `d` an existing writable directory
-- **THEN** a kelpbio-owned progress artifact is written into `d` during the fit (readable via `kb_fit_progress(d)`), no console output is produced, and the artifact remains in `d` after the fit returns (kelpbio does not delete a caller-supplied directory)
+#### Scenario: Dry or summed biomass errors
+- **WHEN** the calibration data are `kb_predict_biomass_in_situ()` output with `measure = "dry"`, `per_area = FALSE`, or a `pool_by`
+- **THEN** it errors naming the missing columns (`biomass_kg_m2`, or the survey's plot cover columns) and pointing to the defaults
 
-#### Scenario: Invalid progress_dir errors at entry
-- **WHEN** `kb_fit_weight_nereo(data, progress_dir = "/no/such/dir")` is called with a path that is not an existing writable directory
-- **THEN** it errors at entry via `chk`/`cli` before sampling
+#### Scenario: Zero canopy is valid for the calibration
+- **WHEN** the calibration data contain a survey with `canopy_area_m2` of `0`
+- **THEN** the data pass
 
-### Requirement: External fit-progress polling
+### Requirement: The data determine which effects are fitted
 
-`kb_fit_progress(progress_dir)` SHALL be an exported function returning the completed fraction of a fit, as a number in `[0, 1]`, read from the kelpbio-owned progress artifact written by `kb_fit_weight_nereo(..., progress_dir = progress_dir)`. It SHALL enable a separate R process (for example a Shiny session polling a fit running in an `ExtendedTask` background process) to read progress without parsing the on-disk format itself. The fraction SHALL be computed as complete saved sampler rows across all chains (counting the thinned warmup and post-warmup rows) divided by the total expected saved rows, excluding the artifact's header and comment lines and ignoring any incomplete trailing row. A chain whose completion marker is present SHALL count as fully complete, so the function returns exactly `1` once every chain has finished regardless of small differences in the expected-row estimate. `progress_dir` SHALL be validated as a string path.
+The site:year effect SHALL be included for every model with a site:year effect (weight and size; wet/dry, carbon, and nitrogen have no random effects, and the cover calibration has site and year effects but never a site:year effect), whatever years and sites the data cover. When no site was sampled in more than one year, which includes data from a single year, or no year had more than one site sampled, it SHALL be retained with a warning naming the main effect (site, year, or both) from which the site:year effect cannot be separated.
 
-#### Scenario: Returns the completed fraction
-- **WHEN** `kb_fit_progress(progress_dir)` is called while a fit writing to `progress_dir` is partway through sampling
-- **THEN** it returns a number in `[0, 1]` equal to the fraction of expected sampler iterations completed so far
+The cover calibration SHALL include a presence part, for either species, when a survey it fits has a biomass of zero (no plants counted), and SHALL omit it otherwise. With the presence part, the probability that a survey holds plants SHALL be logit-linear in the plot's percent tide-corrected cover, and a survey's biomass SHALL follow the Gamma only where plants are present. The fit SHALL warn when every survey with no plants has a percent cover, before tide correction, at or below that of every survey with plants (ties included), saying that the presence slope then follows its prior and suggesting a tighter one; the warning SHALL NOT stop the fit. Data in which no survey with plot cover has plants SHALL error. A `prior_only` fit SHALL neither warn nor error on these grounds. The message is pinned by `tests/testthat/_snaps/warn.md`.
 
-#### Scenario: Zero before progress, complete at end
-- **WHEN** `kb_fit_progress(progress_dir)` is called before any sampler rows are written (or on a directory holding no progress artifact yet), and separately after the fit has finished
-- **THEN** it returns `0` in the first case and `1` in the second, without erroring
+An omitted effect SHALL not be reported or used in prediction (see summaries and predictions).
 
-#### Scenario: Does not error on a torn read
-- **WHEN** `kb_fit_progress(progress_dir)` reads the artifact while another process is writing a row to it
-- **THEN** it ignores the incomplete trailing row and returns a valid fraction rather than erroring
+#### Scenario: Single-year data fit site:year with a warning
+- **WHEN** the data contain one year and more than one site
+- **THEN** the fit has a site:year effect and a warning names the site effect
+
+#### Scenario: One site in one year warns of both effects
+- **WHEN** the data contain one site and one year
+- **THEN** the fit has a site:year effect and a warning names the site and year effects
+
+#### Scenario: Aliased design warns
+- **WHEN** the data span several years but no site spans more than one
+- **THEN** the site:year effect is retained and a warning names the site effect
+
+#### Scenario: One site over several years warns
+- **WHEN** the data span several years but every year has a single site
+- **THEN** the site:year effect is retained and a warning names the year effect
+
+#### Scenario: The cover calibration never fits site:year
+- **WHEN** a cover calibration model is fitted to data spanning several years, including several plots in one site-year
+- **THEN** the fit has site and year effects, no site:year effect, and no site:year message or warning
+
+#### Scenario: An empty survey adds the presence part
+- **WHEN** a cover calibration model of either species is fitted to data holding a survey with no plants
+- **THEN** the fit has the presence parameters, and without such a survey it has none
+
+#### Scenario: Separated empty surveys warn
+- **WHEN** every survey with no plants has a percent canopy cover at or below every survey with plants
+- **THEN** the fit warns that the presence slope follows its prior
+
+### Requirement: Priors
+
+`kb_priors_weight_nereo()`, `kb_priors_weight_macro()`, `kb_priors_size_nereo()`, `kb_priors_wetdry_nereo()`, `kb_priors_wetdry_macro()`, `kb_priors_carbon_nereo()`, `kb_priors_carbon_macro()`, `kb_priors_nitrogen_nereo()`, `kb_priors_nitrogen_macro()`, `kb_priors_cover_calibration_nereo()`, and `kb_priors_cover_calibration_macro()` SHALL return a named list of prior objects, the defaults pinned by `tests/testthat/test-kb_priors_*.R`. Each entry SHALL be named after the parameter it sets, the same name that parameter has in `tidy()`, `coef()`, `summary()`, and `kb_model_describe()`. The entries are:
+
+- *Nereocystis* weight: `intercept`, `diameter_power`, `weight_floor`, `sd_site`, `sd_year`, `sd_site_year`, and `sd_residual`.
+- *Macrocystis* weight: `intercept`, `fronds_slope`, `shape`, `sd_site`, `sd_year`, and `sd_site_year`.
+- *Nereocystis* size: `intercept`, `shape`, `sd_site`, `sd_year`, and `sd_site_year`.
+- Wet/dry, carbon, and nitrogen, both species: `intercept` and `precision`.
+- Cover calibration, both species: `cover_slope` (lognormal), `biomass_floor`, `tide_height_slope`, `cv_residual`, `presence_intercept`, `presence_cover_slope`, `sd_site`, and `sd_year`; the presence entries apply only when the fit has a presence part.
+
+A list passed to `priors` SHALL override only the entries it contains. `kb_prior_normal()`, `kb_prior_exponential()`, and `kb_prior_lognormal()` SHALL validate their hyperparameters and print as the family with its hyperparameters.
+
+#### Scenario: A partial prior list keeps the other defaults
+- **WHEN** a user changes one entry (e.g. `p$sd_site <- kb_prior_exponential(2)`) and fits with `priors = p`
+- **THEN** that entry is used and the others keep their defaults
+
+#### Scenario: A summary term names its prior entry
+- **WHEN** `tidy(fit)` reports a parameter
+- **THEN** its `term` is the name of the entry in the model's `kb_priors_*()` list that sets its prior
+
+#### Scenario: Invalid hyperparameters error
+- **WHEN** `kb_prior_normal(0, sd = -1)`, `kb_prior_exponential(rate = 0)`, or `kb_prior_lognormal(0, sdlog = 0)` is called
+- **THEN** it errors
+
+### Requirement: Sampler control and progress
+
+The fit functions SHALL take `chains` (default 4), `niters` (saved post-warmup draws per chain, default 1000; warmup matches), `nthin` (default 1), `cores`, `seed`, `progress`, and `progress_dir`, passing other named arguments to `rstan::sampling()`; an unnamed argument SHALL error. The sampler SHALL use `adapt_delta = 0.95` unless a `control` list overrides it; a supplied `control` is merged over the default. `cores = NULL` SHALL use `getOption("mc.cores")`, falling back to `chains`, capped at the available cores. A fit SHALL be reproducible from `seed`, or from a preceding `set.seed()` when `seed` is `NULL`. No HTML viewer SHALL open.
+
+`progress` SHALL be one of `"bar"` (default, a progress bar with rstan's output suppressed), `"verbose"` (rstan's per-iteration output and warnings), or `"none"` (silent). It SHALL change only console output, never the draws. When `progress_dir` names an existing directory, the fit SHALL write a progress record there under any `progress` mode, and `kb_progress(progress_dir)` SHALL return the completed fraction in `[0, 1]` from another R process: `0` before sampling starts, `1` once complete, and no error mid-write. kelpbio SHALL NOT delete a caller's `progress_dir`.
+
+#### Scenario: niters counts saved draws
+- **WHEN** a fit uses `niters = 1000` and `nthin = 2`
+- **THEN** `niterations(fit)` is `1000`
+
+#### Scenario: control is merged over the default
+- **WHEN** a fit is called with `control = list(max_treedepth = 12)`
+- **THEN** it samples with `max_treedepth = 12` and `adapt_delta = 0.95`
+
+#### Scenario: progress changes only output
+- **WHEN** the same model is fitted with the same `seed` and different `progress` values
+- **THEN** the draws are identical
+
+#### Scenario: Progress can be polled from another process
+- **WHEN** a fit writes to `progress_dir` and `kb_progress(progress_dir)` is called during and after it
+- **THEN** it returns the completed fraction, reaching `1` when the fit finishes
+
+### Requirement: The fit object
+
+A fit SHALL store posterior draws, sampler diagnostics, the input data, and the fit's settings, and SHALL NOT keep the `stanfit` or any per-observation quantity, so its size depends on the number of draws, not observations. Every summary, diagnostic, and prediction SHALL work from a stored fit. A fit with `prior_only = TRUE` SHALL sample from the priors alone and accept zero-row data; with `prior_only = FALSE`, zero-row data SHALL error before sampling. A diagnostic rate with no draws behind it SHALL be `NA`, not zero.
+
+The draws SHALL be a `posterior` `draws_rvars` object that works with `posterior` and the tools built on it as soon as kelpbio is attached, including for a bundled pre-fit or a fit read back in a new session. Per-level group effects SHALL be labelled by their levels: site effects by site, year effects by year, and site:year effects by site and year, so they can be indexed by name as well as by position.
+
+#### Scenario: A stored fit is self-contained
+- **WHEN** a fit is saved, reloaded in a new session, and summarised or predicted from
+- **THEN** every method works without refitting
+
+#### Scenario: Prior-only fits ignore the data
+- **WHEN** `prior_only = TRUE`, including with zero-row data
+- **THEN** the draws reflect the priors only
+
+#### Scenario: Zero-row data need prior_only
+- **WHEN** a fit function is called with zero-row data and `prior_only = FALSE`
+- **THEN** it errors before sampling, pointing to `prior_only = TRUE`
+
+#### Scenario: Draws work on load
+- **WHEN** kelpbio is attached in a new session and a bundled pre-fit's draws are printed before any other kelpbio function is called
+- **THEN** each parameter prints its draws summary, and has the length of its number of levels
+
+#### Scenario: Group effects are labelled by level
+- **WHEN** the site effects of a fit are indexed by a site name, or its draws are converted with `posterior::as_draws_df()`
+- **THEN** the effect for that site is returned, and the variables are named `site_effect[<site>]` and `site_year_effect[<site>,<year>]`
+
+### Requirement: Bundled example objects
+
+The package SHALL ship simulated datasets `data_weight_sim_nereo`, `data_weight_sim_macro`, `data_size_sample_sim_nereo`, `data_wetdry_sim_nereo`, `data_wetdry_sim_macro`, `data_carbon_sim_nereo`, `data_carbon_sim_macro`, `data_nitrogen_sim_nereo`, `data_nitrogen_sim_macro`, `data_survey_in_situ_sim_nereo`, `data_survey_in_situ_sim_macro`, `data_size_census_sim_macro`, `data_survey_canopy_sim_nereo`, and `data_survey_canopy_sim_macro`, and small pre-fits `fit_weight_sim_nereo`, `fit_weight_sim_macro`, `fit_size_sim_nereo`, `fit_wetdry_sim_nereo`, `fit_wetdry_sim_macro`, `fit_carbon_sim_nereo`, `fit_carbon_sim_macro`, `fit_nitrogen_sim_nereo`, `fit_nitrogen_sim_macro`, `fit_cover_calibration_sim_nereo`, and `fit_cover_calibration_sim_macro`, for examples and tests, not inference. The bundled datasets and the data stored in the pre-fits SHALL use the input column names above. Real survey data and inference-grade fits SHALL NOT be bundled; they belong in the companion package `kelpbiodata`.
+
+For each species, the weight, size, survey, and canopy datasets SHALL be simulated from one set of true site-year values, with parameter values near those estimated from the Hakai Institute surveys, so that survey biomass from the bundled fits is of realistic magnitude and agrees with the bundled cover calibration. *Nereocystis* surveys SHALL carry tallied `plants`, with sizes from `data_size_sample_sim_nereo`; *Macrocystis* surveys SHALL have their plants in `data_size_census_sim_macro`. The sites SHALL have invented names that match no real survey site. The data sources SHALL cover different site-years, as in field programmes: surveys at most site-years, size at most of those, weight at a subset that includes sites never harvested, and plot cover on a subset of surveys, with at least one site-year holding more than one survey and at least one survey with no plants. A *Nereocystis* survey with no plants SHALL have plot cover above that of the lowest-cover survey with plants, so the bundled calibration estimates its presence part from the data.
+
+#### Scenario: Bundled objects work with the package
+- **WHEN** a bundled dataset is checked and a bundled fit is summarised or predicted from
+- **THEN** the dataset passes its data check and the fit works with every method
+
+#### Scenario: Survey biomass and the calibration agree
+- **WHEN** `kb_predict_biomass_in_situ()` is called with a species' bundled fits and survey data
+- **THEN** at the surveys with plot cover, the median ratio of `kb_predict_cover_calibration()` from the bundled calibration fit to the survey biomass estimates lies between 0.5 and 2
+
+#### Scenario: Data sources have gaps
+- **WHEN** the site-years of a species' bundled weight, size, and survey datasets are compared
+- **THEN** weight covers fewer site-years than the surveys, at least one surveyed site has no weight data, *Nereocystis* size misses at least one surveyed site-year, only some surveys have plot cover, and at least one survey has no plants
+
+### Requirement: Implausible units are flagged
+
+The data checks, and so the fit functions, and `kb_predict_biomass_canopy()` on its `new_data`, SHALL warn when a column's median is implausible for the unit its name states: `diameter_mm` below 10 or above 200 (millimetres), `weight_kg` above 100 (kilograms), `survey_area_m2` below 1 or above 5000 (square metres), `plot_area_m2` below 1 or above 1,000,000 (square metres), `classified_area_m2` below 10 or above 1,000,000,000 (square metres), `canopy_tide_height_m` below -1 or above 5 (metres), or `wet_mass_g` or `dry_mass_g` above 1000 (grams). The warning SHALL name the column, its median, and the expected unit, and SHALL NOT stop the check or the fit. The message is pinned by `tests/testthat/_snaps/warn.md`.
+
+#### Scenario: Diameter in centimetres is flagged
+- **WHEN** *Nereocystis* data have `diameter_mm` in centimetres (median about 3)
+- **THEN** a warning names `diameter_mm`, its median, and millimetres, and the data still pass
+
+#### Scenario: Weight in grams is flagged
+- **WHEN** either species' data have `weight_kg` in grams
+- **THEN** a warning names `weight_kg`, its median, and kilograms
+
+#### Scenario: Area in square centimetres is flagged
+- **WHEN** survey data have `survey_area_m2` in square centimetres (median about 400,000)
+- **THEN** a warning names `survey_area_m2`, its median, and square metres, and the data still pass
+
+#### Scenario: Tide height in centimetres is flagged
+- **WHEN** survey data have `canopy_tide_height_m` in centimetres (median about 60)
+- **THEN** a warning names `canopy_tide_height_m`, its median, and metres, and the data still pass
+
+#### Scenario: Sample masses in milligrams are flagged
+- **WHEN** wet/dry data have `wet_mass_g` in milligrams (median about 4000)
+- **THEN** a warning names `wet_mass_g`, its median, and grams, and the data still pass
+
+#### Scenario: Plausible data raise no warning
+- **WHEN** the columns are in the expected units
+- **THEN** no unit warning is issued
+
+### Requirement: Weight functional form
+
+`kb_fit_weight_nereo()` SHALL take `form`, a string naming the mean function of weight in diameter: `"packard_floor"` (the default), a three-parameter power function with a size-independent weight floor, or `"power"`, a power law with no floor. Both forms SHALL share the likelihood, random effects, and prior list. An invalid `form` SHALL error before sampling, listing the available forms. The fit SHALL record its form, and every prediction, likelihood, and residual SHALL use it.
+
+#### Scenario: The default is the Packard form
+- **WHEN** `kb_fit_weight_nereo(data)` is called
+- **THEN** the fit uses the three-parameter power function and estimates the weight floor
+
+#### Scenario: A power-law fit has no floor
+- **WHEN** `kb_fit_weight_nereo(data, form = "power")` is called
+- **THEN** the weight floor is not estimated, and expected weight is proportional to a power of diameter
+
+#### Scenario: An unknown form errors
+- **WHEN** `kb_fit_weight_nereo(data, form = "cubic")` is called
+- **THEN** it errors before sampling, naming `"packard_floor"` and `"power"`
+
+### Requirement: Ambiguous group names are flagged
+
+The data checks, and so the fit functions, SHALL warn when a `site` or `year` value contains `,`, `[`, or `]`, since flattened parameter names such as `site_year_effect[<site>,<year>]` then cannot be parsed back into their levels. The warning SHALL name the column and the offending values, and SHALL NOT stop the check or the fit.
+
+#### Scenario: A site name with a comma warns
+- **WHEN** data have a site named `"North Reef, inner"`
+- **THEN** a warning names `site` and that value, and the data still pass
+
+#### Scenario: Plain names raise no warning
+- **WHEN** the site and year values contain none of `,`, `[`, or `]`, including names with spaces
+- **THEN** no group-name warning is issued
+
+### Requirement: Surveys at high tides are flagged
+
+The cover calibration fits SHALL warn when a survey with positive canopy has `canopy_tide_height_m` above 2 m, giving the number of such surveys and advising imagery at lower tides, since above 2 m the tide correction is large. The warning SHALL NOT stop the fit. The fit's log-likelihood SHALL be finite at any finite tide height, and a survey with no canopy SHALL keep zero cover. The message is pinned by `tests/testthat/_snaps/warn.md`.
+
+#### Scenario: A survey flown at 3.5 m warns
+- **WHEN** a *Nereocystis* cover calibration is fitted and one survey with canopy has `canopy_tide_height_m` of 3.5
+- **THEN** a warning gives one survey, and the fit proceeds
+
+#### Scenario: Surveys at ordinary tides raise no tide warning
+- **WHEN** every survey has `canopy_tide_height_m` at or below 2, including negative tide heights, or a survey above 2 m has no canopy
+- **THEN** no tide warning is issued
+
+#### Scenario: The log-likelihood is finite at any tide
+- **WHEN** the log-likelihood of a cover calibration fit is computed at a survey with canopy at tide heights of 2, 3.5, and 5 m
+- **THEN** every draw's value is finite
+

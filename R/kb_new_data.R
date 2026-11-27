@@ -1,0 +1,104 @@
+#' Build new data to predict at
+#'
+#' Build a grid of rows to predict at: one row per fitted site, year, or
+#' observed site-year, or per supplied site or year, crossed for a weight or
+#' cover calibration fit with a sequence of its predictor.
+#'
+#' @details
+#' Pass the result as `new_data` to the model's prediction function, for example
+#' `kb_predict_size(fit, kb_new_data(fit, by = "site"))`. The grouping factors not
+#' named in `by` are absent from the grid, so the prediction treats them as set
+#' by `new_levels`: with the default `"average"`, the typical site or year.
+#'
+#' For a cover calibration fit, the predictor `cover` is the tide-corrected
+#' proportion of the plot covered by canopy (0 to 1); each row is then a unit
+#' plot at zero tide height, with the in situ survey columns that give that cover. A
+#' single predictor value gives one row per group at that value.
+#'
+#' To fix a grouping factor at chosen levels, supply them by name in `...`, for
+#' example `year = 2021` with `by = "site"` for every fitted site in 2021, or
+#' `site = "otter_cove", year = 2022:2025`. Each value is crossed with the rest
+#' of the grid. A level not in the fit, such as a future year, is a new level,
+#' treated as set by `new_levels`.
+#'
+#' `by = c("site", "year")` gives only the site-years in the fitted data. The
+#' result is a tibble; rows can be filtered and columns added before
+#' predicting.
+#'
+#' @inheritParams params
+#' @param fit A `kb_fit_weight`, `kb_fit_size`, or `kb_fit_cover_calibration`
+#'   object.
+#' @param ... Named values to cross into the grid: for a weight or cover calibration
+#'   fit, the predictor values as a numeric vector (`diameter_mm`, `fronds`, or
+#'   `cover`); and the levels of `site` or `year` not named in `by`. If the
+#'   predictor is omitted, 30 evenly spaced values span the observed range for
+#'   weight (whole numbers for `fronds`), and 0 to 1 for cover.
+#'
+#' @returns A tibble with the grouping columns named in `by` or `...`, the predictor
+#'   column for a weight or cover calibration fit, and for a cover calibration fit the
+#'   survey columns.
+#' @family prediction functions
+#' @export
+#'
+#' @examples
+#' kb_new_data(fit_size_sim_nereo, by = "site")
+#'
+#' # Weight curves by site, and weight at 50 mm by site:
+#' kb_new_data(fit_weight_sim_nereo, by = "site")
+#' kb_new_data(fit_weight_sim_nereo, by = "site", diameter_mm = 50)
+#'
+#' # Every site in 2021, and one site across years:
+#' kb_new_data(fit_weight_sim_nereo, by = "site", diameter_mm = 50, year = 2021)
+#' kb_new_data(fit_size_sim_nereo, site = "otter_cove", year = 2022:2025)
+#'
+#' kb_predict_size(fit_size_sim_nereo, kb_new_data(fit_size_sim_nereo, by = "site"))
+kb_new_data <- function(fit, by = NULL, ...) {
+  .chk_kb_fit_grouped(fit)
+  .with_call(.chk_by(by), rlang::current_env())
+  by <- by %||% character(0)
+  dots <- rlang::list2(...)
+  .with_call(.chk_grid_dots(fit, dots, by), rlang::current_env())
+
+  predictor <- fit$meta[["predictor"]]
+  values <- if (!is.null(predictor)) dots[[predictor]]
+  grid <- build_by_grid(fit, by, values)
+  for (group in intersect(.group_vars(), names(dots))) {
+    fixed <- tibble::tibble(value = as.character(dots[[group]]))
+    names(fixed) <- group
+    grid <- dplyr::cross_join(grid, fixed)
+  }
+  grid <- dplyr::relocate(grid, dplyr::any_of(.group_vars()))
+  grid <- .grid_columns(fit, grid)
+  attr(grid, "kb_curve") <- !is.null(predictor)
+  grid
+}
+
+# Adds the columns a model's prediction reads beyond `by` and the predictor.
+.grid_columns <- function(fit, grid) {
+  UseMethod(".grid_columns")
+}
+
+#' @export
+.grid_columns.default <- function(fit, grid) {
+  .abort_no_method(fit, call = NULL)
+}
+
+#' @export
+.grid_columns.kb_fit_weight <- function(fit, grid) {
+  grid
+}
+
+#' @export
+.grid_columns.kb_fit_size <- function(fit, grid) {
+  grid
+}
+
+# Cover is already tide-corrected: on a unit plot at zero tide height the
+# correction and the cap leave it unchanged.
+#' @export
+.grid_columns.kb_fit_cover_calibration <- function(fit, grid) {
+  grid$canopy_area_m2 <- grid$cover
+  grid$plot_area_m2 <- 1
+  grid$canopy_tide_height_m <- 0
+  grid
+}

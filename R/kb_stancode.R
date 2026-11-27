@@ -1,26 +1,16 @@
-#' Stan Source for a Model Fit
+#' Stan code of a fit
 #'
-#' The Stan source code of the fitted model, with comments stripped for a clean
-#' read. The raw source (comments included) is stored on the fit in
-#' `fit$meta$stancode`.
+#' The Stan source code of the fitted model, without comments.
 #'
-#' @param fit A `kb_fit` object.
-#' @param ... Unused.
-#'
-#' @return A `kb_stancode` object: the comment-stripped Stan source string, which
-#'   prints as readable code. Use [as.character()] for the plain string.
-#' @family generics
+#' @inheritParams params
+#' @returns A `kb_stancode` object, which prints as formatted code. Use
+#'   [as.character()] for the plain string.
+#' @family fit methods
 #' @export
 #'
 #' @examples
 #' kb_stancode(fit_weight_sim_nereo)
 kb_stancode <- function(fit, ...) {
-  UseMethod("kb_stancode")
-}
-
-#' @rdname kb_stancode
-#' @export
-kb_stancode.kb_fit <- function(fit, ...) {
   rlang::check_dots_empty()
   .chk_kb_fit(fit)
   # as.character() drops the model_name attribute rstan::get_stancode() carries.
@@ -28,20 +18,16 @@ kb_stancode.kb_fit <- function(fit, ...) {
   structure(code, class = "kb_stancode")
 }
 
-# Strip Stan comments (`//` line and `/* */` block) for display: comment-only
-# lines are dropped and runs of blank lines collapsed. String-literal contents
-# are not special-cased (the bundled models contain none).
+# String literals are not special-cased (the bundled models contain none).
 .strip_stan_comments <- function(code) {
   code <- gsub("(?s)/\\*.*?\\*/", "", code, perl = TRUE)
   lines <- strsplit(code, "\n", fixed = TRUE)[[1]]
   stripped <- sub("[[:space:]]+$", "", sub("//.*$", "", lines))
-  # drop lines that held only a comment (non-blank before, blank after)
+  # drop comment-only lines
   comment_only <- nzchar(trimws(lines)) & !nzchar(trimws(stripped))
   stripped <- stripped[!comment_only]
-  # collapse consecutive blank lines into one
   blank <- !nzchar(stripped)
   stripped <- stripped[!(blank & c(FALSE, blank[-length(blank)]))]
-  # trim leading and trailing blank lines
   nonblank <- which(nzchar(stripped))
   if (length(nonblank)) {
     stripped <- stripped[seq(min(nonblank), max(nonblank))]

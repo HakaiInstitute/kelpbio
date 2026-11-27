@@ -2,13 +2,13 @@
 % Please edit documentation in R/predict.R
 \name{predict.kb_fit_weight}
 \alias{predict.kb_fit_weight}
-\title{Predict Method for a Weight Model Fit}
+\title{Predict method for weight fits}
 \usage{
 \method{predict}{kb_fit_weight}(
   object,
   new_data = NULL,
   ...,
-  new_levels = c("sample", "average"),
+  new_levels = c("average", "sample"),
   representative_site = NULL,
   conf_level = 0.95,
   estimate = stats::median,
@@ -18,31 +18,43 @@
 \arguments{
 \item{object}{A \code{kb_fit_weight} object.}
 
-\item{new_data}{A data frame with a \code{diameter} column (and optional \code{site} /
-\code{year} columns), or \code{NULL} to predict at the observed data.}
+\item{new_data}{A data frame of the rows to predict at, with the fit's
+predictor column (\code{diameter_mm} or \code{fronds}) and optional \code{site} and \code{year}
+columns, or \code{NULL} for the observed data.
+\code{year} may be numeric or character: \code{2022} and \code{"2022"} match the same
+fitted year.}
 
-\item{...}{Unused.}
+\item{...}{These dots are for future extensions and must be empty.}
 
-\item{new_levels}{A string, one of \code{"sample"} or \code{"average"}, controlling how
-random effects that are not conditioned on are treated (factors absent from
-the prediction, and any new level not seen in the fit). \code{"sample"} draws a
-new random effect from \code{Normal(0, sd)}, widening the interval to include
-between-group variation; \code{"average"} holds the random effects at zero,
-giving the typical group. Known levels are always conditioned on. \code{"sample"}
-draws fresh randomness on each call, so set a seed with \code{set.seed()} for a
-reproducible interval.}
+\item{new_levels}{A string giving how uncertainty is estimated for a site or
+year not in the data used to fit the model, or when \code{new_data} has no
+\code{site} or \code{year} column. Sites and years in the model fit always use their
+own estimates. One of:
+\itemize{
+\item \code{"average"} (the default): the typical site or year. The site and year
+effects are set to 0, their mean, so the interval does not include
+among-site or among-year variation. Use it to describe an average site or
+year.
+\item \code{"sample"}: a new effect for each new site or year, drawn from the
+estimated variation among sites or among years (the random-effect
+standard deviation). The point estimate is equivalent, but the interval
+is wider since it also includes that variation. Use it to get realistic
+uncertainty about a particular site or year that the model has no
+information on. Rows that name the same new site or year, or that have
+no \code{site} or \code{year} column, share one effect; give new sites or years
+different names for independent effects. The interval varies slightly
+between calls; use \code{set.seed()} to reproduce it.
+}}
 
-\item{representative_site}{A character vector of site levels present in the
-fit, or \code{NULL} (the default). When supplied, a new or absent site takes its
-site main effects (intercept and slope) from the named reference site (the
-per-draw average when several are named), instead of the \code{new_levels}
-treatment; the \code{site:year} interaction still follows \code{new_levels}.}
+\item{representative_site}{A character vector of sites in the fit whose
+effects a new site adopts (averaged when several are named), or \code{NULL} (the
+default) to follow \code{new_levels}.}
 
-\item{conf_level}{A number between 0 and 1 giving the compatibility-interval
-level.}
+\item{conf_level}{A number greater than 0 and less than 1 giving the
+compatibility-interval level.}
 
 \item{estimate}{A function that reduces a numeric vector of posterior draws to
-a scalar point estimate (e.g. \code{median} or \code{mean}).}
+a single estimate, such as \code{median} or \code{mean}.}
 
 \item{sig_fig}{A whole number of significant figures for summary output.}
 }
@@ -50,29 +62,30 @@ a scalar point estimate (e.g. \code{median} or \code{mean}).}
 A \code{kb_predictions} object.
 }
 \description{
-A thin wrapper on \code{\link[=kb_predict_weight]{kb_predict_weight()}}: predict weight at the supplied \code{new_data}
-rows (or the observed data when \code{new_data = NULL}). For allometric curves to
-visualise, use \code{\link[=kb_predict_weight_by]{kb_predict_weight_by()}}.
+Predict the expected weight at the rows of \code{new_data}, or at the observed
+data when \code{new_data = NULL}. Equivalent to \code{\link[=kb_predict_weight]{kb_predict_weight()}}.
 }
 \examples{
-predict(fit_weight_sim_nereo, data.frame(diameter = c(20, 40)))
+predict(fit_weight_sim_nereo, data.frame(diameter_mm = c(20, 40)))
 }
 \seealso{
-Other generics:
-\code{\link[=augment.kb_fit]{augment.kb_fit()}},
-\code{\link[=coef.kb_fit]{coef.kb_fit()}},
-\code{\link[=converged.kb_fit]{converged.kb_fit()}},
-\code{\link[=fitted.kb_fit_weight]{fitted.kb_fit_weight()}},
-\code{\link[=glance.kb_fit]{glance.kb_fit()}},
-\code{\link[=kb_stancode]{kb_stancode()}},
-\code{\link[=log_lik.kb_fit]{log_lik.kb_fit()}},
-\code{\link[=posterior_epred.kb_fit_weight]{posterior_epred.kb_fit_weight()}},
-\code{\link[=posterior_linpred.kb_fit_weight]{posterior_linpred.kb_fit_weight()}},
-\code{\link[=posterior_predict.kb_fit_weight]{posterior_predict.kb_fit_weight()}},
-\code{\link[=prior_summary.kb_fit]{prior_summary.kb_fit()}},
-\code{\link[=residuals.kb_fit_weight]{residuals.kb_fit_weight()}},
-\code{\link[=samples]{samples()}},
-\code{\link[=summary.kb_fit]{summary.kb_fit()}},
-\code{\link[=tidy.kb_fit_weight]{tidy.kb_fit_weight()}}
+Other prediction functions:
+\code{\link[=autoplot.kb_predictions]{autoplot.kb_predictions()}},
+\code{\link[=kb_new_data]{kb_new_data()}},
+\code{\link[=kb_plot_predictions]{kb_plot_predictions()}},
+\code{\link[=kb_predict_biomass_canopy]{kb_predict_biomass_canopy()}},
+\code{\link[=kb_predict_biomass_in_situ]{kb_predict_biomass_in_situ()}},
+\code{\link[=kb_predict_carbon]{kb_predict_carbon()}},
+\code{\link[=kb_predict_cover_calibration]{kb_predict_cover_calibration()}},
+\code{\link[=kb_predict_mean_weight]{kb_predict_mean_weight()}},
+\code{\link[=kb_predict_nitrogen]{kb_predict_nitrogen()}},
+\code{\link[=kb_predict_size]{kb_predict_size()}},
+\code{\link[=kb_predict_weight]{kb_predict_weight()}},
+\code{\link[=kb_predict_wetdry]{kb_predict_wetdry()}},
+\code{\link[=predict.kb_fit_carbon]{predict.kb_fit_carbon()}},
+\code{\link[=predict.kb_fit_cover_calibration]{predict.kb_fit_cover_calibration()}},
+\code{\link[=predict.kb_fit_nitrogen]{predict.kb_fit_nitrogen()}},
+\code{\link[=predict.kb_fit_size]{predict.kb_fit_size()}},
+\code{\link[=predict.kb_fit_wetdry]{predict.kb_fit_wetdry()}}
 }
-\concept{generics}
+\concept{prediction functions}

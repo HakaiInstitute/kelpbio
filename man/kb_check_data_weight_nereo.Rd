@@ -2,7 +2,7 @@
 % Please edit documentation in R/kb_check_data_weight_nereo.R
 \name{kb_check_data_weight_nereo}
 \alias{kb_check_data_weight_nereo}
-\title{Validate Nereocystis Weight Model Data}
+\title{Check Nereocystis weight data}
 \usage{
 kb_check_data_weight_nereo(
   data,
@@ -10,10 +10,9 @@ kb_check_data_weight_nereo(
 )
 }
 \arguments{
-\item{data}{A data frame of weight observations (see
-\code{\link[=kb_check_data_weight_nereo]{kb_check_data_weight_nereo()}} for the required columns).}
+\item{data}{A data frame of weight observations, one row per plant.}
 
-\item{x_name}{A string naming \code{data} in error messages.}
+\item{x_name}{A string naming the data for error messages.}
 }
 \value{
 \code{data}, invisibly.
@@ -23,22 +22,44 @@ Check that \code{data} contains the columns required to fit the \emph{Nereocysti
 luetkeana} weight model, with appropriate types and values.
 }
 \details{
-Required columns: numeric \code{diameter} (> 0), numeric \code{weight} (> 0), and factor
-or character \code{site} and \code{year}, with no missing values.
+Required columns:
+\itemize{
+\item \code{diameter_mm}, the plant diameter, measured as in the size data (mm, > 0).
+\item \code{weight_kg}, the plant's weight (kg, > 0).
+\item \code{site}, the site the plant was sampled at (any text).
+\item \code{year}, the year the plant was sampled (whole number or text).
+}
 
-Diameter and weight may be in any units, provided prediction data use the same
-units as the fitted data.
+Other columns are ignored.
+
+\code{diameter_mm} is any plant diameter that relates to weight as a power law,
+such as the maximum sub-bulb diameter, the diameter 15 cm below the
+sub-bulb, or the bulb diameter.
 }
 \examples{
 data <- data.frame(
-  diameter = c(20, 35), weight = c(0.5, 2.1),
-  site = factor(c("a", "b")), year = factor(c("2020", "2021"))
+  diameter_mm = c(20, 35), weight_kg = c(0.5, 2.1),
+  site = factor(c("a", "b")), year = c(2020, 2021)
 )
 kb_check_data_weight_nereo(data)
 }
 \seealso{
-Other data:
-\code{\link{data_weight_sim_nereo}},
-\code{\link{fit_weight_sim_nereo}}
+Other data checks:
+\code{\link[=kb_check_data_carbon_macro]{kb_check_data_carbon_macro()}},
+\code{\link[=kb_check_data_carbon_nereo]{kb_check_data_carbon_nereo()}},
+\code{\link[=kb_check_data_cover_calibration_macro]{kb_check_data_cover_calibration_macro()}},
+\code{\link[=kb_check_data_cover_calibration_nereo]{kb_check_data_cover_calibration_nereo()}},
+\code{\link[=kb_check_data_nitrogen_macro]{kb_check_data_nitrogen_macro()}},
+\code{\link[=kb_check_data_nitrogen_nereo]{kb_check_data_nitrogen_nereo()}},
+\code{\link[=kb_check_data_size_census_macro]{kb_check_data_size_census_macro()}},
+\code{\link[=kb_check_data_size_census_nereo]{kb_check_data_size_census_nereo()}},
+\code{\link[=kb_check_data_size_sample_nereo]{kb_check_data_size_sample_nereo()}},
+\code{\link[=kb_check_data_survey_canopy]{kb_check_data_survey_canopy()}},
+\code{\link[=kb_check_data_survey_in_situ]{kb_check_data_survey_in_situ()}},
+\code{\link[=kb_check_data_weight_macro]{kb_check_data_weight_macro()}},
+\code{\link[=kb_check_data_wetdry_macro]{kb_check_data_wetdry_macro()}},
+\code{\link[=kb_check_data_wetdry_nereo]{kb_check_data_wetdry_nereo()}},
+\code{\link[=kb_data_columns]{kb_data_columns()}},
+\code{\link[=kb_datasets]{kb_datasets()}}
 }
-\concept{data}
+\concept{data checks}

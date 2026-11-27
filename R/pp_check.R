@@ -1,0 +1,74 @@
+#' Posterior predictive check
+#'
+#' Plot the density of the observed data over the densities of replicate datasets
+#' simulated from the fitted model, to check that the model reproduces its data.
+#'
+#' @details
+#' Each replicate is simulated at the observed rows from one random posterior
+#' draw, so set a seed with `set.seed()` for a reproducible plot. For a fit made
+#' with `prior_only = TRUE`, the plot is a prior predictive check. See the
+#' [Advanced article](https://hakaiinstitute.github.io/kelpbio/articles/advanced.html#posterior-predictive-check)
+#' for how to read it.
+#'
+#' @inheritParams params
+#' @param type A string, one of `"response"` (the recorded response) or
+#'   `"residual"` (deviance residuals), specifying what to compare.
+#' @param ndraws A whole number of replicate datasets to draw, at most the
+#'   number of draws in the fit.
+#'
+#' @returns A `ggplot` object from [bayesplot::ppc_dens_overlay()].
+#' @family diagnostics
+#' @seealso [posterior_predict()] for the replicates themselves.
+#' @exportS3Method bayesplot::pp_check
+#' @examples
+#' set.seed(1)
+#' pp_check(fit_weight_sim_nereo)
+#' pp_check(fit_size_sim_nereo, "residual", ndraws = 20)
+pp_check.kb_fit <- function(
+  object,
+  type = c("response", "residual"),
+  ...,
+  ndraws = 50L
+) {
+  .with_call(
+    {
+      rlang::check_dots_empty()
+      .chk_kb_fit(object)
+      type <- rlang::arg_match(type)
+      chk::chk_whole_number(ndraws)
+      chk::chk_range(ndraws, c(1, posterior::ndraws(object$draws)))
+    },
+    # error_call() names the generic, not the method.
+    rlang::error_call(rlang::current_env())
+  )
+  .chk_observed_data(object, call = rlang::error_call(rlang::current_env()))
+  # The same fit holding only the sampled draws, so posterior_predict()
+  # simulates just those. subset_draws() returns draws in index order.
+  draws <- sort(sample.int(posterior::ndraws(object$draws), ndraws))
+  sampled <- object
+  sampled$draws <- posterior::subset_draws(
+    posterior::merge_chains(object$draws),
+    draw = draws
+  )
+  yrep <- posterior_predict(sampled)
+  if (identical(type, "residual")) {
+    y <- residuals(object)
+    yrep <- .replicate_residuals(sampled, yrep)
+    xlab <- "Deviance residual"
+  } else {
+    y <- .obs_family(object, object$data)$response(object$data)
+    xlab <- axis_label(object$meta$response)
+  }
+  bayesplot::ppc_dens_overlay(y, yrep) + ggplot2::labs(x = xlab)
+}
+
+# Deviance residuals of each row of `yrep` (D x N, replicates at the observed
+# rows) under the fit's draw that row was simulated from.
+.replicate_residuals <- function(fit, yrep) {
+  mu <- posterior::draws_of(.linpred_obs(fit)) # link scale, D x N
+  family <- .obs_family(fit, fit$data)
+  res <- .family_fun("res", family$family)
+  .per_draw(mu, function(mu_d, d) {
+    rlang::exec(res, yrep[d, ], !!!family$pars(mu_d, d))
+  })
+}

@@ -1,59 +1,55 @@
-#' Summarise a Model Fit
+#' Summarise a fit
 #'
 #' A model fit's metadata paired with a per-term posterior summary table.
 #'
 #' @details
-#' The `print` method renders a header (likelihood family, fixed- and
-#' random-effect structure, observation and group counts, sampler configuration,
-#' and the convergence verdict), the coefficient table, and a diagnostics footer.
-#' For a compact overview without the numeric table, call `print()` on the fit
-#' itself.
-#'
-#' The coefficient table reports, per term:
-#' \describe{
-#'   \item{`estimate`}{the posterior point estimate (the `estimate` function;
-#'     the median by default).}
-#'   \item{`lower`, `upper`}{the `conf_level` equal-tailed compatibility limits.}
-#'   \item{`rhat`}{the potential scale reduction factor, comparing between- and
-#'     within-chain variance; values near 1 indicate convergence.}
-#'   \item{`ess_bulk`}{the bulk effective sample size, governing the reliability
-#'     of central posterior summaries.}
-#'   \item{`ess_tail`}{the tail effective sample size, governing the reliability
-#'     of the interval limits.}
-#' }
-#'
-#' Population-level coefficients and random-effect standard deviations are always
-#' shown. The group-level deviations are included only when
-#' `include_random_effects = TRUE`, following the convention that `summary`
-#' reports the variance hyperparameters rather than the per-level effects (the
-#' latter are the `tidy()` default).
+#' The printed summary adds the sampler diagnostics (divergent transitions,
+#' maximum treedepth, and E-BFMI). A term's `converged` uses the Rhat and
+#' effective sample size thresholds of [kb_converged()]; the fit's verdict also
+#' covers the group-level deviations and divergent transitions
+#' (`max_perc_divergent`), so it can be `FALSE` when every term shown has
+#' converged.
 #'
 #' @inheritParams params
-#' @param object A `kb_fit` object.
-#' @param ... Unused.
 #'
-#' @return A `summary_kb_fit` object: a list of fit metadata and a
+#' @returns A `summary_kb_fit` object: a list of fit metadata and a
 #'   `coefficients` tibble with columns `term`, `estimate`, `lower`, `upper`,
-#'   `rhat`, `ess_bulk`, and `ess_tail`.
-#' @family generics
+#'   `rhat`, `ess_bulk`, `ess_tail`, and `converged`.
+#' @family fit methods
 #' @exportS3Method base::summary
 #' @examples
 #' summary(fit_weight_sim_nereo)
+#'
+#' # Looser thresholds, for a quick exploratory fit:
+#' summary(fit_weight_sim_nereo, rhat = 1.05, ess = 50)
 summary.kb_fit <- function(
   object,
   ...,
   conf_level = 0.95,
   estimate = stats::median,
   sig_fig = 3,
-  include_random_effects = FALSE
+  include_random_effects = FALSE,
+  rhat = 1.01,
+  ess = 100,
+  max_perc_divergent = 0.2
 ) {
-  rlang::check_dots_empty()
-  .chk_summary_args(conf_level, estimate, sig_fig)
-  chk::chk_flag(include_random_effects)
+  .with_call(
+    {
+      rlang::check_dots_empty()
+      .chk_summary_args(conf_level, estimate, sig_fig)
+      chk::chk_flag(include_random_effects)
+      chk::chk_number(rhat)
+      chk::chk_gte(rhat, value = 1)
+      chk::chk_number(ess)
+      chk::chk_gte(ess, value = 0)
+      chk::chk_number(max_perc_divergent)
+      chk::chk_gte(max_perc_divergent, value = 0)
+    },
+    # error_call() names the generic, not the method.
+    rlang::error_call(rlang::current_env())
+  )
 
-  # Term table from the subclass tidy() (subclass-aware term selection), then
-  # the per-term diagnostics from the stored summary (same source as
-  # converged()/glance(), so the numbers agree).
+  # Diagnostics from the stored summary, the same source as kb_converged().
   coefficients <- tidy(
     object,
     conf_level = conf_level,
@@ -66,13 +62,30 @@ summary.kb_fit <- function(
   coefficients$rhat <- round(diag$rhat[idx], 3)
   coefficients$ess_bulk <- round(diag$ess_bulk[idx])
   coefficients$ess_tail <- round(diag$ess_tail[idx])
+  coefficients$converged <- .term_converged(
+    diag[idx, ],
+    rhat = rhat,
+    min_ess = ess * posterior::nchains(object$draws)
+  )
+  header <- .kb_fit_header(object)
+  header$converged <- kb_converged(
+    object,
+    rhat = rhat,
+    ess = ess,
+    max_perc_divergent = max_perc_divergent
+  )
 
   structure(
     c(
-      .kb_fit_header(object),
+      header,
       list(
-        ndivergent = object$diagnostics$ndivergent,
+        perc_divergent = object$diagnostics$perc_divergent,
+        perc_max_treedepth = object$diagnostics$perc_max_treedepth,
+        ebfmi = object$diagnostics$ebfmi,
         conf_level = conf_level,
+        rhat = rhat,
+        ess = ess,
+        max_perc_divergent = max_perc_divergent,
         coefficients = coefficients
       )
     ),
@@ -80,69 +93,105 @@ summary.kb_fit <- function(
   )
 }
 
-# Fit-level metadata header, shared by the summary_kb_fit object and
-# print.kb_fit() so both render the same block (a single source for the fields;
-# .print_kb_fit_header() in print.R is the single source for the rendering).
+# Per-term form of the kb_converged() thresholds: a missing Rhat or effective
+# sample size (a constant term) is not judged on it.
+.term_converged <- function(diag, rhat, min_ess) {
+  (is.na(diag$rhat) | diag$rhat < rhat) &
+    (is.na(diag$ess_bulk) | diag$ess_bulk >= min_ess) &
+    (is.na(diag$ess_tail) | diag$ess_tail >= min_ess)
+}
+
+# The class before the "kb_fit" root, e.g. "weight".
+.kb_model <- function(fit) {
+  cls <- class(fit)
+  sub("^kb_fit_", "", cls[[match("kb_fit", cls) - 1L]])
+}
+
+.model_label <- function(fit) {
+  model <- .kb_model(fit)
+  if (identical(model, "wetdry")) {
+    return("Wet/dry")
+  }
+  if (identical(model, "cover_calibration")) {
+    return("Cover calibration")
+  }
+  .capitalize(model)
+}
+
+.capitalize <- function(x) {
+  paste0(toupper(substr(x, 1L, 1L)), substring(x, 2L))
+}
+
+# meta$species stores the lowercase genus.
+.species_label <- function(species) {
+  binomial <- c(
+    nereocystis = "Nereocystis luetkeana",
+    macrocystis = "Macrocystis pyrifera"
+  )
+  out <- unname(binomial[species])
+  if (is.na(out)) {
+    out <- .capitalize(species)
+  }
+  out
+}
+
+# Header fields shared by summary_kb_fit and print.kb_fit(); rendered by
+# .print_kb_fit_header().
 .kb_fit_header <- function(fit) {
-  descr <- fit_descriptor(fit)
+  descr <- .fit_descriptor(fit)
   list(
-    model = sub("^kb_fit_", "", class(fit)[1]),
-    species = fit$meta$species,
-    family = descr$family,
-    fixed = descr$fixed,
-    random = descr$random,
-    centered = descr$centered,
+    model = .model_label(fit),
+    species = .species_label(fit$meta$species),
+    predictor = descr$predictor,
     groups = descr$groups,
     nobs = nobs(fit),
-    nchains = nchains(fit),
-    niters = niters(fit),
+    nchains = posterior::nchains(fit$draws),
+    niters = posterior::niterations(fit$draws),
     nthin = fit$meta$nthin,
     ndraws = posterior::ndraws(fit$draws),
     prior_only = isTRUE(fit$meta$prior_only),
-    converged = converged(fit)
+    converged = kb_converged(fit)
   )
 }
 
-# Model-specific descriptor (likelihood family, effect structure, group counts)
-# for the summary header. Switches on the fit subclass; unknown models fall back
-# to NA so the print method omits those lines. The fixed/random lines describe the
-# structure in prose rather than a mixed-model formula, so the output does not
-# imply a formula interface or a particular fitting engine.
-fit_descriptor <- function(x) {
-  model <- sub("^kb_fit_", "", class(x)[1])
-  switch(
-    model,
-    weight = {
-      list(
-        family = "Student-t (df = 4); response log(weight)",
-        fixed = "intercept + linear + quadratic log(diameter/d0)",
-        random = "site (intercept, slope); site:year (intercept)",
-        centered = paste0(
-          "log-diameter at d0 = ",
-          signif(x$meta$diameter_ref, 3),
-          " (geometric mean of diameter)"
-        ),
-        groups = weight_groups(x)
-      )
+# Predictor and group counts for the print header. Only weight models have a
+# predictor line, so the default serves every other model.
+.fit_descriptor <- function(x) {
+  UseMethod(".fit_descriptor")
+}
+
+#' @export
+.fit_descriptor.default <- function(x) {
+  list(predictor = NA_character_, groups = fit_groups(x))
+}
+
+# Fits both species: nereo divides diameter by the reference, macro centres
+# log-fronds on its log.
+#' @export
+.fit_descriptor.kb_fit_weight <- function(x) {
+  list(
+    predictor = paste0(
+      x$meta[["predictor"]],
+      ", reference ",
+      signif(x$meta$predictor_ref, 3),
+      " (geometric mean)"
+    ),
+    groups = fit_groups(x)
+  )
+}
+
+# Level counts in the data, not the model: a site:year count is reported even
+# when the design switched the site:year effect off.
+fit_groups <- function(fit) {
+  counts <- vapply(
+    c("site", "year", "site:year"),
+    function(nm) {
+      key <- paste0(sub(":", "_", nm), "_levels")
+      length(fit$meta[[key]])
     },
-    list(
-      family = NA_character_,
-      fixed = NA_character_,
-      random = NA_character_,
-      centered = NA_character_,
-      groups = integer(0)
-    )
+    integer(1)
   )
+  out <- counts[counts > 0L]
+  if (!length(out)) integer(0) else out
 }
 
-# Number of levels of each grouping factor in the weight model.
-weight_groups <- function(x) {
-  d <- as.data.frame(x$data)
-  n_site <- length(x$meta$site_levels)
-  n_site_year <- if (nrow(d) && all(c("site", "year") %in% names(d))) {
-    nrow(unique(d[c("site", "year")]))
-  } else {
-    0L
-  }
-  c(site = n_site, "site:year" = n_site_year)
-}

@@ -1,8 +1,10 @@
 test_that("autoplot forwards to kb_plot_predictions and returns a ggplot", {
-  # autoplot() is a pure pass-through; plot behaviour is tested in test-kb_plot_predictions.R
-  p <- kb_predict_weight_by(weight_fit, by = "site")
-  gg <- ggplot2::autoplot(p, observed = weight_fit$data)
+  p <- kb_predict_weight(weight_nereo_fit, kb_new_data(weight_nereo_fit, by = "site"))
+  gg <- ggplot2::autoplot(p, x = "site")
   expect_s3_class(gg, "ggplot")
-  geoms <- vapply(gg$layers, function(l) class(l$geom)[1], character(1))
-  expect_true(any(grepl("GeomPoint", geoms)))
+  expect_identical(gg$labels$x, "Site")
+  expect_equal(
+    ggplot2::layer_data(gg),
+    ggplot2::layer_data(kb_plot_predictions(p, x = "site"))
+  )
 })

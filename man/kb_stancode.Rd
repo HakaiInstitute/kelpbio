@@ -2,46 +2,40 @@
 % Please edit documentation in R/kb_stancode.R
 \name{kb_stancode}
 \alias{kb_stancode}
-\alias{kb_stancode.kb_fit}
-\title{Stan Source for a Model Fit}
+\title{Stan code of a fit}
 \usage{
 kb_stancode(fit, ...)
-
-\method{kb_stancode}{kb_fit}(fit, ...)
 }
 \arguments{
 \item{fit}{A \code{kb_fit} object.}
 
-\item{...}{Unused.}
+\item{...}{These dots are for future extensions and must be empty.}
 }
 \value{
-A \code{kb_stancode} object: the comment-stripped Stan source string, which
-prints as readable code. Use \code{\link[=as.character]{as.character()}} for the plain string.
+A \code{kb_stancode} object, which prints as formatted code. Use
+\code{\link[=as.character]{as.character()}} for the plain string.
 }
 \description{
-The Stan source code of the fitted model, with comments stripped for a clean
-read. The raw source (comments included) is stored on the fit in
-\code{fit$meta$stancode}.
+The Stan source code of the fitted model, without comments.
 }
 \examples{
 kb_stancode(fit_weight_sim_nereo)
 }
 \seealso{
-Other generics:
+Other fit methods:
 \code{\link[=augment.kb_fit]{augment.kb_fit()}},
 \code{\link[=coef.kb_fit]{coef.kb_fit()}},
-\code{\link[=converged.kb_fit]{converged.kb_fit()}},
-\code{\link[=fitted.kb_fit_weight]{fitted.kb_fit_weight()}},
+\code{\link[=fitted.kb_fit]{fitted.kb_fit()}},
 \code{\link[=glance.kb_fit]{glance.kb_fit()}},
+\code{\link[=kb_model_describe]{kb_model_describe()}},
+\code{\link[=kb_samples]{kb_samples()}},
 \code{\link[=log_lik.kb_fit]{log_lik.kb_fit()}},
-\code{\link[=posterior_epred.kb_fit_weight]{posterior_epred.kb_fit_weight()}},
-\code{\link[=posterior_linpred.kb_fit_weight]{posterior_linpred.kb_fit_weight()}},
-\code{\link[=posterior_predict.kb_fit_weight]{posterior_predict.kb_fit_weight()}},
-\code{\link[=predict.kb_fit_weight]{predict.kb_fit_weight()}},
+\code{\link[=posterior_epred.kb_fit]{posterior_epred.kb_fit()}},
+\code{\link[=posterior_linpred.kb_fit]{posterior_linpred.kb_fit()}},
+\code{\link[=posterior_predict.kb_fit]{posterior_predict.kb_fit()}},
 \code{\link[=prior_summary.kb_fit]{prior_summary.kb_fit()}},
-\code{\link[=residuals.kb_fit_weight]{residuals.kb_fit_weight()}},
-\code{\link[=samples]{samples()}},
+\code{\link[=residuals.kb_fit]{residuals.kb_fit()}},
 \code{\link[=summary.kb_fit]{summary.kb_fit()}},
-\code{\link[=tidy.kb_fit_weight]{tidy.kb_fit_weight()}}
+\code{\link[=tidy.kb_fit]{tidy.kb_fit()}}
 }
-\concept{generics}
+\concept{fit methods}

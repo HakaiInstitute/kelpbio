@@ -2,24 +2,29 @@
 % Please edit documentation in R/glance.R
 \name{glance.kb_fit}
 \alias{glance.kb_fit}
-\title{Model Fit Diagnostic Summary}
+\title{One-row summary of a fit}
 \usage{
-\method{glance}{kb_fit}(x, ..., rhat = 1.05, esr = 0.1)
+\method{glance}{kb_fit}(x, ..., rhat = 1.01, ess = 100, max_perc_divergent = 0.2)
 }
 \arguments{
 \item{x}{A \code{kb_fit} object.}
 
-\item{...}{Unused.}
+\item{...}{These dots are for future extensions and must be empty.}
 
-\item{rhat}{A number giving the maximum acceptable Rhat.}
+\item{rhat}{A number of at least 1 giving the maximum acceptable Rhat.}
 
-\item{esr}{A number giving the minimum acceptable effective sample rate
-(effective sample size divided by the number of draws).}
+\item{ess}{A number giving the minimum acceptable bulk and tail effective
+sample size per chain.}
+
+\item{max_perc_divergent}{A number giving the maximum acceptable percentage of
+saved draws that ended in a divergent transition.}
 }
 \value{
-A one-row tibble with \code{n}, \code{K}, \code{nchains}, \code{niters}, \code{nthin}, \code{ess}
-(the minimum bulk effective sample size), \code{rhat} (the maximum Rhat), and
-\code{converged}.
+A one-row tibble with \code{n} (the number of observations), \code{K} (the
+number of terms \code{\link[=tidy]{tidy()}} reports, excluding the per-level group effects),
+\code{nchains}, \code{niters}, \code{nthin}, the worst \code{ess_bulk}, \code{ess_tail}, and \code{rhat}
+across parameters, \code{perc_divergent} (the percentage of saved draws that
+ended in a divergent transition), and \code{converged} (from \code{\link[=kb_converged]{kb_converged()}}).
 }
 \description{
 One-row summary of a model fit with convergence diagnostics.
@@ -28,21 +33,23 @@ One-row summary of a model fit with convergence diagnostics.
 glance(fit_weight_sim_nereo)
 }
 \seealso{
-Other generics:
+\code{\link[=kb_converged]{kb_converged()}} for the convergence thresholds and what to do
+when they fail.
+
+Other fit methods:
 \code{\link[=augment.kb_fit]{augment.kb_fit()}},
 \code{\link[=coef.kb_fit]{coef.kb_fit()}},
-\code{\link[=converged.kb_fit]{converged.kb_fit()}},
-\code{\link[=fitted.kb_fit_weight]{fitted.kb_fit_weight()}},
+\code{\link[=fitted.kb_fit]{fitted.kb_fit()}},
+\code{\link[=kb_model_describe]{kb_model_describe()}},
+\code{\link[=kb_samples]{kb_samples()}},
 \code{\link[=kb_stancode]{kb_stancode()}},
 \code{\link[=log_lik.kb_fit]{log_lik.kb_fit()}},
-\code{\link[=posterior_epred.kb_fit_weight]{posterior_epred.kb_fit_weight()}},
-\code{\link[=posterior_linpred.kb_fit_weight]{posterior_linpred.kb_fit_weight()}},
-\code{\link[=posterior_predict.kb_fit_weight]{posterior_predict.kb_fit_weight()}},
-\code{\link[=predict.kb_fit_weight]{predict.kb_fit_weight()}},
+\code{\link[=posterior_epred.kb_fit]{posterior_epred.kb_fit()}},
+\code{\link[=posterior_linpred.kb_fit]{posterior_linpred.kb_fit()}},
+\code{\link[=posterior_predict.kb_fit]{posterior_predict.kb_fit()}},
 \code{\link[=prior_summary.kb_fit]{prior_summary.kb_fit()}},
-\code{\link[=residuals.kb_fit_weight]{residuals.kb_fit_weight()}},
-\code{\link[=samples]{samples()}},
+\code{\link[=residuals.kb_fit]{residuals.kb_fit()}},
 \code{\link[=summary.kb_fit]{summary.kb_fit()}},
-\code{\link[=tidy.kb_fit_weight]{tidy.kb_fit_weight()}}
+\code{\link[=tidy.kb_fit]{tidy.kb_fit()}}
 }
-\concept{generics}
+\concept{fit methods}

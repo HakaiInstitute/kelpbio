@@ -2,7 +2,7 @@
 % Please edit documentation in R/kb_prior_normal.R
 \name{kb_prior_normal}
 \alias{kb_prior_normal}
-\title{Normal Prior}
+\title{Normal prior}
 \usage{
 kb_prior_normal(mean = 0, sd = 1)
 }
@@ -15,8 +15,8 @@ kb_prior_normal(mean = 0, sd = 1)
 A \code{kb_prior_normal} object.
 }
 \description{
-Construct a Normal prior object for use in \code{\link[=kb_priors_weight_nereo]{kb_priors_weight_nereo()}} and the
-\code{priors} argument of the \verb{kb_fit_*()} functions.
+Construct a Normal prior object to replace an entry of a \verb{kb_priors_*()} list
+passed to the \code{priors} argument of the \verb{kb_fit_*()} functions.
 }
 \examples{
 kb_prior_normal(mean = 0, sd = 2)
@@ -24,6 +24,17 @@ kb_prior_normal(mean = 0, sd = 2)
 \seealso{
 Other priors:
 \code{\link[=kb_prior_exponential]{kb_prior_exponential()}},
-\code{\link[=kb_priors_weight_nereo]{kb_priors_weight_nereo()}}
+\code{\link[=kb_prior_lognormal]{kb_prior_lognormal()}},
+\code{\link[=kb_priors_carbon_macro]{kb_priors_carbon_macro()}},
+\code{\link[=kb_priors_carbon_nereo]{kb_priors_carbon_nereo()}},
+\code{\link[=kb_priors_cover_calibration_macro]{kb_priors_cover_calibration_macro()}},
+\code{\link[=kb_priors_cover_calibration_nereo]{kb_priors_cover_calibration_nereo()}},
+\code{\link[=kb_priors_nitrogen_macro]{kb_priors_nitrogen_macro()}},
+\code{\link[=kb_priors_nitrogen_nereo]{kb_priors_nitrogen_nereo()}},
+\code{\link[=kb_priors_size_nereo]{kb_priors_size_nereo()}},
+\code{\link[=kb_priors_weight_macro]{kb_priors_weight_macro()}},
+\code{\link[=kb_priors_weight_nereo]{kb_priors_weight_nereo()}},
+\code{\link[=kb_priors_wetdry_macro]{kb_priors_wetdry_macro()}},
+\code{\link[=kb_priors_wetdry_nereo]{kb_priors_wetdry_nereo()}}
 }
 \concept{priors}

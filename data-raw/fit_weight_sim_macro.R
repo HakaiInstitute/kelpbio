@@ -1,0 +1,30 @@
+# Build fit_weight_sim_macro, a slim pre-fit weight model for runnable examples
+# and tests. Fitted to the whole data_weight_sim_macro with reduced chains and draws
+# so the object stays small; its size is set by the draw count alone, since no
+# per-observation quantities are stored. Not for inference. Reproducibility comes
+# from the sampler `seed`.
+#
+# Requires the compiled package (run `devtools::install()` first; a Stan change
+# is only picked up after install). Re-run whenever the Stan model, the
+# simulated dataset, or the kb_fit object structure changes. Run from the
+# package root:
+#   Rscript data-raw/fit_weight_sim_macro.R
+
+devtools::load_all(quiet = TRUE)
+
+fit_weight_sim_macro <- kb_fit_weight_macro(
+  data_weight_sim_macro,
+  chains = 3L,
+  niters = 500L,
+  # nthin multiplies the sampling iterations while holding the saved draw count
+  # fixed, so these deliberately small objects clear the convergence thresholds
+  # without growing.
+  nthin = 4L,
+  # Avoids the few divergences these data give at the default.
+  control = list(adapt_delta = 0.99),
+  cores = 4L,
+  progress = "bar",
+  seed = 42L
+)
+
+usethis::use_data(fit_weight_sim_macro, overwrite = TRUE)

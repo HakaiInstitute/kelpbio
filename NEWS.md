@@ -1,3 +1,4 @@
-# kelpbio 0.0.0.9000
+# kelpbio (development version)
 
-- Added a `NEWS.md` file to track changes to the package.
+NEWS is not yet maintained: the package is in initial development and has no
+released version. Changes are recorded from the first release.

@@ -2,7 +2,7 @@
 % Please edit documentation in R/summary.R
 \name{summary.kb_fit}
 \alias{summary.kb_fit}
-\title{Summarise a Model Fit}
+\title{Summarise a fit}
 \usage{
 \method{summary}{kb_fit}(
   object,
@@ -10,78 +10,73 @@
   conf_level = 0.95,
   estimate = stats::median,
   sig_fig = 3,
-  include_random_effects = FALSE
+  include_random_effects = FALSE,
+  rhat = 1.01,
+  ess = 100,
+  max_perc_divergent = 0.2
 )
 }
 \arguments{
 \item{object}{A \code{kb_fit} object.}
 
-\item{...}{Unused.}
+\item{...}{These dots are for future extensions and must be empty.}
 
-\item{conf_level}{A number between 0 and 1 giving the compatibility-interval
-level.}
+\item{conf_level}{A number greater than 0 and less than 1 giving the
+compatibility-interval level.}
 
 \item{estimate}{A function that reduces a numeric vector of posterior draws to
-a scalar point estimate (e.g. \code{median} or \code{mean}).}
+a single estimate, such as \code{median} or \code{mean}.}
 
 \item{sig_fig}{A whole number of significant figures for summary output.}
 
 \item{include_random_effects}{A flag specifying whether to include the
 group-level random-effect terms in the output.}
+
+\item{rhat}{A number of at least 1 giving the maximum acceptable Rhat.}
+
+\item{ess}{A number giving the minimum acceptable bulk and tail effective
+sample size per chain.}
+
+\item{max_perc_divergent}{A number giving the maximum acceptable percentage of
+saved draws that ended in a divergent transition.}
 }
 \value{
 A \code{summary_kb_fit} object: a list of fit metadata and a
 \code{coefficients} tibble with columns \code{term}, \code{estimate}, \code{lower}, \code{upper},
-\code{rhat}, \code{ess_bulk}, and \code{ess_tail}.
+\code{rhat}, \code{ess_bulk}, \code{ess_tail}, and \code{converged}.
 }
 \description{
 A model fit's metadata paired with a per-term posterior summary table.
 }
 \details{
-The \code{print} method renders a header (likelihood family, fixed- and
-random-effect structure, observation and group counts, sampler configuration,
-and the convergence verdict), the coefficient table, and a diagnostics footer.
-For a compact overview without the numeric table, call \code{print()} on the fit
-itself.
-
-The coefficient table reports, per term:
-\describe{
-\item{\code{estimate}}{the posterior point estimate (the \code{estimate} function;
-the median by default).}
-\item{\code{lower}, \code{upper}}{the \code{conf_level} equal-tailed compatibility limits.}
-\item{\code{rhat}}{the potential scale reduction factor, comparing between- and
-within-chain variance; values near 1 indicate convergence.}
-\item{\code{ess_bulk}}{the bulk effective sample size, governing the reliability
-of central posterior summaries.}
-\item{\code{ess_tail}}{the tail effective sample size, governing the reliability
-of the interval limits.}
-}
-
-Population-level coefficients and random-effect standard deviations are always
-shown. The group-level deviations are included only when
-\code{include_random_effects = TRUE}, following the convention that \code{summary}
-reports the variance hyperparameters rather than the per-level effects (the
-latter are the \code{tidy()} default).
+The printed summary adds the sampler diagnostics (divergent transitions,
+maximum treedepth, and E-BFMI). A term's \code{converged} uses the Rhat and
+effective sample size thresholds of \code{\link[=kb_converged]{kb_converged()}}; the fit's verdict also
+covers the group-level deviations and divergent transitions
+(\code{max_perc_divergent}), so it can be \code{FALSE} when every term shown has
+converged.
 }
 \examples{
 summary(fit_weight_sim_nereo)
+
+# Looser thresholds, for a quick exploratory fit:
+summary(fit_weight_sim_nereo, rhat = 1.05, ess = 50)
 }
 \seealso{
-Other generics:
+Other fit methods:
 \code{\link[=augment.kb_fit]{augment.kb_fit()}},
 \code{\link[=coef.kb_fit]{coef.kb_fit()}},
-\code{\link[=converged.kb_fit]{converged.kb_fit()}},
-\code{\link[=fitted.kb_fit_weight]{fitted.kb_fit_weight()}},
+\code{\link[=fitted.kb_fit]{fitted.kb_fit()}},
 \code{\link[=glance.kb_fit]{glance.kb_fit()}},
+\code{\link[=kb_model_describe]{kb_model_describe()}},
+\code{\link[=kb_samples]{kb_samples()}},
 \code{\link[=kb_stancode]{kb_stancode()}},
 \code{\link[=log_lik.kb_fit]{log_lik.kb_fit()}},
-\code{\link[=posterior_epred.kb_fit_weight]{posterior_epred.kb_fit_weight()}},
-\code{\link[=posterior_linpred.kb_fit_weight]{posterior_linpred.kb_fit_weight()}},
-\code{\link[=posterior_predict.kb_fit_weight]{posterior_predict.kb_fit_weight()}},
-\code{\link[=predict.kb_fit_weight]{predict.kb_fit_weight()}},
+\code{\link[=posterior_epred.kb_fit]{posterior_epred.kb_fit()}},
+\code{\link[=posterior_linpred.kb_fit]{posterior_linpred.kb_fit()}},
+\code{\link[=posterior_predict.kb_fit]{posterior_predict.kb_fit()}},
 \code{\link[=prior_summary.kb_fit]{prior_summary.kb_fit()}},
-\code{\link[=residuals.kb_fit_weight]{residuals.kb_fit_weight()}},
-\code{\link[=samples]{samples()}},
-\code{\link[=tidy.kb_fit_weight]{tidy.kb_fit_weight()}}
+\code{\link[=residuals.kb_fit]{residuals.kb_fit()}},
+\code{\link[=tidy.kb_fit]{tidy.kb_fit()}}
 }
-\concept{generics}
+\concept{fit methods}

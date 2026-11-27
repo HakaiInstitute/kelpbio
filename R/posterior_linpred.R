@@ -1,40 +1,48 @@
-#' Linear-Predictor Posterior Draws
+#' Draws of the linear predictor
 #'
-#' Draws of the weight-model linear predictor on the log scale (or, with
+#' Draws of the linear predictor on the link scale (or, with
 #' `transform = TRUE`, on the response scale).
 #'
 #' @details
-#' Conditioning is inferred from the grouping columns present in `new_data` (see
-#' [posterior_epred()]); with `new_data = NULL` the observed data is used and
-#' conditioned on its site and year.
+#' Site and year columns in `new_data` are handled as in [posterior_epred()];
+#' with `new_data = NULL` the observed data are used, with their sites and
+#' years.
 #'
+#' @inheritParams posterior_epred.kb_fit
 #' @inheritParams params
-#' @param object A `kb_fit_weight` object.
-#' @param transform A flag specifying whether to return the response-scale
-#'   value (`exp`).
-#' @param new_data A data frame with a `diameter` column (and optional `site` /
-#'   `year` columns), or `NULL` for the observed data.
-#' @param ... Unused.
+#' @param transform A flag specifying whether to apply the inverse of the
+#'   model's link function (see [kb_model_describe()]).
 #'
-#' @return A draws-by-observations (`D x N`) matrix.
-#' @family generics
+#' @returns A draws-by-observations (`D x N`) matrix.
+#' @family fit methods
 #' @exportS3Method rstantools::posterior_linpred
 #' @examples
 #' lp <- posterior_linpred(fit_weight_sim_nereo)
 #' dim(lp)
-posterior_linpred.kb_fit_weight <- function(
+posterior_linpred.kb_fit <- function(
   object,
   transform = FALSE,
   new_data = NULL,
   ...,
-  new_levels = "sample",
+  new_levels = c("average", "sample"),
   representative_site = NULL
 ) {
-  rlang::check_dots_empty()
-  chk::chk_flag(transform)
-  .chk_kb_fit_weight(object)
-  .chk_representative_site(object, representative_site)
-  res <- weight_data_linpred(object, new_data, new_levels, representative_site)
-  m <- posterior::draws_of(res$linpred)
-  if (transform) exp(m) else m
+  # error_call() names the generic, not the method.
+  call <- rlang::error_call(rlang::current_env())
+  .with_call(
+    {
+      rlang::check_dots_empty()
+      chk::chk_flag(transform)
+      .chk_kb_fit(object)
+      .chk_representative_site(object, representative_site)
+    },
+    call
+  )
+  res <- data_linpred(object, new_data, new_levels, representative_site, call = call)
+  lp <- res$linpred
+  # The inverse link, not the response mean.
+  if (transform) {
+    lp <- .epred(object, lp, expectation = FALSE)
+  }
+  posterior::draws_of(lp)
 }

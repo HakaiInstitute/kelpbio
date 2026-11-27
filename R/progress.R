@@ -1,17 +1,12 @@
-# Progress infrastructure for the fitting engine. A fit can write a kelpbio-owned,
-# pollable artifact (a manifest plus rstan's per-chain sample_file CSVs) that the
-# console reporter and the public kb_fit_progress() reader turn into a completed
-# fraction. rstan writes thinned warmup rows by default and an "# Elapsed Time"
-# footer at chain completion (see the change design for the full rationale).
+# A fit writes a pollable directory (a manifest plus rstan's per-chain
+# sample_file CSVs) and a prediction a record of completed steps; the console
+# bar and kb_progress() both read a completed fraction from it.
 
-# Base name for the rstan sample_file; rstan appends _<chain> before the
-# extension, giving samples_1.csv, samples_2.csv, ...
 progress_sample_file <- function(dir) {
   file.path(dir, "samples.csv")
 }
 
-# rstan writes the sample_file as-is for a single chain, and inserts _<chain>
-# before the extension (samples_1.csv, samples_2.csv, ...) for multiple chains.
+# rstan inserts _<chain> before the extension, but only for multiple chains.
 progress_chain_files <- function(dir, chains) {
   base <- progress_sample_file(dir)
   if (chains == 1L) {
@@ -27,8 +22,7 @@ progress_manifest_file <- function(dir) {
   file.path(dir, "manifest.rds")
 }
 
-# Saved rows a completed chain writes: thinned warmup plus the niters post-warmup
-# draws.
+# rstan saves thinned warmup rows as well as the post-warmup draws.
 progress_rows_per_chain <- function(warmup, niters, nthin) {
   as.integer(ceiling(warmup / nthin) + niters)
 }
@@ -52,9 +46,8 @@ read_progress_manifest <- function(dir) {
   tryCatch(readRDS(path), error = function(e) NULL)
 }
 
-# Complete data rows in one chain's CSV: non-comment lines after the header that
-# have the full field count. A partially written trailing row has fewer fields
-# and is ignored, so a torn read never errors or over-counts.
+# Rows with the full field count only, so a partially written trailing row
+# never over-counts.
 count_chain_rows <- function(csv) {
   if (!file.exists(csv)) {
     return(0L)
@@ -76,7 +69,7 @@ count_chain_rows <- function(csv) {
   sum(fields == n_fields)
 }
 
-# A chain is complete once Stan has written its timing footer.
+# Stan writes an "Elapsed Time" footer when a chain completes.
 chain_is_complete <- function(csv) {
   if (!file.exists(csv)) {
     return(FALSE)
@@ -87,8 +80,6 @@ chain_is_complete <- function(csv) {
   any(grepl("Elapsed Time", lines, fixed = TRUE))
 }
 
-# Complete rows across all chains, capped per chain, treating a chain with its
-# completion footer as fully done.
 count_progress_rows <- function(dir, manifest) {
   per_chain <- progress_rows_per_chain(
     manifest$warmup,
@@ -105,7 +96,7 @@ count_progress_rows <- function(dir, manifest) {
   }))
 }
 
-# Completed fraction in [0, 1]: 0 before any artifact or rows, 1 at completion.
+# 0 before any artifact exists.
 read_progress_fraction <- function(dir) {
   manifest <- read_progress_manifest(dir)
   if (is.null(manifest)) {
@@ -123,10 +114,37 @@ read_progress_fraction <- function(dir) {
   min(count_progress_rows(dir, manifest) / total, 1)
 }
 
-# Resolve where (if anywhere) the pollable artifact is written. A caller-supplied
-# progress_dir is used as-is and left in place; the console "bar" otherwise uses
-# an internal temp directory (owned = TRUE, removed by the caller on exit).
-# Other modes without a progress_dir write no artifact.
+progress_prediction_file <- function(dir) {
+  file.path(dir, "prediction.rds")
+}
+
+# Written to a temp file and renamed, so a reader in another process never sees
+# a partial write.
+write_prediction_progress <- function(dir, completed, total) {
+  if (is.null(dir)) {
+    return(invisible(NULL))
+  }
+  tmp <- tempfile("prediction-", tmpdir = dir, fileext = ".rds")
+  saveRDS(list(completed = completed, total = total), tmp)
+  file.rename(tmp, progress_prediction_file(dir))
+  invisible(NULL)
+}
+
+# NULL when the directory holds no prediction record.
+read_prediction_progress <- function(dir) {
+  path <- progress_prediction_file(dir)
+  if (!file.exists(path)) {
+    return(NULL)
+  }
+  record <- tryCatch(readRDS(path), error = function(e) NULL)
+  if (is.null(record) || record$total <= 0) {
+    return(NULL)
+  }
+  min(record$completed / record$total, 1)
+}
+
+# A caller-supplied progress_dir is left in place; the "bar" otherwise gets a
+# temp directory (owned = TRUE) that the caller removes on exit.
 resolve_progress_dir <- function(progress, progress_dir) {
   if (!is.null(progress_dir)) {
     return(list(dir = progress_dir, owned = FALSE))
@@ -139,12 +157,10 @@ resolve_progress_dir <- function(progress, progress_dir) {
   list(dir = NULL, owned = FALSE)
 }
 
-# Console reporter seam: "bar" binds a cli progress bar, every other value a
-# no-op. The reporter renders the fraction; it does not produce it, so the
-# console bar and an external kb_fit_progress() poller share one signal.
-progress_reporter <- function(progress) {
+# "bar" binds a cli progress bar, every other value a no-op.
+progress_reporter <- function(progress, label = "Fitting model") {
   if (identical(progress, "bar")) {
-    return(bar_reporter())
+    return(bar_reporter(label))
   }
   noop_reporter()
 }
@@ -160,43 +176,41 @@ noop_reporter <- function() {
   )
 }
 
-bar_reporter <- function() {
-  id <- NULL
+bar_reporter <- function(label = "Fitting model") {
+  bar <- new.env(parent = emptyenv())
+  bar$id <- NULL
   structure(
     list(
-      # Scope the bar to the caller's frame (the fit loop, alive for the whole
-      # run) via .envir = parent.frame(); a detached environment is not on the
-      # call stack, so cli would drop the bar between poll ticks ("cannot find
-      # progress bar"). The bar is looked up by id thereafter.
+      # Scoped to the caller's frame (the fit loop): in a detached environment
+      # cli drops the bar between poll ticks ("cannot find progress bar").
       start = function(total) {
-        id <<- cli::cli_progress_bar(
-          "Fitting model",
+        bar$id <- cli::cli_progress_bar(
+          label,
           total = total,
           format = paste(
-            "{cli::pb_spin} Fitting model {cli::pb_bar}",
+            "{cli::pb_spin}", label, "{cli::pb_bar}",
             "{cli::pb_percent} | {cli::pb_eta_str}"
           ),
           format_done = paste(
-            "{cli::col_green(cli::symbol$tick)} Fitting model",
+            "{cli::col_green(cli::symbol$tick)}", label,
             "[{cli::pb_elapsed}]"
           ),
           clear = FALSE,
           .envir = parent.frame()
         )
       },
-      # cli auto-terminates the bar once it reaches total, after which a further
-      # update()/finish() errors. Progress is cosmetic and must never abort the
-      # fit, so tolerate a since-terminated bar.
+      # cli terminates the bar at total, after which updates error; progress
+      # must never abort the fit.
       update = function(completed) {
         tryCatch(
-          cli::cli_progress_update(set = completed, id = id),
+          cli::cli_progress_update(set = completed, id = bar$id),
           error = function(e) invisible(NULL)
         )
       },
       finish = function() {
-        if (!is.null(id)) {
+        if (!is.null(bar$id)) {
           tryCatch(
-            cli::cli_progress_done(id = id),
+            cli::cli_progress_done(id = bar$id),
             error = function(e) invisible(NULL)
           )
         }

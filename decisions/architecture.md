@@ -1,188 +1,186 @@
 # kelpbio Architecture
 
-> Scope: the package as it stands on the `add-weight-model` branch. One model, the *Nereocystis luetkeana* allometric weight model, is implemented end to end. This document describes the architecture that model establishes and that every later model will reuse. The behavioural contract lives in `openspec/specs/`; the rationale behind the choices below lives in the other files in `decisions/`. Read those for authority; read this for the map.
+> The durable shape of the package and the rules that decide where new code goes.
+> Behaviour lives in `openspec/specs/`; the other files in `decisions/` hold the
+> rationale for specific choices. For a detailed map of the current internals,
+> generate one from the code (the `describe-design` skill does this) rather than
+> maintaining it here.
 
 ## Overview
 
-kelpbio fits Bayesian hierarchical kelp-biomass models with Stan and exposes them through a small S3 surface built on the tidyverse/`posterior` stack. The engine is `rstan` + `rstantools`: Stan sources in `inst/stan/` are transpiled to C++ and compiled into the package binary at `R CMD INSTALL` time, so users never need `cmdstanr` or a separate Stan toolchain. See `decisions/engine-choice.md`.
+kelpbio fits Bayesian hierarchical kelp-biomass models with Stan and exposes them
+through a small S3 surface built on the tidyverse and `posterior`. Stan sources in
+`inst/stan/` are compiled into the package binary at `R CMD INSTALL`, so users need
+no Stan toolchain (`decisions/engine-choice.md`).
 
-The package is designed around one organising decision: a fit object stores **extracted posterior draws, not the live `stanfit`**. Fitting is the only stochastic step; everything downstream (summaries, diagnostics, predictions, plots) is pure `posterior` arithmetic over stored draws. This makes fit objects small, portable, robust across rstan versions, and makes a pre-fit model a non-special case (the bundled `fit_weight_sim_nereo` is just a fit object). See `decisions/prediction-engine.md` and the `fitting` spec.
+The organising decision is that a fit object stores **extracted posterior draws,
+not the live `stanfit`**. Fitting is the only stochastic step; everything
+downstream (summaries, diagnostics, predictions, plots) is `posterior` arithmetic
+over stored draws. Fit objects are therefore small, portable, robust across rstan
+versions, and a pre-fit model is not a special case (`decisions/prediction-engine.md`).
 
-The eventual package composes six sub-models (weight, size, density, blade fraction, wet/dry, carbon) into a biomass estimate by size-integration. On this branch only the weight model exists; the other five and the biomass composition are out of scope. The architecture here is deliberately the template the rest will follow.
+The package fits weight, wet/dry, carbon, and cover calibration models for
+*Nereocystis luetkeana* and *Macrocystis pyrifera*, and a size model for
+*Nereocystis*. It composes them into the biomass of in situ surveys (each
+counted plant's expected weight, summed over the surveyed area) and into biomass
+over drone-mapped canopy (the cover calibration applied to canopy area).
 
-## Architecture Diagram
+## Models, verbs, and data
+
+Model verbs report one fitted model's expected response and are named for the
+model. Derived verbs combine fits with the user's data and are named for what the
+biomass comes from. Data inputs list their columns; `?` marks an optional column.
+
+Fits and model verbs:
 
 ```mermaid
-flowchart TD
-    subgraph fit["Fit path (stochastic, install-gated)"]
-        DATA[/"weight data frame"/] --> CHK["kb_check_data_weight_nereo()"]
-        CHK --> RP["resolve_priors()"]
-        PRIORS[/"kb_priors_weight_nereo()"/] --> RP
-        RP --> ASM["assemble_weight_nereo_data()"]
-        ASM --> FS["fit_stan()"]
-        SM[["stanmodels$weight_nereo<br/>(compiled at install)"]] --> FS
-        FS -->|"rstan::sampling → draws"| CTOR["new_kb_fit_weight()"]
-        CTOR --> FITOBJ[("kb_fit_weight object<br/>draws · gq · diagnostics · data · meta")]
-    end
-
-    subgraph read["Read path (pure, on stored draws)"]
-        FITOBJ --> LP[".weight_nereo_linpred()<br/>(single mean, log scale)"]
-        LP --> GEN["posterior_epred / linpred / predict<br/>log_lik · prior_summary"]
-        LP --> PV["kb_predict_weight()<br/>kb_predict_weight_by()"]
-        PV --> PRED[("kb_predictions")]
-        PRED --> PLOT["kb_plot_predictions() / autoplot()"]
-        FITOBJ --> SUMM["tidy · coef · glance · summary<br/>augment · converged · accessors · samples"]
-    end
+flowchart LR
+    DW[/"weight data<br/>site · year · weight_kg<br/>diameter_mm (nereo) or fronds (macro)"/] --> FW["kb_fit_weight_nereo()<br/>kb_fit_weight_macro()"] --> MW["kb_predict_weight()<br/>kg at a size"]
+    DS[/"size sample (nereo)<br/>site · year · diameter_mm"/] --> FS["kb_fit_size_nereo()"] --> MS["kb_predict_size()<br/>mean diameter"]
+    DWD[/"wet/dry data<br/>wet_mass_g · dry_mass_g"/] --> FWD["kb_fit_wetdry_*()"] --> MWD["kb_predict_wetdry()<br/>dry:wet ratio"]
+    DC[/"carbon data<br/>sample_mass_mg · carbon_mass_ug"/] --> FC["kb_fit_carbon_*()"] --> MC["kb_predict_carbon()<br/>carbon fraction"]
+    BIO(["kb_predict_biomass_in_situ() output<br/>one row per survey, with drone cover"]) --> FCC["kb_fit_cover_calibration_*(data)"] --> MCC["kb_predict_cover_calibration()<br/>kg/m² of plot at a cover"]
 ```
 
-The two halves meet only at the fit object. The fit path runs `rstan::sampling()` once and discards the `stanfit`; the read path never touches Stan.
+Biomass (derived verbs):
 
-## The Stan Engine
+```mermaid
+flowchart TB
+    FW["weight fit"] --> VMW
+    FS["size fit (nereo)"] --> VMW["kb_predict_mean_weight(weight, size, new_data?)<br/>kg per plant"]
+    FW --> VBP
+    FS -->|"sizes modelled<br/>(tallied plants)"| VBP
+    DPL[/"size census: one row per counted plant<br/>survey_id<br/>diameter_mm or fronds · partial?"/] -->|"sizes observed<br/>(a census)"| VBP
+    DSU[/"survey: one row per survey<br/>survey_id · site · year · survey_area_m2<br/>plants (tallied, with a size fit)<br/>plot_area_m2? · canopy_area_m2? · canopy_tide_height_m?<br/>grouping columns?"/] --> VBP["kb_predict_biomass_in_situ(weight, size, survey)<br/>per_area = TRUE: kg/m² surveyed<br/>FALSE: kg in the surveyed area"]
+    VBP -->|"rows with drone cover"| FCC["kb_fit_cover_calibration_*(data)"]
+    FCC --> VCA["kb_predict_biomass_canopy(fit, new_data)<br/>kg over the canopy"]
+    DCA[/"canopy: one row per map of a site<br/>site · year · canopy_area_m2 · canopy_tide_height_m<br/>classified_area_m2 · grouping columns?"/] --> VCA
+```
 
-**Purpose**: define the likelihood and priors; compile to a callable model object.
+Estimates are for the peak season at site-year resolution: every model has site
+and year effects only. A site-year may hold several surveys, keyed by `survey_id`;
+each survey with drone cover (`plot_area_m2`, `canopy_area_m2`, and
+`canopy_tide_height_m` on its row) is one observation in the cover calibration. Every
+input table gives `year` directly (a numeric year is used as its character
+level). A survey's plants come from the size census, joined by `survey_id`, when
+every plant was measured, and from its tallied `plants` column when sizes come
+from a size fit; a survey with no census rows is zero. Biomass per m² divides by `survey_area_m2`, the surveyed
+area; cover divides canopy by `plot_area_m2`, and the calibration takes a
+survey's biomass per m² as its plot's. "Plant" stands for one
+individual (sporophyte) identified by its holdfast, in both species.
 
-**Location**: `inst/stan/weight_nereo.stan`, surfaced as `stanmodels$weight_nereo` (`R/stanmodels.R`, generated).
+The derived verbs share `wetdry` and `carbon` fits with `measure` (wet, dry, or
+carbon), `new_levels` (default `"sample"`), `representative_site`, and the
+summary trio. Their output carries the response as an `rvar` column of draws
+next to `estimate`, `lower`, and `upper`, so one verb's output can feed another:
+the cover calibration fit reads the mean and SD of `biomass_kg_m2` from
+unsummed `kb_predict_biomass_in_situ()` output. `kb_predict_mean_weight()` takes
+fits only and has no `pool_by`. The two biomass verbs take `pool_by`: `NULL` gives
+one row per input row; column names give one row per group, with kg summed and,
+per area, divided by the summed area, draw by draw.
 
-**Why rstan / rstantools, pre-compiled.** kelpbio uses the `rstan` + `rstantools` backend so the Stan models are transpiled to C++ and compiled once when the package is installed, not when a user fits. Fitting is then an ordinary function call against the ready binary: no cmdstan toolchain, no C++ compiler invoked at runtime, and no minutes-long per-model compile. Users get a package that installs like any other and runs immediately. Because the model is fixed at compile time, everything a user might want to vary (the prior hyperparameters and the structural flags below) is passed in through the Stan `data` block rather than by editing and recompiling source, so the single compiled binary serves every prior choice and structural variant. See `decisions/engine-choice.md`.
+## Layers
 
-The model is the validated analysis-project allometry adapted to site-year resolution (no month dimension). `log(weight)` follows a Student-t (df fixed at 4) with mean
+```mermaid
+flowchart LR
+    D[/"data frame"/] --> FIT
+    P[/"priors, sampler args"/] --> FIT
+    FIT["Fitting layer<br/>kb_fit_*()<br/>the only stochastic step"]
+    FIT -->|"draws, not stanfit"| OBJ[("kb_fit object<br/>draws · diagnostics · data · meta")]
+    OBJ --> PRED["Prediction engine<br/>grid → linear predictor → response scale"]
+    OBJ --> SUMM["Summary surface<br/>tidy · glance · summary · print · kb_model_describe"]
+    OBJ --> DIAG["Diagnostic surface<br/>fitted · residuals · augment · log_lik · posterior_*"]
+    PRED --> KP[("kb_predictions<br/>tibble + column-role attributes")]
+    KP --> PLOT["kb_plot_predictions() · autoplot()"]
+```
 
-- intercept + linear + quadratic terms in centered log-diameter,
-- a site random intercept and a site random slope on log-diameter,
-- a site:year random intercept.
+Everything to the right of the fit object reads stored draws and metadata and never
+re-enters Stan. That boundary is what makes the whole surface testable without
+MCMC and makes a pre-fit model behave exactly like a fresh one.
 
-Engine conventions visible in the source (see `openspec/config.yaml` `context:` for the cross-cutting rules):
+- **Fitting.** Each `kb_fit_<model>_<species>()` validates its inputs, derives the
+  model structure from the data (which effects are fitted), assembles the Stan data
+  list with priors as data, samples through one shared engine, and builds the fit
+  object. The structure is decided by pure helpers, so it is tested without MCMC.
+- **Prediction.** The prediction verbs and the `posterior_*()` generics resolve a
+  grid of rows to one linear predictor (per-row random-effect and covariate
+  resolution), then map it to the response scale. The mean is defined once per
+  model, in R, mirroring the Stan file.
+- **Summaries.** Parameter summaries, diagnostics, and print output read the stored
+  draws and diagnostics; the model description is rendered from the fit's stored
+  priors and structure.
 
-- **Priors as data.** Every prior hyperparameter is a `data`-block input (`prior_intercept_mu`, `prior_sd_site_rate`, and so on), so users adjust priors through R without recompiling. The prior *family* is fixed at compile time (Normal for location terms, Exponential for SDs).
-- **Non-centered parameterization.** `z_*` standard-normal parameters scaled by the group SD in `transformed parameters` (`z_bSite` -\> `bSite`, etc.).
-- **Structural flags as data.** `prior_only` skips the likelihood (sample from priors); `site_year_on` zeroes the site:year term. Both let one compiled model serve several structural variants. `site_year_on` is not a user argument: the fitting layer derives it from the data (dropped only when fewer than two years are present, kept otherwise, with a warning when the design is aliased); see the fitting layer and `openspec/specs/fitting`.
-- **`nObs == 0` supported** for prior-only / empty fits; likelihood and generated- quantity loops are no-ops.
-- **Log-diameter centered at `diameter_ref`** (a data input; the geometric mean of observed diameter). Centering in log space makes the diameter unit immaterial, so the fit and predictions are scale-invariant and the data columns keep plain names.
-- **Mean defined once** in `transformed parameters` (`log_eWeight`) and reused by the `generated quantities`: `log_lik` (pointwise, for `loo`) and `yrep` (response-scale replicate, for `pp_check`). Predictions at new data are computed in R, not here.
+## Why the Nereocystis likelihood is Normal on log weight
 
-Because `devtools::load_all()` does not re-transpile Stan, any `.stan` edit requires `rstantools::rstan_config()` then `devtools::install()`. See `CLAUDE.md`.
+Biomass averages expected weight over the size distribution. Under a Student-t on
+log weight, `E[weight]` does not exist, so the integration would have nothing to
+average. The Normal gives the expected weight `exp(mu + sd_residual^2 / 2)`.
 
-## Fitting Layer
+## The observation distribution is stated once in R
 
-**Purpose**: turn a data frame into a fit object; isolate the one stochastic step.
+The pointwise log-likelihood, deviance residuals, and posterior-predictive
+replicates are computed in R from the stored draws, not in Stan `generated
+quantities`: that would store `D x N` values in every fit, pre-fit, and fixture,
+turn every diagnostic fix into a `.stan` edit and a refit, and put the saturated
+likelihoods that deviance residuals need (found by bisection for some families)
+where they cannot be unit-tested.
 
-**Entry point**: `kb_fit_weight_nereo()` in `R/kb_fit_weight_nereo.R`.
+Each model states its distribution once, in its `.obs_family()` method: an
+extras-style family name, the response, and the family's parameters per draw.
+`log_lik()`, `residuals()`, `augment()`, and `posterior_predict()` evaluate that
+one statement through a table of `log_lik_*`/`res_*`/`ran_*` functions, so they
+cannot use different parameterisations. The family name could be a frozen `meta`
+value, but it must agree with the parameter mapping, which is arithmetic, so both
+stay in the method (see "Meta Versus Dispatch"). Models on the log of a response
+use the `lnorm` family on the response itself, so `log_lik()` is always the
+density of the recorded response. The expected response stays in `.epred()`, on
+`rvar`s (`decisions/prediction-engine.md`).
 
-The fit function is deliberately a thin orchestrator over pure helpers plus one sampling call, so almost all logic is unit-testable without MCMC (see Testability):
+The likelihood is still written twice, in Stan and in R. A test evaluates the
+Stan model's log density with and without the likelihood (`prior_only`) at random
+parameter values and checks the difference against `log_lik()`, so the two cannot
+drift apart.
 
-1.  `.chk_sampler_args()` / `kb_check_data_weight_nereo()` validate arguments and data.
-2.  `resolve_priors(priors, kb_priors_weight_nereo())` merges user priors over defaults (`R/resolve_priors.R`): `NULL` returns defaults; supplied names must be a subset of the defaults; each entry must match the default's family (family is fixed).
-3.  `assemble_weight_nereo_data()` maps validated data plus the resolved prior list to the Stan `data` block (`R/assemble_weight_nereo_data.R`): factor-codes `site`/`year` to integers, passes raw `diameter`/`weight` (Stan applies the log transforms), computes `diameter_ref` via `weight_diameter_ref()`.
-4.  `fit_stan()` (`R/fit_stan.R`) is the model- and species-agnostic sampling engine shared by every future `kb_fit_*`: it calls `rstan::sampling()` once, extracts draws with `posterior::as_draws_rvars()`, splits the requested parameters from the generated quantities (`gq_vars`), summarises convergence (Rhat, bulk/tail ESS, divergences), captures the Stan source, and lets the `stanfit` go out of scope.
-5.  `new_kb_fit_weight()` assembles the fit object and its metadata.
+## Random-effect resolution
 
-**Sampler conventions** (all in `kb_fit_weight_nereo()` / `fit_stan()`):
+A known level conditions on its estimated effect regardless of `new_levels`; only an
+unknown or absent level consults it. That lets a mix of observed and new groups
+resolve in one call. Optional covariates follow the same idea: a row's own value,
+then a value recorded at fit time, then a neutral default.
 
-- `niters` means *saved post-warmup draws per chain*. `fit_stan()` sets `warmup = niters` and `iter = warmup + niters * nthin`, so the argument does not collide with rstan's own `iter` semantics.
-- `adapt_delta = 0.95` by default (above Stan's 0.8, for the hierarchical geometry), merged with any user `control` list passed through `...` so it stays overridable.
-- `quiet = FALSE` shows sampling progress and rstan's full HMC diagnostics; `quiet = TRUE` muffles the post-sampling diagnostic warnings locally via `with_quiet_sampler()` (a `withCallingHandlers`), never a global option.
-- `resolve_cores()` respects `getOption("mc.cores")`, falling back to `chains`, capped at available cores so the default never oversubscribes.
+## Meta Versus Dispatch
 
-**The fit object**. `new_kb_fit_weight()` returns `class = c("kb_fit_weight", "kb_fit")` with:
+Every per-model fact is either a value stored in `meta` at fit time or an internal
+generic dispatching on the fit subclass. The rule, applied in order:
 
-| Slot | Contents |
-|---------------------------|---------------------------------------------|
-| `draws` | `posterior` `draws_rvars` of the model parameters (fixed effects, SDs, and the per-level `bSite`/`bSiteDiameter`/`bSiteYear`, kept so predictions and `augment` can condition on observed levels). |
-| `gq` | `log_lik` and `yrep` generated-quantity draws (`NULL` for zero-row fits). |
-| `diagnostics` | `summary` (per-variable Rhat/ESS) and `ndivergent`, as plain numerics. |
-| `data` | the validated input data frame. |
-| `meta` | `species`, `prior_only`, `priors`, `stancode`, `site_levels`, `year_levels`, `nthin`, `diameter_ref`, `site_year_on` (auto-derived from the data), `nu`. |
+1.  **Can it be computed at fit time and frozen?** A name, a level set, a scalar, a
+    flag derived from the data or the call is a value. -> `meta`
+2.  **Is the code that consumes it identical across models?** If every model runs
+    the same lines and only a constant differs, there is nothing to dispatch on.
+    -> `meta`
+3.  **Otherwise** the arithmetic, the control flow, or the *explanation* differs.
+    -> generic with a `.default` that aborts
 
-The S3 class is model-level (`kb_fit_weight`), not species-level; the species lives in `meta$species` and species-specific values enter through `meta_extra`. This keeps a single set of S3 methods across species variants (see `decisions/species-as-variant.md`).
+A fact that dispatch already encodes is never also stored, unless something
+displays it: `species` lives in both the class (for dispatch) and `meta` (for
+printing), while `model` is not duplicated because nothing displays it and a second
+copy could disagree with the class.
 
-## The Prediction Engine
+Within `meta`, a fact every sub-model must declare is a required argument of the fit
+constructor (`terms`), so omitting it fails at fit time; a fact only some
+models have travels in `meta_extra`. The declarations are not validated at runtime:
+the constructor is internal and every caller is one of the package's own fit
+functions, so a malformed declaration is an authoring error that tests catch.
 
-**Purpose**: compute every predicted / derived quantity from stored draws, with the mean defined in exactly one R location.
+### Internal generics fail loudly
 
-**Single source of the mean**: `.weight_nereo_linpred(fit, grid, new_levels, representative_site)` in `R/weight_nereo_linpred.R`, returning a `posterior` `rvar` on the log scale over grid rows. Every prediction path routes through it, so the mean formula lives in exactly two places total: the Stan `transformed parameters` and this helper.
-
-**Per-row level resolution** is the heart of the engine. For each grid row the helper resolves the site intercept, site slope, and site:year effects independently:
-
-- Known levels take their estimated per-level draws (`resolve_re1` / `resolve_re2`).
-- Unknown or absent levels follow `new_levels`: `"sample"` draws a fresh effect from its estimated SD (`re_draw()` via `posterior::rvar_rng`), widening the interval to include between-group variation; `"average"` holds the effect at zero.
-- `representative_site` is a third treatment for a *new* site: borrow the per-draw average intercept/slope of one or more named reference sites instead of following `new_levels`. See `decisions/prediction-engine.md` and the `add-representative-site` change.
-
-**Two user-facing verbs** with independent arguments (the split is the current contract; `kb_predict_weight()` takes no `by`):
-
-| Verb | File | Grid | Use |
-|------------------|------------------|------------------|------------------|
-| `kb_predict_weight()` | `R/kb_predict_weight.R` | the supplied `new_data` rows, or the observed data when `new_data = NULL` (matching base `predict()`) | prediction at specific rows; per-row level resolution |
-| `kb_predict_weight_by()` | `R/kb_predict_weight_by.R` | a generated diameter sequence crossed with the `by` factors (`NULL`, `"site"`, or `c("site","year")`) | allometric curves, one per group, ready to plot |
-
-`by = "year"` is rejected (`validate_by_weight()`): year has no main effect, only the site:year interaction. `build_by_grid()` crosses diameter only with *observed* site:year combinations. Both verbs share `summarise_weight_predictions()`, which exponentiates the log-scale rvar, reduces each row to `estimate`/`lower`/`upper` (the `estimate` function plus equal-tailed `conf_level` limits, `signif`-rounded), and wraps the result as a `kb_predictions` object.
-
-**`rstantools` generics** (`R/posterior_epred.R`, `posterior_linpred.R`, `posterior_predict.R`, `log_lik.R`, `predict.R`, `prior_summary.R`) are thin faces over the same helper, returning a draws-by-observations (`D x N`) matrix rather than a summary: `posterior_linpred` is the raw linpred, `posterior_epred` exponentiates, `posterior_predict` adds Student-t noise (and returns stored `yrep` when `new_data = NULL`), `log_lik` returns the stored pointwise matrix (feeds `loo::loo`). `predict.kb_fit_weight` wraps `kb_predict_weight`.
-
-## Summary and Diagnostic Surface
-
-**Purpose**: report parameters and fit quality through familiar generics, reconstructed from the stored draws.
-
-kelpbio implements methods for generics owned by `generics` (`tidy`/`glance`/`augment`), `stats` (`coef`/`predict`/`fitted`/`residuals`/`nobs`), `base` (`summary`/`print`), `universals` (`converged`/`rhat`/`esr`/`estimates`/`npars`/`nterms`/`nchains`/`niters`/ `pars`), `rstantools` (the prediction generics + `prior_summary`), and `ggplot2` (`autoplot`), plus its own `samples()` and `kb_stancode()`. The re-exports live in `R/generics.R` / `R/kelpbio-package.R`; the full inventory is in `decisions/prediction-engine.md`.
-
-The `generics` contract is shape-only, so output uses Poisson house vocabulary rather than broom's glossary: `tidy()`/`coef()` return `term`/`estimate`/`lower`/`upper` (`R/tidy.R`, `R/coef.R`); `coef` is a pure wrapper on `tidy`; `glance` returns bboutools-style columns (`R/glance.R`). Point estimates come from the `estimate` function (median by default) and intervals from equal-tailed `conf_level` limits. `include_random_effects` defaults to `FALSE` (report the SD hyperparameters, not the per-level deviations), following `broom.mixed`.
-
-`summary.kb_fit` (`R/summary.R`) returns a classed `summary_kb_fit` combining a metadata header and the coefficient table augmented with `rhat`/`ess_bulk`/`ess_tail` from the stored diagnostics (same source as `converged()`/`glance()`, so numbers agree). `fit_descriptor()` supplies the model-specific header (likelihood family, effect structure in prose, group counts, centering reference); it switches on the fit subclass and returns `NA` fields for unknown models, so new models slot in by adding a `switch` branch. The header prose deliberately avoids a mixed-model formula so the output implies no formula interface.
-
-`converged()` (`R/converged.R`) and `glance()` assess convergence on Rhat and the bulk effective sample *rate* (`esr` = `ess_bulk / ndraws`), with report-mode defaults `rhat = 1.05`, `esr = 0.1`. Structural accessors (`R/accessors.R`) all read from `x$draws` / `x$diagnostics` via `posterior`. `augment()` (`R/augment.R`) returns the data with `fitted`/`residual` computed through the same linpred helper, so its central estimate agrees with `posterior_epred(new_data = NULL)`.
-
-## Objects and Metadata
-
-**`kb_fit` / `kb_fit_weight`** — the draws-not-stanfit fit object (slots above). Accessed with `$` (`x$draws`, `x$meta`); `samples(fit)` returns a `posterior` `draws_rvars`. Constructed only internally by `new_kb_fit_weight()`.
-
-**`kb_predictions`** (`R/kb_predictions.R`) — a tibble subclass carrying column-role metadata as attributes: `kb_predictor`, `kb_predictor_units`, `kb_group_vars`, `kb_response`, `kb_response_units`, and `kb_curve` (whether rows form an ordered generated grid, hence ribbon-eligible; not recoverable from the data shape). `kb_plot_predictions()` (`R/kb_plot_predictions.R`) resolves its `x`/`style`/`facet` defaults from these attributes and falls back with a helpful error if a dplyr verb has stripped them; `autoplot.kb_predictions()` (`R/autoplot.R`) is the conventional entry point and dispatches on the prediction data frame, never on a fit.
-
-**Prior objects** — `kb_prior_normal()` / `kb_prior_exponential()` (`R/kb_prior_normal.R`, `R/kb_prior_exponential.R`) are tiny self-validating, self-printing tagged lists (`class = c("kb_prior_normal", "kb_prior")`, etc.); `kb_priors_weight_nereo()` (`R/kb_priors_weight_nereo.R`) returns the named default list (seven entries: `intercept`, `diameter`, `diameter2`, `sd_site`, `sd_site_diameter`, `sd_site_year`, `sd_residual`).
-
-## Testability Design
-
-The layering exists to make MCMC-free testing the norm; see `decisions/bboutools-api-review.md`.
-
-- **Layer 1 (pure, always run).** Data validation, prior resolution, and Stan-data assembly are pure functions unit-tested without sampling. Bespoke validators follow the `.vld_` (pure predicate) / `.chk_` (messaging) split in `R/vld.R` / `R/chk.R`.
-- **Layer 2 (fixture, always run).** Every downstream method is tested against small pre-built fits in `tests/testthat/fixtures/` (built with `rstan::sampling(seed=)`), loaded via `helper-fixtures.R`. Tests assert structure and invariants (for example `lower <= estimate <= upper`, `weight > 0`, wider `conf_level` gives wider intervals, `"sample"` intervals no narrower than `"average"`), snapshot only prints and messages, and never snapshot MCMC numerics.
-- **Layer 3 (install-gated, `skip_on_cran`).** A few end-to-end tests exercise the one `rstan::sampling()` line and assert the returned object's shape.
-
-Tests mirror sources 1:1 (`R/<name>.R` \<-\> `tests/testthat/test-<name>.R`).
-
-## Code References
-
-| Component | File | Key symbols |
-|-------------------------|-----------------|------------------------------|
-| Stan model | `inst/stan/weight_nereo.stan` | `log_eWeight`, `log_lik`, `yrep`, `prior_only`, `site_year_on`, `diameter_ref` |
-| Compiled model object | `R/stanmodels.R` (generated) | `stanmodels$weight_nereo` |
-| Fit entry point | `R/kb_fit_weight_nereo.R` | `kb_fit_weight_nereo()`, `new_kb_fit_weight()` |
-| Sampling engine | `R/fit_stan.R` | `fit_stan()`, `with_quiet_sampler()`, `resolve_cores()` |
-| Data validation | `R/kb_check_data_weight_nereo.R`, `R/vld.R`, `R/chk.R` | `kb_check_data_weight_nereo()`, `.vld_*`, `.chk_*` |
-| Prior resolution | `R/resolve_priors.R` | `resolve_priors()` |
-| Stan-data assembly | `R/assemble_weight_nereo_data.R` | `assemble_weight_nereo_data()`, `weight_diameter_ref()` |
-| Prior objects | `R/kb_prior_normal.R`, `R/kb_prior_exponential.R`, `R/kb_priors_weight_nereo.R` | `kb_prior_normal()`, `kb_prior_exponential()`, `kb_priors_weight_nereo()` |
-| Mean helper | `R/weight_nereo_linpred.R` | `.weight_nereo_linpred()`, `resolve_re1()`, `resolve_re2()`, `re_draw()`, `validate_by_weight()`, `build_by_grid()` |
-| Prediction verbs | `R/kb_predict_weight.R`, `R/kb_predict_weight_by.R` | `kb_predict_weight()`, `kb_predict_weight_by()`, `summarise_weight_predictions()` |
-| rstantools generics | `R/posterior_epred.R`, `R/posterior_linpred.R`, `R/posterior_predict.R`, `R/log_lik.R`, `R/predict.R`, `R/prior_summary.R` | `posterior_epred.kb_fit_weight()`, `log_lik.kb_fit()`, etc. |
-| Predictions object | `R/kb_predictions.R` | `new_kb_predictions()`, `print.kb_predictions()` |
-| Plotting | `R/kb_plot_predictions.R`, `R/autoplot.R` | `kb_plot_predictions()`, `autoplot.kb_predictions()` |
-| Parameter summaries | `R/tidy.R`, `R/coef.R`, `R/glance.R`, `R/summary.R`, `R/summarise.R` | `tidy.kb_fit_weight()`, `summary.kb_fit()`, `fit_descriptor()`, `summarise_draws_terms()` |
-| Diagnostics / accessors | `R/converged.R`, `R/accessors.R`, `R/samples.R`, `R/kb_stancode.R` | `converged.kb_fit()`, `esr.kb_fit()`, `rhat.kb_fit()` |
-| Augment | `R/augment.R` | `augment.kb_fit()` |
-| Generic re-exports | `R/generics.R`, `R/kelpbio-package.R` | re-exported `generics`/`universals`/`rstantools`/`ggplot2` generics |
-| Bundled data / fit | `data/`, `data-raw/` | `data_weight_sim_nereo`, `fit_weight_sim_nereo` |
-
-## Glossary
-
-| Term | Definition |
-|------------------------|-----------------------------------------------|
-| draws-not-stanfit | The fit object stores extracted posterior draws, not the live `stanfit`; the `stanfit` is discarded after fitting. |
-| linpred | Linear predictor: the model mean on the log scale, returned as a `posterior` `rvar` by `.weight_nereo_linpred()`. |
-| `new_levels` | How predictions treat a grouping level not conditioned on: `"sample"` draws a random effect from its estimated SD; `"average"` holds it at zero. |
-| `representative_site` | Predict a new site by borrowing the intercept/slope of named reference sites (per-draw average), instead of `new_levels`. |
-| `by` | The grouping factors that each get their own predicted curve in `kb_predict_weight_by()`; valid values `NULL`, `"site"`, `c("site","year")`. |
-| `diameter_ref` | Geometric mean of observed diameter; the log-diameter centering reference, shared by the Stan fit and R predictions. |
-| `esr` | Effective sample rate: bulk ESS divided by number of draws; used with Rhat for the convergence verdict. |
-| `prior_only` | Structural flag that skips the likelihood so the model samples from the priors. |
-| `site_year_on` | Structural flag gating the site:year random effect, derived from the data (not user-set): off when fewer than two years are present, on otherwise; on with a warning when the design is aliased (no site sampled in more than one year). |
-| gq | Generated quantities (`log_lik`, `yrep`) stored separately from the model parameter draws. |
-| site-year resolution | The kelpbio models drop the analysis project's month dimension, working at site-year granularity. |
+The public method bodies live on `kb_fit` and delegate what varies to internal
+generics. Because those methods accept any `kb_fit`, each internal generic has a
+`.default` that aborts, so a sub-model added without its methods errors rather than
+computing a wrong number. The one exception supplies `print()`'s header fields,
+where a missing method degrades a display rather than a number; its default returns
+absent fields. `tests/testthat/test-abort.R` discovers the generics from the
+namespace and pins both sets, so a new generic in neither set fails the test. The
+abort message names only the object's class and the `kb_fit_*()` pattern: one
+internal generic serves several public verbs, so naming it would describe something
+the user never called.

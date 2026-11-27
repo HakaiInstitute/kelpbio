@@ -2,31 +2,44 @@
 % Please edit documentation in R/autoplot.R
 \name{autoplot.kb_predictions}
 \alias{autoplot.kb_predictions}
-\title{Autoplot Method for Predictions}
+\title{Plot predictions with autoplot()}
 \usage{
 \method{autoplot}{kb_predictions}(object, ...)
 }
 \arguments{
 \item{object}{A \code{kb_predictions} object.}
 
-\item{...}{Passed to \code{\link[=kb_plot_predictions]{kb_plot_predictions()}} (e.g. \code{x}, \code{observed}).}
+\item{...}{Passed to \code{\link[=kb_plot_predictions]{kb_plot_predictions()}} (for example \code{x}, \code{geom}, \code{log_axis}, \code{max_facets}).}
 }
 \value{
 A \code{ggplot} object.
 }
 \description{
-The conventional \code{ggplot2::autoplot} entry point for a \code{kb_predictions}
-object: a thin wrapper on \code{\link[=kb_plot_predictions]{kb_plot_predictions()}}. Dispatches on the
-prediction data frame, never on a fit.
+Plot a \code{kb_predictions} object, as \code{\link[=kb_plot_predictions]{kb_plot_predictions()}} does.
 }
 \examples{
-p <- kb_predict_weight_by(fit_weight_sim_nereo, by = "site")
+fit <- fit_weight_sim_nereo
+p <- kb_predict_weight(fit, kb_new_data(fit, by = "site"))
 ggplot2::autoplot(p)
 }
 \seealso{
-Other prediction:
+Other prediction functions:
+\code{\link[=kb_new_data]{kb_new_data()}},
 \code{\link[=kb_plot_predictions]{kb_plot_predictions()}},
+\code{\link[=kb_predict_biomass_canopy]{kb_predict_biomass_canopy()}},
+\code{\link[=kb_predict_biomass_in_situ]{kb_predict_biomass_in_situ()}},
+\code{\link[=kb_predict_carbon]{kb_predict_carbon()}},
+\code{\link[=kb_predict_cover_calibration]{kb_predict_cover_calibration()}},
+\code{\link[=kb_predict_mean_weight]{kb_predict_mean_weight()}},
+\code{\link[=kb_predict_nitrogen]{kb_predict_nitrogen()}},
+\code{\link[=kb_predict_size]{kb_predict_size()}},
 \code{\link[=kb_predict_weight]{kb_predict_weight()}},
-\code{\link[=kb_predict_weight_by]{kb_predict_weight_by()}}
+\code{\link[=kb_predict_wetdry]{kb_predict_wetdry()}},
+\code{\link[=predict.kb_fit_carbon]{predict.kb_fit_carbon()}},
+\code{\link[=predict.kb_fit_cover_calibration]{predict.kb_fit_cover_calibration()}},
+\code{\link[=predict.kb_fit_nitrogen]{predict.kb_fit_nitrogen()}},
+\code{\link[=predict.kb_fit_size]{predict.kb_fit_size()}},
+\code{\link[=predict.kb_fit_weight]{predict.kb_fit_weight()}},
+\code{\link[=predict.kb_fit_wetdry]{predict.kb_fit_wetdry()}}
 }
-\concept{prediction}
+\concept{prediction functions}

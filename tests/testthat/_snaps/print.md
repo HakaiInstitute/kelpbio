@@ -15,15 +15,50 @@
 # print.kb_fit shows stable metadata
 
     Code
-      print(weight_fit)
+      print(weight_nereo_fit)
     Output
-      <kb_fit_weight>
-      Model:     weight (nereocystis)
-      Family:    Student-t (df = 4); response log(weight)
-      Fixed:     intercept + linear + quadratic log(diameter/d0)
-      Random:    site (intercept, slope); site:year (intercept)
-      Centered:  log-diameter at d0 = 38.8 (geometric mean of diameter)
-      Data:      72 observations; groups: site (4), site:year (12)
-      Draws:     2 chains, 300 post-warmup draws each (thin = 1), 600 total
-      Converged: TRUE
+      <kb_fit_weight_nereo>
+      Model:     Weight (Nereocystis luetkeana)
+      Predictor: diameter_mm, reference <value> (geometric mean)
+      Data:      460 observations; groups: site (4), year (6), site:year (23)
+      Draws:     2 chains, 300 post-warmup draws each (thin = 5), 600 total
+      Converged: <value>
+      See kb_model_describe(fit) for the model equation and priors.
+
+# print.kb_fit shows the size headers without a predictor line
+
+    Code
+      print(size_nereo_fit)
+    Output
+      <kb_fit_size_nereo>
+      Model:     Size (Nereocystis luetkeana)
+      Data:      420 observations; groups: site (4), year (6), site:year (21)
+      Draws:     2 chains, 300 post-warmup draws each (thin = 5), 600 total
+      Converged: <value>
+      See kb_model_describe(fit) for the model equation and priors.
+
+# print.kb_fit shows the wet/dry header without predictor or group lines
+
+    Code
+      print(wetdry_nereo_fit)
+    Output
+      <kb_fit_wetdry_nereo>
+      Model:     Wet/dry (Nereocystis luetkeana)
+      Data:      80 observations
+      Draws:     2 chains, 300 post-warmup draws each (thin = 5), 600 total
+      Converged: <value>
+      See kb_model_describe(fit) for the model equation and priors.
+
+# print.kb_fit notes a prior-only fit
+
+    Code
+      print(fit)
+    Output
+      <kb_fit_wetdry_nereo>
+      Model:     Wet/dry (Nereocystis luetkeana)
+      Data:      80 observations
+      Draws:     2 chains, 300 post-warmup draws each (thin = 5), 600 total
+      Note:      prior-only fit (likelihood off)
+      Converged: <value>
+      See kb_model_describe(fit) for the model equation and priors.
 

@@ -2,7 +2,7 @@
 % Please edit documentation in R/coef.R
 \name{coef.kb_fit}
 \alias{coef.kb_fit}
-\title{Coefficients of a Model Fit}
+\title{Coefficients}
 \usage{
 \method{coef}{kb_fit}(object, ...)
 }
@@ -16,27 +16,26 @@ A tibble with one row per term and columns \code{term}, \code{estimate},
 \code{lower}, and \code{upper}.
 }
 \description{
-A wrapper on \code{\link[=tidy]{tidy()}} returning the model-term posterior summaries.
+Posterior summaries of the model terms, as returned by \code{\link[=tidy]{tidy()}}.
 }
 \examples{
 coef(fit_weight_sim_nereo)
 }
 \seealso{
-Other generics:
+Other fit methods:
 \code{\link[=augment.kb_fit]{augment.kb_fit()}},
-\code{\link[=converged.kb_fit]{converged.kb_fit()}},
-\code{\link[=fitted.kb_fit_weight]{fitted.kb_fit_weight()}},
+\code{\link[=fitted.kb_fit]{fitted.kb_fit()}},
 \code{\link[=glance.kb_fit]{glance.kb_fit()}},
+\code{\link[=kb_model_describe]{kb_model_describe()}},
+\code{\link[=kb_samples]{kb_samples()}},
 \code{\link[=kb_stancode]{kb_stancode()}},
 \code{\link[=log_lik.kb_fit]{log_lik.kb_fit()}},
-\code{\link[=posterior_epred.kb_fit_weight]{posterior_epred.kb_fit_weight()}},
-\code{\link[=posterior_linpred.kb_fit_weight]{posterior_linpred.kb_fit_weight()}},
-\code{\link[=posterior_predict.kb_fit_weight]{posterior_predict.kb_fit_weight()}},
-\code{\link[=predict.kb_fit_weight]{predict.kb_fit_weight()}},
+\code{\link[=posterior_epred.kb_fit]{posterior_epred.kb_fit()}},
+\code{\link[=posterior_linpred.kb_fit]{posterior_linpred.kb_fit()}},
+\code{\link[=posterior_predict.kb_fit]{posterior_predict.kb_fit()}},
 \code{\link[=prior_summary.kb_fit]{prior_summary.kb_fit()}},
-\code{\link[=residuals.kb_fit_weight]{residuals.kb_fit_weight()}},
-\code{\link[=samples]{samples()}},
+\code{\link[=residuals.kb_fit]{residuals.kb_fit()}},
 \code{\link[=summary.kb_fit]{summary.kb_fit()}},
-\code{\link[=tidy.kb_fit_weight]{tidy.kb_fit_weight()}}
+\code{\link[=tidy.kb_fit]{tidy.kb_fit()}}
 }
-\concept{generics}
+\concept{fit methods}

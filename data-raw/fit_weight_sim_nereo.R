@@ -1,9 +1,9 @@
 # Build fit_weight_sim_nereo, a slim pre-fit weight model for runnable examples
-# and tests. Fitted to the whole data_weight_sim_nereo (which is itself kept
-# small, ~6 obs per site-year cell) with reduced chains and draws so the object
-# stays small (the stored log_lik / yrep generated quantities scale with the
-# number of observations). Not for inference. Reproducibility comes from the
-# sampler `seed`.
+# and tests, and fit_weight_sim_nereo_power, the same fit with `form = "power"`
+# for model comparison examples. Fitted to the whole data_weight_sim_nereo with reduced chains and draws
+# so the object stays small; its size is set by the draw count alone, since no
+# per-observation quantities are stored. Not for inference. Reproducibility comes
+# from the sampler `seed`.
 #
 # Requires the compiled package (run `devtools::load_all()` or
 # `devtools::install()` first). Re-run whenever the Stan model, the simulated
@@ -14,12 +14,28 @@ devtools::load_all(quiet = TRUE)
 
 fit_weight_sim_nereo <- kb_fit_weight_nereo(
   data_weight_sim_nereo,
-  chains = 2L,
-  niters = 400L,
-  nthin = 1L,
-  cores = 2L,
-  progress = "none",
+  chains = 3L,
+  niters = 500L,
+  # nthin multiplies the sampling iterations while holding the saved draw count
+  # fixed, so these deliberately small objects clear the convergence thresholds
+  # without growing.
+  nthin = 4L,
+  cores = 4L,
+  progress = "bar",
   seed = 42L
 )
 
 usethis::use_data(fit_weight_sim_nereo, overwrite = TRUE)
+
+fit_weight_sim_nereo_power <- kb_fit_weight_nereo(
+  data_weight_sim_nereo,
+  form = "power",
+  chains = 3L,
+  niters = 500L,
+  nthin = 4L,
+  cores = 4L,
+  progress = "bar",
+  seed = 42L
+)
+
+usethis::use_data(fit_weight_sim_nereo_power, overwrite = TRUE)
