@@ -234,16 +234,16 @@ simulated <- posterior_predict(fit_weight_sim_nereo, sizes)
 dim(simulated)
 ```
 
-| Function | Returns |
-|---|---|
-| `tidy()` | Parameter estimates |
-| `glance()` | Sample size and convergence |
-| `augment()` | The data with fitted values and residuals |
-| `posterior_epred()` | Draws of the expected response |
-| `posterior_predict()` | Draws of new observations |
-| `log_lik()` | The pointwise log-likelihood |
-| `loo()` | Leave-one-out cross-validation |
-| `kb_stancode()` | The Stan code of the model |
+| Function              | Returns                                   |
+|-----------------------|-------------------------------------------|
+| `tidy()`              | Parameter estimates                       |
+| `glance()`            | Sample size and convergence               |
+| `augment()`           | The data with fitted values and residuals |
+| `posterior_epred()`   | Draws of the expected response            |
+| `posterior_predict()` | Draws of new observations                 |
+| `log_lik()`           | The pointwise log-likelihood              |
+| `loo()`               | Leave-one-out cross-validation            |
+| `kb_stancode()`       | The Stan code of the model                |
 
 ## Custom derived quantities
 
