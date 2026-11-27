@@ -56,6 +56,7 @@ test_that("a term with no Rhat is not judged on it", {
 
 test_that("summary validates its thresholds", {
   expect_error(summary(weight_nereo_fit, rhat = "a"), "rhat")
+  expect_error(summary(weight_nereo_fit, rhat = 0.5), "rhat")
   expect_error(summary(weight_nereo_fit, ess = -1), "ess")
   expect_error(
     summary(weight_nereo_fit, max_perc_divergent = -1),

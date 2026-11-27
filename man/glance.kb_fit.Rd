@@ -11,7 +11,7 @@
 
 \item{...}{These dots are for future extensions and must be empty.}
 
-\item{rhat}{A number giving the maximum acceptable Rhat.}
+\item{rhat}{A number of at least 1 giving the maximum acceptable Rhat.}
 
 \item{ess}{A number giving the minimum acceptable bulk and tail effective
 sample size per chain.}

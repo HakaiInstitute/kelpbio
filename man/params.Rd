@@ -53,7 +53,7 @@ a single estimate, such as \code{median} or \code{mean}.}
 \item{include_random_effects}{A flag specifying whether to include the
 group-level random-effect terms in the output.}
 
-\item{rhat}{A number giving the maximum acceptable Rhat.}
+\item{rhat}{A number of at least 1 giving the maximum acceptable Rhat.}
 
 \item{ess}{A number giving the minimum acceptable bulk and tail effective
 sample size per chain.}

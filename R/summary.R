@@ -39,6 +39,7 @@ summary.kb_fit <- function(
       .chk_summary_args(conf_level, estimate, sig_fig)
       chk::chk_flag(include_random_effects)
       chk::chk_number(rhat)
+      chk::chk_gte(rhat, value = 1)
       chk::chk_number(ess)
       chk::chk_gte(ess, value = 0)
       chk::chk_number(max_perc_divergent)

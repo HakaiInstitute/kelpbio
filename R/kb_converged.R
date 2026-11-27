@@ -64,6 +64,7 @@ kb_converged <- function(
   rlang::check_dots_empty()
   .chk_kb_fit(fit)
   chk::chk_number(rhat)
+  chk::chk_gte(rhat, value = 1)
   chk::chk_number(ess)
   chk::chk_gte(ess, value = 0)
   chk::chk_number(max_perc_divergent)

@@ -75,7 +75,7 @@
 #' @param sig_fig A whole number of significant figures for summary output.
 #' @param include_random_effects A flag specifying whether to include the
 #'   group-level random-effect terms in the output.
-#' @param rhat A number giving the maximum acceptable Rhat.
+#' @param rhat A number of at least 1 giving the maximum acceptable Rhat.
 #' @param ess A number giving the minimum acceptable bulk and tail effective
 #'   sample size per chain.
 #' @param max_perc_divergent A number giving the maximum acceptable percentage of

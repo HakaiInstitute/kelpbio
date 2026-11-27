@@ -53,6 +53,8 @@ test_that("glance reports NA rather than -Inf when no diagnostic is finite", {
 test_that("argument errors name glance()", {
   err <- expect_error(glance(weight_nereo_fit, rhat = "a"))
   expect_identical(err$call[[1]], quote(glance))
+  err <- expect_error(glance(weight_nereo_fit, rhat = 0.5))
+  expect_identical(err$call[[1]], quote(glance))
 })
 
 test_that("glance output matches its snapshot for every model", {

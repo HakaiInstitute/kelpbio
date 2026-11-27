@@ -38,6 +38,7 @@ test_that("a fit with no finite Rhat does not pass on no evidence", {
 })
 
 test_that("kb_converged validates its thresholds", {
+  expect_error(kb_converged(weight_nereo_fit, rhat = 0.5), "rhat")
   expect_error(kb_converged(weight_nereo_fit, max_perc_divergent = -1))
   expect_error(kb_converged(weight_nereo_fit, max_perc_divergent = "0.2"))
 })
