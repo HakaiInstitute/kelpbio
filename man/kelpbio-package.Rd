@@ -6,9 +6,9 @@
 \alias{kelpbio-package}
 \title{kelpbio: Bayesian Kelp Biomass Estimation}
 \description{
-\if{html}{\figure{logo.png}{options: style='float: right' alt='logo' width='120'}}
+\if{html}{\figure{logo.svg}{options: style='float: right' alt='logo' width='120'}}
 
-Fit a Bayesian hierarchical Stan model via 'rstan' to estimate the allometric relationship between kelp weight and size from in-situ observations.
+Estimate wet, dry, carbon, and nitrogen biomass of Nereocystis luetkeana and Macrocystis pyrifera kelp from in situ surveys and mapped surface canopy, with compatibility intervals from Bayesian hierarchical models fitted by 'rstan'.
 }
 \seealso{
 Useful links:

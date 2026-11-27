@@ -1,100 +1,78 @@
-// Full allometric weight model (site-year resolution).
-// log(weight) ~ student_t(4, mu, sWeight) where
-//   mu = bWeight + bSite[site]
-//      + (bDiameter + bSiteDiameter[site]) * log(diameter / diameter_ref)
-//      + bDiameter2 * log(diameter / diameter_ref)^2
-//      + bSiteYear[site, year]
-// log-diameter is centered at diameter_ref (passed as data: the geometric mean
-// of the observed diameter), so the diameter unit does not affect the fit.
-// Random effects: site intercept, site slope (on log diameter), and site:year.
-// Priors are passed as data; the prior family is fixed at compile time.
-// The mean is computed with vectorised indexing (no per-observation loop) for a
-// smaller autodiff graph.
+// Nereocystis weight: Packard's (2023) three-parameter power function.
+//   log(weight_kg) ~ normal(log(mu), sd_residual)
+//   mu         = floor_on * weight_floor + alpha * (diameter_mm / diameter_ref)^diameter_power
+//   log(alpha) = intercept + site_effect[site] + year_effect[year]
+//                + site_year_effect[site, year]
+// The group effects act on alpha, so the floor is common to every site and year.
+// Normal on log weight rather than Student-t, whose lack of a finite exponential
+// moment would leave expected weight undefined.
 data {
-  int<lower=0> nObs;                      // 0 allowed: supports prior-only / empty fits
-  int<lower=1> nSite;
-  int<lower=1> nYear;
-  array[nObs] int<lower=1, upper=nSite> site;
-  array[nObs] int<lower=1, upper=nYear> year;
-  vector<lower=0>[nObs] diameter;
-  vector<lower=0>[nObs] weight;
-  real<lower=0> diameter_ref;             // log-diameter centering reference
+  int<lower=0> n_obs;
+  int<lower=1> n_site;
+  int<lower=1> n_year;
+  array[n_obs] int<lower=1, upper=n_site> site;
+  array[n_obs] int<lower=1, upper=n_year> year;
+  vector<lower=0>[n_obs] diameter_mm;
+  vector<lower=0>[n_obs] weight_kg;
+  real<lower=0> diameter_ref;             // geometric mean diameter (mm)
 
-  // priors (hyperparameters passed as data)
-  real prior_intercept_mu;
+  real prior_intercept_mean;
   real<lower=0> prior_intercept_sd;
-  real prior_diameter_mu;
-  real<lower=0> prior_diameter_sd;
-  real prior_diameter2_mu;
-  real<lower=0> prior_diameter2_sd;
+  real prior_diameter_power_mean;
+  real<lower=0> prior_diameter_power_sd;
+  real prior_weight_floor_mean;
+  real<lower=0> prior_weight_floor_sd;
   real<lower=0> prior_sd_site_rate;
-  real<lower=0> prior_sd_site_diameter_rate;
+  real<lower=0> prior_sd_year_rate;
   real<lower=0> prior_sd_site_year_rate;
   real<lower=0> prior_sd_residual_rate;
 
-  int<lower=0, upper=1> prior_only;       // 1 = skip likelihood, sample from priors
-  int<lower=0, upper=1> site_year_on;     // 0 = drop the site:year term (set to 0)
+  int<lower=0, upper=1> prior_only;
+  int<lower=0, upper=1> floor_on;
 }
 transformed data {
-  real nu = 4.0;                          // Student-t degrees of freedom (fixed)
-  real log_diameter_ref = log(diameter_ref);
-  vector[nObs] log_diameter = log(diameter) - log_diameter_ref;
-  vector[nObs] log_diameter_sq = log_diameter .* log_diameter;  // precomputed
-  vector[nObs] log_weight = log(weight);
-  // column-major linear index into to_vector(bSiteYear): (site, year) ->
-  // site + (year - 1) * nSite. Lets the site:year term be one vectorised gather.
-  array[nObs] int sy_idx;
-  for (i in 1:nObs) {
-    sy_idx[i] = site[i] + (year[i] - 1) * nSite;
+  vector[n_obs] log_x = log(diameter_mm) - log(diameter_ref);
+  vector[n_obs] log_weight = log(weight_kg);
+  // index of (site, year) in to_vector(site_year_effect)
+  array[n_obs] int sy_idx;
+  for (i in 1:n_obs) {
+    sy_idx[i] = site[i] + (year[i] - 1) * n_site;
   }
 }
 parameters {
-  real bWeight;                           // intercept: expected log(weight) at diameter_ref
-  real bDiameter;                         // linear log-diameter slope
-  real bDiameter2;                        // quadratic log-diameter slope
-  real<lower=0> sSite;                    // site intercept SD
-  real<lower=0> sSiteDiameter;            // site slope SD
-  real<lower=0> sSiteYear;                // site:year SD
-  real<lower=0> sWeight;                  // residual scale
-  vector[nSite] z_bSite;                  // non-centered site intercepts
-  vector[nSite] z_bSiteDiameter;          // non-centered site slopes
-  matrix[nSite, nYear] z_bSiteYear;       // non-centered site:year effects
+  real intercept;
+  real<lower=0> diameter_power;
+  real<lower=0> weight_floor;             // weight (kg) as diameter approaches 0
+  real<lower=0> sd_site;
+  real<lower=0> sd_year;
+  real<lower=0> sd_site_year;
+  real<lower=0> sd_residual;
+  vector[n_site] z_site;
+  vector[n_year] z_year;
+  matrix[n_site, n_year] z_site_year;
 }
 transformed parameters {
-  vector[nSite] bSite = z_bSite * sSite;
-  vector[nSite] bSiteDiameter = z_bSiteDiameter * sSiteDiameter;
-  matrix[nSite, nYear] bSiteYear = z_bSiteYear * sSiteYear;
-  // Vectorised mean: gather random effects by observation, combine elementwise.
-  vector[nObs] log_eWeight = bWeight + bSite[site]
-    + (bDiameter + bSiteDiameter[site]) .* log_diameter
-    + bDiameter2 * log_diameter_sq
-    + site_year_on * to_vector(bSiteYear)[sy_idx];
+  vector[n_site] site_effect = z_site * sd_site;
+  vector[n_year] year_effect = z_year * sd_year;
+  matrix[n_site, n_year] site_year_effect = z_site_year * sd_site_year;
 }
 model {
-  bWeight ~ normal(prior_intercept_mu, prior_intercept_sd);
-  bDiameter ~ normal(prior_diameter_mu, prior_diameter_sd);
-  bDiameter2 ~ normal(prior_diameter2_mu, prior_diameter2_sd);
-  sSite ~ exponential(prior_sd_site_rate);
-  sSiteDiameter ~ exponential(prior_sd_site_diameter_rate);
-  sSiteYear ~ exponential(prior_sd_site_year_rate);
-  sWeight ~ exponential(prior_sd_residual_rate);
-  z_bSite ~ std_normal();
-  z_bSiteDiameter ~ std_normal();
-  to_vector(z_bSiteYear) ~ std_normal();
+  intercept ~ normal(prior_intercept_mean, prior_intercept_sd);
+  // Truncated at 0 by the declarations, with constant normalising terms.
+  diameter_power ~ normal(prior_diameter_power_mean, prior_diameter_power_sd);
+  weight_floor ~ normal(prior_weight_floor_mean, prior_weight_floor_sd);
+  sd_site ~ exponential(prior_sd_site_rate);
+  sd_year ~ exponential(prior_sd_year_rate);
+  sd_site_year ~ exponential(prior_sd_site_year_rate);
+  sd_residual ~ exponential(prior_sd_residual_rate);
+  z_site ~ std_normal();
+  z_year ~ std_normal();
+  to_vector(z_site_year) ~ std_normal();
   if (prior_only == 0) {
-    log_weight ~ student_t(nu, log_eWeight, sWeight);
-  }
-}
-generated quantities {
-  // Reuse the single mean definition (log_eWeight, transformed parameters).
-  // log_lik: pointwise log-likelihood, for loo.
-  // yrep:    response-scale posterior-predictive replicate, for pp_check.
-  // Both loops are no-ops when nObs == 0. Predictions at new data are computed
-  // in R from the stored draws, not here.
-  vector[nObs] log_lik;
-  vector[nObs] yrep;
-  for (i in 1:nObs) {
-    log_lik[i] = student_t_lpdf(log_weight[i] | nu, log_eWeight[i], sWeight);
-    yrep[i] = exp(student_t_rng(nu, log_eWeight[i], sWeight));
+    vector[n_obs] log_alpha = intercept + site_effect[site] + year_effect[year]
+      + to_vector(site_year_effect)[sy_idx];
+    vector[n_obs] log_mu = log(floor_on * weight_floor
+      + exp(log_alpha + diameter_power * log_x));
+    log_weight ~ normal(log_mu, sd_residual);
   }
 }

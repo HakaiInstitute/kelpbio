@@ -1,0 +1,53 @@
+test_that("kb_influence returns the data with one row per observation", {
+  out <- kb_influence(size_nereo_fit)
+  expect_s3_class(out, "tbl_df")
+  expect_identical(nrow(out), nrow(size_nereo_fit$data))
+  expect_named(
+    out,
+    c(names(size_nereo_fit$data), "elpd_loo", "pareto_k", "influential")
+  )
+  expect_type(out$influential, "logical")
+})
+
+test_that("kb_influence matches loo's pointwise values", {
+  out <- kb_influence(size_nereo_fit)
+  psis <- suppressWarnings(loo::loo(size_nereo_fit))
+  expect_equal(out$elpd_loo, unname(psis$pointwise[, "elpd_loo"]))
+  expect_equal(out$pareto_k, loo::pareto_k_values(psis))
+})
+
+test_that("the threshold sets the flag and leaves the values unchanged", {
+  default <- kb_influence(weight_nereo_fit)
+  strict <- kb_influence(weight_nereo_fit, threshold = 1e6)
+  expect_equal(strict$pareto_k, default$pareto_k)
+  expect_equal(strict$elpd_loo, default$elpd_loo)
+  expect_false(any(strict$influential))
+})
+
+test_that("kb_influence does not warn about high Pareto k", {
+  fit <- weight_nereo_fit
+  fit$data$weight_kg[1] <- fit$data$weight_kg[1] * 1000
+  out <- expect_no_warning(kb_influence(fit))
+  expect_true(out$influential[1])
+})
+
+test_that("kb_influence refuses fits with no likelihood", {
+  prior_only <- wetdry_nereo_fit
+  prior_only$meta$prior_only <- TRUE
+  expect_snapshot(kb_influence(prior_only), error = TRUE)
+})
+
+test_that("kb_influence validates its arguments", {
+  expect_snapshot(kb_influence(1), error = TRUE)
+  expect_snapshot(kb_influence(wetdry_nereo_fit, threshold = 0), error = TRUE)
+  expect_snapshot(kb_influence(wetdry_nereo_fit, 0.7), error = TRUE)
+})
+
+test_that("the default threshold is loo's: lower than 0.7 below about 2,200 draws", {
+  fit <- weight_nereo_fit
+  out <- kb_influence(fit)
+  k <- out$pareto_k
+  threshold <- 1 - 1 / log10(posterior::ndraws(fit$draws))
+  expect_lt(threshold, 0.7)
+  expect_identical(out$influential, k > threshold)
+})

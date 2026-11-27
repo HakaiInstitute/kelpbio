@@ -2,33 +2,50 @@
 % Please edit documentation in R/kb_priors_weight_nereo.R
 \name{kb_priors_weight_nereo}
 \alias{kb_priors_weight_nereo}
-\title{Default Priors for the Nereocystis Weight Model}
+\title{Default priors for the Nereocystis weight model}
 \usage{
 kb_priors_weight_nereo()
 }
 \value{
-A named list of prior objects with entries \code{intercept}, \code{diameter},
-\code{diameter2}, \code{sd_site}, \code{sd_site_diameter}, \code{sd_site_year}, and
-\code{sd_residual}.
+A named list of prior objects, one per parameter.
 }
 \description{
-The default prior list for the \emph{Nereocystis luetkeana} allometric weight
-model. Edit individual entries and pass the list to the \code{priors} argument of
-\code{\link[=kb_fit_weight_nereo]{kb_fit_weight_nereo()}} to override defaults; unmodified entries keep their
-defaults.
+The default priors for the \emph{Nereocystis luetkeana} weight model, for the
+\code{priors} argument of \code{\link[=kb_fit_weight_nereo]{kb_fit_weight_nereo()}}. \code{weight_floor} applies only to
+\code{form = "packard_floor"}.
 }
-\details{
-The prior family of each entry is fixed (the population-level terms are
-Normal, the standard deviations are Exponential); only the hyperparameters
-can be changed.
+\section{Priors}{
+
+Each entry is named after the parameter it sets, which \code{\link[=kb_model_describe]{kb_model_describe()}}
+prints with the model. A list passed to \code{priors} replaces the entries it
+names; the others keep their defaults. The prior family of each entry is
+fixed; only its arguments can be changed.
 }
+
 \examples{
-priors <- kb_priors_weight_nereo()
-priors$sd_site <- kb_prior_exponential(2)
+kb_priors_weight_nereo()
+\dontshow{if (interactive()) withAutoprint(\{ # examplesIf}
+# Change one prior; the others keep their defaults:
+kb_fit_weight_nereo(
+  data_weight_sim_nereo,
+  priors = list(sd_site = kb_prior_exponential(rate = 2))
+)
+\dontshow{\}) # examplesIf}
 }
 \seealso{
 Other priors:
 \code{\link[=kb_prior_exponential]{kb_prior_exponential()}},
-\code{\link[=kb_prior_normal]{kb_prior_normal()}}
+\code{\link[=kb_prior_lognormal]{kb_prior_lognormal()}},
+\code{\link[=kb_prior_normal]{kb_prior_normal()}},
+\code{\link[=kb_priors_carbon_macro]{kb_priors_carbon_macro()}},
+\code{\link[=kb_priors_carbon_nereo]{kb_priors_carbon_nereo()}},
+\code{\link[=kb_priors_cover_calibration_macro]{kb_priors_cover_calibration_macro()}},
+\code{\link[=kb_priors_cover_calibration_nereo]{kb_priors_cover_calibration_nereo()}},
+\code{\link[=kb_priors_nitrogen_macro]{kb_priors_nitrogen_macro()}},
+\code{\link[=kb_priors_nitrogen_nereo]{kb_priors_nitrogen_nereo()}},
+\code{\link[=kb_priors_size_nereo]{kb_priors_size_nereo()}},
+\code{\link[=kb_priors_weight_macro]{kb_priors_weight_macro()}},
+\code{\link[=kb_priors_wetdry_macro]{kb_priors_wetdry_macro()}},
+\code{\link[=kb_priors_wetdry_nereo]{kb_priors_wetdry_nereo()}}
 }
 \concept{priors}

@@ -1,0 +1,49 @@
+## MODIFIED Requirements
+
+### Requirement: Validate weight model input data
+
+`kb_check_data_weight_nereo(data)` SHALL validate that `data` contains the columns required to fit the weight model, with appropriate types and values, returning the data invisibly on success and erroring on failure. `diameter` is in millimetres and `weight` in kilograms, the units the default priors are set for; prediction data use the same units. An optional `density` column (stipes per m²) is validated when present: numeric, `NA` allowed, non-negative, and at most one distinct non-missing value per site-year. It SHALL use `chk` validators following the `bboudata` conventions (e.g. `chk::chk_superset` for required columns, `chk::chk_character_or_factor` for `site`/`year`, `chk::chk_numeric` plus a positivity check for `diameter`/`weight`, and `chk::chk_not_any_na`), with column-qualified messages.
+
+#### Scenario: Valid data passes
+- **WHEN** `kb_check_data_weight_nereo()` is called with a data frame containing numeric `diameter` (> 0), numeric `weight` (> 0), and factor/character `site` and `year`, with no missing values
+- **THEN** it returns the data invisibly and emits no error
+
+#### Scenario: Missing required column errors
+- **WHEN** the data frame is missing one of `diameter`, `weight`, `site`, `year`
+- **THEN** it errors via `chk` with a message naming the missing column(s)
+
+#### Scenario: Wrong type or impossible value errors
+- **WHEN** `diameter` or `weight` is non-numeric or contains values `<= 0`
+- **THEN** it errors via `chk` with a column-qualified message identifying the offending column
+
+#### Scenario: Missing values error
+- **WHEN** any required column contains `NA`
+- **THEN** it errors via `chk::chk_not_any_na` naming the column
+
+#### Scenario: Optional density column is validated
+- **WHEN** the data have a `density` column
+- **THEN** it passes if numeric, with every non-missing value `>= 0` and at most one distinct non-missing value within each site-year, and otherwise errors with a column-qualified message (a site-year with conflicting values is named)
+
+#### Scenario: Density column is not required
+- **WHEN** the data have no `density` column, or a `density` column of all `NA`
+- **THEN** the data pass validation
+
+### Requirement: Bundled weight dataset
+
+The package SHALL ship `data_weight_sim_nereo`, a small simulated *Nereocystis luetkeana* weight dataset with columns `diameter`, `weight`, `site`, `year`, and `density` (with some site-years unrecorded), generated reproducibly from a fixed seed. It is intended for fast tests and runnable examples, not for inference.
+
+The package SHALL also ship `fit_weight_sim_nereo`, a slim pre-fit `kb_fit_weight` object fitted to `data_weight_sim_nereo` with a reduced number of chains and draws. It is intended for runnable examples and tests, not for inference.
+
+The package SHALL NOT bundle the real Hakai Institute survey data or an inference-grade fit. Those belong in a separate companion data package (`kelpbiodata`); the code package ships only simulated fixtures.
+
+#### Scenario: Simulated dataset is available and valid
+- **WHEN** `data_weight_sim_nereo` is loaded
+- **THEN** it is a data frame with columns `diameter`, `weight`, `site`, `year`, `density` that passes `kb_check_data_weight_nereo()`
+
+#### Scenario: Example fit is available
+- **WHEN** `fit_weight_sim_nereo` is loaded
+- **THEN** it is an object of class `c("kb_fit_weight_nereo", "kb_fit_weight", "kb_fit")` that the `kb_fit` accessors, S3 methods, and `kb_predict_weight*()` functions operate on
+
+#### Scenario: Real Hakai data is not bundled
+- **WHEN** the package's bundled data is enumerated
+- **THEN** it contains no real Hakai survey dataset and no inference-grade fit (these live in the companion data package)

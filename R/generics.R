@@ -10,42 +10,6 @@ generics::glance
 #' @export
 generics::augment
 
-#' @importFrom universals rhat
-#' @export
-universals::rhat
-
-#' @importFrom universals esr
-#' @export
-universals::esr
-
-#' @importFrom universals converged
-#' @export
-universals::converged
-
-#' @importFrom universals estimates
-#' @export
-universals::estimates
-
-#' @importFrom universals npars
-#' @export
-universals::npars
-
-#' @importFrom universals nterms
-#' @export
-universals::nterms
-
-#' @importFrom universals nchains
-#' @export
-universals::nchains
-
-#' @importFrom universals niters
-#' @export
-universals::niters
-
-#' @importFrom universals pars
-#' @export
-universals::pars
-
 #' @importFrom rstantools posterior_epred
 #' @export
 rstantools::posterior_epred
@@ -70,17 +34,38 @@ rstantools::prior_summary
 #' @export
 ggplot2::autoplot
 
-#' Posterior Draws
-#'
-#' The raw posterior draws from a fitted model object.
-#'
-#' @param fit A fitted model object.
-#' @param ... Unused.
-#' @return A `posterior` draws object.
-#' @family generics
+#' @importFrom posterior as_draws
 #' @export
-#' @examples
-#' samples(fit_weight_sim_nereo)
-samples <- function(fit, ...) {
-  UseMethod("samples")
-}
+posterior::as_draws
+
+#' @importFrom posterior nchains
+#' @export
+posterior::nchains
+
+#' @importFrom posterior niterations
+#' @export
+posterior::niterations
+
+#' @importFrom posterior ndraws
+#' @export
+posterior::ndraws
+
+#' @importFrom posterior nvariables
+#' @export
+posterior::nvariables
+
+#' @importFrom posterior variables
+#' @export
+posterior::variables
+
+#' @importFrom bayesplot pp_check
+#' @export
+bayesplot::pp_check
+
+#' @importFrom loo loo
+#' @export
+loo::loo
+
+#' @importFrom loo loo_compare
+#' @export
+loo::loo_compare

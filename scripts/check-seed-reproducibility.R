@@ -41,14 +41,40 @@ maxdiff <- function(a, b) {
 # Each row: fit twice the same way and compare. The explicit cross-mode row
 # checks that a shared seed gives the same draws in-process and in the subprocess.
 rows <- list(
-  list(label = "explicit seed, none x2", a = list(progress = "none", seed = SEED), b = list(progress = "none", seed = SEED)),
-  list(label = "explicit seed, bar x2", a = list(progress = "bar", seed = SEED), b = list(progress = "bar", seed = SEED)),
-  list(label = "explicit seed, none vs bar", a = list(progress = "none", seed = SEED), b = list(progress = "bar", seed = SEED)),
-  list(label = "set.seed(), none x2", a = list(progress = "none", set_seed = SEED), b = list(progress = "none", set_seed = SEED)),
-  list(label = "set.seed(), bar x2", a = list(progress = "bar", set_seed = SEED), b = list(progress = "bar", set_seed = SEED))
+  list(
+    label = "explicit seed, none x2",
+    a = list(progress = "none", seed = SEED),
+    b = list(progress = "none", seed = SEED)
+  ),
+  list(
+    label = "explicit seed, bar x2",
+    a = list(progress = "bar", seed = SEED),
+    b = list(progress = "bar", seed = SEED)
+  ),
+  list(
+    label = "explicit seed, none vs bar",
+    a = list(progress = "none", seed = SEED),
+    b = list(progress = "bar", seed = SEED)
+  ),
+  list(
+    label = "set.seed(), none x2",
+    a = list(progress = "none", set_seed = SEED),
+    b = list(progress = "none", set_seed = SEED)
+  ),
+  list(
+    label = "set.seed(), bar x2",
+    a = list(progress = "bar", set_seed = SEED),
+    b = list(progress = "bar", set_seed = SEED)
+  )
 )
 
-cat(sprintf("chains=%d niters=%d cores=%d seed=%d\n\n", CHAINS, NITERS, CORES, SEED))
+cat(sprintf(
+  "chains=%d niters=%d cores=%d seed=%d\n\n",
+  CHAINS,
+  NITERS,
+  CORES,
+  SEED
+))
 
 results <- lapply(rows, function(row) {
   d <- maxdiff(do.call(fit_draws, row$a), do.call(fit_draws, row$b))

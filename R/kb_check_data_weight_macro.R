@@ -1,0 +1,44 @@
+#' Check Macrocystis weight data
+#'
+#' Check that `data` contains the columns required to fit the *Macrocystis
+#' pyrifera* weight model, with appropriate types and values.
+#'
+#' @details
+#' ```{r, echo = FALSE, results = "asis"}
+#' cat(doc_data_columns("weight_macro"))
+#' ```
+#'
+#' @inheritParams kb_check_data_weight_nereo
+#' @inheritParams params
+#' @returns `data`, invisibly.
+#' @family data checks
+#' @export
+#'
+#' @examples
+#' data <- data.frame(
+#'   fronds = c(3, 8), weight_kg = c(0.4, 1.7),
+#'   site = factor(c("a", "b")), year = c(2020, 2021)
+#' )
+#' kb_check_data_weight_macro(data)
+kb_check_data_weight_macro <- function(
+  data,
+  x_name = chk::deparse_backtick_chk(substitute(data))
+) {
+  .with_call(
+    {
+      chk::chk_string(x_name)
+      chk::chk_data(data, x_name = x_name)
+      chk::chk_superset(
+        names(data),
+        data_column_names("weight_macro"),
+        x_name = x_name
+      )
+      .chk_measure_columns(data, "fronds", x_name, count = TRUE)
+      .chk_measure_columns(data, "weight_kg", x_name)
+      .chk_group_columns(data, x_name)
+      warn_implausible_units(data, x_name)
+    },
+    rlang::current_env()
+  )
+  invisible(data)
+}

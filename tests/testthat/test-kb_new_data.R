@@ -1,0 +1,101 @@
+test_that("kb_new_data gives one row per fitted level of by", {
+  site <- kb_new_data(size_nereo_fit, by = "site")
+  expect_named(site, "site")
+  expect_identical(levels(site$site), size_nereo_fit$meta$site_levels)
+  expect_equal(nrow(site), length(size_nereo_fit$meta$site_levels))
+
+  year <- kb_new_data(size_nereo_fit, by = "year")
+  expect_named(year, "year")
+  expect_equal(nrow(year), length(size_nereo_fit$meta$year_levels))
+
+  sy <- kb_new_data(size_nereo_fit, by = c("site", "year"))
+  expect_equal(nrow(sy), length(size_nereo_fit$meta$site_year_levels))
+
+  pop <- kb_new_data(size_nereo_fit)
+  expect_equal(nrow(pop), 1L)
+  expect_length(names(pop), 0L)
+})
+
+test_that("a supplied predictor sequence is used for either species", {
+  expect_equal(
+    kb_new_data(weight_nereo_fit, diameter_mm = c(25, 50, 75))$diameter_mm,
+    c(25, 50, 75)
+  )
+  expect_equal(kb_new_data(weight_macro_fit, fronds = c(2, 5, 10))$fronds, c(2, 5, 10))
+})
+
+test_that("a single predictor value gives one row per group", {
+  grid <- kb_new_data(weight_nereo_fit, by = "site", diameter_mm = 50)
+  expect_named(grid, c("site", "diameter_mm"))
+  expect_equal(nrow(grid), length(weight_nereo_fit$meta$site_levels))
+  expect_true(all(grid$diameter_mm == 50))
+})
+
+test_that("weight grids are marked as curves and others are not", {
+  expect_true(attr(kb_new_data(weight_nereo_fit), "kb_curve"))
+  expect_false(attr(kb_new_data(size_nereo_fit, by = "site"), "kb_curve"))
+})
+
+test_that("a cover grid is unit-plot surveys over cover from 0 to 1", {
+  grid <- kb_new_data(cover_calibration_nereo_fit, by = "site")
+  expect_named(
+    grid,
+    c("site", "cover", "canopy_area_m2", "plot_area_m2", "canopy_tide_height_m")
+  )
+  expect_equal(range(grid$cover), c(0, 1))
+  expect_equal(grid$canopy_area_m2, grid$cover)
+  expect_true(all(grid$plot_area_m2 == 1 & grid$canopy_tide_height_m == 0))
+  expect_true(attr(grid, "kb_curve"))
+  expect_error(kb_new_data(cover_calibration_nereo_fit, cover = 1.5), "cover")
+  expect_error(kb_new_data(cover_calibration_nereo_fit, cover = NA_real_), "cover")
+  expect_error(kb_new_data(cover_calibration_nereo_fit, diameter_mm = 30), "cover")
+})
+
+test_that("kb_new_data rejects a bad by, predictor, or model", {
+  expect_error(kb_new_data(size_nereo_fit, by = "month"), "Invalid")
+  expect_error(kb_new_data(weight_nereo_fit, fronds = c(2, 5)), "diameter_mm")
+  expect_error(kb_new_data(weight_macro_fit, diameter_mm = c(20, 40)), "fronds")
+  expect_error(kb_new_data(size_nereo_fit, diameter_mm = 30), "no column")
+  expect_error(kb_new_data(1), "must be a <kb_fit> object")
+})
+
+test_that("grouping levels supplied in ... are crossed into the grid", {
+  grid <- kb_new_data(weight_nereo_fit, by = "site", diameter_mm = 40, year = 2021)
+  expect_named(grid, c("site", "year", "diameter_mm"))
+  expect_identical(nrow(grid), length(weight_nereo_fit$meta$site_levels))
+  expect_true(all(grid$year == "2021"))
+
+  years <- kb_new_data(size_nereo_fit, site = "otter_cove", year = 2022:2025)
+  expect_identical(years$year, as.character(2022:2025))
+  expect_true(all(years$site == "otter_cove"))
+  expect_false(attr(years, "kb_curve"))
+})
+
+test_that("errors from ... name kb_new_data()", {
+  expect_identical(
+    expect_error(kb_new_data(size_nereo_fit, by = "month"))$call[[1]],
+    quote(kb_new_data)
+  )
+  expect_identical(
+    expect_error(kb_new_data(cover_calibration_nereo_fit, cover = 1.5))$call[[1]],
+    quote(kb_new_data)
+  )
+  expect_snapshot(error = TRUE, kb_new_data(weight_nereo_fit, by = "year", year = 2021))
+  expect_snapshot(error = TRUE, kb_new_data(weight_nereo_fit, month = 3))
+})
+
+test_that("supplied predictor values are checked like the model's data", {
+  expect_error(kb_new_data(weight_nereo_fit, diameter_mm = -1), "greater than 0")
+  expect_error(kb_new_data(weight_nereo_fit, diameter_mm = Inf), "finite")
+  expect_error(kb_new_data(weight_macro_fit, fronds = 2.5), "whole number")
+  expect_error(kb_new_data(cover_calibration_nereo_fit, cover = 1.2), "between 0 and 1")
+})
+
+test_that("kb_new_data grids match their snapshots", {
+  expect_snapshot_data(kb_new_data(weight_nereo_fit), "weight-nereo-curve")
+  expect_snapshot_data(kb_new_data(cover_calibration_nereo_fit), "cover-nereo-curve")
+  expect_snapshot_data(
+    kb_new_data(weight_macro_fit, by = c("site", "year"), fronds = 10),
+    "weight-macro-site-year"
+  )
+})

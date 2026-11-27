@@ -1,32 +1,26 @@
-#' Deviance Residuals
+#' Deviance residuals
 #'
 #' Posterior point estimates of the deviance residual at each observed row, from
-#' the Student-t log-weight likelihood, matching [augment()]'s `residual` column.
+#' the fitted likelihood, matching [augment()]'s `residual` column.
 #'
 #' @details
 #' The deviance residual is computed per draw, then summarised with the posterior
-#' median.
+#' median, from the likelihood of the fit's model (see [kb_model_describe()]).
+#' Where the cover calibration has a presence part, the residual combines the
+#' deviances of plant presence and biomass and is signed by the difference
+#' from the expected biomass.
 #'
-#' @param object A `kb_fit_weight` object.
-#' @param ... Unused.
-#'
-#' @return A numeric vector of deviance residuals, length `nobs(object)`.
-#' @family generics
+#' @inheritParams params
+#' @returns A numeric vector of deviance residuals, length `nobs(object)`.
+#' @family fit methods
 #' @seealso [fitted()] for fitted values, and [augment()].
 #' @exportS3Method stats::residuals
 #' @examples
 #' residuals(fit_weight_sim_nereo)
-residuals.kb_fit_weight <- function(object, ...) {
+residuals.kb_fit <- function(object, ...) {
   rlang::check_dots_empty()
-  .chk_kb_fit_weight(object)
-  mu <- posterior::draws_of(.weight_nereo_linpred_obs(object))
-  sw <- as.vector(posterior::draws_of(object$draws$sWeight))
-  y <- log(object$data$weight)
-  theta <- 1 / object$meta$nu
-  res <- vapply(
-    seq_len(nrow(mu)),
-    function(d) extras::res_student(y, mu[d, ], sd = sw[d], theta = theta),
-    numeric(length(y))
-  )
-  as.numeric(apply(res, 1L, stats::median))
+  .chk_kb_fit(object)
+  mu <- posterior::draws_of(.linpred_obs(object)) # link scale, D x N
+  res <- .eval_family(object, mu, object$data, "res")
+  as.numeric(apply(res, 2L, stats::median))
 }

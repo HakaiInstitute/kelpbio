@@ -2,13 +2,13 @@
 % Please edit documentation in R/kb_predict_weight.R
 \name{kb_predict_weight}
 \alias{kb_predict_weight}
-\title{Predict Weight for New Data}
+\title{Predict weight}
 \usage{
 kb_predict_weight(
   fit,
   new_data = NULL,
   ...,
-  new_levels = c("sample", "average"),
+  new_levels = c("average", "sample"),
   representative_site = NULL,
   conf_level = 0.95,
   estimate = stats::median,
@@ -18,79 +18,102 @@ kb_predict_weight(
 \arguments{
 \item{fit}{A \code{kb_fit_weight} object.}
 
-\item{new_data}{A data frame with a \code{diameter} column (and optional \code{site} /
-\code{year} columns), or \code{NULL} to predict at the observed data.}
+\item{new_data}{A data frame of the rows to predict at, with the fit's
+predictor column (\code{diameter_mm} or \code{fronds}) and optional \code{site} and \code{year}
+columns, or \code{NULL} for the observed data.
+\code{year} may be numeric or character: \code{2022} and \code{"2022"} match the same
+fitted year.}
 
 \item{...}{These dots are for future extensions and must be empty.}
 
-\item{new_levels}{A string, one of \code{"sample"} or \code{"average"}, controlling how
-random effects that are not conditioned on are treated (factors absent from
-the prediction, and any new level not seen in the fit). \code{"sample"} draws a
-new random effect from \code{Normal(0, sd)}, widening the interval to include
-between-group variation; \code{"average"} holds the random effects at zero,
-giving the typical group. Known levels are always conditioned on. \code{"sample"}
-draws fresh randomness on each call, so set a seed with \code{set.seed()} for a
-reproducible interval.}
+\item{new_levels}{A string giving how uncertainty is estimated for a site or
+year not in the data used to fit the model, or when \code{new_data} has no
+\code{site} or \code{year} column. Sites and years in the model fit always use their
+own estimates. One of:
+\itemize{
+\item \code{"average"} (the default): the typical site or year. The site and year
+effects are set to 0, their mean, so the interval does not include
+among-site or among-year variation. Use it to describe an average site or
+year.
+\item \code{"sample"}: a new effect for each new site or year, drawn from the
+estimated variation among sites or among years (the random-effect
+standard deviation). The point estimate is equivalent, but the interval
+is wider since it also includes that variation. Use it to get realistic
+uncertainty about a particular site or year that the model has no
+information on. Rows that name the same new site or year, or that have
+no \code{site} or \code{year} column, share one effect; give new sites or years
+different names for independent effects. The interval varies slightly
+between calls; use \code{set.seed()} to reproduce it.
+}}
 
-\item{representative_site}{A character vector of site levels present in the
-fit, or \code{NULL} (the default). When supplied, a new or absent site takes its
-site main effects (intercept and slope) from the named reference site (the
-per-draw average when several are named), instead of the \code{new_levels}
-treatment; the \code{site:year} interaction still follows \code{new_levels}.}
+\item{representative_site}{A character vector of sites in the fit whose
+effects a new site adopts (averaged when several are named), or \code{NULL} (the
+default) to follow \code{new_levels}.}
 
-\item{conf_level}{A number between 0 and 1 giving the compatibility-interval
-level.}
+\item{conf_level}{A number greater than 0 and less than 1 giving the
+compatibility-interval level.}
 
 \item{estimate}{A function that reduces a numeric vector of posterior draws to
-a scalar point estimate (e.g. \code{median} or \code{mean}).}
+a single estimate, such as \code{median} or \code{mean}.}
 
 \item{sig_fig}{A whole number of significant figures for summary output.}
 }
 \value{
-A \code{kb_predictions} object: the input rows with added \code{estimate},
-\code{lower}, and \code{upper} columns.
+A \code{kb_predictions} object: the rows of \code{new_data} with added
+\code{estimate}, \code{lower}, and \code{upper} columns summarising the posterior
+distribution of expected weight. When the rows have \code{site} and \code{year}, a
+\code{weight_support} column (as in \code{\link[=kb_predict_mean_weight]{kb_predict_mean_weight()}}) precedes the
+summary.
 }
 \description{
-Predict weight for the supplied rows, or for the observed data when
-\code{new_data = NULL}. For an allometric curve over a diameter sequence, use
-\code{\link[=kb_predict_weight_by]{kb_predict_weight_by()}} instead.
+Predict the expected wet weight (kg) of a plant at each row of \code{new_data}, or
+at the observed data when \code{new_data = NULL}.
 }
 \details{
-Conditioning is resolved per row: a \code{site}/\code{year} value the model has seen is
-conditioned on its estimated random effects; a new site or year, or an absent
-grouping column, is handled by \code{new_levels}.
-
-With the default \code{new_levels = "sample"}, an absent or new group draws a random
-effect from its estimated distribution, so the interval includes between-group
-variation; \code{"average"} instead holds those random effects at zero. \code{"sample"}
-draws fresh values on each call; set a seed with \code{set.seed()} for a
-reproducible interval. \code{"sample"} is the default because it produces honest
-uncertainty for a new, unobserved site/year.
-
-For a new site, \code{representative_site} offers a third approach: instead of
-\code{new_levels} (\code{"sample"} or \code{"average"}) it borrows the site intercept and
-slope of one or more named reference sites (the per-draw average across
-several). The \code{site:year} interaction still follows \code{new_levels}.
+With \code{representative_site}, a new site also takes the named sites'
+site:year effect in a year in which they have data.
 }
 \examples{
-new_data <- data.frame(diameter = c(20, 40, 60))
-kb_predict_weight(fit_weight_sim_nereo, new_data, new_levels = "average")
+fit <- fit_weight_sim_nereo
 
-# Predict a new site as if it behaves like a known reference site:
-new_site <- data.frame(diameter = c(20, 40, 60), site = "new_site")
+# At the observed plants:
+kb_predict_weight(fit)
+
+# Curves by site:
+kb_predict_weight(fit, kb_new_data(fit, by = "site"))
+
+# At new measurements:
+kb_predict_weight(fit, data.frame(diameter_mm = c(20, 40, 60)))
+
+# A new site, with between-site variation:
+set.seed(1)
 kb_predict_weight(
-  fit_weight_sim_nereo, new_site,
-  representative_site = fit_weight_sim_nereo$meta$site_levels[1]
+  fit,
+  data.frame(diameter_mm = 40, site = "new_site"),
+  new_levels = "sample"
 )
 }
 \seealso{
-\code{\link[=kb_predict_weight_by]{kb_predict_weight_by()}} to generate new_data by grouping factors
-and diameter sequence, and \code{\link[=augment]{augment()}} for fitted/residual values at
-the observed data.
+\code{\link[=kb_new_data]{kb_new_data()}} to build rows by site or year over a predictor
+sequence, and \code{\link[=posterior_predict]{posterior_predict()}} for draws of individual plant weights.
 
-Other prediction:
+Other prediction functions:
 \code{\link[=autoplot.kb_predictions]{autoplot.kb_predictions()}},
+\code{\link[=kb_new_data]{kb_new_data()}},
 \code{\link[=kb_plot_predictions]{kb_plot_predictions()}},
-\code{\link[=kb_predict_weight_by]{kb_predict_weight_by()}}
+\code{\link[=kb_predict_biomass_canopy]{kb_predict_biomass_canopy()}},
+\code{\link[=kb_predict_biomass_in_situ]{kb_predict_biomass_in_situ()}},
+\code{\link[=kb_predict_carbon]{kb_predict_carbon()}},
+\code{\link[=kb_predict_cover_calibration]{kb_predict_cover_calibration()}},
+\code{\link[=kb_predict_mean_weight]{kb_predict_mean_weight()}},
+\code{\link[=kb_predict_nitrogen]{kb_predict_nitrogen()}},
+\code{\link[=kb_predict_size]{kb_predict_size()}},
+\code{\link[=kb_predict_wetdry]{kb_predict_wetdry()}},
+\code{\link[=predict.kb_fit_carbon]{predict.kb_fit_carbon()}},
+\code{\link[=predict.kb_fit_cover_calibration]{predict.kb_fit_cover_calibration()}},
+\code{\link[=predict.kb_fit_nitrogen]{predict.kb_fit_nitrogen()}},
+\code{\link[=predict.kb_fit_size]{predict.kb_fit_size()}},
+\code{\link[=predict.kb_fit_weight]{predict.kb_fit_weight()}},
+\code{\link[=predict.kb_fit_wetdry]{predict.kb_fit_wetdry()}}
 }
-\concept{prediction}
+\concept{prediction functions}

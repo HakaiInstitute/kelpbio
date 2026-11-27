@@ -8,32 +8,38 @@ name: R-CMD-check.yaml
 
 permissions: read-all
 
+# A new push to a branch cancels its run still in progress.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   R-CMD-check:
     runs-on: ${{ matrix.config.os }}
+    # R-devel can take 40 min when its package cache is empty.
+    timeout-minutes: ${{ matrix.config.full && 60 || 30 }}
 
     name: ${{ matrix.config.os }} (${{ matrix.config.r }})
 
     strategy:
       fail-fast: false
+      # main (pushes and pull requests into it) runs the full matrix with the
+      # vignettes built; everything else checks on Ubuntu release only.
       matrix:
-        config:
-          - {os: macos-latest,   r: 'release'}
-          - {os: windows-latest, r: 'release'}
-          - {os: ubuntu-latest,  r: 'devel', http-user-agent: 'release'}
-          - {os: ubuntu-latest,  r: 'release'}
-          - {os: ubuntu-latest,  r: 'oldrel-1'}
+        config: ${{ fromJSON((github.ref == 'refs/heads/main' || github.base_ref == 'main') && '[{"os":"macos-latest","r":"release","full":true},{"os":"windows-latest","r":"release","full":true},{"os":"ubuntu-latest","r":"devel","http-user-agent":"release","full":true},{"os":"ubuntu-latest","r":"release","full":true},{"os":"ubuntu-latest","r":"oldrel-1","full":true}]' || '[{"os":"ubuntu-latest","r":"release","full":false}]') }}
 
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
       R_KEEP_PKG_SOURCE: yes
+      # Compiles the Stan models in parallel; they dominate the install time.
+      MAKEFLAGS: -j4
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
-      - uses: r-lib/actions/setup-pandoc@v2
+      - uses: r-lib/actions/setup-pandoc@f9a764fea8d5c63df6ef9a5c7795bf7deb5d7e05 # v2.14.0
 
-      - uses: r-lib/actions/setup-r@v2
+      - uses: r-lib/actions/setup-r@f9a764fea8d5c63df6ef9a5c7795bf7deb5d7e05 # v2.14.0
         with:
           r-version: ${{ matrix.config.r }}
           http-user-agent: ${{ matrix.config.http-user-agent }}
@@ -41,19 +47,23 @@ jobs:
 
       # Caches the package library (keyed on dependency state), so the slow
       # rstan/StanHeaders compile is paid once per dependency change.
-      # TEMP: the CRAN rstan 2.32 Windows binary is built against RcppParallel
-      # < 6; RcppParallel 6.0.0 changed its bundled TBB, so rstan.dll fails to
-      # load ("specified module could not be found") at install. Pin RcppParallel
-      # to the last 5.x on Windows until a RcppParallel-6-compatible rstan ships.
-      # See stan-dev/rstan#979 and #1041. Remove this pin once upstream is fixed.
-      - uses: r-lib/actions/setup-r-dependencies@v2
+      # A previous RcppParallel@5.1.11 pin on Windows worked around the CRAN
+      # rstan 2.32 binary being built against RcppParallel < 6 ("specified
+      # module could not be found" at install). With rstan 2.32.7 the pin now
+      # produces the opposite failure ("specified procedure could not be found",
+      # i.e. tbb.dll loads but lacks the expected exports), so the pin is
+      # removed and RcppParallel resolves to current. See stan-dev/rstan#979,
+      # #1041; restore a pin only if the "module" error returns.
+      - uses: r-lib/actions/setup-r-dependencies@f9a764fea8d5c63df6ef9a5c7795bf7deb5d7e05 # v2.14.0
         with:
           extra-packages: >-
             any::rcmdcheck
-            ${{ matrix.config.os == 'windows-latest' && 'RcppParallel@5.1.11' || '' }}
           needs: check
 
-      - uses: r-lib/actions/check-r-package@v2
+      - uses: r-lib/actions/check-r-package@f9a764fea8d5c63df6ef9a5c7795bf7deb5d7e05 # v2.14.0
         with:
           upload-snapshots: true
-          build_args: 'c("--no-manual","--compact-vignettes=gs+qpdf")'
+          # Outside main the vignettes are not built: building them installs the
+          # package a second time, and the pkgdown workflow renders them on every PR.
+          build_args: ${{ matrix.config.full && 'c("--no-manual")' || 'c("--no-manual","--no-build-vignettes")' }}
+          args: ${{ matrix.config.full && 'c("--no-manual","--as-cran")' || 'c("--no-manual","--as-cran","--ignore-vignettes")' }}

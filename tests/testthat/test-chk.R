@@ -1,17 +1,32 @@
 test_that(".chk_kb_fit passes a fit through invisibly and errors on a non-fit", {
-  expect_invisible(.chk_kb_fit(weight_fit))
-  expect_identical(.chk_kb_fit(weight_fit), weight_fit)
-  expect_error(.chk_kb_fit(1), "kb_fit")
+  expect_invisible(.chk_kb_fit(weight_nereo_fit))
+  expect_identical(.chk_kb_fit(weight_nereo_fit), weight_nereo_fit)
+  expect_error(.chk_kb_fit(1), "must be a <kb_fit> object")
 })
 
-test_that(".chk_kb_fit_weight passes a fit through invisibly and errors on a non-fit", {
-  expect_invisible(.chk_kb_fit_weight(weight_fit))
-  expect_identical(.chk_kb_fit_weight(weight_fit), weight_fit)
-  expect_snapshot(error = TRUE, .chk_kb_fit_weight(1))
+test_that(".chk_kb_fit with class kb_fit_weight passes a fit through invisibly and errors on a non-fit", {
+  expect_invisible(.chk_kb_fit(weight_nereo_fit, "kb_fit_weight"))
+  expect_identical(.chk_kb_fit(weight_nereo_fit, "kb_fit_weight"), weight_nereo_fit)
+  expect_snapshot(error = TRUE, .chk_kb_fit(1, "kb_fit_weight"))
+})
+
+test_that("the fit checkers attribute the error to the supplied call", {
+  caller <- function(x) .chk_kb_fit(x, call = rlang::current_env())
+  expect_equal(
+    rlang::catch_cnd(caller(1))$call,
+    quote(caller(1))
+  )
+  caller_weight <- function(x) {
+    .chk_kb_fit(x, "kb_fit_weight", call = rlang::current_env())
+  }
+  expect_equal(
+    rlang::catch_cnd(caller_weight(1))$call,
+    quote(caller_weight(1))
+  )
 })
 
 test_that(".chk_new_data_weight_nereo passes valid new_data through invisibly", {
-  d <- data.frame(diameter = c(20, 40))
+  d <- data.frame(diameter_mm = c(20, 40))
   expect_invisible(.chk_new_data_weight_nereo(d))
   expect_identical(.chk_new_data_weight_nereo(d), d)
 })
@@ -38,6 +53,15 @@ test_that(".chk_progress_dir accepts NULL/an existing directory and errors other
   expect_snapshot(error = TRUE, .chk_progress_dir(1))
 })
 
+test_that(".chk_progress_dir errors on a directory that cannot be written to", {
+  skip_on_os("windows")
+  d <- withr::local_tempdir()
+  Sys.chmod(d, "0555")
+  withr::defer(Sys.chmod(d, "0755"))
+  skip_if(file.access(d, mode = 2L) == 0L, "running with write access to every directory")
+  expect_error(.chk_progress_dir(d), "writable")
+})
+
 test_that(".chk_sampler_args validates progress, progress_dir, and the numeric args", {
   expect_null(.chk_sampler_args(
     prior_only = FALSE,
@@ -62,6 +86,32 @@ test_that(".chk_sampler_args validates progress, progress_dir, and the numeric a
     ),
     "progress"
   )
+  expect_error(
+    .chk_sampler_args(
+      prior_only = FALSE,
+      chains = Inf,
+      niters = 1000L,
+      nthin = 1L,
+      cores = NULL,
+      seed = NULL,
+      progress = "bar",
+      progress_dir = NULL
+    ),
+    "finite"
+  )
+  expect_error(
+    .chk_sampler_args(
+      prior_only = FALSE,
+      chains = 4L,
+      niters = 1000L,
+      nthin = 1L,
+      cores = NULL,
+      seed = 3e9,
+      progress = "bar",
+      progress_dir = NULL
+    ),
+    "seed"
+  )
   expect_error(.chk_sampler_args(
     prior_only = FALSE,
     chains = 0L,
@@ -75,11 +125,310 @@ test_that(".chk_sampler_args validates progress, progress_dir, and the numeric a
 })
 
 test_that(".chk_representative_site passes NULL/known sites and errors on unknown", {
-  expect_invisible(.chk_representative_site(weight_fit, NULL))
-  site1 <- weight_fit$meta$site_levels[1]
-  expect_identical(.chk_representative_site(weight_fit, site1), site1)
+  expect_invisible(.chk_representative_site(weight_nereo_fit, NULL))
+  site1 <- weight_nereo_fit$meta$site_levels[1]
+  expect_identical(.chk_representative_site(weight_nereo_fit, site1), site1)
   expect_snapshot(
     error = TRUE,
-    .chk_representative_site(weight_fit, "not_a_site")
+    .chk_representative_site(weight_nereo_fit, "not_a_site")
   )
+})
+
+test_that(".chk_representative_site_fits shows the expected list form", {
+  fits <- c("weight", "size")
+  expect_identical(.chk_representative_site_fits(list(weight = "a"), fits), list(weight = "a"))
+  expect_snapshot(error = TRUE, .chk_representative_site_fits(list("a"), fits))
+  expect_snapshot(error = TRUE, .chk_representative_site_fits(list(size = "a"), "weight"))
+})
+
+test_that(".chk_observed_data rejects a fit with no rows to predict at", {
+  # Otherwise .linpred() fails with a posterior broadcast error.
+  fit0 <- weight_nereo_fit
+  fit0$data <- fit0$data[0, ]
+  expect_error(.chk_observed_data(fit0), "no observed data")
+  expect_invisible(.chk_observed_data(weight_nereo_fit))
+})
+
+test_that(".chk_occupied_survey errors when no survey has plants", {
+  data <- data.frame(biomass_kg_m2 = c(0, 2))
+  expect_invisible(.chk_occupied_survey(data, prior_only = FALSE))
+  expect_snapshot(error = TRUE, .chk_occupied_survey(data[1, , drop = FALSE], prior_only = FALSE))
+})
+
+test_that(".chk_fit_rows points zero-row data to prior_only", {
+  data <- data.frame(x = 1)
+  expect_invisible(.chk_fit_rows(data, prior_only = FALSE))
+  expect_invisible(.chk_fit_rows(data[0, , drop = FALSE], prior_only = TRUE))
+  expect_snapshot(error = TRUE, .chk_fit_rows(data[0, , drop = FALSE], prior_only = FALSE))
+})
+
+test_that(".chk_new_data errors name the invalid predictor column", {
+  expect_error(
+    .chk_new_data_weight_nereo(data.frame(diameter_mm = 0)),
+    "`diameter_mm` .* must be greater than 0"
+  )
+  expect_error(
+    .chk_new_data_weight_nereo(data.frame(diameter_mm = "30")),
+    "`diameter_mm` .* must be numeric"
+  )
+  expect_error(
+    .chk_new_data_weight_nereo(data.frame(diameter_mm = NA_real_)),
+    "`diameter_mm` .* must not have missing values"
+  )
+  expect_error(
+    .chk_new_data_weight_macro(data.frame(fronds = 2.5)),
+    "`fronds` .* must be a whole number"
+  )
+})
+
+test_that(".chk_kb_fit with class kb_fit_size passes a size fit through and errors otherwise", {
+  expect_invisible(.chk_kb_fit(size_nereo_fit, "kb_fit_size"))
+  expect_error(.chk_kb_fit(weight_nereo_fit, "kb_fit_size"), "must be a <kb_fit_size> object")
+})
+
+test_that(".chk_kb_fit_grouped errors for a non-fit and a model without groups", {
+  expect_invisible(.chk_kb_fit_grouped(size_nereo_fit))
+  expect_error(.chk_kb_fit_grouped(1), "must be a <kb_fit> object")
+  expect_snapshot(error = TRUE, .chk_kb_fit_grouped(wetdry_nereo_fit))
+})
+
+test_that(".chk_grid_dots accepts the predictor and grouping values and rejects others", {
+  expect_invisible(.chk_grid_dots(weight_nereo_fit, list(), NULL))
+  expect_invisible(.chk_grid_dots(weight_nereo_fit, list(diameter_mm = 30), NULL))
+  expect_invisible(.chk_grid_dots(weight_macro_fit, list(fronds = 1:3), NULL))
+  expect_invisible(.chk_grid_dots(weight_nereo_fit, list(year = 2021), "site"))
+  expect_invisible(.chk_grid_dots(size_nereo_fit, list(site = "a", year = "2020"), NULL))
+  expect_snapshot(
+    error = TRUE,
+    .chk_grid_dots(weight_nereo_fit, list(fronds = 3), NULL)
+  )
+  expect_snapshot(
+    error = TRUE,
+    .chk_grid_dots(weight_nereo_fit, list(30), NULL)
+  )
+  expect_snapshot(
+    error = TRUE,
+    .chk_grid_dots(size_nereo_fit, list(diameter_mm = 30), NULL)
+  )
+  twice <- stats::setNames(list(30, 40), c("diameter_mm", "diameter_mm"))
+  expect_snapshot(
+    error = TRUE,
+    .chk_grid_dots(weight_nereo_fit, twice, NULL)
+  )
+  expect_snapshot(
+    error = TRUE,
+    .chk_grid_dots(weight_nereo_fit, list(diameter_mm = "a"), NULL)
+  )
+  expect_snapshot(
+    error = TRUE,
+    .chk_grid_dots(weight_nereo_fit, list(year = 2021), "year")
+  )
+  expect_snapshot(
+    error = TRUE,
+    .chk_grid_dots(weight_nereo_fit, list(year = TRUE), NULL)
+  )
+  expect_error(
+    .chk_grid_dots(weight_nereo_fit, list(year = NA_character_), NULL),
+    "missing"
+  )
+})
+test_that(".chk_kb_fit with class kb_fit_wetdry passes a wet/dry fit through and errors otherwise", {
+  expect_invisible(.chk_kb_fit(wetdry_macro_fit, "kb_fit_wetdry"))
+  expect_error(.chk_kb_fit(weight_nereo_fit, "kb_fit_wetdry"), "must be a <kb_fit_wetdry> object")
+})
+
+test_that(".chk_kb_fit with class kb_fit_carbon passes a carbon fit through and errors otherwise", {
+  expect_invisible(.chk_kb_fit(carbon_macro_fit, "kb_fit_carbon"))
+  expect_error(.chk_kb_fit(wetdry_macro_fit, "kb_fit_carbon"), "must be a <kb_fit_carbon> object")
+})
+
+test_that(".chk_same_species and .chk_same_ndraws name the fits", {
+  expect_invisible(.chk_same_species(list(weight = weight_nereo_fit, size = size_nereo_fit)))
+  expect_snapshot(
+    .chk_same_species(list(weight = weight_nereo_fit, size = weight_macro_fit)),
+    error = TRUE
+  )
+  expect_invisible(.chk_same_ndraws(list(weight = weight_nereo_fit, size = size_nereo_fit)))
+  expect_snapshot(
+    .chk_same_ndraws(list(weight = weight_nereo_fit, size = fit_size_sim_nereo)),
+    error = TRUE
+  )
+})
+
+
+test_that(".chk_kb_fit with class kb_fit_cover_calibration passes a cover calibration fit through and errors otherwise", {
+  expect_invisible(.chk_kb_fit(cover_calibration_macro_fit, "kb_fit_cover_calibration"))
+  expect_error(.chk_kb_fit(carbon_macro_fit, "kb_fit_cover_calibration"), "must be a <kb_fit_cover_calibration> object")
+})
+
+test_that(".chk_cover_survey errors name the survey column", {
+  good <- data.frame(canopy_area_m2 = 40, plot_area_m2 = 200, canopy_tide_height_m = 0.5)
+  expect_invisible(.chk_cover_survey(good))
+  expect_snapshot(
+    error = TRUE,
+    .chk_cover_survey(good[c("canopy_area_m2", "plot_area_m2")], x_name = "`new_data`")
+  )
+  bad <- good
+  bad$canopy_area_m2 <- 300
+  expect_snapshot(error = TRUE, .chk_cover_survey(bad, x_name = "`new_data`"))
+  bad <- good
+  bad$canopy_tide_height_m <- "low"
+  expect_error(.chk_cover_survey(bad), "canopy_tide_height_m")
+  expect_error(.chk_cover_survey(1), "must be a data.frame")
+})
+
+test_that(".chk_cover_survey checks biomass_sd_kg_m2 where present", {
+  good <- data.frame(canopy_area_m2 = 40, plot_area_m2 = 200, canopy_tide_height_m = 0.5)
+  expect_invisible(.chk_cover_survey(transform(good, biomass_sd_kg_m2 = 0.2)))
+  expect_snapshot(
+    error = TRUE,
+    .chk_cover_survey(transform(good, biomass_sd_kg_m2 = -1), x_name = "`new_data`")
+  )
+})
+
+test_that(".chk_canopy_maps errors name the survey column", {
+  good <- data.frame(
+    site = "a", year = "2020", canopy_area_m2 = 100, canopy_tide_height_m = 0.5, classified_area_m2 = 1e4
+  )
+  expect_invisible(.chk_canopy_maps(good))
+  expect_error(.chk_canopy_maps(good[setdiff(names(good), "classified_area_m2")]), "classified_area_m2")
+  expect_snapshot(
+    error = TRUE,
+    .chk_canopy_maps(good[c("site", "year", "canopy_area_m2")], x_name = "`new_data`")
+  )
+  expect_snapshot(
+    error = TRUE,
+    .chk_canopy_maps(transform(good, classified_area_m2 = 50), x_name = "`new_data`")
+  )
+  expect_error(.chk_canopy_maps(transform(good, classified_area_m2 = 0)), "classified_area_m2")
+  expect_error(.chk_canopy_maps(transform(good, year = NA)), "year")
+  expect_error(.chk_canopy_maps(1), "must be a data.frame")
+})
+
+test_that(".chk_pool_by names a missing or non-grouping column", {
+  data <- data.frame(region = "north", zone = 1)
+  expect_invisible(.chk_pool_by("region", data))
+  expect_snapshot(error = TRUE, .chk_pool_by("zone", data))
+  expect_snapshot(error = TRUE, .chk_pool_by(c("region", "district"), data))
+  expect_error(.chk_pool_by(1, data), "character")
+})
+
+test_that(".chk_measure_fits requires the fits a measure needs", {
+  expect_invisible(.chk_measure_fits("wet", NULL, NULL, NULL))
+  expect_error(.chk_measure_fits("dry", NULL, NULL, NULL), "wetdry")
+  expect_error(.chk_measure_fits("carbon", wetdry_nereo_fit, NULL, NULL), "carbon")
+  expect_error(.chk_measure_fits("nitrogen", wetdry_nereo_fit, NULL, NULL), "nitrogen")
+  expect_error(.chk_measure_fits("dry", carbon_nereo_fit, NULL, NULL), "kb_fit_wetdry")
+  expect_error(.chk_measure_fits("wet", NULL, NULL, carbon_nereo_fit), "kb_fit_nitrogen")
+})
+
+test_that(".chk_sampling_dots rejects sampler arguments kelpbio sets, naming the replacement", {
+  expect_invisible(.chk_sampling_dots(list(control = list(), init = 0)))
+  expect_snapshot(error = TRUE, .chk_sampling_dots(list(iter = 10, thin = 2)))
+  expect_snapshot(error = TRUE, .chk_sampling_dots(list(pars = "intercept")))
+  expect_snapshot(error = TRUE, .chk_sampling_dots(list("power")))
+})
+
+test_that(".chk_predictions names the missing structure", {
+  ok <- data.frame(estimate = 1, lower = 0.5, upper = 2)
+  expect_invisible(.chk_predictions(ok))
+  expect_error(.chk_predictions(list()), "data frame")
+  expect_error(.chk_predictions(ok["estimate"]), "columns")
+})
+
+test_that(".chk_plot_x asks for x when it cannot be inferred", {
+  p <- data.frame(diameter_mm = 1, estimate = 1)
+  expect_invisible(.chk_plot_x("diameter_mm", p, supplied = TRUE))
+  expect_error(.chk_plot_x(NULL, p, supplied = FALSE), "Supply")
+  expect_error(.chk_plot_x("site", p, supplied = TRUE), "must name a column")
+})
+
+test_that(".chk_log_axis gives a message per failing axis", {
+  p <- data.frame(
+    cover = c(0, 1),
+    site = c("a", "b"),
+    estimate = c(1, 2),
+    lower = c(0.5, 1),
+    upper = c(2, 3)
+  )
+  expect_invisible(.chk_log_axis("y", p, "cover"))
+  expect_error(.chk_log_axis("xy", p, "cover"), "positive cover")
+  expect_error(.chk_log_axis("xy", p, "site"), "numeric x-axis")
+  p$upper[1] <- -1
+  expect_error(.chk_log_axis("y", p, "cover"), "log y-axis")
+})
+
+test_that(".chk_finite, .chk_rows, and .chk_new_data_groups name the problem", {
+  expect_invisible(.chk_finite(c(1, NA)))
+  expect_invisible(.chk_rows(data.frame(x = 1)))
+  expect_invisible(.chk_new_data_groups(data.frame(site = "a", year = 2020)))
+  expect_snapshot(error = TRUE, .chk_finite(c(1, Inf), "`x`"))
+  expect_snapshot(error = TRUE, .chk_rows(data.frame(x = numeric(0)), "`new_data`"))
+  expect_snapshot(error = TRUE, .chk_new_data_groups(data.frame(site = c("a", NA))))
+})
+
+test_that("measure checks reject infinite values", {
+  expect_error(.chk_positive_measure(c(1, Inf), "`x`"), "finite")
+  expect_error(
+    .chk_measure_columns(data.frame(weight_kg = Inf), "weight_kg", "`data`"),
+    "finite"
+  )
+})
+
+test_that(".chk_summary_args excludes the conf_level endpoints", {
+  expect_null(.chk_summary_args(0.95, stats::median, 3))
+  expect_error(.chk_summary_args(0, stats::median, 3), "exclusive")
+  expect_error(.chk_summary_args(1, stats::median, 3), "exclusive")
+})
+
+test_that(".chk_fit_inputs checks sampler arguments, data, then rows, naming the call", {
+  call <- quote(kb_fit_size_nereo())
+  check <- function(data, x_name) {
+    chk::chk_superset(names(data), "x", x_name = x_name)
+    invisible(data)
+  }
+  inputs <- function(data, prior_only = FALSE, chains = 4L) {
+    .chk_fit_inputs(
+      data,
+      check,
+      prior_only = prior_only,
+      chains = chains,
+      niters = 1000L,
+      nthin = 1L,
+      cores = NULL,
+      seed = NULL,
+      progress = "none",
+      progress_dir = NULL,
+      call = call
+    )
+  }
+  data <- data.frame(x = 1)
+  expect_invisible(inputs(data))
+  expect_invisible(inputs(data[0, , drop = FALSE], prior_only = TRUE))
+  err <- expect_error(inputs(data, chains = 0L), "chains")
+  expect_identical(err$call, call)
+  err <- expect_error(inputs(data.frame(y = 1)), "x")
+  expect_identical(err$call, call)
+  err <- expect_error(inputs(data[0, , drop = FALSE]), "prior_only")
+  expect_identical(err$call, call)
+})
+
+test_that(".chk_id_column allows numeric year and survey_id only", {
+  expect_invisible(.chk_id_column(2021, "year"))
+  expect_invisible(.chk_id_column(1.5, "survey_id"))
+  expect_error(.chk_id_column(2021.5, "year", "`year`"), "year")
+  expect_error(.chk_id_column(TRUE, "survey_id", "`survey_id`"), "character, factor, or numeric")
+  expect_error(.chk_id_column(1, "site", "`site`"), "site")
+})
+
+test_that(".chk_by rejects a factor no model groups by", {
+  expect_invisible(.chk_by("site"))
+  expect_error(.chk_by("bogus"), "Invalid")
+  expect_error(.chk_by(1), "character")
+})
+
+test_that(".chk_geom gives a message per reason columns cannot be drawn", {
+  expect_invisible(.chk_geom("bar", FALSE, "none"))
+  expect_error(.chk_geom("bar", TRUE, "none"), "drawn as a curve")
+  expect_error(.chk_geom("bar", FALSE, "y"), "linear axes")
 })

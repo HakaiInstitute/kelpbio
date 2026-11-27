@@ -1,33 +1,98 @@
-# Dev build / QC script for kelpbio.
+# Dev build / QC for kelpbio: rstan_config(), install (with the vignettes),
+# document, then test.
 #
-# kelpbio is an rstan/rstantools package: Stan models in inst/stan/ are
-# transpiled to C++ and compiled into the package binary at build/install time.
+#   Rscript scripts/build.R                       routine build
+#   Rscript scripts/build.R --fits                + rebuild all pre-fits and fixtures (MCMC)
+#   Rscript scripts/build.R --fits=size,wetdry    + rebuild only those models'
+#   Rscript scripts/build.R --check               R CMD check in place of test()
+#   Rscript scripts/build.R --site                + build the pkgdown site
 #
-#   * After editing inst/stan/*.stan, regenerate src/stanExports_*.{cc,h} with
-#     rstantools::rstan_config() (done first below). load_all()/document()/
-#     test() compile from those generated files but do NOT re-transpile the
-#     Stan source themselves, so .stan edits are otherwise missed.
-#   * The generated files (R/stanmodels.R, src/stanExports_*, src/RcppExports.cpp)
-#     are not hand-edited and are excluded from styling.
-#   * Linting is handled by jarl in CI (.github/workflows/lint-with-jarl.yaml,
-#     configured by jarl.toml); this script no longer lints, so local and CI
-#     checks stay in sync.
-#   * The slow, authoritative steps (R CMD check, which re-runs configure ->
-#     rstan_config() and recompiles the models, plus the pkgdown site) run only
-#     when KELPBIO_FULL_CHECK=true, so routine runs stay fast:
-#       KELPBIO_FULL_CHECK=true Rscript scripts/build.R
+# Flags combine (--fits=wetdry --check). Also available as Positron / VS Code
+# tasks "kelpbio: ..." (.vscode/tasks.json).
 
-full_check <- isTRUE(as.logical(Sys.getenv("KELPBIO_FULL_CHECK", "false")))
+models <- c("weight", "size", "wetdry", "carbon", "nitrogen", "cover_calibration")
+usage <- paste(
+  "Usage: Rscript scripts/build.R [--fits[=<models>]] [--check] [--site]",
+  "  --fits           also rebuild the pre-fit models and test fixtures (Stan MCMC)",
+  "  --fits=<models>  only for these comma-separated models:",
+  paste0("                   ", paste(models, collapse = ", ")),
+  "  --check          run R CMD check instead of the test suite",
+  "  --site           also build the pkgdown site",
+  sep = "\n"
+)
+args <- commandArgs(trailingOnly = TRUE)
+if (any(c("--help", "-h") %in% args)) {
+  cat(usage, "\n", sep = "")
+  quit(status = 0)
+}
+fits_arg <- args[startsWith(args, "--fits")]
+unknown <- setdiff(args, c("--check", "--site", fits_arg))
+fit_models <- unique(unlist(strsplit(sub("^--fits=?", "", fits_arg), ",")))
+unknown <- c(unknown, setdiff(fit_models, models))
+if (length(unknown)) {
+  cat("Unknown option: ", paste(unknown, collapse = " "), "\n\n", usage, "\n", sep = "")
+  quit(status = 1)
+}
 
-# Regenerate C++ from the current Stan source (picks up inst/stan/*.stan edits).
+full_check <- "--check" %in% args
+build_site <- "--site" %in% args
+rebuild_fits <- length(fits_arg) > 0L
+if (rebuild_fits && !length(fit_models)) {
+  fit_models <- models
+}
+message(
+  "Build: install, document",
+  if (rebuild_fits) paste0(" + rebuild fits (", paste(fit_models, collapse = ", "), ")"),
+  if (full_check) " + R CMD check" else " + test",
+  if (build_site) " + pkgdown"
+)
+
+# load_all()/test() and the fit scripts leave debug (-O0) Stan objects in src/
+# (tens of MB, vs a few MB optimized). install() reuses objects newer than
+# their sources, so a stale debug object ships a sampler ~20x slower.
+stan_objs <- list.files("src", pattern = "\\.o$", full.names = TRUE)
+if (any(file.size(stan_objs) > 15e6)) {
+  message("Removing debug src objects so the install compiles optimized.")
+  pkgbuild::clean_dll()
+}
+
+# load_all()/test() do not re-transpile inst/stan/*.stan.
 rstantools::rstan_config()
-
-roxygen2md::roxygen2md()
-
+# Before document(), whose load_all() would leave debug objects to reuse.
+# Built first, so the vignettes are knitted and installed with the package, as
+# kelpbioshiny shows the installed Methods and Get started vignettes.
+devtools::install(build_vignettes = TRUE, upgrade = FALSE)
 devtools::document()
-devtools::test()
+
+# Each script runs in a fresh R process and load_all()s the current source.
+if (rebuild_fits) {
+  for (model in fit_models) {
+    for (species in c("nereo", "macro")) {
+      script <- paste0("data-raw/fit_", model, "_sim_", species, ".R")
+      # Not every model has both species.
+      if (!file.exists(script)) {
+        next
+      }
+      message("Rebuilding via ", script)
+      callr::rscript(script, show = TRUE)
+    }
+  }
+  message("Rebuilding fixtures for ", paste(fit_models, collapse = ", "))
+  callr::rscript(
+    "tests/testthat/fixtures/make-fixtures.R",
+    cmdargs = fit_models,
+    show = TRUE
+  )
+}
 
 if (full_check) {
-  pkgdown::build_site()
   devtools::check()
+} else {
+  devtools::test()
+}
+
+if (build_site) {
+  # The optimized install above; reinstalling would reuse the debug objects
+  # that document()/test() leave in src/, slowing the articles' fits ~20x.
+  pkgdown::build_site(install = FALSE)
 }

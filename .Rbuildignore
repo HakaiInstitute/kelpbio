@@ -16,8 +16,11 @@
 ^README\.Rmd$
 ^openspec$
 ^\.claude$
-^CLAUDE\.md$
 ^jarl\.toml$
 ^[.]?air[.]toml$
 ^\.vscode$
 ^decisions$
+^figure$
+^tests/testthat/_problems$
+^review$
+^vignettes/articles$

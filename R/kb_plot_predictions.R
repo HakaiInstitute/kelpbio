@@ -1,78 +1,102 @@
-#' Plot Model Predictions
+#' Plot predictions
 #'
 #' Render a `ggplot` from a `kb_predictions` object (the output of a
 #' `kb_predict_*()` function).
 #'
 #' @details
-#' Called with just the predictions, the plot configures itself: the x-axis,
-#' faceting, and geometry are inferred from the prediction's metadata. The result
-#' is a standard `ggplot` that can be refined with `+` (scales, labels, themes,
-#' `coord_flip()`).
+#' The x-axis, facets, and geometry are chosen from the predictions:
+#' predictions over a grid of predictor values (as from [kb_new_data()]) are
+#' drawn as a line and compatibility-interval ribbon, and others as points or
+#' columns with intervals. The result is a `ggplot` that can be extended with
+#' `+`, for example to add the raw data as a layer.
 #'
-#' The geometry is chosen automatically, not set by an argument: a line with a
-#' compatibility-interval ribbon for a generated curve ([kb_predict_weight_by()]
-#' over a varying predictor), and `geom_pointrange` otherwise. Override the
-#' inferred x-axis with `x`, and overlay the raw data with `observed`.
-#'
+#' @inheritParams params
 #' @param predictions A `kb_predictions` object.
-#' @param x A string naming the x-axis column, or `NULL` to infer it from the
-#'   metadata.
-#' @param observed A data frame of raw observations to overlay as points, or
-#'   `NULL` for none.
+#' @param x A string naming the x-axis column, or `NULL` to choose it from the
+#'   predictions.
+#' @param geom A string, one of `"pointrange"` (points with intervals) or
+#'   `"bar"` (columns from zero with intervals), for predictions not drawn as
+#'   a curve.
+#' @param log_axis A string, one of `"none"` (linear axes), `"y"` (log-scaled
+#'   y-axis), or `"xy"` (log-scaled x- and y-axes).
 #' @param max_facets A whole number capping the facet panels drawn; if the
 #'   grouping has more groups, the first `max_facets` are shown with a warning.
 #'   Use `Inf` to disable.
-#' @param ... Unused.
 #'
-#' @return A `ggplot` object.
-#' @family prediction
+#' @returns A `ggplot` object.
+#' @family prediction functions
 #' @export
 #'
 #' @examples
+#' fit <- fit_weight_sim_nereo
+#'
 #' # Allometric curve by site (ribbon):
-#' kb_predict_weight_by(fit_weight_sim_nereo, by = "site") |>
+#' kb_predict_weight(fit, kb_new_data(fit, by = "site")) |>
+#'   kb_plot_predictions()
+#'
+#' # Add the raw data as a layer:
+#' kb_predict_weight(fit, kb_new_data(fit)) |>
+#'   kb_plot_predictions() +
+#'   ggplot2::geom_point(
+#'     ggplot2::aes(diameter_mm, weight_kg),
+#'     data = data_weight_sim_nereo,
+#'     alpha = 0.3
+#'   )
+#'
+#' # Expected size by site (pointrange):
+#' kb_predict_size(
+#'   fit_size_sim_nereo,
+#'   kb_new_data(fit_size_sim_nereo, by = "site")
+#' ) |>
 #'   kb_plot_predictions()
 #'
 #' # Weight at a reference diameter by site (pointrange, sites on the y-axis):
-#' kb_predict_weight_by(
-#'   fit_weight_sim_nereo,
-#'   by = "site", diameter = 30, new_levels = "average"
-#' ) |>
+#' kb_predict_weight(fit, kb_new_data(fit, by = "site", diameter_mm = 30)) |>
 #'   kb_plot_predictions() +
 #'   ggplot2::coord_flip()
+#'
+#' # Canopy biomass by year (columns):
+#' kb_predict_biomass_canopy(
+#'   fit_cover_calibration_sim_nereo,
+#'   data_survey_canopy_sim_nereo,
+#'   pool_by = "year"
+#' ) |>
+#'   kb_plot_predictions(geom = "bar")
+#'
+#' # Allometric curve on log-log axes:
+#' kb_predict_weight(fit, kb_new_data(fit)) |>
+#'   kb_plot_predictions(log_axis = "xy")
+#'
+#' # Cover curve on log-log axes, over positive cover values:
+#' cover_fit <- fit_cover_calibration_sim_nereo
+#' kb_predict_cover_calibration(
+#'   cover_fit,
+#'   kb_new_data(cover_fit, cover = 10^seq(-3, 0, length.out = 30))
+#' ) |>
+#'   kb_plot_predictions(log_axis = "xy")
 kb_plot_predictions <- function(
   predictions,
   ...,
   x = NULL,
-  observed = NULL,
+  geom = c("pointrange", "bar"),
+  log_axis = c("none", "y", "xy"),
   max_facets = 12L
 ) {
   rlang::check_dots_empty()
-  if (!is.null(observed)) {
-    chk::chk_data(observed)
-  }
+  chk::chk_null_or(x, vld = chk::vld_string)
+  geom <- rlang::arg_match(geom)
+  log_axis <- rlang::arg_match(log_axis)
   chk::chk_number(max_facets)
   chk::chk_gt(max_facets, value = 0)
   if (is.finite(max_facets)) {
     chk::chk_whole_number(max_facets)
   }
-  if (!is.data.frame(predictions)) {
-    cli::cli_abort(
-      "{.arg predictions} must be a {.cls kb_predictions} data frame."
-    )
-  }
-  if (!all(c("estimate", "lower", "upper") %in% names(predictions))) {
-    cli::cli_abort(
-      "{.arg predictions} must have {.field estimate}, {.field lower}, and {.field upper} columns."
-    )
-  }
+  .chk_predictions(predictions)
 
-  predictor <- attr(predictions, "kb_predictor")
-  response <- attr(predictions, "kb_response")
-  group_vars <- attr(predictions, "kb_group_vars")
+  predictor <- attr(predictions, "kb_predictor", exact = TRUE)
+  response <- attr(predictions, "kb_response", exact = TRUE)
+  group_vars <- attr(predictions, "kb_group_vars", exact = TRUE)
 
-  # A ribbon needs an ordered, generated grid over a varying predictor; supplied
-  # rows and held/absent predictors render as grouped points instead.
   predictor_varies <- !is.null(predictor) &&
     predictor %in% names(predictions) &&
     length(unique(predictions[[predictor]])) > 1
@@ -81,16 +105,12 @@ kb_plot_predictions <- function(
   } else {
     group_vars[length(group_vars)]
   }
-  # group_vars[length(0)] is character(0); fall through to NULL so the guard
-  # below raises the helpful "supply x" error rather than a cryptic one.
+  x_supplied <- !is.null(x)
+  # character(0) becomes NULL so the guard below asks for `x`.
   x <- x %||% if (length(inferred)) inferred else NULL
 
-  # Layout follows from x: facet by the remaining grouping variables, never by
-  # the variable on the x-axis.
   facet <- setdiff(group_vars, x)
 
-  # Cap the number of facet panels so a many-group prediction (e.g. site x year
-  # over many sites) stays readable; keep the first `max_facets` groups.
   if (length(facet) && is.finite(max_facets)) {
     keys <- do.call(paste, c(predictions[facet], sep = "\r"))
     groups <- unique(keys)
@@ -101,35 +121,29 @@ kb_plot_predictions <- function(
         i = "Pre-filter {.arg predictions} or raise {.arg max_facets} to show more."
       ))
       predictions <- predictions[keys %in% keep, , drop = FALSE]
-      if (!is.null(observed) && all(facet %in% names(observed))) {
-        observed <- observed[
-          do.call(paste, c(observed[facet], sep = "\r")) %in% keep,
-          ,
-          drop = FALSE
-        ]
-      }
     }
   }
 
-  if (is.null(x) || !x %in% names(predictions)) {
-    cli::cli_abort(c(
-      "Cannot infer the x-axis column from {.arg predictions}.",
-      i = "Supply {.arg x}."
-    ))
-  }
-  # Ribbon only for a generated curve over the varying predictor; else pointrange.
+  .chk_plot_x(x, predictions, x_supplied)
+  .chk_log_axis(log_axis, predictions, x)
+  # kb_curve separates a generated grid from supplied rows with varying values.
   style <- if (
-    isTRUE(attr(predictions, "kb_curve")) &&
+    isTRUE(attr(predictions, "kb_curve", exact = TRUE)) &&
       identical(x, predictor) &&
       predictor_varies
   ) {
     "ribbon"
   } else {
-    "pointrange"
+    geom
   }
+  .chk_geom(geom, style == "ribbon", log_axis)
 
+  # The draws column of a derived verb is not plotted.
+  draws <- vapply(predictions, posterior::is_rvar, logical(1))
+  plotted <- tibble::as_tibble(predictions)[!draws]
+  plotted$.row <- seq_len(nrow(plotted))
   gg <- ggplot2::ggplot(
-    predictions,
+    plotted,
     ggplot2::aes(x = .data[[x]], y = .data$estimate)
   )
   if (style == "ribbon") {
@@ -139,6 +153,22 @@ kb_plot_predictions <- function(
         alpha = 0.2
       ) +
       ggplot2::geom_line()
+  } else if (style == "bar") {
+    # A light solid fill keeps the interval visible inside the columns; the
+    # interval is drawn after the columns so it stays on top. Rows sharing an x
+    # value, such as repeated maps of a site-year, are dodged rather than
+    # stacked; a row alone at its x value keeps the full width.
+    dodge <- ggplot2::position_dodge(width = 0.9)
+    gg <- gg +
+      ggplot2::geom_col(
+        ggplot2::aes(group = .data$.row),
+        fill = "grey70",
+        position = dodge
+      ) +
+      ggplot2::geom_linerange(
+        ggplot2::aes(ymin = .data$lower, ymax = .data$upper, group = .data$.row),
+        position = dodge
+      )
   } else {
     gg <- gg +
       ggplot2::geom_pointrange(
@@ -148,48 +178,74 @@ kb_plot_predictions <- function(
   if (length(facet)) {
     gg <- gg + ggplot2::facet_wrap(facet)
   }
-  if (!is.null(observed)) {
-    if (is.null(predictor) || is.null(response)) {
-      cli::cli_abort(
-        "An {.arg observed} overlay needs predictor/response metadata on {.arg predictions}."
-      )
-    }
-    gg <- gg +
-      ggplot2::geom_point(
-        data = observed,
-        mapping = ggplot2::aes(x = .data[[predictor]], y = .data[[response]]),
-        inherit.aes = FALSE,
-        alpha = 0.3
-      )
-  }
-  x_units <- if (identical(x, predictor)) {
-    attr(predictions, "kb_predictor_units")
-  } else {
-    NA_character_
+  gg <- switch(
+    log_axis,
+    none = gg +
+      ggplot2::expand_limits(y = 0) +
+      ggplot2::scale_y_continuous(labels = plain_labels),
+    y = gg + ggplot2::scale_y_log10(labels = plain_labels),
+    xy = gg +
+      ggplot2::scale_x_log10(labels = plain_labels) +
+      ggplot2::scale_y_log10(labels = plain_labels)
+  )
+  if (log_axis != "xy" && is.numeric(predictions[[x]])) {
+    gg <- gg + ggplot2::scale_x_continuous(labels = plain_labels)
   }
   gg +
     ggplot2::labs(
-      x = kb_axis_label(x, x_units),
-      y = kb_axis_label(
-        response %||% "estimate",
-        attr(predictions, "kb_response_units")
-      )
+      x = axis_label(x, log = log_axis == "xy"),
+      y = axis_label(response %||% "estimate", log = log_axis != "none")
     )
 }
 
-# Publication-ready axis title for a prediction column: a descriptive label for
-# the known model variables. Units are appended in parentheses when supplied, but
-# the weight model leaves them unset (units are the user's choice), so labels are
-# unit-free. Unrecognised columns fall back to their name (sentence-cased).
-kb_axis_label <- function(name, units = NA_character_) {
-  base <- switch(
+# Plain numbers (0.1, 1, 10) in place of the default 1e-01 style.
+plain_labels <- function(breaks) {
+  format(
+    breaks,
+    big.mark = ",",
+    scientific = FALSE,
+    trim = TRUE,
+    drop0trailing = TRUE
+  )
+}
+
+# "Wet weight (kg)" becomes "Wet weight (kg, log scale)"; "Fronds" becomes
+# "Fronds (log scale)".
+axis_label <- function(name, log = FALSE) {
+  label <- base_axis_label(name)
+  if (!log) {
+    return(label)
+  }
+  if (endsWith(label, ")")) {
+    return(sub("\\)$", ", log scale)", label))
+  }
+  paste0(label, " (log scale)")
+}
+
+base_axis_label <- function(name) {
+  switch(
     name,
-    diameter = "Sub-bulb diameter",
-    weight = "Wet weight",
+    diameter_mm = "Diameter (mm)",
+    fronds = "Fronds",
+    weight_kg = "Wet weight (kg)",
+    dry_weight_kg = "Dry weight (kg)",
+    carbon_weight_g = "Carbon weight (g C)",
+    nitrogen_weight_g = "Nitrogen weight (g N)",
+    biomass_kg_m2 = "Wet biomass (kg/m\u00b2)",
+    dry_biomass_kg_m2 = "Dry biomass (kg/m\u00b2)",
+    carbon_biomass_g_m2 = "Carbon biomass (g C/m\u00b2)",
+    nitrogen_biomass_g_m2 = "Nitrogen biomass (g N/m\u00b2)",
+    biomass_kg = "Total wet biomass (kg)",
+    dry_biomass_kg = "Total dry biomass (kg)",
+    carbon_biomass_kg = "Total carbon biomass (kg C)",
+    nitrogen_biomass_kg = "Total nitrogen biomass (kg N)",
+    dry_wet_ratio = "Dry:wet mass ratio",
+    carbon_fraction = "Carbon fraction of dry mass",
+    nitrogen_fraction = "Nitrogen fraction of dry mass",
+    cover = "Tide-corrected canopy cover",
     site = "Site",
     year = "Year",
     estimate = "Estimate",
     paste0(toupper(substring(name, 1, 1)), substring(name, 2))
   )
-  if (!is.na(units) && nzchar(units)) paste0(base, " (", units, ")") else base
 }

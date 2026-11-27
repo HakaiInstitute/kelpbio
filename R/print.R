@@ -1,6 +1,4 @@
-# Print methods use cli's cat_*/format_inline (stdout, as print methods must),
-# not the cli_*() condition functions (message stream). format_inline renders the
-# cli markup (e.g. {.cls}).
+# cat_*/format_inline, not cli_*(): print methods write to stdout.
 
 #' @export
 print.kb_stancode <- function(x, ...) {
@@ -22,22 +20,28 @@ print.kb_prior_exponential <- function(x, ...) {
   invisible(x)
 }
 
-# Render the shared fit metadata header (used by print.kb_fit and
-# print.summary_kb_fit). `h` is the field list from .kb_fit_header(); the
-# summary_kb_fit object carries the same fields.
+#' @export
+print.kb_prior_lognormal <- function(x, ...) {
+  cli::cat_line(cli::format_inline(
+    "lognormal(meanlog = {format(x$meanlog)}, sdlog = {format(x$sdlog)})"
+  ))
+  invisible(x)
+}
+
+# "unknown" when the rate has no denominator (a fit with no draws).
+.fmt_perc <- function(x) {
+  if (is.na(x)) {
+    return("unknown")
+  }
+  paste0(format(signif(x, 3)), "%")
+}
+
+# Header shared by print.kb_fit and print.summary_kb_fit; `h` is from
+# .kb_fit_header().
 .print_kb_fit_header <- function(h) {
   cli::cat_line("Model:     ", h$model, " (", h$species, ")")
-  if (!is.na(h$family)) {
-    cli::cat_line("Family:    ", h$family)
-  }
-  if (!is.na(h$fixed)) {
-    cli::cat_line("Fixed:     ", h$fixed)
-  }
-  if (!is.na(h$random)) {
-    cli::cat_line("Random:    ", h$random)
-  }
-  if (!is.na(h$centered)) {
-    cli::cat_line("Centered:  ", h$centered)
+  if (!is.na(h$predictor)) {
+    cli::cat_line("Predictor: ", h$predictor)
   }
   groups <- if (length(h$groups)) {
     paste0(
@@ -69,6 +73,9 @@ print.kb_prior_exponential <- function(x, ...) {
 print.kb_fit <- function(x, ...) {
   cli::cat_line(cli::format_inline("{.cls {class(x)[1]}}"))
   .print_kb_fit_header(.kb_fit_header(x))
+  cli::cat_line(cli::col_grey(
+    "See kb_model_describe(fit) for the model equation and priors."
+  ))
   invisible(x)
 }
 
@@ -92,9 +99,19 @@ print.summary_kb_fit <- function(x, ...) {
     "ess_bulk, ess_tail: bulk and tail effective sample sizes."
   ))
   cli::cat_line(cli::col_grey(
-    x$ndivergent,
-    " divergent transition",
-    if (x$ndivergent == 1) "" else "s",
+    "converged: rhat below ",
+    format(x$rhat),
+    " and ess_bulk, ess_tail at least ",
+    format(x$ess),
+    " per chain."
+  ))
+  # Rounded for display only; the fit stores them unrounded.
+  cli::cat_line(cli::col_grey(
+    .fmt_perc(x$perc_divergent),
+    " divergent transitions; ",
+    .fmt_perc(x$perc_max_treedepth),
+    " max-treedepth; min E-BFMI ",
+    format(signif(x$ebfmi, 3)),
     "."
   ))
   invisible(x)
@@ -102,12 +119,15 @@ print.summary_kb_fit <- function(x, ...) {
 
 #' @export
 print.kb_predictions <- function(x, ...) {
-  gv <- attr(x, "kb_group_vars")
+  gv <- attr(x, "kb_group_vars", exact = TRUE)
   by <- if (length(gv)) paste0(" | by: ", paste(gv, collapse = ", ")) else ""
+  predictor <- attr(x, "kb_predictor", exact = TRUE)
+  predictor <- if (is.null(predictor)) "" else paste0(" predictor: ", predictor, " |")
   cli::cat_line(
-    cli::format_inline(
-      "{.cls kb_predictions} predictor: {attr(x, 'kb_predictor')} | response: {attr(x, 'kb_response')}"
-    ),
+    cli::format_inline("{.cls kb_predictions}"),
+    predictor,
+    " response: ",
+    attr(x, "kb_response", exact = TRUE),
     by
   )
   print(tibble::as_tibble(x), ...)

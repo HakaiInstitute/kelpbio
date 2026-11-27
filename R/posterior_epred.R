@@ -1,38 +1,57 @@
-#' Expected Weight Posterior Draws
+#' Draws of the expected response
 #'
-#' Draws from the expectation of the posterior predictive distribution
-#' (response-scale expected weight, `exp` of the linear predictor).
+#' Draws of the expected response.
 #'
 #' @details
-#' Conditioning is inferred from the grouping columns present in `new_data`: a
-#' `site` (and optionally `year`) column with known levels is conditioned on;
-#' factors with no column are handled by `new_levels`. With `new_data = NULL` the
-#' observed data is used and conditioned on its site and year, so the central
-#' estimate agrees with [augment()].
+#' Each draw is the expected response, the mean of the fit's likelihood (see
+#' [kb_model_describe()]), given that draw's parameters. For a cover
+#' calibration with a presence part, it includes the probability that the plot
+#' has plants present. For a *Nereocystis* weight fit, which is modelled on the
+#' log scale, it is the mean weight, not the median.
+#'
+#' For draws of new observations, which include residual variation, use
+#' [posterior_predict()].
+#'
+#' A `site` (and optionally `year`) column in `new_data` with levels in the fit
+#' gives predictions for those levels. With `new_data = NULL` the observed data
+#' is used, with its sites and years.
 #'
 #' @inheritParams params
-#' @param object A `kb_fit_weight` object.
-#' @param new_data A data frame with a `diameter` column (and optional `site` /
-#'   `year` columns), or `NULL` for the observed data.
-#' @param ... Unused.
+#' @param new_data A data frame with the fit's predictor column (and optional
+#'   `site` and `year` columns), or `NULL` for the observed data.
+#'   `year` may be numeric or character: `2022` and `"2022"` match the same
+#'   fitted year.
 #'
-#' @return A draws-by-observations (`D x N`) matrix.
-#' @family generics
+#' @returns A draws-by-observations (`D x N`) matrix.
+#' @family fit methods
 #' @seealso [kb_predict_weight()], which summarises these draws.
 #' @exportS3Method rstantools::posterior_epred
 #' @examples
 #' ep <- posterior_epred(fit_weight_sim_nereo)
 #' dim(ep)
-posterior_epred.kb_fit_weight <- function(
+posterior_epred.kb_fit <- function(
   object,
   new_data = NULL,
   ...,
-  new_levels = "sample",
+  new_levels = c("average", "sample"),
   representative_site = NULL
 ) {
-  rlang::check_dots_empty()
-  .chk_kb_fit_weight(object)
-  .chk_representative_site(object, representative_site)
-  res <- weight_data_linpred(object, new_data, new_levels, representative_site)
-  exp(posterior::draws_of(res$linpred))
+  # error_call() names the generic, not the method.
+  call <- rlang::error_call(rlang::current_env())
+  .with_call(
+    {
+      rlang::check_dots_empty()
+      .chk_kb_fit(object)
+      .chk_representative_site(object, representative_site)
+    },
+    call
+  )
+  res <- data_linpred(
+    object,
+    new_data,
+    new_levels,
+    representative_site,
+    call = call
+  )
+  posterior::draws_of(.epred(object, res$linpred, grid = res$grid))
 }

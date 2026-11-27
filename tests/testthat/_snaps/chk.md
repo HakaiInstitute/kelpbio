@@ -1,11 +1,11 @@
-# .chk_kb_fit_weight passes a fit through invisibly and errors on a non-fit
+# .chk_kb_fit with class kb_fit_weight passes a fit through invisibly and errors on a non-fit
 
     Code
-      .chk_kb_fit_weight(1)
+      .chk_kb_fit(1, "kb_fit_weight")
     Condition
-      Error in `.chk_kb_fit_weight()`:
+      Error:
       ! `1` must be a <kb_fit_weight> object.
-      i See `kb_fit_weight_nereo()`.
+      i Supported fits are created by the `kb_fit_weight_*()` functions.
 
 # .chk_new_data_weight_nereo errors on a non-data-frame or missing diameter
 
@@ -13,7 +13,7 @@
       .chk_new_data_weight_nereo(not_df)
     Condition
       Error in `.chk_new_data_weight_nereo()`:
-      ! `not_df` must be a data frame.
+      ! `not_df` must be a data.frame.
 
 ---
 
@@ -21,7 +21,7 @@
       .chk_new_data_weight_nereo(no_diameter)
     Condition
       Error in `.chk_new_data_weight_nereo()`:
-      ! `no_diameter` must have a diameter column.
+      ! `no_diameter` must include 'diameter_mm'.
 
 # .chk_progress passes a valid mode through invisibly and errors otherwise
 
@@ -50,9 +50,242 @@
 # .chk_representative_site passes NULL/known sites and errors on unknown
 
     Code
-      .chk_representative_site(weight_fit, "not_a_site")
+      .chk_representative_site(weight_nereo_fit, "not_a_site")
     Condition
-      Error in `.chk_representative_site()`:
+      Error:
       ! Invalid `representative_site` value: "not_a_site".
-      i Available sites: "site1", "site2", "site3", and "site4".
+      i Available sites: "otter_cove", "gull_rock", "cedar_bay", and "heron_reef".
+
+# .chk_representative_site_fits shows the expected list form
+
+    Code
+      .chk_representative_site_fits(list("a"), fits)
+    Condition
+      Error:
+      ! `representative_site` must be a character vector or a list named by "weight" or "size".
+      i For example, `list(weight = "site_a")`.
+
+---
+
+    Code
+      .chk_representative_site_fits(list(size = "a"), "weight")
+    Condition
+      Error:
+      ! `representative_site` cannot name "size" with a size census.
+      i A size census has no site effects; name only "weight".
+
+# .chk_occupied_survey errors when no survey has plants
+
+    Code
+      .chk_occupied_survey(data[1, , drop = FALSE], prior_only = FALSE)
+    Condition
+      Error:
+      ! No survey with plot cover in `data` has plants counted.
+
+# .chk_fit_rows points zero-row data to prior_only
+
+    Code
+      .chk_fit_rows(data[0, , drop = FALSE], prior_only = FALSE)
+    Condition
+      Error:
+      ! `data` must have at least one row.
+      i Set `prior_only = TRUE` to sample from the priors alone.
+
+# .chk_kb_fit_grouped errors for a non-fit and a model without groups
+
+    Code
+      .chk_kb_fit_grouped(wetdry_nereo_fit)
+    Condition
+      Error:
+      ! `wetdry_nereo_fit` is a <kb_fit_wetdry_nereo> object, whose model has no grouping factors.
+      i Grids are built for weight, size, and cover calibration fits.
+
+# .chk_grid_dots accepts the predictor and grouping values and rejects others
+
+    Code
+      .chk_grid_dots(weight_nereo_fit, list(fronds = 3), NULL)
+    Condition
+      Error:
+      ! A nereocystis <kb_fit_weight> grid has no column `fronds`.
+      i Supply the predictor `diameter_mm`, or values for `site` or `year`.
+
+---
+
+    Code
+      .chk_grid_dots(weight_nereo_fit, list(30), NULL)
+    Condition
+      Error:
+      ! Values in `...` must be named.
+      i Supply the predictor `diameter_mm`, or values for `site` or `year`.
+
+---
+
+    Code
+      .chk_grid_dots(size_nereo_fit, list(diameter_mm = 30), NULL)
+    Condition
+      Error:
+      ! A nereocystis <kb_fit_size> grid has no column `diameter_mm`.
+      i Supply values for `site` or `year`.
+
+---
+
+    Code
+      .chk_grid_dots(weight_nereo_fit, twice, NULL)
+    Condition
+      Error:
+      ! Supply `diameter_mm` once.
+
+---
+
+    Code
+      .chk_grid_dots(weight_nereo_fit, list(diameter_mm = "a"), NULL)
+    Condition
+      Error in `.chk_grid_dots()`:
+      ! `diameter_mm` must be numeric.
+
+---
+
+    Code
+      .chk_grid_dots(weight_nereo_fit, list(year = 2021), "year")
+    Condition
+      Error:
+      ! `year` is named in `by` and given values.
+      i `by` takes every fitted level; values in `...` take the levels supplied.
+
+---
+
+    Code
+      .chk_grid_dots(weight_nereo_fit, list(year = TRUE), NULL)
+    Condition
+      Error:
+      ! `year` must be a character, factor, or numeric vector.
+
+# .chk_same_species and .chk_same_ndraws name the fits
+
+    Code
+      .chk_same_species(list(weight = weight_nereo_fit, size = weight_macro_fit))
+    Condition
+      Error:
+      ! The fits must be of one species.
+      i `weight` and `size` are "Nereocystis luetkeana" and "Macrocystis pyrifera".
+
+---
+
+    Code
+      .chk_same_ndraws(list(weight = weight_nereo_fit, size = fit_size_sim_nereo))
+    Condition
+      Error:
+      ! The fits must have the same number of posterior draws.
+      i `weight` and `size` have 600 and 1500 draws.
+
+# .chk_cover_survey errors name the survey column
+
+    Code
+      .chk_cover_survey(good[c("canopy_area_m2", "plot_area_m2")], x_name = "`new_data`")
+    Condition
+      Error in `.chk_cover_survey()`:
+      ! `new_data` must include 'canopy_tide_height_m'.
+
+---
+
+    Code
+      .chk_cover_survey(bad, x_name = "`new_data`")
+    Condition
+      Error in `.chk_cover_survey()`:
+      ! Column `canopy_area_m2` of `new_data` must not exceed plot_area_m2.
+      i The canopy is the area delineated within the plot.
+
+# .chk_cover_survey checks biomass_sd_kg_m2 where present
+
+    Code
+      .chk_cover_survey(transform(good, biomass_sd_kg_m2 = -1), x_name = "`new_data`")
+    Condition
+      Error in `.chk_cover_survey()`:
+      ! Column `biomass_sd_kg_m2` of `new_data` must be greater than or equal to 0, not -1.
+
+# .chk_canopy_maps errors name the survey column
+
+    Code
+      .chk_canopy_maps(good[c("site", "year", "canopy_area_m2")], x_name = "`new_data`")
+    Condition
+      Error in `.chk_canopy_maps()`:
+      ! `new_data` must include 'canopy_tide_height_m' and 'classified_area_m2'.
+
+---
+
+    Code
+      .chk_canopy_maps(transform(good, classified_area_m2 = 50), x_name = "`new_data`")
+    Condition
+      Error in `.chk_canopy_maps()`:
+      ! Column `canopy_area_m2` of `new_data` must not exceed classified_area_m2.
+      i The canopy is found within the area the classification covered.
+
+# .chk_pool_by names a missing or non-grouping column
+
+    Code
+      .chk_pool_by("zone", data)
+    Condition
+      Error:
+      ! `pool_by` column zone must be character or factor with no missing values.
+      i Convert a numeric code with `as.character()` or `factor()`.
+
+---
+
+    Code
+      .chk_pool_by(c("region", "district"), data)
+    Condition
+      Error:
+      ! `pool_by` names column district that `new_data` does not have.
+
+# .chk_sampling_dots rejects sampler arguments kelpbio sets, naming the replacement
+
+    Code
+      .chk_sampling_dots(list(iter = 10, thin = 2))
+    Condition
+      Error:
+      ! `iter` and `thin` cannot be passed to the sampler: kelpbio sets them itself.
+      i Use `niters` and `nthin` instead.
+
+---
+
+    Code
+      .chk_sampling_dots(list(pars = "intercept"))
+    Condition
+      Error:
+      ! `pars` cannot be passed to the sampler: kelpbio sets it itself.
+      i The fit keeps every parameter.
+
+---
+
+    Code
+      .chk_sampling_dots(list("power"))
+    Condition
+      Error:
+      ! Arguments in `...` must be named.
+      i They are passed to the sampler, e.g. `control = list(adapt_delta = 0.99)`.
+
+# .chk_finite, .chk_rows, and .chk_new_data_groups name the problem
+
+    Code
+      .chk_finite(c(1, Inf), "`x`")
+    Condition
+      Error:
+      ! `x` must be finite.
+
+---
+
+    Code
+      .chk_rows(data.frame(x = numeric(0)), "`new_data`")
+    Condition
+      Error:
+      ! `new_data` must have at least one row.
+
+---
+
+    Code
+      .chk_new_data_groups(data.frame(site = c("a", NA)))
+    Condition
+      Error:
+      ! Column `site` of `new_data` must not have missing values.
+      i To predict for a new site, give it a name such as "new" or leave out the site column.
 

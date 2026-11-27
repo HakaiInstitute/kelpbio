@@ -2,26 +2,31 @@
 % Please edit documentation in R/kb_plot_predictions.R
 \name{kb_plot_predictions}
 \alias{kb_plot_predictions}
-\title{Plot Model Predictions}
+\title{Plot predictions}
 \usage{
 kb_plot_predictions(
   predictions,
   ...,
   x = NULL,
-  observed = NULL,
+  geom = c("pointrange", "bar"),
+  log_axis = c("none", "y", "xy"),
   max_facets = 12L
 )
 }
 \arguments{
 \item{predictions}{A \code{kb_predictions} object.}
 
-\item{...}{Unused.}
+\item{...}{These dots are for future extensions and must be empty.}
 
-\item{x}{A string naming the x-axis column, or \code{NULL} to infer it from the
-metadata.}
+\item{x}{A string naming the x-axis column, or \code{NULL} to choose it from the
+predictions.}
 
-\item{observed}{A data frame of raw observations to overlay as points, or
-\code{NULL} for none.}
+\item{geom}{A string, one of \code{"pointrange"} (points with intervals) or
+\code{"bar"} (columns from zero with intervals), for predictions not drawn as
+a curve.}
+
+\item{log_axis}{A string, one of \code{"none"} (linear axes), \code{"y"} (log-scaled
+y-axis), or \code{"xy"} (log-scaled x- and y-axes).}
 
 \item{max_facets}{A whole number capping the facet panels drawn; if the
 grouping has more groups, the first \code{max_facets} are shown with a warning.
@@ -35,33 +40,78 @@ Render a \code{ggplot} from a \code{kb_predictions} object (the output of a
 \verb{kb_predict_*()} function).
 }
 \details{
-Called with just the predictions, the plot configures itself: the x-axis,
-faceting, and geometry are inferred from the prediction's metadata. The result
-is a standard \code{ggplot} that can be refined with \code{+} (scales, labels, themes,
-\code{coord_flip()}).
-
-The geometry is chosen automatically, not set by an argument: a line with a
-compatibility-interval ribbon for a generated curve (\code{\link[=kb_predict_weight_by]{kb_predict_weight_by()}}
-over a varying predictor), and \code{geom_pointrange} otherwise. Override the
-inferred x-axis with \code{x}, and overlay the raw data with \code{observed}.
+The x-axis, facets, and geometry are chosen from the predictions:
+predictions over a grid of predictor values (as from \code{\link[=kb_new_data]{kb_new_data()}}) are
+drawn as a line and compatibility-interval ribbon, and others as points or
+columns with intervals. The result is a \code{ggplot} that can be extended with
+\code{+}, for example to add the raw data as a layer.
 }
 \examples{
+fit <- fit_weight_sim_nereo
+
 # Allometric curve by site (ribbon):
-kb_predict_weight_by(fit_weight_sim_nereo, by = "site") |>
+kb_predict_weight(fit, kb_new_data(fit, by = "site")) |>
+  kb_plot_predictions()
+
+# Add the raw data as a layer:
+kb_predict_weight(fit, kb_new_data(fit)) |>
+  kb_plot_predictions() +
+  ggplot2::geom_point(
+    ggplot2::aes(diameter_mm, weight_kg),
+    data = data_weight_sim_nereo,
+    alpha = 0.3
+  )
+
+# Expected size by site (pointrange):
+kb_predict_size(
+  fit_size_sim_nereo,
+  kb_new_data(fit_size_sim_nereo, by = "site")
+) |>
   kb_plot_predictions()
 
 # Weight at a reference diameter by site (pointrange, sites on the y-axis):
-kb_predict_weight_by(
-  fit_weight_sim_nereo,
-  by = "site", diameter = 30, new_levels = "average"
-) |>
+kb_predict_weight(fit, kb_new_data(fit, by = "site", diameter_mm = 30)) |>
   kb_plot_predictions() +
   ggplot2::coord_flip()
+
+# Canopy biomass by year (columns):
+kb_predict_biomass_canopy(
+  fit_cover_calibration_sim_nereo,
+  data_survey_canopy_sim_nereo,
+  pool_by = "year"
+) |>
+  kb_plot_predictions(geom = "bar")
+
+# Allometric curve on log-log axes:
+kb_predict_weight(fit, kb_new_data(fit)) |>
+  kb_plot_predictions(log_axis = "xy")
+
+# Cover curve on log-log axes, over positive cover values:
+cover_fit <- fit_cover_calibration_sim_nereo
+kb_predict_cover_calibration(
+  cover_fit,
+  kb_new_data(cover_fit, cover = 10^seq(-3, 0, length.out = 30))
+) |>
+  kb_plot_predictions(log_axis = "xy")
 }
 \seealso{
-Other prediction:
+Other prediction functions:
 \code{\link[=autoplot.kb_predictions]{autoplot.kb_predictions()}},
+\code{\link[=kb_new_data]{kb_new_data()}},
+\code{\link[=kb_predict_biomass_canopy]{kb_predict_biomass_canopy()}},
+\code{\link[=kb_predict_biomass_in_situ]{kb_predict_biomass_in_situ()}},
+\code{\link[=kb_predict_carbon]{kb_predict_carbon()}},
+\code{\link[=kb_predict_cover_calibration]{kb_predict_cover_calibration()}},
+\code{\link[=kb_predict_mean_weight]{kb_predict_mean_weight()}},
+\code{\link[=kb_predict_nitrogen]{kb_predict_nitrogen()}},
+\code{\link[=kb_predict_size]{kb_predict_size()}},
 \code{\link[=kb_predict_weight]{kb_predict_weight()}},
-\code{\link[=kb_predict_weight_by]{kb_predict_weight_by()}}
+\code{\link[=kb_predict_wetdry]{kb_predict_wetdry()}},
+\code{\link[=predict.kb_fit_carbon]{predict.kb_fit_carbon()}},
+\code{\link[=predict.kb_fit_cover_calibration]{predict.kb_fit_cover_calibration()}},
+\code{\link[=predict.kb_fit_nitrogen]{predict.kb_fit_nitrogen()}},
+\code{\link[=predict.kb_fit_size]{predict.kb_fit_size()}},
+\code{\link[=predict.kb_fit_weight]{predict.kb_fit_weight()}},
+\code{\link[=predict.kb_fit_wetdry]{predict.kb_fit_wetdry()}}
 }
-\concept{prediction}
+\concept{prediction functions}

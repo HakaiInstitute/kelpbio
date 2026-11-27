@@ -1,0 +1,64 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "kelpbio: build",
+      "detail": "install, document, test",
+      "type": "shell",
+      "command": "Rscript scripts/build.R",
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "kelpbio: build + check",
+      "detail": "R CMD check in place of the test suite",
+      "type": "shell",
+      "command": "Rscript scripts/build.R --check",
+      "group": "build",
+      "problemMatcher": []
+    },
+    {
+      "label": "kelpbio: build + rebuild fits",
+      "detail": "also rebuild every pre-fit and test fixture (Stan MCMC)",
+      "type": "shell",
+      "command": "Rscript scripts/build.R --fits",
+      "group": "build",
+      "problemMatcher": []
+    },
+    {
+      "label": "kelpbio: build + rebuild fits for models",
+      "detail": "rebuild only the named models' pre-fits and fixtures (Stan MCMC)",
+      "type": "shell",
+      "command": "Rscript scripts/build.R --fits=${input:fitModels}",
+      "group": "build",
+      "problemMatcher": []
+    },
+    {
+      "label": "kelpbio: build + pkgdown site",
+      "detail": "also build the pkgdown site",
+      "type": "shell",
+      "command": "Rscript scripts/build.R --site",
+      "group": "build",
+      "problemMatcher": []
+    },
+    {
+      "label": "kelpbio: build + rebuild fits + check",
+      "detail": "rebuild every fit, then R CMD check",
+      "type": "shell",
+      "command": "Rscript scripts/build.R --fits --check",
+      "group": "build",
+      "problemMatcher": []
+    }
+  ],
+  "inputs": [
+    {
+      "id": "fitModels",
+      "type": "promptString",
+      "description": "Models to refit, comma-separated (weight, size, wetdry, carbon, cover_calibration)",
+      "default": "cover_calibration"
+    }
+  ]
+}

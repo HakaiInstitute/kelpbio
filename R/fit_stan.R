@@ -1,18 +1,32 @@
 # Seconds between progress polls in the console "bar" path.
 POLL_INTERVAL <- 0.2
 
-# Model- and species-agnostic sampling engine shared by every kb_fit_* function:
-# sample, extract draws as rvars, split off generated quantities, summarise
-# convergence, discard the live stanfit. warmup = niters, then the post-warmup
-# phase is thinned by nthin to land exactly niters draws/chain.
-#
-# progress: "bar" samples in a callr background process, polling a progress
-# artifact to drive a cli bar; "verbose"/"none" sample in-process.
+# rstan::sampling() arguments fit_stan() sets itself, each with the kelpbio
+# argument that sets it. pars and include have none: they would drop parameters
+# the fit object needs.
+SAMPLING_RESERVED <- c(
+  data = "data",
+  chains = "chains",
+  iter = "niters",
+  warmup = "niters",
+  thin = "nthin",
+  cores = "cores",
+  seed = "seed",
+  refresh = "progress",
+  show_messages = "progress",
+  open_progress = "progress",
+  sample_file = "progress_dir",
+  pars = NA,
+  include = NA
+)
+
+# Sampling engine shared by every kb_fit_* function; the live stanfit is
+# discarded. Post-warmup is thinned by nthin to land exactly niters draws/chain.
+# progress = "bar" samples in a callr background process.
 fit_stan <- function(
   stanmodel,
   stan_data,
   param_vars,
-  gq_vars = NULL,
   chains,
   niters,
   nthin,
@@ -21,13 +35,15 @@ fit_stan <- function(
   progress_dir = NULL,
   stanmodel_name = NULL,
   seed = NULL,
-  ...
+  ...,
+  call = rlang::caller_env()
 ) {
   warmup <- as.integer(niters)
   total_iter <- warmup + as.integer(niters) * as.integer(nthin)
   chains <- as.integer(chains)
 
   dots <- list(...)
+  .chk_sampling_dots(dots, call = call)
   control <- utils::modifyList(
     list(adapt_delta = 0.95),
     dots$control %||% list()
@@ -83,12 +99,11 @@ fit_stan <- function(
     )
   }
 
-  all_draws <- posterior::as_draws_rvars(stanfit)
-  draws <- posterior::subset_draws(all_draws, variable = param_vars)
-  gq <- NULL
-  if (!is.null(gq_vars)) {
-    gq <- posterior::subset_draws(all_draws, variable = gq_vars)
-  }
+  # subset_draws also drops lp__ and the z_* non-centered parameters.
+  draws <- posterior::subset_draws(
+    posterior::as_draws_rvars(stanfit),
+    variable = param_vars
+  )
 
   summary <- suppressWarnings(posterior::summarise_draws(
     draws,
@@ -96,22 +111,39 @@ fit_stan <- function(
     ess_bulk = posterior::ess_bulk,
     ess_tail = posterior::ess_tail
   ))
-  sampler <- rstan::get_sampler_params(stanfit, inc_warmup = FALSE)
-  ndivergent <- sum(purrr::map_dbl(sampler, function(x) {
-    sum(x[, "divergent__"])
-  }))
-
   list(
     draws = draws,
-    gq = gq,
-    diagnostics = list(summary = summary, ndivergent = ndivergent),
-    stancode = rstan::get_stancode(stanfit)
+    diagnostics = c(list(summary = summary), sampler_diagnostics(stanfit)),
+    # as.character() drops the model_name2 attribute, which rstan sets to the
+    # temporary file name the model was compiled from.
+    stancode = as.character(rstan::get_stancode(stanfit))
   )
 }
 
-# Sample in a callr background process, polling the progress artifact to drive a
-# cli bar. The child re-fetches the compiled model by name (its pointer can't
-# cross the process boundary). Bar counts are cosmetic; the stanfit is the fit.
+# Computed here because the stanfit is discarded, from rstan's own vectors so
+# the rates match its warnings. E-BFMI is the minimum over chains.
+sampler_diagnostics <- function(stanfit) {
+  divergent <- rstan::get_divergent_iterations(stanfit)
+  treedepth <- rstan::get_max_treedepth_iterations(stanfit)
+  ndraws <- length(divergent)
+  list(
+    ndivergent = sum(divergent),
+    perc_divergent = perc_of(sum(divergent), ndraws),
+    perc_max_treedepth = perc_of(sum(treedepth), ndraws),
+    ebfmi = min(rstan::get_bfmi(stanfit))
+  )
+}
+
+# NA, not 0, for an empty denominator: an unknown rate must not pass the verdict.
+perc_of <- function(n, total) {
+  if (total <= 0L) {
+    return(NA_real_)
+  }
+  100 * n / total
+}
+
+# The child re-fetches the compiled model by name, since its pointer cannot
+# cross the process boundary.
 sample_with_bar <- function(
   stanmodel_name,
   sampling_args,
@@ -120,7 +152,8 @@ sample_with_bar <- function(
 ) {
   if (is.null(stanmodel_name)) {
     cli::cli_abort(
-      "Internal: {.code progress = \"bar\"} requires {.arg stanmodel_name}."
+      "{.code progress = \"bar\"} requires {.arg stanmodel_name}.",
+      .internal = TRUE
     )
   }
   # niters isn't in sampling_args (rstan folds it into iter); the rest are.
@@ -159,8 +192,7 @@ sample_with_bar <- function(
   bg$get_result()
 }
 
-# Advise only when chains would run one at a time despite idle cores, the sole
-# case the user can act on; otherwise stay silent (the bar carries the happy path).
+# Advise only when chains would run one at a time despite idle cores.
 announce_sampling <- function(chains, cores) {
   avail <- parallel::detectCores()
   cores_unused <- !is.na(avail) &&
@@ -175,9 +207,8 @@ announce_sampling <- function(chains, cores) {
   invisible(NULL)
 }
 
-# Muffle rstan's post-sampling HMC diagnostic warnings for "bar"/"none"; let them
-# through for "verbose". converged()/glance()/summary() give the structured
-# summary regardless.
+# Muffle rstan's post-sampling HMC warnings; kb_converged()/glance()/summary()
+# report the diagnostics.
 with_quiet_sampler <- function(expr, muffle) {
   if (!muffle) {
     return(expr)
@@ -201,9 +232,8 @@ with_quiet_sampler <- function(expr, muffle) {
   )
 }
 
-# NULL respects getOption("mc.cores"), falling back to chains, capped at available
-# cores. On Windows, load_all() dev runs should pass cores = 1 (parallel chains
-# load the installed package, not the load_all() session).
+# NULL respects getOption("mc.cores"), falling back to chains. On Windows,
+# load_all() runs need cores = 1: parallel chains load the installed package.
 resolve_cores <- function(cores, chains) {
   if (is.null(cores)) {
     cores <- getOption("mc.cores", chains)

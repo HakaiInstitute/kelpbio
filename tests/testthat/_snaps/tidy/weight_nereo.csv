@@ -1,0 +1,8 @@
+"term","estimate","lower","upper"
+"intercept",-0.828,-1.28,-0.411
+"diameter_power",2.9,2.64,3.16
+"weight_floor",0.119,0.096,0.143
+"sd_site",0.291,0.0548,1.08
+"sd_year",0.058,0.00221,0.261
+"sd_site_year",0.225,0.138,0.371
+"sd_residual",0.466,0.435,0.499

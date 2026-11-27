@@ -2,11 +2,12 @@
 % Please edit documentation in R/kb_fit_weight_nereo.R
 \name{kb_fit_weight_nereo}
 \alias{kb_fit_weight_nereo}
-\title{Fit a Nereocystis Weight Model}
+\title{Fit a Nereocystis weight model}
 \usage{
 kb_fit_weight_nereo(
   data,
   priors = NULL,
+  form = c("packard_floor", "power"),
   ...,
   prior_only = FALSE,
   chains = 4L,
@@ -22,94 +23,110 @@ kb_fit_weight_nereo(
 \item{data}{A data frame of weight observations (see
 \code{\link[=kb_check_data_weight_nereo]{kb_check_data_weight_nereo()}} for the required columns).}
 
-\item{priors}{A named list of prior objects (see \code{\link[=kb_priors_weight_nereo]{kb_priors_weight_nereo()}}), or
-\code{NULL} to use the defaults. Supplied entries override the corresponding
-defaults; unspecified entries keep their defaults.}
+\item{priors}{A named list of prior objects (see \code{\link[=kb_priors_weight_nereo]{kb_priors_weight_nereo()}}),
+or \code{NULL} to use the defaults. Entries not supplied keep their defaults.}
 
-\item{...}{Additional arguments passed to \code{\link[rstan:sampling]{rstan::sampling()}}, including a
-\code{control} list (merged over the \code{adapt_delta = 0.95} default); see the
-\code{control} argument of \code{\link[rstan:stan]{rstan::stan()}} for the available entries.}
+\item{form}{A string giving the relationship of weight to diameter, one of
+\code{"packard_floor"} (the default, a power law above a weight floor; Packard
+2023) or \code{"power"} (a power law).}
 
-\item{prior_only}{A flag specifying whether to sample from the priors only
-(the likelihood is switched off), for prior predictive checks.}
+\item{...}{Additional arguments passed to \code{\link[rstan:sampling]{rstan::sampling()}}, such as
+\code{control}.}
+
+\item{prior_only}{A flag specifying whether to sample from the priors only,
+for prior predictive checks.}
 
 \item{chains}{A whole number of MCMC chains.}
 
-\item{niters}{A whole number of saved post-warmup draws per chain (warmup
-defaults to match).}
+\item{niters}{A whole number of saved post-warmup draws per chain (minimum
+2; number of warmup draws defaults to match).}
 
-\item{nthin}{A whole number giving the thinning interval.}
+\item{nthin}{A whole number of the thinning interval.}
 
-\item{cores}{A whole number of cores for parallel chains, or \code{NULL} to use
-\code{getOption("mc.cores")} (falling back to \code{chains}), capped at the available
-cores.}
+\item{cores}{A whole number of cores used to sample chains in parallel, or
+\code{NULL} to use \code{getOption("mc.cores")} if set or \code{chains} if not. Capped at
+the number of available cores.}
 
 \item{seed}{A whole number passed to \code{\link[rstan:sampling]{rstan::sampling()}} to make the fit
-reproducible, or \code{NULL} (the default). When \code{NULL}, a seed is drawn from R's
-RNG, so a preceding \code{set.seed()} also makes the fit reproducible; an explicit
-\code{seed} takes precedence over the RNG state.}
+reproducible, or \code{NULL} (the default, which uses a random seed). A
+preceding \code{set.seed()} also makes the fit reproducible.}
 
 \item{progress}{A string, one of \code{"bar"} (the default, a console progress
 bar), \code{"verbose"} (rstan's per-iteration output and diagnostic warnings), or
-\code{"none"} (silent). Controls fit-time console output only.}
+\code{"none"} (silent).}
 
-\item{progress_dir}{A string giving an existing directory in which to write a
-pollable progress artifact (read by \code{\link[=kb_fit_progress]{kb_fit_progress()}}), or \code{NULL} (the
-default) to write none.}
+\item{progress_dir}{A string giving an existing directory in which to record
+progress for \code{\link[=kb_progress]{kb_progress()}}, or \code{NULL} (the default) to record none.}
 }
 \value{
-An object of class \code{c("kb_fit_weight", "kb_fit")}.
+A \code{kb_fit_weight_nereo} object (a \code{kb_fit}).
 }
 \description{
 Fit an allometric weight model for \emph{Nereocystis luetkeana} via Stan.
 }
-\details{
-The response is log wet weight, modelled with a Student-t likelihood (4
-degrees of freedom, for robustness to outliers). Expected log weight is a
-quadratic (allometric) function of log sub-bulb diameter, centered at its
-geometric mean so the intercept is the expected log weight at a typical
-diameter. The intercept and the allometric slope vary by site, and the
-intercept also varies by \code{site:year}.
+\section{Model}{
 
-\code{niters} is the number of saved post-warmup draws per chain; warmup defaults
-to match \code{niters} and the post-warmup phase is thinned by \code{nthin}.
-The returned object stores the extracted posterior draws (including the
-\code{log_lik} and \code{yrep} generated quantities), diagnostics, data, and metadata.
-
-\code{progress} controls fit-time console output. The default \code{"bar"} shows a
-progress bar; \code{"verbose"} streams rstan's per-iteration output and its
-post-sampling diagnostic warnings; \code{"none"} is silent. \code{progress} changes only
-console output, never the fit; inspect convergence with \code{\link[=converged]{converged()}} /
-\code{\link[=glance]{glance()}} / \code{\link[=summary]{summary()}} in every mode.
-
-Supply \code{progress_dir} (an existing directory) to have the fit write a pollable
-progress artifact there, which \code{\link[=kb_fit_progress]{kb_fit_progress()}} reads to report the
-completed fraction from another R process (for example, to drive a progress
-indicator while the fit runs in the background).
-
-Chains run in parallel by default (\code{cores = NULL} uses \code{getOption("mc.cores")},
-falling back to \code{chains}, capped at the available cores). Set
-\code{options(mc.cores = 1)} (or pass \code{cores = 1}) on shared servers, in
-containers, or inside another parallel context.
-
-The sampler runs with a conservative \code{adapt_delta = 0.95} by default, which
-reduces divergences at the cost of slightly longer runtime. Override it, or
-set any other sampler control, by passing a \code{control} list through \code{...}, e.g.
-\code{kb_fit_weight_nereo(data, control = list(adapt_delta = 0.99))}; only the
-entries supplied are changed. See the \code{control} argument of \code{\link[rstan:stan]{rstan::stan()}}
-for the full set of tunable entries (e.g. \code{adapt_delta}, \code{max_treedepth}).
-
-The site:year effect is set from the data: it is dropped when the data span a
-single year (then confounded with the site effect) and included otherwise.
-When no site spans more than one year it is kept with a warning, since \code{sSite}
-and \code{sSiteYear} are not then separately identified.
+\code{\link[=kb_model_describe]{kb_model_describe()}} prints the fitted model, with its priors, in notation
+or as a written description. The
+\href{https://hakaiinstitute.github.io/kelpbio/articles/methods.html}{Methods article}
+describes each model and its assumptions.
 }
+
+\section{Sampling}{
+
+Chains run in parallel by default, one core per chain, capped at the cores
+available. \code{cores} sets the number of cores; when it is \code{NULL},
+\code{getOption("mc.cores")} is used if set. Set \code{cores = 1} (or
+\code{options(mc.cores = 1)}) where cores are shared or limited, or inside another
+parallel process.
+
+The sampler runs with \code{adapt_delta = 0.95} by default, which reduces
+divergences at the cost of slightly longer runtime. Override it, or set any
+other sampler control, by passing a \code{control} list through \code{...}, for example
+\code{control = list(adapt_delta = 0.99)}; only the entries supplied are changed.
+See the \code{control} argument of \code{\link[rstan:stan]{rstan::stan()}} for the full set of entries.
+
+By default, each of 4 chains runs 1000 warmup iterations and then saves 1000
+draws with no thinning, giving 4000 draws in total. These match the defaults
+of \code{\link[rstan:stan]{rstan::stan()}} and Stan's general recommendations.
+
+Check convergence with \code{\link[=kb_converged]{kb_converged()}}, \code{\link[=glance]{glance()}}, or \code{\link[=summary]{summary()}}.
+}
+
+\section{Site and year interaction}{
+
+The site:year effect lets a site depart from the year-to-year pattern shared
+by all sites. It is separable from the site and year effects only when a site
+has data in more than one year and a year has more than one site; otherwise
+the fit warns. Estimates for the site-years in the data are then unaffected,
+but other predictions depend on the \code{sd_site_year} prior (see
+\code{\link[=kb_sensitivity]{kb_sensitivity()}}).
+}
+
 \examples{
-if (interactive()) {
-  fit <- kb_fit_weight_nereo(data_weight_sim_nereo)
-  tidy(fit)
-}
 # A pre-fit example model is included with the package:
 tidy(fit_weight_sim_nereo)
+\dontshow{if (interactive()) withAutoprint(\{ # examplesIf}
+fit <- kb_fit_weight_nereo(data_weight_sim_nereo)
+tidy(fit)
+\dontshow{\}) # examplesIf}
 }
-\concept{model}
+\references{
+Packard, G. C. (2023). What is complex allometry? \emph{Biology Open},
+12, bio060148. \doi{10.1242/bio.060148}
+}
+\seealso{
+Other fit functions:
+\code{\link[=kb_fit_carbon_macro]{kb_fit_carbon_macro()}},
+\code{\link[=kb_fit_carbon_nereo]{kb_fit_carbon_nereo()}},
+\code{\link[=kb_fit_cover_calibration_macro]{kb_fit_cover_calibration_macro()}},
+\code{\link[=kb_fit_cover_calibration_nereo]{kb_fit_cover_calibration_nereo()}},
+\code{\link[=kb_fit_nitrogen_macro]{kb_fit_nitrogen_macro()}},
+\code{\link[=kb_fit_nitrogen_nereo]{kb_fit_nitrogen_nereo()}},
+\code{\link[=kb_fit_size_nereo]{kb_fit_size_nereo()}},
+\code{\link[=kb_fit_weight_macro]{kb_fit_weight_macro()}},
+\code{\link[=kb_fit_wetdry_macro]{kb_fit_wetdry_macro()}},
+\code{\link[=kb_fit_wetdry_nereo]{kb_fit_wetdry_nereo()}},
+\code{\link[=kb_progress]{kb_progress()}}
+}
+\concept{fit functions}

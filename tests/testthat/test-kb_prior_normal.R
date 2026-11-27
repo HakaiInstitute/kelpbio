@@ -10,4 +10,6 @@ test_that("kb_prior_normal validates hyperparameters", {
   expect_error(kb_prior_normal(0, sd = -1), class = "chk_error")
   expect_error(kb_prior_normal(0, sd = 0), class = "chk_error")
   expect_error(kb_prior_normal(mean = "a", sd = 1), class = "chk_error")
+  expect_error(kb_prior_normal(0, sd = Inf), "finite")
+  expect_error(kb_prior_normal(mean = -Inf), "finite")
 })
