@@ -30,8 +30,10 @@ kb_check_data_survey_canopy(
 
 ## Details
 
-Each row is one canopy map of a site; a site-year may have several.
-Required columns:
+Each row is one canopy map of the whole site; a site-year may have
+several. A warning is given if the maps of a site-year have
+`classified_area_m2` values that differ by more than half, which
+suggests maps of parts of the site. Required columns:
 
 - `site`, the site mapped (any text).
 
@@ -41,7 +43,8 @@ Required columns:
   classified_area_m2).
 
 - `canopy_tide_height_m`, the tide height when the canopy was imaged,
-  relative to chart datum (m, any number).
+  relative to chart datum, ideally close to 0 m and at most 2 m, or 0
+  for canopy already corrected for tide (m, any number).
 
 - `classified_area_m2`, the water area the canopy classification
   covered, including water where no canopy was found (m², \> 0).

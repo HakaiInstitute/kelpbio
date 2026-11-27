@@ -38,7 +38,7 @@
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.svg" class="logo" alt=""><h1>Summarise a fit</h1>
-      <small class="dont-index">Source: <a href="https://github.com/HakaiInstitute/kelpbio/blob/docs-terminology/R/summary.R" class="external-link"><code>R/summary.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/HakaiInstitute/kelpbio/blob/main/R/summary.R" class="external-link"><code>R/summary.R</code></a></small>
       <div class="d-none name"><code>summary.kb_fit.Rd</code></div>
     </div>
 
@@ -57,7 +57,8 @@
 <span>  sig_fig <span class="op">=</span> <span class="fl">3</span>,</span>
 <span>  include_random_effects <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  rhat <span class="op">=</span> <span class="fl">1.01</span>,</span>
-<span>  ess <span class="op">=</span> <span class="fl">100</span></span>
+<span>  ess <span class="op">=</span> <span class="fl">100</span>,</span>
+<span>  max_perc_divergent <span class="op">=</span> <span class="fl">0.2</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -93,12 +94,17 @@ group-level random-effect terms in the output.</p></dd>
 
 
 <dt id="arg-rhat">rhat<a class="anchor" aria-label="anchor" href="#arg-rhat"></a></dt>
-<dd><p>A number giving the maximum acceptable Rhat.</p></dd>
+<dd><p>A number of at least 1 giving the maximum acceptable Rhat.</p></dd>
 
 
 <dt id="arg-ess">ess<a class="anchor" aria-label="anchor" href="#arg-ess"></a></dt>
 <dd><p>A number giving the minimum acceptable bulk and tail effective
 sample size per chain.</p></dd>
+
+
+<dt id="arg-max-perc-divergent">max_perc_divergent<a class="anchor" aria-label="anchor" href="#arg-max-perc-divergent"></a></dt>
+<dd><p>A number giving the maximum acceptable percentage of
+saved draws that ended in a divergent transition.</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -112,8 +118,9 @@ sample size per chain.</p></dd>
     <p>The printed summary adds the sampler diagnostics (divergent transitions,
 maximum treedepth, and E-BFMI). A term's <code>converged</code> uses the Rhat and
 effective sample size thresholds of <code><a href="kb_converged.html">kb_converged()</a></code>; the fit's verdict also
-covers the group-level deviations and divergent transitions, so it can be
-<code>FALSE</code> when every term shown has converged.</p>
+covers the group-level deviations and divergent transitions
+(<code>max_perc_divergent</code>), so it can be <code>FALSE</code> when every term shown has
+converged.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>

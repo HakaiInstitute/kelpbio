@@ -40,7 +40,7 @@ of in situ surveys with kb_predict_biomass_in_situ()."><meta property="og:image"
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.svg" class="logo" alt=""><h1>Check in situ survey data</h1>
-      <small class="dont-index">Source: <a href="https://github.com/HakaiInstitute/kelpbio/blob/docs-terminology/R/kb_check_data_survey_in_situ.R" class="external-link"><code>R/kb_check_data_survey_in_situ.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/HakaiInstitute/kelpbio/blob/main/R/kb_check_data_survey_in_situ.R" class="external-link"><code>R/kb_check_data_survey_in_situ.R</code></a></small>
       <div class="d-none name"><code>kb_check_data_survey_in_situ.Rd</code></div>
     </div>
 
@@ -94,7 +94,7 @@ Required columns:</p><ul><li><p><code>survey_id</code>, the survey's identifier 
 </ul><p>Optional columns:</p><ul><li><p><code>plants</code>, the number of plants counted, given only when sizes come from a size sample (whole number &gt;= 0).</p></li>
 <li><p><code>plot_area_m2</code>, the area of the plot polygon bounding the survey area that the canopy cover is measured over (m², &gt; 0, or missing).</p></li>
 <li><p><code>canopy_area_m2</code>, the canopy area delineated within the plot polygon (m², &gt;= 0 and &lt;= plot_area_m2, or missing).</p></li>
-<li><p><code>canopy_tide_height_m</code>, the tide height when the canopy was imaged, relative to chart datum (m, any number, or missing).</p></li>
+<li><p><code>canopy_tide_height_m</code>, the tide height when the canopy was imaged, relative to chart datum, ideally close to 0 m and at most 2 m, or 0 for canopy already corrected for tide (m, any number, or missing).</p></li>
 </ul><p>Other columns are ignored.</p>
 <p><code>plants</code> is required when only a sample of plants is measured (a size
 sample), and must be absent when every plant is measured (a size census),

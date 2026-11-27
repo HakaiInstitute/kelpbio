@@ -40,7 +40,7 @@ Macrocystis pyrifera cover calibration model."><meta property="og:image" content
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.svg" class="logo" alt=""><h1>Check Macrocystis cover calibration data</h1>
-      <small class="dont-index">Source: <a href="https://github.com/HakaiInstitute/kelpbio/blob/docs-terminology/R/kb_check_data_cover_calibration_macro.R" class="external-link"><code>R/kb_check_data_cover_calibration_macro.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/HakaiInstitute/kelpbio/blob/main/R/kb_check_data_cover_calibration_macro.R" class="external-link"><code>R/kb_check_data_cover_calibration_macro.R</code></a></small>
       <div class="d-none name"><code>kb_check_data_cover_calibration_macro.Rd</code></div>
     </div>
 
@@ -82,7 +82,7 @@ Required columns:</p><ul><li><p><code>biomass_kg_m2</code>, the draws of the sur
 <li><p><code>year</code>, the year of the survey (whole number or text).</p></li>
 <li><p><code>plot_area_m2</code>, the area of the plot polygon bounding the survey area that the canopy cover is measured over (m², &gt; 0, or missing).</p></li>
 <li><p><code>canopy_area_m2</code>, the canopy area delineated within the plot polygon (m², &gt;= 0 and &lt;= plot_area_m2, or missing).</p></li>
-<li><p><code>canopy_tide_height_m</code>, the tide height when the canopy was imaged, relative to chart datum (m, any number, or missing).</p></li>
+<li><p><code>canopy_tide_height_m</code>, the tide height when the canopy was imaged, relative to chart datum, ideally close to 0 m and at most 2 m, or 0 for canopy already corrected for tide (m, any number, or missing).</p></li>
 </ul><p>Other columns are ignored.</p>
 <p>The plot cover columns are given or missing together; a row without them is
 not fitted.</p>

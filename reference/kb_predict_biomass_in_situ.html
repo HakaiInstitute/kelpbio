@@ -42,7 +42,7 @@ nitrogen (g/m² or kg)."><meta property="og:image" content="https://hakaiinstitu
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.svg" class="logo" alt=""><h1>Predict the biomass of in situ surveys</h1>
-      <small class="dont-index">Source: <a href="https://github.com/HakaiInstitute/kelpbio/blob/docs-terminology/R/kb_predict_biomass_in_situ.R" class="external-link"><code>R/kb_predict_biomass_in_situ.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/HakaiInstitute/kelpbio/blob/main/R/kb_predict_biomass_in_situ.R" class="external-link"><code>R/kb_predict_biomass_in_situ.R</code></a></small>
       <div class="d-none name"><code>kb_predict_biomass_in_situ.Rd</code></div>
     </div>
 
@@ -128,10 +128,10 @@ surveyed area, or else the biomass in that area.</p></dd>
 <dt id="arg-pool-by">pool_by<a class="anchor" aria-label="anchor" href="#arg-pool-by"></a></dt>
 <dd><p>A character vector naming character or factor columns to
 group the rows by, such as <code>c("site", "year")</code>, <code>character(0)</code> to pool all
-rows, or <code>NULL</code> (the default) for one row per input row. On
-each draw, the biomass of a group is the sum of its rows' biomass (kg).
-For another summary, such as an unweighted mean of rows, summarise the
-draws column, for example with <code><a href="https://mc-stan.org/posterior/reference/rvar-summaries-within-draws.html" class="external-link">posterior::rvar_mean()</a></code>.</p></dd>
+rows, or <code>NULL</code> (the default) for one estimate per input row. The rows of a
+group are combined on each draw as described in Details. To use a different
+summary method, such as an unweighted mean of rows, summarise the draws column,
+for example with <code><a href="https://mc-stan.org/posterior/reference/rvar-summaries-within-draws.html" class="external-link">posterior::rvar_mean()</a></code>.</p></dd>
 
 
 <dt id="arg-new-levels">new_levels<a class="anchor" aria-label="anchor" href="#arg-new-levels"></a></dt>
@@ -142,8 +142,10 @@ from the estimated variation among sites or among years (the
 random-effect standard deviation). The point estimate is equivalent, but
 the interval is wider since it also includes that variation. Use it to
 get realistic uncertainty about a particular site or year that the model
-has no information on. The interval varies slightly between calls; use
-<code><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed()</a></code> to reproduce it.</p></li>
+has no information on. Rows that name the same new site or year, or
+that have no <code>site</code> or <code>year</code> column, share one effect; give new sites
+or years different names for independent effects. The interval varies
+slightly between calls; use <code><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed()</a></code> to reproduce it.</p></li>
 <li><p><code>"average"</code>: the typical site or year. The site and year effects are set
 to 0, their mean, so the interval does not include among-site or
 among-year variation. Use it to describe an average site or year.</p></li>
@@ -203,8 +205,12 @@ or from a size census, when every counted plant was measured, joined to its
 survey by <code>survey_id</code> (see
 <a href="https://hakaiinstitute.github.io/kelpbio/articles/methods.html#survey-biomass">Methods</a>).
 A survey with no rows in the size census has zero biomass, and a message
-lists such surveys. With <code>pool_by</code> and <code>per_area = TRUE</code>, a group's biomass
-per m² is its summed biomass over its summed <code>survey_area_m2</code>.</p>
+lists such surveys.</p>
+<p>With <code>pool_by</code>, the surveys of a group, such as a site-year, are assumed to
+cover separate areas, so the group's biomass is the sum of its surveys'
+biomass, and with <code>per_area = TRUE</code> that sum over their summed
+<code>survey_area_m2</code>, an area-weighted average. A plot surveyed more than once
+therefore counts once per survey.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>

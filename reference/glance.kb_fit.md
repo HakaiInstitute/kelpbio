@@ -21,7 +21,7 @@ glance(x, ..., rhat = 1.01, ess = 100, max_perc_divergent = 0.2)
 
 - rhat:
 
-  A number giving the maximum acceptable Rhat.
+  A number of at least 1 giving the maximum acceptable Rhat.
 
 - ess:
 

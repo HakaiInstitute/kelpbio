@@ -69,7 +69,7 @@
       <img src="../logo.svg" class="logo" alt=""><h1>Advanced usage</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/HakaiInstitute/kelpbio/blob/docs-terminology/vignettes/articles/advanced.Rmd" class="external-link"><code>vignettes/articles/advanced.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/HakaiInstitute/kelpbio/blob/main/vignettes/articles/advanced.Rmd" class="external-link"><code>vignettes/articles/advanced.Rmd</code></a></small>
       <div class="d-none name"><code>advanced.Rmd</code></div>
     </div>
 
@@ -145,6 +145,9 @@ variation among sites or years (i.e., from the estimated random effect
 standard deviation). The interval is wider, and describes a new or
 unobserved site about which nothing is known.</li>
 </ul>
+<p>Rows that name the same new site, or that have no <code>site</code>
+column, are one new site and share its effect; new sites with different
+names are independent. The same applies to years.</p>
 <p>The <code>representative_site</code> argument instead gives a new
 site the effects of named sites in the model fit, e.g., when it is known
 a priori that conditions at the new site are similar.</p>
@@ -293,9 +296,11 @@ a parameter the data identify only weakly.</li>
 </h3>
 <p><code><a href="../reference/kb_influence.html">kb_influence()</a></code> determines how strongly each observation
 affects the model fit if it was removed, where a <code>pareto_k</code>
-above the threshold (0.7) indicates that it is influential. Observations
-flagged as <code>influential</code> are not necessarily wrong, but could
-be double-checked for data error. See the loo package’s <a href="https://mc-stan.org/loo/reference/pareto-k-diagnostic.html" class="external-link">Pareto
+above the threshold (0.7 at the default number of draws, slightly lower
+with fewer draws; see <code><a href="../reference/kb_influence.html">kb_influence()</a></code>) indicates that it is
+influential. Observations flagged as <code>influential</code> are not
+necessarily wrong, but could be double-checked for data error. See the
+loo package’s <a href="https://mc-stan.org/loo/reference/pareto-k-diagnostic.html" class="external-link">Pareto
 k diagnostic</a> page for how <code>pareto_k</code> is calculated and
 interpreted.</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
@@ -449,10 +454,10 @@ biomass was higher in 2025:</p>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 1 × 10</span></span></span>
 <span><span class="co">#&gt;   variable         mean median     sd    mad    q5   q95  rhat ess_bulk ess_tail</span></span>
 <span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>           <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> <span style="color: #949494;">"</span>(by_year[\"20… 0.639  0.632 0.087<span style="text-decoration: underline;">6</span> 0.078<span style="text-decoration: underline;">1</span> 0.512 0.796  1.00    <span style="text-decoration: underline;">1</span>229.    <span style="text-decoration: underline;">1</span>383.</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> <span style="color: #949494;">"</span>(by_year[\"20… 0.634  0.628 0.083<span style="text-decoration: underline;">3</span> 0.072<span style="text-decoration: underline;">4</span> 0.509 0.786  1.00    <span style="text-decoration: underline;">1</span>419.    <span style="text-decoration: underline;">1</span>199.</span></span>
 <span><span class="fu"><a href="https://mc-stan.org/posterior/reference/rvar-summaries-over-draws.html" class="external-link">Pr</a></span><span class="op">(</span><span class="va">by_year</span><span class="op">[</span><span class="st">"2025"</span><span class="op">]</span> <span class="op">&gt;</span> <span class="va">by_year</span><span class="op">[</span><span class="st">"2020"</span><span class="op">]</span><span class="op">)</span></span>
-<span><span class="co">#&gt;  2025 </span></span>
-<span><span class="co">#&gt; 0.002</span></span></code></pre></div>
+<span><span class="co">#&gt; 2025 </span></span>
+<span><span class="co">#&gt;    0</span></span></code></pre></div>
 </div>
 <div class="section level2 unnumbered">
 <h2 class="unnumbered" id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>

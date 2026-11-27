@@ -38,7 +38,7 @@
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.svg" class="logo" alt=""><h1>Predict biomass from canopy cover</h1>
-      <small class="dont-index">Source: <a href="https://github.com/HakaiInstitute/kelpbio/blob/docs-terminology/R/kb_predict_cover_calibration.R" class="external-link"><code>R/kb_predict_cover_calibration.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/HakaiInstitute/kelpbio/blob/main/R/kb_predict_cover_calibration.R" class="external-link"><code>R/kb_predict_cover_calibration.R</code></a></small>
       <div class="d-none name"><code>kb_predict_cover_calibration.Rd</code></div>
     </div>
 
@@ -94,8 +94,10 @@ estimated variation among sites or among years (the random-effect
 standard deviation). The point estimate is equivalent, but the interval
 is wider since it also includes that variation. Use it to get realistic
 uncertainty about a particular site or year that the model has no
-information on. The interval varies slightly between calls; use
-<code><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed()</a></code> to reproduce it.</p></li>
+information on. Rows that name the same new site or year, or that have
+no <code>site</code> or <code>year</code> column, share one effect; give new sites or years
+different names for independent effects. The interval varies slightly
+between calls; use <code><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed()</a></code> to reproduce it.</p></li>
 </ul></dd>
 
 
@@ -129,7 +131,7 @@ and <code>upper</code>.</p>
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>Cover is tide-corrected and capped at full cover, 100% (see
 <a href="https://hakaiinstitute.github.io/kelpbio/articles/methods.html#cover-calibration">Methods</a>).
-A warning is given if a row is past the tide limit on more than 5% of draws.
+A warning is given if a row with canopy has a tide height above 2 m.
 When the fit has a presence part (when any survey in its data counted no
 plants), the prediction includes the probability that the plot holds plants.</p>
     </div>
@@ -188,16 +190,16 @@ cover.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 270 × 8</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    site   cover canopy_area_m2 plot_area_m2 canopy_tide_height_m estimate  lower</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>                <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> otte… 0              0                 1                    0    0.149 0.015<span style="text-decoration: underline;">6</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span> otte… 0.034<span style="text-decoration: underline;">5</span>         0.034<span style="text-decoration: underline;">5</span>            1                    0    0.397 0.207 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span> otte… 0.069<span style="text-decoration: underline;">0</span>         0.069<span style="text-decoration: underline;">0</span>            1                    0    0.662 0.446 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span> otte… 0.103          0.103             1                    0    0.936 0.679 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span> otte… 0.138          0.138             1                    0    1.2   0.905 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span> otte… 0.172          0.172             1                    0    1.47  1.12  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span> otte… 0.207          0.207             1                    0    1.74  1.33  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> otte… 0.241          0.241             1                    0    2     1.54  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> otte… 0.276          0.276             1                    0    2.26  1.73  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> otte… 0.310          0.310             1                    0    2.52  1.93  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> otte… 0              0                 1                    0    0.148 0.013<span style="text-decoration: underline;">9</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span> otte… 0.034<span style="text-decoration: underline;">5</span>         0.034<span style="text-decoration: underline;">5</span>            1                    0    0.39  0.205 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span> otte… 0.069<span style="text-decoration: underline;">0</span>         0.069<span style="text-decoration: underline;">0</span>            1                    0    0.658 0.432 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span> otte… 0.103          0.103             1                    0    0.931 0.648 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span> otte… 0.138          0.138             1                    0    1.2   0.877 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span> otte… 0.172          0.172             1                    0    1.47  1.08  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span> otte… 0.207          0.207             1                    0    1.73  1.28  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> otte… 0.241          0.241             1                    0    2     1.49  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> otte… 0.276          0.276             1                    0    2.26  1.69  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> otte… 0.310          0.310             1                    0    2.52  1.89  </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 260 more rows</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 1 more variable: upper &lt;dbl&gt;</span></span>
 <span class="r-in"><span></span></span>
@@ -215,8 +217,8 @@ cover.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 2 × 7</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   site     canopy_area_m2 plot_area_m2 canopy_tide_height_m estimate lower upper</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>             <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>                <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> otter_c…             80          200                  0.5     3.64  2.77  4.78</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> new_site             80          200                  0.5     3.79  2.87  5.13</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> otter_c…             80          200                  0.5     3.65  2.73  4.86</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> new_site             80          200                  0.5     3.79  2.92  4.99</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

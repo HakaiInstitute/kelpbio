@@ -69,7 +69,7 @@
       <img src="../logo.svg" class="logo" alt=""><h1>Get started with kelpbio</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/HakaiInstitute/kelpbio/blob/docs-terminology/vignettes/kelpbio.Rmd" class="external-link"><code>vignettes/kelpbio.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/HakaiInstitute/kelpbio/blob/main/vignettes/kelpbio.Rmd" class="external-link"><code>vignettes/kelpbio.Rmd</code></a></small>
       <div class="d-none name"><code>kelpbio.Rmd</code></div>
     </div>
 
@@ -147,7 +147,7 @@ the underlying Stan code.</p>
 <span><span class="co">#&gt;              + site_effect[site]</span></span>
 <span><span class="co">#&gt;              + year_effect[year]</span></span>
 <span><span class="co">#&gt;              + site_year_effect[site, year]</span></span>
-<span><span class="co">#&gt;   x = diameter_mm / d0,  d0 = 24.9  (geometric mean diameter)</span></span>
+<span><span class="co">#&gt;   x = diameter_mm / d0,  d0 = 24.9 mm  (geometric mean diameter)</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Random effects</span></span>
 <span><span class="co">#&gt;   site_effect[site]            ~ Normal(0, sd_site)       site effect on log(alpha)</span></span>
@@ -432,11 +432,21 @@ alone.</p>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/kb_predict_biomass_in_situ.html">kb_predict_biomass_in_situ</a></span><span class="op">(</span></span>
-<span>  <span class="fu">kelpbiodata</span><span class="fu">::</span><span class="va">fit_weight_hakai_nereo</span>,</span>
-<span>  <span class="fu">kelpbiodata</span><span class="fu">::</span><span class="va">fit_size_hakai_nereo</span>,</span>
+<span>  <span class="fu">kelpbiodata</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/kelpbiodata/man/fit_weight_hakai_nereo.html" class="external-link">fit_weight_hakai_nereo</a></span>,</span>
+<span>  <span class="fu">kelpbiodata</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/kelpbiodata/man/fit_size_hakai_nereo.html" class="external-link">fit_size_hakai_nereo</a></span>,</span>
 <span>  <span class="va">data_survey_in_situ_sim_nereo</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">3</span>, <span class="op">]</span>,</span>
 <span>  progress <span class="op">=</span> <span class="st">"none"</span></span>
-<span><span class="op">)</span></span></code></pre></div>
+<span><span class="op">)</span></span>
+<span><span class="co">#&gt; <span style="color: #0000BB;">&lt;kb_predictions&gt;</span> response: biomass_kg_m2 | by: site, year</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 3 × 14</span></span></span>
+<span><span class="co">#&gt;   survey_id        site  year  survey_area_m2 plants plot_area_m2 canopy_area_m2</span></span>
+<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>            <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span> <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> otter_cove-2020… otte… 2020            140     992         215            87.3</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> otter_cove-2020… otte… 2020             80     297         262.          110. </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> gull_rock-2020-1 gull… 2020            233.    660         233.           30.3</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 7 more variables: canopy_tide_height_m &lt;dbl&gt;, weight_support &lt;chr&gt;,</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;">#   size_support &lt;chr&gt;, biomass_kg_m2 &lt;rvar[1d]&gt;, estimate &lt;dbl&gt;, lower &lt;dbl&gt;,</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;">#   upper &lt;dbl&gt;</span></span></span></code></pre></div>
 <p>Sites or years in the user’s data that are not in the pre-fit model’s
 dataset are treated as new levels, so their estimates have wider
 uncertainty.</p>
@@ -448,7 +458,7 @@ allometry relationship, while the site-level random effect still gives
 an estimate for each site of interest from the user’s data.</p>
 <div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">data_weight</span> <span class="op">&lt;-</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/bind_rows.html" class="external-link">bind_rows</a></span><span class="op">(</span></span>
-<span>  <span class="fu">kelpbiodata</span><span class="fu">::</span><span class="va">data_weight_hakai_nereo</span>,</span>
+<span>  <span class="fu">kelpbiodata</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/kelpbiodata/man/data_weight_hakai_nereo.html" class="external-link">data_weight_hakai_nereo</a></span>,</span>
 <span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">data_weight_sim_nereo</span>, <span class="va">site</span> <span class="op"><a href="https://mc-stan.org/posterior/reference/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"otter_cove"</span>, <span class="st">"gull_rock"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span></span>

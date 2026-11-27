@@ -16,8 +16,10 @@ A named list of prior objects, one per parameter.
 
 ## Details
 
-The presence priors apply only when the data hold a survey with no
-plants counted.
+The `tide_height_slope` prior, the share of canopy lost per metre of
+tide, is informative and from Timmer et al. (2024); the calibration data
+do not inform it. The presence priors apply only when the data hold a
+survey with no plants counted.
 
 ## Priors
 
@@ -26,6 +28,14 @@ Each entry is named after the parameter it sets, which
 prints with the model. A list passed to `priors` replaces the entries it
 names; the others keep their defaults. The prior family of each entry is
 fixed; only its arguments can be changed.
+
+## References
+
+Timmer, B., Reshitnyk, L. Y., Hessing-Lewis, M., Juanes, F., Gendall,
+L., and Costa, M. (2024). Capturing accurate kelp canopy extent:
+integrating tides, currents, and species-level morphology in kelp remote
+sensing. Frontiers in Environmental Science, 12, 1338483.
+[doi:10.3389/fenvs.2024.1338483](https://doi.org/10.3389/fenvs.2024.1338483)
 
 ## See also
 

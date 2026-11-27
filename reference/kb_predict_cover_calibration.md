@@ -52,9 +52,11 @@ kb_predict_cover_calibration(
     standard deviation). The point estimate is equivalent, but the
     interval is wider since it also includes that variation. Use it to
     get realistic uncertainty about a particular site or year that the
-    model has no information on. The interval varies slightly between
-    calls; use [`set.seed()`](https://rdrr.io/r/base/Random.html) to
-    reproduce it.
+    model has no information on. Rows that name the same new site or
+    year, or that have no `site` or `year` column, share one effect;
+    give new sites or years different names for independent effects. The
+    interval varies slightly between calls; use
+    [`set.seed()`](https://rdrr.io/r/base/Random.html) to reproduce it.
 
 - representative_site:
 
@@ -85,10 +87,10 @@ A `kb_predictions` object: the rows of `new_data` with `cover_support`
 
 Cover is tide-corrected and capped at full cover, 100% (see
 [Methods](https://hakaiinstitute.github.io/kelpbio/articles/methods.html#cover-calibration)).
-A warning is given if a row is past the tide limit on more than 5% of
-draws. When the fit has a presence part (when any survey in its data
-counted no plants), the prediction includes the probability that the
-plot holds plants.
+A warning is given if a row with canopy has a tide height above 2 m.
+When the fit has a presence part (when any survey in its data counted no
+plants), the prediction includes the probability that the plot holds
+plants.
 
 ## See also
 
@@ -146,16 +148,16 @@ kb_predict_cover_calibration(fit, kb_new_data(fit, by = "site"))
 #> # A tibble: 270 × 8
 #>    site   cover canopy_area_m2 plot_area_m2 canopy_tide_height_m estimate  lower
 #>    <fct>  <dbl>          <dbl>        <dbl>                <dbl>    <dbl>  <dbl>
-#>  1 otte… 0              0                 1                    0    0.149 0.0156
-#>  2 otte… 0.0345         0.0345            1                    0    0.397 0.207 
-#>  3 otte… 0.0690         0.0690            1                    0    0.662 0.446 
-#>  4 otte… 0.103          0.103             1                    0    0.936 0.679 
-#>  5 otte… 0.138          0.138             1                    0    1.2   0.905 
-#>  6 otte… 0.172          0.172             1                    0    1.47  1.12  
-#>  7 otte… 0.207          0.207             1                    0    1.74  1.33  
-#>  8 otte… 0.241          0.241             1                    0    2     1.54  
-#>  9 otte… 0.276          0.276             1                    0    2.26  1.73  
-#> 10 otte… 0.310          0.310             1                    0    2.52  1.93  
+#>  1 otte… 0              0                 1                    0    0.148 0.0139
+#>  2 otte… 0.0345         0.0345            1                    0    0.39  0.205 
+#>  3 otte… 0.0690         0.0690            1                    0    0.658 0.432 
+#>  4 otte… 0.103          0.103             1                    0    0.931 0.648 
+#>  5 otte… 0.138          0.138             1                    0    1.2   0.877 
+#>  6 otte… 0.172          0.172             1                    0    1.47  1.08  
+#>  7 otte… 0.207          0.207             1                    0    1.73  1.28  
+#>  8 otte… 0.241          0.241             1                    0    2     1.49  
+#>  9 otte… 0.276          0.276             1                    0    2.26  1.69  
+#> 10 otte… 0.310          0.310             1                    0    2.52  1.89  
 #> # ℹ 260 more rows
 #> # ℹ 1 more variable: upper <dbl>
 
@@ -173,6 +175,6 @@ kb_predict_cover_calibration(
 #> # A tibble: 2 × 7
 #>   site     canopy_area_m2 plot_area_m2 canopy_tide_height_m estimate lower upper
 #>   <chr>             <dbl>        <dbl>                <dbl>    <dbl> <dbl> <dbl>
-#> 1 otter_c…             80          200                  0.5     3.64  2.77  4.78
-#> 2 new_site             80          200                  0.5     3.79  2.87  5.13
+#> 1 otter_c…             80          200                  0.5     3.65  2.73  4.86
+#> 2 new_site             80          200                  0.5     3.79  2.92  4.99
 ```

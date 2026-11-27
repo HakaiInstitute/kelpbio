@@ -78,8 +78,10 @@ kb_predict_mean_weight(
     random-effect standard deviation). The point estimate is equivalent,
     but the interval is wider since it also includes that variation. Use
     it to get realistic uncertainty about a particular site or year that
-    the model has no information on. The interval varies slightly
-    between calls; use
+    the model has no information on. Rows that name the same new site or
+    year, or that have no `site` or `year` column, share one effect;
+    give new sites or years different names for independent effects. The
+    interval varies slightly between calls; use
     [`set.seed()`](https://rdrr.io/r/base/Random.html) to reproduce it.
 
   - `"average"`: the typical site or year. The site and year effects are

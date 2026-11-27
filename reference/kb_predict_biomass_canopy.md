@@ -65,10 +65,10 @@ kb_predict_biomass_canopy(
 
   A character vector naming character or factor columns to group the
   rows by, such as `c("site", "year")`, `character(0)` to pool all rows,
-  or `NULL` (the default) for one row per input row. On each draw, the
-  biomass of a group is the sum of its rows' biomass (kg). For another
-  summary, such as an unweighted mean of rows, summarise the draws
-  column, for example with
+  or `NULL` (the default) for one estimate per input row. The rows of a
+  group are combined on each draw as described in Details. To use a
+  different summary method, such as an unweighted mean of rows,
+  summarise the draws column, for example with
   [`posterior::rvar_mean()`](https://mc-stan.org/posterior/reference/rvar-summaries-within-draws.html).
 
 - new_levels:
@@ -82,8 +82,10 @@ kb_predict_biomass_canopy(
     random-effect standard deviation). The point estimate is equivalent,
     but the interval is wider since it also includes that variation. Use
     it to get realistic uncertainty about a particular site or year that
-    the model has no information on. The interval varies slightly
-    between calls; use
+    the model has no information on. Rows that name the same new site or
+    year, or that have no `site` or `year` column, share one effect;
+    give new sites or years different names for independent effects. The
+    interval varies slightly between calls; use
     [`set.seed()`](https://rdrr.io/r/base/Random.html) to reproduce it.
 
   - `"average"`: the typical site or year. The site and year effects are
@@ -123,9 +125,17 @@ and `upper`.
 A row's total is the calibration at full cover times its tide-corrected
 canopy area, capped at `classified_area_m2` (see
 [Methods](https://hakaiinstitute.github.io/kelpbio/articles/methods.html#total-biomass)).
-A warning is given if a row is past the tide limit on more than 5% of
-draws, or if a pooled group has more than one map of a site-year, which
-counts its bed more than once.
+
+A total is a snapshot of the kelp present when the site is mapped, and
+each row is assumed to map the whole site; a site flown in parts should
+be combined into one row first. Several maps within a site-year are
+therefore repeated measurements of one bed. With `pool_by`, the maps of
+each site-year in a group are first averaged and the site-year means
+then summed, so a bed is never counted more than once.
+
+A warning is given if a row with canopy has a tide height above 2 m, or
+if the maps of a site-year have `classified_area_m2` values that differ
+by more than half, which suggests maps of parts of the site.
 
 ## See also
 
@@ -188,18 +198,18 @@ kb_predict_biomass_canopy(
 #> # A tibble: 12 × 6
 #>    region year         biomass_kg estimate  lower   upper
 #>    <fct>  <fct>        <rvar[1d]>    <dbl>  <dbl>   <dbl>
-#>  1 north  2020    989350 ± 144459   980000 735000 1310000
-#>  2 north  2021    598562 ± 92683    594000 426000  781000
-#>  3 north  2022    396554 ± 68212    391000 278000  543000
-#>  4 north  2023    306940 ± 46859    304000 224000  406000
-#>  5 north  2024    220094 ± 40111    221000 140000  298000
-#>  6 north  2025    477421 ± 70150    469000 355000  639000
-#>  7 south  2020   1110012 ± 141970  1090000 867000 1420000
-#>  8 south  2021    549527 ± 75487    548000 410000  700000
-#>  9 south  2022    566128 ± 75479    560000 433000  732000
-#> 10 south  2023    369234 ± 49059    366000 281000  475000
-#> 11 south  2024    262608 ± 41242    263000 176000  343000
-#> 12 south  2025    853358 ± 121528   841000 650000 1120000
+#>  1 north  2020    991926 ± 142096   982000 749000 1310000
+#>  2 north  2021    601103 ± 97973    598000 423000  801000
+#>  3 north  2022    394536 ± 65931    390000 279000  530000
+#>  4 north  2023    309168 ± 47849    306000 228000  411000
+#>  5 north  2024    219944 ± 40853    220000 136000  298000
+#>  6 north  2025    476246 ± 67328    474000 358000  618000
+#>  7 south  2020   1116765 ± 146107  1110000 864000 1430000
+#>  8 south  2021    552860 ± 79287    552000 410000  718000
+#>  9 south  2022    564797 ± 76372    562000 430000  730000
+#> 10 south  2023    372525 ± 51458    368000 280000  476000
+#> 11 south  2024    262906 ± 43681    265000 175000  344000
+#> 12 south  2025    850501 ± 119518   836000 651000 1120000
 
 # Carbon stock by year
 set.seed(1)
@@ -215,10 +225,10 @@ kb_predict_biomass_canopy(
 #> # A tibble: 6 × 5
 #>   year  carbon_biomass_kg estimate lower upper
 #>   <fct>        <rvar[1d]>    <dbl> <dbl> <dbl>
-#> 1 2020       48826 ± 6095    48300 38100 62500
-#> 2 2021       26706 ± 3654    26700 19800 33900
-#> 3 2022       22391 ± 2970    22200 16700 28800
-#> 4 2023       15727 ± 2066    15700 12000 20100
-#> 5 2024       11227 ± 1789    11300  7420 14800
-#> 6 2025       30952 ± 4019    30500 24100 40100
+#> 1 2020       49046 ± 6064    48900 38500 62400
+#> 2 2021       26840 ± 3827    26700 19700 34400
+#> 3 2022       22312 ± 2923    22200 17000 28500
+#> 4 2023       15854 ± 2120    15700 12000 20300
+#> 5 2024       11230 ± 1853    11300  7390 14700
+#> 6 2025       30859 ± 3887    30500 24400 39700
 ```

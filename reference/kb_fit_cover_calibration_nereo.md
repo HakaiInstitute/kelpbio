@@ -102,11 +102,11 @@ with its defaults. Surveys without plot cover are not fitted, and a
 message gives their number. The model is described in
 [Methods](https://hakaiinstitute.github.io/kelpbio/articles/methods.html#cover-calibration).
 
-The fit warns when a survey is past the tide limit with more than 5%
-prior probability, and when every survey with no plants has a plot cover
-at or below that of every survey with plants, since
-`presence_cover_slope` is then informed only by its prior. If canopy is
-already tide-corrected, set `canopy_tide_height_m = 0`.
+The fit warns when a survey with canopy has a tide height above 2 m, and
+when every survey with no plants has a plot cover at or below that of
+every survey with plants, since `presence_cover_slope` is then informed
+only by its prior. If canopy is already tide-corrected, set
+`canopy_tide_height_m = 0`.
 
 ## Model
 
@@ -166,14 +166,14 @@ tidy(fit_cover_calibration_sim_nereo)
 #> # A tibble: 8 × 4
 #>   term                 estimate    lower  upper
 #>   <chr>                   <dbl>    <dbl>  <dbl>
-#> 1 cover_slope             7.89   5.61    11    
-#> 2 biomass_floor           0.202  0.0252   0.449
-#> 3 tide_height_slope       0.252  0.178    0.32 
-#> 4 cv_residual             0.28   0.193    0.39 
-#> 5 presence_intercept      1.53  -1.09     4.07 
-#> 6 presence_cover_slope    0.135  0.00922  0.424
-#> 7 sd_site                 0.278  0.0783   0.624
-#> 8 sd_year                 0.13   0.00913  0.447
+#> 1 cover_slope             7.89   5.62    10.8  
+#> 2 biomass_floor           0.202  0.0204   0.448
+#> 3 tide_height_slope       0.251  0.184    0.321
+#> 4 cv_residual             0.282  0.193    0.396
+#> 5 presence_intercept      1.49  -1.04     3.99 
+#> 6 presence_cover_slope    0.138  0.00272  0.418
+#> 7 sd_site                 0.278  0.0596   0.574
+#> 8 sd_year                 0.131  0.00613  0.459
 if (FALSE) { # interactive()
 biomass <- kb_predict_biomass_in_situ(
   fit_weight_sim_nereo,

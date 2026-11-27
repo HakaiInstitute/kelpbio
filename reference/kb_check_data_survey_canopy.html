@@ -42,7 +42,7 @@ its new_data."><meta property="og:image" content="https://hakaiinstitute.github.
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.svg" class="logo" alt=""><h1>Check canopy map data</h1>
-      <small class="dont-index">Source: <a href="https://github.com/HakaiInstitute/kelpbio/blob/docs-terminology/R/kb_check_data_survey_canopy.R" class="external-link"><code>R/kb_check_data_survey_canopy.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/HakaiInstitute/kelpbio/blob/main/R/kb_check_data_survey_canopy.R" class="external-link"><code>R/kb_check_data_survey_canopy.R</code></a></small>
       <div class="d-none name"><code>kb_check_data_survey_canopy.Rd</code></div>
     </div>
 
@@ -78,11 +78,14 @@ its <code>new_data</code>.</p>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>Each row is one canopy map of a site; a site-year may have several.
+    <p>Each row is one canopy map of the whole site; a site-year may have several.
+A warning is given if the maps of a site-year have <code>classified_area_m2</code>
+values that differ by more than half, which suggests maps of parts of the
+site.
 Required columns:</p><ul><li><p><code>site</code>, the site mapped (any text).</p></li>
 <li><p><code>year</code>, the year of the map (whole number or text).</p></li>
 <li><p><code>canopy_area_m2</code>, the canopy area mapped (m², &gt;= 0 and &lt;= classified_area_m2).</p></li>
-<li><p><code>canopy_tide_height_m</code>, the tide height when the canopy was imaged, relative to chart datum (m, any number).</p></li>
+<li><p><code>canopy_tide_height_m</code>, the tide height when the canopy was imaged, relative to chart datum, ideally close to 0 m and at most 2 m, or 0 for canopy already corrected for tide (m, any number).</p></li>
 <li><p><code>classified_area_m2</code>, the water area the canopy classification covered, including water where no canopy was found (m², &gt; 0).</p></li>
 </ul><p>Other columns are ignored.</p>
 <p>Other grouping columns, such as <code>region</code>, can be named in <code>pool_by</code>.</p>

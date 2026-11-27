@@ -38,7 +38,7 @@ printed description.
 
 Priors, centring, and random effects are those of the fit; an effect not
 fitted (such as the weight floor of a power-law fit) is omitted. Priors
-marked `T[0, ]` are truncated at zero, and `T[0, 0.5]` at 0 and 0.5.
+marked `T[0, ]` are truncated at zero.
 
 ## See also
 
@@ -72,7 +72,7 @@ kb_model_describe(fit_weight_sim_nereo)
 #>              + site_effect[site]
 #>              + year_effect[year]
 #>              + site_year_effect[site, year]
-#>   x = diameter_mm / d0,  d0 = 24.9  (geometric mean diameter)
+#>   x = diameter_mm / d0,  d0 = 24.9 mm  (geometric mean diameter)
 #> 
 #> Random effects
 #>   site_effect[site]            ~ Normal(0, sd_site)       site effect on log(alpha)

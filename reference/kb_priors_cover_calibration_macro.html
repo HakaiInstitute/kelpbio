@@ -40,7 +40,7 @@ for the priors argument of kb_fit_cover_calibration_macro()."><meta property="og
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.svg" class="logo" alt=""><h1>Default priors for the Macrocystis cover calibration model</h1>
-      <small class="dont-index">Source: <a href="https://github.com/HakaiInstitute/kelpbio/blob/docs-terminology/R/kb_priors_cover_calibration_macro.R" class="external-link"><code>R/kb_priors_cover_calibration_macro.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/HakaiInstitute/kelpbio/blob/main/R/kb_priors_cover_calibration_macro.R" class="external-link"><code>R/kb_priors_cover_calibration_macro.R</code></a></small>
       <div class="d-none name"><code>kb_priors_cover_calibration_macro.Rd</code></div>
     </div>
 
@@ -60,8 +60,10 @@ for the <code>priors</code> argument of <code><a href="kb_fit_cover_calibration_
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>The presence priors apply only when the data hold a survey with no plants
-counted.</p>
+    <p>The <code>tide_height_slope</code> prior, the share of canopy lost per metre of tide,
+is informative and from Timmer et al. (2024); the calibration data do not
+inform it. The presence priors apply only when the data hold a survey with
+no plants counted.</p>
     </div>
     <div class="section level2">
     <h2 id="priors">Priors<a class="anchor" aria-label="anchor" href="#priors"></a></h2>
@@ -71,6 +73,14 @@ counted.</p>
 prints with the model. A list passed to <code>priors</code> replaces the entries it
 names; the others keep their defaults. The prior family of each entry is
 fixed; only its arguments can be changed.</p>
+    </div>
+    <div class="section level2">
+    <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a></h2>
+    <p>Timmer, B., Reshitnyk, L. Y., Hessing-Lewis, M., Juanes, F., Gendall, L.,
+and Costa, M. (2024). Capturing accurate kelp canopy extent: integrating
+tides, currents, and species-level morphology in kelp remote sensing.
+Frontiers in Environmental Science, 12, 1338483.
+<a href="https://doi.org/10.3389/fenvs.2024.1338483" class="external-link">doi:10.3389/fenvs.2024.1338483</a></p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>

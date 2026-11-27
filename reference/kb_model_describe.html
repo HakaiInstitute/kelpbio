@@ -44,7 +44,7 @@ matches a row of tidy(), summary(), and coef()."><meta property="og:image" conte
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.svg" class="logo" alt=""><h1>Describe a fitted model</h1>
-      <small class="dont-index">Source: <a href="https://github.com/HakaiInstitute/kelpbio/blob/docs-terminology/R/kb_model_describe.R" class="external-link"><code>R/kb_model_describe.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/HakaiInstitute/kelpbio/blob/main/R/kb_model_describe.R" class="external-link"><code>R/kb_model_describe.R</code></a></small>
       <div class="d-none name"><code>kb_model_describe.Rd</code></div>
     </div>
 
@@ -86,7 +86,7 @@ printed description.</p>
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>Priors, centring, and random effects are those of the fit; an effect not
 fitted (such as the weight floor of a power-law fit) is omitted.
-Priors marked <code>T[0, ]</code> are truncated at zero, and <code>T[0, 0.5]</code> at 0 and 0.5.</p>
+Priors marked <code>T[0, ]</code> are truncated at zero.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
@@ -120,7 +120,7 @@ Priors marked <code>T[0, ]</code> are truncated at zero, and <code>T[0, 0.5]</co
 <span class="r-out co"><span class="r-pr">#&gt;</span>              + site_effect[site]</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>              + year_effect[year]</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>              + site_year_effect[site, year]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   x = diameter_mm / d0,  d0 = 24.9  (geometric mean diameter)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   x = diameter_mm / d0,  d0 = 24.9 mm  (geometric mean diameter)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Random effects</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   site_effect[site]            ~ Normal(0, sd_site)       site effect on log(alpha)</span>

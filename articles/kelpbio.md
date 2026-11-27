@@ -73,7 +73,7 @@ kb_model_describe(fit)
 #>              + site_effect[site]
 #>              + year_effect[year]
 #>              + site_year_effect[site, year]
-#>   x = diameter_mm / d0,  d0 = 24.9  (geometric mean diameter)
+#>   x = diameter_mm / d0,  d0 = 24.9 mm  (geometric mean diameter)
 #> 
 #> Random effects
 #>   site_effect[site]            ~ Normal(0, sd_site)       site effect on log(alpha)
@@ -423,6 +423,16 @@ kb_predict_biomass_in_situ(
   data_survey_in_situ_sim_nereo[1:3, ],
   progress = "none"
 )
+#> <kb_predictions> response: biomass_kg_m2 | by: site, year
+#> # A tibble: 3 × 14
+#>   survey_id        site  year  survey_area_m2 plants plot_area_m2 canopy_area_m2
+#>   <chr>            <fct> <fct>          <dbl>  <int>        <dbl>          <dbl>
+#> 1 otter_cove-2020… otte… 2020            140     992         215            87.3
+#> 2 otter_cove-2020… otte… 2020             80     297         262.          110. 
+#> 3 gull_rock-2020-1 gull… 2020            233.    660         233.           30.3
+#> # ℹ 7 more variables: canopy_tide_height_m <dbl>, weight_support <chr>,
+#> #   size_support <chr>, biomass_kg_m2 <rvar[1d]>, estimate <dbl>, lower <dbl>,
+#> #   upper <dbl>
 ```
 
 Sites or years in the user’s data that are not in the pre-fit model’s

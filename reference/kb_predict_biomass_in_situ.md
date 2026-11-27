@@ -82,10 +82,10 @@ kb_predict_biomass_in_situ(
 
   A character vector naming character or factor columns to group the
   rows by, such as `c("site", "year")`, `character(0)` to pool all rows,
-  or `NULL` (the default) for one row per input row. On each draw, the
-  biomass of a group is the sum of its rows' biomass (kg). For another
-  summary, such as an unweighted mean of rows, summarise the draws
-  column, for example with
+  or `NULL` (the default) for one estimate per input row. The rows of a
+  group are combined on each draw as described in Details. To use a
+  different summary method, such as an unweighted mean of rows,
+  summarise the draws column, for example with
   [`posterior::rvar_mean()`](https://mc-stan.org/posterior/reference/rvar-summaries-within-draws.html).
 
 - new_levels:
@@ -99,8 +99,10 @@ kb_predict_biomass_in_situ(
     random-effect standard deviation). The point estimate is equivalent,
     but the interval is wider since it also includes that variation. Use
     it to get realistic uncertainty about a particular site or year that
-    the model has no information on. The interval varies slightly
-    between calls; use
+    the model has no information on. Rows that name the same new site or
+    year, or that have no `site` or `year` column, share one effect;
+    give new sites or years different names for independent effects. The
+    interval varies slightly between calls; use
     [`set.seed()`](https://rdrr.io/r/base/Random.html) to reproduce it.
 
   - `"average"`: the typical site or year. The site and year effects are
@@ -161,8 +163,13 @@ measured, or from a size census, when every counted plant was measured,
 joined to its survey by `survey_id` (see
 [Methods](https://hakaiinstitute.github.io/kelpbio/articles/methods.html#survey-biomass)).
 A survey with no rows in the size census has zero biomass, and a message
-lists such surveys. With `pool_by` and `per_area = TRUE`, a group's
-biomass per m² is its summed biomass over its summed `survey_area_m2`.
+lists such surveys.
+
+With `pool_by`, the surveys of a group, such as a site-year, are assumed
+to cover separate areas, so the group's biomass is the sum of its
+surveys' biomass, and with `per_area = TRUE` that sum over their summed
+`survey_area_m2`, an area-weighted average. A plot surveyed more than
+once therefore counts once per survey.
 
 ## See also
 

@@ -69,7 +69,7 @@
       <img src="../logo.svg" class="logo" alt=""><h1>Data format</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/HakaiInstitute/kelpbio/blob/docs-terminology/vignettes/data-format.Rmd" class="external-link"><code>vignettes/data-format.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/HakaiInstitute/kelpbio/blob/main/vignettes/data-format.Rmd" class="external-link"><code>vignettes/data-format.Rmd</code></a></small>
       <div class="d-none name"><code>data-format.Rmd</code></div>
     </div>
 
@@ -729,7 +729,9 @@ any number, or missing
 <code>0.75</code>
 </td>
 <td style="text-align:left;">
-The tide height when the canopy was imaged, relative to chart datum.
+The tide height when the canopy was imaged, relative to chart datum,
+ideally close to 0 m and at most 2 m, or 0 for canopy already corrected
+for tide.
 </td>
 </tr>
 </tbody>
@@ -824,7 +826,9 @@ any number
 <code>1.0</code>
 </td>
 <td style="text-align:left;">
-The tide height when the canopy was imaged, relative to chart datum.
+The tide height when the canopy was imaged, relative to chart datum,
+ideally close to 0 m and at most 2 m, or 0 for canopy already corrected
+for tide.
 </td>
 </tr>
 <tr>
@@ -854,7 +858,8 @@ no canopy was found.
 <a href="https://hakaiinstitute.github.io/kelpbio/reference/kb_fit_wetdry_nereo.html"><code>kb_fit_wetdry_nereo()</code></a>,
 <a href="https://hakaiinstitute.github.io/kelpbio/reference/kb_fit_wetdry_macro.html"><code>kb_fit_wetdry_macro()</code></a>
 and checked by
-<a href="https://hakaiinstitute.github.io/kelpbio/reference/kb_check_data_wetdry_nereo.html"><code>kb_check_data_wetdry_nereo()</code></a>.</p>
+<a href="https://hakaiinstitute.github.io/kelpbio/reference/kb_check_data_wetdry_nereo.html"><code>kb_check_data_wetdry_nereo()</code></a>,
+<a href="https://hakaiinstitute.github.io/kelpbio/reference/kb_check_data_wetdry_macro.html"><code>kb_check_data_wetdry_macro()</code></a>.</p>
 <table class="table table table-sm table-striped small">
 <thead><tr>
 <th style="text-align:left;">
@@ -917,7 +922,8 @@ The mass of the tissue sample after drying.
 <a href="https://hakaiinstitute.github.io/kelpbio/reference/kb_fit_carbon_nereo.html"><code>kb_fit_carbon_nereo()</code></a>,
 <a href="https://hakaiinstitute.github.io/kelpbio/reference/kb_fit_carbon_macro.html"><code>kb_fit_carbon_macro()</code></a>
 and checked by
-<a href="https://hakaiinstitute.github.io/kelpbio/reference/kb_check_data_carbon_nereo.html"><code>kb_check_data_carbon_nereo()</code></a>.</p>
+<a href="https://hakaiinstitute.github.io/kelpbio/reference/kb_check_data_carbon_nereo.html"><code>kb_check_data_carbon_nereo()</code></a>,
+<a href="https://hakaiinstitute.github.io/kelpbio/reference/kb_check_data_carbon_macro.html"><code>kb_check_data_carbon_macro()</code></a>.</p>
 <table class="table table table-sm table-striped small">
 <thead><tr>
 <th style="text-align:left;">
@@ -980,7 +986,8 @@ The mass of carbon measured in the sample.
 <a href="https://hakaiinstitute.github.io/kelpbio/reference/kb_fit_nitrogen_nereo.html"><code>kb_fit_nitrogen_nereo()</code></a>,
 <a href="https://hakaiinstitute.github.io/kelpbio/reference/kb_fit_nitrogen_macro.html"><code>kb_fit_nitrogen_macro()</code></a>
 and checked by
-<a href="https://hakaiinstitute.github.io/kelpbio/reference/kb_check_data_nitrogen_nereo.html"><code>kb_check_data_nitrogen_nereo()</code></a>.</p>
+<a href="https://hakaiinstitute.github.io/kelpbio/reference/kb_check_data_nitrogen_nereo.html"><code>kb_check_data_nitrogen_nereo()</code></a>,
+<a href="https://hakaiinstitute.github.io/kelpbio/reference/kb_check_data_nitrogen_macro.html"><code>kb_check_data_nitrogen_macro()</code></a>.</p>
 <table class="table table table-sm table-striped small">
 <thead><tr>
 <th style="text-align:left;">

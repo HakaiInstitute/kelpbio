@@ -40,7 +40,7 @@ site-year: wet or dry (kg), or carbon or nitrogen (g)."><meta property="og:image
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.svg" class="logo" alt=""><h1>Predict mean plant weight</h1>
-      <small class="dont-index">Source: <a href="https://github.com/HakaiInstitute/kelpbio/blob/docs-terminology/R/kb_predict_mean_weight.R" class="external-link"><code>R/kb_predict_mean_weight.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/HakaiInstitute/kelpbio/blob/main/R/kb_predict_mean_weight.R" class="external-link"><code>R/kb_predict_mean_weight.R</code></a></small>
       <div class="d-none name"><code>kb_predict_mean_weight.Rd</code></div>
     </div>
 
@@ -124,8 +124,10 @@ from the estimated variation among sites or among years (the
 random-effect standard deviation). The point estimate is equivalent, but
 the interval is wider since it also includes that variation. Use it to
 get realistic uncertainty about a particular site or year that the model
-has no information on. The interval varies slightly between calls; use
-<code><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed()</a></code> to reproduce it.</p></li>
+has no information on. Rows that name the same new site or year, or
+that have no <code>site</code> or <code>year</code> column, share one effect; give new sites
+or years different names for independent effects. The interval varies
+slightly between calls; use <code><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed()</a></code> to reproduce it.</p></li>
 <li><p><code>"average"</code>: the typical site or year. The site and year effects are set
 to 0, their mean, so the interval does not include among-site or
 among-year variation. Use it to describe an average site or year.</p></li>

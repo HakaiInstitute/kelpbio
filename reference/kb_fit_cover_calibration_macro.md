@@ -102,11 +102,11 @@ with its defaults. Surveys without plot cover are not fitted, and a
 message gives their number. The model is described in
 [Methods](https://hakaiinstitute.github.io/kelpbio/articles/methods.html#cover-calibration).
 
-The fit warns when a survey is past the tide limit with more than 5%
-prior probability, and when every survey with no plants has a plot cover
-at or below that of every survey with plants, since
-`presence_cover_slope` is then informed only by its prior. If canopy is
-already tide-corrected, set `canopy_tide_height_m = 0`.
+The fit warns when a survey with canopy has a tide height above 2 m, and
+when every survey with no plants has a plot cover at or below that of
+every survey with plants, since `presence_cover_slope` is then informed
+only by its prior. If canopy is already tide-corrected, set
+`canopy_tide_height_m = 0`.
 
 ## Model
 
@@ -166,12 +166,12 @@ tidy(fit_cover_calibration_sim_macro)
 #> # A tibble: 6 × 4
 #>   term              estimate   lower  upper
 #>   <chr>                <dbl>   <dbl>  <dbl>
-#> 1 cover_slope         8.6    6.96    10.3  
-#> 2 biomass_floor       0.326  0.105    0.601
-#> 3 tide_height_slope   0.235  0.18     0.287
-#> 4 cv_residual         0.22   0.165    0.293
-#> 5 sd_site             0.0675 0.00334  0.258
-#> 6 sd_year             0.0614 0.00254  0.284
+#> 1 cover_slope         8.55   6.92    10.3  
+#> 2 biomass_floor       0.328  0.116    0.601
+#> 3 tide_height_slope   0.233  0.18     0.287
+#> 4 cv_residual         0.22   0.161    0.293
+#> 5 sd_site             0.0753 0.00323  0.26 
+#> 6 sd_year             0.0632 0.00281  0.281
 if (FALSE) { # interactive()
 biomass <- kb_predict_biomass_in_situ(
   fit_weight_sim_macro,

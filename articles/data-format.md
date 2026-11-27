@@ -130,14 +130,15 @@ and checked by
 | `site` |  | any text | `otter_cove` | The site mapped. |
 | `year` |  | whole number or text | `2024` | The year of the map. |
 | `canopy_area_m2` | m² | \>= 0 and \<= classified_area_m2 | `7528` | The canopy area mapped. |
-| `canopy_tide_height_m` | m | any number | `1.0` | The tide height when the canopy was imaged, relative to chart datum. |
+| `canopy_tide_height_m` | m | any number | `1.0` | The tide height when the canopy was imaged, relative to chart datum, ideally close to 0 m and at most 2 m, or 0 for canopy already corrected for tide. |
 | `classified_area_m2` | m² | \> 0 | `18478` | The water area the canopy classification covered, including water where no canopy was found. |
 
 One row per tissue sample, with no site or year. Used by
 [`kb_fit_wetdry_nereo()`](https://hakaiinstitute.github.io/kelpbio/reference/kb_fit_wetdry_nereo.html),
 [`kb_fit_wetdry_macro()`](https://hakaiinstitute.github.io/kelpbio/reference/kb_fit_wetdry_macro.html)
 and checked by
-[`kb_check_data_wetdry_nereo()`](https://hakaiinstitute.github.io/kelpbio/reference/kb_check_data_wetdry_nereo.html).
+[`kb_check_data_wetdry_nereo()`](https://hakaiinstitute.github.io/kelpbio/reference/kb_check_data_wetdry_nereo.html),
+[`kb_check_data_wetdry_macro()`](https://hakaiinstitute.github.io/kelpbio/reference/kb_check_data_wetdry_macro.html).
 
 | Column | Units | Allowed | Example | Description |
 |:---|:---|:---|:---|:---|
@@ -148,7 +149,8 @@ One row per tissue sample, with no site or year. Used by
 [`kb_fit_carbon_nereo()`](https://hakaiinstitute.github.io/kelpbio/reference/kb_fit_carbon_nereo.html),
 [`kb_fit_carbon_macro()`](https://hakaiinstitute.github.io/kelpbio/reference/kb_fit_carbon_macro.html)
 and checked by
-[`kb_check_data_carbon_nereo()`](https://hakaiinstitute.github.io/kelpbio/reference/kb_check_data_carbon_nereo.html).
+[`kb_check_data_carbon_nereo()`](https://hakaiinstitute.github.io/kelpbio/reference/kb_check_data_carbon_nereo.html),
+[`kb_check_data_carbon_macro()`](https://hakaiinstitute.github.io/kelpbio/reference/kb_check_data_carbon_macro.html).
 
 | Column | Units | Allowed | Example | Description |
 |:---|:---|:---|:---|:---|
@@ -159,7 +161,8 @@ One row per tissue sample, with no site or year. Used by
 [`kb_fit_nitrogen_nereo()`](https://hakaiinstitute.github.io/kelpbio/reference/kb_fit_nitrogen_nereo.html),
 [`kb_fit_nitrogen_macro()`](https://hakaiinstitute.github.io/kelpbio/reference/kb_fit_nitrogen_macro.html)
 and checked by
-[`kb_check_data_nitrogen_nereo()`](https://hakaiinstitute.github.io/kelpbio/reference/kb_check_data_nitrogen_nereo.html).
+[`kb_check_data_nitrogen_nereo()`](https://hakaiinstitute.github.io/kelpbio/reference/kb_check_data_nitrogen_nereo.html),
+[`kb_check_data_nitrogen_macro()`](https://hakaiinstitute.github.io/kelpbio/reference/kb_check_data_nitrogen_macro.html).
 
 | Column | Units | Allowed | Example | Description |
 |:---|:---|:---|:---|:---|

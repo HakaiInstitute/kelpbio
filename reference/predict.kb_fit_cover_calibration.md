@@ -56,9 +56,11 @@ predict(
     standard deviation). The point estimate is equivalent, but the
     interval is wider since it also includes that variation. Use it to
     get realistic uncertainty about a particular site or year that the
-    model has no information on. The interval varies slightly between
-    calls; use [`set.seed()`](https://rdrr.io/r/base/Random.html) to
-    reproduce it.
+    model has no information on. Rows that name the same new site or
+    year, or that have no `site` or `year` column, share one effect;
+    give new sites or years different names for independent effects. The
+    interval varies slightly between calls; use
+    [`set.seed()`](https://rdrr.io/r/base/Random.html) to reproduce it.
 
 - representative_site:
 
@@ -116,5 +118,5 @@ predict(
 #> # A tibble: 1 × 6
 #>   canopy_area_m2 plot_area_m2 canopy_tide_height_m estimate lower upper
 #>            <dbl>        <dbl>                <dbl>    <dbl> <dbl> <dbl>
-#> 1            120          200                  0.5     6.16  5.22  7.16
+#> 1            120          200                  0.5     6.14  5.19  7.12
 ```

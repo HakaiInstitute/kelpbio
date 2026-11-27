@@ -10,7 +10,7 @@
 ## Citation
 
 Source:
-[`inst/CITATION`](https://github.com/HakaiInstitute/kelpbio/blob/docs-terminology/inst/CITATION)
+[`inst/CITATION`](https://github.com/HakaiInstitute/kelpbio/blob/main/inst/CITATION)
 
 Dalgarno S (2026). *kelpbio: Bayesian Kelp Biomass Estimation*. R
 package version 0.0.0.9000, <https://github.com/HakaiInstitute/kelpbio>.

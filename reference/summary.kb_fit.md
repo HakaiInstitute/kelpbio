@@ -14,7 +14,8 @@ summary(
   sig_fig = 3,
   include_random_effects = FALSE,
   rhat = 1.01,
-  ess = 100
+  ess = 100,
+  max_perc_divergent = 0.2
 )
 ```
 
@@ -49,12 +50,17 @@ summary(
 
 - rhat:
 
-  A number giving the maximum acceptable Rhat.
+  A number of at least 1 giving the maximum acceptable Rhat.
 
 - ess:
 
   A number giving the minimum acceptable bulk and tail effective sample
   size per chain.
+
+- max_perc_divergent:
+
+  A number giving the maximum acceptable percentage of saved draws that
+  ended in a divergent transition.
 
 ## Value
 
@@ -69,7 +75,8 @@ maximum treedepth, and E-BFMI). A term's `converged` uses the Rhat and
 effective sample size thresholds of
 [`kb_converged()`](https://hakaiinstitute.github.io/kelpbio/reference/kb_converged.md);
 the fit's verdict also covers the group-level deviations and divergent
-transitions, so it can be `FALSE` when every term shown has converged.
+transitions (`max_perc_divergent`), so it can be `FALSE` when every term
+shown has converged.
 
 ## See also
 

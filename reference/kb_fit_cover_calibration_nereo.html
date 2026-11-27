@@ -40,7 +40,7 @@ Nereocystis luetkeana via Stan."><meta property="og:image" content="https://haka
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.svg" class="logo" alt=""><h1>Fit a Nereocystis cover calibration model</h1>
-      <small class="dont-index">Source: <a href="https://github.com/HakaiInstitute/kelpbio/blob/docs-terminology/R/kb_fit_cover_calibration_nereo.R" class="external-link"><code>R/kb_fit_cover_calibration_nereo.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/HakaiInstitute/kelpbio/blob/main/R/kb_fit_cover_calibration_nereo.R" class="external-link"><code>R/kb_fit_cover_calibration_nereo.R</code></a></small>
       <div class="d-none name"><code>kb_fit_cover_calibration_nereo.Rd</code></div>
     </div>
 
@@ -139,10 +139,10 @@ draws and <code>biomass_sd_kg_m2</code> their SD.</p>
 Surveys without plot cover are not fitted, and a message gives their number.
 The model is described in
 <a href="https://hakaiinstitute.github.io/kelpbio/articles/methods.html#cover-calibration">Methods</a>.</p>
-<p>The fit warns when a survey is past the tide limit with more than 5% prior
-probability, and when every survey with no plants has a plot cover at or
-below that of every survey with plants, since <code>presence_cover_slope</code> is then
-informed only by its prior. If canopy is already tide-corrected, set
+<p>The fit warns when a survey with canopy has a tide height above 2 m, and
+when every survey with no plants has a plot cover at or below that of every
+survey with plants, since <code>presence_cover_slope</code> is then informed only by
+its prior. If canopy is already tide-corrected, set
 <code>canopy_tide_height_m = 0</code>.</p>
     </div>
     <div class="section level2">
@@ -196,14 +196,14 @@ of <code><a href="https://mc-stan.org/rstan/reference/stan.html" class="external
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 8 × 4</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   term                 estimate    lower  upper</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> cover_slope             7.89   5.61    11    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> biomass_floor           0.202  0.025<span style="text-decoration: underline;">2</span>   0.449</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span> tide_height_slope       0.252  0.178    0.32 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span> cv_residual             0.28   0.193    0.39 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span> presence_intercept      1.53  -<span style="color: #BB0000;">1.09</span>     4.07 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">6</span> presence_cover_slope    0.135  0.009<span style="text-decoration: underline;">22</span>  0.424</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">7</span> sd_site                 0.278  0.078<span style="text-decoration: underline;">3</span>   0.624</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">8</span> sd_year                 0.13   0.009<span style="text-decoration: underline;">13</span>  0.447</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> cover_slope             7.89   5.62    10.8  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> biomass_floor           0.202  0.020<span style="text-decoration: underline;">4</span>   0.448</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span> tide_height_slope       0.251  0.184    0.321</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span> cv_residual             0.282  0.193    0.396</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span> presence_intercept      1.49  -<span style="color: #BB0000;">1.04</span>     3.99 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">6</span> presence_cover_slope    0.138  0.002<span style="text-decoration: underline;">72</span>  0.418</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">7</span> sd_site                 0.278  0.059<span style="text-decoration: underline;">6</span>   0.574</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">8</span> sd_year                 0.131  0.006<span style="text-decoration: underline;">13</span>  0.459</span>
 <span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># interactive()</span></span></span>
 <span class="r-in"><span><span class="va">biomass</span> <span class="op">&lt;-</span> <span class="fu"><a href="kb_predict_biomass_in_situ.html">kb_predict_biomass_in_situ</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>  <span class="va">fit_weight_sim_nereo</span>,</span></span>

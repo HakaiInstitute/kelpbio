@@ -56,9 +56,11 @@ posterior_linpred(
     standard deviation). The point estimate is equivalent, but the
     interval is wider since it also includes that variation. Use it to
     get realistic uncertainty about a particular site or year that the
-    model has no information on. The interval varies slightly between
-    calls; use [`set.seed()`](https://rdrr.io/r/base/Random.html) to
-    reproduce it.
+    model has no information on. Rows that name the same new site or
+    year, or that have no `site` or `year` column, share one effect;
+    give new sites or years different names for independent effects. The
+    interval varies slightly between calls; use
+    [`set.seed()`](https://rdrr.io/r/base/Random.html) to reproduce it.
 
 - representative_site:
 
@@ -74,7 +76,7 @@ A draws-by-observations (`D x N`) matrix.
 
 Site and year columns in `new_data` are handled as in
 [`posterior_epred()`](https://mc-stan.org/rstantools/reference/posterior_epred.html);
-with `new_data = NULL` the observed data is used, with its sites and
+with `new_data = NULL` the observed data are used, with their sites and
 years.
 
 ## See also

@@ -69,7 +69,7 @@
       <img src="../logo.svg" class="logo" alt=""><h1>Methods</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/HakaiInstitute/kelpbio/blob/docs-terminology/vignettes/methods.Rmd" class="external-link"><code>vignettes/methods.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/HakaiInstitute/kelpbio/blob/main/vignettes/methods.Rmd" class="external-link"><code>vignettes/methods.Rmd</code></a></small>
       <div class="d-none name"><code>methods.Rmd</code></div>
     </div>
 
@@ -87,7 +87,7 @@ plants counted in an in situ survey, which is converted to wet biomass
 per m² given the fixed survey area.</li>
 <li>Cover calibration: a model relates estimated in situ biomass to the
 surface canopy cover (%) within a plot bounding the in situ survey area,
-measured from a canopy map (i.e., from aerial imagery).</li>
+measured from a canopy map (e.g., from aerial imagery).</li>
 <li>Total biomass: the cover calibration is applied to all surface
 canopy mapped across the site.</li>
 <li>Dry, carbon, and nitrogen biomass: dry:wet ratio, carbon fraction,
@@ -118,10 +118,12 @@ designs are possible as long as plants are counted within an area of
 known size. Here the three transects form one survey rather than three,
 because their combined area is easier to relate to canopy percent
 cover.</p>
-<p>Surface canopy is mapped across the whole site (i.e., from aerial
+<p>Surface canopy is mapped across the whole site (e.g., from aerial
 imagery), with the tide height at the time of imaging and the extent of
 the water area classified (i.e., the total area classified as kelp or
-non-kelp).</p>
+non-kelp). Imagery is ideally captured at a tide height close to 0 m
+(chart datum), when the least canopy is submerged, and at most 2 m,
+since the tide correction grows quickly above that.</p>
 <p>Percent canopy cover within a plot (plot cover) is calculated for
 each in situ survey, where a plot is defined as the area bounding the in
 situ survey area.</p>
@@ -277,7 +279,7 @@ as diameter approaches zero.</p>
 <span><span class="co">#&gt;              + site_effect[site]</span></span>
 <span><span class="co">#&gt;              + year_effect[year]</span></span>
 <span><span class="co">#&gt;              + site_year_effect[site, year]</span></span>
-<span><span class="co">#&gt;   x = diameter_mm / d0,  d0 = 24.9  (geometric mean diameter)</span></span>
+<span><span class="co">#&gt;   x = diameter_mm / d0,  d0 = 24.9 mm  (geometric mean diameter)</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Random effects</span></span>
 <span><span class="co">#&gt;   site_effect[site]            ~ Normal(0, sd_site)       site effect on log(alpha)</span></span>
@@ -408,6 +410,10 @@ is 0.97 kg, compared with 0.72 kg for a plant of mean size.</p>
 weights over the area surveyed. A plant only partly inside the survey
 area, such as a <em>Macrocystis</em> plant on the edge of a transect, is
 marked <code>partial</code> in the data and counts as half.</p>
+<p>Several in situ surveys of a site-year are assumed to cover separate
+areas, so pooled survey biomass is the sum of the surveys, and pooled
+biomass per m² is that sum over their summed area, i.e., an
+area-weighted average.</p>
 <p>The uncertainty in in situ biomass is that of mean plant weight, from
 the weight and size models (or the weight model alone with a size
 census). The cover calibration takes the mean and SD of each survey’s
@@ -441,7 +447,7 @@ survey counted no plants.</p>
 <span><span class="co">#&gt;   logit(p) = presence_intercept + presence_cover_slope * 100 * cover</span></span>
 <span><span class="co">#&gt;   mu = biomass_floor</span></span>
 <span><span class="co">#&gt;      + cover_slope * exp(year_effect[year] + site_effect[site]) * cover</span></span>
-<span><span class="co">#&gt;   cover = min(1, canopy_area_m2 / (1 - tide_height_slope * canopy_tide_height_m) / plot_area_m2), and 1 where canopy_area_m2 &gt; 0 and canopy_tide_height_m &gt;= 1 / tide_height_slope</span></span>
+<span><span class="co">#&gt;   cover = min(1, canopy_area_m2 / (1 - tide_height_slope * canopy_tide_height_m) / plot_area_m2)</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Random effects</span></span>
 <span><span class="co">#&gt;   year_effect[year] ~ Normal(0, sd_year)  year effect on log(cover_slope)</span></span>
@@ -450,7 +456,7 @@ survey counted no plants.</p>
 <span><span class="co">#&gt; Priors</span></span>
 <span><span class="co">#&gt;   cover_slope          ~ LogNormal(2, 1)</span></span>
 <span><span class="co">#&gt;   biomass_floor        ~ Normal(0, 0.2) T[0, ]</span></span>
-<span><span class="co">#&gt;   tide_height_slope    ~ Normal(0.276, 0.04) T[0, 0.5]</span></span>
+<span><span class="co">#&gt;   tide_height_slope    ~ Normal(0.276, 0.04) T[0, ]</span></span>
 <span><span class="co">#&gt;   cv_residual          ~ Exponential(1)</span></span>
 <span><span class="co">#&gt;   presence_intercept   ~ Normal(0, 2)</span></span>
 <span><span class="co">#&gt;   presence_cover_slope ~ Normal(0, 20)</span></span>
@@ -464,10 +470,9 @@ at most 100%:</p>
 <p>The proportion of canopy lost per metre of tide
 (<code>tide_height_slope</code>) is set by an informative prior from
 <span class="citation">Timmer et al. (2024)</span>; the calibration data
-do not inform it. At a tide height of 1 / <code>tide_height_slope</code>
-or more (the tide limit, at least 2 m), the correction has no finite
-value and the corrected canopy is the cap; a warning is given when a
-plot or map is past the tide limit on more than 5% of draws.</p>
+do not inform it. With the default priors, canopy imaged at 2 m is about
+doubled by the correction; a warning is given for canopy imaged above 2
+m.</p>
 <p>Each survey’s in situ biomass is itself an estimate. Its uncertainty
 from mean plant weight enters the model, so a less certain survey has
 less influence.</p>
@@ -481,8 +486,9 @@ weight uncertainty.</li>
 a floor.</li>
 <li>Biomass per unit of canopy varies by site and by year; the floor
 does not.</li>
-<li>When a survey counted no plants, the probability that a survey holds
-any plants increases with cover (hurdle component).</li>
+<li>Where some surveys counted no plants, the probability that a survey
+holds any plants is a logistic function of cover (hurdle
+component).</li>
 </ul>
 </div>
 <div class="section level2">
@@ -504,6 +510,12 @@ term does not depend on the size of the plot drawn around it. A
 nonlinear calibration (e.g., power law model with scaling exponent not
 equal to 1) would give a total that changed with the size of the area
 over which percent cover is measured.</p>
+<p>Total biomass is a snapshot of the kelp present when the site is
+mapped, and each canopy map is assumed to cover the whole site. Several
+maps of a site-year are therefore repeated measurements of one bed. When
+totals are pooled, for example by site-year, year, or region, the maps
+of each site-year are first averaged and the site-year means then
+summed, so a bed is never counted more than once.</p>
 <p>The probability that a survey holds plants is not applied, since
 mapped canopy is taken to hold plants. The interval is for the expected
 total: it includes the uncertainty in the calibration and its site and

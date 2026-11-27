@@ -79,6 +79,10 @@ compatibility interval):
   deviation). The interval is wider, and describes a new or unobserved
   site about which nothing is known.
 
+Rows that name the same new site, or that have no `site` column, are one
+new site and share its effect; new sites with different names are
+independent. The same applies to years.
+
 The `representative_site` argument instead gives a new site the effects
 of named sites in the model fit, e.g., when it is known a priori that
 conditions at the new site are similar.
@@ -242,10 +246,12 @@ kb_sensitivity(fit_weight_sim_nereo)
 
 [`kb_influence()`](https://hakaiinstitute.github.io/kelpbio/reference/kb_influence.md)
 determines how strongly each observation affects the model fit if it was
-removed, where a `pareto_k` above the threshold (0.7) indicates that it
-is influential. Observations flagged as `influential` are not
-necessarily wrong, but could be double-checked for data error. See the
-loo package’s [Pareto k
+removed, where a `pareto_k` above the threshold (0.7 at the default
+number of draws, slightly lower with fewer draws; see
+[`kb_influence()`](https://hakaiinstitute.github.io/kelpbio/reference/kb_influence.md))
+indicates that it is influential. Observations flagged as `influential`
+are not necessarily wrong, but could be double-checked for data error.
+See the loo package’s [Pareto k
 diagnostic](https://mc-stan.org/loo/reference/pareto-k-diagnostic.html)
 page for how `pareto_k` is calculated and interpreted.
 
@@ -395,10 +401,10 @@ by_year <- setNames(totals$biomass_kg, totals$year)
 #> # A tibble: 1 × 10
 #>   variable         mean median     sd    mad    q5   q95  rhat ess_bulk ess_tail
 #>   <chr>           <dbl>  <dbl>  <dbl>  <dbl> <dbl> <dbl> <dbl>    <dbl>    <dbl>
-#> 1 "(by_year[\"20… 0.639  0.632 0.0876 0.0781 0.512 0.796  1.00    1229.    1383.
+#> 1 "(by_year[\"20… 0.634  0.628 0.0833 0.0724 0.509 0.786  1.00    1419.    1199.
 Pr(by_year["2025"] > by_year["2020"])
-#>  2025 
-#> 0.002
+#> 2025 
+#>    0
 ```
 
 ## References
