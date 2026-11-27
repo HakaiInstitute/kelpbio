@@ -349,8 +349,8 @@ Key assumptions:
 - In situ biomass represents the biomass per m² across the plot.
 - Expected biomass increases linearly with tide-corrected cover above a floor.
 - Biomass per unit of canopy varies by site and by year; the floor does not.
-- When a survey counted no plants, the probability that a survey holds any
-  plants increases with cover (hurdle component).
+- Where some surveys counted no plants, the probability that a survey holds
+  any plants is a logistic function of cover (hurdle component).
 
 ## Total biomass
 
