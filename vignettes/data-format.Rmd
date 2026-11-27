@@ -85,12 +85,17 @@ column_table <- function(dataset) {
   cat("\n")
 }
 # One tab per dataset, as the kelpbioshiny Data format page shows them; a
-# dataset whose columns differ by species has a table per species.
-data_format <- function(tab, datasets, used_by) {
+# dataset whose columns differ by species has a table per species. `checks`
+# lists both species' check functions where one table serves both.
+data_format <- function(
+  tab,
+  datasets,
+  used_by,
+  checks = paste0("kb_check_data_", datasets)
+) {
   row <- kb_datasets(datasets[[1]])$row
   row <- paste0(tolower(substr(row, 1, 1)), substring(row, 2))
   row <- gsub("`([^`]*)`", "<code>\\1</code>", row)
-  checks <- paste0("kb_check_data_", datasets)
   cat(
     "### ", tab, "\n\n",
     "One row per ", row, ". Used by ", refs(used_by),
@@ -124,17 +129,20 @@ data_format("survey_canopy", "survey_canopy", "kb_predict_biomass_canopy")
 data_format(
   "wetdry",
   "wetdry_nereo",
-  c("kb_fit_wetdry_nereo", "kb_fit_wetdry_macro")
+  c("kb_fit_wetdry_nereo", "kb_fit_wetdry_macro"),
+  c("kb_check_data_wetdry_nereo", "kb_check_data_wetdry_macro")
 )
 data_format(
   "carbon",
   "carbon_nereo",
-  c("kb_fit_carbon_nereo", "kb_fit_carbon_macro")
+  c("kb_fit_carbon_nereo", "kb_fit_carbon_macro"),
+  c("kb_check_data_carbon_nereo", "kb_check_data_carbon_macro")
 )
 data_format(
   "nitrogen",
   "nitrogen_nereo",
-  c("kb_fit_nitrogen_nereo", "kb_fit_nitrogen_macro")
+  c("kb_fit_nitrogen_nereo", "kb_fit_nitrogen_macro"),
+  c("kb_check_data_nitrogen_nereo", "kb_check_data_nitrogen_macro")
 )
 ```
 
