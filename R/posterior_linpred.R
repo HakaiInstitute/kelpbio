@@ -5,7 +5,8 @@
 #'
 #' @details
 #' Site and year columns in `new_data` are handled as in [posterior_epred()];
-#' with `new_data = NULL` the observed data is used, with its sites and years.
+#' with `new_data = NULL` the observed data are used, with their sites and
+#' years.
 #'
 #' @inheritParams posterior_epred.kb_fit
 #' @inheritParams params

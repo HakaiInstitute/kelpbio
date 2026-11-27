@@ -57,7 +57,8 @@ Draws of the linear predictor on the link scale (or, with
 }
 \details{
 Site and year columns in \code{new_data} are handled as in \code{\link[=posterior_epred]{posterior_epred()}};
-with \code{new_data = NULL} the observed data is used, with its sites and years.
+with \code{new_data = NULL} the observed data are used, with their sites and
+years.
 }
 \examples{
 lp <- posterior_linpred(fit_weight_sim_nereo)

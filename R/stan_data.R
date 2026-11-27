@@ -27,7 +27,7 @@ geometric_ref <- function(x, fallback) {
 #' Map validated carbon data and a resolved prior list to the `data` block of
 #' `inst/stan/carbon.stan`, shared by both species. The model takes the carbon
 #' fraction of each sample, computed from its carbon and sample masses. Zero-row
-#' data is supported (for prior-only fits).
+#' data are supported (for prior-only fits).
 #'
 #' @inheritParams params
 #' @param priors A list of the resolved named priors (see `resolve_priors()`).
@@ -50,7 +50,7 @@ assemble_carbon_data <- function(data, priors, prior_only = FALSE) {
 #' Map calibration rows (from `survey_calibration_rows()`) and a resolved prior
 #' list to the `data` block of `inst/stan/cover_calibration.stan`, shared by
 #' both species. `site` and `year` are encoded as integer factor codes. A survey
-#' with no biomass is flagged as empty. Zero-row data is supported (for
+#' with no biomass is flagged as empty. Zero-row data are supported (for
 #' prior-only fits): `n_obs` is `0` and `n_site` / `n_year` fall back to `1`.
 #'
 #' @inheritParams params
@@ -88,7 +88,7 @@ assemble_cover_calibration_data <- function(
 #' Map validated nitrogen data and a resolved prior list to the `data` block of
 #' `inst/stan/nitrogen.stan`, shared by both species. The model takes the nitrogen
 #' fraction of each sample, computed from its nitrogen and sample masses. Zero-row
-#' data is supported (for prior-only fits).
+#' data are supported (for prior-only fits).
 #'
 #' @inheritParams params
 #' @param priors A list of the resolved named priors (see `resolve_priors()`).
@@ -110,7 +110,7 @@ assemble_nitrogen_data <- function(data, priors, prior_only = FALSE) {
 #'
 #' Map validated size data and a resolved prior list to the `data` block of
 #' `inst/stan/size_nereo.stan`. `site` and `year` are encoded as integer factor
-#' codes and `diameter_mm` is passed through. Zero-row data is supported (for
+#' codes and `diameter_mm` is passed through. Zero-row data are supported (for
 #' prior-only fits): `n_obs` is `0` and `n_site` / `n_year` fall back to `1`.
 #'
 #' @inheritParams params
@@ -140,7 +140,7 @@ assemble_size_nereo_data <- function(
 #' `inst/stan/weight_macro.stan`. `site` and `year` are encoded as integer factor
 #' codes; the raw `fronds` and `weight_kg` vectors are passed through (the Stan model
 #' applies the `log(fronds) - log(fronds_ref)` transform). `fronds_ref` is the
-#' geometric mean of the observed frond count. Zero-row data is supported (for
+#' geometric mean of the observed frond count. Zero-row data are supported (for
 #' prior-only fits): `n_obs` is `0` and `n_site` / `n_year` fall back to `1`.
 #'
 #' @inheritParams params
@@ -173,8 +173,8 @@ assemble_weight_macro_data <- function(
 #' `inst/stan/weight_nereo.stan`. `site` and `year` are encoded as integer factor
 #' codes; the raw `diameter_mm` and `weight_kg` vectors are passed through (the Stan
 #' model applies the `log(diameter) - log(diameter_ref)` and `log(weight)`
-#' transforms). Zero-row data is supported (for prior-only fits): `n_obs` is `0`
-#' and `n_site` / `n_year` fall back to `1`.
+#' transforms). Zero-row data are supported (for prior-only fits): `n_obs` is
+#' `0` and `n_site` / `n_year` fall back to `1`.
 #'
 #' @inheritParams params
 #' @param priors A list of the resolved named priors (see `resolve_priors()`).
@@ -209,7 +209,7 @@ assemble_weight_nereo_data <- function(
 #'
 #' Map validated wet/dry data and a resolved prior list to the `data` block of
 #' `inst/stan/wetdry.stan`, shared by both species. The model takes the dry:wet
-#' mass ratio of each sample. Zero-row data is supported (for prior-only fits).
+#' mass ratio of each sample. Zero-row data are supported (for prior-only fits).
 #'
 #' @inheritParams params
 #' @param priors A list of the resolved named priors (see `resolve_priors()`).
