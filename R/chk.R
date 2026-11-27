@@ -103,7 +103,7 @@
   cli::cli_abort(
     c(
       "{column_xname(x_name, col)} must not have missing values.",
-      i = "To predict for a new {col}, give it a name or leave out the {.field {col}} column."
+      i = "To predict for a new {col}, give it a name such as {.val new} or leave out the {.field {col}} column."
     ),
     call = call
   )

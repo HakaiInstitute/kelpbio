@@ -5,12 +5,11 @@ re_draw <- function(n, sd_rvar) {
   posterior::rvar_rng(stats::rnorm, n, mean = 0, sd = sd_rvar)
 }
 
-# One draw per distinct key, so rows naming the same new level share it. An NA
-# key (grouping column absent) is no particular level, so each row draws its own.
+# One draw per distinct key, so rows naming the same new level share it. match()
+# treats NA as a value, so the rows of an absent grouping column (an NA label,
+# which new_data cannot hold) are one new level.
 re_draw_shared <- function(keys, sd_rvar) {
-  named <- !is.na(keys)
-  group <- match(keys, unique(keys[named]))
-  group[!named] <- max(0L, group, na.rm = TRUE) + seq_len(sum(!named))
+  group <- match(keys, unique(keys))
   draws <- posterior::draws_of(re_draw(max(group), sd_rvar))
   draws[, group, drop = FALSE]
 }
@@ -64,9 +63,10 @@ resolve_re2 <- function(param, i, j, observed, new_levels, sd_rvar, borrow = NUL
   }
   fresh <- !known & !borrowed
   if (any(fresh) && new_levels == "sample") {
+    # Keyed on each label's position, so an NA label is a level of its own.
     site <- re_labels(i)[fresh]
     year <- re_labels(j)[fresh]
-    keys <- ifelse(is.na(site) | is.na(year), NA_character_, site_year_key(site, year))
+    keys <- paste(match(site, unique(site)), match(year, unique(year)))
     out[, fresh] <- re_draw_shared(keys, sd_rvar)
   }
   posterior::rvar(out)

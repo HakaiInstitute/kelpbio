@@ -60,8 +60,10 @@ from the estimated variation among sites or among years (the
 random-effect standard deviation). The point estimate is equivalent, but
 the interval is wider since it also includes that variation. Use it to
 get realistic uncertainty about a particular site or year that the model
-has no information on. The interval varies slightly between calls; use
-\code{set.seed()} to reproduce it.
+has no information on. Rows that name the same new site or year, or
+that have no \code{site} or \code{year} column, share one effect; give new sites
+or years different names for independent effects. The interval varies
+slightly between calls; use \code{set.seed()} to reproduce it.
 \item \code{"average"}: the typical site or year. The site and year effects are set
 to 0, their mean, so the interval does not include among-site or
 among-year variation. Use it to describe an average site or year.

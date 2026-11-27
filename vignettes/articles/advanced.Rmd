@@ -64,6 +64,8 @@ A site or year that a model fit has no data for is defined as a 'new level'. The
 - `"sample"`: a site or year drawn from the estimated variation among sites or
   years (i.e., from the estimated random effect standard deviation). The interval is wider, and describes a new or unobserved site about which nothing is known.
 
+Rows that name the same new site, or that have no `site` column, are one new site and share its effect; new sites with different names are independent. The same applies to years.
+
 The `representative_site` argument instead gives a new site the effects of named sites in the model fit, e.g., when it is known a priori that conditions at the new site are similar.
 
 ```{r}

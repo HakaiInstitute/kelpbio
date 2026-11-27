@@ -23,6 +23,21 @@ test_that("a kb_new_data() grid gives the typical year at each site", {
   expect_identical(attr(p, "kb_group_vars"), "site")
 })
 
+test_that("sites of a grid without a year column share one new year", {
+  grid <- kb_new_data(size_nereo_fit, by = "site")
+  mean_weight <- function(new_data) {
+    withr::local_seed(1)
+    kb_predict_mean_weight(weight_nereo_fit, size_nereo_fit, new_data, progress = "none")
+  }
+  absent <- mean_weight(grid)
+  grid$year <- "new"
+  named <- mean_weight(grid)
+  expect_identical(
+    posterior::draws_of(absent$weight_kg),
+    posterior::draws_of(named$weight_kg)
+  )
+})
+
 test_that("dry and carbon weight are per-draw conversions of wet", {
   args <- list(weight_nereo_fit, size_nereo_fit, wetdry = wetdry_nereo_fit, carbon = carbon_nereo_fit)
   withr::local_seed(1)

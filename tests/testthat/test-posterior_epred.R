@@ -28,6 +28,16 @@ test_that("rows naming one new site share its sampled effect", {
   expect_false(identical(p[, 1], p[, 3]))
 })
 
+test_that("an absent year column is one new year shared by every row", {
+  nd <- data.frame(diameter_mm = c(20, 40, 60), site = weight_nereo_fit$meta$site_levels[1])
+  withr::local_seed(1)
+  absent <- posterior_epred(weight_nereo_fit, nd, new_levels = "sample")
+  nd$year <- "new"
+  withr::local_seed(1)
+  named <- posterior_epred(weight_nereo_fit, nd, new_levels = "sample")
+  expect_identical(absent, named)
+})
+
 test_that("the default new_levels is average, so a new site needs no seed", {
   nd <- data.frame(diameter_mm = 40, site = "new_site")
   expect_identical(

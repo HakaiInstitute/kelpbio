@@ -99,8 +99,10 @@
 #'     standard deviation). The point estimate is equivalent, but the interval
 #'     is wider since it also includes that variation. Use it to get realistic
 #'     uncertainty about a particular site or year that the model has no
-#'     information on. The interval varies slightly between calls; use
-#'     `set.seed()` to reproduce it.
+#'     information on. Rows that name the same new site or year, or that have
+#'     no `site` or `year` column, share one effect; give new sites or years
+#'     different names for independent effects. The interval varies slightly
+#'     between calls; use `set.seed()` to reproduce it.
 #' @param representative_site A character vector of sites in the fit whose
 #'   effects a new site adopts (averaged when several are named), or `NULL` (the
 #'   default) to follow `new_levels`.
@@ -138,8 +140,10 @@ params <- function(...) NULL
 #'     random-effect standard deviation). The point estimate is equivalent, but
 #'     the interval is wider since it also includes that variation. Use it to
 #'     get realistic uncertainty about a particular site or year that the model
-#'     has no information on. The interval varies slightly between calls; use
-#'     `set.seed()` to reproduce it.
+#'     has no information on. Rows that name the same new site or year, or
+#'     that have no `site` or `year` column, share one effect; give new sites
+#'     or years different names for independent effects. The interval varies
+#'     slightly between calls; use `set.seed()` to reproduce it.
 #'   - `"average"`: the typical site or year. The site and year effects are set
 #'     to 0, their mean, so the interval does not include among-site or
 #'     among-year variation. Use it to describe an average site or year.

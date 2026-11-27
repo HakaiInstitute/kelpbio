@@ -145,21 +145,26 @@ test_that("rows naming the same new level share one sampled effect", {
   expect_false(identical(out[, 2], out[, 4]))
 })
 
-test_that("rows with no grouping label draw independently", {
+test_that("rows of an absent grouping column share one sampled effect", {
   withr::local_seed(1)
   param <- posterior::rvar(matrix(rnorm(200), nrow = 100))
   sd <- posterior::rvar(rep(1, 100))
-  out <- posterior::draws_of(resolve_re1(param, c(NA_integer_, NA_integer_), "sample", sd))
-  expect_false(identical(out[, 1], out[, 2]))
+  idx <- structure(rep(NA_integer_, 3), labels = c(NA, NA, "NA"))
+  out <- posterior::draws_of(resolve_re1(param, idx, "sample", sd))
+  expect_identical(out[, 1], out[, 2])
+  # A level named "NA" is not an absent column.
+  expect_false(identical(out[, 1], out[, 3]))
 })
 
-test_that("a new site:year cell is shared only when both labels are named", {
+test_that("a new site:year cell is keyed on both labels, an absent one included", {
   withr::local_seed(1)
   param <- posterior::rvar(array(rnorm(400), dim = c(100, 2, 2)))
   sd <- posterior::rvar(rep(1, 100))
-  i <- structure(rep(NA_integer_, 3), labels = c("new", "new", "new"))
-  j <- structure(rep(NA_integer_, 3), labels = c("2030", "2030", NA))
+  i <- structure(rep(NA_integer_, 5), labels = c("new", "new", "new", "new", "other"))
+  j <- structure(rep(NA_integer_, 5), labels = c("2030", "2030", NA, NA, NA))
   out <- posterior::draws_of(resolve_re2(param, i, j, FALSE, "sample", sd))
   expect_identical(out[, 1], out[, 2])
+  expect_identical(out[, 3], out[, 4])
   expect_false(identical(out[, 1], out[, 3]))
+  expect_false(identical(out[, 3], out[, 5]))
 })

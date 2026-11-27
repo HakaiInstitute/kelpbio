@@ -287,5 +287,5 @@
     Condition
       Error:
       ! Column `site` of `new_data` must not have missing values.
-      i To predict for a new site, give it a name or leave out the site column.
+      i To predict for a new site, give it a name such as "new" or leave out the site column.
 

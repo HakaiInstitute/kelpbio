@@ -36,8 +36,10 @@ estimated variation among sites or among years (the random-effect
 standard deviation). The point estimate is equivalent, but the interval
 is wider since it also includes that variation. Use it to get realistic
 uncertainty about a particular site or year that the model has no
-information on. The interval varies slightly between calls; use
-\code{set.seed()} to reproduce it.
+information on. Rows that name the same new site or year, or that have
+no \code{site} or \code{year} column, share one effect; give new sites or years
+different names for independent effects. The interval varies slightly
+between calls; use \code{set.seed()} to reproduce it.
 }}
 
 \item{representative_site}{A character vector of sites in the fit whose
