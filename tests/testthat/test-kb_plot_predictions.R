@@ -55,6 +55,60 @@ test_that("reference-diameter by site:year puts year on x, facets by site", {
   expect_false(inherits(gg$facet, "FacetNull"))
 })
 
+test_that("whole-number years are continuous, a new year keeps a discrete axis", {
+  maps <- data_survey_canopy_sim_nereo
+  withr::local_seed(1)
+  p <- kb_predict_biomass_canopy(
+    fit_cover_calibration_sim_nereo,
+    maps,
+    pool_by = "year"
+  )
+  gg <- kb_plot_predictions(p, geom = "bar")
+  x_scale <- ggplot2::layer_scales(gg)$x
+  expect_false(x_scale$is_discrete())
+  breaks <- stats::na.omit(x_scale$get_breaks())
+  expect_true(all(breaks == round(breaks)))
+  expect_false(any(grepl(",", x_scale$get_labels())))
+
+  maps$year <- as.character(maps$year)
+  maps$year[1] <- "new"
+  withr::local_seed(1)
+  p <- kb_predict_biomass_canopy(fit_cover_calibration_sim_nereo, maps)
+  gg <- kb_plot_predictions(p)
+  expect_true(ggplot2::layer_scales(gg)$x$is_discrete())
+  expect_true(gg$scales$get_scales("x")$guide$params$check.overlap)
+})
+
+test_that("columns over many years are visually stable", {
+  skip_if_not_installed("vdiffr")
+  # Every site in every year, so the faceted panels are as narrow as real data.
+  site_years <- function(year) {
+    maps <- data_survey_canopy_sim_nereo
+    grid <- expand.grid(
+      year = year,
+      site = unique(maps$site),
+      stringsAsFactors = FALSE
+    )
+    maps <- maps[rep(1, nrow(grid)), ]
+    maps$site <- grid$site
+    maps$year <- grid$year
+    withr::local_seed(1)
+    kb_predict_biomass_canopy(fit_cover_calibration_sim_nereo, maps)
+  }
+  vdiffr::expect_doppelganger(
+    "canopy biomass over ten years",
+    kb_plot_predictions(site_years(2016:2025), geom = "bar", max_facets = Inf)
+  )
+  vdiffr::expect_doppelganger(
+    "canopy biomass over ten years and an unknown year",
+    kb_plot_predictions(
+      site_years(c(2016:2025, "unknown")),
+      geom = "bar",
+      max_facets = Inf
+    )
+  )
+})
+
 test_that("rows not from kb_new_data() render as points, not a ribbon", {
   p <- kb_predict_weight(
     weight_nereo_fit,
@@ -172,7 +226,7 @@ test_that("log_axis = 'y' log-scales the y-axis without a zero floor", {
   p <- mean_weight_by_site()
   gg <- kb_plot_predictions(p, log_axis = "y")
   expect_identical(gg$scales$get_scales("y")$trans$name, "log-10")
-  expect_null(gg$scales$get_scales("x"))
+  expect_true(gg$scales$get_scales("x")$is_discrete())
   expect_gt(min(ggplot2::layer_scales(gg)$y$range$range), -Inf)
   expect_no_warning(ggplot2::ggplot_build(gg))
   expect_identical(gg$labels$y, "Wet weight (kg, log scale)")

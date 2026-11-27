@@ -142,6 +142,12 @@ kb_plot_predictions <- function(
   draws <- vapply(predictions, posterior::is_rvar, logical(1))
   plotted <- tibble::as_tibble(predictions)[!draws]
   plotted$.row <- seq_len(nrow(plotted))
+  # Whole-number years go on a continuous axis, so ticks thin as years are added.
+  # Integers keep the column width at 0.9 of a year however the years are spaced.
+  year_axis <- identical(x, "year") && whole_number_labels(plotted$year)
+  if (year_axis) {
+    plotted$year <- as.integer(as.character(plotted$year))
+  }
   gg <- ggplot2::ggplot(
     plotted,
     ggplot2::aes(x = .data[[x]], y = .data$estimate)
@@ -188,7 +194,14 @@ kb_plot_predictions <- function(
       ggplot2::scale_x_log10(labels = plain_labels) +
       ggplot2::scale_y_log10(labels = plain_labels)
   )
-  if (log_axis != "xy" && is.numeric(predictions[[x]])) {
+  if (year_axis) {
+    gg <- gg + ggplot2::scale_x_continuous(breaks = whole_breaks)
+  } else if (!is.numeric(plotted[[x]])) {
+    gg <- gg +
+      ggplot2::scale_x_discrete(
+        guide = ggplot2::guide_axis(check.overlap = TRUE)
+      )
+  } else if (log_axis != "xy") {
     gg <- gg + ggplot2::scale_x_continuous(labels = plain_labels)
   }
   gg +
@@ -196,6 +209,17 @@ kb_plot_predictions <- function(
       x = axis_label(x, log = log_axis == "xy"),
       y = axis_label(response %||% "estimate", log = log_axis != "none")
     )
+}
+
+whole_number_labels <- function(x) {
+  x <- as.character(x)
+  !anyNA(x) && all(grepl("^-?[0-9]+$", x))
+}
+
+# The default breaks, keeping only whole numbers (no 2020.5).
+whole_breaks <- function(limits) {
+  breaks <- pretty(limits)
+  breaks[breaks == round(breaks)]
 }
 
 # Plain numbers (0.1, 1, 10) in place of the default 1e-01 style.
