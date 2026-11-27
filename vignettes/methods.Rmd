@@ -33,7 +33,7 @@ pyrifera* by combining several sub-models, each fitted to its own data:
    the fixed survey area.
 2. Cover calibration: a model relates estimated in situ biomass to the surface
    canopy cover (%) within a plot bounding the in situ survey area, measured
-   from a canopy map (i.e., from aerial imagery).
+   from a canopy map (e.g., from aerial imagery).
 3. Total biomass: the cover calibration is applied to all surface canopy mapped
    across the site.
 4. Dry, carbon, and nitrogen biomass: dry:wet ratio, carbon fraction, and
@@ -61,7 +61,7 @@ allometric model). In the diagram below, the survey area is three parallel
 transects, each with a set length and swath width; other designs are possible as
 long as plants are counted within an area of known size. Here the three transects form one survey rather than three, because their combined area is easier to relate to canopy percent cover.
 
-Surface canopy is mapped across the whole site (i.e., from aerial imagery), with the
+Surface canopy is mapped across the whole site (e.g., from aerial imagery), with the
 tide height at the time of imaging and the extent of the water area classified (i.e., the total area classified as kelp or non-kelp).
 Imagery is ideally captured at a tide height close to 0 m (chart datum), when the least canopy is submerged, and at most 2 m, since the tide correction grows quickly above that.
 
