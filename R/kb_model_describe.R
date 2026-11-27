@@ -80,7 +80,7 @@ kb_model_describe <- function(fit, ..., prose = FALSE) {
     sd_site_year = pri$sd_site_year
   )
   centering <- sprintf(
-    "x = diameter_mm / d0,  d0 = %s  (geometric mean diameter)",
+    "x = diameter_mm / d0,  d0 = %s mm  (geometric mean diameter)",
     format(d0)
   )
   if (!floor) {
@@ -91,7 +91,7 @@ kb_model_describe <- function(fit, ..., prose = FALSE) {
       paste0(
         "The expected log weight was log(mu), where mu followed a ",
         "three-parameter power function (Packard 2023) of diameter relative to the geometric mean diameter ",
-        "(%s), in which weight_floor is the weight as diameter approaches zero, alpha ",
+        "(%s mm), in which weight_floor is the weight as diameter approaches zero, alpha ",
         "the weight above the floor at the reference diameter, and diameter_power the ",
         "allometric exponent."
       ),
@@ -102,7 +102,7 @@ kb_model_describe <- function(fit, ..., prose = FALSE) {
       paste0(
         "The expected log weight was log(mu), where mu followed a power law ",
         "in diameter relative to the ",
-        "geometric mean diameter (%s), in which alpha is the weight at the ",
+        "geometric mean diameter (%s mm), in which alpha is the weight at the ",
         "reference diameter and diameter_power the allometric exponent."
       ),
       format(d0)
