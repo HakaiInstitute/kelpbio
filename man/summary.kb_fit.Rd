@@ -12,7 +12,8 @@
   sig_fig = 3,
   include_random_effects = FALSE,
   rhat = 1.01,
-  ess = 100
+  ess = 100,
+  max_perc_divergent = 0.2
 )
 }
 \arguments{
@@ -35,6 +36,9 @@ group-level random-effect terms in the output.}
 
 \item{ess}{A number giving the minimum acceptable bulk and tail effective
 sample size per chain.}
+
+\item{max_perc_divergent}{A number giving the maximum acceptable percentage of
+saved draws that ended in a divergent transition.}
 }
 \value{
 A \code{summary_kb_fit} object: a list of fit metadata and a
@@ -48,8 +52,9 @@ A model fit's metadata paired with a per-term posterior summary table.
 The printed summary adds the sampler diagnostics (divergent transitions,
 maximum treedepth, and E-BFMI). A term's \code{converged} uses the Rhat and
 effective sample size thresholds of \code{\link[=kb_converged]{kb_converged()}}; the fit's verdict also
-covers the group-level deviations and divergent transitions, so it can be
-\code{FALSE} when every term shown has converged.
+covers the group-level deviations and divergent transitions
+(\code{max_perc_divergent}), so it can be \code{FALSE} when every term shown has
+converged.
 }
 \examples{
 summary(fit_weight_sim_nereo)

@@ -31,6 +31,17 @@ test_that("rhat and ess set both the column and the header verdict", {
   expect_identical(c(loose$rhat, loose$ess), c(10, 0))
 })
 
+test_that("max_perc_divergent sets the header verdict", {
+  fit <- weight_nereo_fit
+  fit$diagnostics$perc_divergent <- 0.05
+  expect_true(
+    summary(fit, rhat = Inf, ess = 0, max_perc_divergent = 0.2)$converged
+  )
+  strict <- summary(fit, rhat = Inf, ess = 0, max_perc_divergent = 0)
+  expect_false(strict$converged)
+  expect_identical(strict$max_perc_divergent, 0)
+})
+
 test_that("a term with no Rhat is not judged on it", {
   diag <- data.frame(
     rhat = c(NA, 1.001, 1.2),
@@ -43,9 +54,13 @@ test_that("a term with no Rhat is not judged on it", {
   )
 })
 
-test_that("summary validates rhat and ess", {
+test_that("summary validates its thresholds", {
   expect_error(summary(weight_nereo_fit, rhat = "a"), "rhat")
   expect_error(summary(weight_nereo_fit, ess = -1), "ess")
+  expect_error(
+    summary(weight_nereo_fit, max_perc_divergent = -1),
+    "max_perc_divergent"
+  )
   expect_error(summary(weight_nereo_fit, 1.05), "must be empty")
 })
 

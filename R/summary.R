@@ -6,8 +6,9 @@
 #' The printed summary adds the sampler diagnostics (divergent transitions,
 #' maximum treedepth, and E-BFMI). A term's `converged` uses the Rhat and
 #' effective sample size thresholds of [kb_converged()]; the fit's verdict also
-#' covers the group-level deviations and divergent transitions, so it can be
-#' `FALSE` when every term shown has converged.
+#' covers the group-level deviations and divergent transitions
+#' (`max_perc_divergent`), so it can be `FALSE` when every term shown has
+#' converged.
 #'
 #' @inheritParams params
 #'
@@ -29,7 +30,8 @@ summary.kb_fit <- function(
   sig_fig = 3,
   include_random_effects = FALSE,
   rhat = 1.01,
-  ess = 100
+  ess = 100,
+  max_perc_divergent = 0.2
 ) {
   .with_call(
     {
@@ -39,6 +41,8 @@ summary.kb_fit <- function(
       chk::chk_number(rhat)
       chk::chk_number(ess)
       chk::chk_gte(ess, value = 0)
+      chk::chk_number(max_perc_divergent)
+      chk::chk_gte(max_perc_divergent, value = 0)
     },
     # error_call() names the generic, not the method.
     rlang::error_call(rlang::current_env())
@@ -63,7 +67,12 @@ summary.kb_fit <- function(
     min_ess = ess * posterior::nchains(object$draws)
   )
   header <- .kb_fit_header(object)
-  header$converged <- kb_converged(object, rhat = rhat, ess = ess)
+  header$converged <- kb_converged(
+    object,
+    rhat = rhat,
+    ess = ess,
+    max_perc_divergent = max_perc_divergent
+  )
 
   structure(
     c(
@@ -75,6 +84,7 @@ summary.kb_fit <- function(
         conf_level = conf_level,
         rhat = rhat,
         ess = ess,
+        max_perc_divergent = max_perc_divergent,
         coefficients = coefficients
       )
     ),
