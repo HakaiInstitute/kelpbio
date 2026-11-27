@@ -228,7 +228,7 @@ Sites or years in the user's data that are not in the pre-fit model's dataset ar
 
 User data can also be combined with a kelpbiodata dataset to increase the number of observations. For example, if plants have been harvested at only a couple of sites, combining them with the kelpbiodata Hakai Institute weight data gives a better estimate of the general weight allometry relationship, while the site-level random effect still gives an estimate for each site of interest from the user's data.
 
-```{r, eval = rlang::is_installed("kelpbiodata")}
+```{r, eval = FALSE}
 data_weight <- dplyr::bind_rows(
   kelpbiodata::data_weight_hakai_nereo,
   dplyr::filter(data_weight_sim_nereo, site %in% c("otter_cove", "gull_rock"))
