@@ -11,3 +11,9 @@ test_that("augment appends fitted and residual columns matching the methods", {
 test_that("augment output matches its snapshot", {
   expect_snapshot_data(augment(cover_calibration_nereo_fit), "cover-calibration-nereo")
 })
+
+test_that("augment of a zero-row fit errors naming augment()", {
+  fit0 <- weight_nereo_fit
+  fit0$data <- fit0$data[0, ]
+  expect_snapshot(error = TRUE, augment(fit0))
+})
