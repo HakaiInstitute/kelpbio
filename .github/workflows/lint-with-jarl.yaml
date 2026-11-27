@@ -12,6 +12,6 @@ jobs:
     name: jarl-check
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: etiennebacher/setup-jarl@c35ca3e867df86402478ea1dbfae36419c80ac2b
+      - uses: actions/checkout@v7
+      - uses: etiennebacher/setup-jarl@3da5ed84764b78284e8b9f2bc21e525ba97e8b50
       - run: jarl check .
